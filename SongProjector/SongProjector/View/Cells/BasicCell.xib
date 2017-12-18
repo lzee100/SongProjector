@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="BasicCell" rowHeight="60" id="Ake-CL-Z5S" customClass="BasicCell" customModule="SongViewer" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="60"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Ake-CL-Z5S" id="nFr-yL-i41">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="59.5"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FOs-DM-vm4">
+                        <rect key="frame" x="65" y="0.0" width="245" height="59.5"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="xmk-uH-QIf">
+                        <rect key="frame" x="30" y="17.5" width="25" height="25"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="25" id="FqY-JI-8ZC"/>
+                            <constraint firstAttribute="height" constant="25" id="XVC-SG-HIP"/>
+                        </constraints>
+                    </imageView>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rUF-jx-Ejd">
+                        <rect key="frame" x="26" y="59.5" width="294" height="1"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="1" id="TVc-Mc-F6x"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <constraints>
+                    <constraint firstAttribute="trailing" secondItem="rUF-jx-Ejd" secondAttribute="trailing" id="1xn-QR-Yqs"/>
+                    <constraint firstItem="FOs-DM-vm4" firstAttribute="top" secondItem="nFr-yL-i41" secondAttribute="top" id="7mn-PY-Q1Y"/>
+                    <constraint firstAttribute="trailing" secondItem="FOs-DM-vm4" secondAttribute="trailing" constant="10" id="IWE-nA-SHQ"/>
+                    <constraint firstAttribute="bottom" secondItem="FOs-DM-vm4" secondAttribute="bottom" id="Me2-xd-7vH"/>
+                    <constraint firstItem="xmk-uH-QIf" firstAttribute="leading" secondItem="nFr-yL-i41" secondAttribute="leading" constant="30" id="Vzc-3E-CzV"/>
+                    <constraint firstItem="xmk-uH-QIf" firstAttribute="centerY" secondItem="nFr-yL-i41" secondAttribute="centerY" id="ceM-Qd-D5m"/>
+                    <constraint firstItem="FOs-DM-vm4" firstAttribute="leading" secondItem="xmk-uH-QIf" secondAttribute="trailing" constant="10" id="eMj-qf-lOq"/>
+                    <constraint firstAttribute="bottom" secondItem="rUF-jx-Ejd" secondAttribute="bottom" constant="-1" id="ePr-fB-tHY"/>
+                    <constraint firstItem="rUF-jx-Ejd" firstAttribute="leading" secondItem="nFr-yL-i41" secondAttribute="leadingMargin" constant="10" id="zAL-od-Ch0"/>
+                </constraints>
+            </tableViewCellContentView>
+            <viewLayoutGuide key="safeArea" id="wbj-nI-xiJ"/>
+            <connections>
+                <outlet property="icon" destination="xmk-uH-QIf" id="v9f-zB-Jd7"/>
+                <outlet property="seperator" destination="rUF-jx-Ejd" id="CHm-WY-cIO"/>
+                <outlet property="title" destination="FOs-DM-vm4" id="GCc-Bt-fkg"/>
+            </connections>
+        </tableViewCell>
+    </objects>
+</document>
