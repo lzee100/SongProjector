@@ -13,6 +13,7 @@ class BasicCell: UITableViewCell {
 	@IBOutlet var icon: UIImageView!
 	@IBOutlet var title: UILabel!
 	@IBOutlet var seperator: UIView!
+	@IBOutlet var iconWidthContraint: NSLayoutConstraint!
 	
 	var selectedCell = false { didSet { update() } }
 	var isLast = false { didSet { update() } }
@@ -23,7 +24,7 @@ class BasicCell: UITableViewCell {
 		// Initialization code
 	}
 	
-	func setup(title: String?, icon: UIImage) {
+	func setup(title: String?, icon: UIImage? = nil) {
 		self.icon.image = icon
 		self.title.text = title
 		update()
@@ -34,6 +35,9 @@ class BasicCell: UITableViewCell {
 		self.title.font = .xNormal
 		title.textColor = selectedCell ? .primary : .black
 		icon.tintColor = selectedCell ? .primary : .black
+		if icon == nil {
+			iconWidthContraint.constant = 0
+		}
 	}
 	
 	override func setSelected(_ selected: Bool, animated: Bool) {

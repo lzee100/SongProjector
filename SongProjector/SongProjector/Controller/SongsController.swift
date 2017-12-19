@@ -20,6 +20,8 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 		static let clusterCell = "ClusterCell"
 	}
 	
+	@IBOutlet var new: UIBarButtonItem!
+	@IBOutlet var desciptionSongs: UILabel!
 	@IBOutlet var collectionView: UICollectionView!
 	@IBOutlet var tableView: UITableView!
 	@IBOutlet var searchBar: UISearchBar!
@@ -145,9 +147,13 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 		tableView.register(cell: Constants.clusterCell)
 		collectionView.register(UINib(nibName: Constants.tagCellCollection, bundle: nil), forCellWithReuseIdentifier: Constants.tagCellCollection)
 		
+		navigationController?.title = Text.Songs.title
+		
 		searchBar.showsCancelButton = true
 		searchBar.placeholder = Text.Songs.SearchSongPlaceholder
 		searchBar.delegate = self
+		
+		new.title = Text.Actions.add
 		
 	}
 	

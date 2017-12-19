@@ -32,6 +32,8 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 	@IBOutlet var tableViewSheets: UITableView!
 	@IBOutlet var titleTableCluster: UILabel!
 	@IBOutlet var titleTableSheet: UILabel!
+	@IBOutlet var clear: UIBarButtonItem!
+	@IBOutlet var toNewSongService: UIBarButtonItem!
 	
 	
 	
@@ -183,6 +185,8 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 		titleTableCluster.text = Text.SongService.titleTableClusters
 		titleTableSheet.text = Text.SongService.titleTableSheets
 		
+		clear.title = Text.Actions.new
+		toNewSongService.title = Text.Actions.add
 		
 		NotificationCenter.default.addObserver(forName: NotificationNames.externalScreen, object: nil, queue: nil, using: setExternalDisplay)
 		
@@ -225,6 +229,10 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 	
 	func setExternalDisplay(_ notification: Notification) {
 		externalScreen = notification.userInfo?["screen"] as? UIScreen
+	}
+	
+	@IBAction func clearButtonPressed(_ sender: UIBarButtonItem) {
+		
 	}
 	
 	

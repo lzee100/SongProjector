@@ -24,7 +24,7 @@ class TagCellCollection: UICollectionViewCell {
 	private func update() {
 		title.text = tagName ?? ""
 		title.textColor = isSelectedCell ? .primary : .textColorNormal
-		icon.image = isSelectedCell ? #imageLiteral(resourceName: "song") : #imageLiteral(resourceName: "tag")
+		icon.image = isSelectedCell ? Cells.tagIcon : Cells.tagIcon
 		icon.tintColor = isSelectedCell ? .primary : .textColorNormal
 	}
 

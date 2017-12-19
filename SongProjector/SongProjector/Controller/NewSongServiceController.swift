@@ -48,7 +48,7 @@ class NewSongServiceController: UIViewController, UITableViewDelegate, UITableVi
 	}
 	
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return tableView == tableViewSelectedSongs ? selectedSongs.count : songs.count
+		return tableView == tableViewSelectedSongs ? selectedSongs.count == 0 ? 1 : selectedSongs.count : songs.count
 	}
 	
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -56,6 +56,11 @@ class NewSongServiceController: UIViewController, UITableViewDelegate, UITableVi
 		if tableView == tableViewSelectedSongs {
 			let cell = tableViewSelectedSongs.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath)
 			if let cell = cell as? BasicCell {
+				if selectedSongs.count == 0 {
+					cell.setup(title: Text.NewSongService.noSelectedSongs)
+					cell.isLast = true
+					return cell
+				}
 				cell.setup(title: selectedSongs[indexPath.row].title, icon: Cells.songIcon)
 				cell.isLast = selectedSongs.count == indexPath.row
 			}
@@ -181,9 +186,10 @@ class NewSongServiceController: UIViewController, UITableViewDelegate, UITableVi
 	
 	private func setup() {
 		tableViewSongs.register(cell: Cells.basicCellid)
-		tableViewSelectedSongs.register(cell: Cells.addButtonCellid)
+		tableViewSelectedSongs.register(cell: Cells.basicCellid)
 		collectionView.register(UINib(nibName: Cells.tagCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.tagCellCollection)
 		
+		navigationController?.title = Text.NewSongService.title
 		descriptionSelectedSongs.text = Text.NewSongService.selectedSongsDescription
 		descriptionSongs.text = Text.NewSongService.songsDescription
 		
