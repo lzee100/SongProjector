@@ -182,10 +182,10 @@
             </objects>
             <point key="canvasLocation" x="168" y="-283"/>
         </scene>
-        <!--View Controller-->
+        <!--NewSongServiceController-->
         <scene sceneID="VUB-WC-c2m">
             <objects>
-                <viewController id="mT3-Rt-paS" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NewSongServiceController" title="NewSongServiceController" id="mT3-Rt-paS" customClass="NewSongServiceController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="DGo-e4-p7D">
                         <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -196,6 +196,10 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="250" id="tBi-89-Gfu"/>
                                 </constraints>
+                                <connections>
+                                    <outlet property="dataSource" destination="mT3-Rt-paS" id="vhD-E7-Twn"/>
+                                    <outlet property="delegate" destination="mT3-Rt-paS" id="RO0-5I-cst"/>
+                                </connections>
                             </tableView>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="KYS-Am-2gO">
                                 <rect key="frame" x="0.0" y="474" width="768" height="550"/>
@@ -204,7 +208,14 @@
                                     <rect key="frame" x="0.0" y="0.0" width="768" height="44"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                     <textInputTraits key="textInputTraits"/>
+                                    <connections>
+                                        <outlet property="delegate" destination="mT3-Rt-paS" id="SGH-jt-BPR"/>
+                                    </connections>
                                 </searchBar>
+                                <connections>
+                                    <outlet property="dataSource" destination="mT3-Rt-paS" id="Fbh-wk-nrL"/>
+                                    <outlet property="delegate" destination="mT3-Rt-paS" id="pew-7Y-cpP"/>
+                                </connections>
                             </tableView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="30V-Ho-OWu">
                                 <rect key="frame" x="20" y="64" width="728" height="50"/>
@@ -246,6 +257,10 @@
                                         </view>
                                     </collectionViewCell>
                                 </cells>
+                                <connections>
+                                    <outlet property="dataSource" destination="mT3-Rt-paS" id="vua-qh-2ta"/>
+                                    <outlet property="delegate" destination="mT3-Rt-paS" id="yU0-tL-Wl7"/>
+                                </connections>
                             </collectionView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -269,7 +284,28 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="JtP-5K-GV9"/>
                     </view>
-                    <navigationItem key="navigationItem" id="wbo-QV-nne"/>
+                    <navigationItem key="navigationItem" id="wbo-QV-nne">
+                        <barButtonItem key="leftBarButtonItem" title="Item" id="3rQ-Yf-WF0">
+                            <connections>
+                                <action selector="cancelButtonPressed:" destination="mT3-Rt-paS" id="rB8-yx-MKZ"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="Item" id="0wr-Ry-qtm">
+                            <connections>
+                                <action selector="doneButtonPressed:" destination="mT3-Rt-paS" id="26l-SE-Rrx"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="cancelButton" destination="3rQ-Yf-WF0" id="tDU-zP-XaI"/>
+                        <outlet property="collectionView" destination="2rs-ix-Jh7" id="1IX-by-W6l"/>
+                        <outlet property="descriptionSelectedSongs" destination="30V-Ho-OWu" id="RmX-XW-heU"/>
+                        <outlet property="descriptionSongs" destination="aZh-Yj-N2g" id="BDc-VQ-Gsr"/>
+                        <outlet property="doneButton" destination="0wr-Ry-qtm" id="Pns-xq-h7a"/>
+                        <outlet property="searchBar" destination="sGz-PQ-D0Z" id="bCp-fI-L8z"/>
+                        <outlet property="tableViewSelectedSongs" destination="x6R-gV-but" id="BXQ-pk-rfZ"/>
+                        <outlet property="tableViewSongs" destination="KYS-Am-2gO" id="xnf-pS-iDa"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="mOD-OX-fvw" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

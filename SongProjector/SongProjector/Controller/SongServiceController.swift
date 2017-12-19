@@ -16,6 +16,7 @@ struct Cells {
 	static let basicCellid = "BasicCell"
 	static let addButtonCellid = "AddButtonCell"
 	static let newSongSheetCellid = "NewSongSheetCell"
+	static let tagCellCollection = "TagCellCollection"
 }
 
 class SongServiceController: UIViewController, UITableViewDataSource, UITableViewDelegate, NewSongServiceDelegate, SongsControllerDelegate {
@@ -73,7 +74,7 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 		if let controller = segue.destination as? UINavigationController, let newSongServiceController = controller.viewControllers.first as? NewSongServiceController {
 			newSongServiceController.delegate = self
-			newSongServiceController.clusters = clusters
+			newSongServiceController.songs = clusters
 		}
 		if let controller = segue.destination as? UINavigationController, let songsController = controller.viewControllers.first as? SongsController {
 			songsController.delegate = self

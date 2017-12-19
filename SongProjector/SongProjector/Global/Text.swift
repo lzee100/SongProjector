@@ -11,10 +11,21 @@ import Foundation
 
 class Text: NSObject {
 	
+	struct Actions {
+		static let cancel = "Annulleer"
+		static let close = "Sluit"
+		static let done = "Klaar"
+	}
+	
 	struct SongService {
 		static let title = "Zangdienst"
 		static let titleTableClusters = "Liedjes"
 		static let titleTableSheets = "Dia's"
+	}
+	
+	struct NewSongService {
+		static let selectedSongsDescription = "Hieronder staan de geselecteerde liedjes voor de zangdienst"
+		static let songsDescription = "Zoek en selecteer hieronder de liedjes voor de zangdienst"
 	}
 	
 	struct NewSongViewController {
@@ -23,7 +34,6 @@ class Text: NSObject {
 		static let NoTitleForSheet = "Geen titel gevonden"
 		static let Sheet = "Dia "
 		static let SearchTagPlaceHolder = "Zoek categorie"
-		static let CancelButonText = "Sluit"
 	}
 	
 	struct Songs {
