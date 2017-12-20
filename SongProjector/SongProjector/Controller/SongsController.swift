@@ -15,11 +15,6 @@ protocol SongsControllerDelegate {
 class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UISearchResultsUpdating, UISearchBarDelegate {
 	
 	
-	private struct Constants {
-		static let tagCellCollection = "TagCellCollection"
-		static let clusterCell = "ClusterCell"
-	}
-	
 	@IBOutlet var new: UIBarButtonItem!
 	@IBOutlet var desciptionSongs: UILabel!
 	@IBOutlet var collectionView: UICollectionView!
@@ -49,7 +44,7 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 	}
 	
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		let cell = tableView.dequeueReusableCell(withIdentifier: Constants.clusterCell, for: indexPath)
+		let cell = tableView.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath)
 		
 		if let cell = cell as? BasicCell {
 			cell.setup(title: filteredClusters[indexPath.row].title, icon: Cells.songIcon)
@@ -75,7 +70,7 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 	}
 
 	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-		let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.tagCellCollection, for: indexPath)
+		let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.tagCellCollection, for: indexPath)
 		
 		if let collectionCell = collectionCell as? TagCellCollection {
 			collectionCell.setup(tagName: tags[indexPath.row].title ?? "")
@@ -137,6 +132,7 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 	
 	func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
 		searchBar.resignFirstResponder()
+		searchBar.text = ""
 		filteredClusters = clusters
 		self.tableView.reloadData()
 	}
@@ -144,8 +140,9 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 
 	
 	private func setup() {
-		tableView.register(cell: Constants.clusterCell)
-		collectionView.register(UINib(nibName: Constants.tagCellCollection, bundle: nil), forCellWithReuseIdentifier: Constants.tagCellCollection)
+		
+		tableView.register(cell: Cells.basicCellid)
+		collectionView.register(UINib(nibName: Cells.tagCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.tagCellCollection)
 		
 		navigationController?.title = Text.Songs.title
 		
@@ -155,6 +152,7 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 		
 		new.title = Text.Actions.add
 		
+
 	}
 	
 	private func update() {

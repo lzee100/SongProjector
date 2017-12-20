@@ -84,7 +84,7 @@ class MenuController: UITabBarController {
 		// Maak controllers
 		let storyboard = UIStoryboard(name: "StoryboardiPad", bundle: nil)
 		
-		[.songService, .more].forEach{
+		[.songService, .songs, .more].forEach{
 			
 			controllers[$0] = storyboard.instantiateViewController(withIdentifier: $0.identifier)
 			
@@ -96,7 +96,7 @@ class MenuController: UITabBarController {
 	
 	private func update() {
 		
-		self.menuFeatures = [Feature.songService, .more]
+		self.menuFeatures = [Feature.songService, Feature.songs, .more]
 		
 		var menuFeatures = self.menuFeatures
 		var moreFeatures = menuFeatures

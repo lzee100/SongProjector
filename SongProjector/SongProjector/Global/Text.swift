@@ -29,16 +29,7 @@ class Text: NSObject {
 		static let title = "Nieuwe zangdienst"
 		static let selectedSongsDescription = "Hieronder staan de geselecteerde liedjes voor de zangdienst"
 		static let songsDescription = "Zoek en selecteer hieronder de liedjes voor de zangdienst"
-		static let noSelectedSongs = "Geen liedjes geselecteerd."
-	}
-	
-	struct NewSongViewController {
-		static let title = "Nieuwe liedje"
-		static let SongTitle = "Titel"
-		static let Description = "Voer hier de tekst van het nummer in:"
-		static let NoTitleForSheet = "Geen titel gevonden"
-		static let Sheet = "Dia "
-		static let SearchTagPlaceHolder = "Zoek categorie"
+		static let noSelectedSongs = "Geen liedjes geselecteerd"
 	}
 	
 	struct Songs {
@@ -46,7 +37,15 @@ class Text: NSObject {
 		static let SearchSongPlaceholder = "Zoek dia's"
 	}
 	
-	
+	struct NewSong {
+		static let title = "Nieuwe liedje"
+		static let SongTitle = "Titel"
+		static let headerTag = "Selecteer hier de categorie"
+		static let headerLyrics = "Voer hier de tekst van het nummer in"
+		static let NoTitleForSheet = "Geen titel gevonden"
+		static let Sheet = "Dia "
+		static let SearchTagPlaceHolder = "Zoek categorie"
+	}
 	
 	
 	

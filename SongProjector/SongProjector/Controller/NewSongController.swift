@@ -20,7 +20,10 @@ class NewSongController: UIViewController, UITableViewDataSource, UITableViewDel
 	
 	// MARK: - Properties
 
-	@IBOutlet var header: UILabel!
+	@IBOutlet var cancel: UIBarButtonItem!
+	@IBOutlet var done: UIBarButtonItem!
+	@IBOutlet var headerTags: UILabel!
+	@IBOutlet var headerLyrics: UILabel!
 	@IBOutlet var inputTextView: UITextView!
 	@IBOutlet var tableViewTags: UITableView!
 	@IBOutlet var tableViewSheets: UITableView!
@@ -28,8 +31,6 @@ class NewSongController: UIViewController, UITableViewDataSource, UITableViewDel
 	
 	
 	// MARK: - Properties
-	
-	private let searchController = UISearchController(searchResultsController: nil)
 	
 	private var clusterTitle = ""
 	private var sheets: [Sheet] = []
@@ -116,9 +117,9 @@ class NewSongController: UIViewController, UITableViewDataSource, UITableViewDel
 	func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
 		if tableView == tableViewSheets {
 			if section == 0 {
-				return Text.NewSongViewController.SongTitle
+				return Text.NewSong.SongTitle
 			} else {
-				return Text.NewSongViewController.Sheet + "\(section)"
+				return Text.NewSong.Sheet + "\(section)"
 			}
 		} else {
 			return nil
@@ -159,10 +160,14 @@ class NewSongController: UIViewController, UITableViewDataSource, UITableViewDel
 	
 	private func setup() {
 
-		tableViewTags.register(cell: "TagCell")
-		tableViewSheets.register(cell: "NewSongSheetCell")
-		header.font = .large
-		header.text = Text.NewSongViewController.Description
+		tableViewTags.register(cell: Cells.basicCellid)
+		tableViewSheets.register(cell: Cells.newSongSheetCellid)
+		navigationController?.title = Text.NewSong.title
+		cancel.title = Text.Actions.cancel
+		done.title = Text.Actions.done
+		headerTags.text = Text.NewSong.headerTag
+		headerLyrics.text = Text.NewSong.headerLyrics
+
 		isTableViewHidden = true
 	}
 	
@@ -199,7 +204,7 @@ class NewSongController: UIViewController, UITableViewDataSource, UITableViewDel
 			let rangeRemove = start..<range.upperBound
 			
 			let sheetLyrics = String(lyricsToDevide[rangeSheet])
-			var sheetTitle: String = Text.NewSongViewController.NoTitleForSheet
+			var sheetTitle: String = Text.NewSong.NoTitleForSheet
 			
 			// get title
 			if let rangeTitle = lyricsToDevide.range(of: "\n") {
