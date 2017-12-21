@@ -148,8 +148,6 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 		
 		searchBar.showsCancelButton = true
 		searchBar.placeholder = Text.Songs.SearchSongPlaceholder
-		searchBar.delegate = self
-		
 		new.title = Text.Actions.add
 		
 

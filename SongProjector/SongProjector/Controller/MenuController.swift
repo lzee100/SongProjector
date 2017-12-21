@@ -13,11 +13,11 @@ class MenuController: UITabBarController {
 	// MARK: - Constants
 	
 	fileprivate struct Constants {
-		static let MaxRootFeatures = 5
+		static let MaxRootFeatures = 2
 		static let roomForMore = 1
 	}
 	
-	
+	var splitController: UISplitViewController?
 	
 	// MARK: - Private Properties
 	
@@ -84,19 +84,31 @@ class MenuController: UITabBarController {
 		// Maak controllers
 		let storyboard = UIStoryboard(name: "StoryboardiPad", bundle: nil)
 		
-		[.songService, .songs, .more].forEach{
-			
+
+		[.songService, .songs, .tags].forEach{
 			controllers[$0] = storyboard.instantiateViewController(withIdentifier: $0.identifier)
-			
 		}
 		
+		splitController = UISplitViewController()
+		
+		let master = storyboard.instantiateViewController(withIdentifier: "Master")
+		let navMaster = UINavigationController(rootViewController: master)
+
+		let slave = storyboard.instantiateViewController(withIdentifier: "Detail")
+		let navSlave = UINavigationController(rootViewController: slave)
+		slave.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
+		slave.navigationItem.leftItemsSupplementBackButton = true
+		
+		splitController?.viewControllers = [navMaster]
+		
+		controllers[.more] = splitViewController
 		update()
 		
 	}
 	
 	private func update() {
 		
-		self.menuFeatures = [Feature.songService, Feature.songs, .more]
+		self.menuFeatures = [.songService, .songs, .tags, .more]
 		
 		var menuFeatures = self.menuFeatures
 		var moreFeatures = menuFeatures
@@ -119,14 +131,24 @@ class MenuController: UITabBarController {
 		// get meer menu items
 		if !moreFeatures.isEmpty {
 			moreFeatures.removeFirst(maxFeatures)
+			let index = moreFeatures.index(of: .more) as! Int
+			moreFeatures.remove(at: index)
+			print(index)
 		}
 		
 		
 		// build viewcontrollers for tabbar menu
+		menuFeatures.removeLast()
 		viewControllers = menuFeatures.map {
 			UINavigationController(rootViewController: controller($0)!)
 		}
 		
+		// build viewcontrollers for Meer TableViewController
+		if let navMaster = splitController?.viewControllers[0] as? UINavigationController, let master = navMaster.topViewController as? MoreController {
+			master.features = moreFeatures.map{ ($0, controller($0)!) }
+		}
+		
+		viewControllers?.append(splitController!)
 		// set custom navigationbar color
 		for viewController in viewControllers ?? [] {
 			if let nav = viewController as? UINavigationController {
@@ -134,10 +156,9 @@ class MenuController: UITabBarController {
 			}
 		}
 		
-		// build viewcontrollers for Meer TableViewController
-		moreController?.features = moreFeatures.map{ ($0, controller($0)!) }
+
 		
-		
+		menuFeatures.append(.more)
 		tabBar.items?.enumerated().forEach {
 			index, item in
 			

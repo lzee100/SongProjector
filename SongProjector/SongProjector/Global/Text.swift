@@ -38,7 +38,7 @@ class Text: NSObject {
 	}
 	
 	struct NewSong {
-		static let title = "Nieuwe liedje"
+		static let title = "Nieuw liedje"
 		static let SongTitle = "Titel"
 		static let headerTag = "Selecteer hier de categorie"
 		static let headerLyrics = "Voer hier de tekst van het nummer in"
@@ -47,7 +47,13 @@ class Text: NSObject {
 		static let SearchTagPlaceHolder = "Zoek categorie"
 	}
 	
+	struct Tags {
+		static let title = "Categorien"
+	}
 	
+	struct Players {
+		static let title = "Geanimeerde presentaties"
+	}
 	
 	
 }

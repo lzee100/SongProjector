@@ -15,15 +15,31 @@ enum Feature : String {
 	case songs = "Songs"
 	case players = "Players"
 	case more = "More"
+	case tags = "Tags"
 	
 	
 	
 	// MARK: - Properties
 	
-	static let all = [songService, songs, players,  more]
+	static let all = [songService, songs, players, tags,  more]
 	
 	var titel : String {
 		return rawValue
+	}
+	
+	var titleForDisplay : String {
+		switch self {
+		case .songService:
+			return Text.SongService.title
+		case .songs:
+			return Text.Songs.title
+		case .players:
+			return Text.Players.title
+		case .tags:
+			return Text.Tags.title
+		default:
+			return ""
+		}
 	}
 	
 	var identifier : String {
@@ -35,7 +51,7 @@ enum Feature : String {
 	var isStandaard : Bool {
 		
 		switch self {
-		case .songService, .songs, .players, .more:
+		case .songService, .songs, .players, .tags, .more:
 			return true
 		}
 	}
@@ -63,6 +79,8 @@ enum Feature : String {
 			return (#imageLiteral(resourceName: "SongService"), #imageLiteral(resourceName: "SongService"), #imageLiteral(resourceName: "SongService"))
 		case .songs:
 			return (#imageLiteral(resourceName: "Song"), #imageLiteral(resourceName: "Song"), #imageLiteral(resourceName: "Song"))
+		case .tags:
+			return (#imageLiteral(resourceName: "Bullet"), #imageLiteral(resourceName: "BulletSelected"), #imageLiteral(resourceName: "Bullet"))
 		case .players:
 			return (#imageLiteral(resourceName: "Play"), #imageLiteral(resourceName: "PlaySelected"), #imageLiteral(resourceName: "Play"))
 		case .more:
