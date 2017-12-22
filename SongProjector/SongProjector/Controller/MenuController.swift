@@ -13,7 +13,7 @@ class MenuController: UITabBarController {
 	// MARK: - Constants
 	
 	fileprivate struct Constants {
-		static let MaxRootFeatures = 2
+		static let MaxRootFeatures = 3
 		static let roomForMore = 1
 	}
 	
@@ -85,19 +85,16 @@ class MenuController: UITabBarController {
 		let storyboard = UIStoryboard(name: "StoryboardiPad", bundle: nil)
 		
 
-		[.songService, .songs, .tags].forEach{
+		Feature.all.forEach{
 			controllers[$0] = storyboard.instantiateViewController(withIdentifier: $0.identifier)
 		}
+		// remove more UIViewController, more will become split viewController
+		controllers.removeValue(forKey: .more)
 		
 		splitController = UISplitViewController()
 		
 		let master = storyboard.instantiateViewController(withIdentifier: "Master")
 		let navMaster = UINavigationController(rootViewController: master)
-
-		let slave = storyboard.instantiateViewController(withIdentifier: "Detail")
-		let navSlave = UINavigationController(rootViewController: slave)
-		slave.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
-		slave.navigationItem.leftItemsSupplementBackButton = true
 		
 		splitController?.viewControllers = [navMaster]
 		
@@ -108,7 +105,7 @@ class MenuController: UITabBarController {
 	
 	private func update() {
 		
-		self.menuFeatures = [.songService, .songs, .tags, .more]
+		self.menuFeatures = Feature.all
 		
 		var menuFeatures = self.menuFeatures
 		var moreFeatures = menuFeatures
@@ -121,7 +118,7 @@ class MenuController: UITabBarController {
 		let maxFeatures : Int = Constants.MaxRootFeatures
 		
 		if menuFeatures.count > maxFeatures {
-			let removeLastNumber = (menuFeatures.count - maxFeatures) + Constants.roomForMore
+			let removeLastNumber = (menuFeatures.count - maxFeatures)
 			menuFeatures.removeLast(removeLastNumber)
 			menuFeatures.append(.more)
 		} else {

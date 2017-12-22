@@ -55,5 +55,14 @@ class Text: NSObject {
 		static let title = "Geanimeerde presentaties"
 	}
 	
+	struct DisplaySettings {
+		static let title = "Opmaak"
+	}
+	
+	struct NewTag {
+		static let title = "Nieuwe categorie"
+		static let pageDescription = "Voer een nieuwe categorie toe"
+		static let error = "Invoer mag niet leeg zijn"
+	}
 	
 }

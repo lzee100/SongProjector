@@ -30,7 +30,7 @@ class MoreController: UITableViewController {
 		splitViewController?.preferredDisplayMode = .allVisible
 		features.forEach({ (arg) in
 			let (_, controller) = arg
-			splitViewController?.viewControllers.append(UINavigationController(rootViewController: controller))
+			splitViewController?.viewControllers.append(controller)
 		})
 		
 		setup()
@@ -50,7 +50,7 @@ class MoreController: UITableViewController {
 	// MARK: - Table View
 	
 	override func numberOfSections(in tableView: UITableView) -> Int {
-		return features.count
+		return 1
 	}
 	
 	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -80,6 +80,10 @@ class MoreController: UITableViewController {
 		
 		let navController = UINavigationController.init(rootViewController: controller)
 		showDetailViewController(navController, sender: self)
+		
+		UIView.animate(withDuration: 0.2) {
+			self.splitViewController?.preferredDisplayMode = .primaryHidden
+		}
 		
 	}
 	

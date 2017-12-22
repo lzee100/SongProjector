@@ -87,6 +87,7 @@ class NewSongServiceController: UIViewController, UITableViewDelegate, UITableVi
 		} else {
 			selectedSongs.append(filteredSongs[indexPath.row])
 		}
+		tableViewSelectedSongs.reloadData()
 	}
 	
 	func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
@@ -95,7 +96,6 @@ class NewSongServiceController: UIViewController, UITableViewDelegate, UITableVi
 	
 	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
 		if tableView == tableViewSelectedSongs, editingStyle == .delete {
-			selectedSongs.remove(at: indexPath.row)
 			selectedSongs.remove(at: indexPath.row)
 			update()
 		}
@@ -263,7 +263,7 @@ class NewSongServiceController: UIViewController, UITableViewDelegate, UITableVi
 	}
 	
 	@IBAction func doneButtonPressed(_ sender: UIBarButtonItem) {
-		delegate?.didFinishSongServiceSelection(clusters: songs)
+		delegate?.didFinishSongServiceSelection(clusters: selectedSongs)
 		dismiss(animated: true)
 	}
 	

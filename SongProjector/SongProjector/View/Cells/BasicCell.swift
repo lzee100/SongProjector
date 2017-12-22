@@ -31,7 +31,7 @@ class BasicCell: UITableViewCell {
 	}
 	
 	private func update() {
-		seperator.backgroundColor = isLast ? .clear : .seperatorColor
+		seperator.backgroundColor = .clear
 		self.title.font = .xNormal
 		title.textColor = selectedCell ? .primary : .black
 		icon.tintColor = selectedCell ? .primary : .black

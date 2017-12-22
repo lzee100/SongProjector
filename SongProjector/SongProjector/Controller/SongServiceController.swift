@@ -9,6 +9,22 @@
 import UIKit
 import CoreData
 
+extension UIImage {
+	
+	func imageResize (sizeChange:CGSize)-> UIImage{
+		
+		let hasAlpha = true
+		let scale: CGFloat = 0.0 // Use scale factor of main screen
+		
+		UIGraphicsBeginImageContextWithOptions(sizeChange, !hasAlpha, scale)
+		self.draw(in: CGRect(origin: CGPoint.zero, size: sizeChange))
+		
+		let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
+		return scaledImage!
+	}
+	
+}
+
 struct Cells {
 	static let songIcon = #imageLiteral(resourceName: "Song")
 	static let sheetIcon = #imageLiteral(resourceName: "Sheet")
@@ -24,10 +40,13 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 	
 	// MARK: - Properties
 	
+	@IBOutlet var swipeRecognizerView: UIView!
 	@IBOutlet var sheetDisplayTitle: UILabel!
 	@IBOutlet var sheetDisplayTitleHeightConstraint: NSLayoutConstraint!
 	@IBOutlet var sheetDisplayLyrics: UITextView!
+	@IBOutlet var sheetDisplayPrevious: UIView!
 	@IBOutlet var sheetDisplay: UIView!
+	@IBOutlet var sheetDisplayNext: UIView!
 	@IBOutlet var tableViewClusters: UITableView!
 	@IBOutlet var tableViewSheets: UITableView!
 	@IBOutlet var titleTableCluster: UILabel!
@@ -42,11 +61,32 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 	private var hasEmptySheet = true
 	private var emptySheet = CoreSheet.createEntityNOTsave()
 	private var externalScreen: UIScreen?
+	private var externalScreenBounds = CGRect(x: 0, y: 0, width: 640, height: 480)
 	private var clusters: [Cluster] = [] { didSet { update() } }
 	private var selectedClusterRow = -1
 	private var selectedSheetRow = -1
-	private var selectedCluster: Cluster? { didSet { update() } }
-	private var selectedSheet: Sheet? { didSet { displaySheet() } }
+	private var selectedCluster: Cluster? {
+		didSet {
+			if hasEmptySheet {
+				if selectedCluster == nil {
+					removeEmptySheet()
+				} else {
+					addEmptySheet()
+				}
+			}
+			createSheetListForDisplay()
+			update()
+		}
+	}
+	private var sheetsToDisplay: [UIImage] = []
+	
+	private var selectedSheet: Sheet? {
+		didSet {
+			displaySheet()
+			update()
+			
+		}
+	}
 	private var sheetsForSelectedCluster: [Sheet]? {
 		get {
 			if let sheets = selectedCluster?.hasSheets as? Set<Sheet> {
@@ -96,9 +136,7 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 		if tableView == tableViewClusters {
 			return clusters.count
 		} else {
-			var numberOfSheets = selectedCluster?.hasSheets?.count ?? 0
-			numberOfSheets += (hasEmptySheet && selectedSheet != nil ? 1 : 0)
-			return numberOfSheets
+			return selectedCluster?.hasSheets?.count ?? 0
 		}
 	}
 	
@@ -114,17 +152,10 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 		} else {
 			let cell = tableViewSheets.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath)
 			if let cell = cell as? BasicCell {
-				if hasEmptySheet && indexPath.row == sheetsForSelectedCluster?.count {
-					emptySheet.id = (sheetsForSelectedCluster?[indexPath.row - 1].id ?? 0) + 1
-					cell.setup(title: emptySheet.title, icon: Cells.sheetIcon)
-					cell.selectedCell = emptySheet.id == selectedSheet?.id
-					cell.isLast = true
-				} else {
 					if let sheet = sheetsForSelectedCluster?[indexPath.row] {
 						cell.setup(title: sheet.title, icon: Cells.sheetIcon)
 						cell.selectedCell = selectedSheet?.id == sheet.id
 						cell.isLast = sheetsForSelectedCluster?.count == indexPath.row
-					}
 				}
 			}
 			return cell
@@ -190,7 +221,17 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 		
 		NotificationCenter.default.addObserver(forName: NotificationNames.externalScreen, object: nil, queue: nil, using: setExternalDisplay)
 		
+		let leftSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))
+		let rightSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))
+		
+		leftSwipe.direction = .left
+		rightSwipe.direction = .right
+		
+		swipeRecognizerView.addGestureRecognizer(leftSwipe)
+		swipeRecognizerView.addGestureRecognizer(rightSwipe)
+		
 		tableViewClusters.register(cell: Cells.basicCellid)
+		tableViewSheets.register(cell: Cells.basicCellid)
 
 		sheetDisplay.isHidden = true
 
@@ -227,12 +268,72 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 		}
 	}
 	
+	@objc private func respondToSwipeGesture(_ sender: UISwipeGestureRecognizer) {
+			switch sender.direction {
+			case .right:
+				print("Swiped right")
+				if
+					let intPosition = selectedSheet?.position,
+					Int(intPosition) > 0 {
+					let position = intPosition - 1
+					selectedSheet = (selectedCluster?.hasSheets as! Set<Sheet>).first{ $0.position == position }
+				}
+			case .left:
+				print("Swiped left")
+				if
+					let intPosition = selectedSheet?.position,
+					let numberOfSheets = sheetsForSelectedCluster?.count {
+							
+						if Int(intPosition) < (numberOfSheets - 1) {
+							
+							if Int(intPosition) > 0 {
+								let image = sheetsToDisplay[Int(intPosition)].imageResize(sizeChange: sheetDisplayPrevious.frame.size)
+								sheetDisplayPrevious.backgroundColor = UIColor(patternImage: image)
+							}
+							
+							
+							let position = intPosition + 1
+							selectedSheet = (selectedCluster?.hasSheets as! Set<Sheet>).first{ $0.position == position }
+						}
+					
+				}
+			default:
+				break
+			}
+	}
+	
+	private func addEmptySheet() {
+		emptySheet.position = (sheetsForSelectedCluster?.last?.position ?? 0) + 1
+		selectedCluster?.addToHasSheets(emptySheet)
+	}
+	
+	private func removeEmptySheet() {
+		selectedCluster?.removeFromHasSheets(emptySheet)
+	}
+
+	
 	func setExternalDisplay(_ notification: Notification) {
 		externalScreen = notification.userInfo?["screen"] as? UIScreen
 	}
 	
 	@IBAction func clearButtonPressed(_ sender: UIBarButtonItem) {
 		
+	}
+	
+	private func createSheetListForDisplay() {
+		sheetsToDisplay = []
+		if let sheetsForSelectedCluster = sheetsForSelectedCluster {
+			
+			if let sheetController = storyboard?.instantiateViewController(withIdentifier: "SheetController") as? SheetController {
+				sheetController.setView(CGRect(x: 0, y: 0, width: sheetDisplay.frame.width, height: sheetDisplay.frame.height))
+				sheetController.view.backgroundColor = .red
+				for sheet in sheetsForSelectedCluster {
+					sheetController.songTitle = sheet.title
+					sheetController.lyrics = sheet.lyrics
+					sheetsToDisplay.append(sheetController.asImage())
+				}
+			}
+		}
 	}
 	
 	
