@@ -28,33 +28,9 @@
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FvY-Ax-EmN">
                                                 <rect key="frame" x="280.5" y="0.0" width="463" height="347"/>
-                                                <subviews>
-                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZYo-NJ-0lT">
-                                                        <rect key="frame" x="10" y="10" width="443" height="50"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="height" constant="50" id="2wk-un-8s1"/>
-                                                        </constraints>
-                                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                        <nil key="textColor"/>
-                                                        <nil key="highlightedColor"/>
-                                                    </label>
-                                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="alM-h8-u3G">
-                                                        <rect key="frame" x="0.0" y="70" width="463" height="277"/>
-                                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                                                    </textView>
-                                                </subviews>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="trailing" secondItem="alM-h8-u3G" secondAttribute="trailing" id="2Ik-4V-5CX"/>
                                                     <constraint firstAttribute="width" secondItem="FvY-Ax-EmN" secondAttribute="height" multiplier="4:3" id="6OL-2T-V5Q"/>
-                                                    <constraint firstItem="alM-h8-u3G" firstAttribute="top" secondItem="ZYo-NJ-0lT" secondAttribute="bottom" constant="10" id="Eww-Rx-3oA"/>
-                                                    <constraint firstAttribute="bottom" secondItem="alM-h8-u3G" secondAttribute="bottom" id="RrR-vK-LhE"/>
-                                                    <constraint firstItem="alM-h8-u3G" firstAttribute="leading" secondItem="FvY-Ax-EmN" secondAttribute="leading" id="UVP-0l-keh"/>
-                                                    <constraint firstAttribute="trailing" secondItem="ZYo-NJ-0lT" secondAttribute="trailing" constant="10" id="mzO-6e-3Eq"/>
-                                                    <constraint firstItem="ZYo-NJ-0lT" firstAttribute="leading" secondItem="FvY-Ax-EmN" secondAttribute="leading" constant="10" id="uEV-Fk-Kja"/>
-                                                    <constraint firstItem="ZYo-NJ-0lT" firstAttribute="top" secondItem="FvY-Ax-EmN" secondAttribute="top" constant="10" id="zYB-69-3HE"/>
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7tz-kq-7u9">
@@ -209,11 +185,8 @@
                     <connections>
                         <outlet property="clear" destination="wIy-8U-RpI" id="tEM-mp-Dfq"/>
                         <outlet property="sheetDisplay" destination="FvY-Ax-EmN" id="3Dm-DQ-FgU"/>
-                        <outlet property="sheetDisplayLyrics" destination="alM-h8-u3G" id="Rpd-0k-Hgu"/>
                         <outlet property="sheetDisplayNext" destination="7tz-kq-7u9" id="ohW-Jo-xuV"/>
                         <outlet property="sheetDisplayPrevious" destination="ujf-UX-azl" id="BWF-ah-lIL"/>
-                        <outlet property="sheetDisplayTitle" destination="ZYo-NJ-0lT" id="JjP-eu-616"/>
-                        <outlet property="sheetDisplayTitleHeightConstraint" destination="2wk-un-8s1" id="s8x-T7-igE"/>
                         <outlet property="swipeRecognizerView" destination="Td6-Iu-3Zd" id="F2S-91-QCc"/>
                         <outlet property="tableViewClusters" destination="fEf-D0-LOd" id="FOE-hb-bXY"/>
                         <outlet property="tableViewSheets" destination="4L4-zk-L6M" id="EHR-5h-9YY"/>
@@ -866,7 +839,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="9zO-3S-ZnU">
-                                <rect key="frame" x="0.0" y="70" width="1024" height="698"/>
+                                <rect key="frame" x="20" y="70" width="984" height="698"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -877,10 +850,10 @@
                         <constraints>
                             <constraint firstItem="fMs-iF-jWR" firstAttribute="bottom" secondItem="9zO-3S-ZnU" secondAttribute="bottom" id="30P-Kg-AvO"/>
                             <constraint firstItem="ICj-uD-g8n" firstAttribute="leading" secondItem="fMs-iF-jWR" secondAttribute="leading" constant="20" id="Dcg-KG-prB"/>
-                            <constraint firstItem="9zO-3S-ZnU" firstAttribute="leading" secondItem="fMs-iF-jWR" secondAttribute="leading" id="R0h-fD-qUq"/>
+                            <constraint firstItem="9zO-3S-ZnU" firstAttribute="leading" secondItem="fMs-iF-jWR" secondAttribute="leading" constant="20" id="R0h-fD-qUq"/>
                             <constraint firstItem="9zO-3S-ZnU" firstAttribute="top" secondItem="ICj-uD-g8n" secondAttribute="bottom" id="VX4-wD-jq2"/>
                             <constraint firstItem="fMs-iF-jWR" firstAttribute="trailing" secondItem="ICj-uD-g8n" secondAttribute="trailing" constant="20" id="d64-HW-g7g"/>
-                            <constraint firstItem="fMs-iF-jWR" firstAttribute="trailing" secondItem="9zO-3S-ZnU" secondAttribute="trailing" id="grl-r3-V2u"/>
+                            <constraint firstItem="fMs-iF-jWR" firstAttribute="trailing" secondItem="9zO-3S-ZnU" secondAttribute="trailing" constant="20" id="grl-r3-V2u"/>
                             <constraint firstItem="9zO-3S-ZnU" firstAttribute="top" secondItem="ICj-uD-g8n" secondAttribute="bottom" id="ou1-K3-Y1f"/>
                             <constraint firstItem="ICj-uD-g8n" firstAttribute="top" secondItem="fMs-iF-jWR" secondAttribute="top" id="yFt-sf-KN0"/>
                         </constraints>
@@ -888,6 +861,7 @@
                     </view>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
+                        <outlet property="heightConstraint" destination="62D-qE-Sbu" id="7Jn-ks-yHq"/>
                         <outlet property="lyricsSheet" destination="9zO-3S-ZnU" id="3br-eg-K32"/>
                         <outlet property="titleSheet" destination="ICj-uD-g8n" id="75B-j6-6Ng"/>
                     </connections>
@@ -948,8 +922,8 @@
         <scene sceneID="7oY-te-xjd">
             <objects>
                 <viewController storyboardIdentifier="Detail" id="M3X-qD-uBC" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" misplaced="YES" id="jze-6S-05v">
-                        <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
+                    <view key="view" contentMode="scaleToFill" id="jze-6S-05v">
+                        <rect key="frame" x="0.0" y="0.0" width="703.5" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="detail" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3ga-JH-KUu">
@@ -1131,7 +1105,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="HTz-fD-P3Q" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="3MA-Kh-p1a">
-                        <rect key="frame" x="0.0" y="20" width="1024" height="44"/>
+                        <rect key="frame" x="0.0" y="20" width="703.5" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>

@@ -40,6 +40,8 @@
 		E311717C1FE5A1A0008D9D51 /* NewSongSheetCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E31171741FE5A1A0008D9D51 /* NewSongSheetCell.xib */; };
 		E311717E1FE5A5F5008D9D51 /* StoryboardiPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E311717D1FE5A5F5008D9D51 /* StoryboardiPad.storyboard */; };
 		E31F87BD1FE7035D00D5D4BA /* Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31F87BC1FE7035D00D5D4BA /* Text.swift */; };
+		E3355D6F1FEDA645004C03AE /* TextViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3355D6E1FEDA645004C03AE /* TextViewExtensions.swift */; };
+		E3355D711FEE6436004C03AE /* ClusterExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3355D701FEE6436004C03AE /* ClusterExtensions.swift */; };
 		E3D9274F1FEC1AFC006EDE75 /* TagsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D9274E1FEC1AFC006EDE75 /* TagsController.swift */; };
 		E3D927511FEC3036006EDE75 /* NewTagController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D927501FEC3036006EDE75 /* NewTagController.swift */; };
 		E3D927531FECF4E5006EDE75 /* SheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D927521FECF4E5006EDE75 /* SheetController.swift */; };
@@ -82,6 +84,8 @@
 		E31171741FE5A1A0008D9D51 /* NewSongSheetCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NewSongSheetCell.xib; sourceTree = "<group>"; };
 		E311717D1FE5A5F5008D9D51 /* StoryboardiPad.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = StoryboardiPad.storyboard; sourceTree = "<group>"; };
 		E31F87BC1FE7035D00D5D4BA /* Text.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Text.swift; sourceTree = "<group>"; };
+		E3355D6E1FEDA645004C03AE /* TextViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextViewExtensions.swift; sourceTree = "<group>"; };
+		E3355D701FEE6436004C03AE /* ClusterExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClusterExtensions.swift; sourceTree = "<group>"; };
 		E3D9274E1FEC1AFC006EDE75 /* TagsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsController.swift; sourceTree = "<group>"; };
 		E3D927501FEC3036006EDE75 /* NewTagController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTagController.swift; sourceTree = "<group>"; };
 		E3D927521FECF4E5006EDE75 /* SheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetController.swift; sourceTree = "<group>"; };
@@ -179,6 +183,8 @@
 				E311714F1FE5A071008D9D51 /* UIFontExtensions.swift */,
 				E311714B1FE5A071008D9D51 /* UITableViewExtensions.swift */,
 				E3D927561FECF622006EDE75 /* ViewExtensions.swift */,
+				E3355D6E1FEDA645004C03AE /* TextViewExtensions.swift */,
+				E3355D701FEE6436004C03AE /* ClusterExtensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -291,6 +297,7 @@
 				E31171511FE5A071008D9D51 /* UITableViewExtensions.swift in Sources */,
 				E31171691FE5A0E7008D9D51 /* NewSongController.swift in Sources */,
 				E31171791FE5A1A0008D9D51 /* AddButtonCell.swift in Sources */,
+				E3355D711FEE6436004C03AE /* ClusterExtensions.swift in Sources */,
 				E31F87BD1FE7035D00D5D4BA /* Text.swift in Sources */,
 				E311715A1FE5A0A3008D9D51 /* Notifications.swift in Sources */,
 				E31171531FE5A071008D9D51 /* ArrayExtensions.swift in Sources */,
@@ -308,6 +315,7 @@
 				E3D927571FECF622006EDE75 /* ViewExtensions.swift in Sources */,
 				E3D927511FEC3036006EDE75 /* NewTagController.swift in Sources */,
 				E31171551FE5A071008D9D51 /* UIFontExtensions.swift in Sources */,
+				E3355D6F1FEDA645004C03AE /* TextViewExtensions.swift in Sources */,
 				E31171661FE5A0E7008D9D51 /* SongServiceController.swift in Sources */,
 				E31171641FE5A0E7008D9D51 /* MenuController.swift in Sources */,
 				E31171681FE5A0E7008D9D51 /* SongsController.swift in Sources */,

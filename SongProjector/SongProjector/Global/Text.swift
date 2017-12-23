@@ -65,4 +65,8 @@ class Text: NSObject {
 		static let error = "Invoer mag niet leeg zijn"
 	}
 	
+	struct Sheet {
+		static let emptySheetTitle = "Lege dia"
+	}
+	
 }

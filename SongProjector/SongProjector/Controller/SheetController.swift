@@ -12,9 +12,10 @@ class SheetController: UIViewController {
 	
 	@IBOutlet var titleSheet: UILabel!
 	@IBOutlet var lyricsSheet: UITextView!
+	@IBOutlet var heightConstraint: NSLayoutConstraint!
 	
-	
-	
+	var isEmptySheet: Bool = false { didSet { update() } }
+	var hasTitle: Bool = true { didSet { update() } }
 	var songTitle: String? { didSet { update() } }
 	var lyrics: String? { didSet { update() } }
 	var viewFrame: CGRect?
@@ -28,6 +29,7 @@ class SheetController: UIViewController {
 		if let viewFrame = viewFrame {
 			view.frame = viewFrame
 		}
+
 	}
 	
 	func setView(_ view: CGRect) {
@@ -36,12 +38,13 @@ class SheetController: UIViewController {
 	}
 	
 	private func update() {
+		heightConstraint.constant = isEmptySheet ? 0 : hasTitle ? 50 : 0
 		titleSheet.text = songTitle
 		lyricsSheet.text = lyrics
 	}
     
 	func asImage() -> UIImage {
-		return view.asImage()
+		return self.view.asImage()
 	}
 
 }
