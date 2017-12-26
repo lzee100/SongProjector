@@ -14,9 +14,11 @@ class BasicCell: UITableViewCell {
 	@IBOutlet var title: UILabel!
 	@IBOutlet var seperator: UIView!
 	@IBOutlet var iconWidthContraint: NSLayoutConstraint!
+	@IBOutlet var iconLeftConstraint: NSLayoutConstraint!
 	
 	var selectedCell = false { didSet { update() } }
 	var isLast = false { didSet { update() } }
+	var isInnerCell = false { didSet { update() } }
 	
 	
 	override func awakeFromNib() {
@@ -38,6 +40,7 @@ class BasicCell: UITableViewCell {
 		if icon == nil {
 			iconWidthContraint.constant = 0
 		}
+		iconLeftConstraint.constant = isInnerCell ? 50 : 30
 	}
 	
 	override func setSelected(_ selected: Bool, animated: Bool) {

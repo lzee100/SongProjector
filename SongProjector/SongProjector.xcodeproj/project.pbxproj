@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E309DCE41FF2596500C3D135 /* NewSongServiceIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E309DCE31FF2596500C3D135 /* NewSongServiceIphoneController.swift */; };
 		E31171311FE59DA3008D9D51 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31171301FE59DA3008D9D51 /* AppDelegate.swift */; };
 		E31171331FE59DA3008D9D51 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31171321FE59DA3008D9D51 /* ViewController.swift */; };
 		E31171361FE59DA3008D9D51 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E31171341FE59DA3008D9D51 /* Main.storyboard */; };
@@ -42,6 +43,10 @@
 		E31F87BD1FE7035D00D5D4BA /* Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31F87BC1FE7035D00D5D4BA /* Text.swift */; };
 		E3355D6F1FEDA645004C03AE /* TextViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3355D6E1FEDA645004C03AE /* TextViewExtensions.swift */; };
 		E3355D711FEE6436004C03AE /* ClusterExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3355D701FEE6436004C03AE /* ClusterExtensions.swift */; };
+		E36F41661FEE8CDA00E989E5 /* SongServiceIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E36F41651FEE8CDA00E989E5 /* SongServiceIphoneController.swift */; };
+		E36F41681FEE965200E989E5 /* NewSongIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E36F41671FEE965200E989E5 /* NewSongIphoneController.swift */; };
+		E36F416F1FF06D2F00E989E5 /* SheetCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E36F416D1FF06D2F00E989E5 /* SheetCollectionCell.swift */; };
+		E36F41701FF06D2F00E989E5 /* SheetCollectionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E36F416E1FF06D2F00E989E5 /* SheetCollectionCell.xib */; };
 		E3D9274F1FEC1AFC006EDE75 /* TagsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D9274E1FEC1AFC006EDE75 /* TagsController.swift */; };
 		E3D927511FEC3036006EDE75 /* NewTagController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D927501FEC3036006EDE75 /* NewTagController.swift */; };
 		E3D927531FECF4E5006EDE75 /* SheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D927521FECF4E5006EDE75 /* SheetController.swift */; };
@@ -49,6 +54,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E309DCE31FF2596500C3D135 /* NewSongServiceIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewSongServiceIphoneController.swift; sourceTree = "<group>"; };
 		E311712D1FE59DA3008D9D51 /* SongProjector.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SongProjector.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E31171301FE59DA3008D9D51 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E31171321FE59DA3008D9D51 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -86,6 +92,10 @@
 		E31F87BC1FE7035D00D5D4BA /* Text.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Text.swift; sourceTree = "<group>"; };
 		E3355D6E1FEDA645004C03AE /* TextViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextViewExtensions.swift; sourceTree = "<group>"; };
 		E3355D701FEE6436004C03AE /* ClusterExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClusterExtensions.swift; sourceTree = "<group>"; };
+		E36F41651FEE8CDA00E989E5 /* SongServiceIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongServiceIphoneController.swift; sourceTree = "<group>"; };
+		E36F41671FEE965200E989E5 /* NewSongIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewSongIphoneController.swift; sourceTree = "<group>"; };
+		E36F416D1FF06D2F00E989E5 /* SheetCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetCollectionCell.swift; sourceTree = "<group>"; };
+		E36F416E1FF06D2F00E989E5 /* SheetCollectionCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SheetCollectionCell.xib; sourceTree = "<group>"; };
 		E3D9274E1FEC1AFC006EDE75 /* TagsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsController.swift; sourceTree = "<group>"; };
 		E3D927501FEC3036006EDE75 /* NewTagController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTagController.swift; sourceTree = "<group>"; };
 		E3D927521FECF4E5006EDE75 /* SheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetController.swift; sourceTree = "<group>"; };
@@ -158,6 +168,7 @@
 		E31171471FE59EA5008D9D51 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				E36F41621FEE8C4C00E989E5 /* iPhone */,
 				E31171631FE5A0E7008D9D51 /* SplashScreen.swift */,
 				E311715C1FE5A0E7008D9D51 /* MenuController.swift */,
 				E311715F1FE5A0E7008D9D51 /* MoreController.swift */,
@@ -210,8 +221,20 @@
 				E31171741FE5A1A0008D9D51 /* NewSongSheetCell.xib */,
 				E31171731FE5A1A0008D9D51 /* TagCellCollection.swift */,
 				E31171701FE5A1A0008D9D51 /* TagCellCollection.xib */,
+				E36F416D1FF06D2F00E989E5 /* SheetCollectionCell.swift */,
+				E36F416E1FF06D2F00E989E5 /* SheetCollectionCell.xib */,
 			);
 			path = Cells;
+			sourceTree = "<group>";
+		};
+		E36F41621FEE8C4C00E989E5 /* iPhone */ = {
+			isa = PBXGroup;
+			children = (
+				E36F41651FEE8CDA00E989E5 /* SongServiceIphoneController.swift */,
+				E36F41671FEE965200E989E5 /* NewSongIphoneController.swift */,
+				E309DCE31FF2596500C3D135 /* NewSongServiceIphoneController.swift */,
+			);
+			path = iPhone;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -275,6 +298,7 @@
 			files = (
 				E31171761FE5A1A0008D9D51 /* BasicCell.xib in Resources */,
 				E31171781FE5A1A0008D9D51 /* TagCellCollection.xib in Resources */,
+				E36F41701FF06D2F00E989E5 /* SheetCollectionCell.xib in Resources */,
 				E311713E1FE59DA3008D9D51 /* LaunchScreen.storyboard in Resources */,
 				E311713B1FE59DA3008D9D51 /* Assets.xcassets in Resources */,
 				E31171361FE59DA3008D9D51 /* Main.storyboard in Resources */,
@@ -292,6 +316,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E311716B1FE5A0E7008D9D51 /* SplashScreen.swift in Sources */,
+				E36F41661FEE8CDA00E989E5 /* SongServiceIphoneController.swift in Sources */,
 				E311715B1FE5A0A3008D9D51 /* Features.swift in Sources */,
 				E31171521FE5A071008D9D51 /* StringExtensions.swift in Sources */,
 				E31171511FE5A071008D9D51 /* UITableViewExtensions.swift in Sources */,
@@ -300,6 +325,7 @@
 				E3355D711FEE6436004C03AE /* ClusterExtensions.swift in Sources */,
 				E31F87BD1FE7035D00D5D4BA /* Text.swift in Sources */,
 				E311715A1FE5A0A3008D9D51 /* Notifications.swift in Sources */,
+				E36F41681FEE965200E989E5 /* NewSongIphoneController.swift in Sources */,
 				E31171531FE5A071008D9D51 /* ArrayExtensions.swift in Sources */,
 				E311716A1FE5A0E7008D9D51 /* NewSongServiceController.swift in Sources */,
 				E31171541FE5A071008D9D51 /* UIColorExtension.swift in Sources */,
@@ -318,6 +344,8 @@
 				E3355D6F1FEDA645004C03AE /* TextViewExtensions.swift in Sources */,
 				E31171661FE5A0E7008D9D51 /* SongServiceController.swift in Sources */,
 				E31171641FE5A0E7008D9D51 /* MenuController.swift in Sources */,
+				E309DCE41FF2596500C3D135 /* NewSongServiceIphoneController.swift in Sources */,
+				E36F416F1FF06D2F00E989E5 /* SheetCollectionCell.swift in Sources */,
 				E31171681FE5A0E7008D9D51 /* SongsController.swift in Sources */,
 				E31171751FE5A1A0008D9D51 /* BasicCell.swift in Sources */,
 				E3D9274F1FEC1AFC006EDE75 /* TagsController.swift in Sources */,

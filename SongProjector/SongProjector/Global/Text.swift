@@ -34,6 +34,7 @@ class Text: NSObject {
 	
 	struct Songs {
 		static let title = "Alle liedjes/presentaties"
+		static let description = "Doorzoek hier alle liedjes of collecties"
 		static let SearchSongPlaceholder = "Zoek dia's"
 	}
 	

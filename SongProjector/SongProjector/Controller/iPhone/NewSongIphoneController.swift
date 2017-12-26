@@ -1,34 +1,26 @@
 //
-//  NewSongController.swift
-//  SongViewer
+//  NewSongIphoneController.swift
+//  SongProjector
 //
-//  Created by Leo van der Zee on 06-12-17.
-//  Copyright © 2017 Topicus Onderwijs BV. All rights reserved.
+//  Created by Leo van der Zee on 23-12-17.
+//  Copyright © 2017 iozee. All rights reserved.
 //
 
 import UIKit
-import CoreData
 
-class NewSongController: UIViewController, UITableViewDataSource, UITableViewDelegate, NewSongSheetCellDelegate {
+class NewSongIphoneController: UIViewController, UITableViewDataSource, UITableViewDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, NewSongSheetCellDelegate {
 	
 	// MARK: - Types
 	struct Constants {
 		static let songTitleSheet = 1
 	}
 	
-	
-	
-	// MARK: - Properties
-
 	@IBOutlet var cancel: UIBarButtonItem!
 	@IBOutlet var done: UIBarButtonItem!
-	@IBOutlet var headerTags: UILabel!
-	@IBOutlet var headerLyrics: UILabel!
-	@IBOutlet var inputTextView: UITextView!
-	@IBOutlet var tableViewTags: UITableView!
-	@IBOutlet var tableViewSheets: UITableView!
 	
-	
+	@IBOutlet var collectionView: UICollectionView!
+	@IBOutlet var textView: UITextView!
+	@IBOutlet var tableView: UITableView!
 	
 	// MARK: - Properties
 	
@@ -52,97 +44,89 @@ class NewSongController: UIViewController, UITableViewDataSource, UITableViewDel
 	// MARK: UIViewController Functions
 	
 	override func viewDidLoad() {
-        super.viewDidLoad()
+		super.viewDidLoad()
 		setup()
-    }
+	}
+	
+	override func viewDidAppear(_ animated: Bool) {
+		super.viewDidAppear(animated)
+		update()
+	}
 	
 	
 	
 	// MARK: UITableViewDelegate Functions
 	
 	func numberOfSections(in tableView: UITableView) -> Int {
-		if tableView == tableViewSheets {
-			return tempSheetsBeforeSaving.count + Constants.songTitleSheet
-		} else {
-			return 1
-		}
+		return tempSheetsBeforeSaving.count + Constants.songTitleSheet
 	}
 	
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		if tableView == tableViewTags {
-			return tags.count
-		}
 		return 1
 	}
 	
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		
-		if tableView == tableViewTags {
-			let cell = tableView.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath)
-			if let cell = cell as? BasicCell {
-				cell.setup(title: tags[indexPath.row].title, icon: Cells.tagIcon)
-				cell.selectedCell = selectedTags.contains(tags[indexPath.row])
-			}
-			return cell
-		} else {
-			let cell = tableView.dequeueReusableCell(withIdentifier: Cells.newSongSheetCellid, for: indexPath)
-			
-			if let cell = cell as? NewSongSheetCell {
-				if indexPath.section == 0 {
-					cell.index = 0
-					cell.songTitle = clusterTitle
-				} else {
-					if indexPath.section == 4 {
-						print("")
-					}
-					print(indexPath.section)
-					print(tempSheetsBeforeSaving[indexPath.section-Constants.songTitleSheet].lyrics)
-					cell.index = indexPath.section
-					cell.lyrics = tempSheetsBeforeSaving[indexPath.section-Constants.songTitleSheet].lyrics
-					cell.delegate = self
+		let cell = tableView.dequeueReusableCell(withIdentifier: Cells.newSongSheetCellid, for: indexPath)
+		
+		if let cell = cell as? NewSongSheetCell {
+			if indexPath.section == 0 {
+				cell.index = 0
+				cell.songTitle = clusterTitle
+			} else {
+				if indexPath.section == 4 {
+					print("")
 				}
+				print(indexPath.section)
+				print(tempSheetsBeforeSaving[indexPath.section-Constants.songTitleSheet].lyrics)
+				cell.index = indexPath.section
+				cell.lyrics = tempSheetsBeforeSaving[indexPath.section-Constants.songTitleSheet].lyrics
+				cell.delegate = self
 			}
-			return cell
 		}
+		return cell
 	}
 	
 	func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-		if tableView == tableViewTags {
-			return 60
-		} else {
-			return indexPath.section == 0 ? 70 : 220
-		}
+		return indexPath.section == 0 ? 70 : 220
 	}
 	
 	func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-		if tableView == tableViewSheets {
-			if section == 0 {
-				return Text.NewSong.SongTitle
-			} else {
-				return Text.NewSong.Sheet + "\(section)"
-			}
+		if section == 0 {
+			return Text.NewSong.SongTitle
 		} else {
-			return nil
+			return Text.NewSong.Sheet + "\(section)"
 		}
 	}
 	
-	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		if tableView == tableViewTags {
-			
-			let selectedTagId = tags[indexPath.row].id
-			
-			if !selectedTags.contains(where: { (vTag) -> Bool in
-				return vTag.id == selectedTagId
-			}) {
-				selectedTags.append(tags[indexPath.row])
-			} else {
-				if let index = selectedTags.index(where: { (tag) -> Bool in
-					return tag.id == selectedTagId
-				}) {
-					selectedTags.remove(at: index)
-				}
-			}
+	
+	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+		return tags.count
+	}
+	
+	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+		let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.tagCellCollection, for: indexPath)
+		
+		if let collectionCell = collectionCell as? TagCellCollection {
+			collectionCell.setup(tagName: tags[indexPath.row].title ?? "")
+			collectionCell.isSelectedCell = selectedTags.contains{ $0.id == tags[indexPath.row].id }
 		}
+		return collectionCell
+	}
+	
+	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+		if selectedTags.contains(tags[indexPath.row]) {
+			if let index = selectedTags.index(where: { $0.id == tags[indexPath.row].id }) {
+				selectedTags.remove(at: index)
+			}
+		} else {
+			selectedTags.append(tags[indexPath.row])
+		}
+		update()
+	}
+	
+	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+		return CGSize(width: 200, height: 50)
 	}
 	
 	
@@ -159,25 +143,23 @@ class NewSongController: UIViewController, UITableViewDataSource, UITableViewDel
 	// MARK: - Private Functions
 	
 	private func setup() {
-
-		tableViewTags.register(cell: Cells.basicCellid)
-		tableViewSheets.register(cell: Cells.newSongSheetCellid)
+		
+		collectionView.register(UINib(nibName: Cells.tagCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.tagCellCollection)
+		tableView.register(cell: Cells.newSongSheetCellid)
 		navigationController?.title = Text.NewSong.title
 		cancel.title = Text.Actions.cancel
 		done.title = Text.Actions.done
-		headerTags.text = Text.NewSong.headerTag
-		headerLyrics.text = Text.NewSong.headerLyrics
-
+		
 		isTableViewHidden = true
 	}
 	
 	private func update() {
 		// TODO: uncomment
-		CoreTag.predicates.append("title", notEquals: "Player")
+//		CoreTag.predicates.append("title", notEquals: "Player")
 		tags = CoreTag.getEntities()
-		tableViewTags.reloadData()
-		tableViewSheets.reloadData()
-		tableViewSheets.isHidden = isTableViewHidden
+		collectionView.reloadData()
+		tableView.reloadData()
+		tableView.isHidden = isTableViewHidden
 	}
 	
 	private func buildSheets(fromText: String) {
@@ -212,7 +194,7 @@ class NewSongController: UIViewController, UITableViewDataSource, UITableViewDel
 				let rangeSheetTitle = startTitle..<rangeTitle.lowerBound
 				sheetTitle = String(lyricsToDevide[rangeSheetTitle])
 			}
-
+			
 			tempSheetsBeforeSaving.append((title: sheetTitle, lyrics: sheetLyrics, position: position))
 			
 			lyricsToDevide.removeSubrange(rangeRemove)
@@ -222,7 +204,7 @@ class NewSongController: UIViewController, UITableViewDataSource, UITableViewDel
 		tempSheetsBeforeSaving.sort{ $0.position < $1.position }
 		
 	}
-
+	
 	
 	
 	// MARK: - IBAction Functions
@@ -237,12 +219,12 @@ class NewSongController: UIViewController, UITableViewDataSource, UITableViewDel
 		}
 		
 		isTableViewHidden = true
-
+		
 	}
 	
 	@IBAction func done(_ sender: UIBarButtonItem) {
 		if sheetMode {
-
+			
 			let cluster = CoreCluster.createEntity()
 			cluster.title = clusterTitle
 			let id = Int(cluster.id)
@@ -259,7 +241,7 @@ class NewSongController: UIViewController, UITableViewDataSource, UITableViewDel
 			}
 			
 			if CoreSheet.saveContext() { print("sheets saved") } else { print("sheets not saved") }
-
+			
 			cluster.hasTags = NSSet(array: tags)
 			if CoreTag.saveContext() { print("tag saved") } else { print("tag not saved") }
 			
@@ -268,10 +250,13 @@ class NewSongController: UIViewController, UITableViewDataSource, UITableViewDel
 		} else {
 			isTableViewHidden = false
 			sheetMode = true
-			buildSheets(fromText: inputTextView.text)
+			buildSheets(fromText: textView.text)
 			
 			update()
 		}
 	}
 
+
+	
+	
 }

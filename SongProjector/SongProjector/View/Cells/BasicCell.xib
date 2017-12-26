@@ -56,6 +56,7 @@
             <viewLayoutGuide key="safeArea" id="wbj-nI-xiJ"/>
             <connections>
                 <outlet property="icon" destination="xmk-uH-QIf" id="v9f-zB-Jd7"/>
+                <outlet property="iconLeftConstraint" destination="Vzc-3E-CzV" id="IJ7-Mi-heO"/>
                 <outlet property="iconWidthContraint" destination="FqY-JI-8ZC" id="F8d-Rr-2yp"/>
                 <outlet property="seperator" destination="rUF-jx-Ejd" id="CHm-WY-cIO"/>
                 <outlet property="title" destination="FOs-DM-vm4" id="GCc-Bt-fkg"/>

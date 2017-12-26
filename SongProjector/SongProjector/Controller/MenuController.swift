@@ -82,25 +82,26 @@ class MenuController: UITabBarController {
 	private func setup() {
 		
 		// Maak controllers
-		let storyboard = UIStoryboard(name: "StoryboardiPad", bundle: nil)
+//		let storyboard = UIStoryboard(name: "StoryboardiPad", bundle: nil)
 		
-
-		Feature.all.forEach{
-			controllers[$0] = storyboard.instantiateViewController(withIdentifier: $0.identifier)
+		if let storyboard = storyboard {
+			
+			Feature.all.forEach{
+				controllers[$0] = storyboard.instantiateViewController(withIdentifier: $0.identifier)
+			}
+			// remove more UIViewController, more will become split viewController
+			controllers.removeValue(forKey: .more)
+			
+			splitController = UISplitViewController()
+			
+			let master = storyboard.instantiateViewController(withIdentifier: "Master")
+			let navMaster = UINavigationController(rootViewController: master)
+			
+			splitController?.viewControllers = [navMaster]
+			
+			controllers[.more] = splitViewController
+			update()
 		}
-		// remove more UIViewController, more will become split viewController
-		controllers.removeValue(forKey: .more)
-		
-		splitController = UISplitViewController()
-		
-		let master = storyboard.instantiateViewController(withIdentifier: "Master")
-		let navMaster = UINavigationController(rootViewController: master)
-		
-		splitController?.viewControllers = [navMaster]
-		
-		controllers[.more] = splitViewController
-		update()
-		
 	}
 	
 	private func update() {

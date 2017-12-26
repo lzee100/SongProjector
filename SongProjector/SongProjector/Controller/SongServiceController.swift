@@ -25,6 +25,11 @@ extension UIImage {
 	
 }
 
+enum AnimationDirection {
+	case left
+	case right
+}
+
 struct Cells {
 	static let songIcon = #imageLiteral(resourceName: "Song")
 	static let sheetIcon = #imageLiteral(resourceName: "Sheet")
@@ -33,15 +38,10 @@ struct Cells {
 	static let addButtonCellid = "AddButtonCell"
 	static let newSongSheetCellid = "NewSongSheetCell"
 	static let tagCellCollection = "TagCellCollection"
+	static let sheetCollectionCell = "SheetCollectionCell"
 }
 
 class SongServiceController: UIViewController, UITableViewDataSource, UITableViewDelegate, NewSongServiceDelegate, SongsControllerDelegate {
-	
-	
-	enum AnimationDirection {
-		case left
-		case right
-	}
 	
 	
 	// MARK: - Properties

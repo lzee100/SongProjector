@@ -1,5 +1,5 @@
 //
-//  NewSongServiceController.swift
+//  NewSongServiceIphoneController.swift
 //  SongViewer
 //
 //  Created by Leo van der Zee on 08-12-17.
@@ -8,12 +8,8 @@
 
 import UIKit
 
-protocol NewSongServiceDelegate {
-	func didFinishSongServiceSelection(clusters: [Cluster])
-}
-
 class NewSongServiceController: UIViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UIGestureRecognizerDelegate, UISearchBarDelegate {
-
+	
 	struct Constants {
 		static let songsControllerid = "SongsController"
 	}
@@ -25,7 +21,6 @@ class NewSongServiceController: UIViewController, UITableViewDelegate, UITableVi
 	@IBOutlet var descriptionSongs: UILabel!
 	
 	@IBOutlet var tableViewSelectedSongs: UITableView!
-	@IBOutlet var tableViewSongs: UITableView!
 	@IBOutlet var searchBar: UISearchBar!
 	
 	@IBOutlet var collectionView: UICollectionView!
@@ -36,12 +31,12 @@ class NewSongServiceController: UIViewController, UITableViewDelegate, UITableVi
 	var selectedSongs: [Cluster] = []
 	var tags: [Tag] = []
 	var selectedTags: [Tag] = []
-
+	
 	
 	override func viewDidLoad() {
-        super.viewDidLoad()
+		super.viewDidLoad()
 		setup()
-    }
+	}
 	
 	func numberOfSections(in tableView: UITableView) -> Int {
 		return 1
@@ -166,7 +161,7 @@ class NewSongServiceController: UIViewController, UITableViewDelegate, UITableVi
 		filteredSongs = songs
 		tableViewSongs.reloadData()
 	}
-
+	
 	
 	private func setup() {
 		tableViewSongs.register(cell: Cells.basicCellid)
@@ -179,7 +174,7 @@ class NewSongServiceController: UIViewController, UITableViewDelegate, UITableVi
 		
 		searchBar.showsCancelButton = true
 		searchBar.placeholder = Text.Songs.SearchSongPlaceholder
-
+		
 		let longPressGesture:UILongPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(self.editTableView(_:)))
 		longPressGesture.minimumPressDuration = 0.7
 		longPressGesture.delegate = self
@@ -253,3 +248,4 @@ class NewSongServiceController: UIViewController, UITableViewDelegate, UITableVi
 	
 	
 }
+

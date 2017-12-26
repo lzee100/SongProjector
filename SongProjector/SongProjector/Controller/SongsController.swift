@@ -144,6 +144,10 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 		tableView.register(cell: Cells.basicCellid)
 		collectionView.register(UINib(nibName: Cells.tagCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.tagCellCollection)
 		
+		if desciptionSongs != nil {
+			desciptionSongs.text = Text.Songs.description
+		}
+		
 		navigationController?.title = Text.Songs.title
 		
 		searchBar.showsCancelButton = true
@@ -165,16 +169,14 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 	private func filterOnTags() {
 		if selectedTags.count != 0 {
 			clusters = clusters.filter { (cluster) -> Bool in
-				var hasTag = false
 				for selectedTag in selectedTags {
 					if let contains = cluster.hasTags?.contains(selectedTag) {
 						if contains {
-							hasTag = true
-							break
+							return true
 						}
 					}
 				}
-				return hasTag
+				return false
 			}
 		}
 	}
