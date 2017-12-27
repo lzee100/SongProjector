@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate {
+class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, NewSongServiceDelegate {
 
 	@IBOutlet var clear: UIBarButtonItem!
 	@IBOutlet var new: UIBarButtonItem!
@@ -28,12 +28,14 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 
 	// MARK: - Private Properties
 	
+	private var externalWindow: UIWindow?
 	private var hasTitle = true
 	private var hasEmptySheet = false
 	private var emptySheet = CoreSheet.createEntityNOTsave()
 	private var externalScreen: UIScreen?
 	private var externalScreenBounds = CGRect(x: 0, y: 0, width: 640, height: 480)
 	private var clusters: [Cluster] = [] { didSet { update() } }
+	private var clustersOrdened: [Cluster] { get { return clusters.sorted{ $0.position < $1.position } } }
 	private var selectedClusterRow = -1
 	private var selectedCluster: Cluster? {
 		didSet {
@@ -83,15 +85,15 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		update()
 	}
 	
-//	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-//		if let controller = segue.destination as? UINavigationController, let newSongServiceController = controller.viewControllers.first as? NewSongServiceController {
-//			newSongServiceController.delegate = self
-//			newSongServiceController.songs = clusters
-//		}
+	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+		if let controller = segue.destination as? UINavigationController, let newSongServiceIphoneController = controller.viewControllers.first as? NewSongServiceIphoneController {
+			newSongServiceIphoneController.delegate = self
+			newSongServiceIphoneController.selectedSongs = clusters
+		}
 //		if let controller = segue.destination as? UINavigationController, let songsController = controller.viewControllers.first as? SongsController {
 //			songsController.delegate = self
 //		}
-//	}
+	}
 	
 	
 	
@@ -103,13 +105,19 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	
 	
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-			return clusters.count + (sheetsForSelectedCluster?.count ?? 0)
+		return (clusters.count + (sheetsForSelectedCluster?.count ?? 0)) == 0 ? 1 : clusters.count + (sheetsForSelectedCluster?.count ?? 0)
 	}
 	
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 			let cell = tableView.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath)
 			if let cell = cell as? BasicCell {
 				print(indexPath.row)
+				if clusters.count < 1 {
+					if let cell = cell as? BasicCell {
+						cell.setup(title: Text.NewSongService.noSelectedSongs)
+					}
+					return cell
+				}
 				if sheetsForSelectedCluster != nil && indexPath.row > selectedClusterRow && indexPath.row <= (selectedClusterRow + (sheetsForSelectedCluster?.count ?? 0)){
 					// sheets
 					print("sheet \(indexPath.row)")
@@ -120,9 +128,9 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				} else {
 					print("cluster \(indexPath.row)")
 					let index = getIndexForCluster(indexPath)
-					cell.setup(title: clusters[index].title, icon: Cells.songIcon)
+					cell.setup(title: clustersOrdened[index].title, icon: Cells.songIcon)
 					cell.isInnerCell = false
-					cell.selectedCell = selectedCluster?.id == clusters[index].id
+					cell.selectedCell = selectedCluster?.id == clustersOrdened[index].id
 				}
 			}
 			return cell
@@ -135,7 +143,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		
 		// if sheets open
-		if sheetsForSelectedCluster != nil {
+		if sheetsForSelectedCluster != nil, let selectedClusterIndex = selectedCluster?.position {
 			// if in sheet index
 			if indexPath.row > selectedClusterRow && indexPath.row <= (selectedClusterRow + (sheetsForSelectedCluster?.count ?? 0)) {
 				selectedSheet = sheetsForSelectedCluster?[indexPath.row - (selectedClusterRow + 1)]
@@ -144,19 +152,21 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 					selectedCluster = nil
 					selectedSheet = nil
 				} else {
-					if indexPath.row < selectedClusterRow {
+					if indexPath.row < selectedClusterIndex {
 						selectedClusterRow = indexPath.row
 					} else {
 						selectedClusterRow = indexPath.row - (sheetsForSelectedCluster?.count ?? 0)
 					}
-					selectedCluster = clusters[getIndexForCluster(indexPath)]
+					selectedCluster = clustersOrdened[getIndexForCluster(indexPath)]
 					selectedSheet = sheetsForSelectedCluster?.first
 				}
 			}
 		} else {
-			selectedCluster = clusters[indexPath.row]
-			selectedSheet = sheetsForSelectedCluster?.first
-			selectedClusterRow = indexPath.row
+			if clustersOrdened.count > 0 {
+				selectedCluster = clustersOrdened[indexPath.row]
+				selectedSheet = sheetsForSelectedCluster?.first
+				selectedClusterRow = indexPath.row
+			}
 		}
 		update()
 	}
@@ -184,9 +194,6 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		sheetDisplayerPrevious.layer.transform = self.transformForFraction(fraction: 0.2)
 		
 		sheetDisplayerNext.layer.transform = self.transformForFraction(fraction: 1.8)
-		
-		CoreCluster.setSortDescriptor(attributeName: "position", ascending: true)
-		clusters = CoreCluster.getEntities()
 		
 		navigationController?.title = Text.SongService.title
 		
@@ -253,11 +260,14 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 					let nextPosition = Int(position) + 1
 					if nextPosition < sheetsForSelectedCluster.count {
 						// display next sheet
-						selectedSheet = sheetsForSelectedCluster[nextPosition]
+						animateSheetsWith(.left, completion: {
+							self.selectedSheet = sheetsForSelectedCluster[nextPosition]
+						})
 					} else {
 						// display next song
-						if let clusterPosition = selectedCluster?.position, Int(clusterPosition) + 1 <= clusters.count {
-							selectedCluster = clusters[Int(clusterPosition)]
+						if let clusterPosition = selectedCluster?.position, Int(clusterPosition) + 1 < clusters.count {
+							selectedClusterRow += 1
+							selectedCluster = clustersOrdened[Int(clusterPosition) + 1]
 							selectedSheet = sheetsForSelectedCluster.first
 						}
 					}
@@ -268,15 +278,19 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 			case .right:
 				print("right")
 				
-				if let sheetsForSelectedCluster = sheetsForSelectedCluster, let position = selectedCluster?.position {
+				if let sheetsForSelectedCluster = sheetsForSelectedCluster, let position = selectedSheet?.position {
 					let previousPosition = Int(position) - 1
-					if previousPosition > 0 {
+					if previousPosition >= 0 {
 						// display previous sheet
-						selectedSheet = sheetsForSelectedCluster[previousPosition]
+						animateSheetsWith(.right, completion: {
+							self.selectedSheet = sheetsForSelectedCluster[previousPosition]
+						})
 					} else {
 						// display previous song
-						if let clusterPosition = selectedCluster?.position, Int(clusterPosition) - 1 > 0 {
-							selectedCluster = clusters[Int(clusterPosition) - 1]
+						if let clusterPosition = selectedCluster?.position, Int(clusterPosition) - 1 >= 0 {
+							selectedClusterRow -= 1
+							selectedCluster = clustersOrdened[Int(clusterPosition) - 1]
+							selectedSheet = sheetsForSelectedCluster.first
 						}
 					}
 				}
@@ -293,7 +307,15 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 			case .up:
 				print("up")
 				if sheetDisplayerContainerHeight.constant > 100 {
-					self.sheetDisplayerContainerHeight.constant = 100
+					UIView.animate(withDuration: 0.5, animations: {
+						self.sheetDisplaySwipeView.frame = CGRect(
+							x: self.sheetDisplaySwipeView.frame.minX,
+							y: self.sheetDisplaySwipeView.frame.minY,
+							width: self.sheetDisplaySwipeView.frame.width,
+							height: 100)
+					}, completion: { (bool) in
+						self.sheetDisplayerContainerHeight.constant = 100
+					})
 				} else {
 					self.sheetDisplayerContainerHeight.constant = 0
 				}
@@ -326,11 +348,14 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	
 	
 	func setExternalDisplay(_ notification: Notification) {
-		externalScreen = notification.userInfo?["screen"] as? UIScreen
+//		externalScreen = notification.userInfo?["screen"] as? UIScreen
+		let appDelegate = UIApplication.shared.delegate as! AppDelegate
+		externalWindow = appDelegate.externalDisplayWindow
 	}
 	
 	@IBAction func clearButtonPressed(_ sender: UIBarButtonItem) {
-		
+		clusters = []
+		update()
 	}
 	
 	private func createSheetListForDisplay() {
@@ -397,13 +422,12 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		}
 	}
 	
-	func transformForFraction(fraction:CGFloat) -> CATransform3D {
+	private func transformForFraction(fraction:CGFloat) -> CATransform3D {
 		var identity = CATransform3DIdentity
 		identity.m34 = -1.0 / 1000.0
 		let angle = Double(1.0 - fraction) * -Double.pi/2
 		//		  let xOffset = self.view.bounds.width * 0.5
 		let xOffset = CGFloat(view.frame.width*0.5)
-		//		  let rotateTransform = CATransform3DRotate(identity, CGFloat(angle), 0.0, 1.0, 0.0)
 		let rotateTransform = CATransform3DRotate(identity, CGFloat(angle), 0.0, 1.0, 0.0)
 		let translateTransform = CATransform3DMakeTranslation(0.0, 0.0, xOffset)
 		return CATransform3DConcat(rotateTransform, translateTransform)
@@ -418,12 +442,15 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				let selectedSheetPosition = Int(position)
 				
 				let navigationBarHeight = UIApplication.shared.statusBarFrame.height + navigationController!.navigationBar.frame.height
-				
+				print(sheetDisplayerPrevious.frame.width)
+				sheetDisplayerPrevious.layer.transform = self.transformForFraction(fraction: 1.0)
+				print(sheetDisplayerPrevious.frame.width)
+
+
 				// current sheet
 				let imageCurrent = sheetsToDisplay[selectedSheetPosition].imageResize(sizeChange: sheetDisplayer.frame.size)
 				let currentSheetView = UIImageView(frame: CGRect(x: sheetDisplayer.frame.minX, y: sheetDisplayer.frame.minY + navigationBarHeight, width: sheetDisplayer.frame.width, height: sheetDisplayer.frame.height))
 				currentSheetView.image = imageCurrent
-				
 				
 				let imageNext = sheetsToDisplay[selectedSheetPosition + 1].imageResize(sizeChange: sheetDisplayerNext.frame.size)
 				let nextSheetView = UIImageView(frame: CGRect(x: sheetDisplayerNext.frame.minX, y: sheetDisplayerNext.frame.minY + navigationBarHeight, width: sheetDisplayerNext.frame.width, height: sheetDisplayerNext.frame.height))
@@ -435,9 +462,21 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				sheetDisplayerPrevious.isHidden = true
 				sheetDisplayerNext.isHidden = true
 				UIView.animate(withDuration: 0.3, animations: {
-					currentSheetView.frame = CGRect(x: self.sheetDisplayerPrevious.frame.minX, y: self.sheetDisplayerPrevious.frame.minY + navigationBarHeight, width: self.sheetDisplayerPrevious.frame.width, height: self.sheetDisplayerPrevious.frame.height)
-					nextSheetView.frame = CGRect(x: self.sheetDisplayer.frame.minX, y: navigationBarHeight, width: self.sheetDisplayer.frame.width, height: self.sheetDisplayer.frame.height)
+					currentSheetView.frame = CGRect(
+						x: self.sheetDisplayerPrevious.frame.minX,
+						y: self.sheetDisplayerPrevious.frame.minY + navigationBarHeight,
+						width: self.sheetDisplayerPrevious.frame.width,
+						height: self.sheetDisplayerPrevious.frame.height)
+					currentSheetView.layer.transform = self.transformForFraction(fraction: 0.2)
+
+					nextSheetView.frame = CGRect(
+						x: self.sheetDisplayer.frame.minX,
+						y: navigationBarHeight,
+						width: self.sheetDisplayer.frame.width,
+						height: self.sheetDisplayer.frame.height)
+					
 				}, completion: { (bool) in
+					self.sheetDisplayerPrevious.layer.transform = self.transformForFraction(fraction: 0.2)
 					self.sheetDisplayer.isHidden = false
 					self.sheetDisplayerPrevious.isHidden = false
 					nextSheetView.removeFromSuperview()
@@ -454,7 +493,8 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				
 				sheetDisplayerNext.isHidden = position == numberOfSheets ? true : false
 				sheetDisplayerPrevious.isHidden = position == 0 ? true : false
-				
+				sheetDisplayerNext.layer.transform = self.transformForFraction(fraction: 1.0)
+
 				let selectedSheetPosition = Int(position)
 				
 				let navigationBarHeight = UIApplication.shared.statusBarFrame.height + navigationController!.navigationBar.frame.height
@@ -475,9 +515,21 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				sheetDisplayerPrevious.isHidden = true
 				sheetDisplayerNext.isHidden = true
 				UIView.animate(withDuration: 0.3, animations: {
-					currentSheetView.frame = CGRect(x: self.sheetDisplayerNext.frame.minX, y: self.sheetDisplayerNext.frame.minY + navigationBarHeight, width: self.sheetDisplayerNext.frame.width, height: self.sheetDisplayerNext.frame.height)
-					previousSheetView.frame = CGRect(x: self.sheetDisplayer.frame.minX, y: navigationBarHeight, width: self.sheetDisplayer.frame.width, height: self.sheetDisplayer.frame.height)
+					currentSheetView.frame = CGRect(
+						x: self.sheetDisplayerNext.frame.minX,
+						y: self.sheetDisplayerNext.frame.minY + navigationBarHeight,
+						width: self.sheetDisplayerNext.frame.width,
+						height: self.sheetDisplayerNext.frame.height)
+					currentSheetView.layer.transform = self.transformForFraction(fraction: 1.8)
+
+					previousSheetView.frame = CGRect(
+						x: self.sheetDisplayer.frame.minX,
+						y: navigationBarHeight,
+						width: self.sheetDisplayer.frame.width,
+						height: self.sheetDisplayer.frame.height)
+					
 				}, completion: { (bool) in
+					self.sheetDisplayerNext.layer.transform = self.transformForFraction(fraction: 1.8)
 					self.sheetDisplayer.isHidden = false
 					self.sheetDisplayerPrevious.isHidden = false
 					previousSheetView.removeFromSuperview()

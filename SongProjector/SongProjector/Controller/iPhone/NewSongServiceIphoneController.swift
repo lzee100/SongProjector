@@ -1,202 +1,123 @@
 //
 //  NewSongServiceIphoneController.swift
-//  SongViewer
+//  SongProjector
 //
-//  Created by Leo van der Zee on 08-12-17.
-//  Copyright © 2017 Topicus Onderwijs BV. All rights reserved.
+//  Created by Leo van der Zee on 26-12-17.
+//  Copyright © 2017 iozee. All rights reserved.
 //
 
 import UIKit
 
-class NewSongServiceController: UIViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UIGestureRecognizerDelegate, UISearchBarDelegate {
+class NewSongServiceIphoneController: UITableViewController, SongsControllerDelegate, UIGestureRecognizerDelegate {
+
+	@IBOutlet var done: UIBarButtonItem!
+	@IBOutlet var add: UIBarButtonItem!
 	
-	struct Constants {
-		static let songsControllerid = "SongsController"
-	}
-	
-	@IBOutlet var doneButton: UIBarButtonItem!
-	@IBOutlet var cancelButton: UIBarButtonItem!
-	
-	@IBOutlet var descriptionSelectedSongs: UILabel!
-	@IBOutlet var descriptionSongs: UILabel!
-	
-	@IBOutlet var tableViewSelectedSongs: UITableView!
-	@IBOutlet var searchBar: UISearchBar!
-	
-	@IBOutlet var collectionView: UICollectionView!
-	
-	var delegate: NewSongServiceDelegate?
-	var filteredSongs: [Cluster] = []
-	var songs: [Cluster] = []
 	var selectedSongs: [Cluster] = []
-	var tags: [Tag] = []
-	var selectedTags: [Tag] = []
+	var delegate: NewSongServiceDelegate?
 	
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        setup()
+    }
 	
-	override func viewDidLoad() {
-		super.viewDidLoad()
-		setup()
-	}
-	
-	func numberOfSections(in tableView: UITableView) -> Int {
-		return 1
-	}
-	
-	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return tableView == tableViewSelectedSongs ? selectedSongs.count == 0 ? 1 : selectedSongs.count : songs.count
-	}
-	
-	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		
-		if tableView == tableViewSelectedSongs {
-			let cell = tableViewSelectedSongs.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath)
-			if let cell = cell as? BasicCell {
-				if selectedSongs.count == 0 {
-					cell.setup(title: Text.NewSongService.noSelectedSongs)
-					cell.isLast = true
-					return cell
-				}
-				cell.setup(title: selectedSongs[indexPath.row].title, icon: Cells.songIcon)
-				cell.isLast = selectedSongs.count == indexPath.row
-			}
-			return cell
-		} else {
-			let cell = tableViewSongs.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath)
-			if let cell = cell as? BasicCell {
-				cell.setup(title: filteredSongs[indexPath.row].title, icon: Cells.songIcon)
-				cell.isLast = filteredSongs.count == indexPath.row
-			}
-			return cell
+	// In a storyboard-based application, you will often want to do a little preparation before navigation
+	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+		let navigationController = segue.destination
+		if let songsController = navigationController.childViewControllers.first as? SongsController {
+			songsController.delegate = self
 		}
 	}
+
+    // MARK: - Table view data source
+
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        // #warning Incomplete implementation, return the number of sections
+        return 1
+    }
+
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        // #warning Incomplete implementation, return the number of rows
+		return selectedSongs.count > 0 ? selectedSongs.count : 1
+    }
+
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath)
+		
+		if selectedSongs.count < 1, let cell = cell as? BasicCell {
+			cell.setup(title: Text.NewSongService.noSelectedSongs)
+		} else if let cell = cell as? BasicCell {
+			cell.setup(title: selectedSongs[indexPath.row].title, icon: Cells.songIcon)
+		}
+
+        return cell
+    }
 	
-	func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+	override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 		return 60
 	}
+
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            selectedSongs.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .fade)
+        }
+    }
+
+    // Override to support rearranging the table view.
+    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
+		let itemToMove = selectedSongs[fromIndexPath.row]
+		selectedSongs.remove(at: fromIndexPath.row)
+		selectedSongs.insert(itemToMove, at: to.row)
+		updatePositions()
+    }
+
+    // Override to support conditional rearranging of the table view.
+    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
 	
-	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		if tableView == tableViewSongs, selectedSongs.contains(filteredSongs[indexPath.row]) {
-			if let index = selectedSongs.index(of: filteredSongs[indexPath.row]) {
-				selectedSongs.remove(at: index)
-			}
-		} else {
-			selectedSongs.append(filteredSongs[indexPath.row])
-		}
-		tableViewSelectedSongs.reloadData()
-	}
-	
-	func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
-		return tableView == tableViewSelectedSongs ? UITableViewCellEditingStyle.delete : UITableViewCellEditingStyle.none
-	}
-	
-	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-		if tableView == tableViewSelectedSongs, editingStyle == .delete {
-			selectedSongs.remove(at: indexPath.row)
-			update()
-		}
-	}
-	
-	func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-		return tableView == tableViewSelectedSongs ? true : false
-	}
-	
-	func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-		let itemToMove = selectedSongs[sourceIndexPath.row]
-		selectedSongs.remove(at: sourceIndexPath.row)
-		selectedSongs.insert(itemToMove, at: destinationIndexPath.row)
-		for (index, song) in selectedSongs.enumerated() {
-			song.position = Int16(index)
-		}
-	}
-	
-	
-	
-	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-		return tags.count
-	}
-	
-	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-		let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.tagCellCollection, for: indexPath)
-		
-		if let collectionCell = collectionCell as? TagCellCollection {
-			collectionCell.setup(tagName: tags[indexPath.row].title ?? "")
-			collectionCell.isSelectedCell = selectedTags.contains{ $0.id == tags[indexPath.row].id }
-		}
-		return collectionCell
-	}
-	
-	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-		if selectedTags.contains(tags[indexPath.row]) {
-			if let index = selectedTags.index(where: { $0.id == tags[indexPath.row].id }) {
-				selectedTags.remove(at: index)
-			}
-		} else {
-			selectedTags.append(tags[indexPath.row])
-		}
+	func didSelectCluster(cluster: Cluster) {
+		selectedSongs.append(cluster)
+		updatePositions()
 		update()
 	}
 	
-	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-		return CGSize(width: 200, height: 50)
-	}
-	
-	public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-		if searchText == "" {
-			filteredSongs = songs
-		} else {
-			let searchString = searchText.lowercased()
-			filteredSongs = songs.filter {
-				if let title = $0.title {
-					return title.lowercased().contains(searchString)
-				} else {
-					return false
-				}
-			}
-		}
-		self.tableViewSongs.reloadData()
-	}
-	
-	func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-		searchBar.resignFirstResponder()
-		filteredSongs = songs
-		tableViewSongs.reloadData()
-	}
-	
-	
 	private func setup() {
-		tableViewSongs.register(cell: Cells.basicCellid)
-		tableViewSelectedSongs.register(cell: Cells.basicCellid)
-		collectionView.register(UINib(nibName: Cells.tagCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.tagCellCollection)
+		tableView.register(cell: Cells.basicCellid)
 		
-		navigationController?.title = Text.NewSongService.title
-		descriptionSelectedSongs.text = Text.NewSongService.selectedSongsDescription
-		descriptionSongs.text = Text.NewSongService.songsDescription
-		
-		searchBar.showsCancelButton = true
-		searchBar.placeholder = Text.Songs.SearchSongPlaceholder
+		done.title = Text.Actions.done
+		add.title = Text.Actions.add
 		
 		let longPressGesture:UILongPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(self.editTableView(_:)))
 		longPressGesture.minimumPressDuration = 0.7
 		longPressGesture.delegate = self
-		self.tableViewSelectedSongs.addGestureRecognizer(longPressGesture)
+		self.tableView.addGestureRecognizer(longPressGesture)
 		
 		let doubleTab = UITapGestureRecognizer(target: self, action: #selector(self.editTableView(_:)))
 		doubleTab.numberOfTapsRequired = 2
 		view.addGestureRecognizer(doubleTab)
 		
-		cancelButton.title = Text.Actions.cancel
-		doneButton.title = Text.Actions.done
+		if selectedSongs.count == 0 {
+			performSegue(withIdentifier: "SongsSegue", sender: self)
+		}
+		
 		update()
 	}
 	
 	private func update() {
-		songs = CoreCluster.getEntities()
-		tags = CoreTag.getEntities()
-		filterOnTags()
-		filteredSongs = songs
-		
-		tableViewSelectedSongs.reloadData()
-		tableViewSongs.reloadData()
+		tableView.reloadData()
+	}
+	
+	private func updatePositions() {
+		for (index, song) in selectedSongs.enumerated() {
+			song.position = Int16(index)
+		}
 	}
 	
 	@objc private func editTableView(_ gestureRecognizer: UIGestureRecognizer) {
@@ -205,47 +126,28 @@ class NewSongServiceController: UIViewController, UITableViewDelegate, UITableVi
 				changeEditingState()
 			}
 		} // for double tab
-		else if let _ = gestureRecognizer as? UITapGestureRecognizer, tableViewSelectedSongs.isEditing {
+		else if let _ = gestureRecognizer as? UITapGestureRecognizer, tableView.isEditing {
 			changeEditingState()
 		}
 	}
 	
 	private func changeEditingState(_ onlyIfEditing: Bool? = nil) {
 		if let _ = onlyIfEditing {
-			if tableViewSelectedSongs.isEditing {
-				tableViewSelectedSongs.setEditing(false, animated: false)
+			if tableView.isEditing {
+				tableView.setEditing(false, animated: false)
 			}
 		} else {
-			tableViewSelectedSongs.setEditing(tableViewSelectedSongs.isEditing ? false : true, animated: false)
+			tableView.setEditing(tableView.isEditing ? false : true, animated: false)
 		}
 	}
 	
-	private func filterOnTags() {
-		if selectedTags.count != 0 {
-			songs = songs.filter { (song) -> Bool in
-				var hasTag = false
-				for selectedTag in selectedTags {
-					if let contains = song.hasTags?.contains(selectedTag) {
-						if contains {
-							hasTag = true
-							break
-						}
-					}
-				}
-				return hasTag
-			}
-		}
-	}
 	
-	@IBAction func cancelButtonPressed(_ sender: UIBarButtonItem) {
-		dismiss(animated: true)
-	}
 	
-	@IBAction func doneButtonPressed(_ sender: UIBarButtonItem) {
+	
+	@IBAction func donePressed(_ sender: UIBarButtonItem) {
 		delegate?.didFinishSongServiceSelection(clusters: selectedSongs)
 		dismiss(animated: true)
 	}
 	
 	
 }
-

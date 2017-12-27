@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E309DCE41FF2596500C3D135 /* NewSongServiceIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E309DCE31FF2596500C3D135 /* NewSongServiceIphoneController.swift */; };
+		E309DCE61FF26CB700C3D135 /* NewSongServiceIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E309DCE51FF26CB700C3D135 /* NewSongServiceIphoneController.swift */; };
 		E31171311FE59DA3008D9D51 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31171301FE59DA3008D9D51 /* AppDelegate.swift */; };
 		E31171331FE59DA3008D9D51 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31171321FE59DA3008D9D51 /* ViewController.swift */; };
 		E31171361FE59DA3008D9D51 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E31171341FE59DA3008D9D51 /* Main.storyboard */; };
@@ -54,7 +54,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		E309DCE31FF2596500C3D135 /* NewSongServiceIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewSongServiceIphoneController.swift; sourceTree = "<group>"; };
+		E309DCE51FF26CB700C3D135 /* NewSongServiceIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewSongServiceIphoneController.swift; sourceTree = "<group>"; };
 		E311712D1FE59DA3008D9D51 /* SongProjector.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SongProjector.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E31171301FE59DA3008D9D51 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E31171321FE59DA3008D9D51 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -231,8 +231,8 @@
 			isa = PBXGroup;
 			children = (
 				E36F41651FEE8CDA00E989E5 /* SongServiceIphoneController.swift */,
+				E309DCE51FF26CB700C3D135 /* NewSongServiceIphoneController.swift */,
 				E36F41671FEE965200E989E5 /* NewSongIphoneController.swift */,
-				E309DCE31FF2596500C3D135 /* NewSongServiceIphoneController.swift */,
 			);
 			path = iPhone;
 			sourceTree = "<group>";
@@ -322,6 +322,7 @@
 				E31171511FE5A071008D9D51 /* UITableViewExtensions.swift in Sources */,
 				E31171691FE5A0E7008D9D51 /* NewSongController.swift in Sources */,
 				E31171791FE5A1A0008D9D51 /* AddButtonCell.swift in Sources */,
+				E309DCE61FF26CB700C3D135 /* NewSongServiceIphoneController.swift in Sources */,
 				E3355D711FEE6436004C03AE /* ClusterExtensions.swift in Sources */,
 				E31F87BD1FE7035D00D5D4BA /* Text.swift in Sources */,
 				E311715A1FE5A0A3008D9D51 /* Notifications.swift in Sources */,
@@ -344,7 +345,6 @@
 				E3355D6F1FEDA645004C03AE /* TextViewExtensions.swift in Sources */,
 				E31171661FE5A0E7008D9D51 /* SongServiceController.swift in Sources */,
 				E31171641FE5A0E7008D9D51 /* MenuController.swift in Sources */,
-				E309DCE41FF2596500C3D135 /* NewSongServiceIphoneController.swift in Sources */,
 				E36F416F1FF06D2F00E989E5 /* SheetCollectionCell.swift in Sources */,
 				E31171681FE5A0E7008D9D51 /* SongsController.swift in Sources */,
 				E31171751FE5A1A0008D9D51 /* BasicCell.swift in Sources */,
@@ -487,6 +487,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = LXU7BA48AY;
 				INFOPLIST_FILE = SongProjector/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.iozee.SongProjector;
@@ -501,6 +502,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = LXU7BA48AY;
 				INFOPLIST_FILE = SongProjector/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.iozee.SongProjector;

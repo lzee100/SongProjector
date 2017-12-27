@@ -20,6 +20,7 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 	@IBOutlet var collectionView: UICollectionView!
 	@IBOutlet var tableView: UITableView!
 	@IBOutlet var searchBar: UISearchBar!
+	@IBOutlet var cancel: UIBarButtonItem!
 	
 	var delegate: SongsControllerDelegate?
 	
@@ -148,6 +149,9 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 			desciptionSongs.text = Text.Songs.description
 		}
 		
+		cancel.title = Text.Actions.cancel
+		cancel.tintColor = delegate == nil ? .clear : .primary
+		
 		navigationController?.title = Text.Songs.title
 		
 		searchBar.showsCancelButton = true
@@ -181,5 +185,8 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 		}
 	}
 
-
+	@IBAction func cancelPressed(_ sender: UIBarButtonItem) {
+		dismiss(animated: true)
+	}
+	
 }
