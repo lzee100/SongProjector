@@ -17,5 +17,17 @@ extension UIView {
 			self.drawHierarchy(in: self.bounds, afterScreenUpdates: true)
 		}
 	}
+		
+	public static func create<V : UIView>(nib: String) -> V? {
+		
+		let object : Any? = UINib(nibName: nib, bundle: nil).instantiate(withOwner: nil, options: nil).first
+		
+		if let object = object {
+			return object as? V
+		} else {
+			return nil
+		}
+		
+	}
 	
 }

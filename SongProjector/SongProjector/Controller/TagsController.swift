@@ -22,6 +22,10 @@ class TagsController: UIViewController, UITableViewDelegate, UITableViewDataSour
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
+
+		if let splitViewController = splitViewController {
+			collapseSecondaryViewController(self, for: splitViewController)
+		}
 		setup()
 	}
 	

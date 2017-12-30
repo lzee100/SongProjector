@@ -8,6 +8,12 @@
 
 import UIKit
 
+extension NSLayoutConstraint {
+	func constraintWithMultiplier(_ multiplier: CGFloat) -> NSLayoutConstraint {
+		return NSLayoutConstraint(item: self.firstItem, attribute: self.firstAttribute, relatedBy: self.relation, toItem: self.secondItem, attribute: self.secondAttribute, multiplier: multiplier, constant: self.constant)
+	}
+}
+
 class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, NewSongServiceDelegate {
 
 	@IBOutlet var clear: UIBarButtonItem!
@@ -19,8 +25,14 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	@IBOutlet var sheetDisplayerNext: UIImageView!
 	
 	@IBOutlet var sheetDisplayerContainerHeight: NSLayoutConstraint!
-	@IBOutlet var sheetDisplayerPreviousHeight: NSLayoutConstraint!
-	@IBOutlet var sheetDisplayerNextHeight: NSLayoutConstraint!
+	@IBOutlet var sheetDisplayerPreviousYCenterConstraint: NSLayoutConstraint!
+	@IBOutlet var sheetDisplayerNextYCenterConstraint: NSLayoutConstraint!
+	
+	@IBOutlet var sheetDisplayerRatioConstraint: NSLayoutConstraint!
+	@IBOutlet var sheetDisplayerPreviousRatioConstraint: NSLayoutConstraint!
+	@IBOutlet var sheetDisplayerNextRatioConstraint: NSLayoutConstraint!
+	
+	
 	
 	@IBOutlet var moveUpDownSection: UIView!
 	@IBOutlet var tableView: UITableView!
@@ -33,7 +45,6 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	private var hasEmptySheet = false
 	private var emptySheet = CoreSheet.createEntityNOTsave()
 	private var externalScreen: UIScreen?
-	private var externalScreenBounds = CGRect(x: 0, y: 0, width: 640, height: 480)
 	private var clusters: [Cluster] = [] { didSet { update() } }
 	private var clustersOrdened: [Cluster] { get { return clusters.sorted{ $0.position < $1.position } } }
 	private var selectedClusterRow = -1
@@ -192,8 +203,16 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	private func setup() {
 		
 		sheetDisplayerPrevious.layer.transform = self.transformForFraction(fraction: 0.2)
-		
 		sheetDisplayerNext.layer.transform = self.transformForFraction(fraction: 1.8)
+		
+//		sheetDisplaySwipeView.isHidden = true
+		let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 640, height: 480))
+		externalScreen = window.screen
+		
+		updateSheetRatio()
+		
+		sheetDisplayerPrevious.layer.transform = self.transformForFraction(fraction: 0.09)
+		sheetDisplayerNext.layer.transform = self.transformForFraction(fraction: 1.89)
 		
 		navigationController?.title = Text.SongService.title
 		
@@ -307,24 +326,27 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 			case .up:
 				print("up")
 				if sheetDisplayerContainerHeight.constant > 100 {
-					UIView.animate(withDuration: 0.5, animations: {
-						self.sheetDisplaySwipeView.frame = CGRect(
-							x: self.sheetDisplaySwipeView.frame.minX,
-							y: self.sheetDisplaySwipeView.frame.minY,
-							width: self.sheetDisplaySwipeView.frame.width,
-							height: 100)
-					}, completion: { (bool) in
-						self.sheetDisplayerContainerHeight.constant = 100
-					})
+					sheetDisplayerContainerHeight.constant = 100
+					sheetDisplayerPreviousYCenterConstraint.constant = -110
+					sheetDisplayerNextYCenterConstraint.constant = 110
+					UIView.animate(withDuration: 0.3) {
+						self.view.layoutIfNeeded()
+					}
 				} else {
 					self.sheetDisplayerContainerHeight.constant = 0
+					UIView.animate(withDuration: 0.3) {
+						self.view.layoutIfNeeded()
+					}
 				}
 			case .down:
 				print("down")
-				if sheetDisplayerContainerHeight.constant < 100 {
-					self.sheetDisplayerContainerHeight.constant = 100
-				} else if sheetDisplayerContainerHeight.constant < 150 {
+				if sheetDisplayerContainerHeight.constant < 150 {
 					self.sheetDisplayerContainerHeight.constant = 150
+					sheetDisplayerPreviousYCenterConstraint.constant = -170
+					sheetDisplayerNextYCenterConstraint.constant = 170
+					UIView.animate(withDuration: 0.3) {
+						self.view.layoutIfNeeded()
+					}
 				}
 			case .left:
 				print("left")
@@ -348,14 +370,64 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	
 	
 	func setExternalDisplay(_ notification: Notification) {
-//		externalScreen = notification.userInfo?["screen"] as? UIScreen
+		externalScreen = notification.userInfo?["screen"] as? UIScreen
 		let appDelegate = UIApplication.shared.delegate as! AppDelegate
 		externalWindow = appDelegate.externalDisplayWindow
+		updateSheetRatio()
+		displaySheets()
 	}
 	
+	var times = 0
+	func updateSheetRatio() {
+		if let externalScreen = externalScreen {
+//			let multiplier = externalScreen.bounds.height / externalScreen.bounds.width
+			var multiplier: CGFloat = 4 / 3
+			switch times {
+			case 0:
+				multiplier = 4 / 3
+				times += 1
+			case 1:
+				multiplier = 16 / 9
+				times += 1
+			case 2:
+				multiplier = 16 / 10
+				times = 0
+
+			default:
+				times = 0
+			}
+			
+			
+			var newConstraint = sheetDisplayerRatioConstraint.constraintWithMultiplier(multiplier)
+			sheetDisplayer.removeConstraint(sheetDisplayerRatioConstraint)
+			sheetDisplayer.addConstraint(newConstraint)
+			
+			newConstraint = sheetDisplayerPreviousRatioConstraint.constraintWithMultiplier(multiplier)
+			sheetDisplayerPrevious.removeConstraint(sheetDisplayerPreviousRatioConstraint)
+			sheetDisplayerPrevious.addConstraint(newConstraint)
+			
+			newConstraint = sheetDisplayerNextRatioConstraint.constraintWithMultiplier(multiplier)
+			sheetDisplayerNext.removeConstraint(sheetDisplayerNextRatioConstraint)
+			sheetDisplayerNext.addConstraint(newConstraint)
+			
+			sheetDisplayerPrevious.layoutIfNeeded()
+			sheetDisplayer.layoutIfNeeded()
+			sheetDisplayerNext.layoutIfNeeded()
+			
+			createSheetListForDisplay()
+			displaySheets()
+		}
+	}
+	
+	
 	@IBAction func clearButtonPressed(_ sender: UIBarButtonItem) {
-		clusters = []
-		update()
+//		clusters = []
+//		selectedCluster = nil
+//		selectedSheet = nil
+//		update()
+		let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 1920, height: 1080))
+		externalScreen = window.screen
+		updateSheetRatio()
 	}
 	
 	private func createSheetListForDisplay() {
@@ -363,8 +435,8 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		var sheets: [UIImage] = []
 		if let sheetsForSelectedCluster = sheetsForSelectedCluster {
 			
-			if let sheetController = storyboard?.instantiateViewController(withIdentifier: "SheetController") as? SheetController {
-				sheetController.setView(CGRect(x: 0, y: 0, width: externalScreenBounds.width, height: externalScreenBounds.height))
+			if let sheetController = storyboard?.instantiateViewController(withIdentifier: "SheetController") as? SheetController, let externalScreen = externalScreen {
+				sheetController.setView(CGRect(x: 0, y: 0, width: externalScreen.bounds.width, height: externalScreen.bounds.height))
 				for sheet in sheetsForSelectedCluster {
 					sheetController.isEmptySheet = sheet.title == Text.Sheet.emptySheetTitle ? true : false
 					sheetController.hasTitle = hasTitle
@@ -380,8 +452,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	private func displaySheets() {
 		if selectedSheet != nil {
 			// display background
-			sheetDisplayer.isHidden = false
-			
+			sheetDisplaySwipeView.isHidden = false
 			
 			if let numberOfSheets = sheetsForSelectedCluster?.count, let position = selectedSheet?.position {
 				
@@ -416,9 +487,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 			}
 			
 		} else {
-			sheetDisplayer.isHidden = true
-			sheetDisplayerNext.isHidden = true
-			sheetDisplayerPrevious.isHidden = true
+			sheetDisplaySwipeView.isHidden = true
 		}
 	}
 	

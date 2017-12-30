@@ -19,10 +19,10 @@ class SheetController: UIViewController {
 	var songTitle: String? { didSet { update() } }
 	var lyrics: String? { didSet { update() } }
 	var viewFrame: CGRect?
+	var tag: Tag? { didSet { update() } }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-		
     }
 	
 	override func viewDidLayoutSubviews() {
@@ -39,8 +39,18 @@ class SheetController: UIViewController {
 	
 	private func update() {
 		heightConstraint.constant = isEmptySheet ? 0 : hasTitle ? 50 : 0
-		titleSheet.text = songTitle
-		lyricsSheet.text = lyrics
+		
+		if let songTitle = songTitle, let tag = tag {
+			titleSheet.attributedText = NSAttributedString(string: songTitle, attributes: tag.getTitleAttributes())
+		} else if let songTitle = songTitle {
+			titleSheet.text = songTitle
+		}
+		
+		if let lyrics = lyrics, let tag = tag {
+			lyricsSheet.attributedText = NSAttributedString(string: lyrics, attributes: tag.getLyricsAttributes())
+		} else if let lyrics = lyrics {
+			lyricsSheet.text = lyrics
+		}
 	}
     
 	func asImage() -> UIImage {

@@ -79,4 +79,122 @@ extension UIFont {
 		return UIFont(name: name.rawValue, size: size.rawValue)!
 	}
 	
+	var isBold: Bool
+	{
+		return fontDescriptor.symbolicTraits.contains(.traitBold)
+	}
+	
+	var isItalic: Bool
+	{
+		return fontDescriptor.symbolicTraits.contains(.traitItalic)
+	}
+	
+	func setBoldFnc() -> UIFont
+	{
+		if(isBold)
+		{
+			return self
+		}
+		else
+		{
+			var fontAtrAry = fontDescriptor.symbolicTraits
+			fontAtrAry.insert([.traitBold])
+			if let fontAtrDetails = fontDescriptor.withSymbolicTraits(fontAtrAry) {
+				return UIFont(descriptor: fontAtrDetails, size: 0)
+			} else {
+				return self
+			}
+		}
+	}
+	
+	func setItalicFnc()-> UIFont
+	{
+		if(isItalic)
+		{
+			return self
+		}
+		else
+		{
+			var fontAtrAry = fontDescriptor.symbolicTraits
+			fontAtrAry.insert([.traitItalic])
+			if let fontAtrDetails = fontDescriptor.withSymbolicTraits(fontAtrAry) {
+				return UIFont(descriptor: fontAtrDetails, size: 0)
+			} else {
+				return self
+			}
+		}
+	}
+	
+	func setBoldItalicFnc()-> UIFont
+	{
+		return setBoldFnc().setItalicFnc()
+	}
+	
+	func detBoldFnc() -> UIFont
+	{
+		if(!isBold)
+		{
+			return self
+		}
+		else
+		{
+			var fontAtrAry = fontDescriptor.symbolicTraits
+			fontAtrAry.remove([.traitBold])
+			if let fontAtrDetails = fontDescriptor.withSymbolicTraits(fontAtrAry) {
+				return UIFont(descriptor: fontAtrDetails, size: 0)
+			} else {
+				return self
+			}
+		}
+	}
+	
+	func detItalicFnc()-> UIFont
+	{
+		if(!isItalic)
+		{
+			return self
+		}
+		else
+		{
+			var fontAtrAry = fontDescriptor.symbolicTraits
+			fontAtrAry.remove([.traitItalic])
+			if let fontAtrDetails = fontDescriptor.withSymbolicTraits(fontAtrAry) {
+				return UIFont(descriptor: fontAtrDetails, size: 0)
+			} else {
+				return self
+			}
+		}
+	}
+	
+	func SetNormalFnc()-> UIFont
+	{
+		return detBoldFnc().detItalicFnc()
+	}
+	
+	func toggleBoldFnc()-> UIFont
+	{
+		if(isBold)
+		{
+			return detBoldFnc()
+		}
+		else
+		{
+			return setBoldFnc()
+		}
+	}
+	
+	func toggleItalicFnc()-> UIFont
+	{
+		if(isItalic)
+		{
+			return detItalicFnc()
+		}
+		else
+		{
+			return setItalicFnc()
+		}
+	}
+	
+	
+	
 }

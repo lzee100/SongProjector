@@ -8,7 +8,7 @@
 
 import UIKit
 
-class MoreController: UITableViewController {
+class MoreController: UITableViewController, UISplitViewControllerDelegate {
 	
 	
 	// MARK: - Constants
@@ -33,11 +33,12 @@ class MoreController: UITableViewController {
 			splitViewController?.viewControllers.append(controller)
 		})
 		
+		splitViewController?.delegate = self
+
 		setup()
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
-//		clearsSelectionOnViewWillAppear = splitViewController!.isCollapsed
 		super.viewWillAppear(animated)
 		setup()
 	}
@@ -85,6 +86,11 @@ class MoreController: UITableViewController {
 			self.splitViewController?.preferredDisplayMode = .primaryHidden
 		}
 		
+	}
+
+	
+	func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController: UIViewController, onto primaryViewController: UIViewController) -> Bool {
+		return true
 	}
 	
 	private func setup() {

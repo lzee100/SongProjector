@@ -30,16 +30,7 @@ enum AnimationDirection {
 	case right
 }
 
-struct Cells {
-	static let songIcon = #imageLiteral(resourceName: "Song")
-	static let sheetIcon = #imageLiteral(resourceName: "Sheet")
-	static let tagIcon = #imageLiteral(resourceName: "BulletSelected")
-	static let basicCellid = "BasicCell"
-	static let addButtonCellid = "AddButtonCell"
-	static let newSongSheetCellid = "NewSongSheetCell"
-	static let tagCellCollection = "TagCellCollection"
-	static let sheetCollectionCell = "SheetCollectionCell"
-}
+
 
 class SongServiceController: UIViewController, UITableViewDataSource, UITableViewDelegate, NewSongServiceDelegate, SongsControllerDelegate {
 	

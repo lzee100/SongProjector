@@ -451,6 +451,7 @@
                     </view>
                     <extendedEdge key="edgesForExtendedLayout" top="YES"/>
                     <navigationItem key="navigationItem" id="2th-RP-51L">
+                        <barButtonItem key="leftBarButtonItem" title="Item" id="FEA-U6-BvJ"/>
                         <barButtonItem key="rightBarButtonItem" title="Item" id="T6K-xG-PiH">
                             <connections>
                                 <segue destination="MgK-1a-GII" kind="show" id="dEB-C9-cgK"/>
@@ -458,6 +459,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="cancel" destination="FEA-U6-BvJ" id="ufC-Gm-zsh"/>
                         <outlet property="collectionView" destination="6FM-95-pMC" id="ZeP-dt-iLe"/>
                         <outlet property="desciptionSongs" destination="oQb-Tx-YAS" id="J2x-7Z-K9V"/>
                         <outlet property="new" destination="T6K-xG-PiH" id="63x-HB-EqW"/>

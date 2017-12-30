@@ -12,11 +12,12 @@ import Foundation
 class Text: NSObject {
 	
 	struct Actions {
-		static let cancel = "Annulleer"
+		static let cancel = "Annuleer"
 		static let close = "Sluit"
 		static let done = "Klaar"
 		static let new = "Nieuw"
 		static let add = "Voeg toe"
+		static let save = "Sla op"
 	}
 	
 	struct SongService {
@@ -50,6 +51,7 @@ class Text: NSObject {
 	
 	struct Tags {
 		static let title = "Categorien"
+		static let searchBarPlaceholderText = "Zoek categorie"
 	}
 	
 	struct Players {
@@ -62,8 +64,23 @@ class Text: NSObject {
 	
 	struct NewTag {
 		static let title = "Nieuwe categorie"
+		static let descriptionTitle = "Naam nieuwe categorie"
 		static let pageDescription = "Voer een nieuwe categorie toe"
 		static let error = "Invoer mag niet leeg zijn"
+		
+		static let sampleTitel = "Titel"
+		static let sampleLyrics = "Inhoud"
+		static let background = "Achtergrond"
+		static let fontFamilyDescription = "Lettertype"
+		static let fontSizeDescription = "Grootte lettertype"
+		static let borderSizeDescription = "Dikte rand"
+		static let borderColor = "Kleur rand"
+		static let textColor = "Kleur lettertype"
+		static let underlined = "Onderstreept"
+		static let bold = "Vet"
+		static let italic = "Cursief"
+		static let backgroundImage = "Achtergrond plaatje"
+	
 	}
 	
 	struct Sheet {
