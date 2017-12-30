@@ -41,6 +41,12 @@ class LabelPickerCell: UITableViewCell, UIPickerViewDataSource, UIPickerViewDele
 		return view
 	}
 	
+	func setFontName(value: String) {
+		if let index = pickerValues.index(of: value) {
+			pickerView(picker, didSelectRow: index, inComponent: 0)
+		}
+	}
+	
 	override func setSelected(_ selected: Bool, animated: Bool) {
 	}
 	

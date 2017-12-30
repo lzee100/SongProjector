@@ -10,8 +10,6 @@
 		E309DCE61FF26CB700C3D135 /* NewSongServiceIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E309DCE51FF26CB700C3D135 /* NewSongServiceIphoneController.swift */; };
 		E309DCE81FF44E6A00C3D135 /* TagsIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E309DCE71FF44E6A00C3D135 /* TagsIphoneController.swift */; };
 		E309DCEA1FF45A8A00C3D135 /* MoreSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E309DCE91FF45A8A00C3D135 /* MoreSplitViewController.swift */; };
-		E309DCEF1FF48D9D00C3D135 /* LabelTextInputCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E309DCED1FF48D9D00C3D135 /* LabelTextInputCell.swift */; };
-		E309DCF01FF48D9D00C3D135 /* LabelTextInputCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E309DCEE1FF48D9D00C3D135 /* LabelTextInputCell.xib */; };
 		E309DCF31FF48F0800C3D135 /* LabelSwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E309DCF11FF48F0800C3D135 /* LabelSwitchCell.swift */; };
 		E309DCF41FF48F0800C3D135 /* LabelSwitchCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E309DCF21FF48F0800C3D135 /* LabelSwitchCell.xib */; };
 		E309DCF71FF48FF100C3D135 /* LabelColorPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E309DCF51FF48FF100C3D135 /* LabelColorPickerCell.swift */; };
@@ -62,6 +60,12 @@
 		E36F41681FEE965200E989E5 /* NewSongIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E36F41671FEE965200E989E5 /* NewSongIphoneController.swift */; };
 		E36F416F1FF06D2F00E989E5 /* SheetCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E36F416D1FF06D2F00E989E5 /* SheetCollectionCell.swift */; };
 		E36F41701FF06D2F00E989E5 /* SheetCollectionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E36F416E1FF06D2F00E989E5 /* SheetCollectionCell.xib */; };
+		E38347581FF7AAC9008AE69D /* LabelTextFieldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38347561FF7AAC9008AE69D /* LabelTextFieldCell.swift */; };
+		E38347591FF7AAC9008AE69D /* LabelTextFieldCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E38347571FF7AAC9008AE69D /* LabelTextFieldCell.xib */; };
+		E383475C1FF7DADD008AE69D /* LabelImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E383475A1FF7DADD008AE69D /* LabelImagePicker.swift */; };
+		E383475D1FF7DADD008AE69D /* LabelImagePicker.xib in Resources */ = {isa = PBXBuildFile; fileRef = E383475B1FF7DADD008AE69D /* LabelImagePicker.xib */; };
+		E38347601FF7E8B5008AE69D /* LabelPhotoPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E383475E1FF7E8B5008AE69D /* LabelPhotoPickerCell.swift */; };
+		E38347611FF7E8B5008AE69D /* LabelPhotoPickerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E383475F1FF7E8B5008AE69D /* LabelPhotoPickerCell.xib */; };
 		E3D1CEE71FF6930600F9D7D9 /* LabelPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D1CEE51FF6930600F9D7D9 /* LabelPickerCell.swift */; };
 		E3D1CEE81FF6930600F9D7D9 /* LabelPickerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3D1CEE61FF6930600F9D7D9 /* LabelPickerCell.xib */; };
 		E3D9274F1FEC1AFC006EDE75 /* TagsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D9274E1FEC1AFC006EDE75 /* TagsController.swift */; };
@@ -78,8 +82,6 @@
 		E309DCE51FF26CB700C3D135 /* NewSongServiceIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewSongServiceIphoneController.swift; sourceTree = "<group>"; };
 		E309DCE71FF44E6A00C3D135 /* TagsIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsIphoneController.swift; sourceTree = "<group>"; };
 		E309DCE91FF45A8A00C3D135 /* MoreSplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreSplitViewController.swift; sourceTree = "<group>"; };
-		E309DCED1FF48D9D00C3D135 /* LabelTextInputCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelTextInputCell.swift; sourceTree = "<group>"; };
-		E309DCEE1FF48D9D00C3D135 /* LabelTextInputCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelTextInputCell.xib; sourceTree = "<group>"; };
 		E309DCF11FF48F0800C3D135 /* LabelSwitchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelSwitchCell.swift; sourceTree = "<group>"; };
 		E309DCF21FF48F0800C3D135 /* LabelSwitchCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelSwitchCell.xib; sourceTree = "<group>"; };
 		E309DCF51FF48FF100C3D135 /* LabelColorPickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelColorPickerCell.swift; sourceTree = "<group>"; };
@@ -132,6 +134,12 @@
 		E36F41671FEE965200E989E5 /* NewSongIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewSongIphoneController.swift; sourceTree = "<group>"; };
 		E36F416D1FF06D2F00E989E5 /* SheetCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetCollectionCell.swift; sourceTree = "<group>"; };
 		E36F416E1FF06D2F00E989E5 /* SheetCollectionCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SheetCollectionCell.xib; sourceTree = "<group>"; };
+		E38347561FF7AAC9008AE69D /* LabelTextFieldCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelTextFieldCell.swift; sourceTree = "<group>"; };
+		E38347571FF7AAC9008AE69D /* LabelTextFieldCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelTextFieldCell.xib; sourceTree = "<group>"; };
+		E383475A1FF7DADD008AE69D /* LabelImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelImagePicker.swift; sourceTree = "<group>"; };
+		E383475B1FF7DADD008AE69D /* LabelImagePicker.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelImagePicker.xib; sourceTree = "<group>"; };
+		E383475E1FF7E8B5008AE69D /* LabelPhotoPickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelPhotoPickerCell.swift; sourceTree = "<group>"; };
+		E383475F1FF7E8B5008AE69D /* LabelPhotoPickerCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelPhotoPickerCell.xib; sourceTree = "<group>"; };
 		E3D1CEE51FF6930600F9D7D9 /* LabelPickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelPickerCell.swift; sourceTree = "<group>"; };
 		E3D1CEE61FF6930600F9D7D9 /* LabelPickerCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelPickerCell.xib; sourceTree = "<group>"; };
 		E3D9274E1FEC1AFC006EDE75 /* TagsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsController.swift; sourceTree = "<group>"; };
@@ -287,8 +295,6 @@
 				E31171701FE5A1A0008D9D51 /* TagCellCollection.xib */,
 				E36F416D1FF06D2F00E989E5 /* SheetCollectionCell.swift */,
 				E36F416E1FF06D2F00E989E5 /* SheetCollectionCell.xib */,
-				E309DCED1FF48D9D00C3D135 /* LabelTextInputCell.swift */,
-				E309DCEE1FF48D9D00C3D135 /* LabelTextInputCell.xib */,
 				E309DCF11FF48F0800C3D135 /* LabelSwitchCell.swift */,
 				E309DCF21FF48F0800C3D135 /* LabelSwitchCell.xib */,
 				E309DCF51FF48FF100C3D135 /* LabelColorPickerCell.swift */,
@@ -297,6 +303,12 @@
 				E309DD011FF5127400C3D135 /* LabelNumberCell.xib */,
 				E3D1CEE51FF6930600F9D7D9 /* LabelPickerCell.swift */,
 				E3D1CEE61FF6930600F9D7D9 /* LabelPickerCell.xib */,
+				E38347561FF7AAC9008AE69D /* LabelTextFieldCell.swift */,
+				E38347571FF7AAC9008AE69D /* LabelTextFieldCell.xib */,
+				E383475A1FF7DADD008AE69D /* LabelImagePicker.swift */,
+				E383475B1FF7DADD008AE69D /* LabelImagePicker.xib */,
+				E383475E1FF7E8B5008AE69D /* LabelPhotoPickerCell.swift */,
+				E383475F1FF7E8B5008AE69D /* LabelPhotoPickerCell.xib */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -375,10 +387,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E309DCF01FF48D9D00C3D135 /* LabelTextInputCell.xib in Resources */,
 				E31171761FE5A1A0008D9D51 /* BasicCell.xib in Resources */,
+				E38347611FF7E8B5008AE69D /* LabelPhotoPickerCell.xib in Resources */,
 				E31171781FE5A1A0008D9D51 /* TagCellCollection.xib in Resources */,
 				E36F41701FF06D2F00E989E5 /* SheetCollectionCell.xib in Resources */,
+				E383475D1FF7DADD008AE69D /* LabelImagePicker.xib in Resources */,
 				E311713E1FE59DA3008D9D51 /* LaunchScreen.storyboard in Resources */,
 				E311713B1FE59DA3008D9D51 /* Assets.xcassets in Resources */,
 				E309DCF81FF48FF100C3D135 /* LabelColorPickerCell.xib in Resources */,
@@ -388,6 +401,7 @@
 				E309DCF41FF48F0800C3D135 /* LabelSwitchCell.xib in Resources */,
 				E311717A1FE5A1A0008D9D51 /* AddButtonCell.xib in Resources */,
 				E311717C1FE5A1A0008D9D51 /* NewSongSheetCell.xib in Resources */,
+				E38347591FF7AAC9008AE69D /* LabelTextFieldCell.xib in Resources */,
 				E311717E1FE5A5F5008D9D51 /* StoryboardiPad.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -453,6 +467,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E383475C1FF7DADD008AE69D /* LabelImagePicker.swift in Sources */,
 				E311716B1FE5A0E7008D9D51 /* SplashScreen.swift in Sources */,
 				E36F41661FEE8CDA00E989E5 /* SongServiceIphoneController.swift in Sources */,
 				E311715B1FE5A0A3008D9D51 /* Features.swift in Sources */,
@@ -463,11 +478,11 @@
 				E309DCFA1FF4954100C3D135 /* TagExtensions.swift in Sources */,
 				E309DCEA1FF45A8A00C3D135 /* MoreSplitViewController.swift in Sources */,
 				E31171511FE5A071008D9D51 /* UITableViewExtensions.swift in Sources */,
+				E38347581FF7AAC9008AE69D /* LabelTextFieldCell.swift in Sources */,
 				E31171691FE5A0E7008D9D51 /* NewSongController.swift in Sources */,
 				E31171791FE5A1A0008D9D51 /* AddButtonCell.swift in Sources */,
 				E309DCE61FF26CB700C3D135 /* NewSongServiceIphoneController.swift in Sources */,
 				E3355D711FEE6436004C03AE /* ClusterExtensions.swift in Sources */,
-				E309DCEF1FF48D9D00C3D135 /* LabelTextInputCell.swift in Sources */,
 				E31F87BD1FE7035D00D5D4BA /* Text.swift in Sources */,
 				E311715A1FE5A0A3008D9D51 /* Notifications.swift in Sources */,
 				E36F41681FEE965200E989E5 /* NewSongIphoneController.swift in Sources */,
@@ -481,6 +496,7 @@
 				E31171771FE5A1A0008D9D51 /* NewSongSheetCell.swift in Sources */,
 				E31171331FE59DA3008D9D51 /* ViewController.swift in Sources */,
 				E31171311FE59DA3008D9D51 /* AppDelegate.swift in Sources */,
+				E38347601FF7E8B5008AE69D /* LabelPhotoPickerCell.swift in Sources */,
 				E31171491FE59EBD008D9D51 /* CoreDataManager.swift in Sources */,
 				E309DCF71FF48FF100C3D135 /* LabelColorPickerCell.swift in Sources */,
 				E309DCE81FF44E6A00C3D135 /* TagsIphoneController.swift in Sources */,

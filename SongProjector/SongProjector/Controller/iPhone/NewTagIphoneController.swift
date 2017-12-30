@@ -9,7 +9,7 @@
 import UIKit
 import ChromaColorPicker
 
-class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableViewDataSource, TextFieldCellDelegate, LabelPickerCellDelegate, LabelNumerCellDelegate, LabelColorPickerCellDelegate, LabelSwitchCellDelegate {
+class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableViewDataSource, LabelTextFieldCellDelegate, LabelPickerCellDelegate, LabelNumerCellDelegate, LabelColorPickerCellDelegate, LabelSwitchCellDelegate, LabelPhotoPickerCellDelegate {
 	
 	
 	@IBOutlet var cancel: UIBarButtonItem!
@@ -48,7 +48,7 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 		}
 	}
 	
-	let cellName = LabelTextInputCell.create(placeholder: Text.NewTag.descriptionTitle)
+	let cellName = LabelTextFieldCell.create(id: "cellName", description: Text.NewTag.descriptionTitle, placeholder: Text.NewTag.descriptionTitlePlaceholder)
 	
 	let cellTitelFontFamily = LabelPickerCell.create(id: "titleFontFamily", description: Text.NewTag.fontFamilyDescription, initialFontName: UIFont.systemFont(ofSize: 12).fontName)
 	let cellTitelFontSize = LabelNumberCell.create(id: "titleFontSize", description: Text.NewTag.fontSizeDescription, initialValue: 17)
@@ -68,10 +68,16 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 	let cellLyricsItalic = LabelSwitchCell.create(id: "cellLyricsItalic", description: Text.NewTag.italic)
 	let cellLyricsUnderLined = LabelSwitchCell.create(id: "cellLyricsUnderlined", description: Text.NewTag.underlined)
 	
+	var cellPhotoPicker = LabelPhotoPickerCell()
 	
+	var editExistingTag: Tag?
+	var tagName = ""
 	var titleAttributes: [NSAttributedStringKey : Any] = [:]
 	var lyricsAttributes: [NSAttributedStringKey: Any] = [:]
 	var titleAttributedText: NSAttributedString?
+	
+	var titleFontNameIsSet = false
+	var lyricsFontNameIsSet = false
 	
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -105,7 +111,7 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 		case .Inhoud:
 			return getLyricsCellFor(indexPath: indexPath)
 		case .Achtergrond:
-			return UITableViewCell()
+			return cellPhotoPicker
 		}
 	}
 	
@@ -134,11 +140,15 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 				return 60
 			}
 		case .Achtergrond:
-			return 60
+			return cellPhotoPicker.preferredHeight
 		}
 	}
 	
 	func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+		return 60
+	}
+	
+	func tableView(_ tableView: UITableView, estimatedHeightForHeaderInSection section: Int) -> CGFloat {
 		return 60
 	}
 	
@@ -200,29 +210,52 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 				break
 			}
 		case .Achtergrond:
-			break
+			let cell = cellPhotoPicker
+			cell.isActive = !cell.isActive
+			tableView.beginUpdates()
+			tableView.endUpdates()
+			let indexSet = IndexSet(integersIn: Section.all.count - 1...Section.all.count - 1)
+			tableView.reloadSections(indexSet, with: .top)
 		}
 	}
 	
 	
 	// MARK: - Delegate functions
 	
-	func textFieldCellShouldReturn(_ cell: TextFieldCell) -> Bool {
-		return true
+	func textFieldDidChange(cell: LabelTextFieldCell ,text: String?) {
+		if let text = text {
+			tagName = text
+		}
 	}
 	
 	func didSelectFontWith(name: String, cell: LabelPickerCell) {
-		if cell.id == "titleFontFamily", let font = titleAttributes[.font] as? UIFont {
-			titleAttributes[.font] = UIFont(name: name, size: font.pointSize)
+		if cell.id == "titleFontFamily" {
+			var size: CGFloat = 17
+			if let font = titleAttributes[.font] as? UIFont {
+				size = font.pointSize
+			}
+			titleAttributes[.font] = UIFont(name: name, size: size)
 			buildPreview()
+			if titleFontNameIsSet {
 			cell.isActive = !cell.isActive
+			} else {
+				titleFontNameIsSet = true
+			}
 			tableView.beginUpdates()
 			tableView.endUpdates()
 		}
-		if cell.id == "lyricsFontFamily", let font = lyricsAttributes[.font] as? UIFont {
-			lyricsAttributes[.font] = UIFont(name: name, size: font.pointSize)
+		if cell.id == "lyricsFontFamily" {
+			var size: CGFloat = 17
+			if let font = lyricsAttributes[.font] as? UIFont {
+				size = font.pointSize
+			}
+			lyricsAttributes[.font] = UIFont(name: name, size: size)
 			buildPreview()
-			cell.isActive = !cell.isActive
+			if lyricsFontNameIsSet {
+				cell.isActive = !cell.isActive
+			} else {
+				lyricsFontNameIsSet = true
+			}
 			tableView.beginUpdates()
 			tableView.endUpdates()
 		}
@@ -356,14 +389,29 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 		}
 
 	}
+	
+	func didSelectImage(cell: LabelPhotoPickerCell) {
+		cell.isActive = !cell.isActive
+		tableView.beginUpdates()
+		tableView.endUpdates()
+		buildPreview()
+	}
 
 
 	private func setup() {
+		
 		tableView.register(cell: Cells.labelNumberCell)
 		tableView.register(cell: Cells.LabelPickerCell)
 		tableView.register(cell: Cells.LabelSwitchCell)
 		tableView.register(cell: Cells.labelTextFieldCell)
+		tableView.register(cell: Cells.LabelPhotoPickerCell)
 		
+		cellPhotoPicker = LabelPhotoPickerCell.create(id: "cellPhotoPicker", description: Text.NewTag.backgroundImage, sender: self)
+		cellPhotoPicker.setup()
+
+		
+		cellName.setup()
+		cellName.delegate = self
 		cellTitelFontFamily.delegate = self
 		cellTitelFontSize.delegate = self
 		cellTitelBorderSize.delegate = self
@@ -380,9 +428,38 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 		cellLyricsBold.delegate = self
 		cellLyricsItalic.delegate = self
 		cellLyricsUnderLined.delegate = self
+		cellPhotoPicker.delegate = self
+		
+		if let tag = editExistingTag {
+			
+			
+			
+			cellName.setName(name: tag.title ?? "")
+			cellTitelFontFamily.setFontName(value: tag.titleFontName ?? "")
+			cellTitelFontSize.setValue(value: Int(tag.titleTextSize))
+			cellTitelBorderSize.setValue(value: Int(tag.titleBorderSize))
+			cellTitelBorderColor.setColor(color: tag.borderColorTitle ?? .black)
+			cellTitelTextColor.setColor(color: tag.textColorTitle ?? .black)
+			cellTitelBold.setSwitchValueTo(value: tag.isTitleBold)
+			cellTitelItalic.setSwitchValueTo(value: tag.isTitleItalian)
+			cellTitelUnderLined.setSwitchValueTo(value: tag.isTitleUnderlined)
+			
+			cellLyricsFontFamily.setFontName(value: tag.lyricsFontName ?? "")
+			cellLyricsFontSize.setValue(value: Int(tag.lyricsTextSize))
+			cellLyricsBorderSize.setValue(value: Int(tag.lyricsBorderSize))
+			cellLyricsBorderColor.setColor(color: tag.borderColorLyrics ?? .black)
+			cellLyricsTextColor.setColor(color: tag.textColorLyrics ?? .black)
+			cellLyricsBold.setSwitchValueTo(value: tag.isLyricsBold)
+			cellLyricsItalic.setSwitchValueTo(value: tag.isLyricsItalian)
+			cellLyricsUnderLined.setSwitchValueTo(value: tag.isLyricsUnderlined)
+		}
 		
 		cancel.title = Text.Actions.cancel
 		save.title = Text.Actions.save
+		
+		let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+		tap.cancelsTouchesInView = false
+		view.addGestureRecognizer(tap)
 		
 		titlePreview.attributedText = NSAttributedString(string: Text.NewTag.sampleTitel, attributes: titleAttributes)
 		lyricsPreview.attributedText = NSAttributedString(string: Text.NewTag.sampleLyrics, attributes: lyricsAttributes)
@@ -425,16 +502,17 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 	
 	@IBAction func savePressed(_ sender: UIBarButtonItem) {
 		
-		if let name = cellName.textField.text {
-			if name == "" {
-				return
-			}
-		} else {
-			return
+		if tagName == "" {
+			let message = UIAlertController(title: Text.NewTag.errorTitle, message:
+				Text.NewTag.errorMessage, preferredStyle: UIAlertControllerStyle.alert)
+			message.addAction(UIAlertAction(title: Text.Actions.close, style: UIAlertActionStyle.default,handler: nil))
+			
+			self.present(message, animated: true, completion: nil)
 		}
 		
-		let tag = CoreTag.createEntity()
+		let tag = editExistingTag != nil ? editExistingTag! : CoreTag.createEntity()
 		
+		tag.title = tagName
 		
 		if let titleFont = titleAttributes[.font] as? UIFont {
 			tag.titleFontName = titleFont.familyName
@@ -447,12 +525,12 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 			tag.titleBorderSize = Int16(titleBorderSize)
 		}
 		if let titleColor = titleAttributes[.foregroundColor] as? UIColor {
-			tag.titleTextColorHex = titleColor.hexCode
+			tag.textColorTitle = titleColor
 		}
 		if let titleStrokeColor = titleAttributes[.strokeColor] as? UIColor {
-			tag.titleBorderColorHex = titleStrokeColor.hexCode
+			tag.borderColorTitle = titleStrokeColor
 		}
-		if let _ = titleAttributes[.underlineStyle] as? String {
+		if let _ = titleAttributes[.underlineStyle] as? Int {
 			tag.isTitleUnderlined = true
 		} else {
 			tag.isTitleUnderlined = false
@@ -469,17 +547,28 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 			tag.lyricsBorderSize = Int16(lyricsBorderSize)
 		}
 		if let lyricsColor = lyricsAttributes[.foregroundColor] as? UIColor {
-			tag.lyricsTextColorHex = lyricsColor.hexCode
+			tag.textColorLyrics = lyricsColor
 		}
 		if let lyricsStrokeColor = lyricsAttributes[.strokeColor] as? UIColor {
-			tag.lyricsBorderColorHex = lyricsStrokeColor.hexCode
+			tag.borderColorLyrics = lyricsStrokeColor
 		}
-		if let _ = lyricsAttributes[.underlineStyle] as? String {
+		if let _ = lyricsAttributes[.underlineStyle] as? Int {
 			tag.isLyricsUnderlined = true
 		} else {
 			tag.isLyricsUnderlined = false
 		}
 		
+		CoreTag.saveContext()
+//		if editExistingTag != nil {
+//			navigationController?.popViewController(animated: true)
+//		} else {
+			dismiss(animated: true)
+//		}
+		
+	}
+	
+	@objc func dismissKeyboard() {
+		view.endEditing(true)
 	}
 	
 	@IBAction func cancelPressed(_ sender: UIBarButtonItem) {

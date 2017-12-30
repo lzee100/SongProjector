@@ -242,7 +242,7 @@ class NewSongIphoneController: UIViewController, UITableViewDataSource, UITableV
 			
 			if CoreSheet.saveContext() { print("sheets saved") } else { print("sheets not saved") }
 			
-			cluster.hasTags = NSSet(array: tags)
+			cluster.hasTags = NSSet(array: selectedTags)
 			if CoreTag.saveContext() { print("tag saved") } else { print("tag not saved") }
 			
 			dismiss(animated: true)

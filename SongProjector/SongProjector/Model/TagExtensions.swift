@@ -43,7 +43,7 @@ extension Tag {
 		}
 		set(newColor) {
 			if let newColor = newColor {
-				titleTextColorHex = newColor.toHex
+				lyricsTextColorHex = newColor.toHex
 			}
 		}
 	}
@@ -55,7 +55,7 @@ extension Tag {
 		}
 		set(newColor) {
 			if let newColor = newColor {
-				titleBorderColorHex = newColor.toHex
+				lyricsBorderColorHex = newColor.toHex
 			}
 		}
 	}
@@ -81,7 +81,7 @@ extension Tag {
 			attributes[.foregroundColor] = UIColor.black
 		}
 		
-		if let borderColor = self.titleBorderColorHex {
+		if let borderColor = self.borderColorTitle {
 			attributes[.strokeColor] = borderColor
 		}
 		
@@ -112,7 +112,7 @@ extension Tag {
 			attributes[.foregroundColor] = UIColor.black
 		}
 		
-		if let borderColor = self.lyricsBorderColorHex {
+		if let borderColor = self.borderColorLyrics {
 			attributes[.strokeColor] = borderColor
 		}
 		

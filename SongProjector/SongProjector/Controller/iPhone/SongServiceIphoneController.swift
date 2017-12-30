@@ -437,6 +437,8 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 			
 			if let sheetController = storyboard?.instantiateViewController(withIdentifier: "SheetController") as? SheetController, let externalScreen = externalScreen {
 				sheetController.setView(CGRect(x: 0, y: 0, width: externalScreen.bounds.width, height: externalScreen.bounds.height))
+				sheetController.tag = (selectedCluster?.hasTags?.allObjects as! [Tag]).first
+
 				for sheet in sheetsForSelectedCluster {
 					sheetController.isEmptySheet = sheet.title == Text.Sheet.emptySheetTitle ? true : false
 					sheetController.hasTitle = hasTitle

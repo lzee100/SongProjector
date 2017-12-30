@@ -64,8 +64,8 @@ class NewSongServiceIphoneController: UITableViewController, SongsControllerDele
 
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            selectedSongs.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)
+			selectedSongs.remove(at: indexPath.row)
         }
     }
 

@@ -559,6 +559,9 @@
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <segue destination="t6k-98-reE" kind="presentation" identifier="EditTagSegue" trigger="accessoryAction" id="3y4-aR-4P7"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -638,7 +641,7 @@
         <!--New Song Iphone Controller-->
         <scene sceneID="mvY-e1-rvP">
             <objects>
-                <viewController id="nKb-i5-rlz" customClass="NewSongIphoneController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NewSongIphoneController" id="nKb-i5-rlz" customClass="NewSongIphoneController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="hF4-e7-f20">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -836,4 +839,7 @@
             <point key="canvasLocation" x="-666.39999999999998" y="4099.7001499250382"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="3y4-aR-4P7"/>
+    </inferredMetricsTieBreakers>
 </document>

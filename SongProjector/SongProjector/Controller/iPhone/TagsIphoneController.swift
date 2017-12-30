@@ -16,6 +16,7 @@ class TagsIphoneController: UITableViewController, UISearchBarDelegate, UIGestur
 	
 	private var tags: [Tag] = []
 	private var filteredTags: [Tag] = []
+	private var selectedTag: Tag?
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -33,6 +34,12 @@ class TagsIphoneController: UITableViewController, UISearchBarDelegate, UIGestur
 			popoverViewController.modalPresentationStyle = UIModalPresentationStyle.popover
 			popoverViewController.popoverPresentationController!.delegate = self
 			popoverViewController.delegate = self
+		}
+		if segue.identifier == "EditTagSegue" {
+			let nav = segue.destination as! UINavigationController
+			if let newTagController = nav.topViewController as? NewTagIphoneController {
+				newTagController.editExistingTag = selectedTag
+			}
 		}
 	}
 	
@@ -82,6 +89,11 @@ class TagsIphoneController: UITableViewController, UISearchBarDelegate, UIGestur
 		let itemToMove = filteredTags[sourceIndexPath.row]
 		filteredTags.remove(at: sourceIndexPath.row)
 		filteredTags.insert(itemToMove, at: destinationIndexPath.row)
+	}
+	
+	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+		selectedTag = filteredTags[indexPath.row]
+		performSegue(withIdentifier: "EditTagSegue", sender: self)
 	}
 	
 	

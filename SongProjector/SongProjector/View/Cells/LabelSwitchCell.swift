@@ -31,6 +31,11 @@ class LabelSwitchCell: UITableViewCell {
 		view.switch.isOn = initialValueIsOn
 		return view
 	}
+	
+	func setSwitchValueTo(value: Bool) {
+		self.switch.isOn = value
+		delegate?.valueChangedFor(cell: self, uiSwitch: self.switch)
+	}
 
     override func setSelected(_ selected: Bool, animated: Bool) {
     }

@@ -44,7 +44,7 @@ class NewTagController: UIViewController, UITextFieldDelegate {
 			delegate?.hasNewTag()
 			dismiss(animated: true)
 		} else {
-			errorDescription.text = Text.NewTag.error
+			errorDescription.text = Text.NewTag.errorMessage
 		}
 	}
 	

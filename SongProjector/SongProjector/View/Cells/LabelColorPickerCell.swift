@@ -52,6 +52,11 @@ class LabelColorPickerCell: UITableViewCell, ChromaColorPickerDelegate {
 		}
 	}
 	
+	func setColor(color: UIColor) {
+		colorPreview.backgroundColor = color
+		delegate?.colorPickerDidChooseColor(cell: self, colorPicker: colorPicker, color: color)
+	}
+	
 	func colorPickerDidChooseColor(_ colorPicker: ChromaColorPicker, color: UIColor) {
 		colorPreview.backgroundColor = color
 		isActive = !isActive

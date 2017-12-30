@@ -35,6 +35,12 @@ class LabelNumberCell: UITableViewCell {
 		view.valueLabel.text = String(initialValue)
 		return view
 	}
+	
+	func setValue(value: Int) {
+		self.value = value
+		valueLabel.text = String(value)
+		delegate?.numberChangedForCell(cell: self)
+	}
 
     override func setSelected(_ selected: Bool, animated: Bool) {
     }

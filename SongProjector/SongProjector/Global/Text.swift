@@ -18,6 +18,7 @@ class Text: NSObject {
 		static let new = "Nieuw"
 		static let add = "Voeg toe"
 		static let save = "Sla op"
+		static let ok = "Ok"
 	}
 	
 	struct SongService {
@@ -65,8 +66,10 @@ class Text: NSObject {
 	struct NewTag {
 		static let title = "Nieuwe categorie"
 		static let descriptionTitle = "Naam nieuwe categorie"
+		static let descriptionTitlePlaceholder = "Naam"
 		static let pageDescription = "Voer een nieuwe categorie toe"
-		static let error = "Invoer mag niet leeg zijn"
+		static let errorTitle = "Fout"
+		static let errorMessage = "Naam nieuwe categorie mag niet leeg zijn"
 		
 		static let sampleTitel = "Titel"
 		static let sampleLyrics = "Inhoud"
