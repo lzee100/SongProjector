@@ -19,6 +19,7 @@ class Text: NSObject {
 		static let add = "Voeg toe"
 		static let save = "Sla op"
 		static let ok = "Ok"
+		static let selectImage = "Selecteer afbeelding"
 	}
 	
 	struct SongService {
@@ -72,8 +73,12 @@ class Text: NSObject {
 		static let errorMessage = "Naam nieuwe categorie mag niet leeg zijn"
 		
 		static let sampleTitel = "Titel"
-		static let sampleLyrics = "Inhoud"
-		static let background = "Achtergrond"
+		static let sampleLyrics = "Lorem Ipsum is slechts een proeftekst uit het drukkerij- en zetterijwezen. Lorem Ipsum is de standaard proeftekst in deze bedrijfstak sinds de 16e eeuw."
+		
+		static let sectionGeneral = "Categorie"
+		static let sectionTitle = "Titel"
+		static let sectionLyrics = "Inhoud"
+		static let sectionBackground = "Achtergrond"
 		static let fontFamilyDescription = "Lettertype"
 		static let fontSizeDescription = "Grootte lettertype"
 		static let borderSizeDescription = "Dikte rand"
@@ -82,7 +87,8 @@ class Text: NSObject {
 		static let underlined = "Onderstreept"
 		static let bold = "Vet"
 		static let italic = "Cursief"
-		static let backgroundImage = "Achtergrond plaatje"
+		static let backgroundImage = "Achtergrond afbeelding"
+		static let buttonBackgroundImagePicker = "Kies afbeelding"
 	
 	}
 	

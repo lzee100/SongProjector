@@ -37,6 +37,8 @@ class LabelImagePickerCell: UITableViewCell, UIImagePickerControllerDelegate, UI
 		view.descriptionTitle.text = description
 		view.imageContainer.isHidden = true
 		view.button.isEnabled = false
+		view.button.setTitle(Text.Actions.selectImage, for: .normal)
+		view.button.tintColor = .primary
 		view.sender = sender
 		return view
 	}

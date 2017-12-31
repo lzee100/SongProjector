@@ -66,6 +66,7 @@
 		E383475D1FF7DADD008AE69D /* LabelImagePicker.xib in Resources */ = {isa = PBXBuildFile; fileRef = E383475B1FF7DADD008AE69D /* LabelImagePicker.xib */; };
 		E38347601FF7E8B5008AE69D /* LabelPhotoPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E383475E1FF7E8B5008AE69D /* LabelPhotoPickerCell.swift */; };
 		E38347611FF7E8B5008AE69D /* LabelPhotoPickerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E383475F1FF7E8B5008AE69D /* LabelPhotoPickerCell.xib */; };
+		E38347631FF8434D008AE69D /* ImageExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38347621FF8434D008AE69D /* ImageExtensions.swift */; };
 		E3D1CEE71FF6930600F9D7D9 /* LabelPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D1CEE51FF6930600F9D7D9 /* LabelPickerCell.swift */; };
 		E3D1CEE81FF6930600F9D7D9 /* LabelPickerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3D1CEE61FF6930600F9D7D9 /* LabelPickerCell.xib */; };
 		E3D9274F1FEC1AFC006EDE75 /* TagsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D9274E1FEC1AFC006EDE75 /* TagsController.swift */; };
@@ -140,6 +141,7 @@
 		E383475B1FF7DADD008AE69D /* LabelImagePicker.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelImagePicker.xib; sourceTree = "<group>"; };
 		E383475E1FF7E8B5008AE69D /* LabelPhotoPickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelPhotoPickerCell.swift; sourceTree = "<group>"; };
 		E383475F1FF7E8B5008AE69D /* LabelPhotoPickerCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelPhotoPickerCell.xib; sourceTree = "<group>"; };
+		E38347621FF8434D008AE69D /* ImageExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageExtensions.swift; sourceTree = "<group>"; };
 		E3D1CEE51FF6930600F9D7D9 /* LabelPickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelPickerCell.swift; sourceTree = "<group>"; };
 		E3D1CEE61FF6930600F9D7D9 /* LabelPickerCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelPickerCell.xib; sourceTree = "<group>"; };
 		E3D9274E1FEC1AFC006EDE75 /* TagsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsController.swift; sourceTree = "<group>"; };
@@ -266,6 +268,7 @@
 				E3D927561FECF622006EDE75 /* ViewExtensions.swift */,
 				E3355D6E1FEDA645004C03AE /* TextViewExtensions.swift */,
 				E3355D701FEE6436004C03AE /* ClusterExtensions.swift */,
+				E38347621FF8434D008AE69D /* ImageExtensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -486,6 +489,7 @@
 				E31F87BD1FE7035D00D5D4BA /* Text.swift in Sources */,
 				E311715A1FE5A0A3008D9D51 /* Notifications.swift in Sources */,
 				E36F41681FEE965200E989E5 /* NewSongIphoneController.swift in Sources */,
+				E38347631FF8434D008AE69D /* ImageExtensions.swift in Sources */,
 				E31171531FE5A071008D9D51 /* ArrayExtensions.swift in Sources */,
 				E311716A1FE5A0E7008D9D51 /* NewSongServiceController.swift in Sources */,
 				E31171541FE5A071008D9D51 /* UIColorExtension.swift in Sources */,

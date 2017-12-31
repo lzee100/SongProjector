@@ -15,7 +15,10 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 	@IBOutlet var cancel: UIBarButtonItem!
 	@IBOutlet var save: UIBarButtonItem!
 	@IBOutlet var titlePreview: UILabel!
-	@IBOutlet var lyricsPreview: UILabel!
+	@IBOutlet var lyricsPreview: UITextView!
+	@IBOutlet var imageBackground: UIImageView!
+	@IBOutlet var titleHeightConstraint: NSLayoutConstraint!
+	
 	@IBOutlet var tableView: UITableView!
 	
 	enum Section: String {
@@ -155,13 +158,13 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 	func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
 		switch Section.for(section) {
 		case .Name:
-			return Text.NewTag.descriptionTitle
+			return Text.NewTag.sectionGeneral.capitalized
 		case .Titel:
-			return Text.NewTag.sampleTitel.capitalized
+			return Text.NewTag.sectionTitle.capitalized
 		case .Inhoud:
-			return Text.NewTag.sampleLyrics.capitalized
+			return Text.NewTag.sectionLyrics.capitalized
 		case .Achtergrond:
-			return Text.NewTag.background.capitalized
+			return Text.NewTag.sectionBackground.capitalized
 		}
 	}
 	
@@ -173,19 +176,16 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 			switch Cell.for(indexPath) {
 			case .fontFamily:
 				let cell = cellTitelFontFamily
-				tableView.beginUpdates()
 				cell.isActive = !cell.isActive
-				tableView.endUpdates()
+				reloadDataWithScrollTo(cell)
 			case .textColor:
 				let cell = cellTitelTextColor
-				tableView.beginUpdates()
 				cell.isActive = !cell.isActive
-				tableView.endUpdates()
+				reloadDataWithScrollTo(cell)
 			case .borderColor:
 				let cell = cellTitelBorderColor
-				tableView.beginUpdates()
 				cell.isActive = !cell.isActive
-				tableView.endUpdates()
+				reloadDataWithScrollTo(cell)
 			default:
 				break
 			}
@@ -193,29 +193,23 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 			switch Cell.for(indexPath) {
 			case .fontFamily:
 				let cell = cellLyricsFontFamily
-				tableView.beginUpdates()
 				cell.isActive = !cell.isActive
-				tableView.endUpdates()
+				reloadDataWithScrollTo(cell)
 			case .textColor:
 				let cell = cellLyricsTextColor
-				tableView.beginUpdates()
 				cell.isActive = !cell.isActive
-				tableView.endUpdates()
+				reloadDataWithScrollTo(cell)
 			case .borderColor:
 				let cell = cellLyricsBorderColor
-				tableView.beginUpdates()
 				cell.isActive = !cell.isActive
-				tableView.endUpdates()
+				reloadDataWithScrollTo(cell)
 			default:
 				break
 			}
 		case .Achtergrond:
 			let cell = cellPhotoPicker
 			cell.isActive = !cell.isActive
-			tableView.beginUpdates()
-			tableView.endUpdates()
-			let indexSet = IndexSet(integersIn: Section.all.count - 1...Section.all.count - 1)
-			tableView.reloadSections(indexSet, with: .top)
+			reloadDataWithScrollTo(cell)
 		}
 	}
 	
@@ -394,9 +388,9 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 		cell.isActive = !cell.isActive
 		tableView.beginUpdates()
 		tableView.endUpdates()
+		tableView.reloadData()
 		buildPreview()
 	}
-
 
 	private func setup() {
 		
@@ -452,6 +446,9 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 			cellLyricsBold.setSwitchValueTo(value: tag.isLyricsBold)
 			cellLyricsItalic.setSwitchValueTo(value: tag.isLyricsItalian)
 			cellLyricsUnderLined.setSwitchValueTo(value: tag.isLyricsUnderlined)
+			if let image = tag.backgroundImage {
+				cellPhotoPicker.setImage(image: image)
+			}
 		}
 		
 		cancel.title = Text.Actions.cancel
@@ -461,10 +458,16 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 		tap.cancelsTouchesInView = false
 		view.addGestureRecognizer(tap)
 		
-		titlePreview.attributedText = NSAttributedString(string: Text.NewTag.sampleTitel, attributes: titleAttributes)
-		lyricsPreview.attributedText = NSAttributedString(string: Text.NewTag.sampleLyrics, attributes: lyricsAttributes)
-		
+		buildPreview()
 	}
+	
+	private func reloadDataWithScrollTo(_ cell: UITableViewCell) {
+		tableView.reloadData()
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+			self.tableView.scrollRectToVisible(cell.frame, animated: true)
+		}
+	}
+
 	
 	private func getTitelCellFor(indexPath: IndexPath) -> UITableViewCell {
 		switch Cell.for(indexPath) {
@@ -498,6 +501,26 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 		
 		let attLyrics = NSAttributedString(string: Text.NewTag.sampleLyrics, attributes: lyricsAttributes)
 		lyricsPreview.attributedText = attLyrics
+		
+		if let font = titleAttributes[.font] as? UIFont {
+			titleHeightConstraint.constant = font.pointSize
+		}
+		
+		if let image = cellPhotoPicker.pickedImage {
+			let scaledImage = UIImage.scaleImageToSize(image: image, size: imageBackground.frame.size)
+			imageBackground.image = scaledImage
+		}
+	}
+	
+	private func saveImage(image: UIImage, tag: Tag) -> String? {
+		if let data = UIImagePNGRepresentation(image) {
+			let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+			let imagePath = String(tag.id) + ".png"
+			let filename = documentsDirectory.appendingPathComponent(imagePath)
+			try? data.write(to: filename)
+			return imagePath
+		}
+		return nil
 	}
 	
 	@IBAction func savePressed(_ sender: UIBarButtonItem) {
@@ -508,63 +531,68 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 			message.addAction(UIAlertAction(title: Text.Actions.close, style: UIAlertActionStyle.default,handler: nil))
 			
 			self.present(message, animated: true, completion: nil)
-		}
-		
-		let tag = editExistingTag != nil ? editExistingTag! : CoreTag.createEntity()
-		
-		tag.title = tagName
-		
-		if let titleFont = titleAttributes[.font] as? UIFont {
-			tag.titleFontName = titleFont.familyName
-			tag.titleTextSize = Float(titleFont.pointSize)
-			tag.isTitleBold = titleFont.isBold
-			tag.isTitleItalian = titleFont.isItalic
 			
-		}
-		if let titleBorderSize = titleAttributes[.strokeWidth] as? Int {
-			tag.titleBorderSize = Int16(titleBorderSize)
-		}
-		if let titleColor = titleAttributes[.foregroundColor] as? UIColor {
-			tag.textColorTitle = titleColor
-		}
-		if let titleStrokeColor = titleAttributes[.strokeColor] as? UIColor {
-			tag.borderColorTitle = titleStrokeColor
-		}
-		if let _ = titleAttributes[.underlineStyle] as? Int {
-			tag.isTitleUnderlined = true
 		} else {
-			tag.isTitleUnderlined = false
-		}
-		
-		if let lyricsFont = lyricsAttributes[.font] as? UIFont {
-			tag.lyricsFontName = lyricsFont.familyName
-			tag.lyricsTextSize = Float(lyricsFont.pointSize)
-			tag.isLyricsBold = lyricsFont.isBold
-			tag.isLyricsItalian = lyricsFont.isItalic
 			
-		}
-		if let lyricsBorderSize = lyricsAttributes[.strokeWidth] as? Int {
-			tag.lyricsBorderSize = Int16(lyricsBorderSize)
-		}
-		if let lyricsColor = lyricsAttributes[.foregroundColor] as? UIColor {
-			tag.textColorLyrics = lyricsColor
-		}
-		if let lyricsStrokeColor = lyricsAttributes[.strokeColor] as? UIColor {
-			tag.borderColorLyrics = lyricsStrokeColor
-		}
-		if let _ = lyricsAttributes[.underlineStyle] as? Int {
-			tag.isLyricsUnderlined = true
-		} else {
-			tag.isLyricsUnderlined = false
-		}
-		
-		CoreTag.saveContext()
-//		if editExistingTag != nil {
-//			navigationController?.popViewController(animated: true)
-//		} else {
+			let tag = editExistingTag != nil ? editExistingTag! : CoreTag.createEntity()
+			
+			tag.title = tagName
+			
+			if let titleFont = titleAttributes[.font] as? UIFont {
+				tag.titleFontName = titleFont.familyName
+				tag.titleTextSize = Float(titleFont.pointSize)
+				tag.isTitleBold = titleFont.isBold
+				tag.isTitleItalian = titleFont.isItalic
+				
+			}
+			if let titleBorderSize = titleAttributes[.strokeWidth] as? Int {
+				tag.titleBorderSize = Int16(titleBorderSize)
+			}
+			if let titleColor = titleAttributes[.foregroundColor] as? UIColor {
+				tag.textColorTitle = titleColor
+			}
+			if let titleStrokeColor = titleAttributes[.strokeColor] as? UIColor {
+				tag.borderColorTitle = titleStrokeColor
+			}
+			if let _ = titleAttributes[.underlineStyle] as? Int {
+				tag.isTitleUnderlined = true
+			} else {
+				tag.isTitleUnderlined = false
+			}
+			
+			if let lyricsFont = lyricsAttributes[.font] as? UIFont {
+				tag.lyricsFontName = lyricsFont.familyName
+				tag.lyricsTextSize = Float(lyricsFont.pointSize)
+				tag.isLyricsBold = lyricsFont.isBold
+				tag.isLyricsItalian = lyricsFont.isItalic
+				
+			}
+			if let lyricsBorderSize = lyricsAttributes[.strokeWidth] as? Int {
+				tag.lyricsBorderSize = Int16(lyricsBorderSize)
+			}
+			if let lyricsColor = lyricsAttributes[.foregroundColor] as? UIColor {
+				tag.textColorLyrics = lyricsColor
+			}
+			if let lyricsStrokeColor = lyricsAttributes[.strokeColor] as? UIColor {
+				tag.borderColorLyrics = lyricsStrokeColor
+			}
+			if let _ = lyricsAttributes[.underlineStyle] as? Int {
+				tag.isLyricsUnderlined = true
+			} else {
+				tag.isLyricsUnderlined = false
+			}
+			
+			if let image = cellPhotoPicker.pickedImage {
+				tag.imagePath = saveImage(image: image, tag: tag)
+			}
+			
+			CoreTag.saveContext()
+			//		if editExistingTag != nil {
+			//			navigationController?.popViewController(animated: true)
+			//		} else {
 			dismiss(animated: true)
-//		}
-		
+			//		}
+		}
 	}
 	
 	@objc func dismissKeyboard() {
@@ -574,5 +602,6 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 	@IBAction func cancelPressed(_ sender: UIBarButtonItem) {
 		dismiss(animated: true)
 	}
+	
 	
 }

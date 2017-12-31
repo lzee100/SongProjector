@@ -20,9 +20,9 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	@IBOutlet var new: UIBarButtonItem!
 	@IBOutlet var sheetDisplaySwipeView: UIView!
 
-	@IBOutlet var sheetDisplayerPrevious: UIImageView!
-	@IBOutlet var sheetDisplayer: UIImageView!
-	@IBOutlet var sheetDisplayerNext: UIImageView!
+	@IBOutlet var sheetDisplayerPrevious: UIView!
+	@IBOutlet var sheetDisplayer: UIView!
+	@IBOutlet var sheetDisplayerNext: UIView!
 	
 	@IBOutlet var sheetDisplayerContainerHeight: NSLayoutConstraint!
 	@IBOutlet var sheetDisplayerPreviousYCenterConstraint: NSLayoutConstraint!

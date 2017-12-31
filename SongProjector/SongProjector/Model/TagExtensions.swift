@@ -60,6 +60,16 @@ extension Tag {
 		}
 	}
 	
+	var backgroundImage: UIImage? {
+		if let imagePath = imagePath {
+			let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+			let filePath = documentsDirectory.appendingPathComponent(imagePath).path
+			return UIImage(contentsOfFile: filePath)
+		} else {
+			return nil
+		}
+	}
+	
 	func getTitleAttributes() -> [NSAttributedStringKey: Any] {
 		var attributes : [NSAttributedStringKey: Any] = [:]
 		if let fontFamily = self.titleFontName {

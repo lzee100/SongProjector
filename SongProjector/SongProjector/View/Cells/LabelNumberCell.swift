@@ -32,6 +32,8 @@ class LabelNumberCell: UITableViewCell {
 		view.descriptionTitle.text = description
 		view.positive = positive
 		view.value = initialValue
+		view.plus.tintColor = .primary
+		view.minus.tintColor = .primary
 		view.valueLabel.text = String(initialValue)
 		return view
 	}
@@ -66,7 +68,7 @@ class LabelNumberCell: UITableViewCell {
 	
 	@IBAction func plusPressed(_ sender: UIButton) {
 			if positive {
-				if value < 60 {
+				if value < 49 {
 					value += 1
 					self.valueLabel.text = String(value)
 					delegate?.numberChangedForCell(cell: self)

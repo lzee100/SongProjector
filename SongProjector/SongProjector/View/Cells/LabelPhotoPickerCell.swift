@@ -26,6 +26,7 @@ class LabelPhotoPickerCell: UITableViewCell, UIImagePickerControllerDelegate, UI
 		var delegate: LabelPhotoPickerCellDelegate?
 		var isActive = false { didSet { showImage() } }
 		let imagePicker = UIImagePickerController()
+		var pickedImage: UIImage?
 		var sender: UIViewController?
 		var preferredHeight: CGFloat {
 			return isActive ? 360 : 60
@@ -36,6 +37,8 @@ class LabelPhotoPickerCell: UITableViewCell, UIImagePickerControllerDelegate, UI
 			view.id = id
 			view.descriptionTitle.text = description
 			view.imageContainer.isHidden = true
+			view.imageThumbnail.layer.cornerRadius = CGFloat(5)
+			view.imagePreview.layer.cornerRadius = CGFloat(10)
 			view.button.isEnabled = false
 			view.sender = sender
 			return view
@@ -46,7 +49,10 @@ class LabelPhotoPickerCell: UITableViewCell, UIImagePickerControllerDelegate, UI
 		}
 		
 		func setImage(image: UIImage) {
-			
+			imageThumbnail.image = image
+			imagePreview.image = image
+			pickedImage = image
+			layoutIfNeeded()
 		}
 		
 		func showImage() {
@@ -54,11 +60,13 @@ class LabelPhotoPickerCell: UITableViewCell, UIImagePickerControllerDelegate, UI
 				imageContainer.isHidden = false
 				button.isEnabled = true
 				buttonHeightConstraint.constant = 30
-				imagePreview.isHidden = true
+				imageThumbnail.isHidden = true
+				imagePreview.isHidden = false
 			} else {
 				imageContainer.isHidden = true
 				button.isEnabled = false
-				imagePreview.isHidden = false
+				imageThumbnail.isHidden = false
+				imagePreview.isHidden = true
 				buttonHeightConstraint.constant = 1
 			}
 			
@@ -70,8 +78,14 @@ class LabelPhotoPickerCell: UITableViewCell, UIImagePickerControllerDelegate, UI
 	
 	func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
 			if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
-				imageThumbnail.contentMode = .scaleAspectFit
-				imageThumbnail.image = pickedImage
+				if let scaledImage = UIImage.scaleImageToSize(image: pickedImage, size: imageThumbnail.frame.size) {
+					imageThumbnail.image = scaledImage
+				}
+				if let scaledImage = UIImage.scaleImageToSize(image: pickedImage, size: imagePreview.frame.size) {
+					imagePreview.image = scaledImage
+				}
+				imagePreview.contentMode = .scaleAspectFill
+				self.pickedImage = pickedImage
 				delegate?.didSelectImage(cell: self)
 			}
 			if let sender = sender {

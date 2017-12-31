@@ -10,6 +10,7 @@ import UIKit
 
 class SheetController: UIViewController {
 	
+	@IBOutlet var backgroundImageView: UIImageView!
 	@IBOutlet var titleSheet: UILabel!
 	@IBOutlet var lyricsSheet: UITextView!
 	@IBOutlet var heightConstraint: NSLayoutConstraint!
@@ -51,6 +52,12 @@ class SheetController: UIViewController {
 		} else if let lyrics = lyrics {
 			lyricsSheet.text = lyrics
 		}
+		
+		if let backgroundImage = tag?.backgroundImage, let imageScaled = UIImage.scaleImageToSize(image: backgroundImage, size: view.frame.size) {
+			backgroundImageView.contentMode = .scaleToFill
+			backgroundImageView.image = imageScaled
+		}
+		
 	}
     
 	func asImage() -> UIImage {
