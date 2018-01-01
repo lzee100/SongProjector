@@ -9,11 +9,19 @@
 import UIKit
 import CoreData
 
+var externalDisplayWindow: UIWindow?
+var externalDisplayWindowRatio: CGFloat? {
+	if let height = externalDisplayWindow?.frame.size.height, let widht = externalDisplayWindow?.frame.size.width {
+		return height/widht
+	} else {
+		return nil
+	}
+}
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
 	var window: UIWindow?
-	var externalDisplayWindow: UIWindow?
 
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
 		addDataBaseObjects()
@@ -100,7 +108,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	
 	private func setupAirPlay() {
 		
-		checkForExternalDisplay()
 		
 		NotificationCenter.default.addObserver(
 			forName: Notification.Name.UIScreenDidConnect,
@@ -114,23 +121,34 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			queue: nil,
 			using: displayDisconnected
 		)
-		
+		checkForExternalDisplay()
+
 	}
 	
 	func displayConnected(notification: Notification) {
 		checkForExternalDisplay()
+//		registerForScreenNotifications()
+	}
+	
+	func registerForScreenNotifications(){
+		let notificationCentre = NotificationCenter.default
+		notificationCentre.addObserver(self, selector: #selector(ExternalDisplayController.setupScreen), name: NSNotification.Name.UIScreenDidConnect, object: nil)
 	}
 	
 	func checkForExternalDisplay() {
-		guard let screen = UIScreen.screens.last
-			else { return }
-		
-		if externalDisplayWindow == nil {
-			externalDisplayWindow = UIWindow(
-				frame: screen.bounds
-			)
-			externalDisplayWindow?.screen = screen
-			NotificationCenter.default.post(name: Notification.Name("externalScreenIsActive"), object: nil, userInfo: ["screen": screen])
+		if UIScreen.screens.count > 1 {
+			guard let screen = UIScreen.screens.last
+				else { return }
+			print(screen.bounds)
+			if externalDisplayWindow == nil {
+				externalDisplayWindow = UIWindow(
+					frame: screen.bounds
+				)
+				externalDisplayWindow?.screen = screen
+				NotificationCenter.default.post(name: Notification.Name("externalScreenIsActive"), object: nil, userInfo: ["screen": screen])
+				externalDisplayWindow?.isHidden = false
+			}
+			
 		}
 	}
 	

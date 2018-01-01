@@ -14,11 +14,13 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 	
 	@IBOutlet var cancel: UIBarButtonItem!
 	@IBOutlet var save: UIBarButtonItem!
+	@IBOutlet var sheetPreview: UIView!
 	@IBOutlet var titlePreview: UILabel!
 	@IBOutlet var lyricsPreview: UITextView!
 	@IBOutlet var imageBackground: UIImageView!
 	@IBOutlet var titleHeightConstraint: NSLayoutConstraint!
 	
+	@IBOutlet var sheetPreviewAspectRatio: NSLayoutConstraint!
 	@IBOutlet var tableView: UITableView!
 	
 	enum Section: String {
@@ -394,6 +396,13 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 
 	private func setup() {
 		
+		if let externalDisplayWindowRatio = externalDisplayWindowRatio {
+		sheetPreviewAspectRatio.isActive = false
+		sheetPreview.addConstraint(NSLayoutConstraint(item: sheetPreview, attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.equal, toItem: sheetPreview, attribute: NSLayoutAttribute.width, multiplier: externalDisplayWindowRatio, constant: 0))
+		} else {
+			sheetPreviewAspectRatio.isActive = true
+		}
+		
 		tableView.register(cell: Cells.labelNumberCell)
 		tableView.register(cell: Cells.LabelPickerCell)
 		tableView.register(cell: Cells.LabelSwitchCell)
@@ -496,6 +505,7 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 	}
 	
 	private func buildPreview() {
+		
 		let attText = NSAttributedString(string: Text.NewTag.sampleTitel, attributes: titleAttributes)
 		titlePreview.attributedText = attText
 		
@@ -509,6 +519,16 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 		if let image = cellPhotoPicker.pickedImage {
 			let scaledImage = UIImage.scaleImageToSize(image: image, size: imageBackground.frame.size)
 			imageBackground.image = scaledImage
+		}
+		
+		if let externalDisplayWindow = externalDisplayWindow {
+			if let sheetcontroller = storyboard?.instantiateViewController(withIdentifier: "SheetController") as? SheetController {
+				sheetcontroller.lyrics = Text.NewTag.sampleLyrics
+				sheetcontroller.view.frame = externalDisplayWindow.frame
+				externalDisplayWindow.addSubview(sheetcontroller.view)
+			}
+			let view = UIView(frame: externalDisplayWindow.frame)
+			view.backgroundColor = .red
 		}
 	}
 	

@@ -387,6 +387,22 @@
             </objects>
             <point key="canvasLocation" x="-666" y="-1863"/>
         </scene>
+        <!--View Controller-->
+        <scene sceneID="2Ip-Ge-oz8">
+            <objects>
+                <viewController storyboardIdentifier="ExternalDisplayController" id="X2G-FW-fs6" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="XC5-IF-vy4">
+                        <rect key="frame" x="0.0" y="0.0" width="400" height="300"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="AbA-CK-dTz"/>
+                    </view>
+                    <size key="freeformSize" width="400" height="300"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ZIi-WB-gFU" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1829" y="-1245"/>
+        </scene>
         <!--Navigation Controller-->
         <scene sceneID="k0X-hc-PmV">
             <objects>
@@ -864,11 +880,13 @@
                     </navigationItem>
                     <connections>
                         <outlet property="cancel" destination="Hsc-Er-jg8" id="jko-JS-vhk"/>
-                        <outlet property="imageBackground" destination="Zy4-Z2-I9W" id="Wh6-L6-mdU"/>
-                        <outlet property="lyricsPreview" destination="lHb-qy-lbk" id="EL2-EU-1d2"/>
+                        <outlet property="imageBackground" destination="Zy4-Z2-I9W" id="Uk4-Td-i4x"/>
+                        <outlet property="lyricsPreview" destination="lHb-qy-lbk" id="0Xm-Ry-23f"/>
                         <outlet property="save" destination="q29-Ro-Aer" id="9gw-tt-1en"/>
+                        <outlet property="sheetPreview" destination="NbQ-6v-uI6" id="zAD-sW-HjZ"/>
+                        <outlet property="sheetPreviewAspectRatio" destination="f9f-Oh-CNL" id="kwj-l6-Ib9"/>
                         <outlet property="tableView" destination="DEX-s9-d0x" id="z1D-xz-7XC"/>
-                        <outlet property="titleHeightConstraint" destination="Vnb-s1-Fip" id="pzQ-HH-adP"/>
+                        <outlet property="titleHeightConstraint" destination="Vnb-s1-Fip" id="K8J-kx-LxE"/>
                         <outlet property="titlePreview" destination="0Oc-AW-HfQ" id="SpX-Cq-Vxo"/>
                     </connections>
                 </viewController>

@@ -20,9 +20,9 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	@IBOutlet var new: UIBarButtonItem!
 	@IBOutlet var sheetDisplaySwipeView: UIView!
 
-	@IBOutlet var sheetDisplayerPrevious: UIView!
-	@IBOutlet var sheetDisplayer: UIView!
-	@IBOutlet var sheetDisplayerNext: UIView!
+	@IBOutlet var sheetDisplayerPrevious: UIImageView!
+	@IBOutlet var sheetDisplayer: UIImageView!
+	@IBOutlet var sheetDisplayerNext: UIImageView!
 	
 	@IBOutlet var sheetDisplayerContainerHeight: NSLayoutConstraint!
 	@IBOutlet var sheetDisplayerPreviousYCenterConstraint: NSLayoutConstraint!
@@ -40,7 +40,6 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 
 	// MARK: - Private Properties
 	
-	private var externalWindow: UIWindow?
 	private var hasTitle = true
 	private var hasEmptySheet = false
 	private var emptySheet = CoreSheet.createEntityNOTsave()
@@ -122,22 +121,17 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 			let cell = tableView.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath)
 			if let cell = cell as? BasicCell {
-				print(indexPath.row)
 				if clusters.count < 1 {
-					if let cell = cell as? BasicCell {
-						cell.setup(title: Text.NewSongService.noSelectedSongs)
-					}
+					cell.setup(title: Text.NewSongService.noSelectedSongs)
 					return cell
 				}
 				if sheetsForSelectedCluster != nil && indexPath.row > selectedClusterRow && indexPath.row <= (selectedClusterRow + (sheetsForSelectedCluster?.count ?? 0)){
 					// sheets
-					print("sheet \(indexPath.row)")
 					let index = indexPath.row - (selectedClusterRow + 1)
 					cell.setup(title: sheetsForSelectedCluster?[index].title, icon: Cells.songIcon)
 					cell.selectedCell = selectedSheet?.id == sheetsForSelectedCluster?[index].id
 					cell.isInnerCell = true
 				} else {
-					print("cluster \(indexPath.row)")
 					let index = getIndexForCluster(indexPath)
 					cell.setup(title: clustersOrdened[index].title, icon: Cells.songIcon)
 					cell.isInnerCell = false
@@ -372,7 +366,6 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	func setExternalDisplay(_ notification: Notification) {
 		externalScreen = notification.userInfo?["screen"] as? UIScreen
 		let appDelegate = UIApplication.shared.delegate as! AppDelegate
-		externalWindow = appDelegate.externalDisplayWindow
 		updateSheetRatio()
 		displaySheets()
 	}
