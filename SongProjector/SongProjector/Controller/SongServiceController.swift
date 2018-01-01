@@ -358,16 +358,16 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 		sheetsToDisplay = []
 		if let sheetsForSelectedCluster = sheetsForSelectedCluster {
 			
-			if let sheetController = storyboard?.instantiateViewController(withIdentifier: "SheetController") as? SheetController {
-				sheetController.setView(CGRect(x: 0, y: 0, width: sheetDisplay.frame.width, height: sheetDisplay.frame.height))
-				for sheet in sheetsForSelectedCluster {
-					sheetController.isEmptySheet = sheet.title == Text.Sheet.emptySheetTitle ? true : false
-					sheetController.hasTitle = hasTitle
-					sheetController.songTitle = selectedCluster?.title
-					sheetController.lyrics = sheet.lyrics
-					sheetsToDisplay.append(sheetController.asImage())
-				}
-			}
+//			if let sheetController = storyboard?.instantiateViewController(withIdentifier: "SheetController") as? SheetController {
+//				sheetController.setView(CGRect(x: 0, y: 0, width: sheetDisplay.frame.width, height: sheetDisplay.frame.height))
+//				for sheet in sheetsForSelectedCluster {
+//					sheetController.isEmptySheet = sheet.title == Text.Sheet.emptySheetTitle ? true : false
+//					sheetController.hasTitle = hasTitle
+//					sheetController.songTitle = selectedCluster?.title
+//					sheetController.lyrics = sheet.lyrics
+//					sheetsToDisplay.append(sheetController.asImage())
+//				}
+//			}
 		}
 	}
 	

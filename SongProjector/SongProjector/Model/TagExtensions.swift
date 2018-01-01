@@ -70,10 +70,10 @@ extension Tag {
 		}
 	}
 	
-	func getTitleAttributes() -> [NSAttributedStringKey: Any] {
+	func getTitleAttributes(_ scaleFactor: CGFloat = 1) -> [NSAttributedStringKey: Any] {
 		var attributes : [NSAttributedStringKey: Any] = [:]
 		if let fontFamily = self.titleFontName {
-			var font = UIFont(name: fontFamily, size: CGFloat(self.titleTextSize))
+			var font = UIFont(name: fontFamily, size: (CGFloat(self.titleTextSize) * scaleFactor))
 			if self.isTitleBold {
 				font = font?.setBoldFnc()
 			}
@@ -101,10 +101,10 @@ extension Tag {
 		return attributes
 	}
 	
-	func getLyricsAttributes() -> [NSAttributedStringKey: Any] {
+	func getLyricsAttributes(_ scaleFactor: CGFloat = 1) -> [NSAttributedStringKey: Any] {
 		var attributes : [NSAttributedStringKey: Any] = [:]
 		if let fontFamily = self.lyricsFontName {
-			var font = UIFont(name: fontFamily, size: CGFloat(self.lyricsTextSize))
+			var font = UIFont(name: fontFamily, size: (CGFloat(self.lyricsTextSize) * scaleFactor))
 			if self.isLyricsBold {
 				font = font?.setBoldFnc()
 			}

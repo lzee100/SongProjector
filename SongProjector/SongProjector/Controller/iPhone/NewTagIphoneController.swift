@@ -522,13 +522,21 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 		}
 		
 		if let externalDisplayWindow = externalDisplayWindow {
-			if let sheetcontroller = storyboard?.instantiateViewController(withIdentifier: "SheetController") as? SheetController {
-				sheetcontroller.lyrics = Text.NewTag.sampleLyrics
-				sheetcontroller.view.frame = externalDisplayWindow.frame
-				externalDisplayWindow.addSubview(sheetcontroller.view)
-			}
-			let view = UIView(frame: externalDisplayWindow.frame)
-			view.backgroundColor = .red
+//			if let sheetcontroller = storyboard?.instantiateViewController(withIdentifier: "SheetController") as? SheetController {
+//				sheetcontroller.lyrics = Text.NewTag.sampleLyrics
+//				sheetcontroller.view.frame = externalDisplayWindow.frame
+//				externalDisplayWindow.addSubview(sheetcontroller.view)
+//			}
+		let view = SheetView(frame: externalDisplayWindow.frame)
+			view.selectedTag = editExistingTag
+			view.songTitle = Text.NewTag.sampleTitel
+			view.lyrics = Text.NewTag.sampleLyrics
+			view.scaleFactor = externalDisplayWindow.bounds.size.height / sheetPreview.frame.size.height
+			view.previewTitleAttributes = titleAttributes
+			view.previewLyricsAttributes = lyricsAttributes
+			view.update()
+			externalDisplayWindow.addSubview(view)
+			
 		}
 	}
 	

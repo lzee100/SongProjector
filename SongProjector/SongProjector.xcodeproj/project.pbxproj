@@ -68,13 +68,12 @@
 		E38347611FF7E8B5008AE69D /* LabelPhotoPickerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E383475F1FF7E8B5008AE69D /* LabelPhotoPickerCell.xib */; };
 		E38347631FF8434D008AE69D /* ImageExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38347621FF8434D008AE69D /* ImageExtensions.swift */; };
 		E38347651FF9382F008AE69D /* ExternalDisplayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38347641FF9382F008AE69D /* ExternalDisplayController.swift */; };
-		E38347671FFA5099008AE69D /* SheetView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E38347661FFA5099008AE69D /* SheetView.xib */; };
-		E38347691FFA512D008AE69D /* SheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38347681FFA512D008AE69D /* SheetController.swift */; };
+		E38347671FFA5099008AE69D /* SheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E38347661FFA5099008AE69D /* SheetController.xib */; };
+		E38347691FFA512D008AE69D /* SheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38347681FFA512D008AE69D /* SheetView.swift */; };
 		E3D1CEE71FF6930600F9D7D9 /* LabelPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D1CEE51FF6930600F9D7D9 /* LabelPickerCell.swift */; };
 		E3D1CEE81FF6930600F9D7D9 /* LabelPickerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3D1CEE61FF6930600F9D7D9 /* LabelPickerCell.xib */; };
 		E3D9274F1FEC1AFC006EDE75 /* TagsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D9274E1FEC1AFC006EDE75 /* TagsController.swift */; };
 		E3D927511FEC3036006EDE75 /* NewTagController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D927501FEC3036006EDE75 /* NewTagController.swift */; };
-		E3D927531FECF4E5006EDE75 /* SheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D927521FECF4E5006EDE75 /* SheetController.swift */; };
 		E3D927571FECF622006EDE75 /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D927561FECF622006EDE75 /* ViewExtensions.swift */; };
 		E7226C9E497B8BF49AA031B2 /* Pods_SongProjector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95070415C3C6BD5B7639F73A /* Pods_SongProjector.framework */; };
 /* End PBXBuildFile section */
@@ -146,13 +145,12 @@
 		E383475F1FF7E8B5008AE69D /* LabelPhotoPickerCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelPhotoPickerCell.xib; sourceTree = "<group>"; };
 		E38347621FF8434D008AE69D /* ImageExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageExtensions.swift; sourceTree = "<group>"; };
 		E38347641FF9382F008AE69D /* ExternalDisplayController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalDisplayController.swift; sourceTree = "<group>"; };
-		E38347661FFA5099008AE69D /* SheetView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SheetView.xib; sourceTree = "<group>"; };
-		E38347681FFA512D008AE69D /* SheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetController.swift; sourceTree = "<group>"; };
+		E38347661FFA5099008AE69D /* SheetController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SheetController.xib; sourceTree = "<group>"; };
+		E38347681FFA512D008AE69D /* SheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetView.swift; sourceTree = "<group>"; };
 		E3D1CEE51FF6930600F9D7D9 /* LabelPickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelPickerCell.swift; sourceTree = "<group>"; };
 		E3D1CEE61FF6930600F9D7D9 /* LabelPickerCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelPickerCell.xib; sourceTree = "<group>"; };
 		E3D9274E1FEC1AFC006EDE75 /* TagsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsController.swift; sourceTree = "<group>"; };
 		E3D927501FEC3036006EDE75 /* NewTagController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTagController.swift; sourceTree = "<group>"; };
-		E3D927521FECF4E5006EDE75 /* SheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetController.swift; sourceTree = "<group>"; };
 		E3D927561FECF622006EDE75 /* ViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewExtensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -238,8 +236,8 @@
 			children = (
 				E311716C1FE5A162008D9D51 /* Cells */,
 				E311717D1FE5A5F5008D9D51 /* StoryboardiPad.storyboard */,
-				E38347661FFA5099008AE69D /* SheetView.xib */,
-				E38347681FFA512D008AE69D /* SheetController.swift */,
+				E38347661FFA5099008AE69D /* SheetController.xib */,
+				E38347681FFA512D008AE69D /* SheetView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -258,7 +256,6 @@
 				E311715D1FE5A0E7008D9D51 /* PlayersController.swift */,
 				E3D9274E1FEC1AFC006EDE75 /* TagsController.swift */,
 				E3D927501FEC3036006EDE75 /* NewTagController.swift */,
-				E3D927521FECF4E5006EDE75 /* SheetController.swift */,
 				E309DCE91FF45A8A00C3D135 /* MoreSplitViewController.swift */,
 				E38347641FF9382F008AE69D /* ExternalDisplayController.swift */,
 			);
@@ -402,7 +399,7 @@
 				E31171761FE5A1A0008D9D51 /* BasicCell.xib in Resources */,
 				E38347611FF7E8B5008AE69D /* LabelPhotoPickerCell.xib in Resources */,
 				E31171781FE5A1A0008D9D51 /* TagCellCollection.xib in Resources */,
-				E38347671FFA5099008AE69D /* SheetView.xib in Resources */,
+				E38347671FFA5099008AE69D /* SheetController.xib in Resources */,
 				E36F41701FF06D2F00E989E5 /* SheetCollectionCell.xib in Resources */,
 				E383475D1FF7DADD008AE69D /* LabelImagePicker.xib in Resources */,
 				E311713E1FE59DA3008D9D51 /* LaunchScreen.storyboard in Resources */,
@@ -506,7 +503,6 @@
 				E311717B1FE5A1A0008D9D51 /* TagCellCollection.swift in Sources */,
 				E31171671FE5A0E7008D9D51 /* MoreController.swift in Sources */,
 				E38347651FF9382F008AE69D /* ExternalDisplayController.swift in Sources */,
-				E3D927531FECF4E5006EDE75 /* SheetController.swift in Sources */,
 				E31171651FE5A0E7008D9D51 /* PlayersController.swift in Sources */,
 				E31171771FE5A1A0008D9D51 /* NewSongSheetCell.swift in Sources */,
 				E31171331FE59DA3008D9D51 /* ViewController.swift in Sources */,
@@ -530,7 +526,7 @@
 				E3D9274F1FEC1AFC006EDE75 /* TagsController.swift in Sources */,
 				E31171561FE5A071008D9D51 /* NSManagedObjectExtension.swift in Sources */,
 				E309DCFF1FF501C700C3D135 /* NewTagIphoneController.swift in Sources */,
-				E38347691FFA512D008AE69D /* SheetController.swift in Sources */,
+				E38347691FFA512D008AE69D /* SheetView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
