@@ -65,7 +65,7 @@
                                 <rect key="frame" x="0.0" y="64" width="375" height="150"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Wxo-Zu-clA">
-                                        <rect key="frame" x="87" y="0.0" width="200" height="150"/>
+                                        <rect key="frame" x="107" y="15" width="160" height="120"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="Wxo-Zu-clA" secondAttribute="height" multiplier="4:3" id="EeB-3h-6Bq"/>
@@ -79,7 +79,7 @@
                                         </constraints>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rbL-K4-QOV">
-                                        <rect key="frame" x="278" y="15" width="159" height="120"/>
+                                        <rect key="frame" x="277.5" y="15" width="160" height="120"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="rbL-K4-QOV" secondAttribute="height" multiplier="4:3" id="lQc-3H-06q"/>
@@ -88,15 +88,15 @@
                                 </subviews>
                                 <constraints>
                                     <constraint firstItem="Wxo-Zu-clA" firstAttribute="centerY" secondItem="fa5-qt-hcH" secondAttribute="centerY" id="0iF-X9-b6w"/>
+                                    <constraint firstItem="Wxo-Zu-clA" firstAttribute="top" secondItem="fa5-qt-hcH" secondAttribute="top" constant="15" id="4AE-j2-E0S"/>
+                                    <constraint firstAttribute="bottom" secondItem="Wxo-Zu-clA" secondAttribute="bottom" constant="15" id="5Ft-wE-70p"/>
                                     <constraint firstAttribute="bottom" secondItem="dnu-SA-L3o" secondAttribute="bottom" constant="15" id="D8Q-3Q-rWE"/>
-                                    <constraint firstAttribute="bottom" secondItem="Wxo-Zu-clA" secondAttribute="bottom" id="KUQ-Gk-Fzr"/>
                                     <constraint firstItem="dnu-SA-L3o" firstAttribute="centerY" secondItem="fa5-qt-hcH" secondAttribute="centerY" id="MSo-gi-nfu"/>
                                     <constraint firstItem="rbL-K4-QOV" firstAttribute="centerY" secondItem="fa5-qt-hcH" secondAttribute="centerY" id="Pfz-cI-Fhu"/>
                                     <constraint firstItem="dnu-SA-L3o" firstAttribute="top" secondItem="fa5-qt-hcH" secondAttribute="top" constant="15" id="SVR-64-Tnw"/>
                                     <constraint firstItem="rbL-K4-QOV" firstAttribute="centerX" secondItem="fa5-qt-hcH" secondAttribute="centerX" constant="170" id="T7d-rW-c0u"/>
                                     <constraint firstItem="dnu-SA-L3o" firstAttribute="centerX" secondItem="fa5-qt-hcH" secondAttribute="centerX" constant="-170" id="dPN-QW-6uz"/>
                                     <constraint firstAttribute="bottom" secondItem="rbL-K4-QOV" secondAttribute="bottom" constant="15" id="f8h-yI-LJa"/>
-                                    <constraint firstItem="Wxo-Zu-clA" firstAttribute="top" secondItem="fa5-qt-hcH" secondAttribute="top" id="qJm-MF-uDs"/>
                                     <constraint firstItem="rbL-K4-QOV" firstAttribute="top" secondItem="fa5-qt-hcH" secondAttribute="top" constant="15" id="rJq-wu-cE4"/>
                                     <constraint firstItem="Wxo-Zu-clA" firstAttribute="centerX" secondItem="fa5-qt-hcH" secondAttribute="centerX" id="vXr-6T-uPU"/>
                                     <constraint firstAttribute="height" constant="150" id="zJR-np-cbg"/>

@@ -411,6 +411,9 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 		
 		cellPhotoPicker = LabelPhotoPickerCell.create(id: "cellPhotoPicker", description: Text.NewTag.backgroundImage, sender: self)
 		cellPhotoPicker.setup()
+		
+		lyricsAttributes[.font] = UIFont(name: UIFont.systemFont(ofSize: 12).fontName, size: UIFont.systemFontSize)
+		titleAttributes[.font] = UIFont(name: UIFont.systemFont(ofSize: 12).fontName, size: UIFont.systemFontSize)
 
 		
 		cellName.setup()
@@ -522,12 +525,7 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 		}
 		
 		if let externalDisplayWindow = externalDisplayWindow {
-//			if let sheetcontroller = storyboard?.instantiateViewController(withIdentifier: "SheetController") as? SheetController {
-//				sheetcontroller.lyrics = Text.NewTag.sampleLyrics
-//				sheetcontroller.view.frame = externalDisplayWindow.frame
-//				externalDisplayWindow.addSubview(sheetcontroller.view)
-//			}
-		let view = SheetView(frame: externalDisplayWindow.frame)
+			let view = SheetView(frame: externalDisplayWindow.frame)
 			view.selectedTag = editExistingTag
 			view.songTitle = Text.NewTag.sampleTitel
 			view.lyrics = Text.NewTag.sampleLyrics
@@ -536,7 +534,6 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 			view.previewLyricsAttributes = lyricsAttributes
 			view.update()
 			externalDisplayWindow.addSubview(view)
-			
 		}
 	}
 	
