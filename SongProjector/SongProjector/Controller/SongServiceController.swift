@@ -69,7 +69,6 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 					addEmptySheet()
 				}
 			}
-			createSheetListForDisplay()
 			update()
 			moveToFirstSheet()
 		}
@@ -215,8 +214,9 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 		
 		clear.title = Text.Actions.new
 		toNewSongService.title = Text.Actions.add
+		title = Text.SongService.title
 		
-		NotificationCenter.default.addObserver(forName: NotificationNames.externalScreen, object: nil, queue: nil, using: setExternalDisplay)
+		NotificationCenter.default.addObserver(forName: NotificationNames.externalDisplayDidChange, object: nil, queue: nil, using: externalScreenDidChange)
 		
 		let leftSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))
 		let rightSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))
@@ -346,29 +346,12 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 	}
 	
 	
-	func setExternalDisplay(_ notification: Notification) {
-		externalScreen = notification.userInfo?["screen"] as? UIScreen
+	func externalScreenDidChange(_ notification: Notification) {
+		displaySheet()
 	}
 	
 	@IBAction func clearButtonPressed(_ sender: UIBarButtonItem) {
 		
-	}
-	
-	private func createSheetListForDisplay() {
-		sheetsToDisplay = []
-		if let sheetsForSelectedCluster = sheetsForSelectedCluster {
-			
-//			if let sheetController = storyboard?.instantiateViewController(withIdentifier: "SheetController") as? SheetController {
-//				sheetController.setView(CGRect(x: 0, y: 0, width: sheetDisplay.frame.width, height: sheetDisplay.frame.height))
-//				for sheet in sheetsForSelectedCluster {
-//					sheetController.isEmptySheet = sheet.title == Text.Sheet.emptySheetTitle ? true : false
-//					sheetController.hasTitle = hasTitle
-//					sheetController.songTitle = selectedCluster?.title
-//					sheetController.lyrics = sheet.lyrics
-//					sheetsToDisplay.append(sheetController.asImage())
-//				}
-//			}
-		}
 	}
 	
 	private func animateSheetsWith(_ direction : AnimationDirection, completion: @escaping () -> Void) {

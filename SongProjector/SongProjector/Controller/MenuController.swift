@@ -165,7 +165,7 @@ class MenuController: UITabBarController {
 			let image = feature.image.selected
 			let selectedImage = feature.image.selected
 			
-			item.title = feature.titel
+			item.title = feature.titleForDisplay
 			item.image = image
 			item.selectedImage = selectedImage
 			

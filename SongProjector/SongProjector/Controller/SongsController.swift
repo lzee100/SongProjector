@@ -26,7 +26,7 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 	
 	
 	private var tags: [Tag] = []
-	private var selectedTags: [Tag] = []
+	private var selectedTag: Tag?
 	private var clusters: [Cluster] = []
 	private var filteredClusters: [Cluster] = []
 
@@ -75,18 +75,16 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 		
 		if let collectionCell = collectionCell as? TagCellCollection {
 			collectionCell.setup(tagName: tags[indexPath.row].title ?? "")
-			collectionCell.isSelectedCell = selectedTags.contains{ $0.id == tags[indexPath.row].id }
+			collectionCell.isSelectedCell = selectedTag?.id == tags[indexPath.row].id
 		}
 		return collectionCell
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-		if selectedTags.contains(tags[indexPath.row]) {
-			if let index = selectedTags.index(where: { $0.id == tags[indexPath.row].id }) {
-				selectedTags.remove(at: index)
-			}
+		if selectedTag?.id == tags[indexPath.row].id {
+			selectedTag = nil
 		} else {
-			selectedTags.append(tags[indexPath.row])
+			selectedTag = tags[indexPath.row]
 		}
 		update()
 	}
@@ -171,16 +169,9 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 	}
 	
 	private func filterOnTags() {
-		if selectedTags.count != 0 {
+		if let selectedTag = selectedTag {
 			clusters = clusters.filter { (cluster) -> Bool in
-				for selectedTag in selectedTags {
-					if let contains = cluster.hasTags?.contains(selectedTag) {
-						if contains {
-							return true
-						}
-					}
-				}
-				return false
+				cluster.hasTag?.id == selectedTag.id
 			}
 		}
 	}

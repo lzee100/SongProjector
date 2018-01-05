@@ -2,23 +2,26 @@
 //  SheetCollectionCell.swift
 //  SongProjector
 //
-//  Created by Leo van der Zee on 25-12-17.
-//  Copyright © 2017 iozee. All rights reserved.
+//  Created by Leo van der Zee on 04-01-18.
+//  Copyright © 2018 iozee. All rights reserved.
 //
 
 import UIKit
 
 class SheetCollectionCell: UICollectionViewCell {
 
-	@IBOutlet var sheetView: UIImageView!
+	@IBOutlet var previewView: UIView!
+	@IBOutlet var previewViewAspectRatioConstraint: NSLayoutConstraint!
 	
-	func setupWith(image: UIImage) {
-		sheetView.image = image
+
+	
+	var customRatioConstraint = NSLayoutConstraint()
+	
+	func setPreviewViewAspectRatioConstraint(multiplier: CGFloat) {
+		previewViewAspectRatioConstraint.isActive = false
+		previewView.removeConstraint(customRatioConstraint)
+		customRatioConstraint = NSLayoutConstraint(item: previewView, attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.equal, toItem: previewView, attribute: NSLayoutAttribute.width, multiplier: multiplier, constant: 0)
+		previewView.addConstraint(customRatioConstraint)
 	}
-	
-	override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-    }
 
 }

@@ -35,7 +35,7 @@ class NewSongServiceController: UIViewController, UITableViewDelegate, UITableVi
 	var songs: [Cluster] = []
 	var selectedSongs: [Cluster] = []
 	var tags: [Tag] = []
-	var selectedTags: [Tag] = []
+	var selectedTag: Tag?
 
 	
 	override func viewDidLoad() {
@@ -125,18 +125,16 @@ class NewSongServiceController: UIViewController, UITableViewDelegate, UITableVi
 		
 		if let collectionCell = collectionCell as? TagCellCollection {
 			collectionCell.setup(tagName: tags[indexPath.row].title ?? "")
-			collectionCell.isSelectedCell = selectedTags.contains{ $0.id == tags[indexPath.row].id }
+			collectionCell.isSelectedCell = selectedTag?.id == tags[indexPath.row].id
 		}
 		return collectionCell
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-		if selectedTags.contains(tags[indexPath.row]) {
-			if let index = selectedTags.index(where: { $0.id == tags[indexPath.row].id }) {
-				selectedTags.remove(at: index)
-			}
+		if selectedTag?.id == tags[indexPath.row].id {
+			selectedTag = tags[indexPath.row]
 		} else {
-			selectedTags.append(tags[indexPath.row])
+			selectedTag = nil
 		}
 		update()
 	}
@@ -226,18 +224,9 @@ class NewSongServiceController: UIViewController, UITableViewDelegate, UITableVi
 	}
 	
 	private func filterOnTags() {
-		if selectedTags.count != 0 {
+		if let selectedTag = selectedTag {
 			songs = songs.filter { (song) -> Bool in
-				var hasTag = false
-				for selectedTag in selectedTags {
-					if let contains = song.hasTags?.contains(selectedTag) {
-						if contains {
-							hasTag = true
-							break
-						}
-					}
-				}
-				return hasTag
+				song.hasTag?.id == selectedTag.id
 			}
 		}
 	}

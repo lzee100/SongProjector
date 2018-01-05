@@ -28,7 +28,7 @@ class NewSongIphoneController: UIViewController, UITableViewDataSource, UITableV
 	private var sheets: [Sheet] = []
 	private var tempSheetsBeforeSaving: [(title: String, lyrics: String, position: Int16)] = []
 	private var tags: [Tag] = []
-	private var selectedTags: [Tag] = [] {
+	private var selectedTag: Tag? {
 		didSet { update() }
 	}
 	private var sheetMode = false
@@ -109,18 +109,16 @@ class NewSongIphoneController: UIViewController, UITableViewDataSource, UITableV
 		
 		if let collectionCell = collectionCell as? TagCellCollection {
 			collectionCell.setup(tagName: tags[indexPath.row].title ?? "")
-			collectionCell.isSelectedCell = selectedTags.contains{ $0.id == tags[indexPath.row].id }
+			collectionCell.isSelectedCell = selectedTag?.id == tags[indexPath.row].id
 		}
 		return collectionCell
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-		if selectedTags.contains(tags[indexPath.row]) {
-			if let index = selectedTags.index(where: { $0.id == tags[indexPath.row].id }) {
-				selectedTags.remove(at: index)
-			}
+		if selectedTag?.id == tags[indexPath.row].id {
+			selectedTag = nil
 		} else {
-			selectedTags.append(tags[indexPath.row])
+			selectedTag = tags[indexPath.row]
 		}
 		update()
 	}
@@ -155,7 +153,6 @@ class NewSongIphoneController: UIViewController, UITableViewDataSource, UITableV
 	
 	private func update() {
 		// TODO: uncomment
-//		CoreTag.predicates.append("title", notEquals: "Player")
 		tags = CoreTag.getEntities()
 		collectionView.reloadData()
 		tableView.reloadData()
@@ -205,7 +202,17 @@ class NewSongIphoneController: UIViewController, UITableViewDataSource, UITableV
 		
 	}
 	
-	
+	private func hasTagSelected() -> Bool {
+		if selectedTag != nil {
+			return true
+		} else {
+			let alert = UIAlertController(title: Text.NewSong.errorTitleNoTag, message: Text.NewSong.erorrMessageNoTag, preferredStyle: .alert)
+			alert.addAction(UIAlertAction(title: Text.Actions.ok, style: UIAlertActionStyle.default, handler: nil))
+			self.present(alert, animated: true, completion: nil)
+
+			return false
+		}
+	}
 	
 	// MARK: - IBAction Functions
 	
@@ -224,29 +231,29 @@ class NewSongIphoneController: UIViewController, UITableViewDataSource, UITableV
 	
 	@IBAction func done(_ sender: UIBarButtonItem) {
 		if sheetMode {
-			
-			let cluster = CoreCluster.createEntity()
-			cluster.title = clusterTitle
-			let id = Int(cluster.id)
-			cluster.position = Int16(id)
-			if CoreCluster.saveContext() { print("song saved") } else { print("song not saved") }
-			
-			for tempSheet in tempSheetsBeforeSaving {
-				let sheet = CoreSheet.createEntityNOTsave()
-				sheet.title = tempSheet.title
-				sheet.lyrics = tempSheet.lyrics
-				sheet.position = tempSheet.position
-				sheet.hasCluster = cluster
-				sheets.append(sheet)
+			if hasTagSelected() {
+				let cluster = CoreCluster.createEntity()
+				cluster.title = clusterTitle
+				let id = Int(cluster.id)
+				cluster.position = Int16(id)
+				if CoreCluster.saveContext() { print("song saved") } else { print("song not saved") }
+				
+				for tempSheet in tempSheetsBeforeSaving {
+					let sheet = CoreSheet.createEntityNOTsave()
+					sheet.title = tempSheet.title
+					sheet.lyrics = tempSheet.lyrics
+					sheet.position = tempSheet.position
+					sheet.hasCluster = cluster
+					sheets.append(sheet)
+				}
+				
+				if CoreSheet.saveContext() { print("sheets saved") } else { print("sheets not saved") }
+				
+				cluster.hasTag = selectedTag
+				if CoreTag.saveContext() { print("tag saved") } else { print("tag not saved") }
+				
+				dismiss(animated: true)
 			}
-			
-			if CoreSheet.saveContext() { print("sheets saved") } else { print("sheets not saved") }
-			
-			cluster.hasTags = NSSet(array: selectedTags)
-			if CoreTag.saveContext() { print("tag saved") } else { print("tag not saved") }
-			
-			dismiss(animated: true)
-			
 		} else {
 			isTableViewHidden = false
 			sheetMode = true
@@ -255,7 +262,6 @@ class NewSongIphoneController: UIViewController, UITableViewDataSource, UITableV
 			update()
 		}
 	}
-
 
 	
 	

@@ -9,7 +9,7 @@
 import UIKit
 
 protocol LabelPickerCellDelegate {
-	func didSelectFontWith(name: String, cell: LabelPickerCell)
+	func didSelect(item: (Int64, String), cell: LabelPickerCell)
 }
 
 class LabelPickerCell: UITableViewCell, UIPickerViewDataSource, UIPickerViewDelegate {
@@ -26,23 +26,25 @@ class LabelPickerCell: UITableViewCell, UIPickerViewDataSource, UIPickerViewDele
 	var id: String = ""
 	var isActive = false { didSet { updatePicker() } }
 	var delegate: LabelPickerCellDelegate?
-	var pickerValues: [String] = []
+	var pickerValues: [(Int64, String)] = []
 	var picker = UIPickerView()
 	
-	static func create(id: String, description: String, initialFontName: String, positive: Bool = true) -> LabelPickerCell {
+	static func create(id: String, description: String, initialValueName: String, pickerValues: [(Int64, String)]) -> LabelPickerCell {
 		let view : LabelPickerCell! = UIView.create(nib: "LabelPickerCell")
 		view.id = id
 		view.descriptionTitel.text = description
-		view.fontLabel.text = initialFontName
+		view.fontLabel.text = initialValueName
 		view.picker = UIPickerView(frame: CGRect(x: 0, y: 0, width: 300, height: 300))
 		view.picker.dataSource = view
 		view.picker.delegate = view
-		view.pickerValues = UIFont.familyNames
+		view.pickerValues = pickerValues
 		return view
 	}
 	
-	func setFontName(value: String) {
-		if let index = pickerValues.index(of: value) {
+	func setValue(value: String? = nil, id: Int16? = nil) {
+		if let value = value, let index = pickerValues.index(where: { (item) -> Bool in item.1 == value }) {
+			pickerView(picker, didSelectRow: index, inComponent: 0)
+		} else if let id = id, let index = pickerValues.index(where: { (value) -> Bool in value.0 == id }) {
 			pickerView(picker, didSelectRow: index, inComponent: 0)
 		}
 	}
@@ -64,13 +66,12 @@ class LabelPickerCell: UITableViewCell, UIPickerViewDataSource, UIPickerViewDele
 		}
 	}
 	
-	
 	public func numberOfComponents(in pickerView: UIPickerView) -> Int {
 		return 1
 	}
 	
 	func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-		return pickerValues[row]
+		return pickerValues[row].1
 	}
 	
 	
@@ -79,9 +80,10 @@ class LabelPickerCell: UITableViewCell, UIPickerViewDataSource, UIPickerViewDele
 	}
 	
 	func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+		
 		let value = pickerValues[row]
-		fontLabel.text = value
-		delegate?.didSelectFontWith(name: value, cell: self)
+		fontLabel.text = value.1
+		delegate?.didSelect(item: value, cell: self)
 	}
 	
 	

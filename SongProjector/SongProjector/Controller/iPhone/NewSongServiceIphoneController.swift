@@ -15,6 +15,7 @@ class NewSongServiceIphoneController: UITableViewController, SongsControllerDele
 	
 	var selectedSongs: [Cluster] = []
 	var delegate: NewSongServiceDelegate?
+	var noSelectedSongsMessage: Int? = 1
 	
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,7 +40,7 @@ class NewSongServiceIphoneController: UITableViewController, SongsControllerDele
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-		return selectedSongs.count > 0 ? selectedSongs.count : 1
+		return selectedSongs.count + (noSelectedSongsMessage ?? 0)
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -64,9 +65,10 @@ class NewSongServiceIphoneController: UITableViewController, SongsControllerDele
 
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            tableView.deleteRows(at: [indexPath], with: .fade)
 			selectedSongs.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .fade)
         }
+		generateNoSelectedSongMessage()
     }
 
     // Override to support rearranging the table view.
@@ -83,6 +85,7 @@ class NewSongServiceIphoneController: UITableViewController, SongsControllerDele
     }
 	
 	func didSelectCluster(cluster: Cluster) {
+		noSelectedSongsMessage = nil
 		selectedSongs.append(cluster)
 		updatePositions()
 		update()
@@ -106,6 +109,9 @@ class NewSongServiceIphoneController: UITableViewController, SongsControllerDele
 		if selectedSongs.count == 0 {
 			performSegue(withIdentifier: "SongsSegue", sender: self)
 		}
+		if selectedSongs.count > 0 {
+			noSelectedSongsMessage = 0
+		}
 		
 		update()
 	}
@@ -118,6 +124,11 @@ class NewSongServiceIphoneController: UITableViewController, SongsControllerDele
 		for (index, song) in selectedSongs.enumerated() {
 			song.position = Int16(index)
 		}
+	}
+	
+	private func generateNoSelectedSongMessage() {
+		noSelectedSongsMessage = 1
+		tableView.reloadData()
 	}
 	
 	@objc private func editTableView(_ gestureRecognizer: UIGestureRecognizer) {

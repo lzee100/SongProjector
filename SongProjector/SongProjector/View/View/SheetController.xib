@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="ipad12_9" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SheetView" customModule="SongProjector" customModuleProvider="target">
+            <connections>
+                <outlet property="backgroundImageView" destination="UF3-Hj-dt7" id="E8u-yG-mnd"/>
+                <outlet property="lyricsBottomConstraint" destination="Ig9-gg-TQi" id="K5p-1P-nkH"/>
+                <outlet property="lyricsLeftConstraint" destination="S4r-WP-D8E" id="FEB-Gs-ovL"/>
+                <outlet property="lyricsRightConstraint" destination="gZb-ON-nuw" id="gqr-De-RZr"/>
+                <outlet property="lyricsTextView" destination="o79-HF-K3e" id="f5u-2Z-75z"/>
+                <outlet property="sheetBackground" destination="RRi-xG-ex4" id="ent-8x-ISM"/>
+                <outlet property="sheetView" destination="iN0-l3-epB" id="kep-Sv-sQ8"/>
+                <outlet property="titleBackground" destination="Yrd-bo-GIk" id="X4Z-Dp-vuY"/>
+                <outlet property="titleHeightConstraint" destination="JVx-ct-vfT" id="ff3-gZ-sBi"/>
+                <outlet property="titleLabel" destination="hnb-bU-00a" id="TYw-e7-MfW"/>
+                <outlet property="titleLeftConstraint" destination="NYt-Iy-toW" id="cfj-UJ-Iyg"/>
+                <outlet property="titleRightConstraint" destination="hHQ-Vu-nJE" id="y3O-RG-Q4S"/>
+                <outlet property="titleTopConstraint" destination="nTY-rf-cm4" id="FTx-tv-ccg"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" restorationIdentifier="SheetController" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="400" height="300"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RRi-xG-ex4">
+                    <rect key="frame" x="0.0" y="0.0" width="400" height="300"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                </view>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="UF3-Hj-dt7">
+                    <rect key="frame" x="0.0" y="0.0" width="400" height="300"/>
+                </imageView>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Yrd-bo-GIk">
+                    <rect key="frame" x="0.0" y="0.0" width="400" height="75"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                </view>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="hnb-bU-00a">
+                    <rect key="frame" x="10" y="10" width="380" height="60"/>
+                    <constraints>
+                        <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="10" id="JVx-ct-vfT"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="50"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <textView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="o79-HF-K3e">
+                    <rect key="frame" x="10" y="75" width="380" height="215"/>
+                    <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="14"/>
+                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                </textView>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="RRi-xG-ex4" secondAttribute="trailing" id="ELw-4f-A5Y"/>
+                <constraint firstItem="Yrd-bo-GIk" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="GxQ-0a-dRs"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="o79-HF-K3e" secondAttribute="bottom" constant="10" id="Ig9-gg-TQi"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="Yrd-bo-GIk" secondAttribute="trailing" id="JpC-aN-RUY"/>
+                <constraint firstItem="RRi-xG-ex4" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="Llv-cf-iad"/>
+                <constraint firstItem="hnb-bU-00a" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="10" id="NYt-Iy-toW"/>
+                <constraint firstAttribute="bottom" secondItem="RRi-xG-ex4" secondAttribute="bottom" id="RWF-Wz-FzY"/>
+                <constraint firstItem="o79-HF-K3e" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="10" id="S4r-WP-D8E"/>
+                <constraint firstItem="UF3-Hj-dt7" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="VT2-mc-DYz"/>
+                <constraint firstItem="Yrd-bo-GIk" firstAttribute="bottom" secondItem="hnb-bU-00a" secondAttribute="bottom" constant="5" id="VaL-cp-oIQ"/>
+                <constraint firstItem="UF3-Hj-dt7" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="flj-8f-Ebw"/>
+                <constraint firstItem="RRi-xG-ex4" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="fwr-Bk-BSx"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="o79-HF-K3e" secondAttribute="trailing" constant="10" id="gZb-ON-nuw"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="hnb-bU-00a" secondAttribute="trailing" constant="10" id="hHQ-Vu-nJE"/>
+                <constraint firstItem="o79-HF-K3e" firstAttribute="top" secondItem="hnb-bU-00a" secondAttribute="bottom" constant="5" id="ilf-CR-sQ0"/>
+                <constraint firstItem="UF3-Hj-dt7" firstAttribute="bottom" secondItem="vUN-kp-3ea" secondAttribute="bottom" id="nRB-vW-wDx"/>
+                <constraint firstItem="hnb-bU-00a" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="10" id="nTY-rf-cm4"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="UF3-Hj-dt7" secondAttribute="trailing" id="pBB-mT-pVG"/>
+                <constraint firstItem="Yrd-bo-GIk" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="pkE-ZQ-wWA"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <point key="canvasLocation" x="-76" y="-72"/>
+        </view>
+    </objects>
+</document>

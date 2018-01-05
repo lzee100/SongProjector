@@ -44,20 +44,22 @@ class Text: NSObject {
 	struct NewSong {
 		static let title = "Nieuw liedje"
 		static let SongTitle = "Titel"
-		static let headerTag = "Selecteer hier de categorie"
+		static let headerTag = "Selecteer hier de thema"
 		static let headerLyrics = "Voer hier de tekst van het nummer in"
 		static let NoTitleForSheet = "Geen titel gevonden"
 		static let Sheet = "Dia "
-		static let SearchTagPlaceHolder = "Zoek categorie"
+		static let SearchTagPlaceHolder = "Zoek thema"
+		static let errorTitleNoTag = "Fout"
+		static let erorrMessageNoTag = "Selecteer een thema"
 	}
 	
 	struct Tags {
-		static let title = "Categorien"
-		static let searchBarPlaceholderText = "Zoek categorie"
+		static let title = "Thema's"
+		static let searchBarPlaceholderText = "Zoek thema's"
 	}
 	
 	struct Players {
-		static let title = "Geanimeerde presentaties"
+		static let title = "Afspelers"
 	}
 	
 	struct DisplaySettings {
@@ -65,17 +67,29 @@ class Text: NSObject {
 	}
 	
 	struct NewTag {
-		static let title = "Nieuwe categorie"
-		static let descriptionTitle = "Naam nieuwe categorie"
+		static let title = "Nieuw thema"
+		static let descriptionTitle = "Naam nieuw thema"
 		static let descriptionTitlePlaceholder = "Naam"
-		static let pageDescription = "Voer een nieuwe categorie toe"
+		static let descriptionAsTag = "Gelijk aan thema"
+		static let descriptionTitleBackgroundColor = "Achtergrond kleur"
+		static let pageDescription = "Voer een nieuwe thema's toe"
+		static let descriptionBackgroundColor = "Kleur achtergrond"
+		static let descriptionHasEmptySheet = "Toon lege dia"
+		static let descriptionHasEmptySheetDetail = "Aan het einde of begin van een lied een lege dia tonen met ingestelde achtergrond"
+		static let descriptionPositionEmptySheet = "Toon lege dia aan begin\n(uit is aan het einde tonen)"
+		
+		static let descriptionAlignment = "Uitlijning"
 		static let errorTitle = "Fout"
-		static let errorMessage = "Naam nieuwe categorie mag niet leeg zijn"
+		static let errorMessage = "Naam nieuwe thema mag niet leeg zijn"
+		
+		static let alignLeft = "Links"
+		static let alignCenter = "Midden"
+		static let alignRight = "Rechts"
 		
 		static let sampleTitel = "Titel"
 		static let sampleLyrics = "Lorem Ipsum is slechts een proeftekst uit het drukkerij- en zetterijwezen. Lorem Ipsum is de standaard proeftekst in deze bedrijfstak sinds de 16e eeuw."
 		
-		static let sectionGeneral = "Categorie"
+		static let sectionGeneral = "Algemeen"
 		static let sectionTitle = "Titel"
 		static let sectionLyrics = "Inhoud"
 		static let sectionBackground = "Achtergrond"
@@ -94,6 +108,10 @@ class Text: NSObject {
 	
 	struct Sheet {
 		static let emptySheetTitle = "Lege dia"
+	}
+	
+	struct More {
+		static let title = "Meer"
 	}
 	
 }

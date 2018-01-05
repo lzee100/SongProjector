@@ -53,13 +53,14 @@
 		E311717C1FE5A1A0008D9D51 /* NewSongSheetCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E31171741FE5A1A0008D9D51 /* NewSongSheetCell.xib */; };
 		E311717E1FE5A5F5008D9D51 /* StoryboardiPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E311717D1FE5A5F5008D9D51 /* StoryboardiPad.storyboard */; };
 		E31F87BD1FE7035D00D5D4BA /* Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31F87BC1FE7035D00D5D4BA /* Text.swift */; };
+		E326E9041FFEC9EC00FEAC9C /* PlayersIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E326E9031FFEC9EC00FEAC9C /* PlayersIphoneController.swift */; };
+		E326E9071FFECD0E00FEAC9C /* SheetCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E326E9051FFECD0E00FEAC9C /* SheetCollectionCell.swift */; };
+		E326E9081FFECD0E00FEAC9C /* SheetCollectionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E326E9061FFECD0E00FEAC9C /* SheetCollectionCell.xib */; };
 		E3355D6F1FEDA645004C03AE /* TextViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3355D6E1FEDA645004C03AE /* TextViewExtensions.swift */; };
 		E3355D711FEE6436004C03AE /* ClusterExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3355D701FEE6436004C03AE /* ClusterExtensions.swift */; };
 		E356F2A51FF666E5002A3F3A /* ChromaColorPicker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E356F2A61FF666E5002A3F3A /* ChromaColorPicker.framework */; };
 		E36F41661FEE8CDA00E989E5 /* SongServiceIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E36F41651FEE8CDA00E989E5 /* SongServiceIphoneController.swift */; };
 		E36F41681FEE965200E989E5 /* NewSongIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E36F41671FEE965200E989E5 /* NewSongIphoneController.swift */; };
-		E36F416F1FF06D2F00E989E5 /* SheetCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E36F416D1FF06D2F00E989E5 /* SheetCollectionCell.swift */; };
-		E36F41701FF06D2F00E989E5 /* SheetCollectionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E36F416E1FF06D2F00E989E5 /* SheetCollectionCell.xib */; };
 		E38347581FF7AAC9008AE69D /* LabelTextFieldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38347561FF7AAC9008AE69D /* LabelTextFieldCell.swift */; };
 		E38347591FF7AAC9008AE69D /* LabelTextFieldCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E38347571FF7AAC9008AE69D /* LabelTextFieldCell.xib */; };
 		E383475C1FF7DADD008AE69D /* LabelImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E383475A1FF7DADD008AE69D /* LabelImagePicker.swift */; };
@@ -70,11 +71,15 @@
 		E38347651FF9382F008AE69D /* ExternalDisplayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38347641FF9382F008AE69D /* ExternalDisplayController.swift */; };
 		E38347671FFA5099008AE69D /* SheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E38347661FFA5099008AE69D /* SheetController.xib */; };
 		E38347691FFA512D008AE69D /* SheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38347681FFA512D008AE69D /* SheetView.swift */; };
+		E3BC6BB71FFEBE350039E0CA /* HeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3BC6BB61FFEBE350039E0CA /* HeaderView.xib */; };
+		E3BC6BBA1FFEBECA0039E0CA /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3BC6BB91FFEBECA0039E0CA /* HeaderView.swift */; };
 		E3D1CEE71FF6930600F9D7D9 /* LabelPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D1CEE51FF6930600F9D7D9 /* LabelPickerCell.swift */; };
 		E3D1CEE81FF6930600F9D7D9 /* LabelPickerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3D1CEE61FF6930600F9D7D9 /* LabelPickerCell.xib */; };
 		E3D9274F1FEC1AFC006EDE75 /* TagsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D9274E1FEC1AFC006EDE75 /* TagsController.swift */; };
 		E3D927511FEC3036006EDE75 /* NewTagController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D927501FEC3036006EDE75 /* NewTagController.swift */; };
 		E3D927571FECF622006EDE75 /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D927561FECF622006EDE75 /* ViewExtensions.swift */; };
+		E3F421A41FFE457500C332B0 /* LabelDoubleSwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F421A21FFE457500C332B0 /* LabelDoubleSwitchCell.swift */; };
+		E3F421A51FFE457500C332B0 /* LabelDoubleSwitchCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3F421A31FFE457500C332B0 /* LabelDoubleSwitchCell.xib */; };
 		E7226C9E497B8BF49AA031B2 /* Pods_SongProjector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95070415C3C6BD5B7639F73A /* Pods_SongProjector.framework */; };
 /* End PBXBuildFile section */
 
@@ -130,13 +135,14 @@
 		E31171741FE5A1A0008D9D51 /* NewSongSheetCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NewSongSheetCell.xib; sourceTree = "<group>"; };
 		E311717D1FE5A5F5008D9D51 /* StoryboardiPad.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = StoryboardiPad.storyboard; sourceTree = "<group>"; };
 		E31F87BC1FE7035D00D5D4BA /* Text.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Text.swift; sourceTree = "<group>"; };
+		E326E9031FFEC9EC00FEAC9C /* PlayersIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayersIphoneController.swift; sourceTree = "<group>"; };
+		E326E9051FFECD0E00FEAC9C /* SheetCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetCollectionCell.swift; sourceTree = "<group>"; };
+		E326E9061FFECD0E00FEAC9C /* SheetCollectionCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SheetCollectionCell.xib; sourceTree = "<group>"; };
 		E3355D6E1FEDA645004C03AE /* TextViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextViewExtensions.swift; sourceTree = "<group>"; };
 		E3355D701FEE6436004C03AE /* ClusterExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClusterExtensions.swift; sourceTree = "<group>"; };
 		E356F2A61FF666E5002A3F3A /* ChromaColorPicker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ChromaColorPicker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E36F41651FEE8CDA00E989E5 /* SongServiceIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongServiceIphoneController.swift; sourceTree = "<group>"; };
 		E36F41671FEE965200E989E5 /* NewSongIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewSongIphoneController.swift; sourceTree = "<group>"; };
-		E36F416D1FF06D2F00E989E5 /* SheetCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetCollectionCell.swift; sourceTree = "<group>"; };
-		E36F416E1FF06D2F00E989E5 /* SheetCollectionCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SheetCollectionCell.xib; sourceTree = "<group>"; };
 		E38347561FF7AAC9008AE69D /* LabelTextFieldCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelTextFieldCell.swift; sourceTree = "<group>"; };
 		E38347571FF7AAC9008AE69D /* LabelTextFieldCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelTextFieldCell.xib; sourceTree = "<group>"; };
 		E383475A1FF7DADD008AE69D /* LabelImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelImagePicker.swift; sourceTree = "<group>"; };
@@ -147,11 +153,15 @@
 		E38347641FF9382F008AE69D /* ExternalDisplayController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalDisplayController.swift; sourceTree = "<group>"; };
 		E38347661FFA5099008AE69D /* SheetController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SheetController.xib; sourceTree = "<group>"; };
 		E38347681FFA512D008AE69D /* SheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetView.swift; sourceTree = "<group>"; };
+		E3BC6BB61FFEBE350039E0CA /* HeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HeaderView.xib; sourceTree = "<group>"; };
+		E3BC6BB91FFEBECA0039E0CA /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
 		E3D1CEE51FF6930600F9D7D9 /* LabelPickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelPickerCell.swift; sourceTree = "<group>"; };
 		E3D1CEE61FF6930600F9D7D9 /* LabelPickerCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelPickerCell.xib; sourceTree = "<group>"; };
 		E3D9274E1FEC1AFC006EDE75 /* TagsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsController.swift; sourceTree = "<group>"; };
 		E3D927501FEC3036006EDE75 /* NewTagController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTagController.swift; sourceTree = "<group>"; };
 		E3D927561FECF622006EDE75 /* ViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewExtensions.swift; sourceTree = "<group>"; };
+		E3F421A21FFE457500C332B0 /* LabelDoubleSwitchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelDoubleSwitchCell.swift; sourceTree = "<group>"; };
+		E3F421A31FFE457500C332B0 /* LabelDoubleSwitchCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelDoubleSwitchCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -212,7 +222,6 @@
 				E31171451FE59E98008D9D51 /* Model */,
 				E31171461FE59E9F008D9D51 /* View */,
 				E31171341FE59DA3008D9D51 /* Main.storyboard */,
-				E31171301FE59DA3008D9D51 /* AppDelegate.swift */,
 				E31171321FE59DA3008D9D51 /* ViewController.swift */,
 				E311713C1FE59DA3008D9D51 /* LaunchScreen.storyboard */,
 				E311713F1FE59DA3008D9D51 /* Info.plist */,
@@ -226,6 +235,7 @@
 			isa = PBXGroup;
 			children = (
 				E31171481FE59EBD008D9D51 /* CoreDataManager.swift */,
+				E3355D701FEE6436004C03AE /* ClusterExtensions.swift */,
 				E309DCF91FF4954100C3D135 /* TagExtensions.swift */,
 			);
 			path = Model;
@@ -234,10 +244,9 @@
 		E31171461FE59E9F008D9D51 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				E3BC6BB81FFEBEA80039E0CA /* View */,
 				E311716C1FE5A162008D9D51 /* Cells */,
 				E311717D1FE5A5F5008D9D51 /* StoryboardiPad.storyboard */,
-				E38347661FFA5099008AE69D /* SheetController.xib */,
-				E38347681FFA512D008AE69D /* SheetView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -273,7 +282,6 @@
 				E311714B1FE5A071008D9D51 /* UITableViewExtensions.swift */,
 				E3D927561FECF622006EDE75 /* ViewExtensions.swift */,
 				E3355D6E1FEDA645004C03AE /* TextViewExtensions.swift */,
-				E3355D701FEE6436004C03AE /* ClusterExtensions.swift */,
 				E38347621FF8434D008AE69D /* ImageExtensions.swift */,
 			);
 			path = Extensions;
@@ -282,6 +290,7 @@
 		E31171571FE5A09A008D9D51 /* Global */ = {
 			isa = PBXGroup;
 			children = (
+				E31171301FE59DA3008D9D51 /* AppDelegate.swift */,
 				E31171591FE5A0A3008D9D51 /* Features.swift */,
 				E31171581FE5A0A3008D9D51 /* Notifications.swift */,
 				E31F87BC1FE7035D00D5D4BA /* Text.swift */,
@@ -302,8 +311,6 @@
 				E31171741FE5A1A0008D9D51 /* NewSongSheetCell.xib */,
 				E31171731FE5A1A0008D9D51 /* TagCellCollection.swift */,
 				E31171701FE5A1A0008D9D51 /* TagCellCollection.xib */,
-				E36F416D1FF06D2F00E989E5 /* SheetCollectionCell.swift */,
-				E36F416E1FF06D2F00E989E5 /* SheetCollectionCell.xib */,
 				E309DCF11FF48F0800C3D135 /* LabelSwitchCell.swift */,
 				E309DCF21FF48F0800C3D135 /* LabelSwitchCell.xib */,
 				E309DCF51FF48FF100C3D135 /* LabelColorPickerCell.swift */,
@@ -318,6 +325,10 @@
 				E383475B1FF7DADD008AE69D /* LabelImagePicker.xib */,
 				E383475E1FF7E8B5008AE69D /* LabelPhotoPickerCell.swift */,
 				E383475F1FF7E8B5008AE69D /* LabelPhotoPickerCell.xib */,
+				E3F421A21FFE457500C332B0 /* LabelDoubleSwitchCell.swift */,
+				E3F421A31FFE457500C332B0 /* LabelDoubleSwitchCell.xib */,
+				E326E9051FFECD0E00FEAC9C /* SheetCollectionCell.swift */,
+				E326E9061FFECD0E00FEAC9C /* SheetCollectionCell.xib */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -330,8 +341,20 @@
 				E36F41671FEE965200E989E5 /* NewSongIphoneController.swift */,
 				E309DCE71FF44E6A00C3D135 /* TagsIphoneController.swift */,
 				E309DCFE1FF501C700C3D135 /* NewTagIphoneController.swift */,
+				E326E9031FFEC9EC00FEAC9C /* PlayersIphoneController.swift */,
 			);
 			path = iPhone;
+			sourceTree = "<group>";
+		};
+		E3BC6BB81FFEBEA80039E0CA /* View */ = {
+			isa = PBXGroup;
+			children = (
+				E3BC6BB61FFEBE350039E0CA /* HeaderView.xib */,
+				E3BC6BB91FFEBECA0039E0CA /* HeaderView.swift */,
+				E38347661FFA5099008AE69D /* SheetController.xib */,
+				E38347681FFA512D008AE69D /* SheetView.swift */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -400,17 +423,19 @@
 				E38347611FF7E8B5008AE69D /* LabelPhotoPickerCell.xib in Resources */,
 				E31171781FE5A1A0008D9D51 /* TagCellCollection.xib in Resources */,
 				E38347671FFA5099008AE69D /* SheetController.xib in Resources */,
-				E36F41701FF06D2F00E989E5 /* SheetCollectionCell.xib in Resources */,
 				E383475D1FF7DADD008AE69D /* LabelImagePicker.xib in Resources */,
 				E311713E1FE59DA3008D9D51 /* LaunchScreen.storyboard in Resources */,
 				E311713B1FE59DA3008D9D51 /* Assets.xcassets in Resources */,
 				E309DCF81FF48FF100C3D135 /* LabelColorPickerCell.xib in Resources */,
 				E309DD031FF5127400C3D135 /* LabelNumberCell.xib in Resources */,
 				E3D1CEE81FF6930600F9D7D9 /* LabelPickerCell.xib in Resources */,
+				E3BC6BB71FFEBE350039E0CA /* HeaderView.xib in Resources */,
 				E31171361FE59DA3008D9D51 /* Main.storyboard in Resources */,
 				E309DCF41FF48F0800C3D135 /* LabelSwitchCell.xib in Resources */,
+				E3F421A51FFE457500C332B0 /* LabelDoubleSwitchCell.xib in Resources */,
 				E311717A1FE5A1A0008D9D51 /* AddButtonCell.xib in Resources */,
 				E311717C1FE5A1A0008D9D51 /* NewSongSheetCell.xib in Resources */,
+				E326E9081FFECD0E00FEAC9C /* SheetCollectionCell.xib in Resources */,
 				E38347591FF7AAC9008AE69D /* LabelTextFieldCell.xib in Resources */,
 				E311717E1FE5A5F5008D9D51 /* StoryboardiPad.storyboard in Resources */,
 			);
@@ -484,6 +509,7 @@
 				E309DCF31FF48F0800C3D135 /* LabelSwitchCell.swift in Sources */,
 				E309DD051FF5179B00C3D135 /* Cells.swift in Sources */,
 				E31171521FE5A071008D9D51 /* StringExtensions.swift in Sources */,
+				E3F421A41FFE457500C332B0 /* LabelDoubleSwitchCell.swift in Sources */,
 				E309DCFD1FF4FC9E00C3D135 /* TextFieldCell.swift in Sources */,
 				E309DCFA1FF4954100C3D135 /* TagExtensions.swift in Sources */,
 				E309DCEA1FF45A8A00C3D135 /* MoreSplitViewController.swift in Sources */,
@@ -503,6 +529,7 @@
 				E311717B1FE5A1A0008D9D51 /* TagCellCollection.swift in Sources */,
 				E31171671FE5A0E7008D9D51 /* MoreController.swift in Sources */,
 				E38347651FF9382F008AE69D /* ExternalDisplayController.swift in Sources */,
+				E326E9041FFEC9EC00FEAC9C /* PlayersIphoneController.swift in Sources */,
 				E31171651FE5A0E7008D9D51 /* PlayersController.swift in Sources */,
 				E31171771FE5A1A0008D9D51 /* NewSongSheetCell.swift in Sources */,
 				E31171331FE59DA3008D9D51 /* ViewController.swift in Sources */,
@@ -512,6 +539,7 @@
 				E309DCF71FF48FF100C3D135 /* LabelColorPickerCell.swift in Sources */,
 				E309DCE81FF44E6A00C3D135 /* TagsIphoneController.swift in Sources */,
 				E31171391FE59DA3008D9D51 /* SongProjector.xcdatamodeld in Sources */,
+				E326E9071FFECD0E00FEAC9C /* SheetCollectionCell.swift in Sources */,
 				E3D927571FECF622006EDE75 /* ViewExtensions.swift in Sources */,
 				E3D927511FEC3036006EDE75 /* NewTagController.swift in Sources */,
 				E31171551FE5A071008D9D51 /* UIFontExtensions.swift in Sources */,
@@ -520,13 +548,13 @@
 				E31171641FE5A0E7008D9D51 /* MenuController.swift in Sources */,
 				E3D1CEE71FF6930600F9D7D9 /* LabelPickerCell.swift in Sources */,
 				E309DD021FF5127400C3D135 /* LabelNumberCell.swift in Sources */,
-				E36F416F1FF06D2F00E989E5 /* SheetCollectionCell.swift in Sources */,
 				E31171681FE5A0E7008D9D51 /* SongsController.swift in Sources */,
 				E31171751FE5A1A0008D9D51 /* BasicCell.swift in Sources */,
 				E3D9274F1FEC1AFC006EDE75 /* TagsController.swift in Sources */,
 				E31171561FE5A071008D9D51 /* NSManagedObjectExtension.swift in Sources */,
 				E309DCFF1FF501C700C3D135 /* NewTagIphoneController.swift in Sources */,
 				E38347691FFA512D008AE69D /* SheetView.swift in Sources */,
+				E3BC6BBA1FFEBECA0039E0CA /* HeaderView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

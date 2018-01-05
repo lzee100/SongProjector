@@ -95,6 +95,7 @@ class MoreController: UITableViewController, UISplitViewControllerDelegate {
 	
 	private func setup() {
 		tableView.register(cell: Cells.basicCellid)
+		title = Text.More.title
 	}
 	
 	private func update() {

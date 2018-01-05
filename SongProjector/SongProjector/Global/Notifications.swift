@@ -15,6 +15,6 @@ struct NotificationIdentifier {
 }
 
 struct NotificationNames {
-	static let externalScreen = Notification.Name("externalScreenIsActive")
+	static let externalDisplayDidChange = Notification.Name("externalDisplayDidChange")
 
 }

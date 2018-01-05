@@ -36,7 +36,7 @@ class NewSongController: UIViewController, UITableViewDataSource, UITableViewDel
 	private var sheets: [Sheet] = []
 	private var tempSheetsBeforeSaving: [(title: String, lyrics: String, position: Int16)] = []
 	private var tags: [Tag] = []
-	private var selectedTags: [Tag] = [] {
+	private var selectedTag: Tag? {
 		didSet { update() }
 	}
 	private var sheetMode = false
@@ -81,7 +81,7 @@ class NewSongController: UIViewController, UITableViewDataSource, UITableViewDel
 			let cell = tableView.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath)
 			if let cell = cell as? BasicCell {
 				cell.setup(title: tags[indexPath.row].title, icon: Cells.tagIcon)
-				cell.selectedCell = selectedTags.contains(tags[indexPath.row])
+				cell.selectedCell = selectedTag?.id == tags[indexPath.row].id
 			}
 			return cell
 		} else {
@@ -128,20 +128,12 @@ class NewSongController: UIViewController, UITableViewDataSource, UITableViewDel
 	
 	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		if tableView == tableViewTags {
-			
-			let selectedTagId = tags[indexPath.row].id
-			
-			if !selectedTags.contains(where: { (vTag) -> Bool in
-				return vTag.id == selectedTagId
-			}) {
-				selectedTags.append(tags[indexPath.row])
+			if selectedTag?.id == tags[indexPath.row].id {
+				selectedTag = nil
 			} else {
-				if let index = selectedTags.index(where: { (tag) -> Bool in
-					return tag.id == selectedTagId
-				}) {
-					selectedTags.remove(at: index)
-				}
+				selectedTag = tags[indexPath.row]
 			}
+			update()
 		}
 	}
 	
@@ -260,7 +252,7 @@ class NewSongController: UIViewController, UITableViewDataSource, UITableViewDel
 			
 			if CoreSheet.saveContext() { print("sheets saved") } else { print("sheets not saved") }
 
-			cluster.hasTags = NSSet(array: tags)
+			cluster.hasTag = selectedTag
 			if CoreTag.saveContext() { print("tag saved") } else { print("tag not saved") }
 			
 			dismiss(animated: true)

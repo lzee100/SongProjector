@@ -11,15 +11,14 @@ import Foundation
 
 extension Cluster {
 	
-	public var hasTagsArray: [Tag] {
+	public var hasSheetsArray: [Sheet] {
 		
-		if let setHasTags = hasTags as? Set<Tag> {
-			return setHasTags.sorted{ $0.position < $1.position }
+		if let setHasSheets = hasSheets as? Set<Sheet> {
+			return setHasSheets.sorted{ $0.position < $1.position }
 		} else {
 			return []
 		}
 	}
-	
 	
 
 }

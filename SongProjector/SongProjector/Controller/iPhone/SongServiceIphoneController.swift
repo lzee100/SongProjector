@@ -55,19 +55,17 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	
 	private var viewToBeamer: UIView?
 	private var hasTitle = true
-	private var hasEmptySheet = false
 	private var emptySheet = CoreSheet.createEntityNOTsave()
-	private var externalScreen: UIScreen?
 	private var clusters: [Cluster] = [] { didSet { update() } }
 	private var clustersOrdened: [Cluster] { get { return clusters.sorted{ $0.position < $1.position } } }
 	private var selectedClusterRow = -1
 	private var selectedCluster: Cluster? {
-		didSet {
-			if hasEmptySheet {
-				if selectedCluster == nil {
+		willSet {
+			if let hasEmptySheet = newValue?.hasTag?.hasEmptySheet, hasEmptySheet {
+				if newValue == nil {
 					removeEmptySheet()
 				} else {
-					addEmptySheet()
+					addEmptySheet(newValue, isEmptySheetFirst: newValue?.hasTag?.isEmptySheetFirst)
 				}
 			}
 			update()
@@ -215,11 +213,12 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		sheetDisplayerNext.layer.transform = self.transformForFraction(fraction: Constants.nextSheetFraction)
 		
 		navigationController?.title = Text.SongService.title
+		title = Text.SongService.title
 		
 		clear.title = Text.Actions.new
 		new.title = Text.Actions.add
 		
-		NotificationCenter.default.addObserver(forName: NotificationNames.externalScreen, object: nil, queue: nil, using: setExternalDisplay)
+		NotificationCenter.default.addObserver(forName: NotificationNames.externalDisplayDidChange, object: nil, queue: nil, using: externalDisplayDidChange)
 		
 		let upSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))
 		let downSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))
@@ -287,7 +286,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 						if let clusterPosition = selectedCluster?.position, Int(clusterPosition) + 1 < clusters.count {
 							selectedClusterRow += 1
 							selectedCluster = clustersOrdened[Int(clusterPosition) + 1]
-							selectedSheet = sheetsForSelectedCluster.first
+							selectedSheet = self.sheetsForSelectedCluster?.first
 						}
 					}
 				}
@@ -309,7 +308,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 						if let clusterPosition = selectedCluster?.position, Int(clusterPosition) - 1 >= 0 {
 							selectedClusterRow -= 1
 							selectedCluster = clustersOrdened[Int(clusterPosition) - 1]
-							selectedSheet = sheetsForSelectedCluster.first
+							selectedSheet = self.sheetsForSelectedCluster?.first
 						}
 					}
 				}
@@ -366,20 +365,39 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		}
 	}
 	
-	private func addEmptySheet() {
-		emptySheet.position = (sheetsForSelectedCluster?.last?.position ?? 0) + 1
+	private func addEmptySheet(_ selectedCluster: Cluster?, isEmptySheetFirst: Bool?) {
 		emptySheet.title = Text.Sheet.emptySheetTitle
-		selectedCluster?.addToHasSheets(emptySheet)
+		if let isEmptySheetFirst = isEmptySheetFirst, isEmptySheetFirst {
+			emptySheet.position = 0
+			if let sheets = selectedCluster?.hasSheets as? Set<Sheet> {
+				let sheetsSorted = sheets.sorted{ $0.position < $1.position }
+				for (index, sheet) in sheetsSorted.enumerated() {
+					sheet.position = Int16(index + 1)
+				}
+			}
+			selectedCluster?.addToHasSheets(emptySheet)
+		} else {
+			if let sheets = selectedCluster?.hasSheets as? Set<Sheet> {
+				let sheetsSorted = sheets.sorted{ $0.position < $1.position }
+				emptySheet.position = (sheetsSorted.last?.position ?? 0) + 1
+				selectedCluster?.addToHasSheets(emptySheet)
+			}
+
+		}
 	}
 	
 	private func removeEmptySheet() {
 		selectedCluster?.removeFromHasSheets(emptySheet)
+		if let isEmptySheetFirst = selectedCluster?.hasTag?.isEmptySheetFirst, isEmptySheetFirst {
+			if let sheetsForSelectedCluster = sheetsForSelectedCluster {
+				for (index, sheet) in sheetsForSelectedCluster.enumerated() {
+					sheet.position = Int16(index - 1)
+				}
+			}
+		}
 	}
 	
-	
-	func setExternalDisplay(_ notification: Notification) {
-		externalScreen = notification.userInfo?["screen"] as? UIScreen
-		let appDelegate = UIApplication.shared.delegate as! AppDelegate
+	func externalDisplayDidChange(_ notification: Notification) {
 		updateSheetDisplayersRatios()
 		displaySheets()
 	}
@@ -442,26 +460,26 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				if selectedSheetPosition < (numberOfSheets) {
 					
 					// current sheet
-					if let tags = selectedCluster?.hasTagsArray {
+					if let tag = selectedCluster?.hasTag {
 						viewToBeamer?.removeFromSuperview()
-						viewToBeamer = buildSheetViewFor(type: .current, title: selectedSheet?.title, lyrics: selectedSheet?.lyrics, tag: tags.first!, displayToBeamer: true)
+						viewToBeamer = buildSheetViewFor(type: .current, title: selectedCluster?.title, sheet: selectedSheet, tag: tag, displayToBeamer: true)
 						sheetDisplayer.addSubview(viewToBeamer!)
 					}
 
 					// next sheet
-					if selectedSheetPosition < (numberOfSheets - 1), let tags = selectedCluster?.hasTagsArray {
+					if selectedSheetPosition < (numberOfSheets - 1), let tag = selectedCluster?.hasTag {
 						sheetDisplayerNext.layer.transform = transformForFraction(fraction: 1.0)
 						let nextSheet = sheetsForSelectedCluster?[selectedSheetPosition + 1]
-						sheetDisplayerNext.addSubview(buildSheetViewFor(type: .next, title: nextSheet?.title, lyrics: nextSheet?.lyrics, tag: tags.first!))
+						sheetDisplayerNext.addSubview(buildSheetViewFor(type: .next, title: selectedCluster?.title, sheet: nextSheet, tag: tag))
 						sheetDisplayerNext.layer.transform = transformForFraction(fraction: Constants.nextSheetFraction)
 
 					}
 
 					// previous sheet
-					if selectedSheetPosition > 0, let tags = selectedCluster?.hasTagsArray {
+					if selectedSheetPosition > 0, let tag = selectedCluster?.hasTag {
 						let nextSheet = sheetsForSelectedCluster?[selectedSheetPosition - 1]
 						sheetDisplayerPrevious.layer.transform = transformForFraction(fraction: 1.0)
-						sheetDisplayerPrevious.addSubview(buildSheetViewFor(type: .previous, title: nextSheet?.title, lyrics: nextSheet?.lyrics, tag: tags.first!))
+						sheetDisplayerPrevious.addSubview(buildSheetViewFor(type: .previous, title: selectedCluster?.title, sheet: nextSheet, tag: tag))
 						sheetDisplayerPrevious.layer.transform = transformForFraction(fraction: Constants.previousSheetFraction)
 					}
 					
@@ -479,7 +497,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		}
 	}
 	
-	private func buildSheetViewFor(type: SheetType, title: String?, lyrics: String?, tag: Tag?, displayToBeamer: Bool = false) -> UIView {
+	private func buildSheetViewFor(type: SheetType, title: String?, sheet: Sheet?, tag: Tag?, displayToBeamer: Bool = false) -> UIView {
 		var heightView: CGFloat = 0.0
 		var displayerFrame = CGRect(x: 0, y: 0, width: 0, height: 0)
 		switch type {
@@ -495,18 +513,20 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		}
 		if let externalDisplayWindow = externalDisplayWindow, displayToBeamer {
 			let view = SheetView(frame: externalDisplayWindow.frame)
+			view.isEmptySheet = sheet?.title == Text.Sheet.emptySheetTitle
 			view.selectedTag = tag
 			view.songTitle = title
-			view.lyrics = lyrics
+			view.lyrics = sheet?.lyrics
 			view.scaleFactor = externalDisplayWindow.bounds.size.height / heightView
 			view.update()
 			externalDisplayWindow.addSubview(view)
 		}
 		let frame = CGRect(x: 0, y: 0, width: displayerFrame.width, height: displayerFrame.height)
 		let view = SheetView(frame: frame)
+		view.isEmptySheet = sheet?.title == Text.Sheet.emptySheetTitle
 		view.selectedTag = tag
 		view.songTitle = title
-		view.lyrics = lyrics
+		view.lyrics = sheet?.lyrics
 		view.update()
 		return view
 		
@@ -538,13 +558,13 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 
 				// current sheet
 				// current sheet, move to left
-				let currentSheetView = buildSheetViewFor(type: .current, title: selectedSheet?.title, lyrics: selectedSheet?.lyrics, tag: selectedCluster?.hasTagsArray.first)
+				let currentSheetView = buildSheetViewFor(type: .current, title: selectedCluster?.title, sheet: selectedSheet, tag: selectedCluster?.hasTag)
 				currentSheetView.frame = CGRect(x: sheetDisplayer.frame.minX, y: sheetDisplayer.frame.minY + navigationBarHeight, width: sheetDisplayer.frame.width, height: sheetDisplayer.frame.height)
 				
 				
 				// next sheet, move to left
 				let nextSheet = sheetsForSelectedCluster?[selectedSheetPosition + 1]
-				let nextSheetView = buildSheetViewFor(type: .next, title: nextSheet?.title, lyrics: nextSheet?.lyrics, tag: selectedCluster?.hasTagsArray.first)
+				let nextSheetView = buildSheetViewFor(type: .next, title: selectedCluster?.title, sheet: nextSheet, tag: selectedCluster?.hasTag)
 				
 				nextSheetView.frame = CGRect(
 					x: sheetDisplayerNext.frame.minX,
@@ -602,7 +622,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				let navigationBarHeight = UIApplication.shared.statusBarFrame.height + navigationController!.navigationBar.frame.height
 				
 				// current sheet, move to right
-				let currentSheetView = buildSheetViewFor(type: .current, title: selectedSheet?.title, lyrics: selectedSheet?.lyrics, tag: selectedCluster?.hasTagsArray.first)
+				let currentSheetView = buildSheetViewFor(type: .current, title: selectedCluster?.title, sheet: selectedSheet, tag: selectedCluster?.hasTag)
 				currentSheetView.frame = CGRect(x: sheetDisplayer.frame.minX, y: sheetDisplayer.frame.minY + navigationBarHeight, width: sheetDisplayer.frame.width, height: sheetDisplayer.frame.height)
 				
 				sheetDisplayerPrevious.layer.transform = self.transformForFraction(fraction: 1.0)
@@ -610,7 +630,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				
 				// previous sheet, move to right
 				let previousSheet = sheetsForSelectedCluster?[selectedSheetPosition - 1]
-				let previousSheetView = buildSheetViewFor(type: .previous, title: previousSheet?.title, lyrics: previousSheet?.lyrics, tag: selectedCluster?.hasTagsArray.first) // generates uiview with dimensions of sheetDisplayerPrevious which is set in storyboard
+				let previousSheetView = buildSheetViewFor(type: .previous, title: selectedCluster?.title, sheet: previousSheet, tag: selectedCluster?.hasTag) // generates uiview with dimensions of sheetDisplayerPrevious which is set in storyboard
 				previousSheetView.frame = CGRect(
 					x: sheetDisplayerPrevious.frame.minX,
 					y: sheetDisplayerPrevious.frame.minY + navigationBarHeight,

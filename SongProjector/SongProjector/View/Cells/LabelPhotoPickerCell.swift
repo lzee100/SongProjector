@@ -52,6 +52,7 @@ class LabelPhotoPickerCell: UITableViewCell, UIImagePickerControllerDelegate, UI
 			imageThumbnail.image = image
 			imagePreview.image = image
 			pickedImage = image
+			delegate?.didSelectImage(cell: self)
 			layoutIfNeeded()
 		}
 		

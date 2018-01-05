@@ -40,8 +40,9 @@ enum Feature : String {
 			return Text.Tags.title
 		case .displaySettings:
 			return Text.DisplaySettings.title
-		default:
-			return ""
+		case .more:
+			return Text.More.title
+
 		}
 	}
 	

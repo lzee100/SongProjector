@@ -9,14 +9,50 @@
 import UIKit
 import CoreData
 
-var externalDisplayWindow: UIWindow?
+var externalDisplayWindow: UIWindow? {
+	didSet {
+		let defaults = UserDefaults.standard
+		defaults.set(externalDisplayWindow?.frame.width, forKey: "lastScreenWidth")
+		defaults.set(externalDisplayWindow?.frame.height, forKey: "lastScreenHeight")
+	}
+}
+
 var externalDisplayWindowRatio: CGFloat? {
-	if let height = externalDisplayWindow?.frame.size.height, let widht = externalDisplayWindow?.frame.size.width {
-		return height/widht
+	let defaults = UserDefaults.standard
+	if defaults.float(forKey: "lastScreenHeight") != 0 && defaults.float(forKey: "lastScreenWidth") != 0 {
+		return CGFloat(defaults.float(forKey: "lastScreenHeight")) / CGFloat(defaults.float(forKey: "lastScreenWidth"))
 	} else {
 		return nil
 	}
 }
+
+var externalDisplayWindowRatioHeightWidth: CGFloat? {
+	let defaults = UserDefaults.standard
+	if defaults.float(forKey: "lastScreenHeight") != 0 && defaults.float(forKey: "lastScreenWidth") != 0 {
+		return CGFloat(defaults.float(forKey: "lastScreenWidth")) / CGFloat(defaults.float(forKey: "lastScreenHeight"))
+	} else {
+		return nil
+	}
+}
+
+var externalDisplayWindowHeight: CGFloat? {
+	let defaults = UserDefaults.standard
+	if defaults.float(forKey: "lastScreenHeight") != 0 {
+		return CGFloat(defaults.float(forKey: "lastScreenHeight"))
+	} else {
+		return nil
+	}
+}
+
+var externalDisplayWindowWidth: CGFloat? {
+	let defaults = UserDefaults.standard
+	if defaults.float(forKey: "lastScreenWidth") != 0 {
+		return CGFloat(defaults.float(forKey: "lastScreenWidth"))
+	} else {
+		return nil
+	}
+}
+
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -127,12 +163,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	
 	func displayConnected(notification: Notification) {
 		checkForExternalDisplay()
-//		registerForScreenNotifications()
-	}
-	
-	func registerForScreenNotifications(){
-		let notificationCentre = NotificationCenter.default
-		notificationCentre.addObserver(self, selector: #selector(ExternalDisplayController.setupScreen), name: NSNotification.Name.UIScreenDidConnect, object: nil)
 	}
 	
 	func checkForExternalDisplay() {
@@ -145,7 +175,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 					frame: screen.bounds
 				)
 				externalDisplayWindow?.screen = screen
-				NotificationCenter.default.post(name: Notification.Name("externalScreenIsActive"), object: nil, userInfo: ["screen": screen])
+				NotificationCenter.default.post(name: NotificationNames.externalDisplayDidChange, object: nil, userInfo: nil)
 				externalDisplayWindow?.isHidden = false
 			}
 			
@@ -155,6 +185,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	func displayDisconnected(notification: Notification) {
 		externalDisplayWindow?.isHidden = true
 		externalDisplayWindow = nil
+		NotificationCenter.default.post(name: NotificationNames.externalDisplayDidChange, object: nil, userInfo: nil)
 	}
 
 }
