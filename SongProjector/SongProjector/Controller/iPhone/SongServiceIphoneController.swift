@@ -403,8 +403,6 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	}
 	
 	func updateSheetDisplayersRatios() {
-		if let externalDisplayWindowRatio = externalDisplayWindowRatio {
-			
 			sheetDisplayerRatioConstraint.isActive = false
 			sheetDisplayerPreviousRatioConstraint.isActive = false
 			sheetDisplayerNextRatioConstraint.isActive = false
@@ -429,11 +427,11 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 			customSheetDisplayerNextRatioConstraint = NSLayoutConstraint(item: sheetDisplayerNext, attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.equal, toItem: sheetDisplayerNext, attribute: NSLayoutAttribute.width, multiplier: externalDisplayWindowRatio, constant: 0)
 			sheetDisplayerNext.addConstraint(customSheetDisplayerNextRatioConstraint!)
 			
-		} else {
-			sheetDisplayerRatioConstraint.isActive = true
-			sheetDisplayerPreviousRatioConstraint.isActive = true
-			sheetDisplayerNextRatioConstraint.isActive = true
-		}
+//		} else {
+//			sheetDisplayerRatioConstraint.isActive = true
+//			sheetDisplayerPreviousRatioConstraint.isActive = true
+//			sheetDisplayerNextRatioConstraint.isActive = true
+//		}
 		
 		view.layoutIfNeeded()
 		view.layoutSubviews()

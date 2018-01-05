@@ -17,39 +17,39 @@ var externalDisplayWindow: UIWindow? {
 	}
 }
 
-var externalDisplayWindowRatio: CGFloat? {
+var externalDisplayWindowRatio: CGFloat {
 	let defaults = UserDefaults.standard
 	if defaults.float(forKey: "lastScreenHeight") != 0 && defaults.float(forKey: "lastScreenWidth") != 0 {
 		return CGFloat(defaults.float(forKey: "lastScreenHeight")) / CGFloat(defaults.float(forKey: "lastScreenWidth"))
 	} else {
-		return nil
+		return 4/3
 	}
 }
 
-var externalDisplayWindowRatioHeightWidth: CGFloat? {
+var externalDisplayWindowRatioHeightWidth: CGFloat {
 	let defaults = UserDefaults.standard
 	if defaults.float(forKey: "lastScreenHeight") != 0 && defaults.float(forKey: "lastScreenWidth") != 0 {
 		return CGFloat(defaults.float(forKey: "lastScreenWidth")) / CGFloat(defaults.float(forKey: "lastScreenHeight"))
 	} else {
-		return nil
+		return 3/4
 	}
 }
 
-var externalDisplayWindowHeight: CGFloat? {
+var externalDisplayWindowHeight: CGFloat {
 	let defaults = UserDefaults.standard
 	if defaults.float(forKey: "lastScreenHeight") != 0 {
 		return CGFloat(defaults.float(forKey: "lastScreenHeight"))
 	} else {
-		return nil
+		return externalDisplayWindowWidth / externalDisplayWindowRatio
 	}
 }
 
-var externalDisplayWindowWidth: CGFloat? {
+var externalDisplayWindowWidth: CGFloat {
 	let defaults = UserDefaults.standard
 	if defaults.float(forKey: "lastScreenWidth") != 0 {
 		return CGFloat(defaults.float(forKey: "lastScreenWidth"))
 	} else {
-		return nil
+		return UIScreen.main.bounds.width
 	}
 }
 

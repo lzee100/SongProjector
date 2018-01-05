@@ -8,7 +8,7 @@
 
 import UIKit
 
-class NewSongIphoneController: UIViewController, UITableViewDataSource, UITableViewDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, NewSongSheetCellDelegate {
+class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, NewSongSheetCellDelegate {
 	
 	// MARK: - Types
 	struct Constants {
@@ -20,7 +20,7 @@ class NewSongIphoneController: UIViewController, UITableViewDataSource, UITableV
 	
 	@IBOutlet var collectionView: UICollectionView!
 	@IBOutlet var textView: UITextView!
-	@IBOutlet var tableView: UITableView!
+	@IBOutlet var collectionViewSheets: UICollectionView!
 	
 	// MARK: - Properties
 	
@@ -28,12 +28,17 @@ class NewSongIphoneController: UIViewController, UITableViewDataSource, UITableV
 	private var sheets: [Sheet] = []
 	private var tempSheetsBeforeSaving: [(title: String, lyrics: String, position: Int16)] = []
 	private var tags: [Tag] = []
+	private var delaySheetAimation = 0.0
+	private var isFirstTime = true
+	private var multiplier: CGFloat = 4/3
+	private var sheetSize = CGSize(width: 375, height: 281)
+	private var sheetPreviewView = SheetView()
 	private var selectedTag: Tag? {
 		didSet { update() }
 	}
 	private var sheetMode = false
 	
-	private var isTableViewHidden = true {
+	private var isCollectionviewSheetsHidden = true {
 		didSet { update() }
 	}
 	
@@ -99,32 +104,80 @@ class NewSongIphoneController: UIViewController, UITableViewDataSource, UITableV
 		}
 	}
 	
+	func numberOfSections(in collectionView: UICollectionView) -> Int {
+		if collectionView == collectionViewSheets {
+			return tempSheetsBeforeSaving.count
+		} else {
+			return 1
+		}
+	}
+	
 	
 	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-		return tags.count
+		if collectionView == collectionViewSheets {
+			return 1
+		} else {
+			return tags.count
+		}
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-		let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.tagCellCollection, for: indexPath)
 		
-		if let collectionCell = collectionCell as? TagCellCollection {
-			collectionCell.setup(tagName: tags[indexPath.row].title ?? "")
-			collectionCell.isSelectedCell = selectedTag?.id == tags[indexPath.row].id
+		if collectionView == collectionViewSheets {
+			
+			let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.sheetCollectionCell, for: indexPath)
+			
+			if let collectionCell = collectionCell as? SheetCollectionCell {
+				collectionCell.setPreviewViewAspectRatioConstraint(multiplier: multiplier)
+				
+				let view = buildSheetViewFor(title: clusterTitle, sheet: tempSheetsBeforeSaving[indexPath.section], tag: selectedTag, frame: collectionCell.bounds)
+				collectionCell.previewView.addSubview(view)
+				
+				if isFirstTime {
+					
+					collectionCell.bounds = CGRect(x: -self.view.bounds.width, y: CGFloat(indexPath.section * Int(sheetSize.height)), width: collectionCell.bounds.width, height: collectionCell.bounds.height)
+					UIView.animate(withDuration: 0.5, delay: delaySheetAimation, usingSpringWithDamping: 0.4, initialSpringVelocity: 9, options: .curveEaseInOut, animations: {
+						collectionCell.bounds = CGRect(x: 0  , y: CGFloat(indexPath.section * Int(self.sheetSize.height)), width: collectionCell.bounds.width, height: collectionCell.bounds.height)
+					})
+					delaySheetAimation += 0.1
+				}
+			}
+			let navigationBarHeight = UIApplication.shared.statusBarFrame.height + navigationController!.navigationBar.frame.height
+			let tagBarHeight = self.collectionView.bounds.height
+			if indexPath.section == Int(round(Double((UIScreen.main.bounds.height - navigationBarHeight - tagBarHeight) / (sheetSize.height + 10)))) - 1 {
+				isFirstTime = false
+			}
+			return collectionCell
+			
+			
+		} else {
+			let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.tagCellCollection, for: indexPath)
+			
+			if let collectionCell = collectionCell as? TagCellCollection {
+				collectionCell.setup(tagName: tags[indexPath.row].title ?? "")
+				collectionCell.isSelectedCell = selectedTag?.id == tags[indexPath.row].id
+			}
+			return collectionCell
 		}
-		return collectionCell
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-		if selectedTag?.id == tags[indexPath.row].id {
-			selectedTag = nil
-		} else {
-			selectedTag = tags[indexPath.row]
+		if collectionView != collectionViewSheets {
+			if selectedTag?.id == tags[indexPath.row].id {
+				selectedTag = nil
+			} else {
+				selectedTag = tags[indexPath.row]
+			}
+			update()
 		}
-		update()
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-		return CGSize(width: 200, height: 50)
+		if collectionView == collectionViewSheets {
+			return sheetSize
+		} else {
+			return CGSize(width: 200, height: 50)
+		}
 	}
 	
 	
@@ -143,20 +196,36 @@ class NewSongIphoneController: UIViewController, UITableViewDataSource, UITableV
 	private func setup() {
 		
 		collectionView.register(UINib(nibName: Cells.tagCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.tagCellCollection)
-		tableView.register(cell: Cells.newSongSheetCellid)
 		navigationController?.title = Text.NewSong.title
+		title = Text.Players.title
+
 		cancel.title = Text.Actions.cancel
 		done.title = Text.Actions.done
 		
-		isTableViewHidden = true
+		collectionViewSheets.register(UINib(nibName: Cells.sheetCollectionCell, bundle: nil), forCellWithReuseIdentifier: Cells.sheetCollectionCell)
+		multiplier = externalDisplayWindowRatioHeightWidth
+		let cellHeight = multiplier * (UIScreen.main.bounds.width - 20)
+		sheetSize = CGSize(width: UIScreen.main.bounds.width - 20, height: cellHeight)
+
+		sheetPreviewView = buildSheetViewFor(title: "", sheet: (title: "", lyrics: "", position: Int16(0)), tag: selectedTag, frame: CGRect(x: 0, y: 0, width: sheetSize.width, height: sheetSize.height))
+		
+		let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
+		layout.sectionInset = UIEdgeInsets(top: 20, left: 0, bottom: 10, right: 0)
+		layout.itemSize = sheetSize
+		layout.minimumInteritemSpacing = 30
+		layout.minimumLineSpacing = 0
+		collectionViewSheets!.collectionViewLayout = layout
+		
+		isCollectionviewSheetsHidden = true
 	}
 	
 	private func update() {
 		// TODO: uncomment
 		tags = CoreTag.getEntities()
 		collectionView.reloadData()
-		tableView.reloadData()
-		tableView.isHidden = isTableViewHidden
+		collectionViewSheets.reloadData()
+		isFirstTime = true
+		collectionViewSheets.isHidden = isCollectionviewSheetsHidden
 	}
 	
 	private func buildSheets(fromText: String) {
@@ -202,6 +271,28 @@ class NewSongIphoneController: UIViewController, UITableViewDataSource, UITableV
 		
 	}
 	
+	private func buildSheetViewFor(title: String?, sheet: (title: String, lyrics: String, position: Int16), tag: Tag?, displayToBeamer: Bool = false, frame: CGRect) -> SheetView {
+		let defaults = UserDefaults.standard
+		let view = SheetView(frame: frame)
+		view.isEmptySheet = false
+		view.selectedTag = tag
+		view.songTitle = title
+		view.lyrics = sheet.lyrics
+		view.isEditable = true
+		if let heightExternalDisplay = defaults.object(forKey: "externalDisplayWindowHeight") as? CGFloat {
+			view.scaleFactor = heightExternalDisplay / (frame.size.height * UIScreen.main.scale)
+		}
+		view.update()
+		return view
+	}
+	
+	private func sheetViewFor(indexPath: IndexPath) -> UIView {
+		sheetPreviewView.titleLabel.text = clusterTitle
+		sheetPreviewView.lyrics = sheets[indexPath.row].lyrics
+		sheetPreviewView.update()
+		return sheetPreviewView
+	}
+	
 	private func hasTagSelected() -> Bool {
 		if selectedTag != nil {
 			return true
@@ -224,8 +315,8 @@ class NewSongIphoneController: UIViewController, UITableViewDataSource, UITableV
 			sheetMode = false
 			tempSheetsBeforeSaving = []
 		}
-		
-		isTableViewHidden = true
+		isFirstTime = true
+		isCollectionviewSheetsHidden = true
 		
 	}
 	
@@ -255,7 +346,8 @@ class NewSongIphoneController: UIViewController, UITableViewDataSource, UITableV
 				dismiss(animated: true)
 			}
 		} else {
-			isTableViewHidden = false
+			textView.resignFirstResponder()
+			isCollectionviewSheetsHidden = false
 			sheetMode = true
 			buildSheets(fromText: textView.text)
 			

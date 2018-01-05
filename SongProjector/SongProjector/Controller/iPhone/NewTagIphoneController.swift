@@ -907,12 +907,9 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 	}
 	
 	private func refineSheetRatio() {
-		if let externalDisplayWindowRatio = externalDisplayWindowRatio {
-			sheetPreviewAspectRatio.isActive = false
-			sheetPreview.addConstraint(NSLayoutConstraint(item: sheetPreview, attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.equal, toItem: sheetPreview, attribute: NSLayoutAttribute.width, multiplier: externalDisplayWindowRatio, constant: 0))
-		} else {
-			sheetPreviewAspectRatio.isActive = true
-		}
+		sheetPreviewAspectRatio.isActive = false
+		sheetPreview.addConstraint(NSLayoutConstraint(item: sheetPreview, attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.equal, toItem: sheetPreview, attribute: NSLayoutAttribute.width, multiplier: externalDisplayWindowRatio, constant: 0))
+
 		buildPreview(isSetup: isSetup)
 	}
 	
