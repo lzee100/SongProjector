@@ -22,7 +22,7 @@ var externalDisplayWindowRatio: CGFloat {
 	if defaults.float(forKey: "lastScreenHeight") != 0 && defaults.float(forKey: "lastScreenWidth") != 0 {
 		return CGFloat(defaults.float(forKey: "lastScreenHeight")) / CGFloat(defaults.float(forKey: "lastScreenWidth"))
 	} else {
-		return 4/3
+		return 9/16
 	}
 }
 
@@ -31,7 +31,7 @@ var externalDisplayWindowRatioHeightWidth: CGFloat {
 	if defaults.float(forKey: "lastScreenHeight") != 0 && defaults.float(forKey: "lastScreenWidth") != 0 {
 		return CGFloat(defaults.float(forKey: "lastScreenWidth")) / CGFloat(defaults.float(forKey: "lastScreenHeight"))
 	} else {
-		return 3/4
+		return 16/9
 	}
 }
 
@@ -40,7 +40,7 @@ var externalDisplayWindowHeight: CGFloat {
 	if defaults.float(forKey: "lastScreenHeight") != 0 {
 		return CGFloat(defaults.float(forKey: "lastScreenHeight"))
 	} else {
-		return externalDisplayWindowWidth / externalDisplayWindowRatio
+		return 1080
 	}
 }
 
@@ -49,7 +49,7 @@ var externalDisplayWindowWidth: CGFloat {
 	if defaults.float(forKey: "lastScreenWidth") != 0 {
 		return CGFloat(defaults.float(forKey: "lastScreenWidth"))
 	} else {
-		return UIScreen.main.bounds.width
+		return 1920
 	}
 }
 

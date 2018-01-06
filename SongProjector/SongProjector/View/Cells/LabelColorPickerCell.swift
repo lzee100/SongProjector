@@ -10,7 +10,7 @@ import UIKit
 import ChromaColorPicker
 
 protocol LabelColorPickerCellDelegate {
-	func colorPickerDidChooseColor(cell: LabelColorPickerCell, colorPicker: ChromaColorPicker, color: UIColor)
+	func colorPickerDidChooseColor(cell: LabelColorPickerCell, colorPicker: ChromaColorPicker, color: UIColor?)
 }
 
 class LabelColorPickerCell: UITableViewCell, ChromaColorPickerDelegate {
@@ -31,6 +31,8 @@ class LabelColorPickerCell: UITableViewCell, ChromaColorPickerDelegate {
 		let view : LabelColorPickerCell! = UIView.create(nib: "LabelColorPickerCell")
 		view.id = id
 		view.descriptionTitle.text = description
+		view.colorPreview.layer.borderColor = UIColor.primary.cgColor
+		view.colorPreview.layer.borderWidth = 1.0
 		return view
 	}
 	
@@ -52,9 +54,8 @@ class LabelColorPickerCell: UITableViewCell, ChromaColorPickerDelegate {
 		}
 	}
 	
-	func setColor(color: UIColor) {
-		colorPreview.backgroundColor = color
-		colorPicker.adjustToColor(color)
+	func setColor(color: UIColor?) {
+		colorPreview.backgroundColor = color != nil ? color! : id == "cellTitleTextColor" || id == "cellLyricsTextColor" ? .black : .clear
 		delegate?.colorPickerDidChooseColor(cell: self, colorPicker: colorPicker, color: color)
 	}
 	

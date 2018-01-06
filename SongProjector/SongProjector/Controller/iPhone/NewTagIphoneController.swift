@@ -16,6 +16,7 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 	// MARK: - IBoutlets
 	@IBOutlet var cancel: UIBarButtonItem!
 	@IBOutlet var save: UIBarButtonItem!
+	@IBOutlet var sheetContainerView: UIView!
 	@IBOutlet var sheetPreview: UIView!
 	@IBOutlet var titlePreview: UILabel!
 	@IBOutlet var titleBackground: UIView!
@@ -23,6 +24,7 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 	@IBOutlet var imageBackground: UIImageView!
 	@IBOutlet var titleHeightConstraint: NSLayoutConstraint!
 	
+	@IBOutlet var sheetContainerHeightConstraint: NSLayoutConstraint!
 	@IBOutlet var sheetPreviewAspectRatio: NSLayoutConstraint!
 	@IBOutlet var tableView: UITableView!
 	
@@ -104,16 +106,16 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 	
 	// MARK: Title Cells
 	
-	var cellTitelFontFamily = LabelPickerCell()
-	let cellTitelFontSize = LabelNumberCell.create(id: "cellTitleFontSize", description: Text.NewTag.fontSizeDescription, initialValue: 17)
-	let cellTitelAlignment = LabelPickerCell.create(id: "cellTitleFontAlignment", description: Text.NewTag.descriptionAlignment, initialValueName: Text.NewTag.alignLeft, pickerValues: [(Int64(0), Text.NewTag.alignLeft), (Int64(0), Text.NewTag.alignCenter), (Int64(0), Text.NewTag.alignRight)])
-	let cellTitelBorderSize = LabelNumberCell.create(id: "cellTitleBorderSize", description: Text.NewTag.borderSizeDescription, initialValue: 0, positive: false)
-	let cellTitelTextColor = LabelColorPickerCell.create(id: "cellTitelTextColor", description: Text.NewTag.textColor)
+	var cellTitleFontFamily = LabelPickerCell()
+	let cellTitleFontSize = LabelNumberCell.create(id: "cellTitleFontSize", description: Text.NewTag.fontSizeDescription, initialValue: 17)
+	let cellTitleAlignment = LabelPickerCell.create(id: "cellTitleFontAlignment", description: Text.NewTag.descriptionAlignment, initialValueName: Text.NewTag.alignLeft, pickerValues: [(Int64(0), Text.NewTag.alignLeft), (Int64(0), Text.NewTag.alignCenter), (Int64(0), Text.NewTag.alignRight)])
+	let cellTitleBorderSize = LabelNumberCell.create(id: "cellTitleBorderSize", description: Text.NewTag.borderSizeDescription, initialValue: 0, positive: false)
+	let cellTitleTextColor = LabelColorPickerCell.create(id: "cellTitleTextColor", description: Text.NewTag.textColor)
 	let cellTitleBackgroundColor = LabelColorPickerCell.create(id: "cellTitleBackgroundColor", description: Text.NewTag.descriptionTitleBackgroundColor)
-	let cellTitelBorderColor = LabelColorPickerCell.create(id: "cellTitelBorderColor", description: Text.NewTag.borderColor)
-	let cellTitelBold = LabelSwitchCell.create(id: "cellTitelBold", description: Text.NewTag.bold)
-	let cellTitelItalic = LabelSwitchCell.create(id: "cellTitelItalic", description: Text.NewTag.italic)
-	let cellTitelUnderLined = LabelSwitchCell.create(id: "cellTitelUnderlined", description: Text.NewTag.underlined)
+	let cellTitleBorderColor = LabelColorPickerCell.create(id: "cellTitleBorderColor", description: Text.NewTag.borderColor)
+	let cellTitleBold = LabelSwitchCell.create(id: "cellTitleBold", description: Text.NewTag.bold)
+	let cellTitleItalic = LabelSwitchCell.create(id: "cellTitleItalic", description: Text.NewTag.italic)
+	let cellTitleUnderLined = LabelSwitchCell.create(id: "cellTitleUnderlined", description: Text.NewTag.underlined)
 	
 	
 	// MARK: Lyrics Cells
@@ -139,9 +141,6 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 	var titleAttributes: [NSAttributedStringKey : Any] = [:]
 	var lyricsAttributes: [NSAttributedStringKey: Any] = [:]
 	var titleAttributedText: NSAttributedString?
-	
-	var titleFontNameIsSet = false
-	var lyricsFontNameIsSet = false
 	
 	
 	
@@ -180,7 +179,7 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 		case .general:
 			return getGeneralCellFor(indexPath: indexPath)
 		case .title:
-			return getTitelCellFor(indexPath: indexPath)
+			return getTitleCellFor(indexPath: indexPath)
 		case .content:
 			return getLyricsCellFor(indexPath: indexPath)
 		}
@@ -199,13 +198,13 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 			}
 		case .title:
 			switch CellTitle.for(indexPath) {
-			case .fontFamily: return cellTitelFontFamily.preferredHeight
-			case .fontSize: return cellTitelFontSize.preferredHeight
-			case .alignment: return cellTitelAlignment.preferredHeight
-			case .textColor: return cellTitelTextColor.preferredHeight
+			case .fontFamily: return cellTitleFontFamily.preferredHeight
+			case .fontSize: return cellTitleFontSize.preferredHeight
+			case .alignment: return cellTitleAlignment.preferredHeight
+			case .textColor: return cellTitleTextColor.preferredHeight
 			case .backgroundColor: return cellTitleBackgroundColor.preferredHeight
-			case .borderSize: return cellTitelBorderSize.preferredHeight
-			case .borderColor: return cellTitelBorderColor.preferredHeight
+			case .borderSize: return cellTitleBorderSize.preferredHeight
+			case .borderColor: return cellTitleBorderColor.preferredHeight
 			default:
 				return 60
 			}
@@ -256,6 +255,76 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 		return view
 	}
 	
+	func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+		switch Section.for(indexPath.section) {
+		case .general:
+			switch CellGeneral.for(indexPath) {
+			case .backgroundColor:
+				return .delete
+			case .backgroundImage:
+				return .delete
+			default:
+				return .none
+			}
+		case .title:
+			switch CellTitle.for(indexPath) {
+			case .backgroundColor:
+				return .delete
+			case .textColor:
+				return .delete
+			case .borderColor:
+				return .delete
+			default:
+				return .none
+			}
+		case .content:
+			switch CellLyrics.for(indexPath) {
+			case .textColor:
+				return .delete
+			case .borderColor:
+				return .delete
+			default:
+				return .none
+			}
+		}
+	}
+	
+	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+		if editingStyle == .delete {
+			switch Section.for(indexPath.section) {
+			case .general:
+				switch CellGeneral.for(indexPath) {
+				case .backgroundColor:
+					cellBackgroundColor.setColor(color: nil)
+				case .backgroundImage:
+					cellPhotoPicker.setImage(image: nil)
+				default:
+					break
+				}
+			case .title:
+				switch CellTitle.for(indexPath) {
+				case .backgroundColor:
+					cellTitleBackgroundColor.setColor(color: nil)
+				case .textColor:
+					cellTitleTextColor.setColor(color: nil)
+				case .borderColor:
+					cellTitleBorderColor.setColor(color: nil)
+				default:
+					break
+				}
+			case .content:
+				switch CellLyrics.for(indexPath) {
+				case .textColor:
+					cellLyricsTextColor.setColor(color: nil)
+				case .borderColor:
+					cellLyricsBorderColor.setColor(color: nil)
+				default:
+					break
+				}
+			}
+		}
+	}
+	
 	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		switch Section.for(indexPath.section) {
 		case .general:
@@ -278,15 +347,15 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 		case .title:
 			switch CellTitle.for(indexPath) {
 			case .fontFamily:
-				let cell = cellTitelFontFamily
+				let cell = cellTitleFontFamily
 				cell.isActive = !cell.isActive
 				reloadDataWithScrollTo(cell)
 			case .alignment:
-				let cell = cellTitelAlignment
+				let cell = cellTitleAlignment
 				cell.isActive = !cell.isActive
 				reloadDataWithScrollTo(cell)
 			case .textColor:
-				let cell = cellTitelTextColor
+				let cell = cellTitleTextColor
 				cell.isActive = !cell.isActive
 				reloadDataWithScrollTo(cell)
 			case .backgroundColor:
@@ -294,7 +363,7 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 				cell.isActive = !cell.isActive
 				reloadDataWithScrollTo(cell)
 			case .borderColor:
-				let cell = cellTitelBorderColor
+				let cell = cellTitleBorderColor
 				cell.isActive = !cell.isActive
 				reloadDataWithScrollTo(cell)
 			default:
@@ -334,17 +403,15 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 	}
 	
 	func didSelect(item: (Int64, String), cell: LabelPickerCell) {
-		if cell.id == "titleFontFamily" {
+		if cell.id == "cellTitleFontFamily" {
 			var size: CGFloat = 17
 			if let font = titleAttributes[.font] as? UIFont {
 				size = font.pointSize
 			}
 			titleAttributes[.font] = UIFont(name: item.1, size: size)
 			buildPreview(isSetup: isSetup)
-			if titleFontNameIsSet {
-			cell.isActive = !cell.isActive
-			} else {
-				titleFontNameIsSet = true
+			if !isSetup {
+				cell.isActive = !cell.isActive
 			}
 			tableView.beginUpdates()
 			tableView.endUpdates()
@@ -356,10 +423,8 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 			}
 			lyricsAttributes[.font] = UIFont(name: item.1, size: size)
 			buildPreview(isSetup: isSetup)
-			if lyricsFontNameIsSet {
+			if !isSetup {
 				cell.isActive = !cell.isActive
-			} else {
-				lyricsFontNameIsSet = true
 			}
 			tableView.beginUpdates()
 			tableView.endUpdates()
@@ -370,7 +435,9 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 			loadTagAttributes()
 			editExistingTag = nil
 			cellName.setName(name: "")
-			cell.isActive = !cell.isActive
+			if !isSetup {
+				cell.isActive = !cell.isActive
+			}
 			tableView.beginUpdates()
 			tableView.endUpdates()
 		}
@@ -386,7 +453,9 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 				paragraph.alignment = .center
 				titleAttributes[.paragraphStyle] = paragraph
 			}
-			cell.isActive = !cell.isActive
+			if !isSetup {
+				cell.isActive = !cell.isActive
+			}
 			buildPreview(isSetup: isSetup)
 			tableView.beginUpdates()
 			tableView.endUpdates()
@@ -403,7 +472,9 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 				paragraph.alignment = .center
 				lyricsAttributes[.paragraphStyle] = paragraph
 			}
-			cell.isActive = !cell.isActive
+			if !isSetup {
+				cell.isActive = !cell.isActive
+			}
 			buildPreview(isSetup: isSetup)
 			tableView.beginUpdates()
 			tableView.endUpdates()
@@ -453,43 +524,71 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 		
 	}
 	
-	func colorPickerDidChooseColor(cell: LabelColorPickerCell, colorPicker: ChromaColorPicker, color: UIColor) {
-		if cell.id == "cellTitelTextColor" {
-			titleAttributes[.foregroundColor] = color
-			titleAttributes[.underlineColor] = color
+	func colorPickerDidChooseColor(cell: LabelColorPickerCell, colorPicker: ChromaColorPicker, color: UIColor?) {
+		if cell.id == "cellTitleTextColor" {
+			if let color = color {
+				titleAttributes[.foregroundColor] = color
+				titleAttributes[.underlineColor] = color
+			} else {
+				titleAttributes[.foregroundColor] = UIColor.black
+				titleAttributes[.underlineColor] = UIColor.black
+			}
 			buildPreview(isSetup: isSetup)
 			tableView.beginUpdates()
 			tableView.endUpdates()
-		} else if cell.id == "cellTitelBorderColor" {
-			titleAttributes[.strokeColor] = color
+		} else if cell.id == "cellTitleBorderColor" {
+			if let color = color {
+				titleAttributes[.strokeColor] = color
+			} else {
+				cellTitleBorderSize.setValue(value: 0)
+				titleAttributes.removeValue(forKey: .strokeColor)
+			}
 			buildPreview(isSetup: isSetup)
 			tableView.beginUpdates()
 			tableView.endUpdates()
 		} else if cell.id == "cellTitleBackgroundColor" {
-			titlePreview.backgroundColor = color
-			titleBackgroundColor = color
+			if let color = color {
+				titlePreview.backgroundColor = color
+				titleBackgroundColor = color
+			} else {
+				titlePreview.backgroundColor = .clear
+				titleBackgroundColor = nil
+			}
 			buildPreview(isSetup: isSetup)
 			tableView.beginUpdates()
 			tableView.endUpdates()
 		}
 		
 		if cell.id == "cellLyricsTextColor" {
-			lyricsAttributes[.foregroundColor] = color
-			lyricsAttributes[.underlineColor] = color
+			if let color = color {
+				lyricsAttributes[.foregroundColor] = color
+				lyricsAttributes[.underlineColor] = color
+			} else {
+				lyricsAttributes[.foregroundColor] = UIColor.black
+				lyricsAttributes[.underlineColor] = UIColor.black
+			}
 			buildPreview(isSetup: isSetup)
 			
 			tableView.beginUpdates()
 			tableView.endUpdates()
-			// TODO: iets met opslaan kleur??
 		} else if cell.id == "cellLyricsBorderColor" {
-			lyricsAttributes[.strokeColor] = color
+			if let color = color {
+				lyricsAttributes[.strokeColor] = color
+			} else {
+				cellLyricsBorderSize.setValue(value: 0)
+				lyricsAttributes.removeValue(forKey: .strokeColor)
+			}
 			buildPreview(isSetup: isSetup)
 			
 			tableView.beginUpdates()
 			tableView.endUpdates()
 		}
 		if cell.id == "cellBackgroundColor" {
-			sheetBackgroundColor = color
+			if let color = color {
+				sheetBackgroundColor = color
+			} else {
+				sheetBackgroundColor = .white
+			}
 			buildPreview(isSetup: isSetup)
 			tableView.beginUpdates()
 			tableView.endUpdates()
@@ -499,7 +598,7 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 	
 	func valueChangedFor(cell: LabelSwitchCell, uiSwitch: UISwitch) {
 		switch cell.id {
-		case "cellTitelBold":
+		case "cellTitleBold":
 			if let font = titleAttributes[.font] as? UIFont {
 				if uiSwitch.isOn {
 					titleAttributes[.font] = font.setBoldFnc()
@@ -508,7 +607,7 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 				}
 				buildPreview(isSetup: isSetup)
 			}
-		case "cellTitelItalic":
+		case "cellTitleItalic":
 			if let font = titleAttributes[.font] as? UIFont {
 				if uiSwitch.isOn {
 					titleAttributes[.font] = font.setItalicFnc()
@@ -517,7 +616,7 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 				}
 			}
 			buildPreview(isSetup: isSetup)
-		case "cellTitelUnderlined":
+		case "cellTitleUnderlined":
 				if uiSwitch.isOn {
 					titleAttributes[.underlineStyle] = NSUnderlineStyle.styleSingle.rawValue
 				} else {
@@ -560,7 +659,9 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 	}
 	
 	func didSelectImage(cell: LabelPhotoPickerCell) {
-		cell.isActive = !cell.isActive
+		if !isSetup {
+			cell.isActive = !cell.isActive
+		}
 		tableView.beginUpdates()
 		tableView.endUpdates()
 		tableView.reloadData()
@@ -580,11 +681,13 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 		tableView.register(cell: Cells.labelTextFieldCell)
 		tableView.register(cell: Cells.LabelPhotoPickerCell)
 		
+		sheetContainerHeightConstraint.isActive = false
+		
 		refineSheetRatio()
 		
-		let fontFamilyValues = UIFont.familyNames.map{ (Int64(0), $0) }
-		cellTitelFontFamily = LabelPickerCell.create(id: "cellTitleFontFamily", description: Text.NewTag.fontFamilyDescription, initialValueName: UIFont.systemFont(ofSize: 17).fontName, pickerValues: fontFamilyValues)
-		cellLyricsFontFamily = LabelPickerCell.create(id: "cellLyricsFontFamily", description: Text.NewTag.fontFamilyDescription, initialValueName: UIFont.systemFont(ofSize: 17).fontName, pickerValues: fontFamilyValues)
+		let fontFamilyValues = UIFont.familyNames.map{ (Int64(0), $0) }.sorted { $0.1 < $1.1 }
+		cellTitleFontFamily = LabelPickerCell.create(id: "cellTitleFontFamily", description: Text.NewTag.fontFamilyDescription, initialValueName: "Avenir", pickerValues: fontFamilyValues)
+		cellLyricsFontFamily = LabelPickerCell.create(id: "cellLyricsFontFamily", description: Text.NewTag.fontFamilyDescription, initialValueName: "Avenir", pickerValues: fontFamilyValues)
 		
 		CoreTag.setSortDescriptor(attributeName: "title", ascending: true)
 		let tags = CoreTag.getEntities().map{ ($0.id, $0.title!) }
@@ -593,8 +696,12 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 		cellPhotoPicker = LabelPhotoPickerCell.create(id: "cellPhotoPicker", description: Text.NewTag.backgroundImage, sender: self)
 		cellPhotoPicker.setup()
 		
-		lyricsAttributes[.font] = UIFont(name: UIFont.systemFont(ofSize: 17).fontName, size: 17)
-		titleAttributes[.font] = UIFont(name: UIFont.systemFont(ofSize: 17).fontName, size: 17)
+		
+		titleAttributes[.font] = UIFont(name: "Avenir", size: 17)
+		cellTitleTextColor.setColor(color: .black)
+		lyricsAttributes[.font] = UIFont(name: "Avenir", size: 17)
+		cellLyricsTextColor.setColor(color: .black)
+
 		
 		cellAsTag.delegate = self
 		cellName.setup()
@@ -603,16 +710,16 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 		cellBackgroundColor.delegate = self
 		cellHasEmptySheet.delegate = self
 		
-		cellTitelFontFamily.delegate = self
-		cellTitelFontSize.delegate = self
-		cellTitelAlignment.delegate = self
-		cellTitelBorderSize.delegate = self
-		cellTitelBorderColor.delegate = self
+		cellTitleFontFamily.delegate = self
+		cellTitleFontSize.delegate = self
+		cellTitleAlignment.delegate = self
+		cellTitleBorderSize.delegate = self
+		cellTitleBorderColor.delegate = self
 		cellTitleBackgroundColor.delegate = self
-		cellTitelTextColor.delegate = self
-		cellTitelBold.delegate = self
-		cellTitelItalic.delegate = self
-		cellTitelUnderLined.delegate = self
+		cellTitleTextColor.delegate = self
+		cellTitleBold.delegate = self
+		cellTitleItalic.delegate = self
+		cellTitleUnderLined.delegate = self
 		
 		cellLyricsFontFamily.delegate = self
 		cellLyricsFontSize.delegate = self
@@ -646,18 +753,18 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 	}
 
 	
-	private func getTitelCellFor(indexPath: IndexPath) -> UITableViewCell {
+	private func getTitleCellFor(indexPath: IndexPath) -> UITableViewCell {
 		switch CellTitle.for(indexPath) {
-		case .fontFamily: return cellTitelFontFamily
-		case .fontSize: return cellTitelFontSize
-		case .textColor: return cellTitelTextColor
+		case .fontFamily: return cellTitleFontFamily
+		case .fontSize: return cellTitleFontSize
+		case .textColor: return cellTitleTextColor
 		case .backgroundColor: return cellTitleBackgroundColor
-		case .alignment: return cellTitelAlignment
-		case .borderSize: return cellTitelBorderSize
-		case .borderColor: return cellTitelBorderColor
-		case .bold: return cellTitelBold
-		case .italic: return cellTitelItalic
-		case .underlined: return cellTitelUnderLined
+		case .alignment: return cellTitleAlignment
+		case .borderSize: return cellTitleBorderSize
+		case .borderColor: return cellTitleBorderColor
+		case .bold: return cellTitleBold
+		case .italic: return cellTitleItalic
+		case .underlined: return cellTitleUnderLined
 		}
 	}
 	
@@ -688,22 +795,22 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 	private func loadTagAttributes() {
 		if let tag = editExistingTag {
 			cellName.setName(name: tag.title ?? "")
-			cellTitelFontFamily.setValue(value: tag.titleFontName ?? "")
-			cellTitelFontSize.setValue(value: Int(tag.titleTextSize))
-			cellTitelAlignment.setValue(value: tag.titleAlignment, id: nil)
-			cellTitelBorderSize.setValue(value: Int(tag.titleBorderSize))
-			cellTitelBorderColor.setColor(color: tag.borderColorTitle ?? .black)
-			cellTitelTextColor.setColor(color: tag.textColorTitle ?? .black)
-			cellTitelBold.setSwitchValueTo(value: tag.isTitleBold)
-			cellTitelItalic.setSwitchValueTo(value: tag.isTitleItalian)
-			cellTitelUnderLined.setSwitchValueTo(value: tag.isTitleUnderlined)
+			cellTitleFontFamily.setValue(value: tag.titleFontName ?? "")
+			cellTitleFontSize.setValue(value: Int(tag.titleTextSize))
+			cellTitleAlignment.setValue(value: tag.titleAlignment, id: nil)
+			cellTitleBorderSize.setValue(value: Int(tag.titleBorderSize))
+			cellTitleBorderColor.setColor(color: tag.borderColorTitle)
+			cellTitleTextColor.setColor(color: tag.textColorTitle)
+			cellTitleBold.setSwitchValueTo(value: tag.isTitleBold)
+			cellTitleItalic.setSwitchValueTo(value: tag.isTitleItalian)
+			cellTitleUnderLined.setSwitchValueTo(value: tag.isTitleUnderlined)
 		
 			cellLyricsFontFamily.setValue(value: tag.lyricsFontName ?? "")
 			cellLyricsFontSize.setValue(value: Int(tag.lyricsTextSize))
 			cellLyricslAlignment.setValue(value: tag.lyricsAlignment, id: nil)
 			cellLyricsBorderSize.setValue(value: Int(tag.lyricsBorderSize))
-			cellLyricsBorderColor.setColor(color: tag.borderColorLyrics ?? .black)
-			cellLyricsTextColor.setColor(color: tag.textColorLyrics ?? .black)
+			cellLyricsBorderColor.setColor(color: tag.borderColorLyrics)
+			cellLyricsTextColor.setColor(color: tag.textColorLyrics)
 			cellLyricsBold.setSwitchValueTo(value: tag.isLyricsBold)
 			cellLyricsItalic.setSwitchValueTo(value: tag.isLyricsItalian)
 			cellLyricsUnderLined.setSwitchValueTo(value: tag.isLyricsUnderlined)
@@ -719,9 +826,7 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 				cellBackgroundColor.setColor(color: sheetBackgroundColor)
 			}
 			
-			if let image = tag.backgroundImage {
-				cellPhotoPicker.setImage(image: image)
-			}
+			cellPhotoPicker.setImage(image: tag.backgroundImage)
 			
 			buildPreview(isSetup: false)
 			
@@ -730,7 +835,7 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 	
 	private func buildPreview(isSetup: Bool) {
 		if !isSetup {
-			let attText = NSAttributedString(string: Text.NewTag.sampleTitel, attributes: titleAttributes)
+			let attText = NSAttributedString(string: Text.NewTag.sampleTitle, attributes: titleAttributes)
 			titlePreview.attributedText = attText
 			
 			let attLyrics = NSAttributedString(string: Text.NewTag.sampleLyrics, attributes: lyricsAttributes)
@@ -754,11 +859,14 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 			if let image = cellPhotoPicker.pickedImage {
 				let scaledImage = UIImage.scaleImageToSize(image: image, size: imageBackground.frame.size)
 				imageBackground.image = scaledImage
+			} else {
+				imageBackground.image = nil
 			}
+			
 			if let externalDisplayWindow = externalDisplayWindow {
 				let view = SheetView(frame: externalDisplayWindow.frame)
 				view.selectedTag = editExistingTag
-				view.songTitle = Text.NewTag.sampleTitel
+				view.songTitle = Text.NewTag.sampleTitle
 				if let titleBackgroundColor = titleBackgroundColor {
 					view.titleBackground.isHidden = false
 					view.titleBackground.backgroundColor = titleBackgroundColor
@@ -787,6 +895,18 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 			return imagePath
 		}
 		return nil
+	}
+	
+	private func deleteImageFor(path: String) -> Bool {
+		let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+		let url = documentsDirectory.appendingPathComponent(path)
+			do {
+				try FileManager.default.removeItem(at: url)
+				return true
+			} catch let error as NSError {
+				print("Error: \(error.domain)")
+				return false
+			}
 	}
 	
 	@IBAction func savePressed(_ sender: UIBarButtonItem) {
@@ -840,13 +960,22 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 			
 			if let titleBorderSize = titleAttributes[.strokeWidth] as? Int {
 				tag.titleBorderSize = Int16(titleBorderSize)
+			} else {
+				tag.titleBorderSize = Int16(0)
 			}
+			
 			if let titleColor = titleAttributes[.foregroundColor] as? UIColor {
 				tag.textColorTitle = titleColor
+			} else {
+				tag.textColorTitle = nil
 			}
+			
 			if let titleStrokeColor = titleAttributes[.strokeColor] as? UIColor {
 				tag.borderColorTitle = titleStrokeColor
+			} else {
+				tag.borderColorTitle = nil
 			}
+			
 			if let _ = titleAttributes[.underlineStyle] as? Int {
 				tag.isTitleUnderlined = true
 			} else {
@@ -858,17 +987,26 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 				tag.lyricsTextSize = Float(lyricsFont.pointSize)
 				tag.isLyricsBold = lyricsFont.isBold
 				tag.isLyricsItalian = lyricsFont.isItalic
-				
 			}
+			
 			if let lyricsBorderSize = lyricsAttributes[.strokeWidth] as? Int {
 				tag.lyricsBorderSize = Int16(lyricsBorderSize)
+			} else {
+				tag.lyricsBorderSize = Int16(0)
 			}
+			
 			if let lyricsColor = lyricsAttributes[.foregroundColor] as? UIColor {
 				tag.textColorLyrics = lyricsColor
+			} else {
+				tag.textColorLyrics = nil
 			}
+			
 			if let lyricsStrokeColor = lyricsAttributes[.strokeColor] as? UIColor {
 				tag.borderColorLyrics = lyricsStrokeColor
+			} else {
+				tag.borderColorLyrics = nil
 			}
+			
 			if let _ = lyricsAttributes[.underlineStyle] as? Int {
 				tag.isLyricsUnderlined = true
 			} else {
@@ -877,14 +1015,24 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 			
 			if let image = cellPhotoPicker.pickedImage {
 				tag.imagePath = saveImage(image: image, tag: tag)
+			} else {
+				if let path = tag.imagePath {
+					if deleteImageFor(path: path) {
+						tag.imagePath = nil
+					}
+				}
 			}
 			
 			if let sheetBackgroundColor = sheetBackgroundColor {
 				tag.sheetBackgroundColor = sheetBackgroundColor
+			} else {
+				tag.sheetBackgroundColor = nil
 			}
 			
 			if let titleBackgroundColor = titleBackgroundColor {
 				tag.titleBackgroundColor = titleBackgroundColor.toHex
+			} else {
+				tag.titleBackgroundColor = nil
 			}
 			
 			tag.hasEmptySheet = hasEmptySheet
@@ -909,7 +1057,8 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 	private func refineSheetRatio() {
 		sheetPreviewAspectRatio.isActive = false
 		sheetPreview.addConstraint(NSLayoutConstraint(item: sheetPreview, attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.equal, toItem: sheetPreview, attribute: NSLayoutAttribute.width, multiplier: externalDisplayWindowRatio, constant: 0))
-
+		let constraint = NSLayoutConstraint(item: sheetContainerView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: (UIScreen.main.bounds.width - 20) * externalDisplayWindowRatio)
+		sheetContainerView.addConstraint(constraint)
 		buildPreview(isSetup: isSetup)
 	}
 	

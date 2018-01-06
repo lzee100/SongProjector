@@ -8,7 +8,7 @@
 
 import UIKit
 
-class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, NewSongSheetCellDelegate {
+class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
 	
 	// MARK: - Types
 	struct Constants {
@@ -24,14 +24,20 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 	
 	// MARK: - Properties
 	
+	var cluster: Cluster?
+	
+	private var isSetup = true
 	private var clusterTitle = ""
 	private var sheets: [Sheet] = []
-	private var tempSheetsBeforeSaving: [(title: String, lyrics: String, position: Int16)] = []
 	private var tags: [Tag] = []
 	private var delaySheetAimation = 0.0
-	private var isFirstTime = true
+	private var isFirstTime = true {
+		willSet { if newValue == true { delaySheetAimation = 0.0 } }
+	}
 	private var multiplier: CGFloat = 4/3
 	private var sheetSize = CGSize(width: 375, height: 281)
+	private let defaultIndexPath = IndexPath(row: 0, section: 0)
+	private var defaultFrame = CGRect(x: 0, y: 0, width: 0, height: 0)
 	private var sheetPreviewView = SheetView()
 	private var selectedTag: Tag? {
 		didSet { update() }
@@ -55,58 +61,12 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 	
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
-		update()
 	}
 	
-	
-	
-	// MARK: UITableViewDelegate Functions
-	
-	func numberOfSections(in tableView: UITableView) -> Int {
-		return tempSheetsBeforeSaving.count + Constants.songTitleSheet
-	}
-	
-	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return 1
-	}
-	
-	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		
-		let cell = tableView.dequeueReusableCell(withIdentifier: Cells.newSongSheetCellid, for: indexPath)
-		
-		if let cell = cell as? NewSongSheetCell {
-			if indexPath.section == 0 {
-				cell.index = 0
-				cell.songTitle = clusterTitle
-			} else {
-				if indexPath.section == 4 {
-					print("")
-				}
-				print(indexPath.section)
-				print(tempSheetsBeforeSaving[indexPath.section-Constants.songTitleSheet].lyrics)
-				cell.index = indexPath.section
-				cell.lyrics = tempSheetsBeforeSaving[indexPath.section-Constants.songTitleSheet].lyrics
-				cell.delegate = self
-			}
-		}
-		return cell
-	}
-	
-	func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-		return indexPath.section == 0 ? 70 : 220
-	}
-	
-	func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-		if section == 0 {
-			return Text.NewSong.SongTitle
-		} else {
-			return Text.NewSong.Sheet + "\(section)"
-		}
-	}
 	
 	func numberOfSections(in collectionView: UICollectionView) -> Int {
 		if collectionView == collectionViewSheets {
-			return tempSheetsBeforeSaving.count
+			return cluster != nil ? cluster?.hasSheets?.count ?? 0 : sheets.count
 		} else {
 			return 1
 		}
@@ -126,20 +86,34 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 		if collectionView == collectionViewSheets {
 			
 			let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.sheetCollectionCell, for: indexPath)
-			
 			if let collectionCell = collectionCell as? SheetCollectionCell {
 				collectionCell.setPreviewViewAspectRatioConstraint(multiplier: multiplier)
 				
-				let view = buildSheetViewFor(title: clusterTitle, sheet: tempSheetsBeforeSaving[indexPath.section], tag: selectedTag, frame: collectionCell.bounds)
+				for subview in collectionCell.previewView.subviews {
+					subview.removeFromSuperview()
+				}
+				
+				let view = buildSheetViewFor(cluster: cluster, indexPath: indexPath, frame: collectionCell.bounds)
 				collectionCell.previewView.addSubview(view)
 				
 				if isFirstTime {
+					let y = collectionCell.bounds.minY
+					collectionCell.bounds = CGRect(
+						x: -self.view.bounds.width,
+						y: y,
+						width: collectionCell.bounds.width,
+						height: collectionCell.bounds.height)
 					
-					collectionCell.bounds = CGRect(x: -self.view.bounds.width, y: CGFloat(indexPath.section * Int(sheetSize.height)), width: collectionCell.bounds.width, height: collectionCell.bounds.height)
-					UIView.animate(withDuration: 0.5, delay: delaySheetAimation, usingSpringWithDamping: 0.4, initialSpringVelocity: 9, options: .curveEaseInOut, animations: {
-						collectionCell.bounds = CGRect(x: 0  , y: CGFloat(indexPath.section * Int(self.sheetSize.height)), width: collectionCell.bounds.width, height: collectionCell.bounds.height)
+					UIView.animate(withDuration: 0.4, delay: delaySheetAimation, usingSpringWithDamping: 0.7, initialSpringVelocity: 1, options: .curveEaseInOut, animations: {
+						
+						collectionCell.bounds = CGRect(
+								x: 0,
+								y: y,
+								width: collectionCell.bounds.width,
+								height: collectionCell.bounds.height)
+						
 					})
-					delaySheetAimation += 0.1
+					delaySheetAimation += 0.12
 				}
 			}
 			let navigationBarHeight = UIApplication.shared.statusBarFrame.height + navigationController!.navigationBar.frame.height
@@ -163,12 +137,10 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 	
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		if collectionView != collectionViewSheets {
-			if selectedTag?.id == tags[indexPath.row].id {
-				selectedTag = nil
-			} else {
+			if selectedTag?.id != tags[indexPath.row].id {
 				selectedTag = tags[indexPath.row]
+				update()
 			}
-			update()
 		}
 	}
 	
@@ -180,34 +152,29 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 		}
 	}
 	
-	
-	
-	// MARK: - NewSongSheetCellDelegate Functions
-	
-	func textViewDidChange(index: Int?, lyrics: String?) {
-		if let index = index{
-			tempSheetsBeforeSaving[index].lyrics = lyrics ?? ""
-		}
-	}
+
 	
 	
 	// MARK: - Private Functions
 	
 	private func setup() {
-		
+		tags = CoreTag.getEntities()
+
 		collectionView.register(UINib(nibName: Cells.tagCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.tagCellCollection)
+		collectionViewSheets.register(UINib(nibName: Cells.sheetCollectionCell, bundle: nil), forCellWithReuseIdentifier: Cells.sheetCollectionCell)
 		navigationController?.title = Text.NewSong.title
 		title = Text.Players.title
 
 		cancel.title = Text.Actions.cancel
 		done.title = Text.Actions.done
 		
-		collectionViewSheets.register(UINib(nibName: Cells.sheetCollectionCell, bundle: nil), forCellWithReuseIdentifier: Cells.sheetCollectionCell)
-		multiplier = externalDisplayWindowRatioHeightWidth
+
+		multiplier = externalDisplayWindowRatio
 		let cellHeight = multiplier * (UIScreen.main.bounds.width - 20)
 		sheetSize = CGSize(width: UIScreen.main.bounds.width - 20, height: cellHeight)
 
-		sheetPreviewView = buildSheetViewFor(title: "", sheet: (title: "", lyrics: "", position: Int16(0)), tag: selectedTag, frame: CGRect(x: 0, y: 0, width: sheetSize.width, height: sheetSize.height))
+		defaultFrame = CGRect(x: 0, y: 0, width: sheetSize.width, height: sheetSize.height)
+		sheetPreviewView = buildSheetViewFor(cluster: cluster, indexPath: defaultIndexPath, frame: defaultFrame, isSetup: isSetup)
 		
 		let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
 		layout.sectionInset = UIEdgeInsets(top: 20, left: 0, bottom: 10, right: 0)
@@ -216,17 +183,24 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 		layout.minimumLineSpacing = 0
 		collectionViewSheets!.collectionViewLayout = layout
 		
-		isCollectionviewSheetsHidden = true
+		textView.keyboardDismissMode = .interactive
+		
+		if cluster != nil {
+			isCollectionviewSheetsHidden = false
+			selectedTag = cluster?.hasTag
+		} else {
+			isCollectionviewSheetsHidden = true
+		}
 	}
 	
 	private func update() {
 		// TODO: uncomment
-		tags = CoreTag.getEntities()
 		collectionView.reloadData()
 		collectionViewSheets.reloadData()
 		isFirstTime = true
 		collectionViewSheets.isHidden = isCollectionviewSheetsHidden
 	}
+
 	
 	private func buildSheets(fromText: String) {
 		print(fromText)
@@ -261,36 +235,34 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 				sheetTitle = String(lyricsToDevide[rangeSheetTitle])
 			}
 			
-			tempSheetsBeforeSaving.append((title: sheetTitle, lyrics: sheetLyrics, position: position))
+			let newSheet = CoreSheet.createEntityNOTsave()
+			newSheet.title = sheetTitle
+			newSheet.lyrics = sheetLyrics
+			newSheet.position = position
+			
+			sheets.append(newSheet)
 			
 			lyricsToDevide.removeSubrange(rangeRemove)
 			position += 1
 		}
 		
-		tempSheetsBeforeSaving.sort{ $0.position < $1.position }
+		sheets.sort{ $0.position < $1.position }
 		
 	}
 	
-	private func buildSheetViewFor(title: String?, sheet: (title: String, lyrics: String, position: Int16), tag: Tag?, displayToBeamer: Bool = false, frame: CGRect) -> SheetView {
-		let defaults = UserDefaults.standard
+	private func buildSheetViewFor(cluster: Cluster?, indexPath: IndexPath, frame: CGRect, isSetup: Bool = false) -> SheetView {
 		let view = SheetView(frame: frame)
 		view.isEmptySheet = false
-		view.selectedTag = tag
-		view.songTitle = title
-		view.lyrics = sheet.lyrics
-		view.isEditable = true
-		if let heightExternalDisplay = defaults.object(forKey: "externalDisplayWindowHeight") as? CGFloat {
-			view.scaleFactor = heightExternalDisplay / (frame.size.height * UIScreen.main.scale)
+		view.selectedTag =  selectedTag ?? cluster?.hasTag
+		view.songTitle = cluster?.title ?? clusterTitle
+		if isSetup {
+			view.lyrics = ""
+		} else {
+			view.lyrics = cluster != nil ? cluster?.hasSheetsArray[indexPath.section].lyrics : sheets[indexPath.section].lyrics
 		}
+		view.isEditable = true
 		view.update()
 		return view
-	}
-	
-	private func sheetViewFor(indexPath: IndexPath) -> UIView {
-		sheetPreviewView.titleLabel.text = clusterTitle
-		sheetPreviewView.lyrics = sheets[indexPath.row].lyrics
-		sheetPreviewView.update()
-		return sheetPreviewView
 	}
 	
 	private func hasTagSelected() -> Bool {
@@ -312,8 +284,9 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 		if !sheetMode {
 			dismiss(animated: true)
 		} else {
+			isSetup = true
 			sheetMode = false
-			tempSheetsBeforeSaving = []
+			sheets = []
 		}
 		isFirstTime = true
 		isCollectionviewSheetsHidden = true
@@ -329,8 +302,8 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 				cluster.position = Int16(id)
 				if CoreCluster.saveContext() { print("song saved") } else { print("song not saved") }
 				
-				for tempSheet in tempSheetsBeforeSaving {
-					let sheet = CoreSheet.createEntityNOTsave()
+				for tempSheet in sheets {
+					let sheet = CoreSheet.createEntity()
 					sheet.title = tempSheet.title
 					sheet.lyrics = tempSheet.lyrics
 					sheet.position = tempSheet.position
@@ -346,11 +319,11 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 				dismiss(animated: true)
 			}
 		} else {
+			isSetup = false
 			textView.resignFirstResponder()
 			isCollectionviewSheetsHidden = false
 			sheetMode = true
 			buildSheets(fromText: textView.text)
-			
 			update()
 		}
 	}

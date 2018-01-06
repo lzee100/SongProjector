@@ -99,8 +99,11 @@ class SheetView: UIView {
 		}
 		
 		if let backgroundImage = selectedTag?.backgroundImage, let imageScaled = UIImage.scaleImageToSize(image: backgroundImage, size: frame.size) {
+			backgroundImageView.isHidden = false
 			backgroundImageView.contentMode = .scaleToFill
 			backgroundImageView.image = imageScaled
+		} else {
+			backgroundImageView.isHidden = true
 		}
 		
 		if let titleBackgroundColor = selectedTag?.backgroundColorTitle {
@@ -112,6 +115,8 @@ class SheetView: UIView {
 		
 		if let backgroundColor = selectedTag?.sheetBackgroundColor {
 			self.sheetBackground.backgroundColor = backgroundColor
+		} else {
+			sheetBackground.backgroundColor = .white
 		}
 
 	}

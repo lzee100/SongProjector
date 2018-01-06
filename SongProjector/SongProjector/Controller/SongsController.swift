@@ -28,6 +28,7 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 	private var tags: [Tag] = []
 	private var selectedTag: Tag?
 	private var clusters: [Cluster] = []
+	private var selectedCluster: Cluster?
 	private var filteredClusters: [Cluster] = []
 
 	override func viewDidLoad() {
@@ -38,6 +39,16 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		update()
+	}
+	
+	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+		if segue.identifier == "NewSongSegue" {
+			if let nav = segue.destination as? UINavigationController {
+				let songController = nav.topViewController as! NewSongIphoneController
+				songController.cluster = selectedCluster
+				selectedCluster = nil
+			}
+		}
 	}
 	
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -55,8 +66,13 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 	
 	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		if delegate != nil {
-			delegate?.didSelectCluster(cluster: clusters[indexPath.row])
+			delegate?.didSelectCluster(cluster: filteredClusters[indexPath.row])
 			dismiss(animated: true)
+		} else {
+			selectedCluster = filteredClusters[indexPath.row]
+			DispatchQueue.main.async {
+				self.performSegue(withIdentifier: "NewSongSegue", sender: self)
+			}
 		}
 	}
 	

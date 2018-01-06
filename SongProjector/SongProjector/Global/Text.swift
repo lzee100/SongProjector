@@ -77,6 +77,7 @@ class Text: NSObject {
 		static let descriptionHasEmptySheet = "Toon lege dia"
 		static let descriptionHasEmptySheetDetail = "Aan het einde of begin van een lied een lege dia tonen met ingestelde achtergrond"
 		static let descriptionPositionEmptySheet = "Toon lege dia aan begin\n(uit is aan het einde tonen)"
+		static let descriptionLastBeamerResolution = "Laast bekende beamer resolutie:\n"
 		
 		static let descriptionAlignment = "Uitlijning"
 		static let errorTitle = "Fout"
@@ -86,7 +87,7 @@ class Text: NSObject {
 		static let alignCenter = "Midden"
 		static let alignRight = "Rechts"
 		
-		static let sampleTitel = "Titel"
+		static let sampleTitle = "Titel"
 		static let sampleLyrics = "Lorem Ipsum is slechts een proeftekst uit het drukkerij- en zetterijwezen. Lorem Ipsum is de standaard proeftekst in deze bedrijfstak sinds de 16e eeuw."
 		
 		static let sectionGeneral = "Algemeen"
@@ -102,7 +103,8 @@ class Text: NSObject {
 		static let bold = "Vet"
 		static let italic = "Cursief"
 		static let backgroundImage = "Achtergrond afbeelding"
-		static let buttonBackgroundImagePicker = "Kies afbeelding"
+		static let buttonBackgroundImagePick = "Kies afbeelding"
+		static let buttonBackgroundImageChange = "Wijzig afbeelding"
 	
 	}
 	

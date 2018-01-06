@@ -515,7 +515,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 			view.selectedTag = tag
 			view.songTitle = title
 			view.lyrics = sheet?.lyrics
-			view.scaleFactor = externalDisplayWindow.bounds.size.height / heightView
+			view.scaleFactor = externalDisplayWindowHeight / heightView
 			view.update()
 			externalDisplayWindow.addSubview(view)
 		}

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Nkp-Wd-T9G">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Nkp-Wd-T9G">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -301,7 +301,7 @@
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" title="Item" id="rb7-SH-CQB">
                             <connections>
-                                <segue destination="MRM-O4-wEj" kind="presentation" id="ah9-Vj-7zy"/>
+                                <segue destination="MRM-O4-wEj" kind="presentation" identifier="NewSongSegue" id="ah9-Vj-7zy"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -940,6 +940,8 @@
                         <outlet property="imageBackground" destination="Zy4-Z2-I9W" id="Uk4-Td-i4x"/>
                         <outlet property="lyricsPreview" destination="lHb-qy-lbk" id="0Xm-Ry-23f"/>
                         <outlet property="save" destination="q29-Ro-Aer" id="9gw-tt-1en"/>
+                        <outlet property="sheetContainerHeightConstraint" destination="Wqx-hd-cNq" id="sI0-vk-vHv"/>
+                        <outlet property="sheetContainerView" destination="b34-mF-z17" id="qfg-6I-sue"/>
                         <outlet property="sheetPreview" destination="NbQ-6v-uI6" id="zAD-sW-HjZ"/>
                         <outlet property="sheetPreviewAspectRatio" destination="f9f-Oh-CNL" id="kwj-l6-Ib9"/>
                         <outlet property="tableView" destination="DEX-s9-d0x" id="z1D-xz-7XC"/>

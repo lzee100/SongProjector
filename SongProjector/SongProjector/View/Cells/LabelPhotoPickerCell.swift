@@ -14,22 +14,27 @@ protocol LabelPhotoPickerCellDelegate {
 
 class LabelPhotoPickerCell: UITableViewCell, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 		
-		@IBOutlet var descriptionTitle: UILabel!
-		@IBOutlet var imageThumbnail: UIImageView!
-		@IBOutlet var imagePreview: UIImageView!
-		@IBOutlet var imageContainer: UIView!
-		@IBOutlet var button: UIButton!
+	@IBOutlet var descriptionTitle: UILabel!
+	@IBOutlet var descriptionLastBeamerResolution: UILabel!
+	@IBOutlet var imageThumbnail: UIImageView!
+	@IBOutlet var imageContainer: UIView!
+	@IBOutlet var button: UIButton!
 		
-		@IBOutlet var buttonHeightConstraint: NSLayoutConstraint!
-		
-		var id = ""
+	@IBOutlet var buttonBottomConstraint: NSLayoutConstraint!
+	@IBOutlet var buttonHeightConstraint: NSLayoutConstraint!
+	@IBOutlet var descriptionBeamerHeightConstraint: NSLayoutConstraint!
+	
+	
+	
+	var id = ""
+	
 		var delegate: LabelPhotoPickerCellDelegate?
 		var isActive = false { didSet { showImage() } }
 		let imagePicker = UIImagePickerController()
 		var pickedImage: UIImage?
 		var sender: UIViewController?
 		var preferredHeight: CGFloat {
-			return isActive ? 360 : 60
+			return isActive ? 162 : 60
 		}
 		
 		static func create(id: String, description: String, sender: UIViewController) -> LabelPhotoPickerCell {
@@ -38,8 +43,13 @@ class LabelPhotoPickerCell: UITableViewCell, UIImagePickerControllerDelegate, UI
 			view.descriptionTitle.text = description
 			view.imageContainer.isHidden = true
 			view.imageThumbnail.layer.cornerRadius = CGFloat(5)
-			view.imagePreview.layer.cornerRadius = CGFloat(10)
+			let beamerResolution = "\(Int(externalDisplayWindowWidth)) x \(Int(externalDisplayWindowHeight))"
+			view.descriptionLastBeamerResolution.text = Text.NewTag.descriptionLastBeamerResolution + beamerResolution
+			view.descriptionLastBeamerResolution.textColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
 			view.button.isEnabled = false
+			view.button.backgroundColor = .primary
+			view.button.layer.cornerRadius = 5.0
+			view.button.setTitleColor(.white, for: .normal)
 			view.sender = sender
 			return view
 		}
@@ -48,27 +58,32 @@ class LabelPhotoPickerCell: UITableViewCell, UIImagePickerControllerDelegate, UI
 			imagePicker.delegate = self
 		}
 		
-		func setImage(image: UIImage) {
-			imageThumbnail.image = image
-			imagePreview.image = image
+		func setImage(image: UIImage?) {
+			button.setTitle(image == nil ? Text.NewTag.buttonBackgroundImagePick : Text.NewTag.buttonBackgroundImageChange, for: .normal)
+			let imageView = UIImageView(frame: imageThumbnail.frame)
+			imageView.image = image
+			imageThumbnail.image = imageView.asImage()
 			pickedImage = image
 			delegate?.didSelectImage(cell: self)
 			layoutIfNeeded()
 		}
 		
 		func showImage() {
+			button.setTitle(pickedImage == nil ? Text.NewTag.buttonBackgroundImagePick : Text.NewTag.buttonBackgroundImageChange, for: .normal)
 			if isActive {
 				imageContainer.isHidden = false
 				button.isEnabled = true
-				buttonHeightConstraint.constant = 30
+				descriptionBeamerHeightConstraint.constant = 42
+				buttonHeightConstraint.constant = 50
+				buttonBottomConstraint.constant = 10
 				imageThumbnail.isHidden = true
-				imagePreview.isHidden = false
 			} else {
 				imageContainer.isHidden = true
 				button.isEnabled = false
 				imageThumbnail.isHidden = false
-				imagePreview.isHidden = true
+				descriptionBeamerHeightConstraint.constant = 1
 				buttonHeightConstraint.constant = 1
+				buttonBottomConstraint.constant = 0
 			}
 			
 		}
@@ -82,10 +97,6 @@ class LabelPhotoPickerCell: UITableViewCell, UIImagePickerControllerDelegate, UI
 				if let scaledImage = UIImage.scaleImageToSize(image: pickedImage, size: imageThumbnail.frame.size) {
 					imageThumbnail.image = scaledImage
 				}
-				if let scaledImage = UIImage.scaleImageToSize(image: pickedImage, size: imagePreview.frame.size) {
-					imagePreview.image = scaledImage
-				}
-				imagePreview.contentMode = .scaleAspectFill
 				self.pickedImage = pickedImage
 				delegate?.didSelectImage(cell: self)
 			}
