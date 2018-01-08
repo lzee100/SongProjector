@@ -17,10 +17,10 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 	}
 	
 	@IBOutlet var cancel: UIBarButtonItem!
-	@IBOutlet var edit: UIBarButtonItem!
 	@IBOutlet var save: UIBarButtonItem!
 	
 	@IBOutlet var collectionView: UICollectionView!
+	@IBOutlet var segmentControl: UISegmentedControl!
 	
 	@IBOutlet var textView: UITextView!
 	@IBOutlet var collectionViewSheets: UICollectionView!
@@ -175,9 +175,21 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name:NSNotification.Name.UIKeyboardWillShow, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name:NSNotification.Name.UIKeyboardWillHide, object: nil)
 		NotificationCenter.default.addObserver(forName: Notification.Name.UIScreenDidConnect, object: nil, queue: nil, using: databaseDidChange)
+		
+		segmentControl.setTitle(Text.NewSong.segmentTitleText, forSegmentAt: 0)
+		segmentControl.setTitle(Text.NewSong.segmentTitleSheets, forSegmentAt: 1)
+		segmentControl.selectedSegmentIndex = 1
+		
+		let leftSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))
+		let rightSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))
+		
+		leftSwipe.direction = .left
+		rightSwipe.direction = .right
+		
+		textView.addGestureRecognizer(leftSwipe)
+		collectionViewSheets.addGestureRecognizer(rightSwipe)
 
 		cancel.title = Text.Actions.cancel
-		edit.title = Text.Actions.edit
 		save.title = Text.Actions.done
 		
 		multiplier = externalDisplayWindowRatio
@@ -280,7 +292,19 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 		}
 	}
 	
+	@objc private func respondToSwipeGesture(_ swipe: UISwipeGestureRecognizer) {
+		swipe.cancelsTouchesInView = false
+		if swipe.direction == .left {
+			segmentControl.selectedSegmentIndex = 1
+			segmentControlValueChanged(segmentControl)
+		} else if swipe.direction == .right {
+			segmentControl.selectedSegmentIndex = 0
+			segmentControlValueChanged(segmentControl)
+		}
+	}
+	
 	private func databaseDidChange(_ notification: Notification) {
+		selectedTag = nil
 		tags = CoreTag.getEntities()
 		update()
 	}
@@ -300,88 +324,59 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 	// MARK: - IBAction Functions
 	
 	@IBAction func cancel(_ sender: UIBarButtonItem) {
-		
-		if !textMode {
-			dismiss(animated: true)
-		} else {
-			isSetup = true
-			textMode = !textMode
-			isFirstTime = true
-			isCollectionviewSheetsHidden = false
-			edit.tintColor = .primary
-			edit.isEnabled = true
-			save.title = Text.Actions.done
-		}
-		
-	}
-	
-	@IBAction func edit(_ sender: UIBarButtonItem) {
-		isCollectionviewSheetsHidden = true
-		textView.text = getTextFromSheets()
-		madeChanges = true
-		isSetup = true
-		isFirstTime = true
-		textMode = !textMode
-		edit.isEnabled = false
-		edit.tintColor = .clear
-		save.title = Text.Actions.done
+		dismiss(animated: true)
 	}
 	
 	
 	@IBAction func save(_ sender: UIBarButtonItem) {
-		if textMode {
-			// edit mode
-			isCollectionviewSheetsHidden = false
-			buildSheets(fromText: textView.text)
-			madeChanges = true
-			isSetup = true
-			isFirstTime = true
-			textMode = !textMode
-			edit.isEnabled = true
-			edit.tintColor = .primary
-			save.title = madeChanges ? Text.Actions.save : Text.Actions.done
-		} else {
-			// sheet mode
-			if !madeChanges {
-				dismiss(animated: true)
-			} else {
-				save.isEnabled = true
-				textMode = true
-				// save
-				if let cluster = cluster {
-					cluster.title = clusterTitle ?? cluster.title
-					if CoreCluster.saveContext() { print("song saved") } else { print("song not saved") }
-					
-					if sheets.count > 0 { // if made changes to text // else made changes to tag
-						
-						if let sheets = cluster.hasSheets as? Set<Sheet> {
-							for sheet in sheets {
-								let _ = CoreSheet.delete(entity: sheet)
-							}
-						}
-						
-						for tempSheet in sheets {
-							let sheet = CoreSheet.createEntity()
-							sheet.title = tempSheet.title
-							sheet.lyrics = tempSheet.lyrics
-							sheet.position = tempSheet.position
-							sheet.hasCluster = cluster
-							cluster.addToHasSheets(sheet)
-						}
-						
-						if CoreSheet.saveContext() { print("sheets saved") } else { print("sheets not saved") }
-						
-					}
-					cluster.hasTag = selectedTag
-					if CoreTag.saveContext() { print("tag saved") } else { print("tag not saved") }
-					
-					//dismiss
-					dismiss(animated: true)
-				}
-			}
+		if let cluster = cluster {
+			cluster.title = clusterTitle ?? cluster.title
+			if CoreCluster.saveContext() { print("song saved") } else { print("song not saved") }
 			
+			if sheets.count > 0 { // if made changes to text // else made changes to tag
+				
+				if let sheets = cluster.hasSheets as? Set<Sheet> {
+					for sheet in sheets {
+						let _ = CoreSheet.delete(entity: sheet)
+					}
+				}
+				
+				for tempSheet in sheets {
+					let sheet = CoreSheet.createEntity()
+					sheet.title = tempSheet.title
+					sheet.lyrics = tempSheet.lyrics
+					sheet.position = tempSheet.position
+					sheet.hasCluster = cluster
+					cluster.addToHasSheets(sheet)
+				}
+				
+				if CoreSheet.saveContext() { print("sheets saved") } else { print("sheets not saved") }
+				
+			}
+			cluster.hasTag = selectedTag
+			if CoreTag.saveContext() { print("tag saved") } else { print("tag not saved") }
+			
+			//dismiss
+			dismiss(animated: true)
 		}
 	}
+	
+	@IBAction func segmentControlValueChanged(_ sender: UISegmentedControl) {
+		if sender.selectedSegmentIndex == 1 {
+			isSetup = false
+			isCollectionviewSheetsHidden = false
+			textView.resignFirstResponder()
+			buildSheets(fromText: textView.text)
+			update()
+		} else {
+			isSetup = true
+			textView.text = getTextFromSheets()
+			sheets = []
+			isFirstTime = true
+			isCollectionviewSheetsHidden = true
+		}
+	}
+	
 	
 	@objc func keyboardWillShow(notification:NSNotification){
 		

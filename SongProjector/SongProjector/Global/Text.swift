@@ -52,6 +52,8 @@ class Text: NSObject {
 		static let SearchTagPlaceHolder = "Zoek thema"
 		static let errorTitleNoTag = "Fout"
 		static let erorrMessageNoTag = "Selecteer een thema"
+		static let segmentTitleText = "Text"
+		static let segmentTitleSheets = "Dia's"
 	}
 	
 	struct Tags {

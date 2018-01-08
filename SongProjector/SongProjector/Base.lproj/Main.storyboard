@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Nkp-Wd-T9G">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Nkp-Wd-T9G">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
-        <capability name="Navigation items with more than one left or right bar item" minToolsVersion="7.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -647,7 +646,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wFp-Y9-FKp" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="297" y="253"/>
+            <point key="canvasLocation" x="297" y="272"/>
         </scene>
         <!--New Song Iphone Controller-->
         <scene sceneID="mvY-e1-rvP">
@@ -658,7 +657,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="V13-xa-Ikg">
-                                <rect key="frame" x="15" y="134" width="345" height="533"/>
+                                <rect key="frame" x="15" y="169" width="345" height="498"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
@@ -690,8 +689,21 @@
                                     <outlet property="delegate" destination="nKb-i5-rlz" id="Agb-H2-eDD"/>
                                 </connections>
                             </collectionView>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="C88-Pw-S8w">
+                                <rect key="frame" x="20" y="129" width="335" height="31"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="sV4-u6-RVn"/>
+                                </constraints>
+                                <segments>
+                                    <segment title="First"/>
+                                    <segment title="Second"/>
+                                </segments>
+                                <connections>
+                                    <action selector="segmentControlValueChanged:" destination="nKb-i5-rlz" eventType="valueChanged" id="wB1-ER-yGq"/>
+                                </connections>
+                            </segmentedControl>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="9dg-Ot-1lP">
-                                <rect key="frame" x="10" y="134" width="355" height="533"/>
+                                <rect key="frame" x="10" y="169" width="355" height="498"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="VmT-e3-4lg">
                                     <size key="itemSize" width="50" height="50"/>
@@ -717,17 +729,20 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="C88-Pw-S8w" firstAttribute="leading" secondItem="E9e-Pz-TF5" secondAttribute="leading" constant="20" id="2sc-01-Pbw"/>
+                            <constraint firstItem="E9e-Pz-TF5" firstAttribute="trailing" secondItem="C88-Pw-S8w" secondAttribute="trailing" constant="20" id="7hq-YF-mJ7"/>
                             <constraint firstItem="E9e-Pz-TF5" firstAttribute="trailing" secondItem="LmT-By-qHY" secondAttribute="trailing" id="D8a-O4-WWP"/>
                             <constraint firstItem="V13-xa-Ikg" firstAttribute="leading" secondItem="E9e-Pz-TF5" secondAttribute="leading" constant="15" id="Fjd-b2-Q9t"/>
                             <constraint firstItem="9dg-Ot-1lP" firstAttribute="leading" secondItem="E9e-Pz-TF5" secondAttribute="leading" constant="10" id="IrD-Sl-f6B"/>
                             <constraint firstItem="E9e-Pz-TF5" firstAttribute="trailing" secondItem="9dg-Ot-1lP" secondAttribute="trailing" constant="10" id="KTn-Hy-a0S"/>
                             <constraint firstAttribute="bottomMargin" secondItem="V13-xa-Ikg" secondAttribute="bottom" id="LkD-22-wGV"/>
+                            <constraint firstItem="9dg-Ot-1lP" firstAttribute="top" secondItem="C88-Pw-S8w" secondAttribute="bottom" constant="10" id="Qvh-Vx-3RJ"/>
                             <constraint firstItem="LmT-By-qHY" firstAttribute="leading" secondItem="E9e-Pz-TF5" secondAttribute="leading" id="VpT-pu-tNw"/>
                             <constraint firstItem="E9e-Pz-TF5" firstAttribute="trailing" secondItem="V13-xa-Ikg" secondAttribute="trailing" constant="15" id="aoQ-Mp-hsj"/>
-                            <constraint firstItem="9dg-Ot-1lP" firstAttribute="top" secondItem="LmT-By-qHY" secondAttribute="bottom" constant="10" id="aud-5z-JwR"/>
+                            <constraint firstItem="C88-Pw-S8w" firstAttribute="top" secondItem="LmT-By-qHY" secondAttribute="bottom" constant="5" id="mtJ-mA-a1T"/>
                             <constraint firstItem="LmT-By-qHY" firstAttribute="top" secondItem="E9e-Pz-TF5" secondAttribute="top" id="ugb-G1-Xoa"/>
-                            <constraint firstItem="V13-xa-Ikg" firstAttribute="top" secondItem="LmT-By-qHY" secondAttribute="bottom" constant="10" id="wUC-3V-Bnv"/>
                             <constraint firstItem="E9e-Pz-TF5" firstAttribute="bottom" secondItem="9dg-Ot-1lP" secondAttribute="bottom" id="xWC-xz-pCk"/>
+                            <constraint firstItem="V13-xa-Ikg" firstAttribute="top" secondItem="C88-Pw-S8w" secondAttribute="bottom" constant="10" id="zFe-dU-En9"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="E9e-Pz-TF5"/>
                     </view>
@@ -748,12 +763,13 @@
                         <outlet property="collectionView" destination="LmT-By-qHY" id="utA-pP-RUH"/>
                         <outlet property="collectionViewSheets" destination="9dg-Ot-1lP" id="jDO-do-ipa"/>
                         <outlet property="done" destination="Unf-N9-REe" id="dxU-47-naZ"/>
+                        <outlet property="segmentControl" destination="C88-Pw-S8w" id="vc3-eE-HNP"/>
                         <outlet property="textView" destination="V13-xa-Ikg" id="3au-K9-CkW"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="r2Q-SF-lZC" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="297" y="1010"/>
+            <point key="canvasLocation" x="296.80000000000001" y="1009.7451274362819"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="ktg-CB-Ikl">
@@ -918,7 +934,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="KwL-7W-JkB">
-                                <rect key="frame" x="15" y="134" width="345" height="533"/>
+                                <rect key="frame" x="15" y="169" width="345" height="498"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
@@ -950,8 +966,21 @@
                                     <outlet property="delegate" destination="yUD-FT-Wln" id="sRV-48-rdy"/>
                                 </connections>
                             </collectionView>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="Win-ix-qSq">
+                                <rect key="frame" x="20" y="129" width="335" height="31"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="VoW-xA-doP"/>
+                                </constraints>
+                                <segments>
+                                    <segment title="First"/>
+                                    <segment title="Second"/>
+                                </segments>
+                                <connections>
+                                    <action selector="segmentControlValueChanged:" destination="yUD-FT-Wln" eventType="valueChanged" id="wsQ-y8-Nmp"/>
+                                </connections>
+                            </segmentedControl>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="7vP-oB-z5a">
-                                <rect key="frame" x="10" y="134" width="355" height="533"/>
+                                <rect key="frame" x="10" y="169" width="355" height="498"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="1r2-ST-9gm">
                                     <size key="itemSize" width="50" height="50"/>
@@ -979,11 +1008,14 @@
                         <constraints>
                             <constraint firstItem="nhn-Ez-NR4" firstAttribute="top" secondItem="ntf-ua-It7" secondAttribute="top" id="3KA-2L-zaI"/>
                             <constraint firstItem="ntf-ua-It7" firstAttribute="bottom" secondItem="7vP-oB-z5a" secondAttribute="bottom" id="72f-Ep-hg5"/>
+                            <constraint firstItem="Win-ix-qSq" firstAttribute="top" secondItem="nhn-Ez-NR4" secondAttribute="bottom" constant="5" id="7tl-9x-wi8"/>
                             <constraint firstItem="ntf-ua-It7" firstAttribute="trailing" secondItem="KwL-7W-JkB" secondAttribute="trailing" constant="15" id="9nx-tg-zt4"/>
+                            <constraint firstItem="Win-ix-qSq" firstAttribute="leading" secondItem="ntf-ua-It7" secondAttribute="leading" constant="20" id="A2h-d9-WGa"/>
                             <constraint firstItem="KwL-7W-JkB" firstAttribute="leading" secondItem="ntf-ua-It7" secondAttribute="leading" constant="15" id="APm-9C-3sb"/>
-                            <constraint firstItem="7vP-oB-z5a" firstAttribute="top" secondItem="nhn-Ez-NR4" secondAttribute="bottom" constant="10" id="TPM-es-Rsx"/>
-                            <constraint firstItem="KwL-7W-JkB" firstAttribute="top" secondItem="nhn-Ez-NR4" secondAttribute="bottom" constant="10" id="VP3-cC-jTf"/>
+                            <constraint firstItem="KwL-7W-JkB" firstAttribute="top" secondItem="Win-ix-qSq" secondAttribute="bottom" constant="10" id="DG8-ac-YzC"/>
                             <constraint firstAttribute="bottomMargin" secondItem="KwL-7W-JkB" secondAttribute="bottom" id="ZGW-r8-O5b"/>
+                            <constraint firstItem="ntf-ua-It7" firstAttribute="trailing" secondItem="Win-ix-qSq" secondAttribute="trailing" constant="20" id="bei-ek-wDM"/>
+                            <constraint firstItem="7vP-oB-z5a" firstAttribute="top" secondItem="Win-ix-qSq" secondAttribute="bottom" constant="10" id="doJ-KG-Vao"/>
                             <constraint firstItem="ntf-ua-It7" firstAttribute="trailing" secondItem="7vP-oB-z5a" secondAttribute="trailing" constant="10" id="fWN-lL-Qxi"/>
                             <constraint firstItem="ntf-ua-It7" firstAttribute="trailing" secondItem="nhn-Ez-NR4" secondAttribute="trailing" id="iYm-L7-8kl"/>
                             <constraint firstItem="nhn-Ez-NR4" firstAttribute="leading" secondItem="ntf-ua-It7" secondAttribute="leading" id="qIs-AX-bgN"/>
@@ -997,31 +1029,24 @@
                                 <action selector="cancel:" destination="yUD-FT-Wln" id="bOP-zk-Nq0"/>
                             </connections>
                         </barButtonItem>
-                        <rightBarButtonItems>
-                            <barButtonItem title="Item" id="NWt-jU-oN1">
-                                <connections>
-                                    <action selector="save:" destination="yUD-FT-Wln" id="Hyx-L3-5RG"/>
-                                </connections>
-                            </barButtonItem>
-                            <barButtonItem title="Item" id="AKc-x8-c4i">
-                                <connections>
-                                    <action selector="edit:" destination="yUD-FT-Wln" id="1JR-AG-1Wk"/>
-                                </connections>
-                            </barButtonItem>
-                        </rightBarButtonItems>
+                        <barButtonItem key="rightBarButtonItem" title="Item" id="NWt-jU-oN1">
+                            <connections>
+                                <action selector="save:" destination="yUD-FT-Wln" id="Hyx-L3-5RG"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="cancel" destination="RrJ-Ya-LJB" id="bMh-cR-oGo"/>
                         <outlet property="collectionView" destination="nhn-Ez-NR4" id="KbG-2I-HVF"/>
                         <outlet property="collectionViewSheets" destination="7vP-oB-z5a" id="c0B-bf-MfU"/>
-                        <outlet property="edit" destination="AKc-x8-c4i" id="vJ7-E1-rxX"/>
                         <outlet property="save" destination="NWt-jU-oN1" id="gjI-xR-dom"/>
+                        <outlet property="segmentControl" destination="Win-ix-qSq" id="mO2-T3-K8D"/>
                         <outlet property="textView" destination="KwL-7W-JkB" id="VGs-Ff-aza"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gnP-WI-Gcn" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1137" y="1029"/>
+            <point key="canvasLocation" x="1136.8" y="1009.7451274362819"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="Qw6-v8-4KR">

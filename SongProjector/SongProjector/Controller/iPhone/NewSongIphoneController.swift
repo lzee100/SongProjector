@@ -19,6 +19,7 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 	@IBOutlet var done: UIBarButtonItem!
 	
 	@IBOutlet var collectionView: UICollectionView!
+	@IBOutlet var segmentControl: UISegmentedControl!
 	@IBOutlet var textView: UITextView!
 	@IBOutlet var collectionViewSheets: UICollectionView!
 	
@@ -155,19 +156,32 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 		collectionView.register(UINib(nibName: Cells.tagCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.tagCellCollection)
 		collectionViewSheets.register(UINib(nibName: Cells.sheetCollectionCell, bundle: nil), forCellWithReuseIdentifier: Cells.sheetCollectionCell)
 		NotificationCenter.default.addObserver(forName: Notification.Name.UIScreenDidConnect, object: nil, queue: nil, using: databaseDidChange)
-
+		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name:NSNotification.Name.UIKeyboardWillHide, object: nil)
+		
 		navigationController?.title = Text.NewSong.title
 		title = Text.Players.title
 
 		cancel.title = Text.Actions.cancel
-		done.title = Text.Actions.done
+		done.title = Text.Actions.save
 		
-
+		segmentControl.setTitle(Text.NewSong.segmentTitleText, forSegmentAt: 0)
+		segmentControl.setTitle(Text.NewSong.segmentTitleSheets, forSegmentAt: 1)
+		
+		let leftSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))
+		let rightSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))
+		
+		leftSwipe.direction = .left
+		rightSwipe.direction = .right
+		
+		textView.addGestureRecognizer(leftSwipe)
+		collectionViewSheets.addGestureRecognizer(rightSwipe)
+		
+		
 		let cellHeight = multiplier * (UIScreen.main.bounds.width - 20)
 		sheetSize = CGSize(width: UIScreen.main.bounds.width - 20, height: cellHeight)
 
-		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name:NSNotification.Name.UIKeyboardWillHide, object: nil)
+
 		
 		let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
 		layout.sectionInset = UIEdgeInsets(top: 20, left: 0, bottom: 10, right: 0)
@@ -189,8 +203,8 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 		collectionViewSheets.isHidden = isCollectionviewSheetsHidden
 	}
 	
-	
 	private func databaseDidChange(_ notification: Notification) {
+		selectedTag = nil
 		tags = CoreTag.getEntities()
 		update()
 	}
@@ -270,26 +284,26 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 		}
 	}
 	
+	@objc private func respondToSwipeGesture(_ swipe: UISwipeGestureRecognizer) {
+		swipe.cancelsTouchesInView = false
+		if swipe.direction == .left {
+			segmentControl.selectedSegmentIndex = 1
+			segmentControlValueChanged(segmentControl)
+		} else if swipe.direction == .right {
+			segmentControl.selectedSegmentIndex = 0
+			segmentControlValueChanged(segmentControl)
+		}
+	}
+
+	
 	// MARK: - IBAction Functions
 	
 	@IBAction func cancel(_ sender: UIBarButtonItem) {
-		
-		if !sheetMode {
-			dismiss(animated: true)
-		} else {
-			isSetup = true
-			sheetMode = false
-			sheets = []
-			done.title = Text.Actions.done
-			textView.resignFirstResponder()
-		}
-		isFirstTime = true
-		isCollectionviewSheetsHidden = true
-		
+		dismiss(animated: true)
 	}
 	
 	@IBAction func done(_ sender: UIBarButtonItem) {
-		if sheetMode, hasTagSelected() {
+		if hasTagSelected() {
 			let cluster = CoreCluster.createEntity()
 			cluster.title = clusterTitle
 			let id = Int(cluster.id)
@@ -311,14 +325,23 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 			if CoreTag.saveContext() { print("tag saved") } else { print("tag not saved") }
 			
 			dismiss(animated: true)
-		} else {
+		}
+	}
+	
+	@IBAction func segmentControlValueChanged(_ sender: UISegmentedControl) {
+		if sender.selectedSegmentIndex == 1 {
 			isSetup = false
 			isCollectionviewSheetsHidden = false
 			sheetMode = true
 			textView.resignFirstResponder()
-			done.title = Text.Actions.save
 			buildSheets(fromText: textView.text)
 			update()
+		} else {
+			isSetup = true
+			sheetMode = false
+			sheets = []
+			isFirstTime = true
+			isCollectionviewSheetsHidden = true
 		}
 	}
 	
