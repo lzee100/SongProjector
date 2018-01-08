@@ -1,14 +1,15 @@
 //
-//  NewSongIphoneController.swift
+//  EditSongIphoneController.swift
 //  SongProjector
 //
-//  Created by Leo van der Zee on 23-12-17.
-//  Copyright © 2017 iozee. All rights reserved.
+//  Created by Leo van der Zee on 06-01-18.
+//  Copyright © 2018 iozee. All rights reserved.
 //
+
 
 import UIKit
 
-class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
 	
 	// MARK: - Types
 	struct Constants {
@@ -16,28 +17,37 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 	}
 	
 	@IBOutlet var cancel: UIBarButtonItem!
-	@IBOutlet var done: UIBarButtonItem!
+	@IBOutlet var edit: UIBarButtonItem!
+	@IBOutlet var save: UIBarButtonItem!
 	
 	@IBOutlet var collectionView: UICollectionView!
+	
 	@IBOutlet var textView: UITextView!
 	@IBOutlet var collectionViewSheets: UICollectionView!
 	
+	
+	
 	// MARK: - Properties
 	
+	var cluster: Cluster?
+	
 	private var isSetup = true
-	private var clusterTitle = ""
+	private var clusterTitle: String?
 	private var sheets: [Sheet] = []
 	private var tags: [Tag] = []
 	private var delaySheetAimation = 0.0
 	private var isFirstTime = true {
 		willSet { if newValue == true { delaySheetAimation = 0.0 } }
 	}
-	private var multiplier = externalDisplayWindowRatio
+	private var multiplier: CGFloat = 4/3
 	private var sheetSize = CGSize(width: 375, height: 281)
+	private var sheetPreviewView = SheetView()
 	private var selectedTag: Tag? {
 		didSet { update() }
 	}
-	private var sheetMode = false
+	private var textMode = false
+	private var madeChanges = false
+	private var doneMode = false
 	
 	private var isCollectionviewSheetsHidden = true {
 		didSet { update() }
@@ -61,7 +71,7 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 	
 	func numberOfSections(in collectionView: UICollectionView) -> Int {
 		if collectionView == collectionViewSheets {
-			return sheets.count
+			return sheets.count > 0 ? sheets.count : cluster?.hasSheets?.count ?? 0
 		} else {
 			return 1
 		}
@@ -87,8 +97,8 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 				for subview in collectionCell.previewView.subviews {
 					subview.removeFromSuperview()
 				}
-				
-				let view = buildSheetViewFor(sheet: sheets[indexPath.section], frame: collectionCell.bounds)
+				let sheet = sheets.count > 0 ? sheets[indexPath.section] : cluster?.hasSheetsArray[indexPath.section]
+				let view = buildSheetViewFor(sheet: sheet, frame: collectionCell.bounds)
 				collectionCell.previewView.addSubview(view)
 				
 				if isFirstTime {
@@ -102,10 +112,10 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 					UIView.animate(withDuration: 0.4, delay: delaySheetAimation, usingSpringWithDamping: 0.7, initialSpringVelocity: 1, options: .curveEaseInOut, animations: {
 						
 						collectionCell.bounds = CGRect(
-								x: 0,
-								y: y,
-								width: collectionCell.bounds.width,
-								height: collectionCell.bounds.height)
+							x: 0,
+							y: y,
+							width: collectionCell.bounds.width,
+							height: collectionCell.bounds.height)
 						
 					})
 					delaySheetAimation += 0.12
@@ -134,6 +144,8 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 		if collectionView != collectionViewSheets {
 			if selectedTag?.id != tags[indexPath.row].id {
 				selectedTag = tags[indexPath.row]
+				save.title = Text.Actions.save
+				madeChanges = true
 				update()
 			}
 		}
@@ -147,27 +159,30 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 		}
 	}
 	
+	
+	
+	
 	// MARK: - Private Functions
 	
 	private func setup() {
 		tags = CoreTag.getEntities()
-
+		
 		collectionView.register(UINib(nibName: Cells.tagCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.tagCellCollection)
 		collectionViewSheets.register(UINib(nibName: Cells.sheetCollectionCell, bundle: nil), forCellWithReuseIdentifier: Cells.sheetCollectionCell)
-		NotificationCenter.default.addObserver(forName: Notification.Name.UIScreenDidConnect, object: nil, queue: nil, using: databaseDidChange)
-
 		navigationController?.title = Text.NewSong.title
 		title = Text.Players.title
+		
+		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name:NSNotification.Name.UIKeyboardWillShow, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name:NSNotification.Name.UIKeyboardWillHide, object: nil)
+		NotificationCenter.default.addObserver(forName: Notification.Name.UIScreenDidConnect, object: nil, queue: nil, using: databaseDidChange)
 
 		cancel.title = Text.Actions.cancel
-		done.title = Text.Actions.done
+		edit.title = Text.Actions.edit
+		save.title = Text.Actions.done
 		
-
+		multiplier = externalDisplayWindowRatio
 		let cellHeight = multiplier * (UIScreen.main.bounds.width - 20)
 		sheetSize = CGSize(width: UIScreen.main.bounds.width - 20, height: cellHeight)
-
-		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name:NSNotification.Name.UIKeyboardWillHide, object: nil)
 		
 		let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
 		layout.sectionInset = UIEdgeInsets(top: 20, left: 0, bottom: 10, right: 0)
@@ -176,9 +191,12 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 		layout.minimumLineSpacing = 0
 		collectionViewSheets!.collectionViewLayout = layout
 		
+		textView.contentSize = CGSize(width: textView.bounds.width, height: UIScreen.main.bounds.height * 2)
 		textView.keyboardDismissMode = .interactive
 		
-		isCollectionviewSheetsHidden = true
+		isCollectionviewSheetsHidden = false
+		selectedTag = cluster?.hasTag
+		update()
 	}
 	
 	private func update() {
@@ -190,12 +208,8 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 	}
 	
 	
-	private func databaseDidChange(_ notification: Notification) {
-		tags = CoreTag.getEntities()
-		update()
-	}
-	
 	private func buildSheets(fromText: String) {
+		print(fromText)
 		
 		var lyricsToDevide = fromText + "\n\n"
 		
@@ -242,17 +256,13 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 		
 	}
 	
-	private func buildSheetViewFor(sheet: Sheet?, frame: CGRect, isSetup: Bool = false) -> SheetView {
+	private func buildSheetViewFor(sheet: Sheet?, frame: CGRect) -> SheetView {
 		let view = SheetView(frame: frame)
 		view.isEmptySheet = false
-		view.selectedTag =  selectedTag
-		view.songTitle = clusterTitle
+		view.selectedTag =  selectedTag ?? cluster?.hasTag
+		view.songTitle = clusterTitle ?? cluster?.title
+		view.lyrics = sheet?.lyrics
 		view.position = Int(sheet?.position ?? 0)
-		if isSetup {
-			view.lyrics = ""
-		} else {
-			view.lyrics = sheet?.lyrics
-		}
 		view.isEditable = true
 		view.update()
 		return view
@@ -265,66 +275,112 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 			let alert = UIAlertController(title: Text.NewSong.errorTitleNoTag, message: Text.NewSong.erorrMessageNoTag, preferredStyle: .alert)
 			alert.addAction(UIAlertAction(title: Text.Actions.ok, style: UIAlertActionStyle.default, handler: nil))
 			self.present(alert, animated: true, completion: nil)
-
+			
 			return false
 		}
+	}
+	
+	private func databaseDidChange(_ notification: Notification) {
+		tags = CoreTag.getEntities()
+		update()
+	}
+	
+	private func getTextFromSheets() -> String {
+		var totalString = (cluster?.title ?? "") + "\n\n"
+		let tempSheets:[Sheet] = sheets.count > 0 ? sheets : cluster?.hasSheetsArray ?? []
+		for (index, sheet) in tempSheets.enumerated() {
+			totalString += sheet.lyrics ?? ""
+			if index < tempSheets.count {
+				totalString +=  "\n\n"
+			}
+		}
+		return totalString
 	}
 	
 	// MARK: - IBAction Functions
 	
 	@IBAction func cancel(_ sender: UIBarButtonItem) {
 		
-		if !sheetMode {
+		if !textMode {
 			dismiss(animated: true)
 		} else {
 			isSetup = true
-			sheetMode = false
-			sheets = []
-			done.title = Text.Actions.done
-			textView.resignFirstResponder()
+			textMode = !textMode
+			isFirstTime = true
+			isCollectionviewSheetsHidden = false
+			edit.tintColor = .primary
+			edit.isEnabled = true
+			save.title = Text.Actions.done
 		}
-		isFirstTime = true
-		isCollectionviewSheetsHidden = true
 		
 	}
 	
-	@IBAction func done(_ sender: UIBarButtonItem) {
-		if sheetMode, hasTagSelected() {
-			let cluster = CoreCluster.createEntity()
-			cluster.title = clusterTitle
-			let id = Int(cluster.id)
-			cluster.position = Int16(id)
-			if CoreCluster.saveContext() { print("song saved") } else { print("song not saved") }
-			
-			for tempSheet in sheets {
-				let sheet = CoreSheet.createEntity()
-				sheet.title = tempSheet.title
-				sheet.lyrics = tempSheet.lyrics
-				sheet.position = tempSheet.position
-				sheet.hasCluster = cluster
-				sheets.append(sheet)
-			}
-			
-			if CoreSheet.saveContext() { print("sheets saved") } else { print("sheets not saved") }
-			
-			cluster.hasTag = selectedTag
-			if CoreTag.saveContext() { print("tag saved") } else { print("tag not saved") }
-			
-			dismiss(animated: true)
-		} else {
-			isSetup = false
-			isCollectionviewSheetsHidden = false
-			sheetMode = true
-			textView.resignFirstResponder()
-			done.title = Text.Actions.save
-			buildSheets(fromText: textView.text)
-			update()
-		}
+	@IBAction func edit(_ sender: UIBarButtonItem) {
+		isCollectionviewSheetsHidden = true
+		textView.text = getTextFromSheets()
+		madeChanges = true
+		isSetup = true
+		isFirstTime = true
+		textMode = !textMode
+		edit.isEnabled = false
+		edit.tintColor = .clear
+		save.title = Text.Actions.done
 	}
 	
-	func textFieldShouldReturn(textField: UITextField) -> Bool {
-		textField.resignFirstResponder()
-		return true
+	
+	@IBAction func save(_ sender: UIBarButtonItem) {
+		if textMode {
+			// edit mode
+			isCollectionviewSheetsHidden = false
+			buildSheets(fromText: textView.text)
+			madeChanges = true
+			isSetup = true
+			isFirstTime = true
+			textMode = !textMode
+			edit.isEnabled = true
+			edit.tintColor = .primary
+			save.title = madeChanges ? Text.Actions.save : Text.Actions.done
+		} else {
+			// sheet mode
+			if !madeChanges {
+				dismiss(animated: true)
+			} else {
+				save.isEnabled = true
+				textMode = true
+				// save
+				if let cluster = cluster {
+					cluster.title = clusterTitle ?? cluster.title
+					if CoreCluster.saveContext() { print("song saved") } else { print("song not saved") }
+					
+					if sheets.count > 0 { // if made changes to text // else made changes to tag
+						
+						if let sheets = cluster.hasSheets as? Set<Sheet> {
+							for sheet in sheets {
+								let _ = CoreSheet.delete(entity: sheet)
+							}
+						}
+						
+						for tempSheet in sheets {
+							let sheet = CoreSheet.createEntity()
+							sheet.title = tempSheet.title
+							sheet.lyrics = tempSheet.lyrics
+							sheet.position = tempSheet.position
+							sheet.hasCluster = cluster
+							cluster.addToHasSheets(sheet)
+						}
+						
+						if CoreSheet.saveContext() { print("sheets saved") } else { print("sheets not saved") }
+						
+					}
+					cluster.hasTag = selectedTag
+					if CoreTag.saveContext() { print("tag saved") } else { print("tag not saved") }
+					
+					//dismiss
+					dismiss(animated: true)
+				}
+			}
+			
+		}
 	}
 	
 	@objc func keyboardWillShow(notification:NSNotification){
@@ -344,6 +400,5 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 		textView.contentInset = contentInset
 	}
 	
-
-	
 }
+

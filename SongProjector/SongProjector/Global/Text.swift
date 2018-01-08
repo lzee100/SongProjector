@@ -19,6 +19,7 @@ class Text: NSObject {
 		static let add = "Voeg toe"
 		static let save = "Sla op"
 		static let ok = "Ok"
+		static let edit = "Wijzig"
 		static let selectImage = "Selecteer afbeelding"
 	}
 	
@@ -36,7 +37,7 @@ class Text: NSObject {
 	}
 	
 	struct Songs {
-		static let title = "Alle liedjes/presentaties"
+		static let title = "Alles"
 		static let description = "Doorzoek hier alle liedjes of collecties"
 		static let SearchSongPlaceholder = "Zoek dia's"
 	}
@@ -60,6 +61,10 @@ class Text: NSObject {
 	
 	struct Players {
 		static let title = "Afspelers"
+		
+		static let menuEmptySheet = "Lege dia"
+		static let menuTextSheet = "Text dia"
+		static let menuImageSheet = "Dia met foto"
 	}
 	
 	struct DisplaySettings {
@@ -76,6 +81,7 @@ class Text: NSObject {
 		static let descriptionBackgroundColor = "Kleur achtergrond"
 		static let descriptionHasEmptySheet = "Toon lege dia"
 		static let descriptionHasEmptySheetDetail = "Aan het einde of begin van een lied een lege dia tonen met ingestelde achtergrond"
+		static let descriptionAllTitle = "Titel op elke dia"
 		static let descriptionPositionEmptySheet = "Toon lege dia aan begin\n(uit is aan het einde tonen)"
 		static let descriptionLastBeamerResolution = "Laast bekende beamer resolutie:\n"
 		

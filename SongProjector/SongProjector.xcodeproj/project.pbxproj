@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E3081C6C200271D600701680 /* PlayerMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3081C6B200271D600701680 /* PlayerMenu.swift */; };
 		E309DCE61FF26CB700C3D135 /* NewSongServiceIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E309DCE51FF26CB700C3D135 /* NewSongServiceIphoneController.swift */; };
 		E309DCE81FF44E6A00C3D135 /* TagsIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E309DCE71FF44E6A00C3D135 /* TagsIphoneController.swift */; };
 		E309DCEA1FF45A8A00C3D135 /* MoreSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E309DCE91FF45A8A00C3D135 /* MoreSplitViewController.swift */; };
@@ -56,6 +57,7 @@
 		E326E9041FFEC9EC00FEAC9C /* PlayersIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E326E9031FFEC9EC00FEAC9C /* PlayersIphoneController.swift */; };
 		E326E9071FFECD0E00FEAC9C /* SheetCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E326E9051FFECD0E00FEAC9C /* SheetCollectionCell.swift */; };
 		E326E9081FFECD0E00FEAC9C /* SheetCollectionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E326E9061FFECD0E00FEAC9C /* SheetCollectionCell.xib */; };
+		E32D4D6520017E0100ED81A7 /* EditSongIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32D4D6420017E0100ED81A7 /* EditSongIphoneController.swift */; };
 		E3355D6F1FEDA645004C03AE /* TextViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3355D6E1FEDA645004C03AE /* TextViewExtensions.swift */; };
 		E3355D711FEE6436004C03AE /* ClusterExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3355D701FEE6436004C03AE /* ClusterExtensions.swift */; };
 		E356F2A51FF666E5002A3F3A /* ChromaColorPicker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E356F2A61FF666E5002A3F3A /* ChromaColorPicker.framework */; };
@@ -87,6 +89,7 @@
 		346D1C5C5532C9E10C448104 /* Pods-SongProjector.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SongProjector.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SongProjector/Pods-SongProjector.debug.xcconfig"; sourceTree = "<group>"; };
 		8300EFE78A26AC2834037C54 /* Pods-SongProjector.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SongProjector.release.xcconfig"; path = "Pods/Target Support Files/Pods-SongProjector/Pods-SongProjector.release.xcconfig"; sourceTree = "<group>"; };
 		95070415C3C6BD5B7639F73A /* Pods_SongProjector.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SongProjector.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3081C6B200271D600701680 /* PlayerMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerMenu.swift; sourceTree = "<group>"; };
 		E309DCE51FF26CB700C3D135 /* NewSongServiceIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewSongServiceIphoneController.swift; sourceTree = "<group>"; };
 		E309DCE71FF44E6A00C3D135 /* TagsIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsIphoneController.swift; sourceTree = "<group>"; };
 		E309DCE91FF45A8A00C3D135 /* MoreSplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreSplitViewController.swift; sourceTree = "<group>"; };
@@ -138,6 +141,7 @@
 		E326E9031FFEC9EC00FEAC9C /* PlayersIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayersIphoneController.swift; sourceTree = "<group>"; };
 		E326E9051FFECD0E00FEAC9C /* SheetCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetCollectionCell.swift; sourceTree = "<group>"; };
 		E326E9061FFECD0E00FEAC9C /* SheetCollectionCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SheetCollectionCell.xib; sourceTree = "<group>"; };
+		E32D4D6420017E0100ED81A7 /* EditSongIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSongIphoneController.swift; sourceTree = "<group>"; };
 		E3355D6E1FEDA645004C03AE /* TextViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextViewExtensions.swift; sourceTree = "<group>"; };
 		E3355D701FEE6436004C03AE /* ClusterExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClusterExtensions.swift; sourceTree = "<group>"; };
 		E356F2A61FF666E5002A3F3A /* ChromaColorPicker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ChromaColorPicker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -342,6 +346,8 @@
 				E309DCE71FF44E6A00C3D135 /* TagsIphoneController.swift */,
 				E309DCFE1FF501C700C3D135 /* NewTagIphoneController.swift */,
 				E326E9031FFEC9EC00FEAC9C /* PlayersIphoneController.swift */,
+				E32D4D6420017E0100ED81A7 /* EditSongIphoneController.swift */,
+				E3081C6B200271D600701680 /* PlayerMenu.swift */,
 			);
 			path = iPhone;
 			sourceTree = "<group>";
@@ -508,6 +514,7 @@
 				E311715B1FE5A0A3008D9D51 /* Features.swift in Sources */,
 				E309DCF31FF48F0800C3D135 /* LabelSwitchCell.swift in Sources */,
 				E309DD051FF5179B00C3D135 /* Cells.swift in Sources */,
+				E3081C6C200271D600701680 /* PlayerMenu.swift in Sources */,
 				E31171521FE5A071008D9D51 /* StringExtensions.swift in Sources */,
 				E3F421A41FFE457500C332B0 /* LabelDoubleSwitchCell.swift in Sources */,
 				E309DCFD1FF4FC9E00C3D135 /* TextFieldCell.swift in Sources */,
@@ -537,6 +544,7 @@
 				E38347601FF7E8B5008AE69D /* LabelPhotoPickerCell.swift in Sources */,
 				E31171491FE59EBD008D9D51 /* CoreDataManager.swift in Sources */,
 				E309DCF71FF48FF100C3D135 /* LabelColorPickerCell.swift in Sources */,
+				E32D4D6520017E0100ED81A7 /* EditSongIphoneController.swift in Sources */,
 				E309DCE81FF44E6A00C3D135 /* TagsIphoneController.swift in Sources */,
 				E31171391FE59DA3008D9D51 /* SongProjector.xcdatamodeld in Sources */,
 				E326E9071FFECD0E00FEAC9C /* SheetCollectionCell.swift in Sources */,

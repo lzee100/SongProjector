@@ -60,6 +60,7 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 	func saveContext() -> Bool {
 		do {
 			try managedObjectContext.save()
+			NotificationCenter.default.post(name: NotificationNames.dataBaseDidChange, object:nil)
 			return true
 		} catch {
 			print("Failed saving")
@@ -99,6 +100,7 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 		
 		do {
 			try managedObjectContext.save()
+			NotificationCenter.default.post(name: NotificationNames.dataBaseDidChange, object:nil)
 			print("saved!")
 			return true
 		} catch let error as NSError  {

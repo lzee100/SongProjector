@@ -39,6 +39,10 @@ class LabelDoubleSwitchCell: UITableViewCell {
 		view.descriptionSwitchTwo.text = descriptionSwitchTwo
 		view.imageSwitchTwo.tintColor = .primary
 		view.switchOne.isOn = false
+		view.switchOne.tintColor = .primary
+		view.switchOne.onTintColor = .primary
+		view.switchTwo.tintColor = .primary
+		view.switchTwo.onTintColor = .primary
 		view.showSecondSwitch()
 		view.imageSwitchTwo.image = #imageLiteral(resourceName: "Bullet")
 		return view

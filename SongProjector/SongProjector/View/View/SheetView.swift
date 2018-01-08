@@ -32,6 +32,9 @@ class SheetView: UIView {
 	var isEmptySheet: Bool = false
 	var scaleFactor: CGFloat = 1
 	var isEditable = false
+	var allHaveTitle = false
+	var position = 0
+	var zeroHeightConstraint: NSLayoutConstraint?
 	
 	var previewTitleAttributes: [NSAttributedStringKey: Any]?
 	var previewLyricsAttributes: [NSAttributedStringKey: Any]?
@@ -54,7 +57,6 @@ class SheetView: UIView {
 	
 	func update() {
 		
-		titleLabel.isEnabled = isEditable
 		lyricsTextView.isEditable = isEditable
 		lyricsTextView.isSelectable = isEditable
 		
@@ -78,6 +80,16 @@ class SheetView: UIView {
 					}
 					titleLabel.attributedText = NSAttributedString(string: songTitle, attributes: previewTitleAttributes)
 				} else if let tag = selectedTag {
+					if !tag.allHaveTitle && position > 0 {
+						titleHeightConstraint.isActive = false
+						zeroHeightConstraint = NSLayoutConstraint(item: titleLabel, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
+						titleLabel.addConstraint(zeroHeightConstraint!)
+					} else {
+						if let zeroHeightConstraint = zeroHeightConstraint {
+							titleLabel.removeConstraint(zeroHeightConstraint)
+						}
+						titleHeightConstraint.isActive = true
+					}
 					titleLabel.attributedText = NSAttributedString(string: songTitle, attributes: tag.getTitleAttributes(scaleFactor))
 				} else {
 					titleLabel.text = songTitle
@@ -118,7 +130,7 @@ class SheetView: UIView {
 		} else {
 			sheetBackground.backgroundColor = .white
 		}
-
+		
 	}
 
 }

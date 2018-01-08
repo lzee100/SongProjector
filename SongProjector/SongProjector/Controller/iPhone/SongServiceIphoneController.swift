@@ -26,6 +26,8 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	@IBOutlet var sheetDisplayerNext: UIView!
 	
 
+	@IBOutlet var sheetDisplayerNextLeftConstraint: NSLayoutConstraint!
+	@IBOutlet var sheetDisplayerPreviousRightConstraint: NSLayoutConstraint!
 	@IBOutlet var sheetDisplayerSwipeViewHeight: NSLayoutConstraint!
 	
 	@IBOutlet var sheetDisplayerRatioConstraint: NSLayoutConstraint!
@@ -35,6 +37,8 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	var customSheetDisplayerRatioConstraint: NSLayoutConstraint?
 	var customSheetDisplayerPreviousRatioConstraint: NSLayoutConstraint?
 	var customSheetDisplayerNextRatioConstraint: NSLayoutConstraint?
+	var sheetDisplaySwipeViewCustomHeightConstraint: NSLayoutConstraint?
+	var swipeAnimationIsActive = false
 	
 	@IBOutlet var moveUpDownSection: UIView!
 	@IBOutlet var tableView: UITableView!
@@ -61,15 +65,18 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	private var selectedClusterRow = -1
 	private var selectedCluster: Cluster? {
 		willSet {
-			if let hasEmptySheet = newValue?.hasTag?.hasEmptySheet, hasEmptySheet {
-				if newValue == nil {
+			if newValue == nil {
+				if let hasEmptySheet = selectedCluster?.hasTag?.hasEmptySheet, hasEmptySheet {
 					removeEmptySheet()
-				} else {
-					addEmptySheet(newValue, isEmptySheetFirst: newValue?.hasTag?.isEmptySheetFirst)
 				}
 			}
-			update()
-			moveToFirstSheet()
+		}
+		didSet {
+			if let hasEmptySheet = selectedCluster?.hasTag?.hasEmptySheet, hasEmptySheet {
+				addEmptySheet(selectedCluster, isEmptySheetFirst: selectedCluster?.hasTag?.isEmptySheetFirst)
+			} else {
+				selectedSheet = sheetsForSelectedCluster?.first
+			}
 		}
 	}
 	private var sheetsToDisplay: [UIImage] = []
@@ -134,6 +141,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 			if let cell = cell as? BasicCell {
 				if clusters.count < 1 {
 					cell.setup(title: Text.NewSongService.noSelectedSongs)
+					cell.isSelected = false
 					return cell
 				}
 				if sheetsForSelectedCluster != nil && indexPath.row > selectedClusterRow && indexPath.row <= (selectedClusterRow + (sheetsForSelectedCluster?.count ?? 0)){
@@ -174,13 +182,11 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 						selectedClusterRow = indexPath.row - (sheetsForSelectedCluster?.count ?? 0)
 					}
 					selectedCluster = clustersOrdened[getIndexForCluster(indexPath)]
-					selectedSheet = sheetsForSelectedCluster?.first
 				}
 			}
 		} else {
 			if clustersOrdened.count > 0 {
 				selectedCluster = clustersOrdened[indexPath.row]
-				selectedSheet = sheetsForSelectedCluster?.first
 				selectedClusterRow = indexPath.row
 			}
 		}
@@ -190,6 +196,8 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	// MARK: NewSongServiceDelegate Functions
 	
 	func didFinishSongServiceSelection(clusters: [Cluster]) {
+		selectedCluster = nil
+		selectedSheet = nil
 		self.clusters = clusters
 	}
 	
@@ -206,11 +214,6 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	// MARK: - Private Functions
 	
 	private func setup() {
-
-//		sheetDisplaySwipeView.isHidden = true
-
-		sheetDisplayerPrevious.layer.transform = self.transformForFraction(fraction: Constants.previousSheetFraction)
-		sheetDisplayerNext.layer.transform = self.transformForFraction(fraction: Constants.nextSheetFraction)
 		
 		navigationController?.title = Text.SongService.title
 		title = Text.SongService.title
@@ -219,6 +222,13 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		new.title = Text.Actions.add
 		
 		NotificationCenter.default.addObserver(forName: NotificationNames.externalDisplayDidChange, object: nil, queue: nil, using: externalDisplayDidChange)
+		
+		NotificationCenter.default.addObserver(
+			forName: Notification.Name.UIScreenDidConnect,
+			object: nil,
+			queue: nil,
+			using: databaseDidChange)
+
 		
 		let upSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))
 		let downSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))
@@ -235,23 +245,22 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		leftSwipe.direction = .left
 		rightSwipe.direction = .right
 		
+		sheetDisplayerNextLeftConstraint.constant = UIScreen.main.bounds.width
+		sheetDisplayerPreviousRightConstraint.constant = -UIScreen.main.bounds.width
+		
 		sheetDisplaySwipeView.addGestureRecognizer(leftSwipe)
 		sheetDisplaySwipeView.addGestureRecognizer(rightSwipe)
-		
-
+		sheetDisplaySwipeView.isHidden = true
 		
 		tableView.register(cell: Cells.basicCellid)
-		
+		updateSheetDisplayersRatios()
 		update()
 		
 	}
 	
 	private func update() {
 		tableView.reloadData()
-	}
-	
-	private func moveToFirstSheet() {
-//		tableViewSheets.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
+		
 	}
 	
 	private func getIndexForCluster(_ indexPath: IndexPath) -> Int {
@@ -274,12 +283,15 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				
 			case .left:
 				print("left")
-				if let sheetsForSelectedCluster = sheetsForSelectedCluster, let position = selectedSheet?.position {
+				if let clusterPosition = selectedCluster?.position, let sheetsForSelectedCluster = sheetsForSelectedCluster, let position = selectedSheet?.position {
 					let nextPosition = Int(position) + 1
 					if nextPosition < sheetsForSelectedCluster.count {
 						// display next sheet
+						swipeAnimationIsActive = true
 						animateSheetsWith(.left, completion: {
+							self.swipeAnimationIsActive = false
 							self.selectedSheet = sheetsForSelectedCluster[nextPosition]
+							self.tableView.scrollToRow(at: IndexPath(row: Int(clusterPosition) + nextPosition, section: 0), at: .middle, animated: false)
 						})
 					} else {
 						// display next song
@@ -287,6 +299,8 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 							selectedClusterRow += 1
 							selectedCluster = clustersOrdened[Int(clusterPosition) + 1]
 							selectedSheet = self.sheetsForSelectedCluster?.first
+							self.tableView.scrollToRow(at: IndexPath(row: Int(clusterPosition) + 1, section: 0), at: .middle, animated: false)
+
 						}
 					}
 				}
@@ -296,12 +310,16 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 			case .right:
 				print("right")
 				
-				if let sheetsForSelectedCluster = sheetsForSelectedCluster, let position = selectedSheet?.position {
+				if let clusterPosition = selectedCluster?.position, let sheetsForSelectedCluster = sheetsForSelectedCluster, let position = selectedSheet?.position {
 					let previousPosition = Int(position) - 1
 					if previousPosition >= 0 {
 						// display previous sheet
+						swipeAnimationIsActive = true
 						animateSheetsWith(.right, completion: {
+							self.swipeAnimationIsActive = false
 							self.selectedSheet = sheetsForSelectedCluster[previousPosition]
+							self.tableView.scrollToRow(at: IndexPath(row: Int(clusterPosition) + previousPosition, section: 0), at: .middle, animated: false)
+
 						})
 					} else {
 						// display previous song
@@ -309,6 +327,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 							selectedClusterRow -= 1
 							selectedCluster = clustersOrdened[Int(clusterPosition) - 1]
 							selectedSheet = self.sheetsForSelectedCluster?.first
+							self.tableView.scrollToRow(at: IndexPath(row: Int(clusterPosition - 1), section: 0), at: .middle, animated: false)
 						}
 					}
 				}
@@ -346,8 +365,6 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				print("down")
 				if sheetDisplayerSwipeViewHeight.constant < 150 {
 					self.sheetDisplayerSwipeViewHeight.constant = 150
-//					sheetDisplayerPreviousYCenterConstraint.constant = -170
-//					sheetDisplayerNextYCenterConstraint.constant = 170
 					UIView.animate(withDuration: 0.3) {
 						self.view.layoutIfNeeded()
 						self.sheetDisplayer.layoutIfNeeded()
@@ -382,8 +399,10 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				emptySheet.position = (sheetsSorted.last?.position ?? 0) + 1
 				selectedCluster?.addToHasSheets(emptySheet)
 			}
-
 		}
+		sheetsForSelectedCluster?.forEach{ print(Int($0.position)) }
+		sheetsForSelectedCluster?.forEach{ print($0.title ?? "") }
+		selectedSheet = sheetsForSelectedCluster?.first
 	}
 	
 	private func removeEmptySheet() {
@@ -402,40 +421,52 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		displaySheets()
 	}
 	
+	func databaseDidChange( _ notification: Notification) {
+		selectedCluster = nil
+		selectedSheet = nil
+		
+		for cluster in clusters {
+			CoreCluster.predicates.append("id", equals: cluster.id)
+		}
+		clusters = CoreCluster.getEntities()
+	}
+	
 	func updateSheetDisplayersRatios() {
-			sheetDisplayerRatioConstraint.isActive = false
-			sheetDisplayerPreviousRatioConstraint.isActive = false
-			sheetDisplayerNextRatioConstraint.isActive = false
-			
-			if let customSheetDisplayerRatioConstraint = customSheetDisplayerRatioConstraint {
-				sheetDisplayer.removeConstraint(customSheetDisplayerRatioConstraint)
-			}
-			customSheetDisplayerRatioConstraint = NSLayoutConstraint(item: sheetDisplayer, attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.equal, toItem: sheetDisplayer, attribute: NSLayoutAttribute.width, multiplier: externalDisplayWindowRatio, constant: 0)
-			sheetDisplayer.addConstraint(customSheetDisplayerRatioConstraint!)
-			sheetDisplayer.layoutIfNeeded()
-			sheetDisplayer.layoutSubviews()
-			
-			if let customSheetDisplayerPreviousRatioConstraint = customSheetDisplayerPreviousRatioConstraint {
-				sheetDisplayer.removeConstraint(customSheetDisplayerPreviousRatioConstraint)
-			}
-			customSheetDisplayerPreviousRatioConstraint = NSLayoutConstraint(item: sheetDisplayerPrevious, attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.equal, toItem: sheetDisplayerPrevious, attribute: NSLayoutAttribute.width, multiplier: externalDisplayWindowRatio, constant: 0)
-			sheetDisplayerPrevious.addConstraint(customSheetDisplayerPreviousRatioConstraint!)
-			
-			if let customSheetDisplayerNextRatioConstraint = customSheetDisplayerNextRatioConstraint {
-				sheetDisplayer.removeConstraint(customSheetDisplayerNextRatioConstraint)
-			}
-			customSheetDisplayerNextRatioConstraint = NSLayoutConstraint(item: sheetDisplayerNext, attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.equal, toItem: sheetDisplayerNext, attribute: NSLayoutAttribute.width, multiplier: externalDisplayWindowRatio, constant: 0)
-			sheetDisplayerNext.addConstraint(customSheetDisplayerNextRatioConstraint!)
-			
-//		} else {
-//			sheetDisplayerRatioConstraint.isActive = true
-//			sheetDisplayerPreviousRatioConstraint.isActive = true
-//			sheetDisplayerNextRatioConstraint.isActive = true
-//		}
+		sheetDisplayerRatioConstraint.isActive = false
+		sheetDisplayerPreviousRatioConstraint.isActive = false
+		sheetDisplayerNextRatioConstraint.isActive = false
+		
+		sheetDisplayerSwipeViewHeight.isActive = false
+		
+		if let sheetDisplaySwipeViewCustomHeightConstraint = sheetDisplaySwipeViewCustomHeightConstraint {
+			sheetDisplaySwipeView.removeConstraint(sheetDisplaySwipeViewCustomHeightConstraint)
+		}
+		sheetDisplaySwipeViewCustomHeightConstraint = NSLayoutConstraint(item: sheetDisplaySwipeView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: (UIScreen.main.bounds.width - 20) * externalDisplayWindowRatio)
+		sheetDisplaySwipeView.addConstraint(sheetDisplaySwipeViewCustomHeightConstraint!)
+		
+		if let customSheetDisplayerRatioConstraint = customSheetDisplayerRatioConstraint {
+			sheetDisplayer.removeConstraint(customSheetDisplayerRatioConstraint)
+		}
+		customSheetDisplayerRatioConstraint = NSLayoutConstraint(item: sheetDisplayer, attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.equal, toItem: sheetDisplayer, attribute: NSLayoutAttribute.width, multiplier: externalDisplayWindowRatio, constant: 0)
+		sheetDisplayer.addConstraint(customSheetDisplayerRatioConstraint!)
+		sheetDisplayer.layoutIfNeeded()
+		sheetDisplayer.layoutSubviews()
+		
+		if let customSheetDisplayerPreviousRatioConstraint = customSheetDisplayerPreviousRatioConstraint {
+			sheetDisplayer.removeConstraint(customSheetDisplayerPreviousRatioConstraint)
+		}
+		customSheetDisplayerPreviousRatioConstraint = NSLayoutConstraint(item: sheetDisplayerPrevious, attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.equal, toItem: sheetDisplayerPrevious, attribute: NSLayoutAttribute.width, multiplier: externalDisplayWindowRatio, constant: 0)
+		sheetDisplayerPrevious.addConstraint(customSheetDisplayerPreviousRatioConstraint!)
+		
+		if let customSheetDisplayerNextRatioConstraint = customSheetDisplayerNextRatioConstraint {
+			sheetDisplayer.removeConstraint(customSheetDisplayerNextRatioConstraint)
+		}
+		customSheetDisplayerNextRatioConstraint = NSLayoutConstraint(item: sheetDisplayerNext, attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.equal, toItem: sheetDisplayerNext, attribute: NSLayoutAttribute.width, multiplier: externalDisplayWindowRatio, constant: 0)
+		sheetDisplayerNext.addConstraint(customSheetDisplayerNextRatioConstraint!)
 		
 		view.layoutIfNeeded()
 		view.layoutSubviews()
-
+		
 	}
 	
 	@IBAction func clearButtonPressed(_ sender: UIBarButtonItem) {
@@ -466,19 +497,20 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 
 					// next sheet
 					if selectedSheetPosition < (numberOfSheets - 1), let tag = selectedCluster?.hasTag {
-						sheetDisplayerNext.layer.transform = transformForFraction(fraction: 1.0)
 						let nextSheet = sheetsForSelectedCluster?[selectedSheetPosition + 1]
 						sheetDisplayerNext.addSubview(buildSheetViewFor(type: .next, title: selectedCluster?.title, sheet: nextSheet, tag: tag))
-						sheetDisplayerNext.layer.transform = transformForFraction(fraction: Constants.nextSheetFraction)
 
 					}
 
 					// previous sheet
 					if selectedSheetPosition > 0, let tag = selectedCluster?.hasTag {
 						let nextSheet = sheetsForSelectedCluster?[selectedSheetPosition - 1]
-						sheetDisplayerPrevious.layer.transform = transformForFraction(fraction: 1.0)
 						sheetDisplayerPrevious.addSubview(buildSheetViewFor(type: .previous, title: selectedCluster?.title, sheet: nextSheet, tag: tag))
-						sheetDisplayerPrevious.layer.transform = transformForFraction(fraction: Constants.previousSheetFraction)
+						sheetDisplayerPrevious.frame = CGRect(
+							x: UIScreen.main.bounds.width,
+							y: sheetDisplayer.bounds.minY,
+							width: sheetDisplayer.bounds.width,
+							height: sheetDisplayer.bounds.height)
 					}
 					
 				}
@@ -515,6 +547,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 			view.selectedTag = tag
 			view.songTitle = title
 			view.lyrics = sheet?.lyrics
+			view.position = Int(sheet?.position ?? 0)
 			view.scaleFactor = externalDisplayWindowHeight / heightView
 			view.update()
 			externalDisplayWindow.addSubview(view)
@@ -525,6 +558,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		view.selectedTag = tag
 		view.songTitle = title
 		view.lyrics = sheet?.lyrics
+		view.position = Int(sheet?.position ?? 0)
 		view.update()
 		return view
 		
@@ -550,14 +584,17 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				let selectedSheetPosition = Int(position)
 				
 				let navigationBarHeight = UIApplication.shared.statusBarFrame.height + navigationController!.navigationBar.frame.height
-				sheetDisplayerPrevious.layer.transform = transformForFraction(fraction: 1.0)
-				sheetDisplayerNext.layer.transform = transformForFraction(fraction: 1.0)
 
 
 				// current sheet
 				// current sheet, move to left
 				let currentSheetView = buildSheetViewFor(type: .current, title: selectedCluster?.title, sheet: selectedSheet, tag: selectedCluster?.hasTag)
-				currentSheetView.frame = CGRect(x: sheetDisplayer.frame.minX, y: sheetDisplayer.frame.minY + navigationBarHeight, width: sheetDisplayer.frame.width, height: sheetDisplayer.frame.height)
+				
+				currentSheetView.frame = CGRect(
+					x: sheetDisplayer.frame.minX,
+					y: sheetDisplayer.frame.minY + navigationBarHeight,
+					width: sheetDisplayer.frame.width,
+					height: sheetDisplayer.frame.height)
 				
 				
 				// next sheet, move to left
@@ -565,11 +602,10 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				let nextSheetView = buildSheetViewFor(type: .next, title: selectedCluster?.title, sheet: nextSheet, tag: selectedCluster?.hasTag)
 				
 				nextSheetView.frame = CGRect(
-					x: sheetDisplayerNext.frame.minX,
-					y: sheetDisplayerNext.frame.minY + navigationBarHeight,
-					width: sheetDisplayerNext.frame.width,
-					height: sheetDisplayerNext.frame.height) // set the view
-				nextSheetView.layer.transform = transformForFraction(fraction: Constants.nextSheetFraction)
+					x: UIScreen.main.bounds.width,
+					y: sheetDisplayer.bounds.minY,
+					width: sheetDisplayer.frame.width,
+					height: sheetDisplayer.frame.height) // set the view
 				
 				
 				view.addSubview(currentSheetView)
@@ -580,24 +616,20 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				
 				UIView.animate(withDuration: 0.3, animations: {
 					currentSheetView.frame = CGRect(
-						x: self.sheetDisplayerPrevious.frame.minX,
-						y: self.sheetDisplayerPrevious.frame.minY + navigationBarHeight,
-						width: self.sheetDisplayerPrevious.frame.width,
-						height: self.sheetDisplayerPrevious.frame.height)
-					currentSheetView.layer.transform = self.transformForFraction(fraction: Constants.previousSheetFraction)
+						x: -currentSheetView.bounds.width,
+						y: currentSheetView.bounds.minY,
+						width: self.sheetDisplayerPrevious.bounds.width,
+						height: self.sheetDisplayerPrevious.bounds.height)
 
 					nextSheetView.frame = CGRect(
 						x: self.sheetDisplayer.frame.minX,
 						y: self.sheetDisplayer.frame.minY + navigationBarHeight,
 						width: self.sheetDisplayer.frame.width,
 						height: self.sheetDisplayer.frame.height)
-					nextSheetView.layer.transform = self.transformForFraction(fraction: 1.0)
 					
 				}, completion: { (bool) in
 					self.sheetDisplayer.isHidden = false
 					self.sheetDisplayerPrevious.isHidden = false
-					self.sheetDisplayerPrevious.layer.transform = self.transformForFraction(fraction: Constants.previousSheetFraction)
-					self.sheetDisplayerNext.layer.transform = self.transformForFraction(fraction: Constants.nextSheetFraction)
 
 					nextSheetView.removeFromSuperview()
 					currentSheetView.removeFromSuperview()
@@ -613,7 +645,6 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				
 				sheetDisplayerNext.isHidden = position == numberOfSheets ? true : false
 				sheetDisplayerPrevious.isHidden = position == 0 ? true : false
-				sheetDisplayerNext.layer.transform = self.transformForFraction(fraction: 1.0)
 
 				let selectedSheetPosition = Int(position)
 				
@@ -621,23 +652,25 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				
 				// current sheet, move to right
 				let currentSheetView = buildSheetViewFor(type: .current, title: selectedCluster?.title, sheet: selectedSheet, tag: selectedCluster?.hasTag)
-				currentSheetView.frame = CGRect(x: sheetDisplayer.frame.minX, y: sheetDisplayer.frame.minY + navigationBarHeight, width: sheetDisplayer.frame.width, height: sheetDisplayer.frame.height)
 				
-				sheetDisplayerPrevious.layer.transform = self.transformForFraction(fraction: 1.0)
+				currentSheetView.frame = CGRect(
+					x: sheetDisplayer.frame.minX,
+					y: sheetDisplayer.bounds.minY,
+					width: sheetDisplayer.frame.width,
+					height: sheetDisplayer.frame.height)
+				
 
 				
 				// previous sheet, move to right
 				let previousSheet = sheetsForSelectedCluster?[selectedSheetPosition - 1]
 				let previousSheetView = buildSheetViewFor(type: .previous, title: selectedCluster?.title, sheet: previousSheet, tag: selectedCluster?.hasTag) // generates uiview with dimensions of sheetDisplayerPrevious which is set in storyboard
 				previousSheetView.frame = CGRect(
-					x: sheetDisplayerPrevious.frame.minX,
-					y: sheetDisplayerPrevious.frame.minY + navigationBarHeight,
-					width: sheetDisplayerPrevious.frame.width,
+					x: -sheetDisplayer.bounds.width,
+					y: self.sheetDisplayer.bounds.minY,
+					width: sheetDisplayer.frame.width,
 					height: sheetDisplayerPrevious.frame.height) // set the view
 				
-				sheetDisplayerPrevious.layer.transform = self.transformForFraction(fraction: Constants.previousSheetFraction)
 
-				previousSheetView.layer.transform = self.transformForFraction(fraction: Constants.previousSheetFraction)
 				
 				view.addSubview(currentSheetView)
 				view.addSubview(previousSheetView)
@@ -647,7 +680,6 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				
 				
 				UIView.animate(withDuration: 0.3, animations: {
-					previousSheetView.layer.transform = self.transformForFraction(fraction: 1.0)
 					previousSheetView.frame = CGRect(
 						x: self.sheetDisplayer.frame.minX,
 						y: self.sheetDisplayer.frame.minY + navigationBarHeight,
@@ -655,16 +687,14 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 						height: self.sheetDisplayer.frame.height)
 					
 					currentSheetView.frame = CGRect(
-						x: self.sheetDisplayerNext.frame.minX,
-						y: self.sheetDisplayerNext.frame.minY + navigationBarHeight,
+						x: UIScreen.main.bounds.width,
+						y: self.sheetDisplayer.bounds.minY,
 						width: self.sheetDisplayerNext.frame.width,
 						height: self.sheetDisplayerNext.frame.height)
-					currentSheetView.layer.transform = self.transformForFraction(fraction: Constants.nextSheetFraction)
 
 
 					
 				}, completion: { (bool) in
-					self.sheetDisplayerNext.layer.transform = self.transformForFraction(fraction: Constants.nextSheetFraction)
 					self.sheetDisplayer.isHidden = false
 					self.sheetDisplayerPrevious.isHidden = false
 					previousSheetView.removeFromSuperview()

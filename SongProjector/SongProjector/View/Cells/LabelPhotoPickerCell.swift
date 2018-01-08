@@ -76,11 +76,9 @@ class LabelPhotoPickerCell: UITableViewCell, UIImagePickerControllerDelegate, UI
 				descriptionBeamerHeightConstraint.constant = 42
 				buttonHeightConstraint.constant = 50
 				buttonBottomConstraint.constant = 10
-				imageThumbnail.isHidden = true
 			} else {
 				imageContainer.isHidden = true
 				button.isEnabled = false
-				imageThumbnail.isHidden = false
 				descriptionBeamerHeightConstraint.constant = 1
 				buttonHeightConstraint.constant = 1
 				buttonBottomConstraint.constant = 0

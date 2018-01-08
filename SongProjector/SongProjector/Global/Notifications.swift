@@ -16,5 +16,6 @@ struct NotificationIdentifier {
 
 struct NotificationNames {
 	static let externalDisplayDidChange = Notification.Name("externalDisplayDidChange")
+	static let dataBaseDidChange = Notification.Name("databaseDidChange")
 
 }

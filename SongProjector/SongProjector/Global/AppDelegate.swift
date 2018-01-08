@@ -9,6 +9,7 @@
 import UIKit
 import CoreData
 
+
 var externalDisplayWindow: UIWindow? {
 	didSet {
 		let defaults = UserDefaults.standard
@@ -143,7 +144,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	}
 	
 	private func setupAirPlay() {
-		
 		
 		NotificationCenter.default.addObserver(
 			forName: Notification.Name.UIScreenDidConnect,

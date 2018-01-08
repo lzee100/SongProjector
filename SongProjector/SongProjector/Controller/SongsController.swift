@@ -42,9 +42,9 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 	}
 	
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-		if segue.identifier == "NewSongSegue" {
+		if segue.identifier == "EditSongSegue" {
 			if let nav = segue.destination as? UINavigationController {
-				let songController = nav.topViewController as! NewSongIphoneController
+				let songController = nav.topViewController as! EditSongIphoneController
 				songController.cluster = selectedCluster
 				selectedCluster = nil
 			}
@@ -64,6 +64,22 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 		return cell
 	}
 	
+	func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+		return UITableViewCellEditingStyle.delete
+	}
+
+	
+	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+		if editingStyle == .delete {
+			if let index = clusters.index(of: filteredClusters[indexPath.row]) {
+				let _ = CoreCluster.delete(entity: filteredClusters[indexPath.row])
+				clusters.remove(at: index)
+				filteredClusters = clusters
+				self.tableView.deleteRows(at: [indexPath], with: .automatic)
+			}
+		}
+	}
+	
 	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		if delegate != nil {
 			delegate?.didSelectCluster(cluster: filteredClusters[indexPath.row])
@@ -71,7 +87,7 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 		} else {
 			selectedCluster = filteredClusters[indexPath.row]
 			DispatchQueue.main.async {
-				self.performSegue(withIdentifier: "NewSongSegue", sender: self)
+				self.performSegue(withIdentifier: "EditSongSegue", sender: self)
 			}
 		}
 	}

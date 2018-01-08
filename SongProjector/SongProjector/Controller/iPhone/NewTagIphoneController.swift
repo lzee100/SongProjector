@@ -47,10 +47,11 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 		case name
 		case asTag
 		case emptySheet
+		case allHaveTitle
 		case backgroundColor
 		case backgroundImage
 		
-		static let all = [name, asTag, emptySheet, backgroundColor, backgroundImage]
+		static let all = [name, asTag, emptySheet, allHaveTitle, backgroundColor, backgroundImage]
 		
 		static func `for`(_ indexPath: IndexPath) -> CellGeneral {
 			return all[indexPath.row]
@@ -102,6 +103,8 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 	var cellPhotoPicker = LabelPhotoPickerCell()
 	var cellBackgroundColor = LabelColorPickerCell.create(id: "cellBackgroundColor", description: Text.NewTag.descriptionBackgroundColor)
 	var cellHasEmptySheet = LabelDoubleSwitchCell.create(id: "cellHasEmptySheet", descriptionSwitchOne: Text.NewTag.descriptionHasEmptySheet, descriptionSwitchTwo: Text.NewTag.descriptionPositionEmptySheet)
+	let cellAllHaveTitlle = LabelSwitchCell.create(id: "cellAllHaveTitle", description: Text.NewTag.descriptionAllTitle, initialValueIsOn: false)
+
 	
 	
 	// MARK: Title Cells
@@ -133,6 +136,7 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 	
 	var editExistingTag: Tag?
 	var tagName = ""
+	var allHaveTitle = false
 	var titleBackgroundColor: UIColor?
 	var sheetBackgroundColor: UIColor?
 	var hasEmptySheet: Bool = false
@@ -141,7 +145,8 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 	var titleAttributes: [NSAttributedStringKey : Any] = [:]
 	var lyricsAttributes: [NSAttributedStringKey: Any] = [:]
 	var titleAttributedText: NSAttributedString?
-	
+	var externalDisplayRatioConstraint: NSLayoutConstraint?
+	var sheetContainerViewHeightConstraint: NSLayoutConstraint?
 	
 	
 	
@@ -223,7 +228,7 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 	}
 	
 	func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-		return 80
+		return 60
 	}
 	
 	func tableView(_ tableView: UITableView, estimatedHeightForHeaderInSection section: Int) -> CGFloat {
@@ -260,29 +265,29 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 		case .general:
 			switch CellGeneral.for(indexPath) {
 			case .backgroundColor:
-				return .delete
+				return cellBackgroundColor.isActive ? .none : .delete
 			case .backgroundImage:
-				return .delete
+				return cellPhotoPicker.isActive ? .none : cellPhotoPicker.pickedImage != nil ? .delete : .none
 			default:
 				return .none
 			}
 		case .title:
 			switch CellTitle.for(indexPath) {
 			case .backgroundColor:
-				return .delete
+				return cellTitleBackgroundColor.isActive ? .none : .delete
 			case .textColor:
-				return .delete
+				return cellTitleTextColor.isActive ? .none : .delete
 			case .borderColor:
-				return .delete
+				return cellTitleBorderColor.isActive ? .none : .delete
 			default:
 				return .none
 			}
 		case .content:
 			switch CellLyrics.for(indexPath) {
 			case .textColor:
-				return .delete
+				return cellLyricsTextColor.isActive ? .none : .delete
 			case .borderColor:
-				return .delete
+				return cellLyricsBorderColor.isActive ? .none : .delete
 			default:
 				return .none
 			}
@@ -597,7 +602,10 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 	}
 	
 	func valueChangedFor(cell: LabelSwitchCell, uiSwitch: UISwitch) {
+		
 		switch cell.id {
+		case "cellAllHaveTitle":
+			allHaveTitle = uiSwitch.isOn ? true : false
 		case "cellTitleBold":
 			if let font = titleAttributes[.font] as? UIFont {
 				if uiSwitch.isOn {
@@ -709,6 +717,7 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 		cellPhotoPicker.delegate = self
 		cellBackgroundColor.delegate = self
 		cellHasEmptySheet.delegate = self
+		cellAllHaveTitlle.delegate = self
 		
 		cellTitleFontFamily.delegate = self
 		cellTitleFontSize.delegate = self
@@ -789,12 +798,14 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 		case .backgroundColor: return cellBackgroundColor
 		case .backgroundImage: return cellPhotoPicker
 		case .emptySheet: return cellHasEmptySheet
+		case .allHaveTitle: return cellAllHaveTitlle
 		}
 	}
 	
 	private func loadTagAttributes() {
 		if let tag = editExistingTag {
 			cellName.setName(name: tag.title ?? "")
+			cellAllHaveTitlle.setSwitchValueTo(value: tag.allHaveTitle)
 			cellTitleFontFamily.setValue(value: tag.titleFontName ?? "")
 			cellTitleFontSize.setValue(value: Int(tag.titleTextSize))
 			cellTitleAlignment.setValue(value: tag.titleAlignment, id: nil)
@@ -877,7 +888,7 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 					view.backgroundColor = backgroundColor
 				}
 				view.lyrics = Text.NewTag.sampleLyrics
-				view.scaleFactor = externalDisplayWindow.bounds.size.height / sheetPreview.frame.size.height
+				view.scaleFactor = externalDisplayWindowWidth / (UIScreen.main.bounds.width - 20)
 				view.previewTitleAttributes = titleAttributes
 				view.previewLyricsAttributes = lyricsAttributes
 				view.update()
@@ -1041,6 +1052,8 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 				tag.isEmptySheetFirst = isEmptySheetIsFirst
 			}
 			
+			tag.allHaveTitle = allHaveTitle
+			
 			let _ = CoreTag.saveContext()
 			dismiss(animated: true)
 		}
@@ -1055,10 +1068,34 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 	}
 	
 	private func refineSheetRatio() {
+		
+		// sheet ratio ajustments
+		
+		// deactivate standard constraint
 		sheetPreviewAspectRatio.isActive = false
-		sheetPreview.addConstraint(NSLayoutConstraint(item: sheetPreview, attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.equal, toItem: sheetPreview, attribute: NSLayoutAttribute.width, multiplier: externalDisplayWindowRatio, constant: 0))
-		let constraint = NSLayoutConstraint(item: sheetContainerView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: (UIScreen.main.bounds.width - 20) * externalDisplayWindowRatio)
-		sheetContainerView.addConstraint(constraint)
+		
+		// remove previous constraint
+		if let externalDisplayRatioConstraint = externalDisplayRatioConstraint {
+			sheetPreview.removeConstraint(externalDisplayRatioConstraint)
+		}
+		
+		// add new constraint
+		externalDisplayRatioConstraint = NSLayoutConstraint(item: sheetPreview, attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.equal, toItem: sheetPreview, attribute: NSLayoutAttribute.width, multiplier: externalDisplayWindowRatio, constant: 0)
+		sheetPreview.addConstraint(externalDisplayRatioConstraint!)
+		
+		
+		// Container view height ajustments
+		
+		// remove previous active constraint
+		if let sheetContainerViewHeightConstraint = sheetContainerViewHeightConstraint {
+			sheetContainerView.removeConstraint(sheetContainerViewHeightConstraint)
+		}
+		// deactivate standard constraint
+		sheetContainerHeightConstraint.isActive = false
+		
+		// add new constraint
+		sheetContainerViewHeightConstraint = NSLayoutConstraint(item: sheetContainerView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: (UIScreen.main.bounds.width - 20) * externalDisplayWindowRatio)
+		sheetContainerView.addConstraint(sheetContainerViewHeightConstraint!)
 		buildPreview(isSetup: isSetup)
 	}
 	
