@@ -23,7 +23,7 @@ extension UIColor {
 	static let seperatorColor = UIColor.lightGray
 	static let placeholderColor = UIColor.lightGray
 	
-	static let textColorNormal = UIColor.black
+	static let textColorNormal = UIColor.white
 	
 }
 

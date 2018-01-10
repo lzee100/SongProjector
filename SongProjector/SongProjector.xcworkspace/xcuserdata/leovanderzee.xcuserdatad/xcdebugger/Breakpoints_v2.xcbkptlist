@@ -22,64 +22,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SongProjector/Controller/iPhone/SongServiceIphoneController.swift"
-            timestampString = "537102954.213608"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "405"
-            endingLineNumber = "405"
-            landmarkName = "addEmptySheet(_:isEmptySheetFirst:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SongProjector/Controller/iPhone/SongServiceIphoneController.swift"
-            timestampString = "537102954.213686"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "395"
-            endingLineNumber = "395"
-            landmarkName = "addEmptySheet(_:isEmptySheetFirst:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SongProjector/Controller/iPhone/SongServiceIphoneController.swift"
-            timestampString = "537102954.213747"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "400"
-            endingLineNumber = "400"
-            landmarkName = "addEmptySheet(_:isEmptySheetFirst:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SongProjector/Controller/iPhone/NewTagIphoneController.swift"
-            timestampString = "537089515.880403"
+            filePath = "SongProjector/Controller/iPhone/EditSongIphoneController.swift"
+            timestampString = "537275706.978356"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "892"
-            endingLineNumber = "892"
-            landmarkName = "buildPreview(isSetup:)"
+            startingLineNumber = "275"
+            endingLineNumber = "275"
+            landmarkName = "buildSheetViewFor(sheet:frame:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -89,12 +41,12 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SongProjector/View/View/SheetView.swift"
-            timestampString = "537089912.0425"
+            filePath = "SongProjector/View/Cells/BasicCell.swift"
+            timestampString = "537275538.891474"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "83"
-            endingLineNumber = "83"
+            startingLineNumber = "42"
+            endingLineNumber = "42"
             landmarkName = "update()"
             landmarkType = "7">
          </BreakpointContent>

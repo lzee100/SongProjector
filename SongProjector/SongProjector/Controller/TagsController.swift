@@ -17,6 +17,7 @@ class TagsController: UIViewController, UITableViewDelegate, UITableViewDataSour
 	@IBOutlet var searchBar: UISearchBar!
 	
 	
+	
 	private var tags: [Tag] = []
 	private var filteredTags: [Tag] = []
 	

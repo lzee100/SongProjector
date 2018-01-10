@@ -37,6 +37,8 @@ class LabelPickerCell: UITableViewCell, UIPickerViewDataSource, UIPickerViewDele
 		view.picker = UIPickerView(frame: CGRect(x: 0, y: 0, width: 300, height: 300))
 		view.picker.dataSource = view
 		view.picker.delegate = view
+		view.picker.tintColor = .white
+		view.pickerHolder.backgroundColor = themeWhiteBlackBackground
 		view.pickerValues = pickerValues
 		return view
 	}
@@ -58,10 +60,12 @@ class LabelPickerCell: UITableViewCell, UIPickerViewDataSource, UIPickerViewDele
 	
 	private func updatePicker() {
 		if isActive {
+			pickerHolder.isHidden = false
 			DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: {
 				self.pickerHolder.addSubview(self.picker)
 			})
 		} else {
+			pickerHolder.isHidden = true
 			picker.removeFromSuperview()
 		}
 	}

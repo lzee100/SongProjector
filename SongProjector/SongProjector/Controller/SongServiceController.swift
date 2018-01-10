@@ -216,6 +216,7 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 		toNewSongService.title = Text.Actions.add
 		title = Text.SongService.title
 		
+		
 		NotificationCenter.default.addObserver(forName: NotificationNames.externalDisplayDidChange, object: nil, queue: nil, using: externalScreenDidChange)
 		
 		let leftSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))

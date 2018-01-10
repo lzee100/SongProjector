@@ -35,6 +35,7 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 	private var clusterTitle: String?
 	private var sheets: [Sheet] = []
 	private var tags: [Tag] = []
+	private var visibleCells: [IndexPath] = []
 	private var delaySheetAimation = 0.0
 	private var isFirstTime = true {
 		willSet { if newValue == true { delaySheetAimation = 0.0 } }
@@ -45,9 +46,6 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 	private var selectedTag: Tag? {
 		didSet { update() }
 	}
-	private var textMode = false
-	private var madeChanges = false
-	private var doneMode = false
 	
 	private var isCollectionviewSheetsHidden = true {
 		didSet { update() }
@@ -101,7 +99,7 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 				let view = buildSheetViewFor(sheet: sheet, frame: collectionCell.bounds)
 				collectionCell.previewView.addSubview(view)
 				
-				if isFirstTime {
+				if visibleCells.contains(indexPath) { // is cell was visible to user, animate
 					let y = collectionCell.bounds.minY
 					collectionCell.bounds = CGRect(
 						x: -self.view.bounds.width,
@@ -120,11 +118,9 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 					})
 					delaySheetAimation += 0.12
 				}
-			}
-			let navigationBarHeight = UIApplication.shared.statusBarFrame.height + navigationController!.navigationBar.frame.height
-			let tagBarHeight = self.collectionView.bounds.height
-			if indexPath.section == Int(round(Double((UIScreen.main.bounds.height - navigationBarHeight - tagBarHeight) / (sheetSize.height + 10)))) - 1 {
-				isFirstTime = false
+				if let index = visibleCells.index(of: indexPath), segmentControl.selectedSegmentIndex == 1 {
+					visibleCells.remove(at: index) // remove cell for one time animation
+				}
 			}
 			return collectionCell
 			
@@ -145,7 +141,6 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 			if selectedTag?.id != tags[indexPath.row].id {
 				selectedTag = tags[indexPath.row]
 				save.title = Text.Actions.save
-				madeChanges = true
 				update()
 			}
 		}
@@ -161,12 +156,11 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 	
 	
 	
-	
 	// MARK: - Private Functions
 	
 	private func setup() {
 		tags = CoreTag.getEntities()
-		
+		view.backgroundColor = themeWhiteBlackBackground
 		collectionView.register(UINib(nibName: Cells.tagCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.tagCellCollection)
 		collectionViewSheets.register(UINib(nibName: Cells.sheetCollectionCell, bundle: nil), forCellWithReuseIdentifier: Cells.sheetCollectionCell)
 		navigationController?.title = Text.NewSong.title
@@ -186,11 +180,16 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 		leftSwipe.direction = .left
 		rightSwipe.direction = .right
 		
+		textView.layer.borderColor = themeHighlighted.cgColor
+		textView.layer.borderWidth = 1
+		textView.layer.cornerRadius = CGFloat(5.0)
+		textView.contentInset = UIEdgeInsetsMake(10, 10, 10, 10)
+		
 		textView.addGestureRecognizer(leftSwipe)
 		collectionViewSheets.addGestureRecognizer(rightSwipe)
 
 		cancel.title = Text.Actions.cancel
-		save.title = Text.Actions.done
+		save.title = Text.Actions.save
 		
 		multiplier = externalDisplayWindowRatio
 		let cellHeight = multiplier * (UIScreen.main.bounds.width - 20)
@@ -221,7 +220,6 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 	
 	
 	private func buildSheets(fromText: String) {
-		print(fromText)
 		
 		var lyricsToDevide = fromText + "\n\n"
 		
@@ -314,7 +312,7 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 		let tempSheets:[Sheet] = sheets.count > 0 ? sheets : cluster?.hasSheetsArray ?? []
 		for (index, sheet) in tempSheets.enumerated() {
 			totalString += sheet.lyrics ?? ""
-			if index < tempSheets.count {
+			if index < tempSheets.count - 1 { // add only \n\n to second last, not the last one, or it will add empty sheet
 				totalString +=  "\n\n"
 			}
 		}
@@ -370,6 +368,7 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 			update()
 		} else {
 			isSetup = true
+			visibleCells = collectionViewSheets.indexPathsForVisibleItems
 			textView.text = getTextFromSheets()
 			sheets = []
 			isFirstTime = true
@@ -384,14 +383,14 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 		var keyboardFrame:CGRect = (userInfo[UIKeyboardFrameBeginUserInfoKey] as! NSValue).cgRectValue
 		keyboardFrame = self.view.convert(keyboardFrame, from: nil)
 		
-		var contentInset:UIEdgeInsets = self.textView.contentInset
+		var contentInset:UIEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10)
 		contentInset.bottom = keyboardFrame.size.height + 30
 		textView.contentInset = contentInset
 	}
 	
 	@objc func keyboardWillHide(notification:NSNotification){
 		
-		let contentInset:UIEdgeInsets = UIEdgeInsets.zero
+		let contentInset:UIEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10)
 		textView.contentInset = contentInset
 	}
 	

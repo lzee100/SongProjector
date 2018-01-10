@@ -17,9 +17,9 @@ class LabelPhotoPickerCell: UITableViewCell, UIImagePickerControllerDelegate, UI
 	@IBOutlet var descriptionTitle: UILabel!
 	@IBOutlet var descriptionLastBeamerResolution: UILabel!
 	@IBOutlet var imageThumbnail: UIImageView!
-	@IBOutlet var imageContainer: UIView!
 	@IBOutlet var button: UIButton!
-		
+	@IBOutlet var buttonContainer: UIView!
+	
 	@IBOutlet var buttonBottomConstraint: NSLayoutConstraint!
 	@IBOutlet var buttonHeightConstraint: NSLayoutConstraint!
 	@IBOutlet var descriptionBeamerHeightConstraint: NSLayoutConstraint!
@@ -41,13 +41,15 @@ class LabelPhotoPickerCell: UITableViewCell, UIImagePickerControllerDelegate, UI
 			let view : LabelPhotoPickerCell! = UIView.create(nib: "LabelPhotoPickerCell")
 			view.id = id
 			view.descriptionTitle.text = description
-			view.imageContainer.isHidden = true
+			view.descriptionLastBeamerResolution.textColor = themeWhiteBlackBackground
+			view.buttonContainer.isHidden = true
 			view.imageThumbnail.layer.cornerRadius = CGFloat(5)
 			let beamerResolution = "\(Int(externalDisplayWindowWidth)) x \(Int(externalDisplayWindowHeight))"
 			view.descriptionLastBeamerResolution.text = Text.NewTag.descriptionLastBeamerResolution + beamerResolution
 			view.descriptionLastBeamerResolution.textColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
 			view.button.isEnabled = false
-			view.button.backgroundColor = .primary
+			view.buttonContainer.backgroundColor = themeWhiteBlackBackground
+			view.button.backgroundColor = themeHighlighted
 			view.button.layer.cornerRadius = 5.0
 			view.button.setTitleColor(.white, for: .normal)
 			view.sender = sender
@@ -71,13 +73,13 @@ class LabelPhotoPickerCell: UITableViewCell, UIImagePickerControllerDelegate, UI
 		func showImage() {
 			button.setTitle(pickedImage == nil ? Text.NewTag.buttonBackgroundImagePick : Text.NewTag.buttonBackgroundImageChange, for: .normal)
 			if isActive {
-				imageContainer.isHidden = false
+				buttonContainer.isHidden = false
 				button.isEnabled = true
 				descriptionBeamerHeightConstraint.constant = 42
 				buttonHeightConstraint.constant = 50
 				buttonBottomConstraint.constant = 10
 			} else {
-				imageContainer.isHidden = true
+				buttonContainer.isHidden = true
 				button.isEnabled = false
 				descriptionBeamerHeightConstraint.constant = 1
 				buttonHeightConstraint.constant = 1

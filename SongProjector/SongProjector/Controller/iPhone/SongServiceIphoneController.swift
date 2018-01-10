@@ -24,8 +24,10 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	@IBOutlet var sheetDisplayerPrevious: UIView!
 	@IBOutlet var sheetDisplayer: UIView!
 	@IBOutlet var sheetDisplayerNext: UIView!
+	@IBOutlet var emptyViewTableView: UIView!
 	
-
+	@IBOutlet var swipeViewLine: UIView!
+	
 	@IBOutlet var sheetDisplayerNextLeftConstraint: NSLayoutConstraint!
 	@IBOutlet var sheetDisplayerPreviousRightConstraint: NSLayoutConstraint!
 	@IBOutlet var sheetDisplayerSwipeViewHeight: NSLayoutConstraint!
@@ -221,6 +223,10 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		clear.title = Text.Actions.new
 		new.title = Text.Actions.add
 		
+		emptyViewTableView.backgroundColor = themeWhiteBlackBackground
+		moveUpDownSection.backgroundColor = themeWhiteBlackBackground
+		swipeViewLine.backgroundColor = themeHighlighted
+		
 		NotificationCenter.default.addObserver(forName: NotificationNames.externalDisplayDidChange, object: nil, queue: nil, using: externalDisplayDidChange)
 		
 		NotificationCenter.default.addObserver(
@@ -250,7 +256,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		
 		sheetDisplaySwipeView.addGestureRecognizer(leftSwipe)
 		sheetDisplaySwipeView.addGestureRecognizer(rightSwipe)
-		sheetDisplaySwipeView.isHidden = true
+//		sheetDisplaySwipeView.isHidden = true
 		
 		tableView.register(cell: Cells.basicCellid)
 		updateSheetDisplayersRatios()
@@ -481,8 +487,10 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 			
 			if let numberOfSheets = sheetsForSelectedCluster?.count, let position = selectedSheet?.position {
 				
-				sheetDisplayerNext.isHidden = position == numberOfSheets - 1 ? true : false
-				sheetDisplayerPrevious.isHidden = position == 0 ? true : false
+//				sheetDisplayerNext.isHidden = position == numberOfSheets - 1 ? true : false
+//				sheetDisplayerPrevious.isHidden = position == 0 ? true : false
+				sheetDisplayerPrevious.isHidden = true
+				sheetDisplayerNext.isHidden = true
 				
 				let selectedSheetPosition = Int(position)
 				
@@ -492,25 +500,8 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 					if let tag = selectedCluster?.hasTag {
 						viewToBeamer?.removeFromSuperview()
 						viewToBeamer = buildSheetViewFor(type: .current, title: selectedCluster?.title, sheet: selectedSheet, tag: tag, displayToBeamer: true)
-						sheetDisplayer.addSubview(viewToBeamer!)
-					}
-
-					// next sheet
-					if selectedSheetPosition < (numberOfSheets - 1), let tag = selectedCluster?.hasTag {
-						let nextSheet = sheetsForSelectedCluster?[selectedSheetPosition + 1]
-						sheetDisplayerNext.addSubview(buildSheetViewFor(type: .next, title: selectedCluster?.title, sheet: nextSheet, tag: tag))
-
-					}
-
-					// previous sheet
-					if selectedSheetPosition > 0, let tag = selectedCluster?.hasTag {
-						let nextSheet = sheetsForSelectedCluster?[selectedSheetPosition - 1]
-						sheetDisplayerPrevious.addSubview(buildSheetViewFor(type: .previous, title: selectedCluster?.title, sheet: nextSheet, tag: tag))
-						sheetDisplayerPrevious.frame = CGRect(
-							x: UIScreen.main.bounds.width,
-							y: sheetDisplayer.bounds.minY,
-							width: sheetDisplayer.bounds.width,
-							height: sheetDisplayer.bounds.height)
+						let view = buildSheetViewFor(type: .current, title: selectedCluster?.title, sheet: selectedSheet, tag: tag)
+						sheetDisplayer.addSubview(view)
 					}
 					
 				}
@@ -528,19 +519,19 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	}
 	
 	private func buildSheetViewFor(type: SheetType, title: String?, sheet: Sheet?, tag: Tag?, displayToBeamer: Bool = false) -> UIView {
-		var heightView: CGFloat = 0.0
-		var displayerFrame = CGRect(x: 0, y: 0, width: 0, height: 0)
-		switch type {
-		case .previous:
-			heightView = sheetDisplayerPrevious.frame.size.height
-			displayerFrame = sheetDisplayerPrevious.frame
-		case .current:
-			heightView = sheetDisplayer.frame.size.height
-			displayerFrame = sheetDisplayer.frame
-		case .next:
-			heightView = sheetDisplayerNext.frame.size.height
-			displayerFrame = sheetDisplayerNext.frame
-		}
+//		var heightView: CGFloat = 0.0
+//		var displayerFrame = CGRect(x: 0, y: 0, width: 0, height: 0)
+//		switch type {
+//		case .previous:
+//			heightView = sheetDisplayerPrevious.frame.size.height
+//			displayerFrame = sheetDisplayerPrevious.frame
+//		case .current:
+//			heightView = sheetDisplayer.frame.size.height
+//			displayerFrame = sheetDisplayer.frame
+//		case .next:
+//			heightView = sheetDisplayerNext.frame.size.height
+//			displayerFrame = sheetDisplayerNext.frame
+//		}
 		if let externalDisplayWindow = externalDisplayWindow, displayToBeamer {
 			let view = SheetView(frame: externalDisplayWindow.frame)
 			view.isEmptySheet = sheet?.title == Text.Sheet.emptySheetTitle
@@ -548,11 +539,13 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 			view.songTitle = title
 			view.lyrics = sheet?.lyrics
 			view.position = Int(sheet?.position ?? 0)
-			view.scaleFactor = externalDisplayWindowHeight / heightView
+			view.scaleFactor = externalDisplayWindowHeight / sheetDisplayer.bounds.size.height
 			view.update()
 			externalDisplayWindow.addSubview(view)
 		}
-		let frame = CGRect(x: 0, y: 0, width: displayerFrame.width, height: displayerFrame.height)
+		let frame = CGRect(x: 0, y: 0, width: sheetDisplayer.bounds.width, height: sheetDisplayer.bounds.height)
+//		let view = SheetView(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
+//		view.backgroundColor = .red
 		let view = SheetView(frame: frame)
 		view.isEmptySheet = sheet?.title == Text.Sheet.emptySheetTitle
 		view.selectedTag = tag
@@ -563,17 +556,17 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		return view
 		
 	}
-	
-	private func transformForFraction(fraction:CGFloat) -> CATransform3D {
-		var identity = CATransform3DIdentity
-		identity.m34 = -1.0 / 2000
-		let angle = Double(1.0 - fraction) * -Double.pi/2
-		//		  let xOffset = self.view.bounds.width * 0.5
-		let xOffset = CGFloat(view.frame.width*0.5)
-		let rotateTransform = CATransform3DRotate(identity, CGFloat(angle), 0.0, 1.0, 0.0)
-		let translateTransform = CATransform3DMakeTranslation(0.0, 0.0, xOffset)
-		return CATransform3DConcat(rotateTransform, translateTransform)
-	}
+//
+//	private func transformForFraction(fraction:CGFloat) -> CATransform3D {
+//		var identity = CATransform3DIdentity
+//		identity.m34 = -1.0 / 2000
+//		let angle = Double(1.0 - fraction) * -Double.pi/2
+//		//		  let xOffset = self.view.bounds.width * 0.5
+//		let xOffset = CGFloat(view.frame.width*0.5)
+//		let rotateTransform = CATransform3DRotate(identity, CGFloat(angle), 0.0, 1.0, 0.0)
+//		let translateTransform = CATransform3DMakeTranslation(0.0, 0.0, xOffset)
+//		return CATransform3DConcat(rotateTransform, translateTransform)
+//	}
 	
 	private func animateSheetsWith(_ direction : AnimationDirection, completion: @escaping () -> Void) {
 		switch direction {
@@ -591,10 +584,10 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				let currentSheetView = buildSheetViewFor(type: .current, title: selectedCluster?.title, sheet: selectedSheet, tag: selectedCluster?.hasTag)
 				
 				currentSheetView.frame = CGRect(
-					x: sheetDisplayer.frame.minX,
-					y: sheetDisplayer.frame.minY + navigationBarHeight,
-					width: sheetDisplayer.frame.width,
-					height: sheetDisplayer.frame.height)
+					x: sheetDisplayer.bounds.minX,
+					y: sheetDisplayer.bounds.minY,
+					width: sheetDisplayer.bounds.width,
+					height: sheetDisplayer.bounds.height)
 				
 				
 				// next sheet, move to left
@@ -604,8 +597,8 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				nextSheetView.frame = CGRect(
 					x: UIScreen.main.bounds.width,
 					y: sheetDisplayer.bounds.minY,
-					width: sheetDisplayer.frame.width,
-					height: sheetDisplayer.frame.height) // set the view
+					width: sheetDisplayer.bounds.width,
+					height: sheetDisplayer.bounds.height) // set the view
 				
 				
 				view.addSubview(currentSheetView)
@@ -616,16 +609,16 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				
 				UIView.animate(withDuration: 0.3, animations: {
 					currentSheetView.frame = CGRect(
-						x: -currentSheetView.bounds.width,
-						y: currentSheetView.bounds.minY,
+						x: -UIScreen.main.bounds.width,
+						y: self.sheetDisplayer.bounds.minY,
 						width: self.sheetDisplayerPrevious.bounds.width,
 						height: self.sheetDisplayerPrevious.bounds.height)
 
 					nextSheetView.frame = CGRect(
 						x: self.sheetDisplayer.frame.minX,
-						y: self.sheetDisplayer.frame.minY + navigationBarHeight,
-						width: self.sheetDisplayer.frame.width,
-						height: self.sheetDisplayer.frame.height)
+						y: self.sheetDisplayer.bounds.minY,
+						width: self.sheetDisplayer.bounds.width,
+						height: self.sheetDisplayer.bounds.height)
 					
 				}, completion: { (bool) in
 					self.sheetDisplayer.isHidden = false
@@ -654,10 +647,10 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				let currentSheetView = buildSheetViewFor(type: .current, title: selectedCluster?.title, sheet: selectedSheet, tag: selectedCluster?.hasTag)
 				
 				currentSheetView.frame = CGRect(
-					x: sheetDisplayer.frame.minX,
+					x: sheetDisplayer.bounds.minX,
 					y: sheetDisplayer.bounds.minY,
-					width: sheetDisplayer.frame.width,
-					height: sheetDisplayer.frame.height)
+					width: sheetDisplayer.bounds.width,
+					height: sheetDisplayer.bounds.height)
 				
 
 				
@@ -665,10 +658,10 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				let previousSheet = sheetsForSelectedCluster?[selectedSheetPosition - 1]
 				let previousSheetView = buildSheetViewFor(type: .previous, title: selectedCluster?.title, sheet: previousSheet, tag: selectedCluster?.hasTag) // generates uiview with dimensions of sheetDisplayerPrevious which is set in storyboard
 				previousSheetView.frame = CGRect(
-					x: -sheetDisplayer.bounds.width,
+					x: -UIScreen.main.bounds.width,
 					y: self.sheetDisplayer.bounds.minY,
-					width: sheetDisplayer.frame.width,
-					height: sheetDisplayerPrevious.frame.height) // set the view
+					width: sheetDisplayer.bounds.width,
+					height: sheetDisplayerPrevious.bounds.height) // set the view
 				
 
 				
@@ -682,15 +675,15 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				UIView.animate(withDuration: 0.3, animations: {
 					previousSheetView.frame = CGRect(
 						x: self.sheetDisplayer.frame.minX,
-						y: self.sheetDisplayer.frame.minY + navigationBarHeight,
-						width: self.sheetDisplayer.frame.width,
-						height: self.sheetDisplayer.frame.height)
+						y: self.sheetDisplayer.bounds.minY,
+						width: self.sheetDisplayer.bounds.width,
+						height: self.sheetDisplayer.bounds.height)
 					
 					currentSheetView.frame = CGRect(
 						x: UIScreen.main.bounds.width,
-						y: self.sheetDisplayer.bounds.minY,
-						width: self.sheetDisplayerNext.frame.width,
-						height: self.sheetDisplayerNext.frame.height)
+						y: self.sheetDisplayer.frame.minY,
+						width: self.sheetDisplayerNext.bounds.width,
+						height: self.sheetDisplayerNext.bounds.height)
 
 
 					

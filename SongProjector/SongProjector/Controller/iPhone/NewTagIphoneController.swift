@@ -709,6 +709,8 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 		cellTitleTextColor.setColor(color: .black)
 		lyricsAttributes[.font] = UIFont(name: "Avenir", size: 17)
 		cellLyricsTextColor.setColor(color: .black)
+		
+		lyricsPreview.backgroundColor = .clear
 
 		
 		cellAsTag.delegate = self

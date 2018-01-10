@@ -60,7 +60,6 @@ class MenuController: UITabBarController {
 	
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
-		tabBar.tintColor = .barColor
 	}
 	
 	
@@ -150,7 +149,7 @@ class MenuController: UITabBarController {
 		// set custom navigationbar color
 		for viewController in viewControllers ?? [] {
 			if let nav = viewController as? UINavigationController {
-//				nav.navigationBar.barTintColor = .barColor
+				nav.view.backgroundColor = .clear
 			}
 		}
 		

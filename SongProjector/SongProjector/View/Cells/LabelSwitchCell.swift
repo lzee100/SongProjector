@@ -25,16 +25,19 @@ class LabelSwitchCell: UITableViewCell {
 	static func create(id: String, description: String, initialValueIsOn: Bool = false) -> LabelSwitchCell {
 		let view : LabelSwitchCell! = UIView.create(nib: "LabelSwitchCell")
 		view.id = id
-		view.switch.tintColor = .primary
-		view.switch.onTintColor = .primary
 		view.descriptionLabel.text = description
 		view.switch.isOn = initialValueIsOn
+		view.switch.thumbTintColor = initialValueIsOn ? isThemeLight ? .white : .black : isThemeLight ? .white : UIColor(hex: "FF8324")
+		if !isThemeLight {
+			view.switch.onTintColor = .primary
+			view.switch.tintColor = .primary
+		}
 		return view
 	}
 	
 	func setSwitchValueTo(value: Bool) {
-		self.switch.isOn = value
-		delegate?.valueChangedFor(cell: self, uiSwitch: self.switch)
+		self.`switch`.isOn = value
+		valueChanged(`switch`)
 	}
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -44,6 +47,7 @@ class LabelSwitchCell: UITableViewCell {
 	}
 	
 	@IBAction func valueChanged(_ sender: UISwitch) {
+		`switch`.thumbTintColor = sender.isOn ? isThemeLight ? .white : .black : isThemeLight ? .white : UIColor(hex: "FF8324")
 		delegate?.valueChangedFor(cell: self, uiSwitch: sender)
 	}
 	

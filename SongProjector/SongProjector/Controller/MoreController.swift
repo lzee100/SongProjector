@@ -15,6 +15,7 @@ class MoreController: UITableViewController, UISplitViewControllerDelegate {
 	
 	// MARK: - Properties
 	
+	@IBOutlet var emptyView: UIView!
 	/// De huidig geselecteerde feature in het meermenu.
 	private(set) var selected : Feature?
 	
@@ -96,6 +97,9 @@ class MoreController: UITableViewController, UISplitViewControllerDelegate {
 	private func setup() {
 		tableView.register(cell: Cells.basicCellid)
 		title = Text.More.title
+		emptyView.backgroundColor = themeWhiteBlackBackground
+		
+
 	}
 	
 	private func update() {

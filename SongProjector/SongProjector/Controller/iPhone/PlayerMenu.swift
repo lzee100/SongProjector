@@ -65,6 +65,7 @@ class PlayerMenu: UITableViewController {
 		
 		let cell = tableView.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath) as! BasicCell
 		cell.setup(title: MenuItem.nameFor(indexPath), icon: MenuItem.for(indexPath).image)
+		cell.backgroundColor = UIColor(hex: "282828")
 		return cell
     }
 	
@@ -78,6 +79,7 @@ class PlayerMenu: UITableViewController {
 
 	private func setup() {
 		tableView.register(cell: Cells.basicCellid)
+		tableView.backgroundColor = .gray
 		tableView.reloadData()
 	}
 

@@ -9,41 +9,97 @@
 import Foundation
 import UIKit
 
+var isThemeLight: Bool {
+	let defaults = UserDefaults.standard
+	if let isThemeLight = defaults.object(forKey: "theme") as? Bool {
+		return isThemeLight
+	} else {
+		return false
+	}
+}
+
+var themeWhiteBlackTextColor: UIColor {
+	return isThemeLight ? .black : .white
+}
+
+
+var themeWhiteBlackBackground: UIColor {
+	return isThemeLight ? .white : .black
+}
+
+var themeHighlighted: UIColor {
+	return isThemeLight ? .primary : UIColor(hex: "FF8324") ?? .primary
+}
+
+var themeMainColor: UIColor {
+	return UIColor(hex: "FF8324") ?? .primary
+}
+
 class Theme {
 	
 	static func setup(){
-		let defaults = UserDefaults.standard
-		if let isThemeLight = defaults.object(forKey: "theme") as? Bool {
-			print(isThemeLight)
-		}
+		
 		
 		let navigationbar = UINavigationBar.appearance()
- 		navigationbar.barTintColor = UIColor(hex: "9F4500")
+ 		navigationbar.barTintColor = .black
+		navigationbar.isTranslucent = false
 		navigationbar.titleTextAttributes = [.foregroundColor : UIColor(hex: "FF8324") ?? .white]
 		let barbuttons = UIBarButtonItem.appearance()
 		barbuttons.tintColor = UIColor(hex: "FF8324")
 		
 		let tabbar = UITabBar.appearance()
-		tabbar.barTintColor = UIColor(hex: "9F4500")
+		tabbar.barTintColor = .black
+		tabbar.isTranslucent = false
 		tabbar.tintColor = UIColor(hex: "FF8324")
 
-		UIApplication.shared.statusBarStyle = .lightContent
 		
 		let segment = UISegmentedControl.appearance()
 		segment.tintColor = UIColor(hex: "FF8324")
+		segment.backgroundColor = .black
+		
 		let tableView = UITableView.appearance()
-		tableView.separatorColor = UIColor(hex: "9F4500")
 		tableView.backgroundColor = .black
+		
+		let collectionView = UICollectionView.appearance()
+		collectionView.backgroundColor = .black
+		let collectionCell = UICollectionViewCell.appearance()
+		collectionCell.backgroundColor = .black
+		collectionCell.tintColor = UIColor(hex: "FF8324")
+		
+		let textField = UITextField.appearance()
+		textField.backgroundColor = .gray
+		textField.textColor = .white
+		
+		let picker = UIPickerView.appearance()
+		picker.backgroundColor = .black
+		picker.tintColor = UIColor(hex: "FF8324")
+		
+		let searchBar = UISearchBar.appearance()
+		searchBar.backgroundColor = .black
+		searchBar.searchBarStyle = .minimal
+		
+		let imageView = UIImageView.appearance()
+		imageView.tintColor = UIColor(hex: "FF8324")
+		
 		let tableViewCell = UITableViewCell.appearance()
 		tableViewCell.backgroundColor = .black
+		
 		let button = UIButton.appearance()
 		button.setTitleColor(UIColor(hex: "FF8324"), for: .normal)
+		
+		let mySwitch = UISwitch.appearance()
+		mySwitch.tintColor = UIColor(hex: "FF8324")
+		mySwitch.onTintColor = UIColor(hex: "FF8324")
+		mySwitch.backgroundColor = .black
 		
 		let label = UILabel.appearance()
 		label.textColor = .white
 		
+		let cellLabel = UILabel.appearance(whenContainedInInstancesOf: [UITableViewCell.self, BasicCell.self, AddButtonCell.self, NewSongSheetCell.self, LabelSwitchCell.self, LabelColorPickerCell.self, LabelNumberCell.self, LabelPickerCell.self, LabelTextFieldCell.self, LabelImagePickerCell.self, LabelPhotoPickerCell.self, LabelDoubleSwitchCell.self])
+		cellLabel.textColor = .white
+		
 		let textView = UITextView.appearance()
 		textView.backgroundColor = .black
 		textView.textColor = .white
-	}
+		}
 }

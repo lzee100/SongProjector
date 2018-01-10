@@ -12,6 +12,7 @@ class TagsIphoneController: UITableViewController, UISearchBarDelegate, UIGestur
 
 	@IBOutlet var add: UIBarButtonItem!
 	@IBOutlet var searchBar: UISearchBar!
+	@IBOutlet var emptyView: UIView!
 	
 	
 	private var tags: [Tag] = []
@@ -132,11 +133,13 @@ class TagsIphoneController: UITableViewController, UISearchBarDelegate, UIGestur
 		tableView.register(cell: Cells.basicCellid)
 		
 		navigationController?.title = Text.Songs.title
+		title = Text.Tags.title
 		
 		searchBar.showsCancelButton = true
 		searchBar.placeholder = Text.Tags.searchBarPlaceholderText
 		add.title = Text.Actions.add
 		
+		emptyView.backgroundColor = themeWhiteBlackBackground
 		
 		let longPressGesture:UILongPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(self.editTableView(_:)))
 		longPressGesture.minimumPressDuration = 0.7

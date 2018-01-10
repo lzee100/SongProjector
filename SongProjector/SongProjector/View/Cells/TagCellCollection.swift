@@ -23,9 +23,14 @@ class TagCellCollection: UICollectionViewCell {
 	
 	private func update() {
 		title.text = tagName ?? ""
-		title.textColor = isSelectedCell ? .primary : .textColorNormal
-		icon.image = isSelectedCell ? Cells.tagIcon : Cells.tagIcon
-		icon.tintColor = isSelectedCell ? .primary : .textColorNormal
+		if isSelectedCell {
+			title.textColor = themeHighlighted
+			icon.tintColor = themeHighlighted
+		} else {
+			title.textColor = themeWhiteBlackTextColor
+			icon.tintColor = themeWhiteBlackTextColor
+		}
+		icon.image = isSelectedCell ? Cells.tagIcon : Cells.songIcon
 	}
 
 	

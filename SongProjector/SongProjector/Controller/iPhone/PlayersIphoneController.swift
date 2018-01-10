@@ -19,7 +19,7 @@ class PlayersIphoneController: UIViewController, UICollectionViewDelegate, UICol
 	var tags: [Tag] = []
 	var selectedTag: Tag?
 	var sheets: [Sheet] = []
-	var multiplier: CGFloat = 4/3
+	var multiplier: CGFloat = 9/16
 	var sheetSize = CGSize(width: 375, height: 281)
 	var sheetPreviewView = SheetView()
 	var isFirstTime = true
@@ -111,6 +111,7 @@ class PlayersIphoneController: UIViewController, UICollectionViewDelegate, UICol
 
 		navigationController?.title = Text.Players.title
 		title = Text.Players.title
+		view.backgroundColor = themeWhiteBlackBackground
 		
 		tags = CoreTag.getEntities()
 		

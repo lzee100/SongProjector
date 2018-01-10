@@ -86,11 +86,11 @@
             <connections>
                 <outlet property="button" destination="ucf-Hh-2jx" id="9Qa-dF-zIZ"/>
                 <outlet property="buttonBottomConstraint" destination="KXi-84-fEH" id="CIc-3z-zmH"/>
+                <outlet property="buttonContainer" destination="zQf-CX-Bkr" id="s9Y-zc-Ayw"/>
                 <outlet property="buttonHeightConstraint" destination="uF5-Qg-vN2" id="qgw-GL-koJ"/>
                 <outlet property="descriptionBeamerHeightConstraint" destination="tJ0-XW-YYe" id="lwm-iI-Nb9"/>
                 <outlet property="descriptionLastBeamerResolution" destination="5ZI-5a-20G" id="afO-D1-86T"/>
                 <outlet property="descriptionTitle" destination="0XF-HW-16D" id="gb5-nT-Nrx"/>
-                <outlet property="imageContainer" destination="zQf-CX-Bkr" id="gSE-Ss-0Jc"/>
                 <outlet property="imageThumbnail" destination="PyQ-h8-5KK" id="5Nv-T3-6Jg"/>
             </connections>
             <point key="canvasLocation" x="233" y="57"/>

@@ -21,6 +21,7 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 	@IBOutlet var tableView: UITableView!
 	@IBOutlet var searchBar: UISearchBar!
 	@IBOutlet var cancel: UIBarButtonItem!
+	@IBOutlet var emptyView: UIView!
 	
 	var delegate: SongsControllerDelegate?
 	
@@ -66,6 +67,20 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 	
 	func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
 		return UITableViewCellEditingStyle.delete
+	}
+	
+	func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+		let button1 = UITableViewRowAction(style: .default, title: "Delete") { action, indexPath in
+//			if let index = self.clusters.index(of: self.filteredClusters[indexPath.row]) {
+//				let _ = CoreCluster.delete(entity: self.filteredClusters[indexPath.row])
+//				self.clusters.remove(at: index)
+//				self.filteredClusters = self.clusters
+//				self.tableView.deleteRows(at: [indexPath], with: .automatic)
+//			}
+		}
+		button1.backgroundColor = themeMainColor
+		
+		return [button1]
 	}
 
 	
@@ -179,15 +194,20 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 			desciptionSongs.text = Text.Songs.description
 		}
 		
-		cancel.title = Text.Actions.cancel
-		cancel.tintColor = delegate == nil ? .clear : .primary
-		
 		navigationController?.title = Text.Songs.title
+		title = Text.Songs.title
+		cancel.title = Text.Actions.cancel
+		cancel.tintColor = delegate == nil ? .clear : themeHighlighted
+		emptyView.backgroundColor = themeWhiteBlackBackground
+		
+		if delegate == nil {
+			self.navigationItem.leftBarButtonItem = nil
+		}
+		navigationController?.title = Text.Songs.title
+		tableView.keyboardDismissMode = .interactive
 		
 		searchBar.showsCancelButton = true
 		searchBar.placeholder = Text.Songs.SearchSongPlaceholder
-		new.title = Text.Actions.add
-		
 
 	}
 	

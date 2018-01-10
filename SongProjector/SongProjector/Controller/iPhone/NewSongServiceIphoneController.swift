@@ -12,6 +12,7 @@ class NewSongServiceIphoneController: UITableViewController, SongsControllerDele
 
 	@IBOutlet var done: UIBarButtonItem!
 	@IBOutlet var add: UIBarButtonItem!
+	@IBOutlet var emptyView: UIView!
 	
 	var selectedSongs: [Cluster] = []
 	var delegate: NewSongServiceDelegate?
@@ -96,6 +97,8 @@ class NewSongServiceIphoneController: UITableViewController, SongsControllerDele
 		
 		done.title = Text.Actions.done
 		add.title = Text.Actions.add
+		
+		emptyView.backgroundColor = themeWhiteBlackBackground
 		
 		let longPressGesture:UILongPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(self.editTableView(_:)))
 		longPressGesture.minimumPressDuration = 0.7

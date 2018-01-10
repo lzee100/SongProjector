@@ -35,8 +35,13 @@ class BasicCell: UITableViewCell {
 	private func update() {
 		seperator.backgroundColor = .clear
 		self.title.font = .xNormal
-		title.textColor = selectedCell ? .primary : .black
-		icon.tintColor = selectedCell ? .primary : .black
+		if selectedCell {
+			title.textColor = themeHighlighted
+			icon.tintColor = themeHighlighted
+		} else {
+			title.textColor = themeWhiteBlackTextColor
+			icon.tintColor = themeWhiteBlackTextColor
+		}
 		if icon == nil {
 			iconWidthContraint.constant = 0
 		}

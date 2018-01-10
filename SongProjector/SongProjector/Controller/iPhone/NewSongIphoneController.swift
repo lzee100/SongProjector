@@ -33,6 +33,7 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 	private var isFirstTime = true {
 		willSet { if newValue == true { delaySheetAimation = 0.0 } }
 	}
+	private var visibleCells: [IndexPath] = []
 	private var multiplier = externalDisplayWindowRatio
 	private var sheetSize = CGSize(width: 375, height: 281)
 	private var selectedTag: Tag? {
@@ -92,7 +93,7 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 				let view = buildSheetViewFor(sheet: sheets[indexPath.section], frame: collectionCell.bounds)
 				collectionCell.previewView.addSubview(view)
 				
-				if isFirstTime {
+				if visibleCells.contains(indexPath) {
 					let y = collectionCell.bounds.minY
 					collectionCell.bounds = CGRect(
 						x: -self.view.bounds.width,
@@ -112,13 +113,10 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 					delaySheetAimation += 0.12
 				}
 			}
-			let navigationBarHeight = UIApplication.shared.statusBarFrame.height + navigationController!.navigationBar.frame.height
-			let tagBarHeight = self.collectionView.bounds.height
-			if indexPath.section == Int(round(Double((UIScreen.main.bounds.height - navigationBarHeight - tagBarHeight) / (sheetSize.height + 10)))) - 1 {
-				isFirstTime = false
+			if let index = visibleCells.index(of: indexPath), segmentControl.selectedSegmentIndex == 1 {
+				visibleCells.remove(at: index) // remove cell for one time animation
 			}
 			return collectionCell
-			
 			
 		} else {
 			let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.tagCellCollection, for: indexPath)
@@ -164,6 +162,13 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 
 		cancel.title = Text.Actions.cancel
 		done.title = Text.Actions.save
+		
+		view.backgroundColor = themeWhiteBlackBackground
+		textView.layer.borderColor = themeHighlighted.cgColor
+		textView.layer.borderWidth = 1
+		textView.layer.cornerRadius = CGFloat(5.0)
+		textView.textContainerInset = UIEdgeInsetsMake(10, 10, 10, 10)
+
 		
 		segmentControl.setTitle(Text.NewSong.segmentTitleText, forSegmentAt: 0)
 		segmentControl.setTitle(Text.NewSong.segmentTitleSheets, forSegmentAt: 1)
@@ -332,13 +337,12 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 		if sender.selectedSegmentIndex == 1 {
 			isSetup = false
 			isCollectionviewSheetsHidden = false
-			sheetMode = true
 			textView.resignFirstResponder()
 			buildSheets(fromText: textView.text)
 			update()
 		} else {
 			isSetup = true
-			sheetMode = false
+			visibleCells = collectionViewSheets.indexPathsForVisibleItems
 			sheets = []
 			isFirstTime = true
 			isCollectionviewSheetsHidden = true
@@ -356,14 +360,14 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 		var keyboardFrame:CGRect = (userInfo[UIKeyboardFrameBeginUserInfoKey] as! NSValue).cgRectValue
 		keyboardFrame = self.view.convert(keyboardFrame, from: nil)
 		
-		var contentInset:UIEdgeInsets = self.textView.contentInset
+		var contentInset:UIEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10)
 		contentInset.bottom = keyboardFrame.size.height + 30
 		textView.contentInset = contentInset
 	}
 	
 	@objc func keyboardWillHide(notification:NSNotification){
 		
-		let contentInset:UIEdgeInsets = UIEdgeInsets.zero
+		let contentInset:UIEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10)
 		textView.contentInset = contentInset
 	}
 	

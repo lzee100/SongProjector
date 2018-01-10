@@ -31,8 +31,11 @@ class LabelColorPickerCell: UITableViewCell, ChromaColorPickerDelegate {
 		let view : LabelColorPickerCell! = UIView.create(nib: "LabelColorPickerCell")
 		view.id = id
 		view.descriptionTitle.text = description
-		view.colorPreview.layer.borderColor = UIColor.primary.cgColor
+		view.colorPreview.layer.borderColor = themeHighlighted.cgColor
 		view.colorPreview.layer.borderWidth = 1.0
+		view.colorPicker.backgroundColor = themeWhiteBlackBackground
+		view.colorPickerContainer.isHidden = true
+		view.colorPickerContainer.backgroundColor = themeWhiteBlackBackground
 		return view
 	}
 	
@@ -42,14 +45,17 @@ class LabelColorPickerCell: UITableViewCell, ChromaColorPickerDelegate {
 	private func setupColorPicker() {
 		if isActive {
 			colorPicker = ChromaColorPicker(frame: CGRect(x: 0, y: 0, width: 300, height: 300))
+			colorPicker.backgroundColor = themeWhiteBlackBackground
 			colorPicker.delegate = self
 			colorPicker.padding = 5
 			colorPicker.stroke = 3
 			colorPicker.hexLabel.textColor = UIColor.white
+			colorPickerContainer.isHidden = false
 			DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: {
 				self.colorPickerContainer.addSubview(self.colorPicker)
 			})
 		} else {
+			colorPickerContainer.isHidden = true
 			self.colorPicker.removeFromSuperview()
 		}
 	}

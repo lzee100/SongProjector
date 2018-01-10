@@ -39,10 +39,14 @@ class LabelDoubleSwitchCell: UITableViewCell {
 		view.descriptionSwitchTwo.text = descriptionSwitchTwo
 		view.imageSwitchTwo.tintColor = .primary
 		view.switchOne.isOn = false
-		view.switchOne.tintColor = .primary
-		view.switchOne.onTintColor = .primary
-		view.switchTwo.tintColor = .primary
-		view.switchTwo.onTintColor = .primary
+		view.switchOne.thumbTintColor = isThemeLight ? .white : UIColor(hex: "FF8324")
+		view.switchOne.thumbTintColor = isThemeLight ? .white : UIColor(hex: "FF8324")
+		if !isThemeLight {
+			view.switchTwo.tintColor = .primary
+			view.switchTwo.onTintColor = .primary
+			view.switchOne.tintColor = .primary
+			view.switchOne.onTintColor = .primary
+		}
 		view.showSecondSwitch()
 		view.imageSwitchTwo.image = #imageLiteral(resourceName: "Bullet")
 		return view
@@ -85,11 +89,13 @@ class LabelDoubleSwitchCell: UITableViewCell {
 	}
 	
 	@IBAction func switchOneChanged(_ sender: UISwitch) {
+		switchOne.thumbTintColor = sender.isOn ? isThemeLight ? .white : .black : isThemeLight ? .white : UIColor(hex: "FF8324")
 		showSecondSwitch()
 		delegate?.didSelectSwitch(first: sender.isOn, second: nil, cell: self)
 	}
 	
 	@IBAction func switchTwoChanged(_ sender: UISwitch) {
+		switchTwo.thumbTintColor = sender.isOn ? isThemeLight ? .white : .black : isThemeLight ? .white : UIColor(hex: "FF8324")
 		delegate?.didSelectSwitch(first: nil, second: sender.isOn, cell: self)
 	}
 	

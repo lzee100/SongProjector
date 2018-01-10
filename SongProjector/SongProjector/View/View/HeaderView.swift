@@ -29,6 +29,8 @@ class HeaderView: UIView {
 		Bundle.main.loadNibNamed("HeaderView", owner: self, options: [:])
 		addSubview(headerView)
 		headerView.frame = bounds
+		descriptionLabel.textColor = themeHighlighted
+		headerView.backgroundColor = isThemeLight ? UIColor(hex: "F0F0F2") : UIColor(hex: "101010")
 	}
 	
 }

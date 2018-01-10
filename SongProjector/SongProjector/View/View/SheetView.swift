@@ -51,11 +51,13 @@ class SheetView: UIView {
 	
 	func customInit() {
 		Bundle.main.loadNibNamed("SheetController", owner: self, options: [:])
+		sheetView.frame = self.frame
 		addSubview(sheetView)
-		sheetView.frame = bounds
 	}
 	
 	func update() {
+		
+		lyricsTextView.backgroundColor = .clear
 		
 		lyricsTextView.isEditable = isEditable
 		lyricsTextView.isSelectable = isEditable
@@ -110,9 +112,10 @@ class SheetView: UIView {
 			}
 		}
 		
-		if let backgroundImage = selectedTag?.backgroundImage, let imageScaled = UIImage.scaleImageToSize(image: backgroundImage, size: frame.size) {
+		if let backgroundImage = selectedTag?.backgroundImage, let imageScaled = UIImage.scaleImageToSize(image: backgroundImage, size: bounds.size) {
+			imageScaled.draw(in: CGRect(x: 0, y: 0, width: 50, height: 50))
 			backgroundImageView.isHidden = false
-			backgroundImageView.contentMode = .scaleToFill
+			backgroundImageView.contentMode = .scaleAspectFit
 			backgroundImageView.image = imageScaled
 		} else {
 			backgroundImageView.isHidden = true
@@ -124,7 +127,7 @@ class SheetView: UIView {
 		} else {
 			titleBackground.isHidden = true
 		}
-		
+
 		if let backgroundColor = selectedTag?.sheetBackgroundColor {
 			self.sheetBackground.backgroundColor = backgroundColor
 		} else {
