@@ -16,6 +16,8 @@ class BasicCell: UITableViewCell {
 	@IBOutlet var iconWidthContraint: NSLayoutConstraint!
 	@IBOutlet var iconLeftConstraint: NSLayoutConstraint!
 	
+	var iconImage: UIImage?
+	var iconSelected: UIImage?
 	var selectedCell = false { didSet { update() } }
 	var isLast = false { didSet { update() } }
 	var isInnerCell = false { didSet { update() } }
@@ -26,7 +28,9 @@ class BasicCell: UITableViewCell {
 		// Initialization code
 	}
 	
-	func setup(title: String?, icon: UIImage? = nil) {
+	func setup(title: String?, icon: UIImage? = nil, iconSelected: UIImage? = nil) {
+		self.iconImage = icon
+		self.iconSelected = iconSelected
 		self.icon.image = icon
 		self.title.text = title
 		update()
@@ -38,9 +42,11 @@ class BasicCell: UITableViewCell {
 		if selectedCell {
 			title.textColor = themeHighlighted
 			icon.tintColor = themeHighlighted
+			icon.image = iconSelected ?? iconImage
 		} else {
 			title.textColor = themeWhiteBlackTextColor
 			icon.tintColor = themeWhiteBlackTextColor
+			icon.image = iconImage
 		}
 		if icon == nil {
 			iconWidthContraint.constant = 0

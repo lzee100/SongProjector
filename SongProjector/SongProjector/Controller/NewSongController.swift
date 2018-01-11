@@ -80,7 +80,7 @@ class NewSongController: UIViewController, UITableViewDataSource, UITableViewDel
 		if tableView == tableViewTags {
 			let cell = tableView.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath)
 			if let cell = cell as? BasicCell {
-				cell.setup(title: tags[indexPath.row].title, icon: Cells.tagIcon)
+				cell.setup(title: tags[indexPath.row].title, icon: Cells.bulletFilled)
 				cell.selectedCell = selectedTag?.id == tags[indexPath.row].id
 			}
 			return cell

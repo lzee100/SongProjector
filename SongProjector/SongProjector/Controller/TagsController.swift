@@ -54,7 +54,7 @@ class TagsController: UIViewController, UITableViewDelegate, UITableViewDataSour
 		let cell = tableView.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath)
 		
 		if let cell = cell as? BasicCell {
-			cell.setup(title: filteredTags[indexPath.row].title, icon: Cells.tagIcon)
+			cell.setup(title: filteredTags[indexPath.row].title, icon: Cells.bulletOpen, iconSelected: Cells.bulletFilled)
 		}
 		return cell
 	}

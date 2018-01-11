@@ -98,8 +98,7 @@ class MoreController: UITableViewController, UISplitViewControllerDelegate {
 		tableView.register(cell: Cells.basicCellid)
 		title = Text.More.title
 		emptyView.backgroundColor = themeWhiteBlackBackground
-		
-
+		splitViewController?.view.backgroundColor = .black
 	}
 	
 	private func update() {

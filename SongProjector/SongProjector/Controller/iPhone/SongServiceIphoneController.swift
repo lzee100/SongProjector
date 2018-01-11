@@ -149,7 +149,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				if sheetsForSelectedCluster != nil && indexPath.row > selectedClusterRow && indexPath.row <= (selectedClusterRow + (sheetsForSelectedCluster?.count ?? 0)){
 					// sheets
 					let index = indexPath.row - (selectedClusterRow + 1)
-					cell.setup(title: sheetsForSelectedCluster?[index].title, icon: Cells.songIcon)
+					cell.setup(title: sheetsForSelectedCluster?[index].title, icon: Cells.sheetIcon)
 					cell.selectedCell = selectedSheet?.id == sheetsForSelectedCluster?[index].id
 					cell.isInnerCell = true
 				} else {

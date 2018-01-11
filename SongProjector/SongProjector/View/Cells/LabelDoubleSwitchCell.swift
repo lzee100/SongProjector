@@ -37,7 +37,8 @@ class LabelDoubleSwitchCell: UITableViewCell {
 		view.id = id
 		view.descriptionSwitchOne.text = descriptionSwitchOne
 		view.descriptionSwitchTwo.text = descriptionSwitchTwo
-		view.imageSwitchTwo.tintColor = .primary
+		view.imageSwitchTwo.tintColor = themeHighlighted
+		view.imageSwitchTwo.image = Cells.arrowSub
 		view.switchOne.isOn = false
 		view.switchOne.thumbTintColor = isThemeLight ? .white : UIColor(hex: "FF8324")
 		view.switchOne.thumbTintColor = isThemeLight ? .white : UIColor(hex: "FF8324")

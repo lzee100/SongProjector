@@ -145,5 +145,8 @@ class PlayersIphoneController: UIViewController, UICollectionViewDelegate, UICol
 		view.update()
 		return view
 	}
-
+	@IBAction func showMenu(_ sender: UIBarButtonItem) {
+		Menu.showMenu()
+	}
+	
 }

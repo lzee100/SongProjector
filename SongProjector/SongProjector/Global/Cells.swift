@@ -12,7 +12,9 @@ import UIKit
 struct Cells {
 	static let songIcon = #imageLiteral(resourceName: "Song")
 	static let sheetIcon = #imageLiteral(resourceName: "Sheet")
-	static let tagIcon = #imageLiteral(resourceName: "BulletSelected")
+	static let bulletFilled = #imageLiteral(resourceName: "BulletSelected")
+	static let bulletOpen =  #imageLiteral(resourceName: "Bullet")
+	static let arrowSub = #imageLiteral(resourceName: "ArrowSub")
 	static let basicCellid = "BasicCell"
 	static let addButtonCellid = "AddButtonCell"
 	static let newSongSheetCellid = "NewSongSheetCell"

@@ -30,7 +30,7 @@ class TagCellCollection: UICollectionViewCell {
 			title.textColor = themeWhiteBlackTextColor
 			icon.tintColor = themeWhiteBlackTextColor
 		}
-		icon.image = isSelectedCell ? Cells.tagIcon : Cells.songIcon
+		icon.image = isSelectedCell ? Cells.bulletFilled : Cells.bulletOpen
 	}
 
 	

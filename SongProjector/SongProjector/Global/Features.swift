@@ -84,11 +84,11 @@ enum Feature : String {
 		case .songs:
 			return (#imageLiteral(resourceName: "Song"), #imageLiteral(resourceName: "Song"), #imageLiteral(resourceName: "Song"))
 		case .players:
-			return (#imageLiteral(resourceName: "Play"), #imageLiteral(resourceName: "PlaySelected"), #imageLiteral(resourceName: "Play"))
+			return (#imageLiteral(resourceName: "Play"), #imageLiteral(resourceName: "Play"), #imageLiteral(resourceName: "Play"))
 		case .more:
-			return (#imageLiteral(resourceName: "Sheet"), #imageLiteral(resourceName: "Sheet"), #imageLiteral(resourceName: "Sheet"))
+			return (#imageLiteral(resourceName: "More"), #imageLiteral(resourceName: "More"), #imageLiteral(resourceName: "More"))
 		case .tags:
-			return (#imageLiteral(resourceName: "Bullet"), #imageLiteral(resourceName: "BulletSelected"), #imageLiteral(resourceName: "Bullet"))
+			return (#imageLiteral(resourceName: "Tags"), #imageLiteral(resourceName: "Tags"), #imageLiteral(resourceName: "Tags"))
 		case .displaySettings:
 			return (#imageLiteral(resourceName: "Bullet"), #imageLiteral(resourceName: "BulletSelected"), #imageLiteral(resourceName: "Bullet"))
 		}
