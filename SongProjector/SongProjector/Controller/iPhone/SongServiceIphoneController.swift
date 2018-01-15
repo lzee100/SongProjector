@@ -59,9 +59,9 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		static let nextSheetFraction: CGFloat = 1.8
 	}
 	
-	private var viewToBeamer: UIView?
+	private var viewToBeamer: SheetView?
 	private var hasTitle = true
-	private var emptySheet = CoreSheet.createEntityNOTsave()
+	private var emptySheet: Sheet?
 	private var clusters: [Cluster] = [] { didSet { update() } }
 	private var clustersOrdened: [Cluster] { get { return clusters.sorted{ $0.position < $1.position } } }
 	private var selectedClusterRow = -1
@@ -389,34 +389,39 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	}
 	
 	private func addEmptySheet(_ selectedCluster: Cluster?, isEmptySheetFirst: Bool?) {
-		emptySheet.title = Text.Sheet.emptySheetTitle
-		if let isEmptySheetFirst = isEmptySheetFirst, isEmptySheetFirst {
-			emptySheet.position = 0
-			if let sheets = selectedCluster?.hasSheets as? Set<Sheet> {
-				let sheetsSorted = sheets.sorted{ $0.position < $1.position }
-				for (index, sheet) in sheetsSorted.enumerated() {
-					sheet.position = Int16(index + 1)
+		if let sheet = selectedCluster?.hasSheetsArray.first {
+			emptySheet = sheet.emptySheet
+			emptySheet?.title = Text.Sheet.emptySheetTitle
+			if let isEmptySheetFirst = isEmptySheetFirst, isEmptySheetFirst {
+				emptySheet?.position = 0
+				if let sheets = selectedCluster?.hasSheets as? Set<Sheet> {
+					let sheetsSorted = sheets.sorted{ $0.position < $1.position }
+					for (index, sheet) in sheetsSorted.enumerated() {
+						sheet.position = Int16(index + 1)
+					}
+				}
+				selectedCluster?.addToHasSheets(emptySheet!)
+			} else {
+				if let sheets = selectedCluster?.hasSheets as? Set<Sheet> {
+					let sheetsSorted = sheets.sorted{ $0.position < $1.position }
+					emptySheet?.position = (sheetsSorted.last?.position ?? 0) + 1
+					selectedCluster?.addToHasSheets(emptySheet!)
 				}
 			}
-			selectedCluster?.addToHasSheets(emptySheet)
-		} else {
-			if let sheets = selectedCluster?.hasSheets as? Set<Sheet> {
-				let sheetsSorted = sheets.sorted{ $0.position < $1.position }
-				emptySheet.position = (sheetsSorted.last?.position ?? 0) + 1
-				selectedCluster?.addToHasSheets(emptySheet)
-			}
+			sheetsForSelectedCluster?.forEach{ print(Int($0.position)) }
+			sheetsForSelectedCluster?.forEach{ print($0.title ?? "") }
+			selectedSheet = sheetsForSelectedCluster?.first
 		}
-		sheetsForSelectedCluster?.forEach{ print(Int($0.position)) }
-		sheetsForSelectedCluster?.forEach{ print($0.title ?? "") }
-		selectedSheet = sheetsForSelectedCluster?.first
 	}
 	
 	private func removeEmptySheet() {
-		selectedCluster?.removeFromHasSheets(emptySheet)
-		if let isEmptySheetFirst = selectedCluster?.hasTag?.isEmptySheetFirst, isEmptySheetFirst {
-			if let sheetsForSelectedCluster = sheetsForSelectedCluster {
-				for (index, sheet) in sheetsForSelectedCluster.enumerated() {
-					sheet.position = Int16(index - 1)
+		if let emptySheet = emptySheet {
+			selectedCluster?.removeFromHasSheets(emptySheet)
+			if let isEmptySheetFirst = selectedCluster?.hasTag?.isEmptySheetFirst, isEmptySheetFirst {
+				if let sheetsForSelectedCluster = sheetsForSelectedCluster {
+					for (index, sheet) in sheetsForSelectedCluster.enumerated() {
+						sheet.position = Int16(index - 1)
+					}
 				}
 			}
 		}
@@ -482,13 +487,16 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	
 	private func displaySheets() {
 		if selectedSheet != nil {
+			
+			for subview in sheetDisplayer.subviews {
+				subview.removeFromSuperview()
+			}
+			
 			// display background
 			sheetDisplaySwipeView.isHidden = false
 			
 			if let numberOfSheets = sheetsForSelectedCluster?.count, let position = selectedSheet?.position {
 				
-//				sheetDisplayerNext.isHidden = position == numberOfSheets - 1 ? true : false
-//				sheetDisplayerPrevious.isHidden = position == 0 ? true : false
 				sheetDisplayerPrevious.isHidden = true
 				sheetDisplayerNext.isHidden = true
 				
@@ -496,14 +504,41 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				
 				if selectedSheetPosition < (numberOfSheets) {
 					
-					// current sheet
-					if let tag = selectedCluster?.hasTag {
-						viewToBeamer?.removeFromSuperview()
-						viewToBeamer = buildSheetViewFor(type: .current, title: selectedCluster?.title, sheet: selectedSheet, tag: tag, displayToBeamer: true)
-						let view = buildSheetViewFor(type: .current, title: selectedCluster?.title, sheet: selectedSheet, tag: tag)
-						sheetDisplayer.addSubview(view)
+					if let selectedSheet = selectedSheet {
+												
+						switch selectedSheet.type {
+						case .SheetTitleContent:
+							print("Title content")
+							
+							// current sheet
+							if let tag = selectedCluster?.hasTag {
+								let view = SheetTitleContent.createSheetTitleTextWith(frame: sheetDisplayer.bounds, title: selectedCluster?.title, sheet: selectedSheet as? SheetTitleContentEntity, tag: tag)
+								sheetDisplayer.addSubview(view)
+								view.update()
+								sheetDisplayer.addSubview(view)
+								
+								if externalDisplayWindow != nil {
+									_ = SheetTitleContent.createSheetTitleTextWith(frame: sheetDisplayer.bounds, title: selectedCluster?.title, sheet: selectedSheet as? SheetTitleContentEntity, tag: tag, scaleFactor: externalDisplayWindowWidth / sheetDisplayer.bounds.width).toExternalDisplay()
+								}
+							}
+							
+						case .SheetTitleImage:
+							if let tag = selectedCluster?.hasTag {
+								let view = SheetTitleImage.createSheetTitleImageWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetTitleImageEntity, tag: selectedSheet.hasTag)
+								sheetDisplayer.addSubview(view)
+								view.update()
+								sheetDisplayer.addSubview(view)
+								
+								if externalDisplayWindow != nil {
+									_ = SheetTitleImage.createSheetTitleImageWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetTitleImageEntity, tag: selectedSheet.hasTag, scaleFactor: externalDisplayWindowWidth / sheetDisplayer.bounds.width).toExternalDisplay()
+								}
+								
+							}
+						case .SheetEmpty:
+							print("Empty sheet")
+						}
+						
 					}
-					
 				}
 			}
 			
@@ -518,56 +553,6 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		}
 	}
 	
-	private func buildSheetViewFor(type: SheetType, title: String?, sheet: Sheet?, tag: Tag?, displayToBeamer: Bool = false) -> UIView {
-//		var heightView: CGFloat = 0.0
-//		var displayerFrame = CGRect(x: 0, y: 0, width: 0, height: 0)
-//		switch type {
-//		case .previous:
-//			heightView = sheetDisplayerPrevious.frame.size.height
-//			displayerFrame = sheetDisplayerPrevious.frame
-//		case .current:
-//			heightView = sheetDisplayer.frame.size.height
-//			displayerFrame = sheetDisplayer.frame
-//		case .next:
-//			heightView = sheetDisplayerNext.frame.size.height
-//			displayerFrame = sheetDisplayerNext.frame
-//		}
-		if let externalDisplayWindow = externalDisplayWindow, displayToBeamer {
-			let view = SheetView(frame: externalDisplayWindow.frame)
-			view.isEmptySheet = sheet?.title == Text.Sheet.emptySheetTitle
-			view.selectedTag = tag
-			view.songTitle = title
-			view.lyrics = sheet?.lyrics
-			view.position = Int(sheet?.position ?? 0)
-			view.scaleFactor = externalDisplayWindowHeight / sheetDisplayer.bounds.size.height
-			view.update()
-			externalDisplayWindow.addSubview(view)
-		}
-		let frame = CGRect(x: 0, y: 0, width: sheetDisplayer.bounds.width, height: sheetDisplayer.bounds.height)
-//		let view = SheetView(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
-//		view.backgroundColor = .red
-		let view = SheetView(frame: frame)
-		view.isEmptySheet = sheet?.title == Text.Sheet.emptySheetTitle
-		view.selectedTag = tag
-		view.songTitle = title
-		view.lyrics = sheet?.lyrics
-		view.position = Int(sheet?.position ?? 0)
-		view.update()
-		return view
-		
-	}
-//
-//	private func transformForFraction(fraction:CGFloat) -> CATransform3D {
-//		var identity = CATransform3DIdentity
-//		identity.m34 = -1.0 / 2000
-//		let angle = Double(1.0 - fraction) * -Double.pi/2
-//		//		  let xOffset = self.view.bounds.width * 0.5
-//		let xOffset = CGFloat(view.frame.width*0.5)
-//		let rotateTransform = CATransform3DRotate(identity, CGFloat(angle), 0.0, 1.0, 0.0)
-//		let translateTransform = CATransform3DMakeTranslation(0.0, 0.0, xOffset)
-//		return CATransform3DConcat(rotateTransform, translateTransform)
-//	}
-	
 	private func animateSheetsWith(_ direction : AnimationDirection, completion: @escaping () -> Void) {
 		switch direction {
 		case .left:
@@ -575,59 +560,76 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 			if let position = selectedSheet?.position {
 				
 				let selectedSheetPosition = Int(position)
-				
-				let navigationBarHeight = UIApplication.shared.statusBarFrame.height + navigationController!.navigationBar.frame.height
-
 
 				// current sheet
 				// current sheet, move to left
-				let currentSheetView = buildSheetViewFor(type: .current, title: selectedCluster?.title, sheet: selectedSheet, tag: selectedCluster?.hasTag)
-				
-				currentSheetView.frame = CGRect(
-					x: sheetDisplayer.bounds.minX,
-					y: sheetDisplayer.bounds.minY,
-					width: sheetDisplayer.bounds.width,
-					height: sheetDisplayer.bounds.height)
-				
-				
-				// next sheet, move to left
-				let nextSheet = sheetsForSelectedCluster?[selectedSheetPosition + 1]
-				let nextSheetView = buildSheetViewFor(type: .next, title: selectedCluster?.title, sheet: nextSheet, tag: selectedCluster?.hasTag)
-				
-				nextSheetView.frame = CGRect(
-					x: UIScreen.main.bounds.width,
-					y: sheetDisplayer.bounds.minY,
-					width: sheetDisplayer.bounds.width,
-					height: sheetDisplayer.bounds.height) // set the view
-				
-				
-				view.addSubview(currentSheetView)
-				view.addSubview(nextSheetView)
-				sheetDisplayer.isHidden = true
-				sheetDisplayerPrevious.isHidden = true
-				sheetDisplayerNext.isHidden = true
-				
-				UIView.animate(withDuration: 0.3, animations: {
-					currentSheetView.frame = CGRect(
-						x: -UIScreen.main.bounds.width,
-						y: self.sheetDisplayer.bounds.minY,
-						width: self.sheetDisplayerPrevious.bounds.width,
-						height: self.sheetDisplayerPrevious.bounds.height)
+				var currentSheetView: SheetView?
+				var nextSheetView: SheetView?
 
-					nextSheetView.frame = CGRect(
-						x: self.sheetDisplayer.frame.minX,
-						y: self.sheetDisplayer.bounds.minY,
-						width: self.sheetDisplayer.bounds.width,
-						height: self.sheetDisplayer.bounds.height)
+				
+				if let selectedSheet = selectedSheet {
+					switch selectedSheet.type {
+					case .SheetTitleContent:
+						
+						currentSheetView = SheetTitleContent.createSheetTitleTextWith(frame: sheetDisplayer.bounds, title: selectedCluster?.title, sheet: selectedSheet as? SheetTitleContentEntity, tag: selectedCluster?.hasTag)
+
+						// next sheet, move to left
+						let nextSheet = sheetsForSelectedCluster?[selectedSheetPosition + 1]
+						nextSheetView = SheetTitleContent.createSheetTitleTextWith(frame: sheetDisplayerNext.frame, title: selectedCluster?.title, sheet: nextSheet as? SheetTitleContentEntity, tag: selectedCluster?.hasTag)
+						
+					case .SheetTitleImage:
+						
+						currentSheetView = SheetTitleImage.createSheetTitleImageWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetTitleImageEntity, tag: selectedSheet.hasTag)
+						
+						let nextSheet = sheetsForSelectedCluster?[selectedSheetPosition + 1]
+						nextSheetView = SheetTitleImage.createSheetTitleImageWith(frame: sheetDisplayer.bounds, sheet: nextSheet as! SheetTitleImageEntity, tag: nextSheet?.hasTag)
+						
+					case .SheetEmpty:
+						print("Empty sheet")
+					}
 					
-				}, completion: { (bool) in
-					self.sheetDisplayer.isHidden = false
-					self.sheetDisplayerPrevious.isHidden = false
+					currentSheetView?.frame = CGRect(
+						x: sheetDisplayer.bounds.minX,
+						y: sheetDisplayer.bounds.minY,
+						width: sheetDisplayer.bounds.width,
+						height: sheetDisplayer.bounds.height)
+					
+					nextSheetView?.frame = CGRect(
+						x: UIScreen.main.bounds.width,
+						y: sheetDisplayer.bounds.minY,
+						width: sheetDisplayer.bounds.width,
+						height: sheetDisplayer.bounds.height) // set the view
+				}
+				
+				if let currentSheetView = currentSheetView, let nextSheetView = nextSheetView {
+					view.addSubview(currentSheetView)
+					view.addSubview(nextSheetView)
+					sheetDisplayer.isHidden = true
+					sheetDisplayerPrevious.isHidden = true
+					sheetDisplayerNext.isHidden = true
+					
+					UIView.animate(withDuration: 0.3, animations: {
+						currentSheetView.frame = CGRect(
+							x: -UIScreen.main.bounds.width,
+							y: self.sheetDisplayer.bounds.minY,
+							width: self.sheetDisplayerPrevious.bounds.width,
+							height: self.sheetDisplayerPrevious.bounds.height)
 
-					nextSheetView.removeFromSuperview()
-					currentSheetView.removeFromSuperview()
-					completion()
-				})
+						nextSheetView.frame = CGRect(
+							x: self.sheetDisplayer.frame.minX,
+							y: self.sheetDisplayer.bounds.minY,
+							width: self.sheetDisplayer.bounds.width,
+							height: self.sheetDisplayer.bounds.height)
+						
+					}, completion: { (bool) in
+						self.sheetDisplayer.isHidden = false
+						self.sheetDisplayerPrevious.isHidden = false
+
+						nextSheetView.removeFromSuperview()
+						currentSheetView.removeFromSuperview()
+						completion()
+					})
+				}
 			}
 			
 			
@@ -641,59 +643,83 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 
 				let selectedSheetPosition = Int(position)
 				
-				let navigationBarHeight = UIApplication.shared.statusBarFrame.height + navigationController!.navigationBar.frame.height
+				// current sheet
+				// current sheet, move to left
+				var currentSheetView: SheetView?
+				var previousSheetView: SheetView?
 				
-				// current sheet, move to right
-				let currentSheetView = buildSheetViewFor(type: .current, title: selectedCluster?.title, sheet: selectedSheet, tag: selectedCluster?.hasTag)
-				
-				currentSheetView.frame = CGRect(
-					x: sheetDisplayer.bounds.minX,
-					y: sheetDisplayer.bounds.minY,
-					width: sheetDisplayer.bounds.width,
-					height: sheetDisplayer.bounds.height)
-				
+				if let selectedSheet = selectedSheet {
+					switch selectedSheet.type {
+					case .SheetTitleContent:
+						
+						print("Title content")
 
-				
-				// previous sheet, move to right
-				let previousSheet = sheetsForSelectedCluster?[selectedSheetPosition - 1]
-				let previousSheetView = buildSheetViewFor(type: .previous, title: selectedCluster?.title, sheet: previousSheet, tag: selectedCluster?.hasTag) // generates uiview with dimensions of sheetDisplayerPrevious which is set in storyboard
-				previousSheetView.frame = CGRect(
-					x: -UIScreen.main.bounds.width,
-					y: self.sheetDisplayer.bounds.minY,
-					width: sheetDisplayer.bounds.width,
-					height: sheetDisplayerPrevious.bounds.height) // set the view
-				
+						// current sheet, move to right
+						currentSheetView = SheetTitleContent.createSheetTitleTextWith(frame: sheetDisplayer.bounds, title: selectedCluster?.title, sheet: selectedSheet as? SheetTitleContentEntity, tag: selectedCluster?.hasTag)
 
-				
-				view.addSubview(currentSheetView)
-				view.addSubview(previousSheetView)
-				sheetDisplayer.isHidden = true
-				sheetDisplayerPrevious.isHidden = true
-				sheetDisplayerNext.isHidden = true
-				
-				
-				UIView.animate(withDuration: 0.3, animations: {
-					previousSheetView.frame = CGRect(
-						x: self.sheetDisplayer.frame.minX,
+						// previous sheet, move to right
+						let previousSheet = sheetsForSelectedCluster?[selectedSheetPosition - 1]
+						
+						previousSheetView = SheetTitleContent.createSheetTitleTextWith(frame: sheetDisplayerPrevious.bounds, title: selectedCluster?.title, sheet: previousSheet as? SheetTitleContentEntity, tag: selectedCluster?.hasTag)
+						
+					case .SheetTitleImage:
+						
+						currentSheetView = SheetTitleImage.createSheetTitleImageWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetTitleImageEntity, tag: selectedSheet.hasTag)
+						
+						let previousSheet = sheetsForSelectedCluster?[selectedSheetPosition - 1]
+						
+						previousSheetView = SheetTitleImage.createSheetTitleImageWith(frame: sheetDisplayer.bounds, sheet: previousSheet as! SheetTitleImageEntity, tag: previousSheet?.hasTag)
+						
+					case .SheetEmpty:
+						print("Empty sheet")
+					}
+					
+					currentSheetView?.frame = CGRect(
+						x: sheetDisplayer.bounds.minX,
+						y: sheetDisplayer.bounds.minY,
+						width: sheetDisplayer.bounds.width,
+						height: sheetDisplayer.bounds.height)
+					
+					previousSheetView?.frame = CGRect(
+						x: -UIScreen.main.bounds.width,
 						y: self.sheetDisplayer.bounds.minY,
-						width: self.sheetDisplayer.bounds.width,
-						height: self.sheetDisplayer.bounds.height)
+						width: sheetDisplayer.bounds.width,
+						height: sheetDisplayerPrevious.bounds.height) // set the view
 					
-					currentSheetView.frame = CGRect(
-						x: UIScreen.main.bounds.width,
-						y: self.sheetDisplayer.frame.minY,
-						width: self.sheetDisplayerNext.bounds.width,
-						height: self.sheetDisplayerNext.bounds.height)
+					
+				}
+				
+				if let currentSheetView = currentSheetView, let previousSheetView = previousSheetView {
+					view.addSubview(currentSheetView)
+					view.addSubview(previousSheetView)
+					sheetDisplayer.isHidden = true
+					sheetDisplayerPrevious.isHidden = true
+					sheetDisplayerNext.isHidden = true
+					
+					
+					UIView.animate(withDuration: 0.3, animations: {
+						previousSheetView.frame = CGRect(
+							x: self.sheetDisplayer.frame.minX,
+							y: self.sheetDisplayer.bounds.minY,
+							width: self.sheetDisplayer.bounds.width,
+							height: self.sheetDisplayer.bounds.height)
+						
+						currentSheetView.frame = CGRect(
+							x: UIScreen.main.bounds.width,
+							y: self.sheetDisplayer.frame.minY,
+							width: self.sheetDisplayerNext.bounds.width,
+							height: self.sheetDisplayerNext.bounds.height)
 
 
-					
-				}, completion: { (bool) in
-					self.sheetDisplayer.isHidden = false
-					self.sheetDisplayerPrevious.isHidden = false
-					previousSheetView.removeFromSuperview()
-					currentSheetView.removeFromSuperview()
-					completion()
-				})
+						
+					}, completion: { (bool) in
+						self.sheetDisplayer.isHidden = false
+						self.sheetDisplayerPrevious.isHidden = false
+						previousSheetView.removeFromSuperview()
+						currentSheetView.removeFromSuperview()
+						completion()
+					})
+				}
 			}
 		}
 	}

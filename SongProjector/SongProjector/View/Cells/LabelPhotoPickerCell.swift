@@ -9,7 +9,7 @@
 import UIKit
 
 protocol LabelPhotoPickerCellDelegate {
-	func didSelectImage(cell: LabelPhotoPickerCell)
+	func didSelectImage(cell: LabelPhotoPickerCell, image: UIImage)
 }
 
 class LabelPhotoPickerCell: UITableViewCell, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
@@ -66,7 +66,9 @@ class LabelPhotoPickerCell: UITableViewCell, UIImagePickerControllerDelegate, UI
 			imageView.image = image
 			imageThumbnail.image = imageView.asImage()
 			pickedImage = image
-			delegate?.didSelectImage(cell: self)
+			if let image = image {
+				delegate?.didSelectImage(cell: self, image: image)
+			}
 			layoutIfNeeded()
 		}
 		
@@ -98,22 +100,24 @@ class LabelPhotoPickerCell: UITableViewCell, UIImagePickerControllerDelegate, UI
 					imageThumbnail.image = scaledImage
 				}
 				self.pickedImage = pickedImage
-				delegate?.didSelectImage(cell: self)
+				delegate?.didSelectImage(cell: self, image: pickedImage)
 			}
 			if let sender = sender {
 				sender.dismiss(animated: true)
 			}
 		}
 		
-		override func setHighlighted(_ highlighted: Bool, animated: Bool) {
-		}
-		@IBAction func changeImage(_ sender: UIButton) {
-			imagePicker.allowsEditing = false
-			imagePicker.sourceType = .photoLibrary
-			if let sender = self.sender {
-				sender.present(imagePicker, animated: true, completion: nil)
+	override func setHighlighted(_ highlighted: Bool, animated: Bool) {
+	}
+	@IBAction func changeImage(_ sender: UIButton) {
+		imagePicker.allowsEditing = false
+		imagePicker.sourceType = .photoLibrary
+		if let sender = self.sender {
+			DispatchQueue.main.async {
+				sender.present(self.imagePicker, animated: true, completion: nil)
 			}
 		}
-		
+	}
+	
 }
 

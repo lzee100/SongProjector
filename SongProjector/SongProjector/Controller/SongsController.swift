@@ -12,8 +12,7 @@ protocol SongsControllerDelegate {
 	func didSelectCluster(cluster: Cluster)
 }
 
-class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UISearchResultsUpdating, UISearchBarDelegate {
-	
+class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UISearchResultsUpdating, UISearchBarDelegate, CustomSheetsControllerDelegate {
 	
 	@IBOutlet var new: UIBarButtonItem!
 	@IBOutlet var desciptionSongs: UILabel!
@@ -27,7 +26,7 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 	
 	
 	private var tags: [Tag] = []
-	private var selectedTag: Tag?
+	private var selectedTags: [Tag] = []
 	private var clusters: [Cluster] = []
 	private var selectedCluster: Cluster?
 	private var filteredClusters: [Cluster] = []
@@ -69,19 +68,19 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 		return UITableViewCellEditingStyle.delete
 	}
 	
-	func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
-		let button1 = UITableViewRowAction(style: .default, title: "Delete") { action, indexPath in
-//			if let index = self.clusters.index(of: self.filteredClusters[indexPath.row]) {
-//				let _ = CoreCluster.delete(entity: self.filteredClusters[indexPath.row])
-//				self.clusters.remove(at: index)
-//				self.filteredClusters = self.clusters
-//				self.tableView.deleteRows(at: [indexPath], with: .automatic)
-//			}
-		}
-		button1.backgroundColor = themeMainColor
-		
-		return [button1]
-	}
+//	func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+//		let button1 = UITableViewRowAction(style: .default, title: "Delete") { action, indexPath in
+////			if let index = self.clusters.index(of: self.filteredClusters[indexPath.row]) {
+////				let _ = CoreCluster.delete(entity: self.filteredClusters[indexPath.row])
+////				self.clusters.remove(at: index)
+////				self.filteredClusters = self.clusters
+////				self.tableView.deleteRows(at: [indexPath], with: .automatic)
+////			}
+//		}
+//		button1.backgroundColor = themeMainColor
+//
+//		return [button1]
+//	}
 
 	
 	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
@@ -96,13 +95,24 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 	}
 	
 	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+		selectedCluster = filteredClusters[indexPath.row]
 		if delegate != nil {
-			delegate?.didSelectCluster(cluster: filteredClusters[indexPath.row])
+			delegate?.didSelectCluster(cluster: selectedCluster!)
 			dismiss(animated: true)
 		} else {
-			selectedCluster = filteredClusters[indexPath.row]
-			DispatchQueue.main.async {
-				self.performSegue(withIdentifier: "EditSongSegue", sender: self)
+			if selectedCluster!.isTypeSong {
+				DispatchQueue.main.async {
+					self.performSegue(withIdentifier: "EditSongSegue", sender: self)
+				}
+			} else {
+				let playersController = storyboard?.instantiateViewController(withIdentifier: "PlayersController") as! PlayersIphoneController
+				playersController.cluster = selectedCluster!
+				playersController.sheets = selectedCluster!.hasSheetsArray
+				let nav = UINavigationController(rootViewController: playersController)
+				playersController.delegate = self
+				DispatchQueue.main.async {
+					self.present(nav, animated: true)
+				}
 			}
 		}
 	}
@@ -122,16 +132,16 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 		
 		if let collectionCell = collectionCell as? TagCellCollection {
 			collectionCell.setup(tagName: tags[indexPath.row].title ?? "")
-			collectionCell.isSelectedCell = selectedTag?.id == tags[indexPath.row].id
+			collectionCell.isSelectedCell = selectedTags.contains(tags[indexPath.row])
 		}
 		return collectionCell
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-		if selectedTag?.id == tags[indexPath.row].id {
-			selectedTag = nil
+		if selectedTags.contains(tags[indexPath.row]), let index = selectedTags.index(of: tags[indexPath.row]) {
+			self.selectedTags.remove(at: index)
 		} else {
-			selectedTag = tags[indexPath.row]
+			self.selectedTags.append(tags[indexPath.row])
 		}
 		update()
 	}
@@ -183,8 +193,11 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 		self.tableView.reloadData()
 	}
 	
-
+	// MARK: - Delegate functions
 	
+	func didSaveSheets(sheets: [Sheet]) {
+		tableView.reloadData()
+	}
 	private func setup() {
 		
 		tableView.register(cell: Cells.basicCellid)
@@ -199,7 +212,7 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 		cancel.title = Text.Actions.cancel
 		cancel.tintColor = delegate == nil ? .clear : themeHighlighted
 		emptyView.backgroundColor = themeWhiteBlackBackground
-		
+
 		if delegate == nil {
 			self.navigationItem.leftBarButtonItem = nil
 		}
@@ -213,6 +226,7 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 	
 	private func update() {
 		clusters = CoreCluster.getEntities()
+		CoreTag.predicates.append("isHidden", notEquals: true)
 		tags = CoreTag.getEntities()
 		filterOnTags()
 		filteredClusters = clusters
@@ -221,10 +235,13 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 	}
 	
 	private func filterOnTags() {
-		if let selectedTag = selectedTag {
-			clusters = clusters.filter { (cluster) -> Bool in
-				cluster.hasTag?.id == selectedTag.id
-			}
+		if selectedTags.count == 0 {
+			return
+		}
+		clusters = clusters.filter { (cluster) -> Bool in
+			if let tag = cluster.hasTag {
+				return selectedTags.contains(tag)
+			} else {return false}
 		}
 	}
 

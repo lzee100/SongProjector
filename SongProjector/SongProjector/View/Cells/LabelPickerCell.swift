@@ -37,7 +37,6 @@ class LabelPickerCell: UITableViewCell, UIPickerViewDataSource, UIPickerViewDele
 		view.picker = UIPickerView(frame: CGRect(x: 0, y: 0, width: 300, height: 300))
 		view.picker.dataSource = view
 		view.picker.delegate = view
-		view.picker.tintColor = .white
 		view.pickerHolder.backgroundColor = themeWhiteBlackBackground
 		view.pickerValues = pickerValues
 		return view
@@ -48,6 +47,8 @@ class LabelPickerCell: UITableViewCell, UIPickerViewDataSource, UIPickerViewDele
 			pickerView(picker, didSelectRow: index, inComponent: 0)
 		} else if let id = id, let index = pickerValues.index(where: { (value) -> Bool in value.0 == id }) {
 			pickerView(picker, didSelectRow: index, inComponent: 0)
+		} else {
+			pickerView(picker, didSelectRow: 0, inComponent: 0)
 		}
 	}
 	
@@ -76,6 +77,12 @@ class LabelPickerCell: UITableViewCell, UIPickerViewDataSource, UIPickerViewDele
 	
 	func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
 		return pickerValues[row].1
+	}
+	
+	func pickerView(_ pickerView: UIPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString? {
+		let title = pickerValues[row].1
+		let myTitle = NSAttributedString(string: title, attributes: [ .foregroundColor : themeWhiteBlackTextColor ])
+		return myTitle
 	}
 	
 	

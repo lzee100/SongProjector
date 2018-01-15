@@ -67,39 +67,33 @@ class Theme {
 		collectionCell.tintColor = UIColor(hex: "FF8324")
 		
 		let textField = UITextField.appearance()
-		textField.backgroundColor = .gray
+		textField.backgroundColor = UIColor(red: 255, green: 255, blue: 255, alpha: 0.15)
 		textField.textColor = .white
 		
 		let picker = UIPickerView.appearance()
 		picker.backgroundColor = .black
-		picker.tintColor = UIColor(hex: "FF8324")
-		
+		picker.tintColor = .white
+
 		let searchBar = UISearchBar.appearance()
 		searchBar.backgroundColor = .black
 		searchBar.searchBarStyle = .minimal
-		
-		let imageView = UIImageView.appearance()
-		imageView.tintColor = UIColor(hex: "FF8324")
-		
+
 		let tableViewCell = UITableViewCell.appearance()
 		tableViewCell.backgroundColor = .black
-		
-		let button = UIButton.appearance()
+
+		let button = UIButton.appearance(whenContainedInInstancesOf: [UITableViewCell.self])
 		button.setTitleColor(UIColor(hex: "FF8324"), for: .normal)
-		
+
 		let mySwitch = UISwitch.appearance()
 		mySwitch.tintColor = UIColor(hex: "FF8324")
 		mySwitch.onTintColor = UIColor(hex: "FF8324")
 		mySwitch.backgroundColor = .black
-		
-		let label = UILabel.appearance()
+
+		let label = UILabel.appearance(whenContainedInInstancesOf: [UITableViewCell.self])
 		label.textColor = .white
-		
+
 		let cellLabel = UILabel.appearance(whenContainedInInstancesOf: [UITableViewCell.self, BasicCell.self, AddButtonCell.self, NewSongSheetCell.self, LabelSwitchCell.self, LabelColorPickerCell.self, LabelNumberCell.self, LabelPickerCell.self, LabelTextFieldCell.self, LabelImagePickerCell.self, LabelPhotoPickerCell.self, LabelDoubleSwitchCell.self])
 		cellLabel.textColor = .white
-		
-		let textView = UITextView.appearance()
-		textView.backgroundColor = .black
-		textView.textColor = .white
-		}
+
+	}
 }

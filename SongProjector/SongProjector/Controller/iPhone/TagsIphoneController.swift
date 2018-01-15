@@ -149,10 +149,11 @@ class TagsIphoneController: UITableViewController, UISearchBarDelegate, UIGestur
 		let doubleTab = UITapGestureRecognizer(target: self, action: #selector(self.editTableView(_:)))
 		doubleTab.numberOfTapsRequired = 2
 		view.addGestureRecognizer(doubleTab)
-		
+		update()
 	}
 	
 	private func update() {
+		CoreTag.predicates.append("isHidden", notEquals: true)
 		tags = CoreTag.getEntities()
 		filteredTags = tags
 		tableView.reloadData()

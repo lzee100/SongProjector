@@ -12,6 +12,9 @@ import CoreData
 
 let CoreTag = CoreDataManager(nsManagedObject: Tag())
 let CoreSheet = CoreDataManager(nsManagedObject: Sheet())
+let CoreSheetTitleContent = CoreDataManager(nsManagedObject: SheetTitleContentEntity())
+let CoreSheetTitleImage = CoreDataManager(nsManagedObject: SheetTitleImageEntity())
+let CoreSheetEmptySheet = CoreDataManager(nsManagedObject: SheetEmptyEntity())
 let CoreCluster = CoreDataManager(nsManagedObject: Cluster())
 
 var managedObjectContext: NSManagedObjectContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
@@ -39,7 +42,23 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 			entity.id = first.id + 1
 		}
 		
+		sortDiscriptor = nil
+		
 		return entity
+	}
+	
+	func getNewIDForEntityNOTsave() -> Int64 {
+		// get ID
+		sortDiscriptor = NSSortDescriptor(key: "id", ascending: false)
+		let first = getEntities().first as? Entity
+		sortDiscriptor = nil
+
+		if let first = first {
+			return first.id + 1
+		} else {
+			return Int64(0)
+		}
+		
 	}
 	
 	func createEntity() -> T {
@@ -53,7 +72,7 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 			entity.id = first.id + 1
 			entity.createdAt = Date()
 		}
-		saveContext() // raise ID
+		let _ = saveContext() // raise ID
 		return entity
 	}
 	
@@ -78,6 +97,9 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 		
 		if let sortDiscriptor = sortDiscriptor {
 			request.sortDescriptors = [sortDiscriptor]
+		} else {
+			sortDiscriptor = NSSortDescriptor(key: "createdAt", ascending: true)
+			request.sortDescriptors = [sortDiscriptor!]
 		}
 		
 		request.returnsObjectsAsFaults = false
@@ -89,6 +111,32 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 		}
 		predicates = []
 		return entities
+	}
+	
+	func getEntitieWith(id: Int64) -> T? {
+		
+		var entitie: T? = nil
+		let request = NSFetchRequest<NSFetchRequestResult>(entityName: nsManagedObject.classForCoder.description())
+		
+		predicates.append("id", equals: id)
+		request.predicate = predicates.first
+		
+		if let sortDiscriptor = sortDiscriptor {
+			request.sortDescriptors = [sortDiscriptor]
+		}
+		
+		request.returnsObjectsAsFaults = false
+		do {
+			let result = try managedObjectContext.fetch(request).first
+			if let result = result as? T {
+				entitie = result
+			}
+		} catch {
+			predicates = []
+			return entitie
+		}
+		predicates = []
+		return entitie
 	}
 	
 	func setSortDescriptor(attributeName: String, ascending: Bool) {

@@ -33,7 +33,7 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 	
 	private var isSetup = true
 	private var clusterTitle: String?
-	private var sheets: [Sheet] = []
+	private var sheets: [SheetTitleContentEntity] = []
 	private var tags: [Tag] = []
 	private var visibleCells: [IndexPath] = []
 	private var delaySheetAimation = 0.0
@@ -95,8 +95,8 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 				for subview in collectionCell.previewView.subviews {
 					subview.removeFromSuperview()
 				}
-				let sheet = sheets.count > 0 ? sheets[indexPath.section] : cluster?.hasSheetsArray[indexPath.section]
-				let view = buildSheetViewFor(sheet: sheet, frame: collectionCell.bounds)
+				let sheet = sheets.count > 0 ? sheets[indexPath.section] : cluster?.hasSheetsArray[indexPath.section] as? SheetTitleContentEntity
+				let view = SheetTitleContent.createSheetTitleTextWith(frame: collectionCell.bounds, title: clusterTitle ?? cluster?.title, sheet: sheet, tag: selectedTag ?? cluster?.hasTag)
 				collectionCell.previewView.addSubview(view)
 				
 				if visibleCells.contains(indexPath) { // is cell was visible to user, animate
@@ -160,7 +160,11 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 	
 	private func setup() {
 		tags = CoreTag.getEntities()
+		
 		view.backgroundColor = themeWhiteBlackBackground
+		textView.backgroundColor = themeWhiteBlackBackground
+		textView.textColor = themeWhiteBlackTextColor
+		
 		collectionView.register(UINib(nibName: Cells.tagCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.tagCellCollection)
 		collectionViewSheets.register(UINib(nibName: Cells.sheetCollectionCell, bundle: nil), forCellWithReuseIdentifier: Cells.sheetCollectionCell)
 		navigationController?.title = Text.NewSong.title
@@ -251,7 +255,7 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 				sheetTitle = String(lyricsToDevide[rangeSheetTitle])
 			}
 			
-			let newSheet = CoreSheet.createEntityNOTsave()
+			let newSheet = CoreSheetTitleContent.createEntityNOTsave()
 			newSheet.title = sheetTitle
 			newSheet.lyrics = sheetLyrics
 			newSheet.position = position
@@ -266,17 +270,17 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 		
 	}
 	
-	private func buildSheetViewFor(sheet: Sheet?, frame: CGRect) -> SheetView {
-		let view = SheetView(frame: frame)
-		view.isEmptySheet = false
-		view.selectedTag =  selectedTag ?? cluster?.hasTag
-		view.songTitle = clusterTitle ?? cluster?.title
-		view.lyrics = sheet?.lyrics
-		view.position = Int(sheet?.position ?? 0)
-		view.isEditable = true
-		view.update()
-		return view
-	}
+//	private func buildSheetViewFor(sheet: Sheet?, frame: CGRect) -> SheetView {
+//		let view = SheetView(frame: frame)
+//		view.isEmptySheet = false
+//		view.selectedTag =  selectedTag ?? cluster?.hasTag
+//		view.songTitle = clusterTitle ?? cluster?.title
+//		view.lyrics = sheet?.lyrics
+//		view.position = Int(sheet?.position ?? 0)
+//		view.isEditable = true
+//		view.update()
+//		return view
+//	}
 	
 	private func hasTagSelected() -> Bool {
 		if selectedTag != nil {
@@ -309,7 +313,7 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 	
 	private func getTextFromSheets() -> String {
 		var totalString = (cluster?.title ?? "") + "\n\n"
-		let tempSheets:[Sheet] = sheets.count > 0 ? sheets : cluster?.hasSheetsArray ?? []
+		let tempSheets:[SheetTitleContentEntity] = sheets.count > 0 ? sheets : cluster?.hasSheetsArray as? [SheetTitleContentEntity] ?? []
 		for (index, sheet) in tempSheets.enumerated() {
 			totalString += sheet.lyrics ?? ""
 			if index < tempSheets.count - 1 { // add only \n\n to second last, not the last one, or it will add empty sheet
@@ -340,7 +344,7 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 				}
 				
 				for tempSheet in sheets {
-					let sheet = CoreSheet.createEntity()
+					let sheet = CoreSheetTitleContent.createEntity()
 					sheet.title = tempSheet.title
 					sheet.lyrics = tempSheet.lyrics
 					sheet.position = tempSheet.position

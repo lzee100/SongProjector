@@ -63,10 +63,10 @@ class Text: NSObject {
 	
 	struct Players {
 		static let title = "Afspelers"
-		
-		static let menuEmptySheet = "Lege dia"
-		static let menuTextSheet = "Text dia"
-		static let menuImageSheet = "Dia met foto"
+		static let namePlaceHolder = "Voer titel in (voor zoeken)"
+		static let errorTitle = "Fout"
+		static let errorNoName = "Geen titel ingevoerd"
+		static let segmentSheets = "Dia's"
 	}
 	
 	struct DisplaySettings {
@@ -120,8 +120,29 @@ class Text: NSObject {
 		static let emptySheetTitle = "Lege dia"
 	}
 	
+	struct SheetsMenu {
+		static let sheetTitleImage = "Dia: titel met foto"
+		static let sheetEmpty = "Lege dia"
+		static let sheetSplit = "Dia 2 segmenten"
+		static let sheetTitleText = "Dia titel met tekst"
+	}
+	
 	struct More {
 		static let title = "Meer"
+	}
+	
+	struct NewSheetTitleImage {
+		static let title = "Dia titel met foto"
+		static let descriptionTitle = "Naam dia, titel"
+		static let descriptionContent = "Ondertitel"
+		static let descriptionImage = "foto"
+		static let descriptionImageHasBorder = "Foto heeft rand"
+		static let descriptionImageBorderSize = "Dikte rand"
+		static let descriptionImageBorderColor = "Kleur rand"
+		static let descriptionImageContentMode = "Positionering foto"
+		
+		static let placeholderContent = "tekst"
+
 	}
 	
 }

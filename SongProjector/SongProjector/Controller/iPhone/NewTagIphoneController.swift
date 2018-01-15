@@ -13,6 +13,7 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 	
 	
 	
+	
 	// MARK: - IBoutlets
 	@IBOutlet var cancel: UIBarButtonItem!
 	@IBOutlet var save: UIBarButtonItem!
@@ -666,7 +667,7 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 		}
 	}
 	
-	func didSelectImage(cell: LabelPhotoPickerCell) {
+	func didSelectImage(cell: LabelPhotoPickerCell, image: UIImage) {
 		if !isSetup {
 			cell.isActive = !cell.isActive
 		}
@@ -689,29 +690,16 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 		tableView.register(cell: Cells.labelTextFieldCell)
 		tableView.register(cell: Cells.LabelPhotoPickerCell)
 		
-		sheetContainerHeightConstraint.isActive = false
-		
-		refineSheetRatio()
-		
 		let fontFamilyValues = UIFont.familyNames.map{ (Int64(0), $0) }.sorted { $0.1 < $1.1 }
 		cellTitleFontFamily = LabelPickerCell.create(id: "cellTitleFontFamily", description: Text.NewTag.fontFamilyDescription, initialValueName: "Avenir", pickerValues: fontFamilyValues)
 		cellLyricsFontFamily = LabelPickerCell.create(id: "cellLyricsFontFamily", description: Text.NewTag.fontFamilyDescription, initialValueName: "Avenir", pickerValues: fontFamilyValues)
 		
 		CoreTag.setSortDescriptor(attributeName: "title", ascending: true)
-		let tags = CoreTag.getEntities().map{ ($0.id, $0.title!) }
+		let tags = CoreTag.getEntities().map{ ($0.id, $0.title ?? "") }
 		cellAsTag = LabelPickerCell.create(id: "cellAsTag", description: Text.NewTag.descriptionAsTag, initialValueName: "", pickerValues: tags)
 		
 		cellPhotoPicker = LabelPhotoPickerCell.create(id: "cellPhotoPicker", description: Text.NewTag.backgroundImage, sender: self)
 		cellPhotoPicker.setup()
-		
-		
-		titleAttributes[.font] = UIFont(name: "Avenir", size: 17)
-		cellTitleTextColor.setColor(color: .black)
-		lyricsAttributes[.font] = UIFont(name: "Avenir", size: 17)
-		cellLyricsTextColor.setColor(color: .black)
-		
-		lyricsPreview.backgroundColor = .clear
-
 		
 		cellAsTag.delegate = self
 		cellName.setup()
@@ -742,15 +730,28 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 		cellLyricsItalic.delegate = self
 		cellLyricsUnderLined.delegate = self
 
+		sheetContainerHeightConstraint.isActive = false
+		
+		refineSheetRatio()
+		
+		
+		
+		
+		titleAttributes[.font] = UIFont(name: "Avenir", size: 17)
+		cellTitleTextColor.setColor(color: .black)
+		lyricsAttributes[.font] = UIFont(name: "Avenir", size: 17)
+		cellLyricsTextColor.setColor(color: .black)
+		
+		lyricsPreview.backgroundColor = .clear
+		tableView.keyboardDismissMode = .interactive
+
 		
 		loadTagAttributes()
 		
 		cancel.title = Text.Actions.cancel
 		save.title = Text.Actions.save
 		
-		let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-		tap.cancelsTouchesInView = false
-		view.addGestureRecognizer(tap)
+		hideKeyboardWhenTappedAround()
 		
 		isSetup = false
 		buildPreview(isSetup: isSetup)
@@ -877,24 +878,22 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 			}
 			
 			if let externalDisplayWindow = externalDisplayWindow {
-				let view = SheetView(frame: externalDisplayWindow.frame)
-				view.selectedTag = editExistingTag
-				view.songTitle = Text.NewTag.sampleTitle
-				if let titleBackgroundColor = titleBackgroundColor {
-					view.titleBackground.isHidden = false
-					view.titleBackground.backgroundColor = titleBackgroundColor
-				} else {
-					view.titleBackground.isHidden = true
-				}
-				if let backgroundColor = sheetBackgroundColor {
-					view.backgroundColor = backgroundColor
-				}
-				view.lyrics = Text.NewTag.sampleLyrics
-				view.scaleFactor = externalDisplayWindowWidth / (UIScreen.main.bounds.width - 20)
-				view.previewTitleAttributes = titleAttributes
-				view.previewLyricsAttributes = lyricsAttributes
-				view.update()
-				externalDisplayWindow.addSubview(view)
+				
+				let viewToBeamer = SheetTitleContent.createSheetTitleTextWith(
+					frame: externalDisplayWindow.bounds,
+					songTitle: Text.NewTag.sampleTitle,
+					lyrics: Text.NewTag.sampleLyrics,
+					selectedTag: editExistingTag,
+					titleBackgroundColor: titleBackgroundColor,
+					sheetBackgroundColor: sheetBackgroundColor,
+					tagName: tagName,
+					scaleFactor: externalDisplayWindowWidth / sheetPreview.bounds.width,
+					previewTitleAttributes: titleAttributes,
+					previewLyricsAttributes: lyricsAttributes)
+				
+				viewToBeamer.update()
+				externalDisplayWindow.addSubview(viewToBeamer)
+				
 			}
 		}
 	}
@@ -1059,10 +1058,6 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 			let _ = CoreTag.saveContext()
 			dismiss(animated: true)
 		}
-	}
-	
-	@objc func dismissKeyboard() {
-		view.endEditing(true)
 	}
 	
 	@objc func externalDisplayDidChange(_ notification: Notification) {

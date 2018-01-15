@@ -20,5 +20,9 @@ extension Cluster {
 		}
 	}
 	
+	public var isTypeSong: Bool {
+		return !hasSheetsArray.contains(where: { $0.hasTag?.isHidden == true  })
+	}
+	
 
 }

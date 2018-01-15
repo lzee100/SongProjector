@@ -27,7 +27,7 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 	
 	private var isSetup = true
 	private var clusterTitle = ""
-	private var sheets: [Sheet] = []
+	private var sheets: [SheetTitleContentEntity] = []
 	private var tags: [Tag] = []
 	private var delaySheetAimation = 0.0
 	private var isFirstTime = true {
@@ -90,7 +90,7 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 					subview.removeFromSuperview()
 				}
 				
-				let view = buildSheetViewFor(sheet: sheets[indexPath.section], frame: collectionCell.bounds)
+				let view = SheetTitleContent.createSheetTitleTextWith(frame: collectionCell.bounds, title: clusterTitle, sheet: sheets[indexPath.section], tag: selectedTag)
 				collectionCell.previewView.addSubview(view)
 				
 				if visibleCells.contains(indexPath) {
@@ -113,9 +113,11 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 					delaySheetAimation += 0.12
 				}
 			}
+			
 			if let index = visibleCells.index(of: indexPath), segmentControl.selectedSegmentIndex == 1 {
 				visibleCells.remove(at: index) // remove cell for one time animation
 			}
+			
 			return collectionCell
 			
 		} else {
@@ -149,6 +151,7 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 	// MARK: - Private Functions
 	
 	private func setup() {
+		CoreTag.predicates.append("isHidden", notEquals: true)
 		tags = CoreTag.getEntities()
 
 		collectionView.register(UINib(nibName: Cells.tagCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.tagCellCollection)
@@ -164,6 +167,8 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 		done.title = Text.Actions.save
 		
 		view.backgroundColor = themeWhiteBlackBackground
+		textView.backgroundColor = themeWhiteBlackBackground
+		textView.textColor = themeWhiteBlackTextColor
 		textView.layer.borderColor = themeHighlighted.cgColor
 		textView.layer.borderWidth = 1
 		textView.layer.cornerRadius = CGFloat(5.0)
@@ -246,7 +251,7 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 				sheetTitle = String(lyricsToDevide[rangeSheetTitle])
 			}
 			
-			let newSheet = CoreSheet.createEntityNOTsave()
+			let newSheet = CoreSheetTitleContent.createEntityNOTsave()
 			newSheet.title = sheetTitle
 			newSheet.lyrics = sheetLyrics
 			newSheet.position = position
@@ -261,21 +266,21 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 		
 	}
 	
-	private func buildSheetViewFor(sheet: Sheet?, frame: CGRect, isSetup: Bool = false) -> SheetView {
-		let view = SheetView(frame: frame)
-		view.isEmptySheet = false
-		view.selectedTag =  selectedTag
-		view.songTitle = clusterTitle
-		view.position = Int(sheet?.position ?? 0)
-		if isSetup {
-			view.lyrics = ""
-		} else {
-			view.lyrics = sheet?.lyrics
-		}
-		view.isEditable = true
-		view.update()
-		return view
-	}
+//	private func buildSheetViewFor(sheet: Sheet?, frame: CGRect, isSetup: Bool = false) -> SheetView {
+//		let view = SheetView(frame: frame)
+//		view.isEmptySheet = false
+//		view.selectedTag =  selectedTag
+//		view.songTitle = clusterTitle
+//		view.position = Int(sheet?.position ?? 0)
+//		if isSetup {
+//			view.lyrics = ""
+//		} else {
+//			view.lyrics = sheet?.lyrics
+//		}
+//		view.isEditable = true
+//		view.update()
+//		return view
+//	}
 	
 	private func hasTagSelected() -> Bool {
 		if selectedTag != nil {
@@ -316,7 +321,7 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 			if CoreCluster.saveContext() { print("song saved") } else { print("song not saved") }
 			
 			for tempSheet in sheets {
-				let sheet = CoreSheet.createEntity()
+				let sheet = CoreSheetTitleContent.createEntity()
 				sheet.title = tempSheet.title
 				sheet.lyrics = tempSheet.lyrics
 				sheet.position = tempSheet.position

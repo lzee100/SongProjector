@@ -33,7 +33,7 @@ class NewSongController: UIViewController, UITableViewDataSource, UITableViewDel
 	// MARK: - Properties
 	
 	private var clusterTitle = ""
-	private var sheets: [Sheet] = []
+	private var sheets: [SheetTitleContentEntity] = []
 	private var tempSheetsBeforeSaving: [(title: String, lyrics: String, position: Int16)] = []
 	private var tags: [Tag] = []
 	private var selectedTag: Tag? {
@@ -242,7 +242,7 @@ class NewSongController: UIViewController, UITableViewDataSource, UITableViewDel
 			if CoreCluster.saveContext() { print("song saved") } else { print("song not saved") }
 			
 			for tempSheet in tempSheetsBeforeSaving {
-				let sheet = CoreSheet.createEntityNOTsave()
+				let sheet = CoreSheetTitleContent.createEntityNOTsave()
 				sheet.title = tempSheet.title
 				sheet.lyrics = tempSheet.lyrics
 				sheet.position = tempSheet.position

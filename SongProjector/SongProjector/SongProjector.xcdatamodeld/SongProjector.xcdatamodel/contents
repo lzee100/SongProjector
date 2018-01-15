@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="13533" systemVersion="17C88" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="13772" systemVersion="17C88" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Cluster" representedClassName="Cluster" parentEntity="Entity" syncable="YES" codeGenerationType="class">
         <attribute name="duration" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="position" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
@@ -12,10 +12,26 @@
         <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="Sheet" representedClassName="Sheet" parentEntity="Entity" syncable="YES" codeGenerationType="class">
-        <attribute name="lyrics" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="position" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <relationship name="hasCluster" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Cluster" inverseName="hasSheets" inverseEntity="Cluster" syncable="YES"/>
-        <relationship name="hasTags" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tag" inverseName="hasSheets" inverseEntity="Tag" syncable="YES"/>
+        <relationship name="hasTag" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Tag" inverseName="hasSheets" inverseEntity="Tag" syncable="YES"/>
+    </entity>
+    <entity name="SheetEmptyEntity" representedClassName="SheetEmptyEntity" parentEntity="Sheet" syncable="YES" codeGenerationType="class"/>
+    <entity name="SheetSplitEntity" representedClassName="SheetSplitEntity" parentEntity="Sheet" syncable="YES" codeGenerationType="class">
+        <attribute name="textLeft" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="textRight" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="SheetTitleContentEntity" representedClassName="SheetTitleContentEntity" parentEntity="Sheet" syncable="YES" codeGenerationType="class">
+        <attribute name="lyrics" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="SheetTitleImageEntity" representedClassName="SheetTitleImageEntity" parentEntity="Sheet" syncable="YES" codeGenerationType="class">
+        <attribute name="content" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="hasTitle" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="imageBorderColor" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="imageBorderSize" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="imageContentMode" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="imageHasBorder" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="imagePath" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="Tag" representedClassName="Tag" parentEntity="Entity" syncable="YES" codeGenerationType="class">
         <attribute name="allHaveTitle" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
@@ -23,6 +39,7 @@
         <attribute name="hasEmptySheet" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="imagePath" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="isEmptySheetFirst" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="isHidden" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="isLyricsBold" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="isLyricsItalian" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="isLyricsUnderlined" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
@@ -44,12 +61,16 @@
         <attribute name="titleTextColorHex" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="titleTextSize" attributeType="Float" defaultValueString="17" usesScalarValueType="YES" syncable="YES"/>
         <relationship name="hasCluster" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Cluster" inverseName="hasTag" inverseEntity="Cluster" syncable="YES"/>
-        <relationship name="hasSheets" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Sheet" inverseName="hasTags" inverseEntity="Sheet" syncable="YES"/>
+        <relationship name="hasSheets" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Sheet" inverseName="hasTag" inverseEntity="Sheet" syncable="YES"/>
     </entity>
     <elements>
         <element name="Cluster" positionX="-54" positionY="-9" width="128" height="105"/>
         <element name="Entity" positionX="-63" positionY="-18" width="128" height="90"/>
-        <element name="Sheet" positionX="-18" positionY="27" width="128" height="105"/>
-        <element name="Tag" positionX="-36" positionY="9" width="128" height="450"/>
+        <element name="Sheet" positionX="-18" positionY="27" width="128" height="90"/>
+        <element name="SheetEmptyEntity" positionX="-18" positionY="153" width="128" height="45"/>
+        <element name="SheetSplitEntity" positionX="-36" positionY="135" width="128" height="75"/>
+        <element name="SheetTitleContentEntity" positionX="-27" positionY="144" width="128" height="60"/>
+        <element name="SheetTitleImageEntity" positionX="-36" positionY="135" width="128" height="150"/>
+        <element name="Tag" positionX="-36" positionY="9" width="128" height="465"/>
     </elements>
 </model>

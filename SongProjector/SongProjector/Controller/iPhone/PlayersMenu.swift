@@ -25,20 +25,23 @@ class PlayerMenu {
 	
 	private var menu : PlayersMenu?
 
-	private func createMenu() -> PlayersMenu?{
+	private func createMenu(_ sender: NewSheetTitleImageDelegate, playerMenu: PlayerMenu) -> PlayersMenu?{
 		if let window = UIApplication.shared.keyWindow{
 			let playersMenu = window.rootViewController?.storyboard?.instantiateViewController(withIdentifier: "PlayersMenu") as? PlayersMenu
+			playersMenu?.sender = sender
+			playersMenu?.menu = playerMenu
 			playersMenu?.view?.frame = window.frame
+			
 			if let view = playersMenu?.view{
 				view.isHidden = true
 				view.backgroundColor = .clear
 				
-				let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.dark)
-				let blurEffectView = UIVisualEffectView(effect: blurEffect)
-					blurEffectView.frame = view.bounds
-					blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-					view.addSubview(blurEffectView)
-					view.sendSubview(toBack: blurEffectView)
+//				let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.dark)
+//				let blurEffectView = UIVisualEffectView(effect: blurEffect)
+//					blurEffectView.frame = view.bounds
+//					blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+//					view.addSubview(blurEffectView)
+//					view.sendSubview(toBack: blurEffectView)
 				window.addSubview(view)
 			}
 			return playersMenu
@@ -46,9 +49,9 @@ class PlayerMenu {
 		return nil
 	}
 	
-	private func getMenu() -> PlayersMenu?{
+	private func getMenu(_ sender: NewSheetTitleImageDelegate) -> PlayersMenu?{
 		if menu == nil{
-			menu = createMenu()
+			menu = createMenu(sender, playerMenu: self)
 			let tab = UITapGestureRecognizer(target: self, action: #selector(self.dismissMenu(_:)))
 			tab.numberOfTapsRequired = 1
 			menu?.view.addGestureRecognizer(tab)
@@ -56,9 +59,9 @@ class PlayerMenu {
 		return menu
 	}
 	
-	func showMenu(){
+	func showMenu(sender: NewSheetTitleImageDelegate){
 		DispatchQueue.main.async  {
-			if let menu = self.getMenu(){
+			if let menu = self.getMenu(sender){
 				menu.view.alpha = 0
 				menu.view.isHidden = false
 				UIView.animate(withDuration: TimeInterval.seconds(0.3), animations: {
@@ -88,9 +91,6 @@ class PlayerMenu {
 	}
 }
 
-
-
-
 class PlayersMenu: UIViewController {
 
 	@IBOutlet var button1: UIButton!
@@ -99,6 +99,8 @@ class PlayersMenu: UIViewController {
 	
 	private var blurEffectView: UIVisualEffectView?
 	private var isSetupDone = false
+	var sender: NewSheetTitleImageDelegate?
+	var menu: PlayerMenu?
 	
 	@IBOutlet var buttonsContainerView: UIView! {
 		didSet{
@@ -118,8 +120,10 @@ class PlayersMenu: UIViewController {
 			if let blurEffectView = blurEffectView {
 				blurEffectView.frame = view.bounds
 				blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+				let newV = UIView(frame: view.bounds)
+				newV.backgroundColor = .red
 				view.addSubview(blurEffectView)
-//				view.sendSubview(toBack: blurEffectView)
+				view.sendSubview(toBack: blurEffectView)
 			}
 		}
 	}
@@ -129,7 +133,13 @@ class PlayersMenu: UIViewController {
 	}
 	
 	@IBAction func menuitem2(_ sender: UIButton) {
-		
+		let sheetTitleImage = storyboard?.instantiateViewController(withIdentifier: "NewSheetTitleImage") as! NewSheetTitleImage
+		let nav = UINavigationController(rootViewController: sheetTitleImage)
+		sheetTitleImage.delegate = self.sender
+		DispatchQueue.main.async {
+			self.present(nav, animated: true)
+		}
+		menu?.hideMenu()
 	}
 	
 	@IBAction func menuitem3(_ sender: UIButton) {
