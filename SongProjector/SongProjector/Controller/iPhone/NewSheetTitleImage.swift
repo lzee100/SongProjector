@@ -23,8 +23,6 @@ class NewSheetTitleImage: UIViewController, UITableViewDelegate, UITableViewData
 	@IBOutlet var sheetContainerViewHeightConstraint: NSLayoutConstraint!
 	@IBOutlet var previewViewRatioConstraint: NSLayoutConstraint!
 	
-	var sheetType: SheetType!
-	
 	// MARK: - Types
 	
 	enum Section: String {
@@ -971,10 +969,10 @@ class NewSheetTitleImage: UIViewController, UITableViewDelegate, UITableViewData
 				
 				generateTag()
 				
-				let view = SheetTitleImage.createSheetTitleImageWith(frame: previewView.frame, sheet: sheet, tag: tag)
+				let view = SheetTitleImage.createWith(frame: previewView.frame, sheet: sheet, tag: tag)
 				
 				previewView.addSubview(view)
-				let beamerView = SheetTitleImage.createSheetTitleImageWith(frame: externalDisplayWindow.frame, sheet: self.sheet, tag: self.tag, scaleFactor: externalDisplayWindowWidth / self.previewView.bounds.width)
+				let beamerView = SheetTitleImage.createWith(frame: externalDisplayWindow.frame, sheet: self.sheet, tag: self.tag, scaleFactor: externalDisplayWindowWidth / self.previewView.bounds.width)
 				externalDisplayWindow.addSubview(beamerView)
 				
 			} else {
@@ -984,7 +982,7 @@ class NewSheetTitleImage: UIViewController, UITableViewDelegate, UITableViewData
 				}
 				
 				generateTag()
-				let view = SheetTitleImage.createSheetTitleImageWith(frame: previewView.bounds, sheet: sheet, tag: tag)
+				let view = SheetTitleImage.createWith(frame: previewView.bounds, sheet: sheet, tag: tag)
 				previewView.addSubview(view)
 				
 			}

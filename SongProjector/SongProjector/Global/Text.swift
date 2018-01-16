@@ -134,6 +134,8 @@ class Text: NSObject {
 	struct NewSheetTitleImage {
 		static let title = "Dia titel met foto"
 		static let descriptionTitle = "Naam dia, titel"
+		static let descriptionTextLeft = "Tekst links"
+		static let descriptionTextRight = "Tekst rechts"
 		static let descriptionContent = "Ondertitel"
 		static let descriptionImage = "foto"
 		static let descriptionImageHasBorder = "Foto heeft rand"

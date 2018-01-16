@@ -879,7 +879,7 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 			
 			if let externalDisplayWindow = externalDisplayWindow {
 				
-				let viewToBeamer = SheetTitleContent.createSheetTitleTextWith(
+				let viewToBeamer = SheetTitleContent.createWith(
 					frame: externalDisplayWindow.bounds,
 					songTitle: Text.NewTag.sampleTitle,
 					lyrics: Text.NewTag.sampleLyrics,

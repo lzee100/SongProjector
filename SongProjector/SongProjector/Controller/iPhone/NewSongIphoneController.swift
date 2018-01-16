@@ -90,7 +90,7 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 					subview.removeFromSuperview()
 				}
 				
-				let view = SheetTitleContent.createSheetTitleTextWith(frame: collectionCell.bounds, title: clusterTitle, sheet: sheets[indexPath.section], tag: selectedTag)
+				let view = SheetTitleContent.createWith(frame: collectionCell.bounds, title: clusterTitle, sheet: sheets[indexPath.section], tag: selectedTag)
 				collectionCell.previewView.addSubview(view)
 				
 				if visibleCells.contains(indexPath) {

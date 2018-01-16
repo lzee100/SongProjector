@@ -512,28 +512,30 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 							
 							// current sheet
 							if let tag = selectedCluster?.hasTag {
-								let view = SheetTitleContent.createSheetTitleTextWith(frame: sheetDisplayer.bounds, title: selectedCluster?.title, sheet: selectedSheet as? SheetTitleContentEntity, tag: tag)
-								sheetDisplayer.addSubview(view)
-								view.update()
+								let view = SheetTitleContent.createWith(frame: sheetDisplayer.bounds, title: selectedCluster?.title, sheet: selectedSheet as? SheetTitleContentEntity, tag: tag)
 								sheetDisplayer.addSubview(view)
 								
 								if externalDisplayWindow != nil {
-									_ = SheetTitleContent.createSheetTitleTextWith(frame: sheetDisplayer.bounds, title: selectedCluster?.title, sheet: selectedSheet as? SheetTitleContentEntity, tag: tag, scaleFactor: externalDisplayWindowWidth / sheetDisplayer.bounds.width).toExternalDisplay()
+									_ = SheetTitleContent.createWith(frame: sheetDisplayer.bounds, title: selectedCluster?.title, sheet: selectedSheet as? SheetTitleContentEntity, tag: tag, scaleFactor: externalDisplayWindowWidth / sheetDisplayer.bounds.width).toExternalDisplay()
 								}
 							}
 							
 						case .SheetTitleImage:
-							if let tag = selectedCluster?.hasTag {
-								let view = SheetTitleImage.createSheetTitleImageWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetTitleImageEntity, tag: selectedSheet.hasTag)
-								sheetDisplayer.addSubview(view)
-								view.update()
-								sheetDisplayer.addSubview(view)
-								
-								if externalDisplayWindow != nil {
-									_ = SheetTitleImage.createSheetTitleImageWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetTitleImageEntity, tag: selectedSheet.hasTag, scaleFactor: externalDisplayWindowWidth / sheetDisplayer.bounds.width).toExternalDisplay()
-								}
-								
+							let view = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetTitleImageEntity, tag: selectedSheet.hasTag)
+							sheetDisplayer.addSubview(view)
+							
+							if externalDisplayWindow != nil {
+								_ = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetTitleImageEntity, tag: selectedSheet.hasTag, scaleFactor: externalDisplayWindowWidth / sheetDisplayer.bounds.width).toExternalDisplay()
 							}
+								
+						case .SheetSplit:
+							let view = SheetSplit.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetSplitEntity, tag: selectedSheet.hasTag)
+							sheetDisplayer.addSubview(view)
+							
+							if externalDisplayWindow != nil {
+								_ = SheetSplit.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetSplitEntity, tag: selectedSheet.hasTag, scaleFactor: externalDisplayWindowWidth / sheetDisplayer.bounds.width).toExternalDisplay()
+							}
+								
 						case .SheetEmpty:
 							print("Empty sheet")
 						}
@@ -571,18 +573,25 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 					switch selectedSheet.type {
 					case .SheetTitleContent:
 						
-						currentSheetView = SheetTitleContent.createSheetTitleTextWith(frame: sheetDisplayer.bounds, title: selectedCluster?.title, sheet: selectedSheet as? SheetTitleContentEntity, tag: selectedCluster?.hasTag)
+						currentSheetView = SheetTitleContent.createWith(frame: sheetDisplayer.bounds, title: selectedCluster?.title, sheet: selectedSheet as? SheetTitleContentEntity, tag: selectedCluster?.hasTag)
 
 						// next sheet, move to left
 						let nextSheet = sheetsForSelectedCluster?[selectedSheetPosition + 1]
-						nextSheetView = SheetTitleContent.createSheetTitleTextWith(frame: sheetDisplayerNext.frame, title: selectedCluster?.title, sheet: nextSheet as? SheetTitleContentEntity, tag: selectedCluster?.hasTag)
+						nextSheetView = SheetTitleContent.createWith(frame: sheetDisplayerNext.frame, title: selectedCluster?.title, sheet: nextSheet as? SheetTitleContentEntity, tag: selectedCluster?.hasTag)
 						
 					case .SheetTitleImage:
 						
-						currentSheetView = SheetTitleImage.createSheetTitleImageWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetTitleImageEntity, tag: selectedSheet.hasTag)
+						currentSheetView = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetTitleImageEntity, tag: selectedSheet.hasTag)
 						
 						let nextSheet = sheetsForSelectedCluster?[selectedSheetPosition + 1]
-						nextSheetView = SheetTitleImage.createSheetTitleImageWith(frame: sheetDisplayer.bounds, sheet: nextSheet as! SheetTitleImageEntity, tag: nextSheet?.hasTag)
+						nextSheetView = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: nextSheet as! SheetTitleImageEntity, tag: nextSheet?.hasTag)
+						
+					case .SheetSplit:
+						
+						currentSheetView = SheetSplit.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetSplitEntity, tag: selectedSheet.hasTag)
+						
+						let nextSheet = sheetsForSelectedCluster?[selectedSheetPosition + 1]
+						nextSheetView = SheetSplit.createWith(frame: sheetDisplayer.bounds, sheet: nextSheet as! SheetSplitEntity, tag: nextSheet?.hasTag)
 						
 					case .SheetEmpty:
 						print("Empty sheet")
@@ -655,20 +664,28 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 						print("Title content")
 
 						// current sheet, move to right
-						currentSheetView = SheetTitleContent.createSheetTitleTextWith(frame: sheetDisplayer.bounds, title: selectedCluster?.title, sheet: selectedSheet as? SheetTitleContentEntity, tag: selectedCluster?.hasTag)
+						currentSheetView = SheetTitleContent.createWith(frame: sheetDisplayer.bounds, title: selectedCluster?.title, sheet: selectedSheet as? SheetTitleContentEntity, tag: selectedCluster?.hasTag)
 
 						// previous sheet, move to right
 						let previousSheet = sheetsForSelectedCluster?[selectedSheetPosition - 1]
 						
-						previousSheetView = SheetTitleContent.createSheetTitleTextWith(frame: sheetDisplayerPrevious.bounds, title: selectedCluster?.title, sheet: previousSheet as? SheetTitleContentEntity, tag: selectedCluster?.hasTag)
+						previousSheetView = SheetTitleContent.createWith(frame: sheetDisplayerPrevious.bounds, title: selectedCluster?.title, sheet: previousSheet as? SheetTitleContentEntity, tag: selectedCluster?.hasTag)
 						
 					case .SheetTitleImage:
 						
-						currentSheetView = SheetTitleImage.createSheetTitleImageWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetTitleImageEntity, tag: selectedSheet.hasTag)
+						currentSheetView = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetTitleImageEntity, tag: selectedSheet.hasTag)
 						
 						let previousSheet = sheetsForSelectedCluster?[selectedSheetPosition - 1]
 						
-						previousSheetView = SheetTitleImage.createSheetTitleImageWith(frame: sheetDisplayer.bounds, sheet: previousSheet as! SheetTitleImageEntity, tag: previousSheet?.hasTag)
+						previousSheetView = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: previousSheet as! SheetTitleImageEntity, tag: previousSheet?.hasTag)
+						
+					case .SheetSplit:
+						
+						currentSheetView = SheetSplit.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetSplitEntity, tag: selectedSheet.hasTag)
+						
+						let previousSheet = sheetsForSelectedCluster?[selectedSheetPosition - 1]
+						
+						previousSheetView = SheetSplit.createWith(frame: sheetDisplayer.bounds, sheet: previousSheet as! SheetSplitEntity, tag: previousSheet?.hasTag)
 						
 					case .SheetEmpty:
 						print("Empty sheet")

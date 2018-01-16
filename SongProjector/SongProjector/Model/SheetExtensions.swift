@@ -11,13 +11,12 @@ import Foundation
 public enum SheetType {
 	case SheetTitleContent
 	case SheetTitleImage
+	case SheetSplit
 	case SheetEmpty
 }
 
 extension Sheet {
-	
-
-		
+			
 	var type: SheetType {
 		if self.entity.isKindOf(entity: SheetTitleContentEntity.entity()){
 			return .SheetTitleContent
@@ -35,6 +34,8 @@ extension Sheet {
 			return CoreSheetTitleContent.createEntityNOTsave()
 		case .SheetTitleImage:
 			return CoreSheetTitleImage.createEntityNOTsave()
+		case .SheetSplit:
+			return CoreSheetSplit.createEntityNOTsave()
 		case .SheetEmpty:
 			return CoreSheetEmptySheet.createEntityNOTsave()
 		}

@@ -94,7 +94,11 @@ class TagsIphoneController: UITableViewController, UISearchBarDelegate, UIGestur
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		selectedTag = filteredTags[indexPath.row]
-		performSegue(withIdentifier: "EditTagSegue", sender: self)
+		let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditcontroller") as! NewOrEditController
+		controller.editTagMode = true
+		let nav = UINavigationController(rootViewController: controller)
+		present(nav, animated: true)
+//		performSegue(withIdentifier: "EditTagSegue", sender: self)
 	}
 	
 	

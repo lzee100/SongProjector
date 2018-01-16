@@ -36,7 +36,7 @@ class SheetSplit: SheetView {
 		addSubview(sheetView)
 	}
 	
-	static func createSheetTitleImageWith(frame: CGRect, sheet: SheetSplitEntity, tag: Tag?, scaleFactor: CGFloat = 1) -> SheetSplit {
+	static func createWith(frame: CGRect, sheet: SheetSplitEntity, tag: Tag?, scaleFactor: CGFloat = 1) -> SheetSplit {
 		
 		let view = SheetSplit(frame: frame)
 		view.sheet = sheet
@@ -138,20 +138,6 @@ class SheetSplit: SheetView {
 			}
 		}
 	}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-	}
-	
-	
-	
-	
 	
 	
 	

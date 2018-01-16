@@ -98,7 +98,9 @@
 		E3D927571FECF622006EDE75 /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D927561FECF622006EDE75 /* ViewExtensions.swift */; };
 		E3F421A41FFE457500C332B0 /* LabelDoubleSwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F421A21FFE457500C332B0 /* LabelDoubleSwitchCell.swift */; };
 		E3F421A51FFE457500C332B0 /* LabelDoubleSwitchCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3F421A31FFE457500C332B0 /* LabelDoubleSwitchCell.xib */; };
-		E3FA3DF5200D45F00038C97B /* NewSheetSplit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3FA3DF4200D45F00038C97B /* NewSheetSplit.swift */; };
+		E3FA3DF5200D45F00038C97B /* NewOrEditController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3FA3DF4200D45F00038C97B /* NewOrEditController.swift */; };
+		E3FA3DF8200DE8570038C97B /* LabelTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3FA3DF6200DE8570038C97B /* LabelTextView.swift */; };
+		E3FA3DF9200DE8570038C97B /* LabelTextView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3FA3DF7200DE8570038C97B /* LabelTextView.xib */; };
 		E7226C9E497B8BF49AA031B2 /* Pods_SongProjector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95070415C3C6BD5B7639F73A /* Pods_SongProjector.framework */; };
 /* End PBXBuildFile section */
 
@@ -199,7 +201,9 @@
 		E3D927561FECF622006EDE75 /* ViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewExtensions.swift; sourceTree = "<group>"; };
 		E3F421A21FFE457500C332B0 /* LabelDoubleSwitchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelDoubleSwitchCell.swift; sourceTree = "<group>"; };
 		E3F421A31FFE457500C332B0 /* LabelDoubleSwitchCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelDoubleSwitchCell.xib; sourceTree = "<group>"; };
-		E3FA3DF4200D45F00038C97B /* NewSheetSplit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewSheetSplit.swift; sourceTree = "<group>"; };
+		E3FA3DF4200D45F00038C97B /* NewOrEditController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewOrEditController.swift; sourceTree = "<group>"; };
+		E3FA3DF6200DE8570038C97B /* LabelTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelTextView.swift; sourceTree = "<group>"; };
+		E3FA3DF7200DE8570038C97B /* LabelTextView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelTextView.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -374,6 +378,8 @@
 				E3F421A31FFE457500C332B0 /* LabelDoubleSwitchCell.xib */,
 				E326E9051FFECD0E00FEAC9C /* SheetCollectionCell.swift */,
 				E326E9061FFECD0E00FEAC9C /* SheetCollectionCell.xib */,
+				E3FA3DF6200DE8570038C97B /* LabelTextView.swift */,
+				E3FA3DF7200DE8570038C97B /* LabelTextView.xib */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -391,7 +397,7 @@
 				E3081C6B200271D600701680 /* PlayerMenu.swift */,
 				E3CB685520063F5F00F007B2 /* PlayersMenu.swift */,
 				E371CBB92008E7EF0059FF71 /* NewSheetTitleImage.swift */,
-				E3FA3DF4200D45F00038C97B /* NewSheetSplit.swift */,
+				E3FA3DF4200D45F00038C97B /* NewOrEditController.swift */,
 			);
 			path = iPhone;
 			sourceTree = "<group>";
@@ -493,6 +499,7 @@
 				E309DCF41FF48F0800C3D135 /* LabelSwitchCell.xib in Resources */,
 				E3F421A51FFE457500C332B0 /* LabelDoubleSwitchCell.xib in Resources */,
 				E311717A1FE5A1A0008D9D51 /* AddButtonCell.xib in Resources */,
+				E3FA3DF9200DE8570038C97B /* LabelTextView.xib in Resources */,
 				E393B7692008D3FC0073D0A9 /* SheetTitleImage.xib in Resources */,
 				E311717C1FE5A1A0008D9D51 /* NewSongSheetCell.xib in Resources */,
 				E326E9081FFECD0E00FEAC9C /* SheetCollectionCell.xib in Resources */,
@@ -616,9 +623,10 @@
 				E3CB685620063F5F00F007B2 /* PlayersMenu.swift in Sources */,
 				E31171551FE5A071008D9D51 /* UIFontExtensions.swift in Sources */,
 				E3355D6F1FEDA645004C03AE /* TextViewExtensions.swift in Sources */,
+				E3FA3DF8200DE8570038C97B /* LabelTextView.swift in Sources */,
 				E31171661FE5A0E7008D9D51 /* SongServiceController.swift in Sources */,
 				E3CB6852200634EC00F007B2 /* TimeIntervalExtensions.swift in Sources */,
-				E3FA3DF5200D45F00038C97B /* NewSheetSplit.swift in Sources */,
+				E3FA3DF5200D45F00038C97B /* NewOrEditController.swift in Sources */,
 				E31171641FE5A0E7008D9D51 /* MenuController.swift in Sources */,
 				E393B7672008D25F0073D0A9 /* SheetEmpty.swift in Sources */,
 				E3D1CEE71FF6930600F9D7D9 /* LabelPickerCell.swift in Sources */,

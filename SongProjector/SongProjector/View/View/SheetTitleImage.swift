@@ -50,7 +50,7 @@ class SheetTitleImage: SheetView {
 		addSubview(sheetView)
 	}
 	
-	static func createSheetTitleImageWith(frame: CGRect, sheet: SheetTitleImageEntity, tag: Tag?, scaleFactor: CGFloat = 1) -> SheetTitleImage {
+	static func createWith(frame: CGRect, sheet: SheetTitleImageEntity, tag: Tag?, scaleFactor: CGFloat = 1) -> SheetTitleImage {
 		
 		let view = SheetTitleImage(frame: frame)
 		view.sheet = sheet

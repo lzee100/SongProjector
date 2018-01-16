@@ -14,6 +14,8 @@ protocol CustomSheetsControllerDelegate {
 
 class PlayersIphoneController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, NewSheetTitleImageDelegate {
 
+	
+
 	@IBOutlet var new: UIBarButtonItem!
 	@IBOutlet var save: UIBarButtonItem!
 	@IBOutlet var clusterNameTextField: UITextField!
@@ -78,7 +80,8 @@ class PlayersIphoneController: UIViewController, UICollectionViewDelegate, UICol
 				setViewFor(collectionCell: collectionCell, sheet: sheetsSorted[indexPath.section])
 			case .SheetTitleContent:
 				print("title content")
-				
+			case .SheetSplit:
+				print("sheet split")
 			case .SheetEmpty:
 				print("empty")
 			}
@@ -193,7 +196,7 @@ class PlayersIphoneController: UIViewController, UICollectionViewDelegate, UICol
 	
 	// MARK: - Delegate Functions
 	
-	func didCreate(sheet: SheetTitleImageEntity) {
+	func didCreate(sheet: Sheet) {
 		if !sheets.contains(where: { $0.id == sheet.id }) {
 			sheet.position = Int16(sheets.count)
 			sheets.append(sheet)
@@ -216,7 +219,7 @@ class PlayersIphoneController: UIViewController, UICollectionViewDelegate, UICol
 		
 		hideKeyboardWhenTappedAround()
 		
-		clusterNameTextField.attributedPlaceholder = NSAttributedString(string: Text.Players.namePlaceHolder, attributes: [NSAttributedStringKey.foregroundColor: UIColor.init(red: 150, green: 150, blue: 150, alpha: 1)])
+		clusterNameTextField.attributedPlaceholder = NSAttributedString(string: Text.Players.namePlaceHolder, attributes: [NSAttributedStringKey.foregroundColor: UIColor.placeholderColor])
 		clusterNameTextField.text = cluster?.title
 		
 		collectionView.register(UINib(nibName: Cells.sheetCollectionCell, bundle: nil), forCellWithReuseIdentifier: Cells.sheetCollectionCell)
@@ -288,10 +291,20 @@ class PlayersIphoneController: UIViewController, UICollectionViewDelegate, UICol
 				subview.removeFromSuperview()
 			}
 			
-			if let sheet = sheet as? SheetTitleImageEntity {
-				let view = SheetTitleImage.createSheetTitleImageWith(frame: collectionCell.bounds, sheet: sheet, tag: sheet.hasTag)
-				collectionCell.previewView.addSubview(view)
+			var view = UIView()
+			switch sheet.type {
+			case .SheetTitleContent:
+				view = SheetTitleContent.createWith(frame: collectionCell.bounds, title: sheet.title, sheet: sheet as? SheetTitleContentEntity, tag: sheet.hasTag)
+			case .SheetTitleImage:
+				view = SheetTitleImage.createWith(frame: collectionCell.bounds, sheet: sheet as! SheetTitleImageEntity, tag: sheet.hasTag)
+			case .SheetSplit:
+				view = SheetSplit.createWith(frame: collectionCell.bounds, sheet: sheet as! SheetSplitEntity, tag: sheet.hasTag)
+			case .SheetEmpty:
+				break
 			}
+			
+			collectionCell.previewView.addSubview(view)
+			
 		}
 	}
 	

@@ -12,6 +12,7 @@ import CoreData
 
 let CoreTag = CoreDataManager(nsManagedObject: Tag())
 let CoreSheet = CoreDataManager(nsManagedObject: Sheet())
+let CoreSheetSplit = CoreDataManager(nsManagedObject: SheetSplitEntity())
 let CoreSheetTitleContent = CoreDataManager(nsManagedObject: SheetTitleContentEntity())
 let CoreSheetTitleImage = CoreDataManager(nsManagedObject: SheetTitleImageEntity())
 let CoreSheetEmptySheet = CoreDataManager(nsManagedObject: SheetEmptyEntity())

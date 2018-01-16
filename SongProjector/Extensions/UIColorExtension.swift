@@ -21,7 +21,7 @@ extension UIColor {
 	static let barColor = UIColor.darkGray
 	static let bulletColor = UIColor.red
 	static let seperatorColor = UIColor.lightGray
-	static let placeholderColor = UIColor.lightGray
+	static let placeholderColor = UIColor.init(red: 150, green: 150, blue: 150, alpha: 1)
 	
 	static let textColorNormal = UIColor.white
 	

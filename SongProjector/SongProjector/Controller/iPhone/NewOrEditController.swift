@@ -1,5 +1,5 @@
 //
-//  NewSheetSplit.swift
+//  NewOrEditController.swift
 //  SongProjector
 //
 //  Created by Leo van der Zee on 15-01-18.
@@ -9,11 +9,12 @@
 import UIKit
 import ChromaColorPicker
 
-protocol NewSheetSplitDelegate {
+protocol NewEditAllController {
 	func didCreate(sheet: SheetSplitEntity)
 }
 
-class NewSheetSplit: UIViewController, UITableViewDelegate, UITableViewDataSource, LabelTextFieldCellDelegate, LabelPickerCellDelegate, LabelDoubleSwitchDelegate, LabelNumerCellDelegate, LabelColorPickerCellDelegate, LabelSwitchCellDelegate, LabelPhotoPickerCellDelegate {
+class NewOrEditController: UIViewController, UITableViewDelegate, UITableViewDataSource, LabelTextFieldCellDelegate, LabelTextViewDelegate, LabelPickerCellDelegate, LabelDoubleSwitchDelegate, LabelNumerCellDelegate, LabelColorPickerCellDelegate, LabelSwitchCellDelegate, LabelPhotoPickerCellDelegate {
+	
 	
 	@IBOutlet var cancel: UIBarButtonItem!
 	@IBOutlet var save: UIBarButtonItem!
@@ -22,6 +23,9 @@ class NewSheetSplit: UIViewController, UITableViewDelegate, UITableViewDataSourc
 	@IBOutlet var sheetContainerView: UIView!
 	@IBOutlet var sheetContainerViewHeightConstraint: NSLayoutConstraint!
 	@IBOutlet var previewViewRatioConstraint: NSLayoutConstraint!
+	
+	
+	var sheetType: SheetType?
 	
 	// MARK: - Types
 	
@@ -33,24 +37,55 @@ class NewSheetSplit: UIViewController, UITableViewDelegate, UITableViewDataSourc
 		
 		static let all = [general, title, content, image]
 		
-		static func `for`(_ section: Int) -> Section {
-			return all[section]
+		static let titleContent = [general, title, content]
+		static let titleImage = [general, title, content, image]
+		static let splitSheet = [general, title, content]
+		static let emptySheet = [general]
+		
+		static func `for`(_ section: Int, type: SheetType) -> Section {
+			switch type {
+			case .SheetTitleContent:
+				return titleContent[section]
+			case .SheetTitleImage:
+				return titleImage[section]
+			case .SheetSplit:
+				return splitSheet[section]
+			case .SheetEmpty:
+				return emptySheet[section]
+			}
 		}
 	}
 	
 	enum CellGeneral: String {
 		case name
 		case content
+		case textLeft
+		case textRight
 		case asTag
-		//		case emptySheet
-		//		case allHaveTitle
+		case hasEmptySheet
+		case allHaveTitle
 		case backgroundColor
 		case backgroundImage
 		
-		static let all = [name, content, asTag, backgroundColor, backgroundImage]
+		static let all = [name, content, textLeft, textRight, asTag, hasEmptySheet, allHaveTitle, backgroundColor, backgroundImage]
 		
-		static func `for`(_ indexPath: IndexPath) -> CellGeneral {
-			return all[indexPath.row]
+		static let tag = [name, asTag, hasEmptySheet, allHaveTitle, backgroundColor, backgroundImage]
+		static let titleContent = [name, content, asTag, hasEmptySheet, allHaveTitle, backgroundColor, backgroundImage]
+		static let titleImage = [name, content, asTag, backgroundColor, backgroundImage]
+		static let sheetSplit = [name, textLeft, textRight, asTag, hasEmptySheet, allHaveTitle, backgroundColor, backgroundImage]
+		static let sheetEmpty = [name, hasEmptySheet, backgroundColor, backgroundImage]
+		
+		static func `for`(_ indexPath: IndexPath, type: SheetType) -> CellGeneral {
+			switch type {
+			case .SheetTitleContent:
+				return titleContent[indexPath.row]
+			case .SheetTitleImage:
+				return titleImage[indexPath.row]
+			case .SheetSplit:
+				return sheetSplit[indexPath.row]
+			case .SheetEmpty:
+				return sheetEmpty[indexPath.row]
+			}
 		}
 	}
 	
@@ -68,8 +103,26 @@ class NewSheetSplit: UIViewController, UITableViewDelegate, UITableViewDataSourc
 		
 		static let all = [fontFamily, fontSize, backgroundColor, alignment, borderSize, textColor, borderColor, bold, italic, underlined]
 		
+		static let titleContent = [fontFamily, fontSize, backgroundColor, alignment, borderSize, textColor, borderColor, bold, italic, underlined]
+		static let titleImage = [fontFamily, fontSize, backgroundColor, alignment, borderSize, textColor, borderColor, bold, italic, underlined]
+		static let sheetSplit = [fontFamily, fontSize, backgroundColor, alignment, borderSize, textColor, borderColor, bold, italic, underlined]
+		static let sheetEmpty: [CellTitle] = []
+		
 		static func `for`(_ indexPath: IndexPath) -> CellTitle {
 			return all[indexPath.row]
+		}
+		
+		static func `for`(_ indexPath: IndexPath, type: SheetType) -> CellTitle? {
+			switch type {
+			case .SheetTitleContent:
+				return titleContent[indexPath.row]
+			case .SheetTitleImage:
+				return titleImage[indexPath.row]
+			case .SheetSplit:
+				return sheetSplit[indexPath.row]
+			default:
+				return nil
+			}
 		}
 	}
 	
@@ -86,8 +139,22 @@ class NewSheetSplit: UIViewController, UITableViewDelegate, UITableViewDataSourc
 		
 		static let all = [fontFamily, fontSize, alignment, borderSize, textColor, borderColor, bold, italic, underlined]
 		
-		static func `for`(_ indexPath: IndexPath) -> CellLyrics {
-			return all[indexPath.row]
+		static let titleContentContent = [fontFamily, fontSize, alignment, borderSize, textColor, borderColor, bold, italic, underlined]
+		static let titleImage = [fontFamily, fontSize, alignment, borderSize, textColor, borderColor, bold, italic, underlined]
+		static let sheetSplit = [fontFamily, fontSize, alignment, borderSize, textColor, borderColor, bold, italic, underlined]
+		static let sheetEmpty: [CellLyrics] = []
+		
+		static func `for`(_ indexPath: IndexPath, type: SheetType) -> CellLyrics? {
+			switch  type{
+			case .SheetTitleContent:
+				return titleContentContent[indexPath.row]
+			case .SheetTitleImage:
+				return titleImage[indexPath.row]
+			case .SheetSplit:
+				return sheetSplit[indexPath.row]
+			default:
+				return nil
+			}
 		}
 	}
 	
@@ -103,19 +170,28 @@ class NewSheetSplit: UIViewController, UITableViewDelegate, UITableViewDataSourc
 		static func `for`(_ indexPath: IndexPath) -> CellImage {
 			return all[indexPath.row]
 		}
+		
+		static func `for`(_ indexPath: IndexPath, type: SheetType) -> CellImage? {
+			if type == .SheetTitleImage {
+				return all[indexPath.row]
+			} else {
+				return nil
+			}
+		}
 	}
 	
 	// MARK: - Properties
 	// MARK: General Cells
 	
 	private let cellName = LabelTextFieldCell.create(id: "cellName", description: Text.NewSheetTitleImage.descriptionTitle, placeholder: Text.NewTag.descriptionTitlePlaceholder)
-	private let cellContent = LabelTextFieldCell.create(id: "cellContent", description: Text.NewSheetTitleImage.descriptionContent, placeholder: Text.NewSheetTitleImage.placeholderContent)
+	private let cellContent = LabelTextView.create(id: "cellContent", description: Text.NewSheetTitleImage.descriptionContent, placeholder: Text.NewSheetTitleImage.placeholderContent)
+	private var cellTextLeft = LabelTextView.create(id: "cellTextLeft", description: Text.NewSheetTitleImage.descriptionTextLeft, placeholder: Text.NewSheetTitleImage.descriptionTextLeft)
+	private var cellTextRight = LabelTextView.create(id: "cellTextRight", description: Text.NewSheetTitleImage.descriptionTextRight, placeholder: Text.NewSheetTitleImage.descriptionTextRight)
 	private var  cellAsTag = LabelPickerCell()
 	private var  cellPhotoPickerBackground = LabelPhotoPickerCell()
 	private var  cellBackgroundColor = LabelColorPickerCell.create(id: "cellBackgroundColor", description: Text.NewTag.descriptionBackgroundColor)
-	//	private var  cellHasEmptySheet = LabelDoubleSwitchCell.create(id: "cellHasEmptySheet", descriptionSwitchOne: Text.NewTag.descriptionHasEmptySheet, descriptionSwitchTwo: Text.NewTag.descriptionPositionEmptySheet)
-	//	private let cellAllHaveTitlle = LabelSwitchCell.create(id: "cellAllHaveTitle", description: Text.NewTag.descriptionAllTitle, initialValueIsOn: false)
-	
+	private var  cellHasEmptySheet = LabelDoubleSwitchCell.create(id: "cellHasEmptySheet", descriptionSwitchOne: Text.NewTag.descriptionHasEmptySheet, descriptionSwitchTwo: Text.NewTag.descriptionPositionEmptySheet)
+	private let cellAllHaveTitlle = LabelSwitchCell.create(id: "cellAllHaveTitle", description: Text.NewTag.descriptionAllTitle, initialValueIsOn: false)
 	
 	
 	// MARK: Title Cells
@@ -150,9 +226,12 @@ class NewSheetSplit: UIViewController, UITableViewDelegate, UITableViewDataSourc
 	private let cellImageBorderColor = LabelColorPickerCell.create(id: "cellImageBorderColor", description: Text.NewSheetTitleImage.descriptionImageBorderColor)
 	private var  cellImageContentMode = LabelPickerCell()
 	
+	
 	var editExtistingSheet = false
+	var newTagMode = editTagMode // if saved pressed, don't save sheet
+	var editTagMode = false // if cancel pressed, don't delete tag
 	var tag: Tag!
-	var sheet: SheetTitleImageEntity!
+	var sheet: Sheet!
 	var delegate: NewSheetTitleImageDelegate?
 	private var isSetup = true
 	private var titleAttributes: [NSAttributedStringKey : Any] = [:]
@@ -163,14 +242,11 @@ class NewSheetSplit: UIViewController, UITableViewDelegate, UITableViewDataSourc
 	// MARK: - Functions
 	
 	// MARK: UIViewController functions
-	
+
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		
 		setup()
 	}
-	
-	
 	
 	// MARK: UITableview functions
 	
@@ -179,9 +255,9 @@ class NewSheetSplit: UIViewController, UITableViewDelegate, UITableViewDataSourc
 	}
 	
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		switch Section.for(section) {
+		switch Section.for(section, type: sheet.type) {
 		case .general:
-			return CellGeneral.all.count
+			return newTagMode ? CellGeneral.tag.count : CellGeneral.all.count
 		case .title:
 			return CellTitle.all.count
 		case .content:
@@ -192,7 +268,7 @@ class NewSheetSplit: UIViewController, UITableViewDelegate, UITableViewDataSourc
 	}
 	
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		switch Section.for(indexPath.section) {
+		switch Section.for(indexPath.section, type: sheet.type) {
 		case .general: return getGeneralCellFor(indexPath: indexPath)
 		case .title: return getTitleCellFor(indexPath: indexPath)
 		case .content: return getLyricsCellFor(indexPath: indexPath)
@@ -201,9 +277,9 @@ class NewSheetSplit: UIViewController, UITableViewDelegate, UITableViewDataSourc
 	}
 	
 	func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-		switch Section.for(indexPath.section) {
+		switch Section.for(indexPath.section, type: sheet.type) {
 		case .general:
-			switch CellGeneral.for(indexPath) {
+			switch CellGeneral.for(indexPath, type: sheet.type) {
 			case .asTag : return cellAsTag.preferredHeight
 			case .backgroundColor: return cellBackgroundColor.preferredHeight
 			case .backgroundImage: return cellPhotoPickerBackground.preferredHeight
@@ -211,35 +287,35 @@ class NewSheetSplit: UIViewController, UITableViewDelegate, UITableViewDataSourc
 				return 60
 			}
 		case .title:
-			switch CellTitle.for(indexPath) {
-			case .fontFamily: return cellTitleFontFamily.preferredHeight
-			case .fontSize: return cellTitleFontSize.preferredHeight
-			case .alignment: return cellTitleAlignment.preferredHeight
-			case .textColor: return cellTitleTextColor.preferredHeight
-			case .backgroundColor: return cellTitleBackgroundColor.preferredHeight
-			case .borderSize: return cellTitleBorderSize.preferredHeight
-			case .borderColor: return cellTitleBorderColor.preferredHeight
-			default:
-				return 60
+			switch CellTitle.for(indexPath, type: sheet.type) {
+			case .some(.fontFamily): return cellTitleFontFamily.preferredHeight
+			case .some(.fontSize): return cellTitleFontSize.preferredHeight
+			case .some(.alignment): return cellTitleAlignment.preferredHeight
+			case .some(.textColor): return cellTitleTextColor.preferredHeight
+			case .some(.backgroundColor): return cellTitleBackgroundColor.preferredHeight
+			case .some(.borderSize): return cellTitleBorderSize.preferredHeight
+			case .some(.borderColor): return cellTitleBorderColor.preferredHeight
+			case .none: return 60
+			default: return 60
 			}
 		case .content:
-			switch CellLyrics.for(indexPath) {
-			case .fontFamily: return cellLyricsFontFamily.preferredHeight
-			case .fontSize: return cellLyricsFontSize.preferredHeight
-			case .alignment: return cellLyricslAlignment.preferredHeight
-			case .textColor: return cellLyricsTextColor.preferredHeight
-			case .borderSize: return cellLyricsBorderSize.preferredHeight
-			case .borderColor: return cellLyricsBorderColor.preferredHeight
-			default:
-				return 60
+			switch CellLyrics.for(indexPath, type: sheet.type) {
+			case .some(.fontFamily): return cellLyricsFontFamily.preferredHeight
+			case .some(.fontSize): return cellLyricsFontSize.preferredHeight
+			case .some(.alignment): return cellLyricslAlignment.preferredHeight
+			case .some(.textColor): return cellLyricsTextColor.preferredHeight
+			case .some(.borderSize): return cellLyricsBorderSize.preferredHeight
+			case .some(.borderColor): return cellLyricsBorderColor.preferredHeight
+			case .none: return 60
+			default: return 60
 			}
 		case .image:
-			switch CellImage.for(indexPath) {
-			case .image: return cellImagePicker.preferredHeight
-			case .borderColor: return cellImageBorderColor.preferredHeight
-			case .contentMode: return cellImageContentMode.preferredHeight
-			default:
-				return 60
+			switch CellImage.for(indexPath, type: sheet.type) {
+			case .some(.image): return cellImagePicker.preferredHeight
+			case .some(.borderColor): return cellImageBorderColor.preferredHeight
+			case .some(.contentMode): return cellImageContentMode.preferredHeight
+			case .none: return 60
+			default: return 60
 			}
 		}
 	}
@@ -255,7 +331,7 @@ class NewSheetSplit: UIViewController, UITableViewDelegate, UITableViewDataSourc
 	func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
 		let frame = CGRect(x: 0, y: 0, width: tableView.bounds.size.width, height: 60)
 		let view = HeaderView(frame: frame)
-		switch Section.for(section) {
+		switch Section.for(section, type: sheet.type) {
 		case .general:
 			view.descriptionLabel.text = Text.NewTag.sectionGeneral.uppercased()
 		case .title:
@@ -269,9 +345,9 @@ class NewSheetSplit: UIViewController, UITableViewDelegate, UITableViewDataSourc
 	}
 	
 	func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
-		switch Section.for(indexPath.section) {
+		switch Section.for(indexPath.section, type: sheet.type) {
 		case .general:
-			switch CellGeneral.for(indexPath) {
+			switch CellGeneral.for(indexPath, type: sheet.type) {
 			case .backgroundColor:
 				return cellBackgroundColor.isActive ? .none : .delete
 			case .asTag:
@@ -282,106 +358,76 @@ class NewSheetSplit: UIViewController, UITableViewDelegate, UITableViewDataSourc
 				return .none
 			}
 		case .title:
-			switch CellTitle.for(indexPath) {
-			case .fontFamily:
-				return cellTitleFontFamily.isActive ? .none: .delete
-			case .backgroundColor:
-				return cellTitleBackgroundColor.isActive ? .none : .delete
-			case .textColor:
-				return cellTitleTextColor.isActive ? .none : .delete
-			case .borderColor:
-				return cellTitleBorderColor.isActive ? .none : .delete
-			default:
-				return .none
+			switch CellTitle.for(indexPath, type: sheet.type) {
+			case .some(.fontFamily): return cellTitleFontFamily.isActive ? .none: .delete
+			case .some(.backgroundColor): return cellTitleBackgroundColor.isActive ? .none : .delete
+			case .some(.textColor): return cellTitleTextColor.isActive ? .none : .delete
+			case .some(.borderColor): return cellTitleBorderColor.isActive ? .none : .delete
+			default: return .none
 			}
 		case .content:
-			switch CellLyrics.for(indexPath) {
-			case .fontFamily:
-				return cellLyricsFontFamily.isActive ? .none : .delete
-			case .textColor:
-				return cellLyricsTextColor.isActive ? .none : .delete
-			case .borderColor:
-				return cellLyricsBorderColor.isActive ? .none : .delete
-			default:
-				return .none
+			switch CellLyrics.for(indexPath, type: sheet.type) {
+			case .some(.fontFamily): return cellLyricsFontFamily.isActive ? .none : .delete
+			case .some(.textColor): return cellLyricsTextColor.isActive ? .none : .delete
+			case .some(.borderColor): return cellLyricsBorderColor.isActive ? .none : .delete
+			default: return .none
 			}
 		case .image:
-			switch CellImage.for(indexPath) {
-			case .image:
-				return cellImagePicker.isActive ? .none : .delete
-			case .borderColor:
-				return cellImageBorderColor.isActive ? .none : .delete
-			case .contentMode:
-				return cellImageContentMode.isActive ? .none : .delete
-			default:
-				return .none
+			switch CellImage.for(indexPath, type: sheet.type) {
+			case .some(.image): return cellImagePicker.isActive ? .none : .delete
+			case .some(.borderColor): return cellImageBorderColor.isActive ? .none : .delete
+			case .some(.contentMode): return cellImageContentMode.isActive ? .none : .delete
+			default: return .none
 			}
 		}
 	}
 	
 	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
 		if editingStyle == .delete {
-			switch Section.for(indexPath.section) {
+			switch Section.for(indexPath.section, type: sheet.type) {
 			case .general:
-				switch CellGeneral.for(indexPath) {
-				case .asTag:
-					cellAsTag.setValue(value: nil, id: nil)
-				case .backgroundColor:
-					cellBackgroundColor.setColor(color: nil)
-				case .backgroundImage:
-					cellPhotoPickerBackground.setImage(image: nil)
+				switch CellGeneral.for(indexPath, type: sheet.type) {
+				case .asTag: cellAsTag.setValue(value: nil, id: nil)
+				case .backgroundColor: cellBackgroundColor.setColor(color: nil)
+				case .backgroundImage: cellPhotoPickerBackground.setImage(image: nil)
 					if let path = tag.imagePath {
 						let _ = deleteImageFor(path: path)
 					}
-				default:
-					break
+				default: break
 				}
 			case .title:
-				switch CellTitle.for(indexPath) {
-				case .fontFamily:
-					cellTitleFontFamily.setValue(value: nil, id: nil)
-				case .backgroundColor:
-					cellTitleBackgroundColor.setColor(color: nil)
-				case .textColor:
-					cellTitleTextColor.setColor(color: nil)
-				case .borderColor:
-					cellTitleBorderColor.setColor(color: nil)
-				default:
-					break
+				switch CellTitle.for(indexPath, type: sheet.type) {
+				case .some(.fontFamily): cellTitleFontFamily.setValue(value: nil, id: nil)
+				case .some(.backgroundColor): cellTitleBackgroundColor.setColor(color: nil)
+				case .some(.textColor): cellTitleTextColor.setColor(color: nil)
+				case .some(.borderColor): cellTitleBorderColor.setColor(color: nil)
+				default: break
 				}
 			case .content:
-				switch CellLyrics.for(indexPath) {
-				case .fontFamily:
-					cellLyricsFontFamily.setValue(value: nil, id: nil)
-				case .textColor:
-					cellLyricsTextColor.setColor(color: nil)
-				case .borderColor:
-					cellLyricsBorderColor.setColor(color: nil)
-				default:
-					break
+				switch CellLyrics.for(indexPath, type: sheet.type) {
+				case .some(.fontFamily): cellLyricsFontFamily.setValue(value: nil, id: nil)
+				case .some(.textColor): cellLyricsTextColor.setColor(color: nil)
+				case .some(.borderColor): cellLyricsBorderColor.setColor(color: nil)
+				default: break
 				}
 			case .image:
-				switch CellImage.for(indexPath) {
-				case .image:
-					cellImagePicker.setImage(image: nil)
-					if let path = sheet.imagePath {
+				switch CellImage.for(indexPath, type: sheet.type) {
+				case .some(.image): cellImagePicker.setImage(image: nil)
+					if let sheet = sheet as? SheetTitleImageEntity, let path = sheet.imagePath {
 						let _ = deleteImageFor(path: path)
 					}
-				case .borderColor:
-					cellImageBorderColor.setColor(color: nil)
-				case .contentMode:
-					cellImageContentMode.setValue(value: nil, id: nil)
-				default:
-					break
+				case .some(.borderColor): cellImageBorderColor.setColor(color: nil)
+				case .some(.contentMode): cellImageContentMode.setValue(value: nil, id: nil)
+				default: break
 				}
 			}
 		}
 	}
 	
 	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		switch Section.for(indexPath.section) {
+		switch Section.for(indexPath.section, type: sheet.type) {
 		case .general:
-			switch CellGeneral.for(indexPath) {
+			switch CellGeneral.for(indexPath, type: sheet.type) {
 			case .asTag:
 				let cell = cellAsTag
 				cell.isActive = !cell.isActive
@@ -398,24 +444,24 @@ class NewSheetSplit: UIViewController, UITableViewDelegate, UITableViewDataSourc
 				break
 			}
 		case .title:
-			switch CellTitle.for(indexPath) {
-			case .fontFamily:
+			switch CellTitle.for(indexPath, type: sheet.type) {
+			case .some(.fontFamily):
 				let cell = cellTitleFontFamily
 				cell.isActive = !cell.isActive
 				reloadDataWithScrollTo(cell)
-			case .alignment:
+			case .some(.alignment):
 				let cell = cellTitleAlignment
 				cell.isActive = !cell.isActive
 				reloadDataWithScrollTo(cell)
-			case .textColor:
+			case .some(.textColor):
 				let cell = cellTitleTextColor
 				cell.isActive = !cell.isActive
 				reloadDataWithScrollTo(cell)
-			case .backgroundColor:
+			case .some(.backgroundColor):
 				let cell = cellTitleBackgroundColor
 				cell.isActive = !cell.isActive
 				reloadDataWithScrollTo(cell)
-			case .borderColor:
+			case .some(.borderColor):
 				let cell = cellTitleBorderColor
 				cell.isActive = !cell.isActive
 				reloadDataWithScrollTo(cell)
@@ -423,20 +469,20 @@ class NewSheetSplit: UIViewController, UITableViewDelegate, UITableViewDataSourc
 				break
 			}
 		case .content:
-			switch CellLyrics.for(indexPath) {
-			case .fontFamily:
+			switch CellLyrics.for(indexPath, type: sheet.type) {
+			case .some(.fontFamily):
 				let cell = cellLyricsFontFamily
 				cell.isActive = !cell.isActive
 				reloadDataWithScrollTo(cell)
-			case .alignment:
+			case .some(.alignment):
 				let cell = cellLyricslAlignment
 				cell.isActive = !cell.isActive
 				reloadDataWithScrollTo(cell)
-			case .textColor:
+			case .some(.textColor):
 				let cell = cellLyricsTextColor
 				cell.isActive = !cell.isActive
 				reloadDataWithScrollTo(cell)
-			case .borderColor:
+			case .some(.borderColor):
 				let cell = cellLyricsBorderColor
 				cell.isActive = !cell.isActive
 				reloadDataWithScrollTo(cell)
@@ -444,16 +490,16 @@ class NewSheetSplit: UIViewController, UITableViewDelegate, UITableViewDataSourc
 				break
 			}
 		case .image:
-			switch CellImage.for(indexPath) {
-			case .image:
+			switch CellImage.for(indexPath, type: sheet.type) {
+			case .some(.image):
 				let cell = cellImagePicker
 				cell.isActive = !cell.isActive
 				reloadDataWithScrollTo(cell)
-			case .borderColor:
+			case .some(.borderColor):
 				let cell = cellImageBorderColor
 				cell.isActive = !cell.isActive
 				reloadDataWithScrollTo(cell)
-			case .contentMode:
+			case .some(.contentMode):
 				let cell = cellImageContentMode
 				cell.isActive = !cell.isActive
 				reloadDataWithScrollTo(cell)
@@ -470,10 +516,26 @@ class NewSheetSplit: UIViewController, UITableViewDelegate, UITableViewDataSourc
 		if cell.id == "cellName" {
 			sheet.title = text
 		}
-		if cell.id == "cellContent" {
-			sheet.content = text
+		buildPreview(isSetup: isSetup)
+	}
+	
+	func textViewDidChange(cell: LabelTextView, textView: UITextView) {
+		if cell.id == "cellContent", let sheet = sheet as? SheetTitleImageEntity {
+			sheet.content = textView.text
+		} else if cell.id == "cellTextLeft", let sheet = sheet as? SheetSplitEntity {
+			sheet.textLeft = textView.text
+		} else if cell.id == "cellTextRight",  let sheet = sheet as? SheetSplitEntity {
+			sheet.textRight = textView.text
 		}
 		buildPreview(isSetup: isSetup)
+	}
+	
+	func textViewDidResign(cell: LabelTextView, textView: UITextView) {
+		if !isSetup {
+			cell.isActive = !cell.isActive
+		}
+		tableView.beginUpdates()
+		tableView.endUpdates()
 	}
 	
 	func didSelect(item: (Int64, String), cell: LabelPickerCell) {
@@ -543,7 +605,7 @@ class NewSheetSplit: UIViewController, UITableViewDelegate, UITableViewDataSourc
 				cell.isActive = !cell.isActive
 			}
 		}
-		if cell.id == "cellImageContentMode" {
+		if cell.id == "cellImageContentMode", let sheet = sheet as? SheetTitleImageEntity {
 			sheet.imageContentMode = Int16(item.0)
 		}
 		buildPreview(isSetup: isSetup)
@@ -579,7 +641,7 @@ class NewSheetSplit: UIViewController, UITableViewDelegate, UITableViewDataSourc
 		if cell.id == "cellLyricsBorderSize" {
 			lyricsAttributes[.strokeWidth] = cell.value
 		}
-		if cell.id == "cellImageBorderSize" {
+		if cell.id == "cellImageBorderSize", let sheet = sheet as? SheetTitleImageEntity {
 			sheet.imageBorderSize = Int16(cell.value)
 		}
 		buildPreview(isSetup: isSetup)
@@ -633,7 +695,7 @@ class NewSheetSplit: UIViewController, UITableViewDelegate, UITableViewDataSourc
 			}
 		}
 		
-		if cell.id == "cellImageBorderColor" {
+		if cell.id == "cellImageBorderColor", let sheet = sheet as? SheetTitleImageEntity {
 			if let color = color {
 				sheet.imageBorderColor = color.hexCode
 			}
@@ -705,12 +767,14 @@ class NewSheetSplit: UIViewController, UITableViewDelegate, UITableViewDataSourc
 		
 		switch cell.id {
 		case "cellImageHasBorder":
-			sheet.imageHasBorder = uiSwitch.isOn
-			
-			if !uiSwitch.isOn {
+			if let sheet = sheet as? SheetTitleImageEntity {
 				sheet.imageHasBorder = uiSwitch.isOn
-				cellImageBorderSize.setValue(value: 0)
-				cellImageBorderColor.setColor(color: nil)
+				
+				if !uiSwitch.isOn {
+					sheet.imageHasBorder = uiSwitch.isOn
+					cellImageBorderSize.setValue(value: 0)
+					cellImageBorderColor.setColor(color: nil)
+				}
 			}
 		default:
 			break
@@ -731,7 +795,7 @@ class NewSheetSplit: UIViewController, UITableViewDelegate, UITableViewDataSourc
 			tableView.reloadData()
 			buildPreview(isSetup: isSetup)
 		}
-		if cell.id == "cellImagePicker" {
+		if cell.id == "cellImagePicker", let sheet = sheet as? SheetTitleImageEntity {
 			if !isSetup {
 				cell.isActive = !cell.isActive
 			}
@@ -770,7 +834,6 @@ class NewSheetSplit: UIViewController, UITableViewDelegate, UITableViewDataSourc
 		tableView.register(cell: Cells.LabelPhotoPickerCell)
 		
 		// create cells
-		
 		let fontFamilyValues = UIFont.familyNames.map{ (Int64(0), $0) }.sorted { $0.1 < $1.1 }
 		cellTitleFontFamily = LabelPickerCell.create(id: "cellTitleFontFamily", description: Text.NewTag.fontFamilyDescription, initialValueName: "Avenir", pickerValues: fontFamilyValues)
 		cellLyricsFontFamily = LabelPickerCell.create(id: "cellLyricsFontFamily", description: Text.NewTag.fontFamilyDescription, initialValueName: "Avenir", pickerValues: fontFamilyValues)
@@ -792,11 +855,12 @@ class NewSheetSplit: UIViewController, UITableViewDelegate, UITableViewDataSourc
 		
 		// set delegates
 		
+		cellName.setup()
+		cellName.delegate = self
 		cellAsTag.delegate = self
 		cellContent.delegate = self
-		cellName.setup()
-		cellContent.setup()
-		cellName.delegate = self
+		cellTextLeft.delegate = self
+		cellTextRight.delegate = self
 		cellPhotoPickerBackground.delegate = self
 		cellBackgroundColor.delegate = self
 		
@@ -875,39 +939,44 @@ class NewSheetSplit: UIViewController, UITableViewDelegate, UITableViewDataSourc
 	}
 	
 	private func getLyricsCellFor(indexPath: IndexPath) -> UITableViewCell {
-		switch CellLyrics.for(indexPath) {
-		case .fontFamily: return cellLyricsFontFamily
-		case .fontSize: return cellLyricsFontSize
-		case .alignment: return cellLyricslAlignment
-		case .textColor: return cellLyricsTextColor
-		case .borderSize: return cellLyricsBorderSize
-		case .borderColor: return cellLyricsBorderColor
-		case .bold: return cellLyricsBold
-		case .italic: return cellLyricsItalic
-		case .underlined: return cellLyricsUnderLined
+		switch CellLyrics.for(indexPath, type: sheet.type) {
+		case .some(.fontFamily): return cellLyricsFontFamily
+		case .some(.fontSize): return cellLyricsFontSize
+		case .some(.alignment): return cellLyricslAlignment
+		case .some(.textColor): return cellLyricsTextColor
+		case .some(.borderSize): return cellLyricsBorderSize
+		case .some(.borderColor): return cellLyricsBorderColor
+		case .some(.bold): return cellLyricsBold
+		case .some(.italic): return cellLyricsItalic
+		case .some(.underlined): return cellLyricsUnderLined
+		case .none: return UITableViewCell()
 		}
 	}
 	
 	private func getGeneralCellFor(indexPath: IndexPath) -> UITableViewCell {
-		switch CellGeneral.for(indexPath) {
+		switch CellGeneral.for(indexPath, type: sheet.type) {
 		case .name: return cellName
 		case .content: return cellContent
+		case .textLeft: return cellTextLeft
+		case .textRight: return cellTextRight
 		case .asTag: return cellAsTag
+		case .hasEmptySheet: return cellHasEmptySheet
+		case .allHaveTitle: return cellAllHaveTitlle
 		case .backgroundColor: return cellBackgroundColor
 		case .backgroundImage: return cellPhotoPickerBackground
 		}
 	}
 	
 	private func getImageCellFor(indexPath: IndexPath) -> UITableViewCell {
-		switch CellImage.for(indexPath) {
-		case .image: return cellImagePicker
-		case .hasBorder: return cellImageHasBorder
-		case .borderSize: return cellImageBorderSize
-		case .borderColor: return cellImageBorderColor
-		case .contentMode: return cellImageContentMode
+		switch CellImage.for(indexPath, type: sheet.type) {
+		case .some(.image): return cellImagePicker
+		case .some(.hasBorder): return cellImageHasBorder
+		case .some(.borderSize): return cellImageBorderSize
+		case .some(.borderColor): return cellImageBorderColor
+		case .some(.contentMode): return cellImageContentMode
+		case .none: return UITableViewCell()
 		}
 	}
-	
 	
 	private func loadTagAttributes(_ tag: Tag) {
 		isSetup = true
@@ -947,45 +1016,83 @@ class NewSheetSplit: UIViewController, UITableViewDelegate, UITableViewDataSourc
 	private func loadSheetAttributes() {
 		isSetup = true
 		
+		// GENERAL ATTRIBUTES
 		cellName.setName(name: sheet.title ?? "")
-		cellContent.setName(name: sheet.content ?? "")
-		cellImagePicker.setImage(image: sheet.image)
-		cellImageHasBorder.setSwitchValueTo(value: sheet.imageHasBorder)
-		cellImageBorderSize.setValue(value: Int(sheet.imageBorderSize))
-		if let color = sheet.imageBorderColor {
-			cellImageBorderColor.setColor(color: UIColor(hex: color))
+
+		
+		switch sheet.type {
+		case .SheetTitleContent:
+			if let sheet = sheet as? SheetTitleContentEntity {
+				cellContent.set(text: sheet.lyrics)
+			}
+		case .SheetTitleImage:
+			if let sheet = sheet as? SheetTitleImageEntity {
+				cellContent.set(text: sheet.content)
+				cellImagePicker.setImage(image: sheet.image)
+				cellImageHasBorder.setSwitchValueTo(value: sheet.imageHasBorder)
+				cellImageBorderSize.setValue(value: Int(sheet.imageBorderSize))
+				if let color = sheet.imageBorderColor {
+					cellImageBorderColor.setColor(color: UIColor(hex: color))
+				}
+				cellImageContentMode.setValue(value: nil, id: sheet.imageContentMode)
+			}
+		case .SheetSplit:
+			if let sheet = sheet as? SheetSplitEntity {
+				cellTextLeft.set(text: sheet.textLeft)
+				cellTextRight.set(text: sheet.textRight)
+			}
+		default:
+			break
 		}
-		cellImageContentMode.setValue(value: nil, id: sheet.imageContentMode)
 		isSetup = false
 	}
 	
 	private func buildPreview(isSetup: Bool) {
 		if !isSetup {
-			if let externalDisplayWindow = externalDisplayWindow {
-				
-				for subview in previewView.subviews {
-					subview.removeFromSuperview()
-				}
-				
-				generateTag()
-				
-				let view = SheetTitleImage.createSheetTitleImageWith(frame: previewView.frame, sheet: sheet, tag: tag)
-				
-				previewView.addSubview(view)
-				let beamerView = SheetTitleImage.createSheetTitleImageWith(frame: externalDisplayWindow.frame, sheet: self.sheet, tag: self.tag, scaleFactor: externalDisplayWindowWidth / self.previewView.bounds.width)
-				externalDisplayWindow.addSubview(beamerView)
-				
-			} else {
-				
-				for subview in previewView.subviews {
-					subview.removeFromSuperview()
-				}
-				
-				generateTag()
-				let view = SheetTitleImage.createSheetTitleImageWith(frame: previewView.bounds, sheet: sheet, tag: tag)
-				previewView.addSubview(view)
-				
+			
+			for subview in previewView.subviews {
+				subview.removeFromSuperview()
 			}
+			
+			generateTag()
+
+			var newPreviewView = UIView()
+			
+			switch sheet.type {
+			case .SheetTitleContent:
+				if let sheet = sheet as? SheetTitleContentEntity {
+					newPreviewView = SheetTitleContent.createWith(frame: previewView.frame, title: sheet.title, sheet: sheet, tag: tag)
+					if externalDisplayWindow != nil {
+						_ = SheetTitleContent.createWith(frame: previewView.frame, title: sheet.title, sheet: sheet, tag: tag, scaleFactor: externalDisplayWindowWidth / previewView.frame.width).toExternalDisplay()
+					}
+				}
+			case .SheetTitleImage:
+				if let sheet = sheet as? SheetTitleImageEntity {
+					newPreviewView = SheetTitleImage.createWith(frame: previewView.frame, sheet: sheet, tag: tag)
+					if externalDisplayWindow != nil {
+						_ = SheetTitleImage.createWith(frame: previewView.frame, sheet: sheet, tag: tag, scaleFactor: externalDisplayWindowWidth / previewView.frame.width).toExternalDisplay()
+					}
+				}
+			case .SheetSplit:
+				if let sheet = sheet as? SheetSplitEntity {
+					newPreviewView = SheetSplit.createWith(frame: previewView.frame, sheet: sheet, tag: tag)
+					if externalDisplayWindow != nil {
+						_ = SheetSplit.createWith(frame: previewView.frame, sheet: sheet, tag: tag, scaleFactor: externalDisplayWindowWidth / previewView.frame.width).toExternalDisplay()
+					}
+				}
+			case .SheetEmpty:
+//				if let sheet = sheet as? SheetEmptyEntity {
+//					newPreviewView = SheetEmpty()
+//					if externalDisplayWindow != nil {
+//
+//					}
+//				}
+				print("empty sheet")
+			}
+			
+			previewView.addSubview(newPreviewView)
+			
+
 		}
 	}
 	
@@ -1162,10 +1269,6 @@ class NewSheetSplit: UIViewController, UITableViewDelegate, UITableViewDataSourc
 		
 	}
 	
-	
-	
-	
-	
 	@IBAction func cancelPressed(_ sender: UIBarButtonItem) {
 		
 		if let externalDisplayWindow = externalDisplayWindow {
@@ -1174,14 +1277,14 @@ class NewSheetSplit: UIViewController, UITableViewDelegate, UITableViewDataSourc
 			externalDisplayWindow.addSubview(view)
 		}
 		
-		if editExtistingSheet {
+		if !editExtistingSheet && !editTagMode {
 			if let path = tag.imagePath {
 				let _ = deleteImageFor(path: path)
 			}
 			
 			let _ = CoreTag.delete(entity: tag) // delete temp tag
 			
-			if let path = sheet.imagePath {
+			if let sheet = sheet as? SheetTitleImageEntity, let path = sheet.imagePath {
 				let _ = deleteImageFor(path: path)
 			}
 			
@@ -1204,11 +1307,16 @@ class NewSheetSplit: UIViewController, UITableViewDelegate, UITableViewDataSourc
 			
 			generateTag()
 			
-			if let image = cellImagePicker.pickedImage {
+			if let image = cellImagePicker.pickedImage, let sheet = sheet as? SheetTitleImageEntity {
 				sheet.imagePath = saveImage(image: image, id: sheet.id)
 			}
 			
-			sheet.hasTag = tag
+			// if new or edit tag, don't save preview sheet
+			if newTagMode {
+				sheet = nil
+			} else {
+				sheet.hasTag = tag
+			}
 			
 			let _ = CoreSheetTitleImage.saveContext()
 			
