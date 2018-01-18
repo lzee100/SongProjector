@@ -94,11 +94,11 @@ class TagsIphoneController: UITableViewController, UISearchBarDelegate, UIGestur
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		selectedTag = filteredTags[indexPath.row]
-		let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditcontroller") as! NewOrEditController
+		let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
 		controller.editTagMode = true
+		controller.tag = selectedTag
 		let nav = UINavigationController(rootViewController: controller)
 		present(nav, animated: true)
-//		performSegue(withIdentifier: "EditTagSegue", sender: self)
 	}
 	
 	
@@ -133,7 +133,6 @@ class TagsIphoneController: UITableViewController, UISearchBarDelegate, UIGestur
 	
 	
 	private func setup() {
-		
 		tableView.register(cell: Cells.basicCellid)
 		
 		navigationController?.title = Text.Songs.title
@@ -141,6 +140,7 @@ class TagsIphoneController: UITableViewController, UISearchBarDelegate, UIGestur
 		
 		searchBar.showsCancelButton = true
 		searchBar.placeholder = Text.Tags.searchBarPlaceholderText
+		searchBar.tintColor = themeHighlighted
 		add.title = Text.Actions.add
 		
 		emptyView.backgroundColor = themeWhiteBlackBackground
@@ -184,15 +184,10 @@ class TagsIphoneController: UITableViewController, UISearchBarDelegate, UIGestur
 		}
 	}
 	
-	
-	func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
-		return UIModalPresentationStyle.none
-	}
-//	func adaptivePresentationStyleForPresentationController(controller: UIPresentationController) -> UIModalPresentationStyle {
-//		return UIModalPresentationStyle.none
-//	}
-	
 	@IBAction func addTagPressed(_ sender: UIBarButtonItem) {
-		
+		let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
+		controller.newTagMode = true
+		let nav = UINavigationController(rootViewController: controller)
+		present(nav, animated: true)
 	}
 }

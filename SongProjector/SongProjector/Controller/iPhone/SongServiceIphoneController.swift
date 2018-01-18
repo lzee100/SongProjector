@@ -281,11 +281,43 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		}
 	}
 	
+	private func getNextSheet() -> Sheet? {
+		if let sheetsForSelectedCluster = sheetsForSelectedCluster, let position = selectedSheet?.position {
+			let nextPosition = Int(position) + 1
+			if nextPosition < sheetsForSelectedCluster.count {
+				return sheetsForSelectedCluster[nextPosition]
+			} else if let clusterPosition = selectedCluster?.position, Int(clusterPosition) + 1 < clusters.count {
+					let selectedCluster = self.clustersOrdened[Int(clusterPosition) + 1]
+					return selectedCluster.hasSheetsArray.first
+			} else {
+				return nil
+			}
+		} else {
+			return nil
+		}
+	}
+	
+	private func getPreviousSheet() -> Sheet? {
+		if let sheetsForSelectedCluster = sheetsForSelectedCluster, let position = selectedSheet?.position {
+			let previousPosition = Int(position) - 1
+			
+			if previousPosition >= 0 {
+				return sheetsForSelectedCluster[previousPosition]
+			} else if let clusterPosition = selectedCluster?.position, Int(clusterPosition) - 1 >= 0 {
+				let selectedCluster = clustersOrdened[Int(clusterPosition) - 1]
+				return selectedCluster.hasSheetsArray.first
+			} else {
+				return nil
+			}
+		} else {
+			return nil
+		}
+	}
+	
 	@objc private func respondToSwipeGesture(_ sender: UISwipeGestureRecognizer) {
 		
 		if sender.view == sheetDisplaySwipeView {
 			switch sender.direction {
-				
 				
 			case .left:
 				print("left")
@@ -297,16 +329,19 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 						animateSheetsWith(.left, completion: {
 							self.swipeAnimationIsActive = false
 							self.selectedSheet = sheetsForSelectedCluster[nextPosition]
-							self.tableView.scrollToRow(at: IndexPath(row: Int(clusterPosition) + nextPosition, section: 0), at: .middle, animated: false)
 						})
+						self.tableView.scrollToRow(at: IndexPath(row: Int(clusterPosition) + nextPosition, section: 0), at: .middle, animated: false)
 					} else {
 						// display next song
 						if let clusterPosition = selectedCluster?.position, Int(clusterPosition) + 1 < clusters.count {
-							selectedClusterRow += 1
-							selectedCluster = clustersOrdened[Int(clusterPosition) + 1]
-							selectedSheet = self.sheetsForSelectedCluster?.first
-							self.tableView.scrollToRow(at: IndexPath(row: Int(clusterPosition) + 1, section: 0), at: .middle, animated: false)
-
+							swipeAnimationIsActive = true
+							animateSheetsWith(.left, completion: {
+								self.swipeAnimationIsActive = false
+								self.selectedClusterRow += 1
+								self.selectedCluster = self.clustersOrdened[Int(clusterPosition) + 1]
+								self.selectedSheet = self.sheetsForSelectedCluster?.first
+							})
+							self.tableView.scrollToRow(at: IndexPath(row: Int(clusterPosition) + nextPosition, section: 0), at: .middle, animated: false)
 						}
 					}
 				}
@@ -324,27 +359,33 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 						animateSheetsWith(.right, completion: {
 							self.swipeAnimationIsActive = false
 							self.selectedSheet = sheetsForSelectedCluster[previousPosition]
-							self.tableView.scrollToRow(at: IndexPath(row: Int(clusterPosition) + previousPosition, section: 0), at: .middle, animated: false)
-
 						})
+						self.tableView.scrollToRow(at: IndexPath(row: Int(clusterPosition) + previousPosition, section: 0), at: .middle, animated: false)
+
 					} else {
 						// display previous song
 						if let clusterPosition = selectedCluster?.position, Int(clusterPosition) - 1 >= 0 {
-							selectedClusterRow -= 1
-							selectedCluster = clustersOrdened[Int(clusterPosition) - 1]
-							selectedSheet = self.sheetsForSelectedCluster?.first
+							
+							swipeAnimationIsActive = true
+							animateSheetsWith(.right, completion: {
+								self.swipeAnimationIsActive = false
+								self.selectedClusterRow -= 1
+								self.selectedCluster = self.clustersOrdened[Int(clusterPosition) - 1]
+								self.selectedSheet = self.sheetsForSelectedCluster?.first
+							})
 							self.tableView.scrollToRow(at: IndexPath(row: Int(clusterPosition - 1), section: 0), at: .middle, animated: false)
 						}
 					}
 				}
 				
 				
-				
-				
-				
+
 			default:
 				break
 			}
+			
+			
+			
 		} else if sender.view == moveUpDownSection {
 			switch sender.direction {
 			case .up:
@@ -537,7 +578,11 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 							}
 								
 						case .SheetEmpty:
-							print("Empty sheet")
+							let view = SheetEmpty.createWith(frame: sheetDisplayer.bounds, tag: selectedSheet.hasTag)
+							sheetDisplayer.addSubview(view)
+							if externalDisplayWindow != nil {
+								_ = SheetEmpty.createWith(frame: sheetDisplayer.bounds, tag: selectedSheet.hasTag, scaleFactor: externalDisplayWindowWidth / sheetDisplayer.bounds.width)
+							}
 						}
 						
 					}
@@ -559,12 +604,11 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		switch direction {
 		case .left:
 			
-			if let position = selectedSheet?.position {
-				
-				let selectedSheetPosition = Int(position)
-
+			print("left")
+			
 				// current sheet
 				// current sheet, move to left
+				let nextSheet = getNextSheet()
 				var currentSheetView: SheetView?
 				var nextSheetView: SheetView?
 
@@ -572,31 +616,28 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				if let selectedSheet = selectedSheet {
 					switch selectedSheet.type {
 					case .SheetTitleContent:
-						
 						currentSheetView = SheetTitleContent.createWith(frame: sheetDisplayer.bounds, title: selectedCluster?.title, sheet: selectedSheet as? SheetTitleContentEntity, tag: selectedCluster?.hasTag)
-
-						// next sheet, move to left
-						let nextSheet = sheetsForSelectedCluster?[selectedSheetPosition + 1]
-						nextSheetView = SheetTitleContent.createWith(frame: sheetDisplayerNext.frame, title: selectedCluster?.title, sheet: nextSheet as? SheetTitleContentEntity, tag: selectedCluster?.hasTag)
-						
 					case .SheetTitleImage:
-						
 						currentSheetView = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetTitleImageEntity, tag: selectedSheet.hasTag)
-						
-						let nextSheet = sheetsForSelectedCluster?[selectedSheetPosition + 1]
-						nextSheetView = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: nextSheet as! SheetTitleImageEntity, tag: nextSheet?.hasTag)
-						
 					case .SheetSplit:
-						
 						currentSheetView = SheetSplit.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetSplitEntity, tag: selectedSheet.hasTag)
-						
-						let nextSheet = sheetsForSelectedCluster?[selectedSheetPosition + 1]
-						nextSheetView = SheetSplit.createWith(frame: sheetDisplayer.bounds, sheet: nextSheet as! SheetSplitEntity, tag: nextSheet?.hasTag)
-						
 					case .SheetEmpty:
-						print("Empty sheet")
+						currentSheetView = SheetEmpty.createWith(frame: sheetDisplayer.bounds, tag: selectedSheet.hasTag)
 					}
 					
+					
+					switch nextSheet?.type {
+					case .none: break
+					case .some(.SheetTitleContent):
+						nextSheetView = SheetTitleContent.createWith(frame: sheetDisplayerNext.bounds, title: selectedCluster?.title, sheet: nextSheet as? SheetTitleContentEntity, tag: selectedCluster?.hasTag)
+					case .some(.SheetTitleImage):
+						nextSheetView = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: nextSheet as! SheetTitleImageEntity, tag: nextSheet?.hasTag)
+					case .some(.SheetSplit):
+						nextSheetView = SheetSplit.createWith(frame: sheetDisplayer.bounds, sheet: nextSheet as! SheetSplitEntity, tag: nextSheet?.hasTag)
+					case .some(.SheetEmpty):
+						nextSheetView = SheetEmpty.createWith(frame: sheetDisplayer.bounds, tag: nextSheet?.hasTag)
+					}
+
 					currentSheetView?.frame = CGRect(
 						x: sheetDisplayer.bounds.minX,
 						y: sheetDisplayer.bounds.minY,
@@ -639,8 +680,6 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 						completion()
 					})
 				}
-			}
-			
 			
 		case .right:
 			
@@ -649,9 +688,9 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				
 				sheetDisplayerNext.isHidden = position == numberOfSheets ? true : false
 				sheetDisplayerPrevious.isHidden = position == 0 ? true : false
-
-				let selectedSheetPosition = Int(position)
 				
+				let previousSheet = getPreviousSheet()
+
 				// current sheet
 				// current sheet, move to left
 				var currentSheetView: SheetView?
@@ -661,38 +700,37 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 					switch selectedSheet.type {
 					case .SheetTitleContent:
 						
-						print("Title content")
-
-						// current sheet, move to right
 						currentSheetView = SheetTitleContent.createWith(frame: sheetDisplayer.bounds, title: selectedCluster?.title, sheet: selectedSheet as? SheetTitleContentEntity, tag: selectedCluster?.hasTag)
-
-						// previous sheet, move to right
-						let previousSheet = sheetsForSelectedCluster?[selectedSheetPosition - 1]
-						
-						previousSheetView = SheetTitleContent.createWith(frame: sheetDisplayerPrevious.bounds, title: selectedCluster?.title, sheet: previousSheet as? SheetTitleContentEntity, tag: selectedCluster?.hasTag)
 						
 					case .SheetTitleImage:
 						
 						currentSheetView = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetTitleImageEntity, tag: selectedSheet.hasTag)
 						
-						let previousSheet = sheetsForSelectedCluster?[selectedSheetPosition - 1]
-						
-						previousSheetView = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: previousSheet as! SheetTitleImageEntity, tag: previousSheet?.hasTag)
 						
 					case .SheetSplit:
 						
 						currentSheetView = SheetSplit.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetSplitEntity, tag: selectedSheet.hasTag)
 						
-						let previousSheet = sheetsForSelectedCluster?[selectedSheetPosition - 1]
-						
-						previousSheetView = SheetSplit.createWith(frame: sheetDisplayer.bounds, sheet: previousSheet as! SheetSplitEntity, tag: previousSheet?.hasTag)
-						
 					case .SheetEmpty:
-						print("Empty sheet")
+						
+						currentSheetView = SheetEmpty.createWith(frame: sheetDisplayer.bounds, tag: selectedSheet.hasTag)
+						
+					}
+					
+					switch previousSheet?.type {
+					case .none: break
+					case .some(.SheetTitleContent):
+						previousSheetView = SheetTitleContent.createWith(frame: sheetDisplayerPrevious.bounds, title: selectedCluster?.title, sheet: previousSheet as? SheetTitleContentEntity, tag: selectedCluster?.hasTag)
+					case .some(.SheetTitleImage):
+						previousSheetView = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: previousSheet as! SheetTitleImageEntity, tag: previousSheet?.hasTag)
+					case .some(.SheetSplit):
+						previousSheetView = SheetSplit.createWith(frame: sheetDisplayer.bounds, sheet: previousSheet as! SheetSplitEntity, tag: previousSheet?.hasTag)
+					case .some(.SheetEmpty):
+						previousSheetView = SheetEmpty.createWith(frame: sheetDisplayer.bounds, tag: previousSheet?.hasTag)
 					}
 					
 					currentSheetView?.frame = CGRect(
-						x: sheetDisplayer.bounds.minX,
+						x: sheetDisplayer.frame.minX,
 						y: sheetDisplayer.bounds.minY,
 						width: sheetDisplayer.bounds.width,
 						height: sheetDisplayer.bounds.height)

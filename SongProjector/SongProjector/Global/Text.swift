@@ -61,7 +61,7 @@ class Text: NSObject {
 		static let searchBarPlaceholderText = "Zoek thema's"
 	}
 	
-	struct Players {
+	struct CustomSheets {
 		static let title = "Afspelers"
 		static let namePlaceHolder = "Voer titel in (voor zoeken)"
 		static let errorTitle = "Fout"
@@ -120,7 +120,7 @@ class Text: NSObject {
 		static let emptySheetTitle = "Lege dia"
 	}
 	
-	struct SheetsMenu {
+	struct CustomSheetsMenu {
 		static let sheetTitleImage = "Dia: titel met foto"
 		static let sheetEmpty = "Lege dia"
 		static let sheetSplit = "Dia 2 segmenten"

@@ -29,6 +29,7 @@ class SheetSplit: SheetView {
 	private var selectedTag: Tag?
 	private var zeroHeightConstraint: NSLayoutConstraint?
 	private var newTitleBottomConstraint: NSLayoutConstraint?
+	var position = 0
 	
 	override func customInit() {
 		Bundle.main.loadNibNamed("SheetSplit", owner: self, options: [:])
@@ -40,6 +41,7 @@ class SheetSplit: SheetView {
 		
 		let view = SheetSplit(frame: frame)
 		view.sheet = sheet
+		view.position = Int(sheet.position)
 		view.selectedTag = tag
 		view.scaleFactor = scaleFactor
 		view.update()
@@ -62,11 +64,11 @@ class SheetSplit: SheetView {
 						zeroHeightConstraint = NSLayoutConstraint(item: descriptionTitle, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
 						descriptionTitle.addConstraint(zeroHeightConstraint!)
 						
-						
-						// set title.bottom - stackView.top constraint to zero
-						titleBottomConstraint.isActive = false
-						newTitleBottomConstraint = NSLayoutConstraint(item: descriptionTitle, attribute: .bottom, relatedBy: .equal, toItem: stackView, attribute: .top, multiplier: 1, constant: 0)
-						descriptionTitle.addConstraint(newTitleBottomConstraint!)
+//
+//						// set title.bottom - stackView.top constraint to zero
+//						titleBottomConstraint.isActive = false
+//						newTitleBottomConstraint = NSLayoutConstraint(item: stackView, attribute: .top, relatedBy: .equal, toItem: descriptionTitle, attribute: .bottom, multiplier: 1, constant: 0)
+//						descriptionTitle.addConstraint(newTitleBottomConstraint!)
 						
 					} else {
 						// remove previous height constraint
@@ -92,10 +94,10 @@ class SheetSplit: SheetView {
 				zeroHeightConstraint = NSLayoutConstraint(item: descriptionTitle, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
 				descriptionTitle.addConstraint(zeroHeightConstraint!)
 				
-				// set title.bottom - stackView.top constraint to zero
-				titleBottomConstraint.isActive = false
-				newTitleBottomConstraint = NSLayoutConstraint(item: descriptionTitle, attribute: .bottom, relatedBy: .equal, toItem: stackView, attribute: .top, multiplier: 1, constant: 0)
-				descriptionTitle.addConstraint(newTitleBottomConstraint!)
+//				// set title.bottom - stackView.top constraint to zero
+//				titleBottomConstraint.isActive = false
+//				newTitleBottomConstraint = NSLayoutConstraint(item: stackView, attribute: .top, relatedBy: .equal, toItem: descriptionTitle, attribute: .bottom, multiplier: 1, constant: 0)
+//				descriptionTitle.addConstraint(newTitleBottomConstraint!)
 				
 			}
 			
@@ -109,9 +111,9 @@ class SheetSplit: SheetView {
 			
 			if let lyrics = sheet?.textRight {
 				if let tag = selectedTag {
-					textViewLeft.attributedText = NSAttributedString(string: lyrics, attributes: tag.getLyricsAttributes(scaleFactor))
+					textViewRight.attributedText = NSAttributedString(string: lyrics, attributes: tag.getLyricsAttributes(scaleFactor))
 				} else {
-					textViewLeft.text = lyrics
+					textViewRight.text = lyrics
 				}
 			}
 			
@@ -124,9 +126,16 @@ class SheetSplit: SheetView {
 				 sheetBackgroundImageView.isHidden = true
 			}
 			
-			if let titleBackgroundColor = selectedTag?.backgroundColorTitle {
-				titleBackgroundView.isHidden = false
-				titleBackgroundView.backgroundColor = titleBackgroundColor
+			if let titleBackgroundColor = selectedTag?.backgroundColorTitle, let title = selectedTag?.title, title != "" {
+				if let allHaveTitle = selectedTag?.allHaveTitle, allHaveTitle == false && position < 1 {
+					titleBackgroundView.isHidden = false
+					titleBackgroundView.backgroundColor = titleBackgroundColor
+				} else if  let allHaveTitle = selectedTag?.allHaveTitle, allHaveTitle == true {
+					titleBackgroundView.isHidden = false
+					titleBackgroundView.backgroundColor = titleBackgroundColor
+				} else {
+					titleBackgroundView.isHidden = true
+				}
 			} else {
 				titleBackgroundView.isHidden = true
 			}

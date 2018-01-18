@@ -27,6 +27,7 @@ class LabelDoubleSwitchCell: UITableViewCell {
 	@IBOutlet var heightDescriptionSwitchTwoConstraint: NSLayoutConstraint!
 	@IBOutlet var heightSwitchTwoConstraint: NSLayoutConstraint!
 	var id = ""
+	var isActive = false { didSet { showSecondSwitch() } }
 	var delegate: LabelDoubleSwitchDelegate?
 	var preferredHeight: CGFloat {
 		return switchOne.isOn ? 120 : 60
@@ -41,7 +42,8 @@ class LabelDoubleSwitchCell: UITableViewCell {
 		view.imageSwitchTwo.image = Cells.arrowSub
 		view.switchOne.isOn = false
 		view.switchOne.thumbTintColor = isThemeLight ? .white : UIColor(hex: "FF8324")
-		view.switchOne.thumbTintColor = isThemeLight ? .white : UIColor(hex: "FF8324")
+		view.switchTwo.thumbTintColor = isThemeLight ? .white : UIColor(hex: "FF8324")
+		view.switchTwo.isOn = false
 		if !isThemeLight {
 			view.switchTwo.tintColor = .primary
 			view.switchTwo.onTintColor = .primary
@@ -49,7 +51,8 @@ class LabelDoubleSwitchCell: UITableViewCell {
 			view.switchOne.onTintColor = .primary
 		}
 		view.showSecondSwitch()
-		view.imageSwitchTwo.image = #imageLiteral(resourceName: "Bullet")
+		view.imageSwitchTwo.image = #imageLiteral(resourceName: "ArrowSub")
+		view.imageSwitchTwo.tintColor = UIColor(hex: "FF8324")
 		return view
 	}
 	

@@ -43,6 +43,7 @@ class SheetTitleImage: SheetView {
 	private var newTitleHeightConstraint: NSLayoutConstraint?
 	private var titleContentConstraint: NSLayoutConstraint?
 	private var newContentHeightConstraint: NSLayoutConstraint?
+	var position = 0
 	
 	override func customInit() {
 		Bundle.main.loadNibNamed("SheetTitleImage", owner: self, options: [:])
@@ -54,6 +55,7 @@ class SheetTitleImage: SheetView {
 		
 		let view = SheetTitleImage(frame: frame)
 		view.sheet = sheet
+		view.position = Int(sheet.position)
 		view.selectedTag = tag
 		view.imageWidthConstraint.constant = (frame.height * 0.4)
 		
@@ -174,9 +176,16 @@ class SheetTitleImage: SheetView {
 				backgroundImage.isHidden = true
 			}
 			
-			if let titleBackgroundColor = selectedTag?.backgroundColorTitle {
-				titleBackground.isHidden = false
-				titleBackground.backgroundColor = titleBackgroundColor
+			if let titleBackgroundColor = selectedTag?.backgroundColorTitle, let title = selectedTag?.title, title != "" {
+				if let allHaveTitle = selectedTag?.allHaveTitle, allHaveTitle == false && position < 1 {
+					titleBackground.isHidden = false
+					titleBackground.backgroundColor = titleBackgroundColor
+				} else if  let allHaveTitle = selectedTag?.allHaveTitle, allHaveTitle == true {
+					titleBackground.isHidden = false
+					titleBackground.backgroundColor = titleBackgroundColor
+				} else {
+					titleBackground.isHidden = true
+				}
 			} else {
 				titleBackground.isHidden = true
 			}

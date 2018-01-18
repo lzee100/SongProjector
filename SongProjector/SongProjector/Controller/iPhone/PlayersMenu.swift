@@ -25,7 +25,7 @@ class PlayerMenu {
 	
 	private var menu : PlayersMenu?
 
-	private func createMenu(_ sender: NewSheetTitleImageDelegate, playerMenu: PlayerMenu) -> PlayersMenu?{
+	private func createMenu(_ sender: NewOrEditIphoneControllerDelegate, playerMenu: PlayerMenu) -> PlayersMenu?{
 		if let window = UIApplication.shared.keyWindow{
 			let playersMenu = window.rootViewController?.storyboard?.instantiateViewController(withIdentifier: "PlayersMenu") as? PlayersMenu
 			playersMenu?.sender = sender
@@ -36,12 +36,12 @@ class PlayerMenu {
 				view.isHidden = true
 				view.backgroundColor = .clear
 				
-//				let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.dark)
-//				let blurEffectView = UIVisualEffectView(effect: blurEffect)
-//					blurEffectView.frame = view.bounds
-//					blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-//					view.addSubview(blurEffectView)
-//					view.sendSubview(toBack: blurEffectView)
+				let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.dark)
+				let blurEffectView = UIVisualEffectView(effect: blurEffect)
+					blurEffectView.frame = view.bounds
+					blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+					view.addSubview(blurEffectView)
+					view.sendSubview(toBack: blurEffectView)
 				window.addSubview(view)
 			}
 			return playersMenu
@@ -49,7 +49,7 @@ class PlayerMenu {
 		return nil
 	}
 	
-	private func getMenu(_ sender: NewSheetTitleImageDelegate) -> PlayersMenu?{
+	private func getMenu(_ sender: NewOrEditIphoneControllerDelegate) -> PlayersMenu?{
 		if menu == nil{
 			menu = createMenu(sender, playerMenu: self)
 			let tab = UITapGestureRecognizer(target: self, action: #selector(self.dismissMenu(_:)))
@@ -59,7 +59,7 @@ class PlayerMenu {
 		return menu
 	}
 	
-	func showMenu(sender: NewSheetTitleImageDelegate){
+	func showMenu(sender: NewOrEditIphoneControllerDelegate){
 		DispatchQueue.main.async  {
 			if let menu = self.getMenu(sender){
 				menu.view.alpha = 0
@@ -99,11 +99,12 @@ class PlayersMenu: UIViewController {
 	
 	private var blurEffectView: UIVisualEffectView?
 	private var isSetupDone = false
-	var sender: NewSheetTitleImageDelegate?
+	var sender: NewOrEditIphoneControllerDelegate?
 	var menu: PlayerMenu?
 	
 	@IBOutlet var buttonsContainerView: UIView! {
 		didSet{
+			buttonsContainerView.backgroundColor = themeWhiteBlackBackground
 			buttonsContainerView.layer.cornerRadius = 10.0
 			buttonsContainerView.layer.shadowOffset = CGSize(width: 0,height: 2.0)
 			buttonsContainerView.layer.shadowRadius = 5.0
@@ -115,6 +116,19 @@ class PlayersMenu: UIViewController {
 	
 	func setup() {
 		if blurEffectView == nil {
+			
+			button1.backgroundColor = themeWhiteBlackBackground
+			button2.backgroundColor = themeWhiteBlackBackground
+			button3.backgroundColor = themeWhiteBlackBackground
+			button1.tintColor = themeHighlighted
+			button2.tintColor = themeHighlighted
+			button3.tintColor = themeHighlighted
+
+			button1.setTitle(Text.CustomSheetsMenu.sheetEmpty, for: .normal)
+			button2.setTitle(Text.CustomSheetsMenu.sheetTitleImage, for: .normal)
+			button3.setTitle(Text.CustomSheetsMenu.sheetSplit, for: .normal)
+
+			
 			let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.dark)
 			blurEffectView = UIVisualEffectView(effect: blurEffect)
 			if let blurEffectView = blurEffectView {
@@ -129,13 +143,23 @@ class PlayersMenu: UIViewController {
 	}
 	
 	@IBAction func menuitem1(_ sender: UIButton) {
-		
+		let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
+		let sheet = CoreSheetEmptySheet.createEntity()
+		controller.sheet = sheet
+		let nav = UINavigationController(rootViewController: controller)
+		controller.delegate = self.sender
+		DispatchQueue.main.async {
+			self.present(nav, animated: true)
+		}
+		menu?.hideMenu()
 	}
 	
 	@IBAction func menuitem2(_ sender: UIButton) {
-		let sheetTitleImage = storyboard?.instantiateViewController(withIdentifier: "NewSheetTitleImage") as! NewSheetTitleImage
-		let nav = UINavigationController(rootViewController: sheetTitleImage)
-		sheetTitleImage.delegate = self.sender
+		let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
+		let sheet = CoreSheetTitleImage.createEntity()
+		controller.sheet = sheet
+		let nav = UINavigationController(rootViewController: controller)
+		controller.delegate = self.sender
 		DispatchQueue.main.async {
 			self.present(nav, animated: true)
 		}
@@ -143,7 +167,15 @@ class PlayersMenu: UIViewController {
 	}
 	
 	@IBAction func menuitem3(_ sender: UIButton) {
-		
+		let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
+		let sheet = CoreSheetSplit.createEntity()
+		controller.sheet = sheet
+		let nav = UINavigationController(rootViewController: controller)
+		controller.delegate = self.sender
+		DispatchQueue.main.async {
+			self.present(nav, animated: true)
+		}
+		menu?.hideMenu()
 	}
 	
 	

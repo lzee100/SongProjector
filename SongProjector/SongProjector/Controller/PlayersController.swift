@@ -6,18 +6,4 @@
 //  Copyright © 2017 Topicus Onderwijs BV. All rights reserved.
 //
 
-import UIKit
 
-class PlayersController: UIViewController {
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        setup()
-    }
-
-	private func setup() {
-		title = Text.Players.title
-	}
-
-}

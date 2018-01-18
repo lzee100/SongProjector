@@ -81,7 +81,7 @@ class Theme {
 		let tableViewCell = UITableViewCell.appearance()
 		tableViewCell.backgroundColor = .black
 
-		let button = UIButton.appearance(whenContainedInInstancesOf: [UITableViewCell.self])
+		let button = UIButton.appearance(whenContainedInInstancesOf: [UITableViewCell.self, UISearchBar.self])
 		button.setTitleColor(UIColor(hex: "FF8324"), for: .normal)
 
 		let mySwitch = UISwitch.appearance()

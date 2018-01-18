@@ -85,12 +85,34 @@ extension Tag {
 	}
 	
 	var backgroundImage: UIImage? {
-		if let imagePath = imagePath {
-			let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-			let filePath = documentsDirectory.appendingPathComponent(imagePath).path
-			return UIImage(contentsOfFile: filePath)
-		} else {
-			return nil
+		get {
+			if let imagePath = imagePath {
+				let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+				let filePath = documentsDirectory.appendingPathComponent(imagePath).path
+				return UIImage(contentsOfFile: filePath)
+			} else {
+				return nil
+			}
+		}
+		set {
+			if newValue == nil, let path = imagePath {
+				let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+				let url = documentsDirectory.appendingPathComponent(path)
+				do {
+					try FileManager.default.removeItem(at: url)
+					imagePath = nil
+				} catch let error as NSError {
+					print("Error: \(error.domain)")
+				}
+			} else {
+				if let data = UIImagePNGRepresentation(newValue!) {
+					let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+					let imagePath = UUID().uuidString + ".png"
+					let filename = documentsDirectory.appendingPathComponent(imagePath)
+					try? data.write(to: filename)
+					self.imagePath = imagePath
+				}
+			}
 		}
 	}
 	

@@ -39,7 +39,7 @@
         <attribute name="hasEmptySheet" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="imagePath" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="isEmptySheetFirst" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="isHidden" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="isHidden" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="isLyricsBold" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="isLyricsItalian" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="isLyricsUnderlined" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
@@ -51,7 +51,7 @@
         <attribute name="lyricsBorderSize" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="lyricsFontName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="lyricsTextColorHex" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="lyricsTextSize" attributeType="Float" defaultValueString="17" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="lyricsTextSize" attributeType="Float" defaultValueString="10" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="position" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="titleAlignment" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="titleBackgroundColor" optional="YES" attributeType="String" syncable="YES"/>
@@ -59,7 +59,7 @@
         <attribute name="titleBorderSize" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="titleFontName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="titleTextColorHex" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="titleTextSize" attributeType="Float" defaultValueString="17" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="titleTextSize" attributeType="Float" defaultValueString="14" usesScalarValueType="YES" syncable="YES"/>
         <relationship name="hasCluster" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Cluster" inverseName="hasTag" inverseEntity="Cluster" syncable="YES"/>
         <relationship name="hasSheets" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Sheet" inverseName="hasTag" inverseEntity="Sheet" syncable="YES"/>
     </entity>

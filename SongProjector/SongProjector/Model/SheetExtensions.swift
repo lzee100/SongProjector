@@ -22,6 +22,8 @@ extension Sheet {
 			return .SheetTitleContent
 		} else if self.entity.isKindOf(entity: SheetTitleImageEntity.entity()) {
 			return .SheetTitleImage
+		} else if self.entity.isKindOf(entity: SheetSplitEntity.entity()) {
+			return .SheetSplit
 		} else {
 			return .SheetEmpty
 		}

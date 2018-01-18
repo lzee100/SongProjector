@@ -63,6 +63,7 @@
                     <subviews>
                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="mmG-fE-mtY">
                             <rect key="frame" x="0.0" y="18" width="600" height="285.5"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         </imageView>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YB8-4p-Jl8">
                             <rect key="frame" x="0.0" y="2" width="600" height="16"/>
@@ -73,11 +74,12 @@
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
                         </label>
-                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="testImage" translatesAutoresizingMaskIntoConstraints="NO" id="R8c-Id-ICH">
-                            <rect key="frame" x="0.0" y="18" width="150" height="200"/>
+                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="R8c-Id-ICH">
+                            <rect key="frame" x="0.0" y="18" width="300" height="225"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>
-                                <constraint firstAttribute="width" secondItem="R8c-Id-ICH" secondAttribute="height" multiplier="3:4" id="Red-Vo-QKK"/>
-                                <constraint firstAttribute="width" constant="150" id="clw-Z7-j7x"/>
+                                <constraint firstAttribute="width" secondItem="R8c-Id-ICH" secondAttribute="height" multiplier="4:3" id="Red-Vo-QKK"/>
+                                <constraint firstAttribute="width" constant="300" id="clw-Z7-j7x"/>
                             </constraints>
                         </imageView>
                     </subviews>
@@ -121,7 +123,4 @@
             <point key="canvasLocation" x="-21" y="46"/>
         </view>
     </objects>
-    <resources>
-        <image name="testImage" width="1136" height="1158"/>
-    </resources>
 </document>

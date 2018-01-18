@@ -12,7 +12,7 @@ protocol CustomSheetsControllerDelegate {
 	func didSaveSheets(sheets: [Sheet])
 }
 
-class PlayersIphoneController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, NewSheetTitleImageDelegate {
+class PlayersIphoneController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, NewOrEditIphoneControllerDelegate {
 
 	
 
@@ -74,17 +74,9 @@ class PlayersIphoneController: UIViewController, UICollectionViewDelegate, UICol
 			return collectionCell
 		} else {
 			let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.sheetCollectionCell, for: indexPath)
+			
+			setViewFor(collectionCell: collectionCell, sheet: sheetsSorted[indexPath.section])
 
-			switch sheetsSorted[indexPath.section].type {
-			case .SheetTitleImage:
-				setViewFor(collectionCell: collectionCell, sheet: sheetsSorted[indexPath.section])
-			case .SheetTitleContent:
-				print("title content")
-			case .SheetSplit:
-				print("sheet split")
-			case .SheetEmpty:
-				print("empty")
-			}
 			let swipe = UISwipeGestureRecognizer(target: self, action: #selector(respondToSwipeGesture))
 			swipe.direction = .left
 			collectionCell.addGestureRecognizer(swipe)
@@ -129,10 +121,10 @@ class PlayersIphoneController: UIViewController, UICollectionViewDelegate, UICol
 			let sheet = sheetsSorted[indexPath.section]
 			switch sheet.type {
 			case .SheetTitleImage:
-				let sheetTitleImage = storyboard?.instantiateViewController(withIdentifier: "NewSheetTitleImage") as! NewSheetTitleImage
-				sheetTitleImage.sheet = sheet as! SheetTitleImageEntity
-				sheetTitleImage.delegate = self
-				let nav = UINavigationController(rootViewController: sheetTitleImage)
+				let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
+				controller.sheet = sheet
+				controller.delegate = self
+				let nav = UINavigationController(rootViewController: controller)
 				present(nav, animated: true)
 			default:
 				break
@@ -164,6 +156,7 @@ class PlayersIphoneController: UIViewController, UICollectionViewDelegate, UICol
 	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
 		if editingStyle == .delete {
 			if let tag = sheetsSorted[indexPath.row].hasTag {
+				
 				_ = CoreTag.delete(entity: tag)
 			}
 			_ = CoreSheet.delete(entity: sheetsSorted[indexPath.row])
@@ -211,15 +204,15 @@ class PlayersIphoneController: UIViewController, UICollectionViewDelegate, UICol
 
 	private func setup() {
 		
-		navigationController?.title = Text.Players.title
-		title = Text.Players.title
+		navigationController?.title = Text.CustomSheets.title
+		title = Text.CustomSheets.title
 		view.backgroundColor = themeWhiteBlackBackground
 		save.isEnabled = delegate != nil ? true : sheets.count > 0 ? true : false
 		save.setTitleTextAttributes([NSAttributedStringKey.foregroundColor : UIColor.gray], for: .disabled)
 		
 		hideKeyboardWhenTappedAround()
 		
-		clusterNameTextField.attributedPlaceholder = NSAttributedString(string: Text.Players.namePlaceHolder, attributes: [NSAttributedStringKey.foregroundColor: UIColor.placeholderColor])
+		clusterNameTextField.attributedPlaceholder = NSAttributedString(string: Text.CustomSheets.namePlaceHolder, attributes: [NSAttributedStringKey.foregroundColor: UIColor.placeholderColor])
 		clusterNameTextField.text = cluster?.title
 		
 		collectionView.register(UINib(nibName: Cells.sheetCollectionCell, bundle: nil), forCellWithReuseIdentifier: Cells.sheetCollectionCell)
@@ -227,11 +220,11 @@ class PlayersIphoneController: UIViewController, UICollectionViewDelegate, UICol
 		tableView.register(cell: Cells.basicCellid)
 
 
-//		CoreTag.predicates.append("isHidden", notEquals: true)
+		CoreTag.predicates.append("isHidden", notEquals: true)
 		tags = CoreTag.getEntities()
 		
 		segmentControl.setTitle(Text.Actions.edit, forSegmentAt: 0)
-		segmentControl.setTitle(Text.Players.segmentSheets, forSegmentAt: 1)
+		segmentControl.setTitle(Text.CustomSheets.segmentSheets, forSegmentAt: 1)
 		segmentControl.selectedSegmentIndex = 1
 		
 		let leftSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))
@@ -300,7 +293,7 @@ class PlayersIphoneController: UIViewController, UICollectionViewDelegate, UICol
 			case .SheetSplit:
 				view = SheetSplit.createWith(frame: collectionCell.bounds, sheet: sheet as! SheetSplitEntity, tag: sheet.hasTag)
 			case .SheetEmpty:
-				break
+				view = SheetEmpty.createWith(frame: collectionCell.bounds, tag: sheet.hasTag)
 			}
 			
 			collectionCell.previewView.addSubview(view)
@@ -337,7 +330,7 @@ class PlayersIphoneController: UIViewController, UICollectionViewDelegate, UICol
 		if clusterNameTextField.text != "" {
 			return true
 		} else {
-			let alert = UIAlertController(title: Text.Players.errorTitle, message: Text.Players.errorNoName, preferredStyle: .alert)
+			let alert = UIAlertController(title: Text.CustomSheets.errorTitle, message: Text.CustomSheets.errorNoName, preferredStyle: .alert)
 			alert.addAction(UIAlertAction(title: Text.Actions.ok, style: UIAlertActionStyle.default, handler: nil))
 			self.present(alert, animated: true, completion: nil)
 			

@@ -29,8 +29,6 @@ class SheetTitleContent: SheetView {
 	var lyrics: String?
 	var selectedTag: Tag?
 	var isEmptySheet: Bool = false
-	var isEditable = false
-	var allHaveTitle = false
 	var position = 0
 	var zeroHeightConstraint: NSLayoutConstraint?
 	
@@ -56,9 +54,6 @@ class SheetTitleContent: SheetView {
 		
 		if let scaleFactor = scaleFactor {
 			lyricsTextView.backgroundColor = .clear
-			
-			lyricsTextView.isEditable = isEditable
-			lyricsTextView.isSelectable = isEditable
 			
 			if isEmptySheet {
 				songTitle = nil
@@ -111,9 +106,16 @@ class SheetTitleContent: SheetView {
 				backgroundImageView.isHidden = true
 			}
 			
-			if let titleBackgroundColor = selectedTag?.backgroundColorTitle {
-				titleBackground.isHidden = false
-				titleBackground.backgroundColor = titleBackgroundColor
+			if let titleBackgroundColor = selectedTag?.backgroundColorTitle, let title = selectedTag?.title, title != "" {
+				if let allHaveTitle = selectedTag?.allHaveTitle, allHaveTitle == false && position < 1 {
+					titleBackground.isHidden = false
+					titleBackground.backgroundColor = titleBackgroundColor
+				} else if  let allHaveTitle = selectedTag?.allHaveTitle, allHaveTitle == true {
+					titleBackground.isHidden = false
+					titleBackground.backgroundColor = titleBackgroundColor
+				} else {
+					titleBackground.isHidden = true
+				}
 			} else {
 				titleBackground.isHidden = true
 			}

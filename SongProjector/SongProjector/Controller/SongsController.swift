@@ -203,6 +203,8 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 		tableView.register(cell: Cells.basicCellid)
 		collectionView.register(UINib(nibName: Cells.tagCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.tagCellCollection)
 		
+		hideKeyboardWhenTappedAround()
+		
 		if desciptionSongs != nil {
 			desciptionSongs.text = Text.Songs.description
 		}
@@ -221,6 +223,7 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 		
 		searchBar.showsCancelButton = true
 		searchBar.placeholder = Text.Songs.SearchSongPlaceholder
+		searchBar.tintColor = themeHighlighted
 
 	}
 	

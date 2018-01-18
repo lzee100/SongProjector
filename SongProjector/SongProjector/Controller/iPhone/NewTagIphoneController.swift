@@ -879,20 +879,20 @@ class NewTagIphoneController: UIViewController, UITableViewDelegate, UITableView
 			
 			if let externalDisplayWindow = externalDisplayWindow {
 				
-				let viewToBeamer = SheetTitleContent.createWith(
-					frame: externalDisplayWindow.bounds,
-					songTitle: Text.NewTag.sampleTitle,
-					lyrics: Text.NewTag.sampleLyrics,
-					selectedTag: editExistingTag,
-					titleBackgroundColor: titleBackgroundColor,
-					sheetBackgroundColor: sheetBackgroundColor,
-					tagName: tagName,
-					scaleFactor: externalDisplayWindowWidth / sheetPreview.bounds.width,
-					previewTitleAttributes: titleAttributes,
-					previewLyricsAttributes: lyricsAttributes)
-				
-				viewToBeamer.update()
-				externalDisplayWindow.addSubview(viewToBeamer)
+//				let viewToBeamer = SheetTitleContent.createWith(
+//					frame: externalDisplayWindow.bounds,
+//					songTitle: Text.NewTag.sampleTitle,
+//					lyrics: Text.NewTag.sampleLyrics,
+//					selectedTag: editExistingTag,
+//					titleBackgroundColor: titleBackgroundColor,
+//					sheetBackgroundColor: sheetBackgroundColor,
+//					tagName: tagName,
+//					scaleFactor: externalDisplayWindowWidth / sheetPreview.bounds.width,
+//					previewTitleAttributes: titleAttributes,
+//					previewLyricsAttributes: lyricsAttributes)
+//
+//				viewToBeamer.update()
+//				externalDisplayWindow.addSubview(viewToBeamer)
 				
 			}
 		}

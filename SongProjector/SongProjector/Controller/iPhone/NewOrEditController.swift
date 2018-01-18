@@ -1,5 +1,5 @@
 //
-//  NewOrEditController.swift
+//  NewOrEditIphoneController.swift
 //  SongProjector
 //
 //  Created by Leo van der Zee on 15-01-18.
@@ -9,11 +9,11 @@
 import UIKit
 import ChromaColorPicker
 
-protocol NewEditAllController {
-	func didCreate(sheet: SheetSplitEntity)
+protocol NewOrEditIphoneControllerDelegate {
+	func didCreate(sheet: Sheet)
 }
 
-class NewOrEditController: UIViewController, UITableViewDelegate, UITableViewDataSource, LabelTextFieldCellDelegate, LabelTextViewDelegate, LabelPickerCellDelegate, LabelDoubleSwitchDelegate, LabelNumerCellDelegate, LabelColorPickerCellDelegate, LabelSwitchCellDelegate, LabelPhotoPickerCellDelegate {
+class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableViewDataSource, LabelTextFieldCellDelegate, LabelTextViewDelegate, LabelPickerCellDelegate, LabelDoubleSwitchDelegate, LabelNumerCellDelegate, LabelColorPickerCellDelegate, LabelSwitchCellDelegate, LabelPhotoPickerCellDelegate {
 	
 	
 	@IBOutlet var cancel: UIBarButtonItem!
@@ -24,8 +24,6 @@ class NewOrEditController: UIViewController, UITableViewDelegate, UITableViewDat
 	@IBOutlet var sheetContainerViewHeightConstraint: NSLayoutConstraint!
 	@IBOutlet var previewViewRatioConstraint: NSLayoutConstraint!
 	
-	
-	var sheetType: SheetType?
 	
 	// MARK: - Types
 	
@@ -39,8 +37,8 @@ class NewOrEditController: UIViewController, UITableViewDelegate, UITableViewDat
 		
 		static let titleContent = [general, title, content]
 		static let titleImage = [general, title, content, image]
-		static let splitSheet = [general, title, content]
-		static let emptySheet = [general]
+		static let sheetSplit = [general, title, content]
+		static let sheetEmpty = [general]
 		
 		static func `for`(_ section: Int, type: SheetType) -> Section {
 			switch type {
@@ -49,9 +47,9 @@ class NewOrEditController: UIViewController, UITableViewDelegate, UITableViewDat
 			case .SheetTitleImage:
 				return titleImage[section]
 			case .SheetSplit:
-				return splitSheet[section]
+				return sheetSplit[section]
 			case .SheetEmpty:
-				return emptySheet[section]
+				return sheetEmpty[section]
 			}
 		}
 	}
@@ -139,7 +137,7 @@ class NewOrEditController: UIViewController, UITableViewDelegate, UITableViewDat
 		
 		static let all = [fontFamily, fontSize, alignment, borderSize, textColor, borderColor, bold, italic, underlined]
 		
-		static let titleContentContent = [fontFamily, fontSize, alignment, borderSize, textColor, borderColor, bold, italic, underlined]
+		static let titleContent = [fontFamily, fontSize, alignment, borderSize, textColor, borderColor, bold, italic, underlined]
 		static let titleImage = [fontFamily, fontSize, alignment, borderSize, textColor, borderColor, bold, italic, underlined]
 		static let sheetSplit = [fontFamily, fontSize, alignment, borderSize, textColor, borderColor, bold, italic, underlined]
 		static let sheetEmpty: [CellLyrics] = []
@@ -147,7 +145,7 @@ class NewOrEditController: UIViewController, UITableViewDelegate, UITableViewDat
 		static func `for`(_ indexPath: IndexPath, type: SheetType) -> CellLyrics? {
 			switch  type{
 			case .SheetTitleContent:
-				return titleContentContent[indexPath.row]
+				return titleContent[indexPath.row]
 			case .SheetTitleImage:
 				return titleImage[indexPath.row]
 			case .SheetSplit:
@@ -197,7 +195,7 @@ class NewOrEditController: UIViewController, UITableViewDelegate, UITableViewDat
 	// MARK: Title Cells
 	
 	private var  cellTitleFontFamily = LabelPickerCell()
-	private let cellTitleFontSize = LabelNumberCell.create(id: "cellTitleFontSize", description: Text.NewTag.fontSizeDescription, initialValue: 17)
+	private let cellTitleFontSize = LabelNumberCell.create(id: "cellTitleFontSize", description: Text.NewTag.fontSizeDescription, initialValue: 14)
 	private let cellTitleAlignment = LabelPickerCell.create(id: "cellTitleFontAlignment", description: Text.NewTag.descriptionAlignment, initialValueName: Text.NewTag.alignLeft, pickerValues: [(Int64(0), Text.NewTag.alignLeft), (Int64(0), Text.NewTag.alignCenter), (Int64(0), Text.NewTag.alignRight)])
 	private let cellTitleBorderSize = LabelNumberCell.create(id: "cellTitleBorderSize", description: Text.NewTag.borderSizeDescription, initialValue: 0, positive: false)
 	private let cellTitleTextColor = LabelColorPickerCell.create(id: "cellTitleTextColor", description: Text.NewTag.textColor)
@@ -211,7 +209,7 @@ class NewOrEditController: UIViewController, UITableViewDelegate, UITableViewDat
 	// MARK: Lyrics Cells
 	
 	private var  cellLyricsFontFamily = LabelPickerCell()
-	private let cellLyricsFontSize = LabelNumberCell.create(id: "cellLyricsFontSize", description: Text.NewTag.fontSizeDescription, initialValue: 17)
+	private let cellLyricsFontSize = LabelNumberCell.create(id: "cellLyricsFontSize", description: Text.NewTag.fontSizeDescription, initialValue: 10)
 	private let cellLyricslAlignment = LabelPickerCell.create(id: "cellLyricsFontAlignment", description: Text.NewTag.descriptionAlignment, initialValueName: "Left", pickerValues: [(Int64(0), Text.NewTag.alignLeft), (Int64(0), Text.NewTag.alignCenter), (Int64(0), Text.NewTag.alignRight)])
 	private let cellLyricsBorderSize = LabelNumberCell.create(id: "cellLyricsBorderSize", description: Text.NewTag.borderSizeDescription, initialValue: 0, positive: false)
 	private let cellLyricsTextColor = LabelColorPickerCell.create(id: "cellLyricsTextColor", description: Text.NewTag.textColor)
@@ -228,11 +226,11 @@ class NewOrEditController: UIViewController, UITableViewDelegate, UITableViewDat
 	
 	
 	var editExtistingSheet = false
-	var newTagMode = editTagMode // if saved pressed, don't save sheet
+	var newTagMode = false // if saved pressed, don't save sheet
 	var editTagMode = false // if cancel pressed, don't delete tag
 	var tag: Tag!
 	var sheet: Sheet!
-	var delegate: NewSheetTitleImageDelegate?
+	var delegate: NewOrEditIphoneControllerDelegate?
 	private var isSetup = true
 	private var titleAttributes: [NSAttributedStringKey : Any] = [:]
 	private var lyricsAttributes: [NSAttributedStringKey: Any] = [:]
@@ -251,19 +249,48 @@ class NewOrEditController: UIViewController, UITableViewDelegate, UITableViewDat
 	// MARK: UITableview functions
 	
 	func numberOfSections(in tableView: UITableView) -> Int {
-		return Section.all.count
+		switch sheet.type {
+		case .SheetTitleContent:
+			return Section.titleContent.count
+		case .SheetTitleImage:
+			return Section.titleImage.count
+		case .SheetSplit:
+			return Section.sheetSplit.count
+		case .SheetEmpty:
+			return Section.sheetEmpty.count
+		}
+		return newTagMode || editTagMode ? Section.titleContent.count : Section.all.count
 	}
 	
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		switch Section.for(section, type: sheet.type) {
 		case .general:
-			return newTagMode ? CellGeneral.tag.count : CellGeneral.all.count
+			switch sheet.type {
+			case .SheetTitleContent: return newTagMode || editTagMode ? CellGeneral.tag.count : CellGeneral.all.count
+			case .SheetTitleImage: return CellGeneral.titleImage.count
+			case .SheetSplit: return CellGeneral.sheetSplit.count
+			case .SheetEmpty: return CellGeneral.sheetEmpty.count
+			}
 		case .title:
-			return CellTitle.all.count
+			switch sheet.type {
+			case .SheetTitleContent: return CellTitle.titleContent.count
+			case .SheetTitleImage: return CellTitle.titleImage.count
+			case .SheetSplit: return CellTitle.sheetSplit.count
+			case .SheetEmpty: return CellTitle.sheetEmpty.count
+			}
 		case .content:
-			return CellLyrics.all.count
+			switch sheet.type {
+			case .SheetTitleContent: return CellLyrics.titleContent.count
+			case .SheetTitleImage: return CellLyrics.titleImage.count
+			case .SheetSplit: return CellLyrics.sheetSplit.count
+			case .SheetEmpty: return CellLyrics.sheetEmpty.count
+			}
 		case .image:
-			return CellImage.all.count
+			switch sheet.type {
+			case .SheetTitleImage: return CellImage.all.count
+			default:
+				return 0
+			}
 		}
 	}
 	
@@ -280,7 +307,11 @@ class NewOrEditController: UIViewController, UITableViewDelegate, UITableViewDat
 		switch Section.for(indexPath.section, type: sheet.type) {
 		case .general:
 			switch CellGeneral.for(indexPath, type: sheet.type) {
-			case .asTag : return cellAsTag.preferredHeight
+			case .asTag: return cellAsTag.preferredHeight
+			case .content: return cellContent.preferredHeight
+			case .textLeft: return cellTextLeft.preferredHeight
+			case .textRight: return cellTextRight.preferredHeight
+			case .hasEmptySheet: return cellHasEmptySheet.preferredHeight
 			case .backgroundColor: return cellBackgroundColor.preferredHeight
 			case .backgroundImage: return cellPhotoPickerBackground.preferredHeight
 			default:
@@ -352,6 +383,11 @@ class NewOrEditController: UIViewController, UITableViewDelegate, UITableViewDat
 				return cellBackgroundColor.isActive ? .none : .delete
 			case .asTag:
 				return cellAsTag.isActive ? .none : .delete
+			case .content:
+				return .delete
+			case .textLeft:
+				return cellTextLeft.isActive ? .none : .delete
+			case .textRight: return cellTextRight.isActive ? .none: .delete
 			case .backgroundImage:
 				return cellPhotoPickerBackground.isActive ? .none : cellPhotoPickerBackground.pickedImage != nil ? .delete : .none
 			default:
@@ -388,10 +424,13 @@ class NewOrEditController: UIViewController, UITableViewDelegate, UITableViewDat
 			case .general:
 				switch CellGeneral.for(indexPath, type: sheet.type) {
 				case .asTag: cellAsTag.setValue(value: nil, id: nil)
+				case .content: cellContent.set(text: nil)
+				case .textLeft: cellTextLeft.set(text: nil)
+				case .textRight: cellTextRight.set(text: nil)
 				case .backgroundColor: cellBackgroundColor.setColor(color: nil)
 				case .backgroundImage: cellPhotoPickerBackground.setImage(image: nil)
 					if let path = tag.imagePath {
-						let _ = deleteImageFor(path: path)
+						tag.backgroundImage = nil
 					}
 				default: break
 				}
@@ -414,7 +453,7 @@ class NewOrEditController: UIViewController, UITableViewDelegate, UITableViewDat
 				switch CellImage.for(indexPath, type: sheet.type) {
 				case .some(.image): cellImagePicker.setImage(image: nil)
 					if let sheet = sheet as? SheetTitleImageEntity, let path = sheet.imagePath {
-						let _ = deleteImageFor(path: path)
+						sheet.image = nil
 					}
 				case .some(.borderColor): cellImageBorderColor.setColor(color: nil)
 				case .some(.contentMode): cellImageContentMode.setValue(value: nil, id: nil)
@@ -430,6 +469,18 @@ class NewOrEditController: UIViewController, UITableViewDelegate, UITableViewDat
 			switch CellGeneral.for(indexPath, type: sheet.type) {
 			case .asTag:
 				let cell = cellAsTag
+				cell.isActive = !cell.isActive
+				reloadDataWithScrollTo(cell)
+			case .content:
+				let cell = cellContent
+				cell.isActive = !cell.isActive
+				reloadDataWithScrollTo(cell)
+			case .textLeft:
+				let cell = cellTextLeft
+				cell.isActive = !cell.isActive
+				reloadDataWithScrollTo(cell)
+			case .textRight:
+				let cell = cellTextRight
 				cell.isActive = !cell.isActive
 				reloadDataWithScrollTo(cell)
 			case .backgroundColor:
@@ -514,14 +565,19 @@ class NewOrEditController: UIViewController, UITableViewDelegate, UITableViewDat
 	
 	func textFieldDidChange(cell: LabelTextFieldCell ,text: String?) {
 		if cell.id == "cellName" {
+			tag.title = text
 			sheet.title = text
 		}
 		buildPreview(isSetup: isSetup)
 	}
 	
 	func textViewDidChange(cell: LabelTextView, textView: UITextView) {
-		if cell.id == "cellContent", let sheet = sheet as? SheetTitleImageEntity {
-			sheet.content = textView.text
+		if cell.id == "cellContent" {
+			if let sheet = sheet as? SheetTitleImageEntity {
+				sheet.content = textView.text
+			} else if let sheet = sheet as? SheetTitleContentEntity {
+				sheet.lyrics = textView.text
+			}
 		} else if cell.id == "cellTextLeft", let sheet = sheet as? SheetSplitEntity {
 			sheet.textLeft = textView.text
 		} else if cell.id == "cellTextRight",  let sheet = sheet as? SheetSplitEntity {
@@ -531,11 +587,21 @@ class NewOrEditController: UIViewController, UITableViewDelegate, UITableViewDat
 	}
 	
 	func textViewDidResign(cell: LabelTextView, textView: UITextView) {
-		if !isSetup {
-			cell.isActive = !cell.isActive
+		if cell.id == "cellContent" {
+			if let sheet = sheet as? SheetTitleImageEntity {
+				sheet.content = textView.text
+			} else if let sheet = sheet as? SheetTitleContentEntity {
+				sheet.lyrics = textView.text
+			}
+		} else if cell.id == "cellTextLeft", let sheet = sheet as? SheetSplitEntity {
+			sheet.textLeft = textView.text
+		} else if cell.id == "cellTextRight",  let sheet = sheet as? SheetSplitEntity {
+			sheet.textRight = textView.text
 		}
+
 		tableView.beginUpdates()
 		tableView.endUpdates()
+		buildPreview(isSetup: isSetup)
 	}
 	
 	func didSelect(item: (Int64, String), cell: LabelPickerCell) {
@@ -614,7 +680,21 @@ class NewOrEditController: UIViewController, UITableViewDelegate, UITableViewDat
 	}
 	
 	func didSelectSwitch(first: Bool?, second: Bool?, cell: LabelDoubleSwitchCell) {
-		
+		if cell.id == "cellHasEmptySheet" {
+			if let first = first {
+				tag.hasEmptySheet = first
+				let cell = cellHasEmptySheet
+				reloadDataWithScrollTo(cell)
+			}
+			if let second = second {
+				tag.isEmptySheetFirst = second
+			}
+		}
+		if !isSetup  {
+			cell.isActive = !cell.isActive
+		}
+		reloadDataWithScrollTo(cell)
+		buildPreview(isSetup: isSetup)
 	}
 	
 	func numberChangedForCell(cell: LabelNumberCell) {
@@ -789,7 +869,7 @@ class NewOrEditController: UIViewController, UITableViewDelegate, UITableViewDat
 			if !isSetup {
 				cell.isActive = !cell.isActive
 			}
-			tag.imagePath = saveImage(image: image, id: tag.id)
+			tag.backgroundImage = image
 			tableView.beginUpdates()
 			tableView.endUpdates()
 			tableView.reloadData()
@@ -799,7 +879,7 @@ class NewOrEditController: UIViewController, UITableViewDelegate, UITableViewDat
 			if !isSetup {
 				cell.isActive = !cell.isActive
 			}
-			sheet.imagePath = saveImage(image: image, id: sheet.id)
+			sheet.image = image
 			tableView.beginUpdates()
 			tableView.endUpdates()
 			tableView.reloadData()
@@ -813,18 +893,19 @@ class NewOrEditController: UIViewController, UITableViewDelegate, UITableViewDat
 	
 	private func setup() {
 		
-		if let sheet = sheet, let tag = sheet.hasTag {
+		if sheet == nil {
+			sheet = CoreSheetTitleContent.createEntity()
+		}
+		
+		if editTagMode {
+			
+		} else if let tag = sheet.hasTag  {
 			self.tag = tag
 		} else {
-			sheet = CoreSheetTitleImage.createEntity()
-		}
-		
-		if tag == nil {
 			tag = CoreTag.createEntity()
-			tag.isHidden = true // this tag will not show up in the tag list for users
+			tag.isHidden = newTagMode // this tag will not show up in the tag list for users
 		}
-		
-		
+
 		NotificationCenter.default.addObserver(forName: NotificationNames.externalDisplayDidChange, object: nil, queue: nil, using: externalDisplayDidChange)
 		
 		tableView.register(cell: Cells.labelNumberCell)
@@ -861,6 +942,7 @@ class NewOrEditController: UIViewController, UITableViewDelegate, UITableViewDat
 		cellContent.delegate = self
 		cellTextLeft.delegate = self
 		cellTextRight.delegate = self
+		cellHasEmptySheet.delegate = self
 		cellPhotoPickerBackground.delegate = self
 		cellBackgroundColor.delegate = self
 		
@@ -898,10 +980,10 @@ class NewOrEditController: UIViewController, UITableViewDelegate, UITableViewDat
 		
 		refineSheetRatio()
 		
-		titleAttributes[.font] = UIFont(name: "Avenir", size: 17)
 		cellTitleTextColor.setColor(color: .black)
-		lyricsAttributes[.font] = UIFont(name: "Avenir", size: 17)
 		cellLyricsTextColor.setColor(color: .black)
+		cellTitleFontSize.setValue(value: 14)
+		cellLyricsFontSize.setValue(value: 10)
 		
 		cancel.title = Text.Actions.cancel
 		save.title = Text.Actions.save
@@ -981,7 +1063,9 @@ class NewOrEditController: UIViewController, UITableViewDelegate, UITableViewDat
 	private func loadTagAttributes(_ tag: Tag) {
 		isSetup = true
 		
-		cellName.setName(name: sheet.title ?? "")
+		if editExtistingSheet || editTagMode {
+			cellName.setName(name: sheet.title ?? "")
+		}
 		cellTitleFontFamily.setValue(value: tag.titleFontName ?? "Avenir")
 		cellTitleFontSize.setValue(value: Int(tag.titleTextSize))
 		cellTitleAlignment.setValue(value: tag.titleAlignment, id: nil)
@@ -1019,27 +1103,46 @@ class NewOrEditController: UIViewController, UITableViewDelegate, UITableViewDat
 		// GENERAL ATTRIBUTES
 		cellName.setName(name: sheet.title ?? "")
 
+		if newTagMode || editTagMode {
+			cellName.setName(name: tag.title ?? "")
+			sheet.title = Text.NewTag.sampleTitle
+		} else {
+			cellName.setName(name: sheet.title ?? "")
+		}
 		
 		switch sheet.type {
 		case .SheetTitleContent:
 			if let sheet = sheet as? SheetTitleContentEntity {
-				cellContent.set(text: sheet.lyrics)
+				if !editExtistingSheet {
+					sheet.lyrics = Text.NewTag.sampleLyrics
+				} else {
+					cellContent.set(text: sheet.lyrics ?? "")
+				}
 			}
 		case .SheetTitleImage:
 			if let sheet = sheet as? SheetTitleImageEntity {
-				cellContent.set(text: sheet.content)
-				cellImagePicker.setImage(image: sheet.image)
-				cellImageHasBorder.setSwitchValueTo(value: sheet.imageHasBorder)
-				cellImageBorderSize.setValue(value: Int(sheet.imageBorderSize))
-				if let color = sheet.imageBorderColor {
-					cellImageBorderColor.setColor(color: UIColor(hex: color))
+				if !editExtistingSheet {
+					cellContent.set(text: Text.NewTag.sampleLyrics)
+				} else {
+					cellContent.set(text: sheet.content ?? "")
+					cellImagePicker.setImage(image: sheet.image)
+					cellImageHasBorder.setSwitchValueTo(value: sheet.imageHasBorder)
+					cellImageBorderSize.setValue(value: Int(sheet.imageBorderSize))
+					if let color = sheet.imageBorderColor {
+						cellImageBorderColor.setColor(color: UIColor(hex: color))
+					}
+					cellImageContentMode.setValue(value: nil, id: sheet.imageContentMode)
 				}
-				cellImageContentMode.setValue(value: nil, id: sheet.imageContentMode)
 			}
 		case .SheetSplit:
 			if let sheet = sheet as? SheetSplitEntity {
-				cellTextLeft.set(text: sheet.textLeft)
-				cellTextRight.set(text: sheet.textRight)
+				if !editExtistingSheet {
+					cellTextLeft.set(text: Text.NewTag.sampleLyrics)
+					cellTextRight.set(text: Text.NewTag.sampleLyrics)
+				} else {
+					cellTextLeft.set(text: sheet.textLeft ?? "")
+					cellTextRight.set(text: sheet.textRight ?? "")
+				}
 			}
 		default:
 			break
@@ -1061,33 +1164,30 @@ class NewOrEditController: UIViewController, UITableViewDelegate, UITableViewDat
 			switch sheet.type {
 			case .SheetTitleContent:
 				if let sheet = sheet as? SheetTitleContentEntity {
-					newPreviewView = SheetTitleContent.createWith(frame: previewView.frame, title: sheet.title, sheet: sheet, tag: tag)
+					newPreviewView = SheetTitleContent.createWith(frame: previewView.bounds, title: sheet.title, sheet: sheet, tag: tag)
 					if externalDisplayWindow != nil {
-						_ = SheetTitleContent.createWith(frame: previewView.frame, title: sheet.title, sheet: sheet, tag: tag, scaleFactor: externalDisplayWindowWidth / previewView.frame.width).toExternalDisplay()
+						_ = SheetTitleContent.createWith(frame: previewView.bounds, title: sheet.title, sheet: sheet, tag: tag, scaleFactor: externalDisplayWindowWidth / previewView.bounds.width).toExternalDisplay()
 					}
 				}
 			case .SheetTitleImage:
 				if let sheet = sheet as? SheetTitleImageEntity {
-					newPreviewView = SheetTitleImage.createWith(frame: previewView.frame, sheet: sheet, tag: tag)
+					newPreviewView = SheetTitleImage.createWith(frame: previewView.bounds, sheet: sheet, tag: tag)
 					if externalDisplayWindow != nil {
-						_ = SheetTitleImage.createWith(frame: previewView.frame, sheet: sheet, tag: tag, scaleFactor: externalDisplayWindowWidth / previewView.frame.width).toExternalDisplay()
+						_ = SheetTitleImage.createWith(frame: previewView.bounds, sheet: sheet, tag: tag, scaleFactor: externalDisplayWindowWidth / previewView.bounds.width).toExternalDisplay()
 					}
 				}
 			case .SheetSplit:
 				if let sheet = sheet as? SheetSplitEntity {
-					newPreviewView = SheetSplit.createWith(frame: previewView.frame, sheet: sheet, tag: tag)
+					newPreviewView = SheetSplit.createWith(frame: previewView.bounds, sheet: sheet, tag: tag)
 					if externalDisplayWindow != nil {
-						_ = SheetSplit.createWith(frame: previewView.frame, sheet: sheet, tag: tag, scaleFactor: externalDisplayWindowWidth / previewView.frame.width).toExternalDisplay()
+						_ = SheetSplit.createWith(frame: previewView.bounds, sheet: sheet, tag: tag, scaleFactor: externalDisplayWindowWidth / previewView.bounds.width).toExternalDisplay()
 					}
 				}
 			case .SheetEmpty:
-//				if let sheet = sheet as? SheetEmptyEntity {
-//					newPreviewView = SheetEmpty()
-//					if externalDisplayWindow != nil {
-//
-//					}
-//				}
-				print("empty sheet")
+				newPreviewView = SheetEmpty.createWith(frame: previewView.bounds, tag: tag)
+				if externalDisplayWindow != nil {
+					_ = SheetEmpty.createWith(frame: previewView.bounds, tag: tag, scaleFactor: externalDisplayWindowWidth / previewView.bounds.width).toExternalDisplay()
+				}
 			}
 			
 			previewView.addSubview(newPreviewView)
@@ -1095,31 +1195,7 @@ class NewOrEditController: UIViewController, UITableViewDelegate, UITableViewDat
 
 		}
 	}
-	
-	
-	private func saveImage(image: UIImage, id: Int64) -> String? {
-		if let data = UIImagePNGRepresentation(image) {
-			let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-			let imagePath = String(id) + ".png"
-			let filename = documentsDirectory.appendingPathComponent(imagePath)
-			try? data.write(to: filename)
-			return imagePath
-		}
-		return nil
-	}
-	
-	private func deleteImageFor(path: String) -> Bool {
-		let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-		let url = documentsDirectory.appendingPathComponent(path)
-		do {
-			try FileManager.default.removeItem(at: url)
-			return true
-		} catch let error as NSError {
-			print("Error: \(error.domain)")
-			return false
-		}
-	}
-	
+
 	@objc func externalDisplayDidChange(_ notification: Notification) {
 		refineSheetRatio()
 	}
@@ -1253,12 +1329,10 @@ class NewOrEditController: UIViewController, UITableViewDelegate, UITableViewDat
 		}
 		
 		if let image = cellPhotoPickerBackground.pickedImage {
-			tag.imagePath = saveImage(image: image, id: tag.id)
+			tag.backgroundImage = image
 		} else {
 			if let path = tag.imagePath {
-				if deleteImageFor(path: path) {
-					tag.imagePath = nil
-				}
+				tag.backgroundImage = nil
 			}
 		}
 	}
@@ -1278,14 +1352,14 @@ class NewOrEditController: UIViewController, UITableViewDelegate, UITableViewDat
 		}
 		
 		if !editExtistingSheet && !editTagMode {
-			if let path = tag.imagePath {
-				let _ = deleteImageFor(path: path)
+			if tag.imagePath != nil {
+				tag.backgroundImage = nil
 			}
 			
 			let _ = CoreTag.delete(entity: tag) // delete temp tag
 			
 			if let sheet = sheet as? SheetTitleImageEntity, let path = sheet.imagePath {
-				let _ = deleteImageFor(path: path)
+				sheet.image = nil
 			}
 			
 			let _ = CoreSheet.delete(entity: sheet)
@@ -1308,17 +1382,19 @@ class NewOrEditController: UIViewController, UITableViewDelegate, UITableViewDat
 			generateTag()
 			
 			if let image = cellImagePicker.pickedImage, let sheet = sheet as? SheetTitleImageEntity {
-				sheet.imagePath = saveImage(image: image, id: sheet.id)
+				sheet.image = image
 			}
 			
-			// if new or edit tag, don't save preview sheet
-			if newTagMode {
+			// if new or edit tag, don't save preview sheet and isHidden is false (show tag in list)
+			if newTagMode || editTagMode {
 				sheet = nil
+				tag.isHidden = false
 			} else {
 				sheet.hasTag = tag
+				tag.isHidden = true
 			}
-			
-			let _ = CoreSheetTitleImage.saveContext()
+			let _ = CoreTag.saveContext()
+//			let _ = CoreSheetTitleImage.saveContext()
 			
 			delegate?.didCreate(sheet: sheet)
 			dismiss(animated: true)

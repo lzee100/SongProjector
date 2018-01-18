@@ -23,17 +23,18 @@ class LabelTextView: UITableViewCell, UITextViewDelegate {
 	
 
 	var preferredHeight : CGFloat {
-		return isActive ? 360 : 60
+		return isActive ? 260 : 60
 	}
 	
 	var id = ""
 	var isActive = false { didSet { setupTextView() } }
 	var textView = UITextView()
+	var customText = ""
 
 	static func create(id: String, description: String, placeholder: String) -> LabelTextView {
 		let view : LabelTextView! = UIView.create(nib: "LabelTextView")
 		view.id = id
-		view.previewTextField.attributedPlaceholder = NSAttributedString(string: placeHolder, attributes: [NSAttributedStringKey.foregroundColor: UIColor.placeholderColor])
+		view.previewTextField.attributedPlaceholder = NSAttributedString(string: placeholder, attributes: [NSAttributedStringKey.foregroundColor: UIColor.placeholderColor])
 		view.previewTextField.isEnabled = false
 		view.textViewContainer.isHidden = true
 		view.textViewContainer.backgroundColor = themeWhiteBlackBackground
@@ -46,11 +47,20 @@ class LabelTextView: UITableViewCell, UITextViewDelegate {
 
 	private func setupTextView() {
 		if isActive {
-			textView = UITextView(frame: textViewContainer.frame)
 			previewTextField.isHidden = true
 			DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: {
+				self.textView = UITextView(frame: self.textViewContainer.bounds)
+				self.textView.delegate = self
+				if let font = UIFont (name: "Avenir", size: 16) {
+					self.textView.attributedText = NSAttributedString(string: self.customText, attributes: [NSAttributedStringKey.font : font])
+				}
 				self.textViewContainer.addSubview(self.textView)
 				self.textViewContainer.isHidden = false
+				self.textViewContainer.alpha = 0.0
+				UIView.animate(withDuration: 0.2, animations: {
+					self.textViewContainer.alpha = 1
+					self.setNeedsLayout()
+				})
 			})
 		} else {
 			previewTextField.isHidden = false
@@ -60,8 +70,10 @@ class LabelTextView: UITableViewCell, UITextViewDelegate {
 	}
 	
 	func set(text: String?) {
+		customText = text ?? ""
 		textView.text = text
 		previewTextField.text = text
+		delegate?.textViewDidResign(cell: self, textView: textView)
 	}
 
 	
@@ -74,6 +86,7 @@ class LabelTextView: UITableViewCell, UITextViewDelegate {
 	}
 	
 	public func textViewDidChange(_ textView: UITextView) {
+		customText = textView.text
 		delegate?.textViewDidChange(cell: self, textView: textView)
 	}
 	
@@ -81,7 +94,4 @@ class LabelTextView: UITableViewCell, UITextViewDelegate {
 		previewTextField.text = textView.text
 		delegate?.textViewDidResign(cell: self, textView: textView)
 	}
-
-	
-	
 }

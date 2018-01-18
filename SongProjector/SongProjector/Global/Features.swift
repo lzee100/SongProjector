@@ -35,7 +35,7 @@ enum Feature : String {
 		case .songs:
 			return Text.Songs.title
 		case .players:
-			return Text.Players.title
+			return Text.CustomSheets.title
 		case .tags:
 			return Text.Tags.title
 		case .displaySettings:

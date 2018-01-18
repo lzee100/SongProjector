@@ -161,7 +161,7 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name:NSNotification.Name.UIKeyboardWillHide, object: nil)
 		
 		navigationController?.title = Text.NewSong.title
-		title = Text.Players.title
+		title = Text.CustomSheets.title
 
 		cancel.title = Text.Actions.cancel
 		done.title = Text.Actions.save
@@ -192,7 +192,6 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 		sheetSize = CGSize(width: UIScreen.main.bounds.width - 20, height: cellHeight)
 
 
-		
 		let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
 		layout.sectionInset = UIEdgeInsets(top: 20, left: 0, bottom: 10, right: 0)
 		layout.itemSize = sheetSize
@@ -220,7 +219,7 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 	}
 	
 	private func buildSheets(fromText: String) {
-		
+		sheets = []
 		var lyricsToDevide = fromText + "\n\n"
 		
 		// get title
@@ -266,22 +265,6 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 		
 	}
 	
-//	private func buildSheetViewFor(sheet: Sheet?, frame: CGRect, isSetup: Bool = false) -> SheetView {
-//		let view = SheetView(frame: frame)
-//		view.isEmptySheet = false
-//		view.selectedTag =  selectedTag
-//		view.songTitle = clusterTitle
-//		view.position = Int(sheet?.position ?? 0)
-//		if isSetup {
-//			view.lyrics = ""
-//		} else {
-//			view.lyrics = sheet?.lyrics
-//		}
-//		view.isEditable = true
-//		view.update()
-//		return view
-//	}
-	
 	private func hasTagSelected() -> Bool {
 		if selectedTag != nil {
 			return true
@@ -314,6 +297,9 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 	
 	@IBAction func done(_ sender: UIBarButtonItem) {
 		if hasTagSelected() {
+			
+			buildSheets(fromText: textView.text)
+
 			let cluster = CoreCluster.createEntity()
 			cluster.title = clusterTitle
 			let id = Int(cluster.id)

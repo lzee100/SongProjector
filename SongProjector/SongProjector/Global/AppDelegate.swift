@@ -54,7 +54,6 @@ var externalDisplayWindowWidth: CGFloat {
 	}
 }
 
-
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
