@@ -7,12 +7,32 @@
 //
 
 import Foundation
+import UIKit
 
 public enum SheetType {
 	case SheetTitleContent
 	case SheetTitleImage
 	case SheetSplit
 	case SheetEmpty
+	
+	static let all = [SheetTitleContent, SheetTitleImage, SheetSplit, SheetEmpty]
+	
+	static func `for`(_ indexPath: IndexPath) -> SheetType {
+		return all[indexPath.row]
+	}
+	
+	static func iconFor(type: SheetType) -> UIImage {
+		switch type {
+		case .SheetTitleContent:
+			return Cells.bulletOpen
+		case .SheetTitleImage:
+			return Cells.bulletOpen
+		case .SheetSplit:
+			return Cells.bulletOpen
+		case .SheetEmpty:
+			return Cells.bulletOpen
+		}
+	}
 }
 
 extension Sheet {
@@ -43,4 +63,19 @@ extension Sheet {
 		}
 	}
 	
+	@objc open func delete() {
+		if let tag = hasTag {
+			tag.backgroundImage = nil
+			let _ = CoreTag.delete(entity: tag)
+		}
+		_ = CoreSheet.delete(entity: self)
+	}
+	
+}
+
+extension SheetTitleImageEntity {
+	override public func delete() {
+		super.delete()
+		image = nil
+	}
 }

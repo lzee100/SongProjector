@@ -69,25 +69,23 @@ class SheetTitleContent: SheetView {
 				lyricsRightConstraint.constant = lyricsRightConstraint.constant * scaleFactor
 				
 				if let songTitle = songTitle {
-					
-					if let tag = selectedTag {
-						if !tag.allHaveTitle && position > 0 {
-							titleHeightConstraint.isActive = false
-							zeroHeightConstraint = NSLayoutConstraint(item: titleLabel, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
-							titleLabel.addConstraint(zeroHeightConstraint!)
-						} else {
-							if let zeroHeightConstraint = zeroHeightConstraint {
-								titleLabel.removeConstraint(zeroHeightConstraint)
+						if let tag = selectedTag { // is custom sheet
+							
+							if !tag.allHaveTitle && position > 0 {
+								titleHeightConstraint.isActive = false
+								zeroHeightConstraint = NSLayoutConstraint(item: titleLabel, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
+								titleLabel.addConstraint(zeroHeightConstraint!)
+							} else {
+								if let zeroHeightConstraint = zeroHeightConstraint {
+									titleLabel.removeConstraint(zeroHeightConstraint)
+								}
+								titleHeightConstraint.isActive = true
 							}
-							titleHeightConstraint.isActive = true
-						}
-						titleLabel.attributedText = NSAttributedString(string: songTitle, attributes: tag.getTitleAttributes(scaleFactor))
-					} else {
-						titleLabel.text = songTitle
+							titleLabel.attributedText = NSAttributedString(string: songTitle, attributes: tag.getTitleAttributes(scaleFactor))
+						} else {
+							titleLabel.text = songTitle
 					}
-					
 				}
-				
 				if let lyrics = lyrics {
 					if let tag = selectedTag {
 						lyricsTextView.attributedText = NSAttributedString(string: lyrics, attributes: tag.getLyricsAttributes(scaleFactor))

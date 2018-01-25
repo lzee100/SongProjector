@@ -25,9 +25,11 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 	
 	// MARK: - Properties
 	
+	var cluster: Cluster?
+	var sheets: [SheetTitleContentEntity] = []
+	var editExistingCluster = false
+	
 	private var isSetup = true
-	private var clusterTitle = ""
-	private var sheets: [SheetTitleContentEntity] = []
 	private var tags: [Tag] = []
 	private var delaySheetAimation = 0.0
 	private var isFirstTime = true {
@@ -41,9 +43,7 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 	}
 	private var sheetMode = false
 	
-	private var isCollectionviewSheetsHidden = true {
-		didSet { update() }
-	}
+	private var isCollectionviewSheetsHidden = true
 	
 	
 	
@@ -90,7 +90,7 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 					subview.removeFromSuperview()
 				}
 				
-				let view = SheetTitleContent.createWith(frame: collectionCell.bounds, title: clusterTitle, sheet: sheets[indexPath.section], tag: selectedTag)
+				let view = SheetTitleContent.createWith(frame: collectionCell.bounds, title: cluster?.title, sheet: sheets[indexPath.section], tag: selectedTag ?? cluster?.hasTag)
 				collectionCell.previewView.addSubview(view)
 				
 				if visibleCells.contains(indexPath) {
@@ -153,6 +153,10 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 	private func setup() {
 		CoreTag.predicates.append("isHidden", notEquals: true)
 		tags = CoreTag.getEntities()
+		
+		if cluster == nil {
+			cluster = CoreCluster.createEntity()
+		}
 
 		collectionView.register(UINib(nibName: Cells.tagCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.tagCellCollection)
 		collectionViewSheets.register(UINib(nibName: Cells.sheetCollectionCell, bundle: nil), forCellWithReuseIdentifier: Cells.sheetCollectionCell)
@@ -173,7 +177,8 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 		textView.layer.borderWidth = 1
 		textView.layer.cornerRadius = CGFloat(5.0)
 		textView.textContainerInset = UIEdgeInsetsMake(10, 10, 10, 10)
-
+		textView.setNeedsLayout()
+		textView.setNeedsDisplay()
 		
 		segmentControl.setTitle(Text.NewSong.segmentTitleText, forSegmentAt: 0)
 		segmentControl.setTitle(Text.NewSong.segmentTitleSheets, forSegmentAt: 1)
@@ -187,10 +192,8 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 		textView.addGestureRecognizer(leftSwipe)
 		collectionViewSheets.addGestureRecognizer(rightSwipe)
 		
-		
 		let cellHeight = multiplier * (UIScreen.main.bounds.width - 20)
 		sheetSize = CGSize(width: UIScreen.main.bounds.width - 20, height: cellHeight)
-
 
 		let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
 		layout.sectionInset = UIEdgeInsets(top: 20, left: 0, bottom: 10, right: 0)
@@ -201,15 +204,22 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 		
 		textView.keyboardDismissMode = .interactive
 		
-		isCollectionviewSheetsHidden = true
+		visibleCells = getMaxVisiblecells()
+		if editExistingCluster {
+			textView.text = getTextFromSheets()
+			segmentControl.selectedSegmentIndex = 1
+			selectedTag = cluster?.hasTag
+		} else {
+			isCollectionviewSheetsHidden = true
+			segmentControl.selectedSegmentIndex = 0
+			segmentControlValueChanged(segmentControl)
+		}
 	}
 	
 	private func update() {
-		// TODO: uncomment
 		collectionView.reloadData()
 		collectionViewSheets.reloadData()
 		isFirstTime = true
-		collectionViewSheets.isHidden = isCollectionviewSheetsHidden
 	}
 	
 	private func databaseDidChange(_ notification: Notification) {
@@ -227,7 +237,7 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 			let start = lyricsToDevide.index(lyricsToDevide.startIndex, offsetBy: 0)
 			let rangeSheet = start..<range.lowerBound
 			let rangeRemove = start..<range.upperBound
-			clusterTitle = String(lyricsToDevide[rangeSheet])
+			cluster?.title = String(lyricsToDevide[rangeSheet])
 			lyricsToDevide.removeSubrange(rangeRemove)
 		}
 		
@@ -265,6 +275,28 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 		
 	}
 	
+	private func getMaxVisiblecells() -> [IndexPath] {
+		
+		let completeCellsVisible = Int(collectionViewSheets.bounds.height / sheetSize.height)
+		let remainder = collectionViewSheets.bounds.height.truncatingRemainder(dividingBy: sheetSize.height)
+		let remainderInt = remainder > 0 ? 1 : 0
+		let sum = completeCellsVisible + remainderInt
+		var indexPaths: [IndexPath] = []
+		for index in 0..<sum {
+			indexPaths.append(IndexPath(row: 0, section: index))
+		}
+		
+		let tooMuchCells = (indexPaths.count - sheets.count)
+		
+		if tooMuchCells > 0 {
+			for _ in 0..<tooMuchCells {
+				indexPaths.removeLast()
+			}
+		}
+		
+		return indexPaths
+	}
+	
 	private func hasTagSelected() -> Bool {
 		if selectedTag != nil {
 			return true
@@ -287,11 +319,26 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 			segmentControlValueChanged(segmentControl)
 		}
 	}
+	
+	private func getTextFromSheets() -> String {
+		var totalString = (cluster?.title ?? "") + "\n\n"
+		let tempSheets:[SheetTitleContentEntity] = sheets.count > 0 ? sheets : cluster?.hasSheetsArray as? [SheetTitleContentEntity] ?? []
+		for (index, sheet) in tempSheets.enumerated() {
+			totalString += sheet.lyrics ?? ""
+			if index < tempSheets.count - 1 { // add only \n\n to second last, not the last one, or it will add empty sheet
+				totalString +=  "\n\n"
+			}
+		}
+		return totalString
+	}
 
 	
 	// MARK: - IBAction Functions
 	
 	@IBAction func cancel(_ sender: UIBarButtonItem) {
+		if !editExistingCluster, let cluster = cluster {
+			let _ = CoreCluster.delete(entity: cluster)
+		}
 		dismiss(animated: true)
 	}
 	
@@ -300,11 +347,14 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 			
 			buildSheets(fromText: textView.text)
 
-			let cluster = CoreCluster.createEntity()
-			cluster.title = clusterTitle
-			let id = Int(cluster.id)
-			cluster.position = Int16(id)
-			if CoreCluster.saveContext() { print("song saved") } else { print("song not saved") }
+			// if existing cluster, remove current sheets
+			CoreCluster.predicates.append("id", equals: cluster?.id)
+			let results = CoreCluster.getEntities()
+			if results.count != 0, let cluster = cluster {
+				for sheet in cluster.hasSheetsArray {
+					sheet.delete()
+				}
+			}
 			
 			for tempSheet in sheets {
 				let sheet = CoreSheetTitleContent.createEntity()
@@ -317,11 +367,10 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 			
 			if CoreSheet.saveContext() { print("sheets saved") } else { print("sheets not saved") }
 			
-			cluster.hasTag = selectedTag
+			cluster?.hasTag = selectedTag
 			if CoreTag.saveContext() { print("tag saved") } else { print("tag not saved") }
-			
-			dismiss(animated: true)
 		}
+		dismiss(animated: true)
 	}
 	
 	@IBAction func segmentControlValueChanged(_ sender: UISegmentedControl) {
@@ -330,6 +379,7 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 			isCollectionviewSheetsHidden = false
 			textView.resignFirstResponder()
 			buildSheets(fromText: textView.text)
+			view.bringSubview(toFront: collectionViewSheets)
 			update()
 		} else {
 			isSetup = true
@@ -337,6 +387,8 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 			sheets = []
 			isFirstTime = true
 			isCollectionviewSheetsHidden = true
+			view.sendSubview(toBack: collectionViewSheets)
+			update()
 		}
 	}
 	

@@ -8,7 +8,19 @@
 
 import UIKit
 import CoreData
+import Photos
 
+var canUsePhotos: Bool {
+
+	get {
+		let defaults = UserDefaults.standard
+		return defaults.bool(forKey: "canUsePhotos")
+	}
+	set {
+		let defaults = UserDefaults.standard
+		defaults.set(newValue, forKey: "canUsePhotos")
+	}
+}
 
 var externalDisplayWindow: UIWindow? {
 	didSet {
@@ -60,10 +72,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	var window: UIWindow?
 
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-		addDataBaseObjects()
+		setupAndCheckDatabase()
 		setupAirPlay()
 		application.statusBarStyle = .lightContent
 		Theme.setup()
+		if PHPhotoLibrary.authorizationStatus() == .notDetermined {
+			PHPhotoLibrary.requestAuthorization({ (status) in
+				if status == PHAuthorizationStatus.authorized {
+					canUsePhotos = true
+				} else {
+					canUsePhotos = false
+				}
+			})
+		}
 		return true
 	}
 
@@ -118,8 +139,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	    })
 	    return container
 	}()
+	
 
-	private func addDataBaseObjects() {
+	private func setupAndCheckDatabase() {
+		
+		// remove temporary sheets or tags that were created but session got lost (app terminated durring configuration process)
+		CoreEntity.predicates.append("isTemp", equals: true)
+		var entities = CoreEntity.getEntities()
+		for entity in entities{
+			_ = CoreEntity.delete(entity: entity)
+		}
+		let predicate = NSPredicate(format: "title == %@", 0)
+		CoreEntity.predicates.append(and: [predicate])
+		entities = CoreEntity.getEntities()
+		for entity in entities {
+			_ = CoreEntity.delete(entity: entity)
+		}
+		
 		CoreTag.predicates.append("title", equals: "Player")
 		var tags = CoreTag.getEntities()
 		if tags.count == 0 {

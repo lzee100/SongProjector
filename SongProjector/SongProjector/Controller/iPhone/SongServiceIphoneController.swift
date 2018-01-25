@@ -8,7 +8,6 @@
 
 import UIKit
 import QuartzCore
-
 extension NSLayoutConstraint {
 	func constraintWithMultiplier(_ multiplier: CGFloat) -> NSLayoutConstraint {
 		return NSLayoutConstraint(item: self.firstItem, attribute: self.firstAttribute, relatedBy: self.relation, toItem: self.secondItem, attribute: self.secondAttribute, multiplier: multiplier, constant: self.constant)
@@ -16,8 +15,10 @@ extension NSLayoutConstraint {
 }
 
 class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, NewSongServiceDelegate {
+	
+	
+	
 
-	@IBOutlet var clear: UIBarButtonItem!
 	@IBOutlet var new: UIBarButtonItem!
 	@IBOutlet var sheetDisplaySwipeView: UIView!
 
@@ -26,7 +27,11 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	@IBOutlet var sheetDisplayerNext: UIView!
 	@IBOutlet var emptyViewTableView: UIView!
 	
-	@IBOutlet var swipeViewLine: UIView!
+	@IBOutlet var swipeUpDownImageView: UIImageView!
+	@IBOutlet var swipeLineLeft: UIView!
+	@IBOutlet var swipeLineRight: UIView!
+	@IBOutlet var swipeLineLeftWidthConstraint: NSLayoutConstraint!
+	@IBOutlet var swipeLineRightWidthConstraint: NSLayoutConstraint!
 	
 	@IBOutlet var sheetDisplayerNextLeftConstraint: NSLayoutConstraint!
 	@IBOutlet var sheetDisplayerPreviousRightConstraint: NSLayoutConstraint!
@@ -59,6 +64,11 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		static let nextSheetFraction: CGFloat = 1.8
 	}
 	
+	private var scaleFactor: CGFloat = 1
+	private var sheetDisplayerInitialFrame: CGRect = CGRect(x: 0, y: 0, width: 0, height: 0)
+	private var sheetDisplayerSwipeViewInitialHeight: CGFloat = 0
+	private var isPlaying = false
+	private var leftSwipe = UISwipeGestureRecognizer()
 	private var viewToBeamer: SheetView?
 	private var hasTitle = true
 	private var emptySheet: Sheet?
@@ -72,6 +82,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 					removeEmptySheet()
 				}
 			}
+			stopPlay()
 		}
 		didSet {
 			if let hasEmptySheet = selectedCluster?.hasTag?.hasEmptySheet, hasEmptySheet {
@@ -79,6 +90,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 			} else {
 				selectedSheet = sheetsForSelectedCluster?.first
 			}
+
 		}
 	}
 	private var sheetsToDisplay: [UIImage] = []
@@ -120,9 +132,6 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 			newSongServiceIphoneController.delegate = self
 			newSongServiceIphoneController.selectedSongs = clusters
 		}
-//		if let controller = segue.destination as? UINavigationController, let songsController = controller.viewControllers.first as? SongsController {
-//			songsController.delegate = self
-//		}
 	}
 	
 	
@@ -133,9 +142,18 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		return 1
 	}
 	
-	
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return (clusters.count + (sheetsForSelectedCluster?.count ?? 0)) == 0 ? 1 : clusters.count + (sheetsForSelectedCluster?.count ?? 0)
+		if clusters.count == 0 {
+			// return No songs selected cell
+			return 1
+			// return only 1 cell if song has but 1 sheet
+		} else {
+			if selectedCluster != nil {
+				return clusters.count +  (sheetsForSelectedCluster?.count == 1 ? 0 : sheetsForSelectedCluster?.count ?? 0)
+			} else {
+				return clusters.count
+			}
+		}
 	}
 	
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -207,8 +225,9 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	
 	// MARK: SongsControllerDelegate Functions
 	
-	func didSelectCluster(cluster: Cluster){
-		self.clusters.append(cluster)
+	func didFinishSongServiceSelection(clusters: [Cluster], completion: () -> Void) {
+		self.clusters = clusters
+		completion()
 	}
 	
 	
@@ -220,12 +239,16 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		navigationController?.title = Text.SongService.title
 		title = Text.SongService.title
 		
-		clear.title = Text.Actions.new
 		new.title = Text.Actions.add
+		swipeUpDownImageView.tintColor = themeHighlighted
 		
+		view.backgroundColor = themeWhiteBlackBackground
 		emptyViewTableView.backgroundColor = themeWhiteBlackBackground
-		moveUpDownSection.backgroundColor = themeWhiteBlackBackground
-		swipeViewLine.backgroundColor = themeHighlighted
+		moveUpDownSection.backgroundColor = .clear
+		swipeLineLeft.backgroundColor = themeHighlighted
+		swipeLineRight.backgroundColor = themeHighlighted
+		swipeLineLeftWidthConstraint.constant = UIScreen.main.bounds.width * 0.35
+		swipeLineRightWidthConstraint.constant = UIScreen.main.bounds.width * 0.35
 		
 		NotificationCenter.default.addObserver(forName: NotificationNames.externalDisplayDidChange, object: nil, queue: nil, using: externalDisplayDidChange)
 		
@@ -245,7 +268,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		moveUpDownSection.addGestureRecognizer(upSwipe)
 		moveUpDownSection.addGestureRecognizer(downSwipe)
 		
-		let leftSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))
+		leftSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))
 		let rightSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))
 
 		leftSwipe.direction = .left
@@ -256,10 +279,11 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		
 		sheetDisplaySwipeView.addGestureRecognizer(leftSwipe)
 		sheetDisplaySwipeView.addGestureRecognizer(rightSwipe)
-//		sheetDisplaySwipeView.isHidden = true
 		
 		tableView.register(cell: Cells.basicCellid)
 		updateSheetDisplayersRatios()
+		sheetDisplayerInitialFrame = sheetDisplayer.bounds
+		sheetDisplayerSwipeViewInitialHeight = sheetDisplaySwipeViewCustomHeightConstraint?.constant ?? sheetDisplaySwipeView.bounds.height
 		update()
 		
 	}
@@ -286,9 +310,11 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 			let nextPosition = Int(position) + 1
 			if nextPosition < sheetsForSelectedCluster.count {
 				return sheetsForSelectedCluster[nextPosition]
-			} else if let clusterPosition = selectedCluster?.position, Int(clusterPosition) + 1 < clusters.count {
-					let selectedCluster = self.clustersOrdened[Int(clusterPosition) + 1]
-					return selectedCluster.hasSheetsArray.first
+			} else if isPlaying{
+				return sheetsForSelectedCluster.first
+			}else if let clusterPosition = selectedCluster?.position, Int(clusterPosition) + 1 < clusters.count {
+				let selectedCluster = self.clustersOrdened[Int(clusterPosition) + 1]
+				return selectedCluster.hasSheetsArray.first
 			} else {
 				return nil
 			}
@@ -330,8 +356,17 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 							self.swipeAnimationIsActive = false
 							self.selectedSheet = sheetsForSelectedCluster[nextPosition]
 						})
-						self.tableView.scrollToRow(at: IndexPath(row: Int(clusterPosition) + nextPosition, section: 0), at: .middle, animated: false)
+						self.tableView.scrollToRow(at: IndexPath(row: Int(clusterPosition) + nextPosition, section: 0), at: .middle, animated: true)
 					} else {
+						
+						// don't go to next song but play first sheet again
+						if isPlaying {
+							animateSheetsWith(.left, completion: {
+								self.swipeAnimationIsActive = false
+								self.selectedSheet = self.sheetsForSelectedCluster?.first
+							})
+							return
+						}
 						// display next song
 						if let clusterPosition = selectedCluster?.position, Int(clusterPosition) + 1 < clusters.count {
 							swipeAnimationIsActive = true
@@ -341,7 +376,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 								self.selectedCluster = self.clustersOrdened[Int(clusterPosition) + 1]
 								self.selectedSheet = self.sheetsForSelectedCluster?.first
 							})
-							self.tableView.scrollToRow(at: IndexPath(row: Int(clusterPosition) + nextPosition, section: 0), at: .middle, animated: false)
+							self.tableView.scrollToRow(at: IndexPath(row: Int(clusterPosition) + nextPosition, section: 0), at: .middle, animated: true)
 						}
 					}
 				}
@@ -390,39 +425,98 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 			switch sender.direction {
 			case .up:
 				print("up")
-				if sheetDisplayerSwipeViewHeight.constant > 100 {
-					sheetDisplayerSwipeViewHeight.constant = 100
+				if sheetDisplayerSwipeViewHeight.isActive {
+					if sheetDisplayerSwipeViewHeight.constant > (sheetDisplayerSwipeViewHeight.constant / 2) {
+						sheetDisplayerRatioConstraint.isActive = false
+						sheetDisplayerNextRatioConstraint.isActive = false
+						sheetDisplayerPreviousRatioConstraint.isActive = false
+						sheetDisplayerSwipeViewHeight.constant = (sheetDisplayerSwipeViewHeight.constant / 2)
 
-					UIView.animate(withDuration: 0.3) {
-						self.view.layoutIfNeeded()
-						self.sheetDisplayer.layoutIfNeeded()
-						self.sheetDisplayerPrevious.layoutIfNeeded()
-						self.sheetDisplayerNext.layoutIfNeeded()
+						UIView.animate(withDuration: 0.2) {
+							self.view.layoutIfNeeded()
+						}
 					}
-				} else {
-					self.sheetDisplayerSwipeViewHeight.constant = 0
-					UIView.animate(withDuration: 0.3) {
+				} else if let heightConstraint = sheetDisplaySwipeViewCustomHeightConstraint, heightConstraint.isActive {
+					if heightConstraint.constant > sheetDisplayerSwipeViewInitialHeight / 2{
+						
+						// old height copy to image
+						let image = sheetDisplayer.asImage()
+						let imageView = UIImageView(frame: sheetDisplayer.bounds)
+						imageView.image = image
+						view.addSubview(imageView)
+						
+						// new height
+						self.sheetDisplaySwipeViewCustomHeightConstraint?.constant = (heightConstraint.constant / 2)
+						sheetDisplayer.isHidden = true
 						self.view.layoutIfNeeded()
-						self.sheetDisplayer.layoutIfNeeded()
-						self.sheetDisplayerPrevious.layoutIfNeeded()
-						self.sheetDisplayerNext.layoutIfNeeded()
+						
+						// set image to new height
+						
+						UIView.animate(withDuration: 0.2, animations: {
+							imageView.frame = self.sheetDisplayer.frame
+						}, completion: { (bool) in
+							self.sheetDisplayer.isHidden = false
+							imageView.removeFromSuperview()
+							self.scaleFactor = self.sheetDisplayer.bounds.width / self.sheetDisplayerInitialFrame.width
+							self.displaySheets()
+
+						})
+						
+						
 					}
 				}
 			case .down:
 				print("down")
-				if sheetDisplayerSwipeViewHeight.constant < 150 {
-					self.sheetDisplayerSwipeViewHeight.constant = 150
-					UIView.animate(withDuration: 0.3) {
-						self.view.layoutIfNeeded()
-						self.sheetDisplayer.layoutIfNeeded()
-						self.sheetDisplayerPrevious.layoutIfNeeded()
-						self.sheetDisplayerNext.layoutIfNeeded()
+				if sheetDisplayerSwipeViewHeight.isActive {
+					if sheetDisplayerSwipeViewHeight.constant < sheetDisplayerSwipeViewInitialHeight {
+						sheetDisplayerSwipeViewHeight.constant = sheetDisplayerSwipeViewInitialHeight
+						scaleFactor = 1
+						UIView.animate(withDuration: 0.3, animations: {
+							self.view.layoutIfNeeded()
+						}, completion: { (bool) in
+							self.displaySheets()
+						})
 					}
+				} else if let heightConstraint = sheetDisplaySwipeViewCustomHeightConstraint, heightConstraint.isActive, heightConstraint.constant < sheetDisplayerSwipeViewInitialHeight && heightConstraint.constant > 0 {
+					
+					// old height copy to image
+					let image = sheetDisplayer.asImage()
+					let imageView = UIImageView(frame: sheetDisplayer.frame)
+					imageView.image = image
+					view.addSubview(imageView)
+					sheetDisplayer.isHidden = true
+
+					// new height
+					self.sheetDisplaySwipeViewCustomHeightConstraint?.constant = sheetDisplayerSwipeViewInitialHeight
+					self.view.layoutIfNeeded()
+					
+					// set image to new height
+					
+					UIView.animate(withDuration: 0.3, animations: {
+						imageView.frame = self.sheetDisplayer.frame
+					}, completion: { (bool) in
+						self.sheetDisplayer.isHidden = false
+						imageView.removeFromSuperview()
+						self.scaleFactor = self.sheetDisplayer.bounds.width / self.sheetDisplayerInitialFrame.width
+						self.displaySheets()
+						
+					})
+					
+					
+					
+					
+				} else if let heightConstraint = sheetDisplaySwipeViewCustomHeightConstraint, heightConstraint.isActive, heightConstraint.constant < sheetDisplayerSwipeViewInitialHeight {
+					sheetDisplayer.isHidden = true
+					heightConstraint.constant = sheetDisplayerSwipeViewInitialHeight
+					
+					scaleFactor = 1
+					UIView.animate(withDuration: 0.3, animations: {
+						self.view.layoutIfNeeded()
+					}, completion: { (bool) in
+						self.displaySheets()
+						self.sheetDisplayer.isHidden = false
+					})
 				}
-			case .left:
-				print("left")
-			case .right:
-				print("right")
 			default:
 				break
 			}
@@ -469,6 +563,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	}
 	
 	func externalDisplayDidChange(_ notification: Notification) {
+		scaleFactor = 1
 		updateSheetDisplayersRatios()
 		displaySheets()
 	}
@@ -521,20 +616,16 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		
 	}
 	
-	@IBAction func clearButtonPressed(_ sender: UIBarButtonItem) {
-
-	}
-	
 	
 	private func displaySheets() {
 		if selectedSheet != nil {
-			
+
 			for subview in sheetDisplayer.subviews {
 				subview.removeFromSuperview()
 			}
 			
 			// display background
-			sheetDisplaySwipeView.isHidden = false
+			sheetDisplayer.isHidden = false
 			
 			if let numberOfSheets = sheetsForSelectedCluster?.count, let position = selectedSheet?.position {
 				
@@ -553,35 +644,35 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 							
 							// current sheet
 							if let tag = selectedCluster?.hasTag {
-								let view = SheetTitleContent.createWith(frame: sheetDisplayer.bounds, title: selectedCluster?.title, sheet: selectedSheet as? SheetTitleContentEntity, tag: tag)
+								let view = SheetTitleContent.createWith(frame: sheetDisplayer.bounds, title: selectedCluster?.title, sheet: selectedSheet as? SheetTitleContentEntity, tag: tag, scaleFactor: scaleFactor)
 								sheetDisplayer.addSubview(view)
 								
-								if externalDisplayWindow != nil {
-									_ = SheetTitleContent.createWith(frame: sheetDisplayer.bounds, title: selectedCluster?.title, sheet: selectedSheet as? SheetTitleContentEntity, tag: tag, scaleFactor: externalDisplayWindowWidth / sheetDisplayer.bounds.width).toExternalDisplay()
+								if let externalDisplayWindow = externalDisplayWindow {
+									_ = SheetTitleContent.createWith(frame: externalDisplayWindow.bounds, title: selectedCluster?.title, sheet: selectedSheet as? SheetTitleContentEntity, tag: tag, scaleFactor: (externalDisplayWindowWidth / sheetDisplayer.bounds.width) * scaleFactor).toExternalDisplay()
 								}
 							}
 							
 						case .SheetTitleImage:
-							let view = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetTitleImageEntity, tag: selectedSheet.hasTag)
+							let view = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetTitleImageEntity, tag: selectedSheet.hasTag, scaleFactor: scaleFactor)
 							sheetDisplayer.addSubview(view)
 							
-							if externalDisplayWindow != nil {
-								_ = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetTitleImageEntity, tag: selectedSheet.hasTag, scaleFactor: externalDisplayWindowWidth / sheetDisplayer.bounds.width).toExternalDisplay()
+							if let externalDisplayWindow = externalDisplayWindow {
+								_ = SheetTitleImage.createWith(frame: externalDisplayWindow.bounds, sheet: selectedSheet as! SheetTitleImageEntity, tag: selectedSheet.hasTag, scaleFactor: (externalDisplayWindowWidth / sheetDisplayer.bounds.width) * scaleFactor).toExternalDisplay()
 							}
 								
 						case .SheetSplit:
-							let view = SheetSplit.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetSplitEntity, tag: selectedSheet.hasTag)
+							let view = SheetSplit.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetSplitEntity, tag: selectedSheet.hasTag, scaleFactor: scaleFactor)
 							sheetDisplayer.addSubview(view)
 							
-							if externalDisplayWindow != nil {
-								_ = SheetSplit.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetSplitEntity, tag: selectedSheet.hasTag, scaleFactor: externalDisplayWindowWidth / sheetDisplayer.bounds.width).toExternalDisplay()
+							if let externalDisplayWindow = externalDisplayWindow {
+								_ = SheetSplit.createWith(frame: externalDisplayWindow.bounds, sheet: selectedSheet as! SheetSplitEntity, tag: selectedSheet.hasTag, scaleFactor: (externalDisplayWindowWidth / sheetDisplayer.bounds.width) * scaleFactor).toExternalDisplay()
 							}
 								
 						case .SheetEmpty:
-							let view = SheetEmpty.createWith(frame: sheetDisplayer.bounds, tag: selectedSheet.hasTag)
+							let view = SheetEmpty.createWith(frame: sheetDisplayer.bounds, tag: selectedSheet.hasTag, scaleFactor: scaleFactor)
 							sheetDisplayer.addSubview(view)
-							if externalDisplayWindow != nil {
-								_ = SheetEmpty.createWith(frame: sheetDisplayer.bounds, tag: selectedSheet.hasTag, scaleFactor: externalDisplayWindowWidth / sheetDisplayer.bounds.width)
+							if let externalDisplayWindow = externalDisplayWindow {
+								_ = SheetEmpty.createWith(frame: externalDisplayWindow.bounds, tag: selectedSheet.hasTag, scaleFactor: (externalDisplayWindowWidth / sheetDisplayer.bounds.width) * scaleFactor).toExternalDisplay()
 							}
 						}
 						
@@ -589,14 +680,33 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				}
 			}
 			
-		} else {
-			sheetDisplaySwipeView.isHidden = true
-			if let externalDisplayWindow = externalDisplayWindow {
-				let view = UIView(frame: externalDisplayWindow.frame)
-				view.backgroundColor = .black
-				externalDisplayWindow.addSubview(view)
-				viewToBeamer?.removeFromSuperview()
+			if !isPlaying {
+				// check if needs to play
+				if let duration = selectedCluster?.duration, duration > 0 {
+					startPlay()
+				} else if let sheetTime = selectedSheet?.time, sheetTime > 0 {
+					startPlay()
+				}
 			}
+			
+		} else {
+			stopPlay()
+			shutDownDisplayer()
+		}
+	}
+	
+	private func shutDownDisplayer() {
+		for subView in sheetDisplayer.subviews {
+			subView.removeFromSuperview()
+		}
+		if clusters.count > 0 {
+			sheetDisplayer.isHidden = true
+		}
+		if let externalDisplayWindow = externalDisplayWindow {
+			let view = UIView(frame: externalDisplayWindow.frame)
+			view.backgroundColor = .black
+			externalDisplayWindow.addSubview(view)
+			viewToBeamer?.removeFromSuperview()
 		}
 	}
 	
@@ -616,26 +726,26 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				if let selectedSheet = selectedSheet {
 					switch selectedSheet.type {
 					case .SheetTitleContent:
-						currentSheetView = SheetTitleContent.createWith(frame: sheetDisplayer.bounds, title: selectedCluster?.title, sheet: selectedSheet as? SheetTitleContentEntity, tag: selectedCluster?.hasTag)
+						currentSheetView = SheetTitleContent.createWith(frame: sheetDisplayer.bounds, title: selectedCluster?.title, sheet: selectedSheet as? SheetTitleContentEntity, tag: selectedCluster?.hasTag, scaleFactor: scaleFactor)
 					case .SheetTitleImage:
-						currentSheetView = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetTitleImageEntity, tag: selectedSheet.hasTag)
+						currentSheetView = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetTitleImageEntity, tag: selectedSheet.hasTag, scaleFactor: scaleFactor)
 					case .SheetSplit:
-						currentSheetView = SheetSplit.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetSplitEntity, tag: selectedSheet.hasTag)
+						currentSheetView = SheetSplit.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetSplitEntity, tag: selectedSheet.hasTag, scaleFactor: scaleFactor)
 					case .SheetEmpty:
-						currentSheetView = SheetEmpty.createWith(frame: sheetDisplayer.bounds, tag: selectedSheet.hasTag)
+						currentSheetView = SheetEmpty.createWith(frame: sheetDisplayer.bounds, tag: selectedSheet.hasTag, scaleFactor: scaleFactor)
 					}
 					
 					
 					switch nextSheet?.type {
 					case .none: break
 					case .some(.SheetTitleContent):
-						nextSheetView = SheetTitleContent.createWith(frame: sheetDisplayerNext.bounds, title: selectedCluster?.title, sheet: nextSheet as? SheetTitleContentEntity, tag: selectedCluster?.hasTag)
+						nextSheetView = SheetTitleContent.createWith(frame: sheetDisplayerNext.bounds, title: selectedCluster?.title, sheet: nextSheet as? SheetTitleContentEntity, tag: selectedCluster?.hasTag, scaleFactor: scaleFactor)
 					case .some(.SheetTitleImage):
-						nextSheetView = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: nextSheet as! SheetTitleImageEntity, tag: nextSheet?.hasTag)
+						nextSheetView = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: nextSheet as! SheetTitleImageEntity, tag: nextSheet?.hasTag, scaleFactor: scaleFactor)
 					case .some(.SheetSplit):
-						nextSheetView = SheetSplit.createWith(frame: sheetDisplayer.bounds, sheet: nextSheet as! SheetSplitEntity, tag: nextSheet?.hasTag)
+						nextSheetView = SheetSplit.createWith(frame: sheetDisplayer.bounds, sheet: nextSheet as! SheetSplitEntity, tag: nextSheet?.hasTag, scaleFactor: scaleFactor)
 					case .some(.SheetEmpty):
-						nextSheetView = SheetEmpty.createWith(frame: sheetDisplayer.bounds, tag: nextSheet?.hasTag)
+						nextSheetView = SheetEmpty.createWith(frame: sheetDisplayer.bounds, tag: nextSheet?.hasTag, scaleFactor: scaleFactor)
 					}
 
 					currentSheetView?.frame = CGRect(
@@ -700,33 +810,33 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 					switch selectedSheet.type {
 					case .SheetTitleContent:
 						
-						currentSheetView = SheetTitleContent.createWith(frame: sheetDisplayer.bounds, title: selectedCluster?.title, sheet: selectedSheet as? SheetTitleContentEntity, tag: selectedCluster?.hasTag)
+						currentSheetView = SheetTitleContent.createWith(frame: sheetDisplayer.bounds, title: selectedCluster?.title, sheet: selectedSheet as? SheetTitleContentEntity, tag: selectedCluster?.hasTag, scaleFactor: scaleFactor)
 						
 					case .SheetTitleImage:
 						
-						currentSheetView = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetTitleImageEntity, tag: selectedSheet.hasTag)
+						currentSheetView = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetTitleImageEntity, tag: selectedSheet.hasTag, scaleFactor: scaleFactor)
 						
 						
 					case .SheetSplit:
 						
-						currentSheetView = SheetSplit.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetSplitEntity, tag: selectedSheet.hasTag)
+						currentSheetView = SheetSplit.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetSplitEntity, tag: selectedSheet.hasTag, scaleFactor: scaleFactor)
 						
 					case .SheetEmpty:
 						
-						currentSheetView = SheetEmpty.createWith(frame: sheetDisplayer.bounds, tag: selectedSheet.hasTag)
+						currentSheetView = SheetEmpty.createWith(frame: sheetDisplayer.bounds, tag: selectedSheet.hasTag, scaleFactor: scaleFactor)
 						
 					}
 					
 					switch previousSheet?.type {
 					case .none: break
 					case .some(.SheetTitleContent):
-						previousSheetView = SheetTitleContent.createWith(frame: sheetDisplayerPrevious.bounds, title: selectedCluster?.title, sheet: previousSheet as? SheetTitleContentEntity, tag: selectedCluster?.hasTag)
+						previousSheetView = SheetTitleContent.createWith(frame: sheetDisplayerPrevious.bounds, title: selectedCluster?.title, sheet: previousSheet as? SheetTitleContentEntity, tag: selectedCluster?.hasTag, scaleFactor: scaleFactor)
 					case .some(.SheetTitleImage):
-						previousSheetView = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: previousSheet as! SheetTitleImageEntity, tag: previousSheet?.hasTag)
+						previousSheetView = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: previousSheet as! SheetTitleImageEntity, tag: previousSheet?.hasTag, scaleFactor: scaleFactor)
 					case .some(.SheetSplit):
-						previousSheetView = SheetSplit.createWith(frame: sheetDisplayer.bounds, sheet: previousSheet as! SheetSplitEntity, tag: previousSheet?.hasTag)
+						previousSheetView = SheetSplit.createWith(frame: sheetDisplayer.bounds, sheet: previousSheet as! SheetSplitEntity, tag: previousSheet?.hasTag, scaleFactor: scaleFactor)
 					case .some(.SheetEmpty):
-						previousSheetView = SheetEmpty.createWith(frame: sheetDisplayer.bounds, tag: previousSheet?.hasTag)
+						previousSheetView = SheetEmpty.createWith(frame: sheetDisplayer.bounds, tag: previousSheet?.hasTag, scaleFactor: scaleFactor)
 					}
 					
 					currentSheetView?.frame = CGRect(
@@ -778,5 +888,65 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 			}
 		}
 	}
+	
+	private func startPlay() {
+		isPlaying = true
+		
+		// is cluster has time (advertisement)
+		if let time = selectedCluster?.duration {
+			DispatchQueue.main.asyncAfter(deadline: .now() + time, execute: {
+				if self.isPlaying {
+					self.respondToSwipeGesture(self.leftSwipe)
+					
+					// keep doing while isPlaying is true
+					if self.isPlaying {
+						self.startPlay()
+					}
+				}
+			})
+		}
+		
+		// else if sheet has time (mp3 song)
+		else if let time = selectedSheet?.time, time > 0 {
+			DispatchQueue.main.asyncAfter(deadline: .now() + time, execute: {
+				if self.isPlaying {
+					self.respondToSwipeGesture(self.leftSwipe)
+					
+					// keep doing while isPlaying is true
+					if self.isPlaying {
+						self.startPlay()
+					}
+				}
+			})
+		}
+	}
+	
+	private func stopPlay() {
+		isPlaying = false
+	}
+	@IBAction func deleteDB(_ sender: UIBarButtonItem) {
+		var storeCoordinator = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.persistentStoreCoordinator
+		do {
+			if let store = storeCoordinator.persistentStores.first {
+				try storeCoordinator.remove(store)
+			}
+		} catch {
+			print("error deleting persitant store")
+		}
+		
+		do {
+			if ( storeCoordinator.persistentStores.isEmpty ) {
+				var container = (UIApplication.shared.delegate as! AppDelegate).persistentContainer 
 
+//				try storeCoordinator.addPersistentStore(container)
+				
+			}
+			
+		} catch {
+			
+			print("false")
+			
+		}
+	}
+	
 }

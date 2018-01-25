@@ -32,8 +32,8 @@ class LabelNumberCell: UITableViewCell {
 		view.descriptionTitle.text = description
 		view.positive = positive
 		view.value = initialValue
-		view.plus.tintColor = .primary
-		view.minus.tintColor = .primary
+		view.plus.tintColor = themeHighlighted
+		view.minus.tintColor = themeHighlighted
 		view.valueLabel.text = String(initialValue)
 		return view
 	}

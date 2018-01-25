@@ -30,18 +30,18 @@ class TagsIphoneController: UITableViewController, UISearchBarDelegate, UIGestur
 	}
 	
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-		if segue.identifier == "newTagSegue" {
-			let popoverViewController = segue.destination as! NewTagController
-			popoverViewController.modalPresentationStyle = UIModalPresentationStyle.popover
-			popoverViewController.popoverPresentationController!.delegate = self
-			popoverViewController.delegate = self
-		}
-		if segue.identifier == "EditTagSegue" {
-			let nav = segue.destination as! UINavigationController
-			if let newTagController = nav.topViewController as? NewTagIphoneController {
-				newTagController.editExistingTag = selectedTag
-			}
-		}
+//		if segue.identifier == "newTagSegue" {
+//			let popoverViewController = segue.destination as! NewTagController
+//			popoverViewController.modalPresentationStyle = UIModalPresentationStyle.popover
+//			popoverViewController.popoverPresentationController!.delegate = self
+//			popoverViewController.delegate = self
+//		}
+//		if segue.identifier == "EditTagSegue" {
+//			let nav = segue.destination as! UINavigationController
+//			if let newTagController = nav.topViewController as? NewTagIphoneController {
+//				newTagController.editExistingTag = selectedTag
+//			}
+//		}
 	}
 	
 	
@@ -95,7 +95,6 @@ class TagsIphoneController: UITableViewController, UISearchBarDelegate, UIGestur
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		selectedTag = filteredTags[indexPath.row]
 		let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
-		controller.editTagMode = true
 		controller.tag = selectedTag
 		let nav = UINavigationController(rootViewController: controller)
 		present(nav, animated: true)
@@ -134,7 +133,7 @@ class TagsIphoneController: UITableViewController, UISearchBarDelegate, UIGestur
 	
 	private func setup() {
 		tableView.register(cell: Cells.basicCellid)
-		
+		tableView.keyboardDismissMode = .interactive
 		navigationController?.title = Text.Songs.title
 		title = Text.Tags.title
 		

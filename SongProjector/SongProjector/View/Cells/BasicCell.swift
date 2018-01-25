@@ -21,6 +21,7 @@ class BasicCell: UITableViewCell {
 	var selectedCell = false { didSet { update() } }
 	var isLast = false { didSet { update() } }
 	var isInnerCell = false { didSet { update() } }
+	var customTextColor: UIColor?
 	
 	
 	override func awakeFromNib() {
@@ -28,10 +29,11 @@ class BasicCell: UITableViewCell {
 		// Initialization code
 	}
 	
-	func setup(title: String?, icon: UIImage? = nil, iconSelected: UIImage? = nil) {
+	func setup(title: String?, icon: UIImage? = nil, iconSelected: UIImage? = nil, textColor: UIColor? = nil) {
 		self.iconImage = icon
 		self.iconSelected = iconSelected
 		self.icon.image = icon
+		self.customTextColor = textColor
 		self.title.text = title
 		update()
 	}
@@ -40,11 +42,11 @@ class BasicCell: UITableViewCell {
 		seperator.backgroundColor = .clear
 		self.title.font = .xNormal
 		if selectedCell {
-			title.textColor = themeHighlighted
+			title.textColor = customTextColor ?? themeHighlighted
 			icon.tintColor = themeHighlighted
 			icon.image = iconSelected ?? iconImage
 		} else {
-			title.textColor = themeWhiteBlackTextColor
+			title.textColor = customTextColor ?? themeWhiteBlackTextColor
 			icon.tintColor = themeWhiteBlackTextColor
 			icon.image = iconImage
 		}

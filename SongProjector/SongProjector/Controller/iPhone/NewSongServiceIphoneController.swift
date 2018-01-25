@@ -159,9 +159,8 @@ class NewSongServiceIphoneController: UITableViewController, SongsControllerDele
 	
 	
 	@IBAction func donePressed(_ sender: UIBarButtonItem) {
-		delegate?.didFinishSongServiceSelection(clusters: selectedSongs)
-		dismiss(animated: true)
+		delegate?.didFinishSongServiceSelection(clusters: selectedSongs, completion: {
+			self.dismiss(animated: true)
+		})
 	}
-	
-	
 }

@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import CoreData
 
+let CoreEntity = CoreDataManager(nsManagedObject: Entity())
 let CoreTag = CoreDataManager(nsManagedObject: Tag())
 let CoreSheet = CoreDataManager(nsManagedObject: Sheet())
 let CoreSheetSplit = CoreDataManager(nsManagedObject: SheetSplitEntity())
@@ -36,30 +37,15 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 		let entityDes = NSEntityDescription.entity(forEntityName: nsManagedObject.classForCoder.description(), in: managedObjectContext)
 		let entity = NSManagedObject(entity: entityDes!, insertInto: managedObjectContext) as! T
 		
-		// get ID
-		sortDiscriptor = NSSortDescriptor(key: "id", ascending: false)
-		
-		if let first = getEntities().first as? Entity, let entity = entity as? Entity {
-			entity.id = first.id + 1
+		if let entity = entity as? Entity {
+			entity.id = getNewId()
 		}
-		
-		sortDiscriptor = nil
 		
 		return entity
 	}
 	
 	func getNewIDForEntityNOTsave() -> Int64 {
-		// get ID
-		sortDiscriptor = NSSortDescriptor(key: "id", ascending: false)
-		let first = getEntities().first as? Entity
-		sortDiscriptor = nil
-
-		if let first = first {
-			return first.id + 1
-		} else {
-			return Int64(0)
-		}
-		
+		return getNewId()
 	}
 	
 	func createEntity() -> T {
@@ -69,8 +55,8 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 		// get ID
 		sortDiscriptor = NSSortDescriptor(key: "id", ascending: false)
 		
-		if let first = getEntities().first as? Entity, let entity = entity as? Entity {
-			entity.id = first.id + 1
+		if let entity = entity as? Entity {
+			entity.id = getNewId()
 			entity.createdAt = Date()
 		}
 		let _ = saveContext() // raise ID
@@ -87,6 +73,24 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 			return false
 		}
 	}
+	
+	private func getNewId() -> Int64 {
+		var entity: Entity?
+		let request = NSFetchRequest<NSFetchRequestResult>(entityName: Entity.name)
+		
+		request.sortDescriptors = [NSSortDescriptor(key: "id", ascending: false)]
+		
+		request.returnsObjectsAsFaults = false
+		do {
+			let result = try managedObjectContext.fetch(request)
+			entity = result.first as? Entity
+		} catch {
+			print("Failed")
+		}
+		print(entity != nil ? entity!.id + 1 : Int64(0))
+		return entity != nil ? entity!.id + 1 : Int64(0)
+	}
+	
 	
 	func getEntities() -> [T] {
 		var entities: [T] = []

@@ -188,10 +188,11 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 	
 	// MARK: NewSongServiceDelegate Functions
 	
-	func didFinishSongServiceSelection(clusters: [Cluster]) {
+	func didFinishSongServiceSelection(clusters: [Cluster], completion: () -> Void) {
 		self.clusters = clusters
+		completion()
 	}
-	
+
 	
 	
 	// MARK: SongsControllerDelegate Functions
@@ -359,7 +360,7 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 		switch direction {
 		case .left:
 			
-			if let numberOfSheets = sheetsForSelectedCluster?.count, let position = selectedSheet?.position {
+			if let position = selectedSheet?.position {
 				
 				let selectedSheetPosition = Int(position)
 				

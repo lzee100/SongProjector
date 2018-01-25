@@ -62,11 +62,20 @@ class Text: NSObject {
 	}
 	
 	struct CustomSheets {
-		static let title = "Afspelers"
+		static let title = "Speciale dia's"
 		static let namePlaceHolder = "Voer titel in (voor zoeken)"
 		static let errorTitle = "Fout"
 		static let errorNoName = "Geen titel ingevoerd"
+		static let segmentInput = "Invoeren"
+		static let segmentCheck = "Controle"
 		static let segmentSheets = "Dia's"
+		static let segmentChange = "Aanpassen"
+		static let descriptionName = "Groepnaam"
+		static let descriptionTime = "Dia's afspelen om de x seconden"
+		static let descriptionTimeAdd = "0: is niet automatisch afspelen"
+		
+		static let tableViewHeaderGeneral = "Algemeen"
+		static let tableViewHeaderSheets = "Dia's"
 	}
 	
 	struct DisplaySettings {
@@ -120,15 +129,25 @@ class Text: NSObject {
 		static let emptySheetTitle = "Lege dia"
 	}
 	
-	struct CustomSheetsMenu {
-		static let sheetTitleImage = "Dia: titel met foto"
-		static let sheetEmpty = "Lege dia"
-		static let sheetSplit = "Dia 2 segmenten"
+	struct SheetsMenu {
 		static let sheetTitleText = "Dia titel met tekst"
+		static let sheetTitleImage = "Dia: titel met foto"
+		static let sheetSplit = "Dia 2 segmenten"
+		static let sheetEmpty = "Lege dia"
+		static let bibleStudyGen = "Bijbelstudie dia generator"
+	}
+	
+	struct SheetPickerMenu {
+		static let pickSong = "Nieuw lied"
+		static let pickCustom = "Aangepaste dia's"
 	}
 	
 	struct More {
 		static let title = "Meer"
+	}
+	
+	struct BibleStudy {
+		static let title = "Bijbelstudie"
 	}
 	
 	struct NewSheetTitleImage {

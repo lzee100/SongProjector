@@ -57,20 +57,20 @@ class SheetSplit: SheetView {
 			
 			if let songTitle = sheet?.title {
 				if let tag = selectedTag {
-					if !tag.allHaveTitle && (sheet?.position ?? 0 > 0) {
-						
-						// set height constraint to zero
-						titleHeightConstraint.isActive = false
-						zeroHeightConstraint = NSLayoutConstraint(item: descriptionTitle, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
-						descriptionTitle.addConstraint(zeroHeightConstraint!)
-						
+//					if !tag.allHaveTitle && (sheet?.position ?? 0 > 0) {
 //
-//						// set title.bottom - stackView.top constraint to zero
-//						titleBottomConstraint.isActive = false
-//						newTitleBottomConstraint = NSLayoutConstraint(item: stackView, attribute: .top, relatedBy: .equal, toItem: descriptionTitle, attribute: .bottom, multiplier: 1, constant: 0)
-//						descriptionTitle.addConstraint(newTitleBottomConstraint!)
-						
-					} else {
+//						// set height constraint to zero
+//						titleHeightConstraint.isActive = false
+//						zeroHeightConstraint = NSLayoutConstraint(item: descriptionTitle, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
+//						descriptionTitle.addConstraint(zeroHeightConstraint!)
+//
+////
+////						// set title.bottom - stackView.top constraint to zero
+////						titleBottomConstraint.isActive = false
+////						newTitleBottomConstraint = NSLayoutConstraint(item: stackView, attribute: .top, relatedBy: .equal, toItem: descriptionTitle, attribute: .bottom, multiplier: 1, constant: 0)
+////						descriptionTitle.addConstraint(newTitleBottomConstraint!)
+//
+//					} else {
 						// remove previous height constraint
 						if let zeroHeightConstraint = zeroHeightConstraint {
 							descriptionTitle.removeConstraint(zeroHeightConstraint)
@@ -83,7 +83,7 @@ class SheetSplit: SheetView {
 						titleHeightConstraint.isActive = true
 						titleBottomConstraint.isActive = true
 						
-					}
+//					}
 					descriptionTitle.attributedText = NSAttributedString(string: songTitle, attributes: tag.getTitleAttributes(scaleFactor))
 				} else {
 					descriptionTitle.text = songTitle

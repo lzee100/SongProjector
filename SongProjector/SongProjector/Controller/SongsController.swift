@@ -15,7 +15,6 @@ protocol SongsControllerDelegate {
 class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UISearchResultsUpdating, UISearchBarDelegate, CustomSheetsControllerDelegate {
 	
 	@IBOutlet var new: UIBarButtonItem!
-	@IBOutlet var desciptionSongs: UILabel!
 	@IBOutlet var collectionView: UICollectionView!
 	@IBOutlet var tableView: UITableView!
 	@IBOutlet var searchBar: UISearchBar!
@@ -42,10 +41,10 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 	}
 	
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-		if segue.identifier == "EditSongSegue" {
+		if segue.identifier == "NewSongIphoneSegue" {
 			if let nav = segue.destination as? UINavigationController {
-				let songController = nav.topViewController as! EditSongIphoneController
-				songController.cluster = selectedCluster
+				let songController = nav.topViewController as! NewSongIphoneController
+				songController.editExistingCluster = false
 				selectedCluster = nil
 			}
 		}
@@ -68,21 +67,6 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 		return UITableViewCellEditingStyle.delete
 	}
 	
-//	func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
-//		let button1 = UITableViewRowAction(style: .default, title: "Delete") { action, indexPath in
-////			if let index = self.clusters.index(of: self.filteredClusters[indexPath.row]) {
-////				let _ = CoreCluster.delete(entity: self.filteredClusters[indexPath.row])
-////				self.clusters.remove(at: index)
-////				self.filteredClusters = self.clusters
-////				self.tableView.deleteRows(at: [indexPath], with: .automatic)
-////			}
-//		}
-//		button1.backgroundColor = themeMainColor
-//
-//		return [button1]
-//	}
-
-	
 	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
 		if editingStyle == .delete {
 			if let index = clusters.index(of: filteredClusters[indexPath.row]) {
@@ -101,15 +85,19 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 			dismiss(animated: true)
 		} else {
 			if selectedCluster!.isTypeSong {
+				let controller = storyboard?.instantiateViewController(withIdentifier: "NewSongIphoneController") as! NewSongIphoneController
+				controller.cluster = selectedCluster!
+				controller.sheets = selectedCluster!.hasSheetsArray as? [SheetTitleContentEntity] ?? []
+				controller.editExistingCluster = true
+				let nav = UINavigationController(rootViewController: controller)
 				DispatchQueue.main.async {
-					self.performSegue(withIdentifier: "EditSongSegue", sender: self)
+					self.present(nav, animated: true)
 				}
 			} else {
-				let playersController = storyboard?.instantiateViewController(withIdentifier: "PlayersController") as! PlayersIphoneController
-				playersController.cluster = selectedCluster!
-				playersController.sheets = selectedCluster!.hasSheetsArray
-				let nav = UINavigationController(rootViewController: playersController)
-				playersController.delegate = self
+				let customController = storyboard?.instantiateViewController(withIdentifier: "CustomSheetsIphoneController") as! CustomSheetsIphoneController
+				customController.cluster = selectedCluster!
+				customController.sheets = selectedCluster!.hasSheetsArray
+				let nav = UINavigationController(rootViewController: customController)
 				DispatchQueue.main.async {
 					self.present(nav, animated: true)
 				}
@@ -120,8 +108,6 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 	func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 		return 60
 	}
-	
-	
 	
 	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
 		return tags.count
@@ -203,11 +189,9 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 		tableView.register(cell: Cells.basicCellid)
 		collectionView.register(UINib(nibName: Cells.tagCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.tagCellCollection)
 		
+		NotificationCenter.default.addObserver(forName: NotificationNames.dataBaseDidChange, object: nil, queue: nil, using: dataBaseDidChange)
+
 		hideKeyboardWhenTappedAround()
-		
-		if desciptionSongs != nil {
-			desciptionSongs.text = Text.Songs.description
-		}
 		
 		navigationController?.title = Text.Songs.title
 		title = Text.Songs.title
@@ -247,9 +231,16 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 			} else {return false}
 		}
 	}
+	
+	func dataBaseDidChange(notification: Notification) {
+		update()
+	}
 
 	@IBAction func cancelPressed(_ sender: UIBarButtonItem) {
 		dismiss(animated: true)
 	}
 	
+	@IBAction func new(_ sender: UIBarButtonItem) {
+		SheetPickerMenu.showMenu(sender: self)
+	}
 }

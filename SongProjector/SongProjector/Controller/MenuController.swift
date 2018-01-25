@@ -130,7 +130,6 @@ class MenuController: UITabBarController {
 			moreFeatures.removeFirst(maxFeatures)
 			let index = moreFeatures.index(of: .more) as! Int
 			moreFeatures.remove(at: index)
-			print(index)
 		}
 		
 		

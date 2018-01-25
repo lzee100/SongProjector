@@ -1,5 +1,5 @@
 //
-//  PlayersMenu.swift
+//  SheetPickerMenu.swift
 //  SongProjector
 //
 //  Created by Leo van der Zee on 10-01-18.
@@ -8,51 +8,39 @@
 
 import UIKit
 
+let SheetPickerMenu = SheetPickerMen()
 
-//
-//  LoadingIndicator.swift
-//  SongProjector
-//
-//  Created by Leo van der Zee on 10-01-18.
-//  Copyright © 2018 iozee. All rights reserved.
-//
-
-import UIKit
-
-let Menu = PlayerMenu()
-
-class PlayerMenu {
+class SheetPickerMen {
 	
-	private var menu : PlayersMenu?
-
-	private func createMenu(_ sender: NewOrEditIphoneControllerDelegate, playerMenu: PlayerMenu) -> PlayersMenu?{
+	private var menu : SheetPickMenuVC?
+	
+	private func createMenu(_ sender: SongsController, sheetPickersMen: SheetPickerMen) -> SheetPickMenuVC?{
 		if let window = UIApplication.shared.keyWindow{
-			let playersMenu = window.rootViewController?.storyboard?.instantiateViewController(withIdentifier: "PlayersMenu") as? PlayersMenu
-			playersMenu?.sender = sender
-			playersMenu?.menu = playerMenu
-			playersMenu?.view?.frame = window.frame
+			let sheetPickersController = window.rootViewController?.storyboard?.instantiateViewController(withIdentifier: "SheetPickMenuVC") as? SheetPickMenuVC
+			sheetPickersController?.sender = sender
+			sheetPickersController?.menu = sheetPickersMen
+			sheetPickersController?.view?.frame = window.frame
 			
-			if let view = playersMenu?.view{
+			if let view = sheetPickersController?.view{
 				view.isHidden = true
 				view.backgroundColor = .clear
 				
 				let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.dark)
 				let blurEffectView = UIVisualEffectView(effect: blurEffect)
-					blurEffectView.frame = view.bounds
-					blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-					blurEffectView.alpha = 0.9
-					view.addSubview(blurEffectView)
-					view.sendSubview(toBack: blurEffectView)
+				blurEffectView.frame = view.bounds
+				blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+				view.addSubview(blurEffectView)
+				view.sendSubview(toBack: blurEffectView)
 				window.addSubview(view)
 			}
-			return playersMenu
+			return sheetPickersController
 		}
 		return nil
 	}
 	
-	private func getMenu(_ sender: NewOrEditIphoneControllerDelegate) -> PlayersMenu?{
+	private func getMenu(_ sender: SongsController) -> SheetPickMenuVC?{
 		if menu == nil{
-			menu = createMenu(sender, playerMenu: self)
+			menu = createMenu(sender, sheetPickersMen: self)
 			let tab = UITapGestureRecognizer(target: self, action: #selector(self.dismissMenu(_:)))
 			tab.numberOfTapsRequired = 1
 			menu?.view.addGestureRecognizer(tab)
@@ -60,7 +48,7 @@ class PlayerMenu {
 		return menu
 	}
 	
-	func showMenu(sender: NewOrEditIphoneControllerDelegate){
+	func showMenu(sender: SongsController){
 		DispatchQueue.main.async  {
 			if let menu = self.getMenu(sender){
 				menu.view.alpha = 0
@@ -92,16 +80,15 @@ class PlayerMenu {
 	}
 }
 
-class PlayersMenu: UIViewController {
-
+class SheetPickMenuVC: UIViewController {
+	
 	@IBOutlet var button1: UIButton!
 	@IBOutlet var button2: UIButton!
-	@IBOutlet var button3: UIButton!
 	
 	private var blurEffectView: UIVisualEffectView?
 	private var isSetupDone = false
-	var sender: NewOrEditIphoneControllerDelegate?
-	var menu: PlayerMenu?
+	var sender: SongsController?
+	var menu: SheetPickerMen?
 	
 	@IBOutlet var buttonsContainerView: UIView! {
 		didSet{
@@ -120,15 +107,12 @@ class PlayersMenu: UIViewController {
 			
 			button1.backgroundColor = themeWhiteBlackBackground
 			button2.backgroundColor = themeWhiteBlackBackground
-			button3.backgroundColor = themeWhiteBlackBackground
+			
 			button1.tintColor = themeHighlighted
 			button2.tintColor = themeHighlighted
-			button3.tintColor = themeHighlighted
-
-			button1.setTitle(Text.SheetsMenu.sheetEmpty, for: .normal)
-			button2.setTitle(Text.SheetsMenu.sheetTitleImage, for: .normal)
-			button3.setTitle(Text.SheetsMenu.sheetSplit, for: .normal)
-
+			
+			button1.setTitle(Text.SheetPickerMenu.pickSong, for: .normal)
+			button2.setTitle(Text.SheetPickerMenu.pickCustom, for: .normal)
 			
 			let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.dark)
 			blurEffectView = UIVisualEffectView(effect: blurEffect)
@@ -144,12 +128,7 @@ class PlayersMenu: UIViewController {
 	}
 	
 	@IBAction func menuitem1(_ sender: UIButton) {
-		let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
-		let sheet = CoreSheetEmptySheet.createEntity()
-		sheet.isTemp = true
-		sheet.title = "sheet"
-		controller.sheet = sheet
-		controller.delegate = self.sender
+		let controller = storyboard?.instantiateViewController(withIdentifier: "NewSongIphoneController") as! NewSongIphoneController
 		let nav = UINavigationController(rootViewController: controller)
 		DispatchQueue.main.async {
 			self.present(nav, animated: true)
@@ -158,25 +137,7 @@ class PlayersMenu: UIViewController {
 	}
 	
 	@IBAction func menuitem2(_ sender: UIButton) {
-		let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
-		let sheet = CoreSheetTitleImage.createEntity()
-		sheet.isTemp = true
-		controller.sheet = sheet
-		controller.delegate = self.sender
-		let nav = UINavigationController(rootViewController: controller)
-		DispatchQueue.main.async {
-			self.present(nav, animated: true, completion: {
-				self.menu?.hideMenu()
-			})
-		}
-	}
-	
-	@IBAction func menuitem3(_ sender: UIButton) {
-		let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
-		let sheet = CoreSheetSplit.createEntity()
-		sheet.isTemp = true
-		controller.sheet = sheet
-		controller.delegate = self.sender
+		let controller = storyboard?.instantiateViewController(withIdentifier: "CustomSheetsIphoneController") as! CustomSheetsIphoneController
 		let nav = UINavigationController(rootViewController: controller)
 		DispatchQueue.main.async {
 			self.present(nav, animated: true, completion: {

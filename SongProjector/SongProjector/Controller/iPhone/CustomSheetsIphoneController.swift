@@ -1,5 +1,5 @@
 //
-//  PlayersIphoneController.swift
+//  CustomSheetsIphoneController.swift
 //  SongProjector
 //
 //  Created by Leo van der Zee on 04-01-18.
@@ -12,53 +12,60 @@ protocol CustomSheetsControllerDelegate {
 	func didSaveSheets(sheets: [Sheet])
 }
 
-class PlayersIphoneController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, NewOrEditIphoneControllerDelegate {
-
+class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, NewOrEditIphoneControllerDelegate, LabelNumberPickerCellDelegate, LabelTextFieldCellDelegate {
 	
+	
+	// MARK: - Properties
 
-	@IBOutlet var new: UIBarButtonItem!
+	@IBOutlet var cancel: UIBarButtonItem!
 	@IBOutlet var save: UIBarButtonItem!
-	@IBOutlet var clusterNameTextField: UITextField!
 	@IBOutlet var segmentControl: UISegmentedControl!
 	
 	@IBOutlet var collectionViewTags: UICollectionView!
 	@IBOutlet var collectionView: UICollectionView!
 	@IBOutlet var tableView: UITableView!
 	
-	var songTitle = ""
+	var isNew = true
 	var cluster: Cluster!
 	var tags: [Tag] = []
 	var selectedTag: Tag? { didSet { collectionViewTags.reloadData() }}
-	var sheets: [Sheet] = [] {
-		didSet { save.isEnabled = sheets.count > 0 }
-	}
-	var sheetsSorted: [Sheet] {
-		return sheets.sorted{ $0.position < $1.position }
-	}
-	var delegate: CustomSheetsControllerDelegate?
-	private var visibleCells: [IndexPath] = []
-	private var delaySheetAimation = 0.0
-	var multiplier: CGFloat = 9/16
-	var sheetSize = CGSize(width: 375, height: 281)
-	var sheetPreviewView = SheetView()
-	var isFirstTime = true
-	var delay = 0.0
+	var sheets: [Sheet] = [] { didSet { save.isEnabled = sheets.count > 0 } }
 	
+	// MARK: Private properties
+	private var visibleCells: [IndexPath] = []
+	private var sheetsSorted: [Sheet] { return sheets.sorted { $0.position < $1.position } }
+	private var delaySheetAimation = 0.0
+	private var multiplier: CGFloat = 9/16
+	private var sheetSize = CGSize(width: 375, height: 281)
+	
+	private var isFirstTime = true {
+		willSet { if newValue == true { delaySheetAimation = 0.0 } }
+	}
+	private var delay = 0.0
+	private let cellName = LabelTextFieldCell.create(id: "cellName", description: Text.CustomSheets.descriptionName, placeholder: Text.NewTag.descriptionTitlePlaceholder)
+	private let cellAnimationTime = LabelNumberPickerCell.create(id: "cellAnimationTime", description: Text.CustomSheets.descriptionTime, subtitle: Text.CustomSheets.descriptionTimeAdd)
+	
+
+	
+	
+	// MARK - UIView functions
 	
 	override func viewDidLoad() {
         super.viewDidLoad()
-
         setup()
-		
     }
 	
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 		update()
 	}
+	
+	
+	
+	// MARK: - UICollectionView Functions
 
 	func numberOfSections(in collectionView: UICollectionView) -> Int {
-		return collectionView == collectionViewTags ? 1 : sheetsSorted.count
+		return collectionView == collectionViewTags ? 1 : sheetsSorted.count + 1
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -73,13 +80,16 @@ class PlayersIphoneController: UIViewController, UICollectionViewDelegate, UICol
 			collectionCell.isSelectedCell = selectedTag == tags[indexPath.row]
 			return collectionCell
 		} else {
+			
+			if indexPath.section == 0 {
+				let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.AddButtonCollectionCell, for: indexPath) as! AddButtonCollectionCell
+				collectionCell.setup(description: Text.Actions.add)
+				return collectionCell
+			}
+			
 			let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.sheetCollectionCell, for: indexPath)
 			
-			setViewFor(collectionCell: collectionCell, sheet: sheetsSorted[indexPath.section])
-
-			let swipe = UISwipeGestureRecognizer(target: self, action: #selector(respondToSwipeGesture))
-			swipe.direction = .left
-			collectionCell.addGestureRecognizer(swipe)
+			setViewFor(collectionCell: collectionCell, sheet: sheetsSorted[indexPath.section-1])
 			
 			if visibleCells.contains(indexPath) {
 				let y = collectionCell.bounds.minY
@@ -110,47 +120,65 @@ class PlayersIphoneController: UIViewController, UICollectionViewDelegate, UICol
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-		
-		return collectionView == collectionViewTags ? CGSize(width: 200, height: 50) : sheetSize
+		if collectionView == collectionViewTags {
+			return CGSize(width: 200, height: 50)
+		} else if indexPath.section == 0 {
+			return CGSize(width: collectionView.bounds.width, height: 60)
+		} else {
+			return sheetSize
+		}
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		if collectionView == collectionViewTags {
 			selectedTag = selectedTag == tags[indexPath.row] ? nil : tags[indexPath.row]
 		} else {
-			let sheet = sheetsSorted[indexPath.section]
-			switch sheet.type {
-			case .SheetTitleImage:
+			if indexPath.section == 0 {
+				
+				Menu.showMenu(sender: self)
+				
+			} else {
+				
+				let sheet = sheetsSorted[indexPath.section]
 				let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
 				controller.sheet = sheet
 				controller.delegate = self
 				let nav = UINavigationController(rootViewController: controller)
 				present(nav, animated: true)
-			default:
-				break
+				
 			}
 		}
 	}
 	
 	
+	// MARK: - UItableView functions
+	
 	func numberOfSections(in tableView: UITableView) -> Int {
-		return 1
+		return 2
 	}
 	
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return sheetsSorted.count
+		return section == 0 ? 2 : sheetsSorted.count
 	}
 	
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		let cell = tableView.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath) as! BasicCell
 		
-		cell.setup(title: sheetsSorted[indexPath.row].title, icon: nil, iconSelected: nil)
+		if indexPath.section == 0 {
+			
+			return indexPath.row == 0 ? cellName : cellAnimationTime
+			
+		} else {
+			
+			let cell = tableView.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath) as! BasicCell
+			cell.setup(title: sheetsSorted[indexPath.row].title, icon: nil, iconSelected: nil)
+			return cell
+			
+		}
 		
-		return cell
 	}
 	
 	func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
-		return .delete
+		return indexPath.section == 0 ? .none : .delete
 	}
 	
 	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
@@ -169,10 +197,14 @@ class PlayersIphoneController: UIViewController, UICollectionViewDelegate, UICol
 	}
 	
 	func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-		return true
+		return indexPath.section == 0 ? false : true
 	}
 	
 	func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+		if destinationIndexPath.section == 0 {
+			tableView.reloadData()
+			return
+		}
 		let itemToMove = sheets[sourceIndexPath.row]
 		sheets.remove(at: sourceIndexPath.row)
 		sheets.insert(itemToMove, at: destinationIndexPath.row)
@@ -187,45 +219,97 @@ class PlayersIphoneController: UIViewController, UICollectionViewDelegate, UICol
 		return 60
 	}
 	
+	func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+		let view = HeaderView(frame: CGRect(x: 0, y: 0, width: tableView.bounds.width, height: 60))
+		view.descriptionLabel.text = section == 0 ? Text.CustomSheets.tableViewHeaderGeneral.uppercased() : Text.CustomSheets.tableViewHeaderSheets.uppercased()
+		return view
+	}
+	
+	func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+		return 60
+	}
+	
 	// MARK: - Delegate Functions
 	
 	func didCreate(sheet: Sheet) {
+		if segmentControl.selectedSegmentIndex != 1 {
+			segmentControl.selectedSegmentIndex = 1
+			segmentChanged(segmentControl)
+		}
 		if !sheets.contains(where: { $0.id == sheet.id }) {
 			sheet.position = Int16(sheets.count)
 			sheets.append(sheet)
 		}
 		isFirstTime = true
-		visibleCells = collectionView.indexPathsForVisibleItems
-//		DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+		
+		var maxVisibleCells = getMaxVisiblecells()
+		
+		let tooMuchCells = (maxVisibleCells.count - sheets.count)
+		
+		if tooMuchCells > 0 {
+			for _ in 0..<tooMuchCells {
+				maxVisibleCells.removeLast()
+			}
+		}
+		
+		visibleCells = getMaxVisiblecells()
+		
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
 			self.collectionView.reloadData()
-//		}
+		}
 	}
-    
+	
+	
+	func numberPickerValueChanged(cell: LabelNumberPickerCell, value: Int) {
+		cluster.duration = Double(value)
+	}
+	
+	func textFieldDidChange(cell: LabelTextFieldCell, text: String?) {
+		cluster.title = text
+	}
+	
+	
+	// MARK: - Private functions
 
 	private func setup() {
 		
+		if cluster == nil {
+			cluster = CoreCluster.createEntity()
+			cluster.title = "cluster"
+			cluster.isTemp = true
+		}
+		save.title = Text.Actions.save
+		cancel.title = Text.Actions.cancel
+
 		navigationController?.title = Text.CustomSheets.title
 		title = Text.CustomSheets.title
 		view.backgroundColor = themeWhiteBlackBackground
-		save.isEnabled = delegate != nil ? true : sheets.count > 0 ? true : false
-		save.setTitleTextAttributes([NSAttributedStringKey.foregroundColor : UIColor.gray], for: .disabled)
 		
 		hideKeyboardWhenTappedAround()
 		
-		clusterNameTextField.attributedPlaceholder = NSAttributedString(string: Text.CustomSheets.namePlaceHolder, attributes: [NSAttributedStringKey.foregroundColor: UIColor.placeholderColor])
-		clusterNameTextField.text = cluster?.title
+		cellName.delegate = self
+		cellAnimationTime.delegate = self
+		
+		cellName.textField.attributedPlaceholder = NSAttributedString(string: Text.CustomSheets.namePlaceHolder, attributes: [NSAttributedStringKey.foregroundColor: UIColor.placeholderColor])
+		
+		if let title = cluster.title {
+			cellName.setName(name: title)
+		}
+		cellAnimationTime.setValue(Int(cluster.duration))
 		
 		collectionView.register(UINib(nibName: Cells.sheetCollectionCell, bundle: nil), forCellWithReuseIdentifier: Cells.sheetCollectionCell)
 		collectionViewTags.register(UINib(nibName: Cells.tagCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.tagCellCollection)
-		tableView.register(cell: Cells.basicCellid)
+		collectionView.register(UINib(nibName: Cells.AddButtonCollectionCell, bundle: nil), forCellWithReuseIdentifier: Cells.AddButtonCollectionCell)
 
+		tableView.register(cell: Cells.basicCellid)
+		tableView.keyboardDismissMode = .interactive
 
 		CoreTag.predicates.append("isHidden", notEquals: true)
 		tags = CoreTag.getEntities()
 		
-		segmentControl.setTitle(Text.Actions.edit, forSegmentAt: 0)
+		segmentControl.setTitle(Text.CustomSheets.segmentChange, forSegmentAt: 0)
 		segmentControl.setTitle(Text.CustomSheets.segmentSheets, forSegmentAt: 1)
-		segmentControl.selectedSegmentIndex = 1
+		segmentControl.selectedSegmentIndex = cluster != nil ? 1 : 0 // show sheets when editing
 		
 		let leftSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))
 		let rightSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))
@@ -245,8 +329,6 @@ class PlayersIphoneController: UIViewController, UICollectionViewDelegate, UICol
 		doubleTab.numberOfTapsRequired = 2
 		view.addGestureRecognizer(doubleTab)
 		
-		new.title = Text.Actions.new
-		
 		let cellHeight = multiplier * (UIScreen.main.bounds.width - 20)
 		sheetSize = CGSize(width: UIScreen.main.bounds.width - 20, height: cellHeight)
 		
@@ -264,6 +346,8 @@ class PlayersIphoneController: UIViewController, UICollectionViewDelegate, UICol
 		
 		collectionView.keyboardDismissMode = .interactive
 		
+		visibleCells = getMaxVisiblecells()
+		
 		update()
 	}
 	
@@ -272,6 +356,28 @@ class PlayersIphoneController: UIViewController, UICollectionViewDelegate, UICol
 		collectionView.reloadData()
 		tableView.reloadData()
 		isFirstTime = true
+	}
+	
+	private func getMaxVisiblecells() -> [IndexPath] {
+		
+		let completeCellsVisible = Int(tableView.bounds.height / sheetSize.height)
+		let remainder = tableView.bounds.height.truncatingRemainder(dividingBy: sheetSize.height)
+		let remainderInt = remainder > 0 ? 1 : 0
+		let sum = completeCellsVisible + remainderInt
+		var indexPaths: [IndexPath] = []
+		for index in 0..<sum {
+			indexPaths.append(IndexPath(row: 0, section: index + 1))
+		}
+		
+		let tooMuchCells = (indexPaths.count - sheets.count)
+		
+		if tooMuchCells > 0 {
+			for _ in 0..<tooMuchCells {
+				indexPaths.removeLast()
+			}
+		}
+		
+		return indexPaths
 	}
 	
 	private func setViewFor(collectionCell: UICollectionViewCell, sheet: Sheet) {
@@ -327,7 +433,7 @@ class PlayersIphoneController: UIViewController, UICollectionViewDelegate, UICol
 	}
 	
 	private func hasName() -> Bool {
-		if clusterNameTextField.text != "" {
+		if let title = cluster.title, title != "" {
 			return true
 		} else {
 			let alert = UIAlertController(title: Text.CustomSheets.errorTitle, message: Text.CustomSheets.errorNoName, preferredStyle: .alert)
@@ -343,14 +449,15 @@ class PlayersIphoneController: UIViewController, UICollectionViewDelegate, UICol
 		if sender.selectedSegmentIndex == 1 {
 			isFirstTime = false
 			collectionView.isHidden = false
-			clusterNameTextField.resignFirstResponder()
+			cellName.textField.resignFirstResponder()
 			update()
 		} else {
 			isFirstTime = true
 			visibleCells = collectionView.indexPathsForVisibleItems
 			isFirstTime = true
 			collectionView.isHidden = true
-			update()
+			collectionViewTags.reloadData()
+			tableView.reloadData()
 		}
 		
 	}
@@ -376,10 +483,26 @@ class PlayersIphoneController: UIViewController, UICollectionViewDelegate, UICol
 		}
 	}
 	
-	
-	
-	@IBAction func showMenu(_ sender: UIBarButtonItem) {
-		Menu.showMenu(sender: self)
+	@IBAction func cancel(_ sender: UIBarButtonItem) {
+		// remove all
+		if isNew {
+			for sheet in sheets {
+				if let sheet = sheet as? SheetTitleImageEntity {
+					sheet.delete()
+				} else {
+					sheet.delete()
+				}
+				let _ = CoreSheet.delete(entity: sheet)
+			}
+			
+			if let cluster = cluster {
+				let _ = CoreCluster.delete(entity: cluster)
+			}
+			let _ = CoreCluster.saveContext()
+		}
+		
+		dismiss(animated: true)
+		
 	}
 	
 	@IBAction func savedPressed(_ sender: UIBarButtonItem) {
@@ -390,26 +513,23 @@ class PlayersIphoneController: UIViewController, UICollectionViewDelegate, UICol
 					cluster = CoreCluster.createEntity()
 				}
 				
+				cluster.hasTag = selectedTag
+				
 				var index: Int16 = 0
 				for sheet in sheets {
 					sheet.position = index
-					cluster.addToHasSheets(sheet)
+					sheet.hasCluster = cluster
 					index += 1
 				}
 				
-				cluster.title = clusterNameTextField.text
-				cluster.hasTag = selectedTag
 				let _ = CoreCluster.saveContext()
 				
 				sheets = []
 				
 				update()
 				
-				if let delegate = delegate {
-					delegate.didSaveSheets(sheets: sheets)
-					DispatchQueue.main.async {
-						self.dismiss(animated: true)
-					}
+				DispatchQueue.main.async {
+					self.dismiss(animated: true)
 				}
 			}
 		}

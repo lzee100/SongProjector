@@ -17,7 +17,7 @@
                BlueprintIdentifier = "E311712C1FE59DA3008D9D51"
                BuildableName = "SongProjector.app"
                BlueprintName = "SongProjector"
-               ReferencedContainer = "container:SongProjector.xcodeproj">
+               ReferencedContainer = "container:ChurchBeam.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -36,7 +36,7 @@
             BlueprintIdentifier = "E311712C1FE59DA3008D9D51"
             BuildableName = "SongProjector.app"
             BlueprintName = "SongProjector"
-            ReferencedContainer = "container:SongProjector.xcodeproj">
+            ReferencedContainer = "container:ChurchBeam.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -60,14 +60,14 @@
             BlueprintIdentifier = "E311712C1FE59DA3008D9D51"
             BuildableName = "SongProjector.app"
             BlueprintName = "SongProjector"
-            ReferencedContainer = "container:SongProjector.xcodeproj">
+            ReferencedContainer = "container:ChurchBeam.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "CG_CONTEXT_SHOW_BACKTRACE"
             value = "YES"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </EnvironmentVariable>
       </EnvironmentVariables>
       <AdditionalOptions>
@@ -86,7 +86,7 @@
             BlueprintIdentifier = "E311712C1FE59DA3008D9D51"
             BuildableName = "SongProjector.app"
             BlueprintName = "SongProjector"
-            ReferencedContainer = "container:SongProjector.xcodeproj">
+            ReferencedContainer = "container:ChurchBeam.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

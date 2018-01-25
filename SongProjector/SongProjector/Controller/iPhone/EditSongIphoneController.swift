@@ -30,10 +30,10 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 	// MARK: - Properties
 	
 	var cluster: Cluster?
-	
+	var sheets: [SheetTitleContentEntity] = []
+
 	private var isSetup = true
 	private var clusterTitle: String?
-	private var sheets: [SheetTitleContentEntity] = []
 	private var tags: [Tag] = []
 	private var visibleCells: [IndexPath] = []
 	private var delaySheetAimation = 0.0
@@ -211,6 +211,9 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 		
 		isCollectionviewSheetsHidden = false
 		selectedTag = cluster?.hasTag
+		
+//		visibleCells = getMaxVisiblecells()
+
 		update()
 	}
 	

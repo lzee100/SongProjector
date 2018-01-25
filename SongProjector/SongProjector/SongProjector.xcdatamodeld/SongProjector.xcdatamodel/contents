@@ -1,18 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="13772" systemVersion="17C88" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="13772" systemVersion="17C205" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Cluster" representedClassName="Cluster" parentEntity="Entity" syncable="YES" codeGenerationType="class">
-        <attribute name="duration" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="duration" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="position" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <relationship name="child" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Cluster" inverseName="parent" inverseEntity="Cluster" syncable="YES"/>
         <relationship name="hasSheets" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Sheet" inverseName="hasCluster" inverseEntity="Sheet" syncable="YES"/>
+        <relationship name="hasSong" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Song" inverseName="hasCluster" inverseEntity="Song" syncable="YES"/>
         <relationship name="hasTag" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Tag" inverseName="hasCluster" inverseEntity="Tag" syncable="YES"/>
+        <relationship name="parent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Cluster" inverseName="child" inverseEntity="Cluster" syncable="YES"/>
     </entity>
     <entity name="Entity" representedClassName="Entity" syncable="YES" codeGenerationType="class">
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="isTemp" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="Sheet" representedClassName="Sheet" parentEntity="Entity" syncable="YES" codeGenerationType="class">
         <attribute name="position" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="time" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <relationship name="hasCluster" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Cluster" inverseName="hasSheets" inverseEntity="Cluster" syncable="YES"/>
         <relationship name="hasTag" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Tag" inverseName="hasSheets" inverseEntity="Tag" syncable="YES"/>
     </entity>
@@ -32,6 +37,10 @@
         <attribute name="imageContentMode" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="imageHasBorder" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="imagePath" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="Song" representedClassName="Song" parentEntity="Entity" syncable="YES" codeGenerationType="class">
+        <attribute name="resourcePath" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="hasCluster" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Cluster" inverseName="hasSong" inverseEntity="Cluster" syncable="YES"/>
     </entity>
     <entity name="Tag" representedClassName="Tag" parentEntity="Entity" syncable="YES" codeGenerationType="class">
         <attribute name="allHaveTitle" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
@@ -64,13 +73,14 @@
         <relationship name="hasSheets" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Sheet" inverseName="hasTag" inverseEntity="Sheet" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Cluster" positionX="-54" positionY="-9" width="128" height="105"/>
-        <element name="Entity" positionX="-63" positionY="-18" width="128" height="90"/>
-        <element name="Sheet" positionX="-18" positionY="27" width="128" height="90"/>
+        <element name="Cluster" positionX="-54" positionY="-9" width="128" height="150"/>
+        <element name="Entity" positionX="-63" positionY="-18" width="128" height="105"/>
+        <element name="Sheet" positionX="-18" positionY="27" width="128" height="105"/>
         <element name="SheetEmptyEntity" positionX="-18" positionY="153" width="128" height="45"/>
         <element name="SheetSplitEntity" positionX="-36" positionY="135" width="128" height="75"/>
         <element name="SheetTitleContentEntity" positionX="-27" positionY="144" width="128" height="60"/>
         <element name="SheetTitleImageEntity" positionX="-36" positionY="135" width="128" height="150"/>
+        <element name="Song" positionX="-36" positionY="135" width="128" height="75"/>
         <element name="Tag" positionX="-36" positionY="9" width="128" height="465"/>
     </elements>
 </model>

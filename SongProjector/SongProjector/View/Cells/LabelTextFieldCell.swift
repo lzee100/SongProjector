@@ -26,13 +26,15 @@ class LabelTextFieldCell: UITableViewCell {
 		view.id = id
 		view.descriptionTitle.text = description
 		view.textField.placeholder = placeholder
+		view.textField.addTarget(view, action: #selector(view.textFieldDidChange),
+								 for: UIControlEvents.editingChanged)
 		return view
 	}
 	
-	func setup() {
-		textField.addTarget(self, action: #selector(textFieldDidChange),
-							for: UIControlEvents.editingChanged)
-	}
+//	func setup() {
+//		textField.addTarget(self, action: #selector(textFieldDidChange),
+//							for: UIControlEvents.editingChanged)
+//	}
 	
 	func setName(name: String) {
 		textField.text = name

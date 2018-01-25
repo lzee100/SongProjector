@@ -9,7 +9,7 @@
 import UIKit
 
 protocol NewSongServiceDelegate {
-	func didFinishSongServiceSelection(clusters: [Cluster])
+	func didFinishSongServiceSelection(clusters: [Cluster], completion: () -> Void)
 }
 
 class NewSongServiceController: UIViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UIGestureRecognizerDelegate, UISearchBarDelegate {
@@ -236,9 +236,8 @@ class NewSongServiceController: UIViewController, UITableViewDelegate, UITableVi
 	}
 	
 	@IBAction func doneButtonPressed(_ sender: UIBarButtonItem) {
-		delegate?.didFinishSongServiceSelection(clusters: selectedSongs)
-		dismiss(animated: true)
+		delegate?.didFinishSongServiceSelection(clusters: selectedSongs, completion: {
+			dismiss(animated: true)
+		})
 	}
-	
-	
 }

@@ -13,7 +13,7 @@ enum Feature : String {
 	
 	case songService = "SongService"
 	case songs = "Songs"
-	case players = "Players"
+	case bibleStudy = "BibleStudyIphone"
 	case more = "More"
 	case tags = "Tags"
 	case displaySettings = "DisplaySettings"
@@ -22,7 +22,7 @@ enum Feature : String {
 	
 	// MARK: - Properties
 	
-	static let all = [songService, songs, players, tags, displaySettings, more]
+	static let all = [songService, songs, bibleStudy, tags, displaySettings, more]
 	
 	var titel : String {
 		return rawValue
@@ -34,8 +34,8 @@ enum Feature : String {
 			return Text.SongService.title
 		case .songs:
 			return Text.Songs.title
-		case .players:
-			return Text.CustomSheets.title
+		case .bibleStudy:
+			return Text.BibleStudy.title
 		case .tags:
 			return Text.Tags.title
 		case .displaySettings:
@@ -55,7 +55,7 @@ enum Feature : String {
 	var isStandaard : Bool {
 		
 		switch self {
-		case .songService, .songs, .players, .more, .tags, .displaySettings:
+		case .songService, .songs, .bibleStudy, .more, .tags, .displaySettings:
 			return true
 		}
 	}
@@ -83,8 +83,8 @@ enum Feature : String {
 			return (#imageLiteral(resourceName: "SongService"), #imageLiteral(resourceName: "SongService"), #imageLiteral(resourceName: "SongService"))
 		case .songs:
 			return (#imageLiteral(resourceName: "Song"), #imageLiteral(resourceName: "Song"), #imageLiteral(resourceName: "Song"))
-		case .players:
-			return (#imageLiteral(resourceName: "Play"), #imageLiteral(resourceName: "Play"), #imageLiteral(resourceName: "Play"))
+		case .bibleStudy:
+			return (#imageLiteral(resourceName: "Bullet"), #imageLiteral(resourceName: "BulletSelected"), #imageLiteral(resourceName: "Bullet"))
 		case .more:
 			return (#imageLiteral(resourceName: "More"), #imageLiteral(resourceName: "More"), #imageLiteral(resourceName: "More"))
 		case .tags:

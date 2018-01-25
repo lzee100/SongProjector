@@ -73,10 +73,10 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		static let sheetSplit = [name, textLeft, textRight, asTag, hasEmptySheet, allHaveTitle, backgroundColor, backgroundImage]
 		static let sheetEmpty = [name, hasEmptySheet, backgroundColor, backgroundImage]
 		
-		static func `for`(_ indexPath: IndexPath, type: SheetType) -> CellGeneral {
+		static func `for`(_ indexPath: IndexPath, type: SheetType, newTagMode: Bool, editTagMode: Bool) -> CellGeneral {
 			switch type {
 			case .SheetTitleContent:
-				return titleContent[indexPath.row]
+				return (newTagMode || editTagMode) ? tag[indexPath.row] : titleContent[indexPath.row]
 			case .SheetTitleImage:
 				return titleImage[indexPath.row]
 			case .SheetSplit:
@@ -225,12 +225,14 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 	private var  cellImageContentMode = LabelPickerCell()
 	
 	
-	var editExtistingSheet = false
+	// you have 6 possibilities
+	// new tag / edit tag / new song / edit song / new custom / edit custom
+	
 	var newTagMode = false // if saved pressed, don't save sheet
-	var editTagMode = false // if cancel pressed, don't delete tag
 	var tag: Tag!
 	var sheet: Sheet!
 	var delegate: NewOrEditIphoneControllerDelegate?
+	private var editTagMode: Bool { return !tag.isTemp && sheet.isTemp }
 	private var isSetup = true
 	private var titleAttributes: [NSAttributedStringKey : Any] = [:]
 	private var lyricsAttributes: [NSAttributedStringKey: Any] = [:]
@@ -251,7 +253,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 	func numberOfSections(in tableView: UITableView) -> Int {
 		switch sheet.type {
 		case .SheetTitleContent:
-			return Section.titleContent.count
+			return newTagMode || editTagMode ? Section.titleContent.count : Section.all.count
 		case .SheetTitleImage:
 			return Section.titleImage.count
 		case .SheetSplit:
@@ -259,7 +261,6 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		case .SheetEmpty:
 			return Section.sheetEmpty.count
 		}
-		return newTagMode || editTagMode ? Section.titleContent.count : Section.all.count
 	}
 	
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -306,7 +307,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 	func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 		switch Section.for(indexPath.section, type: sheet.type) {
 		case .general:
-			switch CellGeneral.for(indexPath, type: sheet.type) {
+			switch CellGeneral.for(indexPath, type: sheet.type, newTagMode: newTagMode, editTagMode: editTagMode) {
 			case .asTag: return cellAsTag.preferredHeight
 			case .content: return cellContent.preferredHeight
 			case .textLeft: return cellTextLeft.preferredHeight
@@ -378,7 +379,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 	func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
 		switch Section.for(indexPath.section, type: sheet.type) {
 		case .general:
-			switch CellGeneral.for(indexPath, type: sheet.type) {
+			switch CellGeneral.for(indexPath, type: sheet.type, newTagMode: newTagMode, editTagMode: editTagMode) {
 			case .backgroundColor:
 				return cellBackgroundColor.isActive ? .none : .delete
 			case .asTag:
@@ -422,16 +423,13 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		if editingStyle == .delete {
 			switch Section.for(indexPath.section, type: sheet.type) {
 			case .general:
-				switch CellGeneral.for(indexPath, type: sheet.type) {
+				switch CellGeneral.for(indexPath, type: sheet.type, newTagMode: newTagMode, editTagMode: editTagMode) {
 				case .asTag: cellAsTag.setValue(value: nil, id: nil)
 				case .content: cellContent.set(text: nil)
 				case .textLeft: cellTextLeft.set(text: nil)
 				case .textRight: cellTextRight.set(text: nil)
 				case .backgroundColor: cellBackgroundColor.setColor(color: nil)
 				case .backgroundImage: cellPhotoPickerBackground.setImage(image: nil)
-					if let path = tag.imagePath {
-						tag.backgroundImage = nil
-					}
 				default: break
 				}
 			case .title:
@@ -452,7 +450,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 			case .image:
 				switch CellImage.for(indexPath, type: sheet.type) {
 				case .some(.image): cellImagePicker.setImage(image: nil)
-					if let sheet = sheet as? SheetTitleImageEntity, let path = sheet.imagePath {
+					if let sheet = sheet as? SheetTitleImageEntity, sheet.imagePath != nil {
 						sheet.image = nil
 					}
 				case .some(.borderColor): cellImageBorderColor.setColor(color: nil)
@@ -466,7 +464,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		switch Section.for(indexPath.section, type: sheet.type) {
 		case .general:
-			switch CellGeneral.for(indexPath, type: sheet.type) {
+			switch CellGeneral.for(indexPath, type: sheet.type, newTagMode: newTagMode, editTagMode: editTagMode) {
 			case .asTag:
 				let cell = cellAsTag
 				cell.isActive = !cell.isActive
@@ -864,7 +862,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		
 	}
 	
-	func didSelectImage(cell: LabelPhotoPickerCell, image: UIImage) {
+	func didSelectImage(cell: LabelPhotoPickerCell, image: UIImage?) {
 		if cell.id == "cellPhotoPickerBackground" {
 			if !isSetup {
 				cell.isActive = !cell.isActive
@@ -873,6 +871,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 			tableView.beginUpdates()
 			tableView.endUpdates()
 			tableView.reloadData()
+			generateTag()
 			buildPreview(isSetup: isSetup)
 		}
 		if cell.id == "cellImagePicker", let sheet = sheet as? SheetTitleImageEntity {
@@ -883,6 +882,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 			tableView.beginUpdates()
 			tableView.endUpdates()
 			tableView.reloadData()
+			generateTag()
 			buildPreview(isSetup: isSetup)
 		}
 	}
@@ -895,15 +895,16 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		
 		if sheet == nil {
 			sheet = CoreSheetTitleContent.createEntity()
+			sheet.isTemp = true // remove at restart app if user quit app
 		}
 		
-		if editTagMode {
-			
-		} else if let tag = sheet.hasTag  {
+		if let tag = sheet.hasTag {
 			self.tag = tag
-		} else {
+		} else if tag == nil {
 			tag = CoreTag.createEntity()
+			tag.title = "tag"
 			tag.isHidden = newTagMode // this tag will not show up in the tag list for users
+			tag.isTemp = true // remove at restart app if user quit app
 		}
 
 		NotificationCenter.default.addObserver(forName: NotificationNames.externalDisplayDidChange, object: nil, queue: nil, using: externalDisplayDidChange)
@@ -920,6 +921,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		cellLyricsFontFamily = LabelPickerCell.create(id: "cellLyricsFontFamily", description: Text.NewTag.fontFamilyDescription, initialValueName: "Avenir", pickerValues: fontFamilyValues)
 		
 		CoreTag.setSortDescriptor(attributeName: "title", ascending: true)
+		CoreTag.predicates.append("isHidden", notEquals: true)
 		let tags = CoreTag.getEntities().map{ ($0.id, $0.title ?? "") }
 		cellAsTag = LabelPickerCell.create(id: "cellAsTag", description: Text.NewTag.descriptionAsTag, initialValueName: "", pickerValues: tags)
 		
@@ -936,12 +938,12 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		
 		// set delegates
 		
-		cellName.setup()
 		cellName.delegate = self
 		cellAsTag.delegate = self
 		cellContent.delegate = self
 		cellTextLeft.delegate = self
 		cellTextRight.delegate = self
+		cellAllHaveTitlle.delegate = self
 		cellHasEmptySheet.delegate = self
 		cellPhotoPickerBackground.delegate = self
 		cellBackgroundColor.delegate = self
@@ -1036,7 +1038,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 	}
 	
 	private func getGeneralCellFor(indexPath: IndexPath) -> UITableViewCell {
-		switch CellGeneral.for(indexPath, type: sheet.type) {
+		switch CellGeneral.for(indexPath, type: sheet.type, newTagMode: newTagMode, editTagMode: editTagMode) {
 		case .name: return cellName
 		case .content: return cellContent
 		case .textLeft: return cellTextLeft
@@ -1063,11 +1065,13 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 	private func loadTagAttributes(_ tag: Tag) {
 		isSetup = true
 		
-		if editExtistingSheet || editTagMode {
-			cellName.setName(name: sheet.title ?? "")
-		}
+		cellAllHaveTitlle.setSwitchValueTo(value: tag.allHaveTitle)
+		cellHasEmptySheet.setSwitches(first: tag.hasEmptySheet, second: tag.isEmptySheetFirst)
+		cellBackgroundColor.setColor(color: tag.sheetBackgroundColor)
+		
 		cellTitleFontFamily.setValue(value: tag.titleFontName ?? "Avenir")
 		cellTitleFontSize.setValue(value: Int(tag.titleTextSize))
+		cellTitleBackgroundColor.setColor(color: tag.backgroundColorTitle)
 		cellTitleAlignment.setValue(value: tag.titleAlignment, id: nil)
 		cellTitleBorderSize.setValue(value: Int(tag.titleBorderSize))
 		cellTitleBorderColor.setColor(color: tag.borderColorTitle)
@@ -1101,10 +1105,12 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		isSetup = true
 		
 		// GENERAL ATTRIBUTES
-		cellName.setName(name: sheet.title ?? "")
 
-		if newTagMode || editTagMode {
-			cellName.setName(name: tag.title ?? "")
+		if newTagMode {
+			sheet.title = Text.NewTag.sampleTitle
+		} else if editTagMode, let tagTitle = tag.title {
+			cellName.setName(name: tagTitle)
+		} else if sheet.isTemp && tag.isTemp && !newTagMode {
 			sheet.title = Text.NewTag.sampleTitle
 		} else {
 			cellName.setName(name: sheet.title ?? "")
@@ -1113,7 +1119,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		switch sheet.type {
 		case .SheetTitleContent:
 			if let sheet = sheet as? SheetTitleContentEntity {
-				if !editExtistingSheet {
+				if sheet.isTemp && tag.isTemp || sheet.isTemp && !tag.isTemp {
 					sheet.lyrics = Text.NewTag.sampleLyrics
 				} else {
 					cellContent.set(text: sheet.lyrics ?? "")
@@ -1121,7 +1127,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 			}
 		case .SheetTitleImage:
 			if let sheet = sheet as? SheetTitleImageEntity {
-				if !editExtistingSheet {
+				if sheet.isTemp && tag.isTemp || sheet.isTemp && !tag.isTemp {
 					cellContent.set(text: Text.NewTag.sampleLyrics)
 				} else {
 					cellContent.set(text: sheet.content ?? "")
@@ -1136,7 +1142,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 			}
 		case .SheetSplit:
 			if let sheet = sheet as? SheetSplitEntity {
-				if !editExtistingSheet {
+				if sheet.isTemp && tag.isTemp || sheet.isTemp && !tag.isTemp {
 					cellTextLeft.set(text: Text.NewTag.sampleLyrics)
 					cellTextRight.set(text: Text.NewTag.sampleLyrics)
 				} else {
@@ -1165,28 +1171,28 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 			case .SheetTitleContent:
 				if let sheet = sheet as? SheetTitleContentEntity {
 					newPreviewView = SheetTitleContent.createWith(frame: previewView.bounds, title: sheet.title, sheet: sheet, tag: tag)
-					if externalDisplayWindow != nil {
-						_ = SheetTitleContent.createWith(frame: previewView.bounds, title: sheet.title, sheet: sheet, tag: tag, scaleFactor: externalDisplayWindowWidth / previewView.bounds.width).toExternalDisplay()
+					if let externalDisplayWindow = externalDisplayWindow {
+						_ = SheetTitleContent.createWith(frame: externalDisplayWindow.bounds, title: sheet.title, sheet: sheet, tag: tag, scaleFactor: externalDisplayWindowWidth / previewView.bounds.width).toExternalDisplay()
 					}
 				}
 			case .SheetTitleImage:
 				if let sheet = sheet as? SheetTitleImageEntity {
 					newPreviewView = SheetTitleImage.createWith(frame: previewView.bounds, sheet: sheet, tag: tag)
-					if externalDisplayWindow != nil {
-						_ = SheetTitleImage.createWith(frame: previewView.bounds, sheet: sheet, tag: tag, scaleFactor: externalDisplayWindowWidth / previewView.bounds.width).toExternalDisplay()
+					if let externalDisplayWindow = externalDisplayWindow {
+						_ = SheetTitleImage.createWith(frame: externalDisplayWindow.bounds, sheet: sheet, tag: tag, scaleFactor: externalDisplayWindowWidth / previewView.bounds.width).toExternalDisplay()
 					}
 				}
 			case .SheetSplit:
 				if let sheet = sheet as? SheetSplitEntity {
 					newPreviewView = SheetSplit.createWith(frame: previewView.bounds, sheet: sheet, tag: tag)
-					if externalDisplayWindow != nil {
-						_ = SheetSplit.createWith(frame: previewView.bounds, sheet: sheet, tag: tag, scaleFactor: externalDisplayWindowWidth / previewView.bounds.width).toExternalDisplay()
+					if let externalDisplayWindow = externalDisplayWindow {
+						_ = SheetSplit.createWith(frame: externalDisplayWindow.bounds, sheet: sheet, tag: tag, scaleFactor: externalDisplayWindowWidth / previewView.bounds.width).toExternalDisplay()
 					}
 				}
 			case .SheetEmpty:
 				newPreviewView = SheetEmpty.createWith(frame: previewView.bounds, tag: tag)
-				if externalDisplayWindow != nil {
-					_ = SheetEmpty.createWith(frame: previewView.bounds, tag: tag, scaleFactor: externalDisplayWindowWidth / previewView.bounds.width).toExternalDisplay()
+				if let externalDisplayWindow = externalDisplayWindow {
+					_ = SheetEmpty.createWith(frame: externalDisplayWindow.bounds, tag: tag, scaleFactor: externalDisplayWindowWidth / previewView.bounds.width).toExternalDisplay()
 				}
 			}
 			
@@ -1235,10 +1241,6 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 	}
 	
 	private func generateTag() {
-		CoreTag.predicates.append("id", equals: tag.id)
-		if CoreTag.getEntities().count == 0 {
-			tag.id = CoreTag.getNewIDForEntityNOTsave()
-		}
 		
 		if let titleFont = titleAttributes[.font] as? UIFont {
 			tag.titleFontName = titleFont.familyName
@@ -1331,7 +1333,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		if let image = cellPhotoPickerBackground.pickedImage {
 			tag.backgroundImage = image
 		} else {
-			if let path = tag.imagePath {
+			if tag.imagePath != nil {
 				tag.backgroundImage = nil
 			}
 		}
@@ -1351,18 +1353,10 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 			externalDisplayWindow.addSubview(view)
 		}
 		
-		if !editExtistingSheet && !editTagMode {
-			if tag.imagePath != nil {
-				tag.backgroundImage = nil
-			}
-			
-			let _ = CoreTag.delete(entity: tag) // delete temp tag
-			
-			if let sheet = sheet as? SheetTitleImageEntity, let path = sheet.imagePath {
-				sheet.image = nil
-			}
-			
-			let _ = CoreSheet.delete(entity: sheet)
+		if tag.isTemp { // new tag or new sheet
+			sheet.delete()
+		} else if sheet.isTemp { // if editing existing tag
+			_ = CoreSheet.delete(entity: sheet)
 		}
 		
 		dismiss(animated: true)
@@ -1386,15 +1380,29 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 			}
 			
 			// if new or edit tag, don't save preview sheet and isHidden is false (show tag in list)
-			if newTagMode || editTagMode {
-				sheet = nil
-				tag.isHidden = false
-			} else {
+			if (tag.isTemp && sheet.isTemp) || (sheet.isTemp && !tag.isTemp) {
+				// (tag.isTemp && sheet.isTemp) is also applicable for new sheet with new tag
+				if newTagMode {
+					sheet.delete()
+					tag.isHidden = false
+					tag.isTemp = false
+				} else if !newTagMode { // new sheet and new tag
+					tag.isHidden = true
+				}
+				let _ = CoreTag.saveContext()
+			} else { // if (!tag.isTemp && !sheet.isTemp)
 				sheet.hasTag = tag
 				tag.isHidden = true
 			}
-			let _ = CoreTag.saveContext()
-//			let _ = CoreSheetTitleImage.saveContext()
+			
+//			if newTagMode || editTagMode {
+//				sheet = nil
+//				tag.isHidden = false
+//				let _ = CoreTag.saveContext()
+//			} else {
+//				sheet.hasTag = tag
+//				tag.isHidden = true
+//			}
 			
 			delegate?.didCreate(sheet: sheet)
 			dismiss(animated: true)

@@ -64,6 +64,8 @@ class LabelDoubleSwitchCell: UITableViewCell {
 		switchOne.isOn = first ?? false
 
 		switchTwo.isOn = second ?? false
+		switchTwoChanged(switchTwo)
+		
 		delegate?.didSelectSwitch(first: first ?? false, second: second ?? false, cell: self)
 		layoutIfNeeded()
 	}
@@ -94,6 +96,10 @@ class LabelDoubleSwitchCell: UITableViewCell {
 	
 	@IBAction func switchOneChanged(_ sender: UISwitch) {
 		switchOne.thumbTintColor = sender.isOn ? isThemeLight ? .white : .black : isThemeLight ? .white : UIColor(hex: "FF8324")
+		if !switchOne.isOn {
+			switchTwo.isOn = false
+			switchTwoChanged(switchTwo)
+		}
 		showSecondSwitch()
 		delegate?.didSelectSwitch(first: sender.isOn, second: nil, cell: self)
 	}

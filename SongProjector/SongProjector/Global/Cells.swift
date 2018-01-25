@@ -25,4 +25,6 @@ struct Cells {
 	static let LabelSwitchCell = "LabelSwitchCell"
 	static let labelTextFieldCell = "LabelTextFieldCell"
 	static let LabelPhotoPickerCell = "LabelPhotoPickerCell"
+	static let LabelNumberPickerCell = "LabelNumberPickerCell"
+	static let AddButtonCollectionCell = "AddButtonCollectionCell"
 }

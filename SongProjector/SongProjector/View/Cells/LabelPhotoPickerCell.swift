@@ -7,9 +7,10 @@
 //
 
 import UIKit
+import Photos
 
 protocol LabelPhotoPickerCellDelegate {
-	func didSelectImage(cell: LabelPhotoPickerCell, image: UIImage)
+	func didSelectImage(cell: LabelPhotoPickerCell, image: UIImage?)
 }
 
 class LabelPhotoPickerCell: UITableViewCell, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
@@ -46,7 +47,7 @@ class LabelPhotoPickerCell: UITableViewCell, UIImagePickerControllerDelegate, UI
 			view.imageThumbnail.layer.cornerRadius = CGFloat(5)
 			let beamerResolution = "\(Int(externalDisplayWindowWidth)) x \(Int(externalDisplayWindowHeight))"
 			view.descriptionLastBeamerResolution.text = Text.NewTag.descriptionLastBeamerResolution + beamerResolution
-			view.descriptionLastBeamerResolution.textColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
+			view.descriptionLastBeamerResolution.textColor = isThemeLight ? UIColor(red: 0, green: 0, blue: 0, alpha: 0.5) : UIColor(red: 255, green: 255, blue: 255, alpha: 0.4)
 			view.button.isEnabled = false
 			view.buttonContainer.backgroundColor = themeWhiteBlackBackground
 			view.button.backgroundColor = themeHighlighted
@@ -66,9 +67,8 @@ class LabelPhotoPickerCell: UITableViewCell, UIImagePickerControllerDelegate, UI
 			imageView.image = image
 			imageThumbnail.image = imageView.asImage()
 			pickedImage = image
-			if let image = image {
-				delegate?.didSelectImage(cell: self, image: image)
-			}
+			delegate?.didSelectImage(cell: self, image: image)
+
 			layoutIfNeeded()
 		}
 		
@@ -110,6 +110,15 @@ class LabelPhotoPickerCell: UITableViewCell, UIImagePickerControllerDelegate, UI
 	override func setHighlighted(_ highlighted: Bool, animated: Bool) {
 	}
 	@IBAction func changeImage(_ sender: UIButton) {
+		if !canUsePhotos {
+			PHPhotoLibrary.requestAuthorization({ (status) in
+				if status == PHAuthorizationStatus.authorized {
+					canUsePhotos = true
+				} else {
+					canUsePhotos = false
+				}
+			})
+		}
 		imagePicker.allowsEditing = false
 		imagePicker.sourceType = .photoLibrary
 		if let sender = self.sender {

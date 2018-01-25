@@ -11,6 +11,10 @@ import Foundation
 
 extension Cluster {
 	
+	// cluster has parent and has child
+	// parent = normal songservice song as mp3 and sheets
+	// child = piano alter call song as mp3 alone
+	
 	public var hasSheetsArray: [Sheet] {
 		
 		if let setHasSheets = hasSheets as? Set<Sheet> {
