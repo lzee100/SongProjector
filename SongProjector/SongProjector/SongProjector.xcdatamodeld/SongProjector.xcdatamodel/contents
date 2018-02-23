@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="13772" systemVersion="17C205" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="13772" systemVersion="17D47" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Cluster" representedClassName="Cluster" parentEntity="Entity" syncable="YES" codeGenerationType="class">
         <attribute name="duration" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="position" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
@@ -12,14 +12,29 @@
     <entity name="Entity" representedClassName="Entity" syncable="YES" codeGenerationType="class">
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="isTemp" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="isTemp" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+    </entity>
+    <entity name="GoogleActivity" representedClassName="GoogleActivity" parentEntity="Entity" syncable="YES" codeGenerationType="class">
+        <attribute name="endDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="eventDescription" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="startDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <relationship name="hasSheetsActivities" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SheetActivities" inverseName="hasGoogleActivity" inverseEntity="SheetActivities" syncable="YES"/>
+    </entity>
+    <entity name="Instrument" representedClassName="Instrument" parentEntity="Entity" syncable="YES" codeGenerationType="class">
+        <attribute name="resourcePath" attributeType="String" syncable="YES"/>
+        <attribute name="typeString" attributeType="String" defaultValueString="Piano" syncable="YES"/>
+        <relationship name="hasSong" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Song" inverseName="hasIntruments" inverseEntity="Song" syncable="YES"/>
     </entity>
     <entity name="Sheet" representedClassName="Sheet" parentEntity="Entity" syncable="YES" codeGenerationType="class">
         <attribute name="position" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="time" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <relationship name="hasCluster" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Cluster" inverseName="hasSheets" inverseEntity="Cluster" syncable="YES"/>
         <relationship name="hasTag" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Tag" inverseName="hasSheets" inverseEntity="Tag" syncable="YES"/>
+    </entity>
+    <entity name="SheetActivities" representedClassName="SheetActivities" parentEntity="Sheet" syncable="YES" codeGenerationType="class">
+        <relationship name="hasGoogleActivity" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="GoogleActivity" inverseName="hasSheetsActivities" inverseEntity="GoogleActivity" syncable="YES"/>
     </entity>
     <entity name="SheetEmptyEntity" representedClassName="SheetEmptyEntity" parentEntity="Sheet" syncable="YES" codeGenerationType="class"/>
     <entity name="SheetSplitEntity" representedClassName="SheetSplitEntity" parentEntity="Sheet" syncable="YES" codeGenerationType="class">
@@ -39,8 +54,8 @@
         <attribute name="imagePath" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="Song" representedClassName="Song" parentEntity="Entity" syncable="YES" codeGenerationType="class">
-        <attribute name="resourcePath" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="hasCluster" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Cluster" inverseName="hasSong" inverseEntity="Cluster" syncable="YES"/>
+        <relationship name="hasIntruments" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Instrument" inverseName="hasSong" inverseEntity="Instrument" syncable="YES"/>
     </entity>
     <entity name="Tag" representedClassName="Tag" parentEntity="Entity" syncable="YES" codeGenerationType="class">
         <attribute name="allHaveTitle" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
@@ -74,13 +89,16 @@
     </entity>
     <elements>
         <element name="Cluster" positionX="-54" positionY="-9" width="128" height="150"/>
-        <element name="Entity" positionX="-63" positionY="-18" width="128" height="105"/>
+        <element name="Entity" positionX="-63" positionY="-18" width="128" height="120"/>
+        <element name="GoogleActivity" positionX="-36" positionY="135" width="128" height="105"/>
         <element name="Sheet" positionX="-18" positionY="27" width="128" height="105"/>
+        <element name="SheetActivities" positionX="-27" positionY="144" width="128" height="60"/>
         <element name="SheetEmptyEntity" positionX="-18" positionY="153" width="128" height="45"/>
         <element name="SheetSplitEntity" positionX="-36" positionY="135" width="128" height="75"/>
         <element name="SheetTitleContentEntity" positionX="-27" positionY="144" width="128" height="60"/>
         <element name="SheetTitleImageEntity" positionX="-36" positionY="135" width="128" height="150"/>
         <element name="Song" positionX="-36" positionY="135" width="128" height="75"/>
         <element name="Tag" positionX="-36" positionY="9" width="128" height="465"/>
+        <element name="Instrument" positionX="-36" positionY="135" width="128" height="90"/>
     </elements>
 </model>

@@ -8,12 +8,11 @@
 
 import UIKit
 
-class TagsIphoneController: UITableViewController, UISearchBarDelegate, UIGestureRecognizerDelegate, UIPopoverPresentationControllerDelegate, NewTagControllerDelegate {
+class TagsIphoneController: UITableViewController, UISearchBarDelegate, UIGestureRecognizerDelegate, UIPopoverPresentationControllerDelegate, NewOrEditIphoneControllerDelegate {
 
 	@IBOutlet var add: UIBarButtonItem!
 	@IBOutlet var searchBar: UISearchBar!
 	@IBOutlet var emptyView: UIView!
-	
 	
 	private var tags: [Tag] = []
 	private var filteredTags: [Tag] = []
@@ -28,22 +27,6 @@ class TagsIphoneController: UITableViewController, UISearchBarDelegate, UIGestur
 		super.viewWillAppear(animated)
 		update()
 	}
-	
-	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-//		if segue.identifier == "newTagSegue" {
-//			let popoverViewController = segue.destination as! NewTagController
-//			popoverViewController.modalPresentationStyle = UIModalPresentationStyle.popover
-//			popoverViewController.popoverPresentationController!.delegate = self
-//			popoverViewController.delegate = self
-//		}
-//		if segue.identifier == "EditTagSegue" {
-//			let nav = segue.destination as! UINavigationController
-//			if let newTagController = nav.topViewController as? NewTagIphoneController {
-//				newTagController.editExistingTag = selectedTag
-//			}
-//		}
-	}
-	
 	
 	override func numberOfSections(in tableView: UITableView) -> Int {
 		return 1
@@ -96,6 +79,7 @@ class TagsIphoneController: UITableViewController, UISearchBarDelegate, UIGestur
 		selectedTag = filteredTags[indexPath.row]
 		let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
 		controller.tag = selectedTag
+		controller.modificationMode = .editTag
 		let nav = UINavigationController(rootViewController: controller)
 		present(nav, animated: true)
 	}
@@ -127,6 +111,10 @@ class TagsIphoneController: UITableViewController, UISearchBarDelegate, UIGestur
 	
 	func hasNewTag() {
 		update()
+	}
+	
+	func didCreate(sheet: Sheet) {
+		
 	}
 	
 	
@@ -185,7 +173,7 @@ class TagsIphoneController: UITableViewController, UISearchBarDelegate, UIGestur
 	
 	@IBAction func addTagPressed(_ sender: UIBarButtonItem) {
 		let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
-		controller.newTagMode = true
+		controller.modificationMode = .newTag
 		let nav = UINavigationController(rootViewController: controller)
 		present(nav, animated: true)
 	}

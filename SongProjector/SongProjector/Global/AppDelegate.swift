@@ -9,6 +9,10 @@
 import UIKit
 import CoreData
 import Photos
+import GGLSignIn
+import UIKit
+import Google
+import GoogleSignIn
 
 var canUsePhotos: Bool {
 
@@ -68,6 +72,7 @@ var externalDisplayWindowWidth: CGFloat {
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
+	
 
 	var window: UIWindow?
 
@@ -85,6 +90,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 				}
 			})
 		}
+		
 		return true
 	}
 
@@ -140,6 +146,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	    return container
 	}()
 	
+	func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+		return GIDSignIn.sharedInstance().handle(url,
+													sourceApplication: options[UIApplicationOpenURLOptionsKey.sourceApplication] as? String,
+													annotation: options[UIApplicationOpenURLOptionsKey.annotation])
+	}
 
 	private func setupAndCheckDatabase() {
 		
@@ -155,7 +166,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		for entity in entities {
 			_ = CoreEntity.delete(entity: entity)
 		}
-		
+	
 		CoreTag.predicates.append("title", equals: "Player")
 		var tags = CoreTag.getEntities()
 		if tags.count == 0 {
@@ -177,6 +188,59 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			tag.title = "Security"
 			let _ = CoreTag.saveContext()
 		}
+		
+		CoreSong.predicates.append("title", equals: "testSong")
+		let songs = CoreSong.getEntities()
+		if songs.count == 0 {
+			let song = CoreSong.createEntity()
+			song.title = "testSong"
+			CoreSong.saveContext()
+		}
+		
+		CoreSong.predicates.append("title", equals: "testSong")
+		
+		if let song = CoreSong.getEntities().first {
+			
+			CoreInstrument.predicates.append("typeString", equals: "piano")
+			let pianos = CoreInstrument.getEntities()
+			if pianos.count == 0 {
+				let piano = CoreInstrument.createEntity()
+				piano.type = .piano
+				piano.resourcePath = "Piano"
+				piano.hasSong = song
+			}
+			
+			CoreInstrument.predicates.append("typeString", equals: "guitar")
+			let guitars = CoreInstrument.getEntities()
+			if guitars.count == 0 {
+				let guitar = CoreInstrument.createEntity()
+				guitar.type = .guitar
+				guitar.resourcePath = "Guitar"
+				guitar.hasSong = song
+			}
+			
+			CoreInstrument.predicates.append("typeString", equals: "bassGuitar")
+			let bassGuitars = CoreInstrument.getEntities()
+			if bassGuitars.count == 0 {
+				let bassGuitar = CoreInstrument.createEntity()
+				bassGuitar.type = .bassGuitar
+				bassGuitar.resourcePath = "BassGuitar"
+				bassGuitar.hasSong = song
+			}
+			
+			CoreInstrument.predicates.append("typeString", equals: "drums")
+			let drums = CoreInstrument.getEntities()
+			if drums.count == 0 {
+				let drum = CoreInstrument.createEntity()
+				drum.type = .drums
+				drum.resourcePath = "Drums"
+				drum.hasSong = song
+			}
+			
+			let _ = CoreInstrument.saveContext()
+
+		}
+
 	}
 	
 	private func setupAirPlay() {

@@ -82,9 +82,12 @@ class MenuController: UITabBarController {
 		
 		// Maak controllers
 //		let storyboard = UIStoryboard(name: "StoryboardiPad", bundle: nil)
+//		let storyboardiPad = UIStoryboard(name: "StoryboardiPad", bundle: nil)
 		
 		if let storyboard = storyboard {
-			
+			if let name = storyboard.value(forKey: "name") as? String, name == "StoryboardiPad" {
+				UserDefaults.standard.setValue("ipad", forKey: "device")
+			}
 			Feature.all.forEach{
 				controllers[$0] = storyboard.instantiateViewController(withIdentifier: $0.identifier)
 			}

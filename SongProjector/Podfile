@@ -5,7 +5,11 @@ use_frameworks!
 
 
 pod 'ChromaColorPicker'
-
+pod 'Google/SignIn'
+pod 'GoogleAPIClientForREST'
+pod 'GTMOAuth2', '~> 1.1.0'
+pod 'GoogleAPIClientForREST/Calendar', '~> 1.2.1'
+pod 'VerticalSlider'
 
 target 'SongProjector' do
 

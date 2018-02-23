@@ -31,11 +31,6 @@ class LabelTextFieldCell: UITableViewCell {
 		return view
 	}
 	
-//	func setup() {
-//		textField.addTarget(self, action: #selector(textFieldDidChange),
-//							for: UIControlEvents.editingChanged)
-//	}
-	
 	func setName(name: String) {
 		textField.text = name
 		delegate?.textFieldDidChange(cell: self, text: textField.text)

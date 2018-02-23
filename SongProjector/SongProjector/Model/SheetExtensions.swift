@@ -14,8 +14,9 @@ public enum SheetType {
 	case SheetTitleImage
 	case SheetSplit
 	case SheetEmpty
+	case SheetActivities
 	
-	static let all = [SheetTitleContent, SheetTitleImage, SheetSplit, SheetEmpty]
+	static let all = [SheetTitleContent, SheetTitleImage, SheetSplit, SheetEmpty, SheetActivities]
 	
 	static func `for`(_ indexPath: IndexPath) -> SheetType {
 		return all[indexPath.row]
@@ -31,6 +32,8 @@ public enum SheetType {
 			return Cells.bulletOpen
 		case .SheetEmpty:
 			return Cells.bulletOpen
+		case .SheetActivities:
+			return Cells.bulletOpen
 		}
 	}
 }
@@ -44,6 +47,8 @@ extension Sheet {
 			return .SheetTitleImage
 		} else if self.entity.isKindOf(entity: SheetSplitEntity.entity()) {
 			return .SheetSplit
+		}  else if self.entity.isKindOf(entity: SheetActivities.entity()) {
+			return .SheetActivities
 		} else {
 			return .SheetEmpty
 		}
@@ -53,17 +58,29 @@ extension Sheet {
 	var emptySheet: Sheet {
 		switch type {
 		case .SheetTitleContent:
-			return CoreSheetTitleContent.createEntityNOTsave()
+			let sheet = CoreSheetTitleContent.createEntityNOTsave()
+			sheet.isTemp = true
+			return sheet
 		case .SheetTitleImage:
-			return CoreSheetTitleImage.createEntityNOTsave()
+			let sheet = CoreSheetTitleImage.createEntityNOTsave()
+			sheet.isTemp = true
+			return sheet
 		case .SheetSplit:
-			return CoreSheetSplit.createEntityNOTsave()
+			let sheet = CoreSheetSplit.createEntityNOTsave()
+			sheet.isTemp = true
+			return sheet
 		case .SheetEmpty:
-			return CoreSheetEmptySheet.createEntityNOTsave()
+			let sheet = CoreSheetEmptySheet.createEntity()
+			sheet.isTemp = true
+			return sheet
+		case .SheetActivities:
+			let sheet = CoreSheetActivities.createEntity()
+			sheet.isTemp = true
+			return sheet
 		}
 	}
 	
-	@objc open func delete() {
+	override public func delete() {
 		if let tag = hasTag {
 			tag.backgroundImage = nil
 			let _ = CoreTag.delete(entity: tag)

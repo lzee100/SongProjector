@@ -8,7 +8,7 @@
 
 import UIKit
 
-class BibleStudyIphoneController: UIViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, BibleStudyGeneratorDelegate, NewOrEditIphoneControllerDelegate {
+class BibleStudyIphoneController: UIViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, BibleStudyGeneratorIphoneDelegate, NewOrEditIphoneControllerDelegate {
 	
 
 	@IBOutlet var tableView: UITableView!
@@ -34,7 +34,7 @@ class BibleStudyIphoneController: UIViewController, UITableViewDelegate, UITable
 		if segue.identifier == "SheetsPickerMenuSegue" {
 			let controller = segue.destination as! SheetPickerMenuController
 			controller.sender = self
-			controller.sendr = self
+			controller.bibleStudyGeneratorIphoneDelegate = self
 			controller.selectedTag = selectedTag
 		}
     }

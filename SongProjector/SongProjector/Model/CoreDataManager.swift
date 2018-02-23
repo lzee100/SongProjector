@@ -11,6 +11,8 @@ import UIKit
 import CoreData
 
 let CoreEntity = CoreDataManager(nsManagedObject: Entity())
+let CoreSheetActivities = CoreDataManager(nsManagedObject: SheetActivities())
+let CoreGoogleActivities = CoreDataManager(nsManagedObject: GoogleActivity())
 let CoreTag = CoreDataManager(nsManagedObject: Tag())
 let CoreSheet = CoreDataManager(nsManagedObject: Sheet())
 let CoreSheetSplit = CoreDataManager(nsManagedObject: SheetSplitEntity())
@@ -18,6 +20,8 @@ let CoreSheetTitleContent = CoreDataManager(nsManagedObject: SheetTitleContentEn
 let CoreSheetTitleImage = CoreDataManager(nsManagedObject: SheetTitleImageEntity())
 let CoreSheetEmptySheet = CoreDataManager(nsManagedObject: SheetEmptyEntity())
 let CoreCluster = CoreDataManager(nsManagedObject: Cluster())
+let CoreSong = CoreDataManager(nsManagedObject: Song())
+let CoreInstrument = CoreDataManager(nsManagedObject: Instrument())
 
 var managedObjectContext: NSManagedObjectContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 

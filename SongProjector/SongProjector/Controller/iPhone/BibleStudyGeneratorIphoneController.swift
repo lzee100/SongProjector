@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol BibleStudyGeneratorDelegate {
+protocol BibleStudyGeneratorIphoneDelegate {
 	func didFinishGeneratorWith(_ sheets: [Sheet])
 }
 
@@ -24,7 +24,7 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 	
 
 	var selectedTag: Tag?
-	var delegate: BibleStudyGeneratorDelegate?
+	var delegate: BibleStudyGeneratorIphoneDelegate?
 	
 	// MARK: Private properties
 	private var sheets: [Sheet] = []
@@ -214,6 +214,9 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 				view = SheetSplit.createWith(frame: collectionCell.bounds, sheet: sheet as! SheetSplitEntity, tag: sheet.hasTag)
 			case .SheetEmpty:
 				view = SheetEmpty.createWith(frame: collectionCell.bounds, tag: sheet.hasTag)
+			case .SheetActivities:
+				print("Sheet Activities biblestudygeneratoriphonecontroller")
+				break
 			}
 			
 			collectionCell.previewView.addSubview(view)

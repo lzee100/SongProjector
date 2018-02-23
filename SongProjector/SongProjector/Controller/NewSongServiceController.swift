@@ -27,6 +27,7 @@ class NewSongServiceController: UIViewController, UITableViewDelegate, UITableVi
 	@IBOutlet var tableViewSelectedSongs: UITableView!
 	@IBOutlet var tableViewSongs: UITableView!
 	@IBOutlet var searchBar: UISearchBar!
+	@IBOutlet var add: UIButton!
 	
 	@IBOutlet var collectionView: UICollectionView!
 	
@@ -174,6 +175,9 @@ class NewSongServiceController: UIViewController, UITableViewDelegate, UITableVi
 		navigationController?.title = Text.NewSongService.title
 		descriptionSelectedSongs.text = Text.NewSongService.selectedSongsDescription
 		descriptionSongs.text = Text.NewSongService.songsDescription
+		descriptionSongs.textColor = themeWhiteBlackTextColor
+		descriptionSelectedSongs.textColor = themeWhiteBlackTextColor
+		add.tintColor = themeHighlighted
 		
 		searchBar.showsCancelButton = true
 		searchBar.placeholder = Text.Songs.SearchSongPlaceholder
@@ -236,6 +240,10 @@ class NewSongServiceController: UIViewController, UITableViewDelegate, UITableVi
 	}
 	
 	@IBAction func doneButtonPressed(_ sender: UIBarButtonItem) {
+		
+		for (index, cluster) in selectedSongs.enumerated() {
+			cluster.position = Int16(index)
+		}
 		delegate?.didFinishSongServiceSelection(clusters: selectedSongs, completion: {
 			dismiss(animated: true)
 		})

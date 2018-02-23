@@ -40,6 +40,7 @@ class Text: NSObject {
 		static let title = "Alles"
 		static let description = "Doorzoek hier alle liedjes of collecties"
 		static let SearchSongPlaceholder = "Zoek dia's"
+		static let menuTitle = "Toevoegen"
 	}
 	
 	struct NewSong {
@@ -54,6 +55,7 @@ class Text: NSObject {
 		static let erorrMessageNoTag = "Selecteer een thema"
 		static let segmentTitleText = "Tekst"
 		static let segmentTitleSheets = "Dia's"
+		static let generateSheetsButton = "Genereer dia's"
 	}
 	
 	struct Tags {
@@ -76,10 +78,37 @@ class Text: NSObject {
 		
 		static let tableViewHeaderGeneral = "Algemeen"
 		static let tableViewHeaderSheets = "Dia's"
+		
+		static let titleMenu = "Dia's toevoegen"
 	}
 	
-	struct DisplaySettings {
-		static let title = "Opmaak"
+	struct Settings {
+		static let title = "Instellingen"
+		static let descriptionGoogleSub = "Login om activiteiten op te halen"
+		static let descriptionCalendarId = "Google agenda ID"
+		
+		static let descriptionInstructions = "Handleiding"
+		static let instructions = """
+			Voor het implementeren van Google agenda activiteiten in de app is het nodig
+			om de volgende stappen te doorlopen: \n\n
+			
+			Ten eerste is de ID van de agenda nodig. Een handleiding hiervoor kan je vinden
+			op Google door te zoeken op 'Finding Your Google Calendar ID'.
+			De ID moet vervolgens ingevuld worden voordat de activiteiten van die kalender
+			opgehaald kunnen worden. \n\n
+			
+			Ga vervolgens naar https://console.developers.google.com/apis/api/calendar/overview.
+			Login met het account waarvoor je ook de activiteiten in de app wilt tonen. Ga naar
+			Dashboard en klik vervolgens op 'Api's en services inschakelen'. Zoek naar
+			"Google Calendar API". Klik daarop en klik daarna op Inschakelen. \n\n
+
+			Het kan een aantal minuten duren voordat de agenda beschikbaar is voor de app.
+			
+			"""
+			
+		static let descriptionGoogle = "Google account"
+		static let errorTitleGoogleAuth = "Fout in authenticatie"
+		static let googleSignOutButton = "Uitloggen"
 	}
 	
 	struct NewTag {
@@ -135,6 +164,7 @@ class Text: NSObject {
 		static let sheetSplit = "Dia 2 segmenten"
 		static let sheetEmpty = "Lege dia"
 		static let bibleStudyGen = "Bijbelstudie dia generator"
+		static let sheetActivity = "Google activiteiten dia"
 	}
 	
 	struct SheetPickerMenu {
@@ -144,6 +174,10 @@ class Text: NSObject {
 	
 	struct More {
 		static let title = "Meer"
+	}
+	
+	struct Google {
+		static let title = "Google agenda"
 	}
 	
 	struct BibleStudy {
@@ -164,6 +198,15 @@ class Text: NSObject {
 		
 		static let placeholderContent = "tekst"
 
+	}
+	
+	struct ActivitySheet {
+		static let titleThisWeek = "Deze week"
+		static let titleNextWeek = "Volgende week"
+		static let titleUpcomingTime = "Komende tijd"
+		static let descriptionNoActivities = "Geen activiteiten gepland"
+		static let previewDescription = "Activiteitomschrijving uit de google agenda"
+		static let dayActivity = "Hele dag"
 	}
 	
 }

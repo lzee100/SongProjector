@@ -13,16 +13,16 @@ enum Feature : String {
 	
 	case songService = "SongService"
 	case songs = "Songs"
-	case bibleStudy = "BibleStudyIphone"
+	case bibleStudy = "BibleStudy"
 	case more = "More"
 	case tags = "Tags"
-	case displaySettings = "DisplaySettings"
+	case settings = "Settings"
 	
 	
 	
 	// MARK: - Properties
 	
-	static let all = [songService, songs, bibleStudy, tags, displaySettings, more]
+	static let all = [songService, songs, bibleStudy, tags, settings, more]
 	
 	var titel : String {
 		return rawValue
@@ -38,8 +38,8 @@ enum Feature : String {
 			return Text.BibleStudy.title
 		case .tags:
 			return Text.Tags.title
-		case .displaySettings:
-			return Text.DisplaySettings.title
+		case .settings:
+			return Text.Settings.title
 		case .more:
 			return Text.More.title
 
@@ -55,7 +55,7 @@ enum Feature : String {
 	var isStandaard : Bool {
 		
 		switch self {
-		case .songService, .songs, .bibleStudy, .more, .tags, .displaySettings:
+		case .songService, .songs, .bibleStudy, .more, .tags, .settings:
 			return true
 		}
 	}
@@ -89,7 +89,7 @@ enum Feature : String {
 			return (#imageLiteral(resourceName: "More"), #imageLiteral(resourceName: "More"), #imageLiteral(resourceName: "More"))
 		case .tags:
 			return (#imageLiteral(resourceName: "Tags"), #imageLiteral(resourceName: "Tags"), #imageLiteral(resourceName: "Tags"))
-		case .displaySettings:
+		case .settings:
 			return (#imageLiteral(resourceName: "Bullet"), #imageLiteral(resourceName: "BulletSelected"), #imageLiteral(resourceName: "Bullet"))
 		}
 		

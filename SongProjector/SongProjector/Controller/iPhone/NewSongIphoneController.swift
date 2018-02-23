@@ -224,6 +224,7 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 	
 	private func databaseDidChange(_ notification: Notification) {
 		selectedTag = nil
+		CoreTag.predicates.append("isHidden", notEquals: true)
 		tags = CoreTag.getEntities()
 		update()
 	}

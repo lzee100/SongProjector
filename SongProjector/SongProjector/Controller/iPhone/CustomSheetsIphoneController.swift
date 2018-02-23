@@ -8,10 +8,6 @@
 
 import UIKit
 
-protocol CustomSheetsControllerDelegate {
-	func didSaveSheets(sheets: [Sheet])
-}
-
 class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, NewOrEditIphoneControllerDelegate, LabelNumberPickerCellDelegate, LabelTextFieldCellDelegate {
 	
 	
@@ -61,11 +57,19 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 	}
 	
 	
+	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+		if segue.identifier == "SheetPickerMenuControllerSegue" {
+			let controller = segue.destination as! SheetPickerMenuController
+			controller.sender = self
+			controller.selectedTag = selectedTag
+		}
+	}
+	
 	
 	// MARK: - UICollectionView Functions
 
 	func numberOfSections(in collectionView: UICollectionView) -> Int {
-		return collectionView == collectionViewTags ? 1 : sheetsSorted.count + 1
+		return collectionView == collectionViewTags ? 1 : sheetsSorted.count
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -81,15 +85,9 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 			return collectionCell
 		} else {
 			
-			if indexPath.section == 0 {
-				let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.AddButtonCollectionCell, for: indexPath) as! AddButtonCollectionCell
-				collectionCell.setup(description: Text.Actions.add)
-				return collectionCell
-			}
-			
 			let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.sheetCollectionCell, for: indexPath)
 			
-			setViewFor(collectionCell: collectionCell, sheet: sheetsSorted[indexPath.section-1])
+			setViewFor(collectionCell: collectionCell, sheet: sheetsSorted[indexPath.section])
 			
 			if visibleCells.contains(indexPath) {
 				let y = collectionCell.bounds.minY
@@ -122,8 +120,6 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
 		if collectionView == collectionViewTags {
 			return CGSize(width: 200, height: 50)
-		} else if indexPath.section == 0 {
-			return CGSize(width: collectionView.bounds.width, height: 60)
 		} else {
 			return sheetSize
 		}
@@ -133,20 +129,13 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 		if collectionView == collectionViewTags {
 			selectedTag = selectedTag == tags[indexPath.row] ? nil : tags[indexPath.row]
 		} else {
-			if indexPath.section == 0 {
-				
-				Menu.showMenu(sender: self)
-				
-			} else {
-				
-				let sheet = sheetsSorted[indexPath.section]
-				let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
-				controller.sheet = sheet
-				controller.delegate = self
-				let nav = UINavigationController(rootViewController: controller)
-				present(nav, animated: true)
-				
-			}
+			let sheet = sheetsSorted[indexPath.section]
+			let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
+			controller.modificationMode = .editCustomSheet
+			controller.sheet = sheet
+			controller.delegate = self
+			let nav = UINavigationController(rootViewController: controller)
+			present(nav, animated: true)
 		}
 	}
 	
@@ -275,7 +264,6 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 		
 		if cluster == nil {
 			cluster = CoreCluster.createEntity()
-			cluster.title = "cluster"
 			cluster.isTemp = true
 		}
 		save.title = Text.Actions.save
@@ -286,6 +274,10 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 		view.backgroundColor = themeWhiteBlackBackground
 		
 		hideKeyboardWhenTappedAround()
+		
+		multiplier = externalDisplayWindowRatio
+		
+		sheetSize = CGSize(width: collectionView.bounds.width, height: collectionView.bounds.width * multiplier)
 		
 		cellName.delegate = self
 		cellAnimationTime.delegate = self
@@ -299,7 +291,6 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 		
 		collectionView.register(UINib(nibName: Cells.sheetCollectionCell, bundle: nil), forCellWithReuseIdentifier: Cells.sheetCollectionCell)
 		collectionViewTags.register(UINib(nibName: Cells.tagCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.tagCellCollection)
-		collectionView.register(UINib(nibName: Cells.AddButtonCollectionCell, bundle: nil), forCellWithReuseIdentifier: Cells.AddButtonCollectionCell)
 
 		tableView.register(cell: Cells.basicCellid)
 		tableView.keyboardDismissMode = .interactive
@@ -400,6 +391,9 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 				view = SheetSplit.createWith(frame: collectionCell.bounds, sheet: sheet as! SheetSplitEntity, tag: sheet.hasTag)
 			case .SheetEmpty:
 				view = SheetEmpty.createWith(frame: collectionCell.bounds, tag: sheet.hasTag)
+			case .SheetActivities:
+				view = SheetActivitiesView.createWith(frame: collectionCell.bounds, sheet: sheet as! SheetActivities, tag: sheet.hasTag, isPreview: true)
+				break
 			}
 			
 			collectionCell.previewView.addSubview(view)
@@ -486,6 +480,7 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 	@IBAction func cancel(_ sender: UIBarButtonItem) {
 		// remove all
 		if isNew {
+			managedObjectContext.rollback()
 			for sheet in sheets {
 				if let sheet = sheet as? SheetTitleImageEntity {
 					sheet.delete()
@@ -499,10 +494,10 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 				let _ = CoreCluster.delete(entity: cluster)
 			}
 			let _ = CoreCluster.saveContext()
+		} else {
+			managedObjectContext.rollback()
 		}
-		
 		dismiss(animated: true)
-		
 	}
 	
 	@IBAction func savedPressed(_ sender: UIBarButtonItem) {
@@ -512,17 +507,29 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 				if cluster == nil {
 					cluster = CoreCluster.createEntity()
 				}
-				
+				cluster.isTemp = false
 				cluster.hasTag = selectedTag
 				
 				var index: Int16 = 0
 				for sheet in sheets {
 					sheet.position = index
 					sheet.hasCluster = cluster
+					sheet.isTemp = false
 					index += 1
 				}
 				
+				CoreGoogleActivities.predicates.append("isTemp", equals: true)
+				let activities = CoreGoogleActivities.getEntities()
+				for activity in activities {
+					activity.delete()
+				}
+
 				let _ = CoreCluster.saveContext()
+				CoreSheet.predicates.append("isTemp", equals: true)
+				let tempSheets = CoreSheet.getEntities()
+				for sheet in tempSheets {
+					sheet.delete()
+				}
 				
 				sheets = []
 				

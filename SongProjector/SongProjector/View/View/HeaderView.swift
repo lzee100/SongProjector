@@ -31,6 +31,7 @@ class HeaderView: UIView {
 		headerView.frame = bounds
 		descriptionLabel.textColor = themeHighlighted
 		headerView.backgroundColor = isThemeLight ? UIColor(hex: "F0F0F2") : UIColor(hex: "101010")
+
 	}
 	
 }

@@ -9,20 +9,33 @@
 import UIKit
 
 class SheetPickerMenuController: UITableViewController {
-	
-	@IBOutlet var emptyView: UIView!
+		
 	var sender: NewOrEditIphoneControllerDelegate?
-	var sendr: BibleStudyGeneratorDelegate?
+	var bibleStudyGeneratorIphoneDelegate: BibleStudyGeneratorIphoneDelegate?
+	var bibleStudyGeneratorDelegate: BibleStudyGeneratorDelegate?
 	var selectedTag: Tag?
-
+	
+	
+	private enum SheetGroup: String {
+		case customSheets
+		case bibleStudy
+	}
+	
 	private enum Sections: String {
 		case additional
 		case `default`
 		
 		static let all = [additional, `default`]
+		static let bibleStudy = all
+		static let customSheets = [`default`]
 		
-		static func `for`(_ section: Int) -> Sections {
-			return all[section]
+		static func `for`(_ section: Int, forType: SheetGroup) -> Sections {
+			switch forType {
+			case .bibleStudy:
+				return bibleStudy[section]
+			case .customSheets:
+				return customSheets[section]
+			}
 		}
 	}
 	
@@ -43,15 +56,25 @@ class SheetPickerMenuController: UITableViewController {
 		}
 	}
 	
+	private var sheetGroup: SheetGroup {
+		return bibleStudyGeneratorIphoneDelegate != nil || bibleStudyGeneratorDelegate != nil ? .bibleStudy : .customSheets
+	}
+	
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
     }
 	
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-		if segue.identifier == "BibleStudyGeneratorSegue" {
+		if segue.identifier == "BibleStudyIphoneGeneratorSegue" {
 			let controller = segue.destination as! BibleStudyGeneratorIphoneController
-			controller.delegate = sendr
+			controller.delegate = bibleStudyGeneratorIphoneDelegate
+			controller.selectedTag = selectedTag
+		}
+		if segue.identifier == "BibleStudyGeneratorSegue" {
+			let nav = segue.destination as! UINavigationController
+			let controller = nav.topViewController as! BibleStudyGeneratorController
+			controller.delegate = bibleStudyGeneratorDelegate
 			controller.selectedTag = selectedTag
 		}
 	}
@@ -59,23 +82,28 @@ class SheetPickerMenuController: UITableViewController {
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return Sections.all.count
+		switch sheetGroup {
+		case .bibleStudy:
+			return Sections.bibleStudy.count
+		case .customSheets:
+			return Sections.customSheets.count
+		}
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		switch Sections.for(section) {
+		switch Sections.for(section, forType: sheetGroup) {
 		case .additional:
 			return AdditionalFeatures.all.count
 		case .default:
 			return SheetType.all.count
 		}
-    }
+	}
 
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath) as! BasicCell
 		
-		switch Sections.for(indexPath.section) {
+		switch Sections.for(indexPath.section, forType: sheetGroup) {
 		case .additional:
 			switch AdditionalFeatures.for(indexPath) {
 			case .bibleStudyGenerator:
@@ -96,12 +124,15 @@ class SheetPickerMenuController: UITableViewController {
 			case .SheetEmpty:
 				cell.setup(title: Text.SheetsMenu.sheetEmpty, icon: SheetType.iconFor(type: .SheetEmpty))
 				return cell
+			case .SheetActivities:
+				cell.setup(title: Text.SheetsMenu.sheetActivity, icon: SheetType.iconFor(type: .SheetActivities))
+				return cell
 			}
 		}
     }
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		switch Sections.for(indexPath.section) {
+		switch Sections.for(indexPath.section, forType: sheetGroup) {
 		case .additional:
 			switch AdditionalFeatures.for(indexPath) {
 			case .bibleStudyGenerator:
@@ -110,6 +141,7 @@ class SheetPickerMenuController: UITableViewController {
 		case .default:
 			let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
 			controller.delegate = sender
+			controller.modificationMode = .newCustomSheet
 			switch SheetType.for(indexPath){
 			case .SheetTitleContent:
 				let sheet = CoreSheetTitleContent.createEntity()
@@ -127,6 +159,10 @@ class SheetPickerMenuController: UITableViewController {
 				let sheet = CoreSheetEmptySheet.createEntity()
 				sheet.isTemp = true
 				controller.sheet = sheet
+			case .SheetActivities:
+				let sheet = CoreSheetActivities.createEntity()
+				sheet.isTemp = true
+				controller.sheet = sheet
 			}
 			let nav = UINavigationController(rootViewController: controller)
 			present(nav, animated: true)
@@ -139,7 +175,7 @@ class SheetPickerMenuController: UITableViewController {
 
 	private func setup() {
 		tableView.register(cell: Cells.basicCellid)
-		emptyView.backgroundColor = themeWhiteBlackBackground
+		tableView.isScrollEnabled = false
 	}
 	
 }
