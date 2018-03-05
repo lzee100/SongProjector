@@ -136,7 +136,11 @@ class SheetPickerMenuController: UITableViewController {
 		case .additional:
 			switch AdditionalFeatures.for(indexPath) {
 			case .bibleStudyGenerator:
-				performSegue(withIdentifier: "BibleStudyGeneratorSegue", sender: self)
+				if let device = UserDefaults.standard.value(forKey: "device") as? String, device == "ipad" {
+					performSegue(withIdentifier: "BibleStudyGeneratorSegue", sender: self)
+				} else {
+					performSegue(withIdentifier: "BibleStudyIphoneGeneratorSegue", sender: self)
+				}
 			}
 		case .default:
 			let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController

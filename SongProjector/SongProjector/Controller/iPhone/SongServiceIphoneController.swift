@@ -113,6 +113,38 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		}
 	}
 	
+	private var nextCluster: Cluster? {
+		willSet {
+			if newValue == nil {
+				if let hasEmptySheet = nextCluster?.hasTag?.hasEmptySheet, hasEmptySheet {
+					removeEmptySheet()
+				}
+			}
+			stopPlay()
+		}
+		didSet {
+			if let hasEmptySheet = nextCluster?.hasTag?.hasEmptySheet, hasEmptySheet {
+				addEmptySheet(nextCluster, isEmptySheetFirst: nextCluster?.hasTag?.isEmptySheetFirst)
+			}
+		}
+	}
+	
+	private var previousCluster: Cluster? {
+		willSet {
+			if newValue == nil {
+				if let hasEmptySheet = previousCluster?.hasTag?.hasEmptySheet, hasEmptySheet {
+					removeEmptySheet()
+				}
+			}
+			stopPlay()
+		}
+		didSet {
+			if let hasEmptySheet = previousCluster?.hasTag?.hasEmptySheet, hasEmptySheet {
+				addEmptySheet(previousCluster, isEmptySheetFirst: previousCluster?.hasTag?.isEmptySheetFirst)
+			}
+		}
+	}
+	
 	
 	
 	// MARK: - Functions
@@ -259,7 +291,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		GoogleActivityFetcher.fetch(true)
 		view.backgroundColor = themeWhiteBlackBackground
 		emptyViewTableView.backgroundColor = themeWhiteBlackBackground
-		moveUpDownSection.backgroundColor = .clear
+		moveUpDownSection.backgroundColor = themeWhiteBlackBackground
 		swipeLineLeft.backgroundColor = themeHighlighted
 		swipeLineRight.backgroundColor = themeHighlighted
 		swipeLineLeftWidthConstraint.constant = UIScreen.main.bounds.width * 0.35
@@ -327,8 +359,8 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 			} else if isPlaying{
 				return sheetsForSelectedCluster.first
 			}else if let clusterPosition = selectedCluster?.position, Int(clusterPosition) + 1 < clusters.count {
-				let selectedCluster = self.clustersOrdened[Int(clusterPosition) + 1]
-				return selectedCluster.hasSheetsArray.first
+				nextCluster = self.clustersOrdened[Int(clusterPosition) + 1]
+				return nextCluster?.hasSheetsArray.first
 			} else {
 				return nil
 			}
@@ -344,13 +376,29 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 			if previousPosition >= 0 {
 				return sheetsForSelectedCluster[previousPosition]
 			} else if let clusterPosition = selectedCluster?.position, Int(clusterPosition) - 1 >= 0 {
-				let selectedCluster = clustersOrdened[Int(clusterPosition) - 1]
-				return selectedCluster.hasSheetsArray.first
+				previousCluster = clustersOrdened[Int(clusterPosition) - 1]
+				return previousCluster?.hasSheetsArray.first
 			} else {
 				return nil
 			}
 		} else {
 			return nil
+		}
+	}
+	
+	private func getTagForPreviousSheet(sheet: Sheet?) -> Tag? {
+		if let previousCluster = previousCluster, let sheet = sheet {
+			return previousCluster.hasSheetsArray.contains(sheet) ? previousCluster.hasTag : selectedCluster?.hasTag
+		} else {
+			return selectedCluster?.hasTag
+		}
+	}
+	
+	private func getTagForNextSheet(sheet: Sheet?) -> Tag? {
+		if let nextCluster = nextCluster, let sheet = sheet {
+			return nextCluster.hasSheetsArray.contains(sheet) ? sheet.hasTag ?? nextCluster.hasTag : selectedCluster?.hasTag
+		} else {
+			return selectedCluster?.hasTag
 		}
 	}
 	
@@ -384,7 +432,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 						// display next song
 						if let clusterPosition = selectedCluster?.position, Int(clusterPosition) + 1 < clusters.count {
 							swipeAnimationIsActive = true
-							animateSheetsWith(.left, completion: {
+							animateSheetsWith(.left, isNextOrPreviousCluster: true, completion: {
 								self.swipeAnimationIsActive = false
 								self.selectedClusterRow += 1
 								self.selectedCluster = self.clustersOrdened[Int(clusterPosition) + 1]
@@ -416,7 +464,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 						if let clusterPosition = selectedCluster?.position, Int(clusterPosition) - 1 >= 0 {
 							
 							swipeAnimationIsActive = true
-							animateSheetsWith(.right, completion: {
+							animateSheetsWith(.right, isNextOrPreviousCluster: true, completion: {
 								self.swipeAnimationIsActive = false
 								self.selectedClusterRow -= 1
 								self.selectedCluster = self.clustersOrdened[Int(clusterPosition) - 1]
@@ -446,9 +494,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 						if let topConstraint = newSheetDisplayerSwipeViewTopConstraint, topConstraint.isActive {
 							
 							mixerHeightConstraint.constant = 0
-							for subView in mixerContainerView.subviews {
-								subView.removeFromSuperview()
-							}
+
 							
 							sheetDisplayerSwipeViewTopConstraint.isActive = true
 							topConstraint.isActive = false
@@ -458,6 +504,9 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 							}, completion: { (bool) in
 								self.displayMode = .normal
 								self.isAnimatingUpDown = false
+								for subView in self.mixerContainerView.subviews {
+									subView.removeFromSuperview()
+								}
 							})
 							
 						}
@@ -756,7 +805,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		}
 	}
 	
-	private func animateSheetsWith(_ direction : AnimationDirection, completion: @escaping () -> Void) {
+	private func animateSheetsWith(_ direction : AnimationDirection, isNextOrPreviousCluster: Bool = false, completion: @escaping () -> Void) {
 		switch direction {
 		case .left:
 			
@@ -787,7 +836,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 					switch nextSheet?.type {
 					case .none: break
 					case .some(.SheetTitleContent):
-						nextSheetView = SheetTitleContent.createWith(frame: sheetDisplayerNext.bounds, title: selectedCluster?.title, sheet: nextSheet as? SheetTitleContentEntity, tag: selectedCluster?.hasTag, scaleFactor: scaleFactor)
+						nextSheetView = SheetTitleContent.createWith(frame: sheetDisplayerNext.bounds, title: selectedCluster?.title, sheet: nextSheet as? SheetTitleContentEntity, tag: isNextOrPreviousCluster ? nextCluster?.hasTag : selectedCluster?.hasTag, scaleFactor: scaleFactor)
 					case .some(.SheetTitleImage):
 						nextSheetView = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: nextSheet as! SheetTitleImageEntity, tag: nextSheet?.hasTag, scaleFactor: scaleFactor)
 					case .some(.SheetSplit):
@@ -881,7 +930,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 					switch previousSheet?.type {
 					case .none: break
 					case .some(.SheetTitleContent):
-						previousSheetView = SheetTitleContent.createWith(frame: sheetDisplayerPrevious.bounds, title: selectedCluster?.title, sheet: previousSheet as? SheetTitleContentEntity, tag: selectedCluster?.hasTag, scaleFactor: scaleFactor)
+						previousSheetView = SheetTitleContent.createWith(frame: sheetDisplayerPrevious.bounds, title: selectedCluster?.title, sheet: previousSheet as? SheetTitleContentEntity, tag: isNextOrPreviousCluster ? previousCluster?.hasTag : selectedCluster?.hasTag, scaleFactor: scaleFactor)
 					case .some(.SheetTitleImage):
 						previousSheetView = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: previousSheet as! SheetTitleImageEntity, tag: previousSheet?.hasTag, scaleFactor: scaleFactor)
 					case .some(.SheetSplit):

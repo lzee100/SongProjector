@@ -23,6 +23,11 @@ let CoreCluster = CoreDataManager(nsManagedObject: Cluster())
 let CoreSong = CoreDataManager(nsManagedObject: Song())
 let CoreInstrument = CoreDataManager(nsManagedObject: Instrument())
 
+let CoreBook = CoreDataManager(nsManagedObject: Book())
+let CoreChapter = CoreDataManager(nsManagedObject: Chapter())
+let CoreVers = CoreDataManager(nsManagedObject: Vers())
+
+
 var managedObjectContext: NSManagedObjectContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
 

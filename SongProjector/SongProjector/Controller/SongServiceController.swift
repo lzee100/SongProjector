@@ -111,6 +111,7 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 			
 		}
 	}
+	
 	private var nextCluster: Cluster? {
 		willSet {
 			if newValue == nil {
@@ -516,6 +517,8 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 		}
 		if clusters.count > 0 {
 			sheetDisplayer.isHidden = true
+			sheetDisplayerPrevious.isHidden = true
+			sheetDisplayerNext.isHidden = true
 		}
 		if let externalDisplayWindow = externalDisplayWindow {
 			let view = UIView(frame: externalDisplayWindow.frame)
@@ -624,7 +627,7 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 				switch nextSheet?.type {
 				case .none: break
 				case .some(.SheetTitleContent):
-					nextSheetView = SheetTitleContent.createWith(frame: sheetDisplayer.bounds, title: isNextOrPreviousCluster ? nextCluster?.title : selectedCluster?.title, sheet: nextSheet as? SheetTitleContentEntity, tag: isNextOrPreviousCluster ? nextCluster?.hasTag : nextSheet?.hasTag ?? selectedCluster?.hasTag, scaleFactor: scaleFactor)
+					nextSheetView = SheetTitleContent.createWith(frame: sheetDisplayer.bounds, title: isNextOrPreviousCluster ? nextCluster?.title : selectedCluster?.title, sheet: nextSheet as? SheetTitleContentEntity, tag: isNextOrPreviousCluster ? getTagForNextSheet(sheet: nextSheet) : nextSheet?.hasTag ?? selectedCluster?.hasTag, scaleFactor: scaleFactor)
 				case .some(.SheetTitleImage):
 					nextSheetView = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: nextSheet as! SheetTitleImageEntity, tag: nextSheet?.hasTag, scaleFactor: scaleFactor)
 				case .some(.SheetSplit):
@@ -737,6 +740,7 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 					view.addSubview(previousImageView)
 					sheetDisplayer.isHidden = true
 					sheetDisplayerPrevious.isHidden = true
+					sheetDisplayerNext.isHidden = getNextSheet() == nil
 					
 					UIView.animate(withDuration: 0.3, animations: {
 						
@@ -800,7 +804,7 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 	
 	private func getTagForNextSheet(sheet: Sheet?) -> Tag? {
 		if let nextCluster = nextCluster, let sheet = sheet {
-			return nextCluster.hasSheetsArray.contains(sheet) ? nextCluster.hasTag : selectedCluster?.hasTag
+			return nextCluster.hasSheetsArray.contains(sheet) ? sheet.hasTag ?? nextCluster.hasTag : selectedCluster?.hasTag
 		} else {
 			return selectedCluster?.hasTag
 		}

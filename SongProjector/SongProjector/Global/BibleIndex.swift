@@ -8,9 +8,13 @@
 
 import Foundation
 
+let BibleIndex = BibleIndexx()
 
-class BibleIndex {
+class BibleIndexx {
 	private var searchText: String?
+	
+	init() {
+	}
 	
 	init(searchText: String?){
 		self.searchText = searchText
@@ -27,7 +31,7 @@ class BibleIndex {
 	
 	
 	
-	private enum Chapter: String {
+	private enum Book: String {
 		case Genesis
 		case Exodus
 		case Leviticus
@@ -86,7 +90,7 @@ class BibleIndex {
 		
 		static let all = [Genesis, Exodus, Leviticus, Numeri, Deuteronomium, Jozua, Richteren, Ruth, Samuël, Koningen, Ezra, Nehemia, Ester, Job, Psalmen, Spreuken, Prediker, Hooglied, Jesaja, Jeremia, Klaagliederen, Ezechiël, Daniël, Hosea, Joël, Amos, Obadja, Jona, Micha, Nahum, Habakuk, Sefanja, Haggai, Zacharia, Maleachi, Matteüs, Marcus, Lucas, Johannes, Handelingen, Romeinen, Korintiërs, Galaten, Efeziërs, Filippenzen, Kolossenzen, Tessalonicenzen, Timoteüs, Titus, Filemon, Hebreeën, Jakobus, Petrus, Judas, Openbaringen]
 		
-		static let searchIndex: [(Chapter, [String])] = [
+		static let searchIndex: [(Book, [String])] = [
 			(.Genesis, ["Genesis", "Gen"]),
 			(.Exodus, ["Exodus", "Exo"]),
 			(.Leviticus, ["Leviticus", "Lev"]),
@@ -144,7 +148,7 @@ class BibleIndex {
 			(.Openbaringen, ["Openbaringen", "Open", "Ope", "Openb"])
 		]
 		
-		static func searchIn(chapter: Chapter) -> [String]? {
+		static func searchIn(chapter: Book) -> [String]? {
 			if let result = searchIndex.first(where: { (searchIndex) -> Bool in
 				searchIndex.0 == chapter
 			}) {
@@ -157,7 +161,7 @@ class BibleIndex {
 		}
 	}
 	
-	private func parse(searchRequest: String?) -> String? {
+	private func parse(searchRequest: String?, returnScripture: Bool) -> String? {
 		
 		if let searchRequest = searchRequest, searchRequest.count > 0 {
 			
@@ -208,8 +212,8 @@ class BibleIndex {
 			}
 			
 			var found = false
-			for chapter in Chapter.all {
-				if let searchIndex = Chapter.searchIn(chapter: chapter) {
+			for chapter in Book.all {
+				if let searchIndex = Book.searchIn(chapter: chapter) {
 					if searchIndex.contains(chapterString) {
 						bookName = chapter.rawValue
 						found = true
@@ -235,6 +239,7 @@ class BibleIndex {
 			searchText.removeSubrange(point)
 			}
 			
+			// get verses (this only gets the last remainder (4-10 AX), not search verses as 4 till 10
 			if let strIndex = searchText.index(of: ":") {
 				bookChapter = String(searchText.prefix(strIndex.encodedOffset)).trimmingCharacters(in: .whitespacesAndNewlines)
 				let nextIndex = searchText.index(strIndex, offsetBy: 1)
@@ -249,11 +254,26 @@ class BibleIndex {
 				return nil
 			}
 			
-			return bookNumber + " " + bookName + " " + bookChapter + ":" + vers
+			if returnScripture {
+				CoreVers
+				//
+			} else {
+				return bookNumber + " " + bookName + " " + bookChapter + ":" + vers
+			}
 
 		} else {
 			return nil
 		}
+	}
+	
+	public func getBookFor(index: Int) -> String {
+		return Book.all[index].rawValue
+	}
+	
+	public func getBibleTextFor(searchValue: String) -> String {
+		
+		
+		
 	}
 	
 }

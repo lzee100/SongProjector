@@ -14,6 +14,7 @@ protocol BibleStudyGeneratorIphoneDelegate {
 
 class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate {
 	
+	@IBOutlet var textViewContainerView: UIView!
 	@IBOutlet var saveButton: UIBarButtonItem!
 	@IBOutlet var segmentControl: UISegmentedControl!
 	@IBOutlet var collectionViewTags: UICollectionView!
@@ -56,7 +57,7 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 	
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath) as! BasicCell
-		let fullName = BibleIndex(searchText: sheets[indexPath.row].title).getFullName()
+		let fullName = BibleIndexx(searchText: sheets[indexPath.row].title).getFullName()
 		cell.setup(title: fullName ?? sheets[indexPath.row].title ?? "", textColor: fullName != nil ? UIColor.green : UIColor.red)
 		cell.textLabel?.textColor = fullName != nil ? UIColor.green : UIColor.red
 		return cell
@@ -106,8 +107,9 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 		title = Text.CustomSheets.title
 		view.backgroundColor = themeWhiteBlackBackground
 		emptyView.backgroundColor = themeWhiteBlackBackground
-		hideKeyboardWhenTappedAround()
 		
+		hideKeyboardWhenTappedAround()
+		textViewContainerView.layer.borderColor = themeHighlighted.cgColor
 		collectionViewSheets.register(UINib(nibName: Cells.sheetCollectionCell, bundle: nil), forCellWithReuseIdentifier: Cells.sheetCollectionCell)
 		collectionViewTags.register(UINib(nibName: Cells.tagCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.tagCellCollection)
 		
@@ -119,12 +121,6 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 		
 		textView.backgroundColor = themeWhiteBlackBackground
 		textView.textColor = themeWhiteBlackTextColor
-		textView.layer.borderColor = themeHighlighted.cgColor
-		textView.layer.borderWidth = 1
-		textView.layer.cornerRadius = CGFloat(5.0)
-		textView.textContainerInset = UIEdgeInsetsMake(10, 10, 10, 10)
-		textView.setNeedsLayout()
-		textView.setNeedsDisplay()
 		
 		segmentControl.setTitle(Text.CustomSheets.segmentInput, forSegmentAt: 0)
 		segmentControl.setTitle(Text.CustomSheets.segmentCheck, forSegmentAt: 1)
