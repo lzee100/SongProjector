@@ -36,6 +36,7 @@ PODS:
     - GoogleToolboxForMac/Defines (= 2.1.3)
     - GoogleToolboxForMac/NSString+URLArguments (= 2.1.3)
   - GoogleToolboxForMac/NSString+URLArguments (2.1.3)
+  - GPUImage (0.1.7)
   - GTMOAuth2 (1.1.6):
     - GTMSessionFetcher (~> 1.1)
   - GTMSessionFetcher (1.1.13):
@@ -43,6 +44,8 @@ PODS:
   - GTMSessionFetcher/Core (1.1.13)
   - GTMSessionFetcher/Full (1.1.13):
     - GTMSessionFetcher/Core (= 1.1.13)
+  - SwiftOCR (1.1):
+    - GPUImage
   - VerticalSlider (1.0.3)
 
 DEPENDENCIES:
@@ -51,7 +54,17 @@ DEPENDENCIES:
   - GoogleAPIClientForREST
   - GoogleAPIClientForREST/Calendar (~> 1.2.1)
   - GTMOAuth2 (~> 1.1.0)
+  - SwiftOCR (from `https://github.com/garnele007/SwiftOCR.git`)
   - VerticalSlider
+
+EXTERNAL SOURCES:
+  SwiftOCR:
+    :git: https://github.com/garnele007/SwiftOCR.git
+
+CHECKOUT OPTIONS:
+  SwiftOCR:
+    :commit: d8a93b1add23204337f5bd8cdb99227d11feab14
+    :git: https://github.com/garnele007/SwiftOCR.git
 
 SPEC CHECKSUMS:
   ChromaColorPicker: 33efa67b17cca51dd253689d18b83ac7e05642c2
@@ -62,10 +75,12 @@ SPEC CHECKSUMS:
   GoogleAPIClientForREST: a8b95a252014ce2e618df6b75dc72eca2c00b4af
   GoogleSignIn: 3fdaa34a2ba04dbd7a25d7db39aecb0da98d5bdc
   GoogleToolboxForMac: 2501e2ad72a52eb3dfe7bd9aee7dad11b858bd20
+  GPUImage: 733a5f0fab92df9de1c37ba9df520a833ccb406d
   GTMOAuth2: c77fe325e4acd453837e72d91e3b5f13116857b2
   GTMSessionFetcher: 5bb1eae636127de695590f50e7d248483eb891e6
+  SwiftOCR: 99f0b08c90b39e8e58761fa3a92eb521efcfe5aa
   VerticalSlider: 4dacdf1ba587956142e12087f96922166ec2b58d
 
-PODFILE CHECKSUM: 13cd009f3e0c387f1233d8769f0b6730590c47df
+PODFILE CHECKSUM: 0ba5c9d4b9bb43e3641ab288f00cf7b77ccd000f
 
 COCOAPODS: 1.3.1

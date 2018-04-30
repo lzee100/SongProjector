@@ -21,6 +21,7 @@ class Text: NSObject {
 		static let ok = "Ok"
 		static let edit = "Wijzig"
 		static let selectImage = "Selecteer afbeelding"
+		static let `import` = "Importeer"
 	}
 	
 	struct SongService {
@@ -124,6 +125,9 @@ class Text: NSObject {
 		static let descriptionAllTitle = "Titel op elke dia"
 		static let descriptionPositionEmptySheet = "Toon lege dia aan begin\n(uit is aan het einde tonen)"
 		static let descriptionLastBeamerResolution = "Laast bekende beamer resolutie:\n"
+		static let descriptionBackgroundTransparency = "Transparantie achtergrond"
+		static let descriptionDisplayTime = "Weergave tijd"
+		static let descriptionDarkBlurTitleBackground = "Blur achtergrond"
 		
 		static let descriptionAlignment = "Uitlijning"
 		static let errorTitle = "Fout"
@@ -207,6 +211,11 @@ class Text: NSObject {
 		static let descriptionNoActivities = "Geen activiteiten gepland"
 		static let previewDescription = "Activiteitomschrijving uit de google agenda"
 		static let dayActivity = "Hele dag"
+	}
+	
+	struct  Import {
+		static let title = "Importeer bijbel"
+		static let description = "Voeg hieronder de bijbeltest toe die je wilt importeren."
 	}
 	
 }

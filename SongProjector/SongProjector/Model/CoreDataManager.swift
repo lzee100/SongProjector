@@ -34,17 +34,20 @@ var managedObjectContext: NSManagedObjectContext = (UIApplication.shared.delegat
 class CoreDataManager<T: NSManagedObject>: NSObject {
 	
 	var predicates: [NSPredicate] = []
+	var skipTemp = true
 	private var sortDiscriptor: NSSortDescriptor?
 	
 	private let nsManagedObject: T
+	
+	var moc: NSManagedObjectContext = managedObjectContext
 	
 	init(nsManagedObject: T) {
 		self.nsManagedObject = nsManagedObject
 	}
 	
 	func createEntityNOTsave() -> T {
-		let entityDes = NSEntityDescription.entity(forEntityName: nsManagedObject.classForCoder.description(), in: managedObjectContext)
-		let entity = NSManagedObject(entity: entityDes!, insertInto: managedObjectContext) as! T
+		let entityDes = NSEntityDescription.entity(forEntityName: nsManagedObject.classForCoder.description(), in: moc)
+		let entity = NSManagedObject(entity: entityDes!, insertInto: moc) as! T
 		
 		if let entity = entity as? Entity {
 			entity.id = getNewId()
@@ -58,8 +61,8 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 	}
 	
 	func createEntity() -> T {
-		let entityDes = NSEntityDescription.entity(forEntityName: nsManagedObject.classForCoder.description(), in: managedObjectContext)
-		let entity = NSManagedObject(entity: entityDes!, insertInto: managedObjectContext) as! T
+		let entityDes = NSEntityDescription.entity(forEntityName: nsManagedObject.classForCoder.description(), in: moc)
+		let entity = NSManagedObject(entity: entityDes!, insertInto: moc) as! T
 		
 		// get ID
 		sortDiscriptor = NSSortDescriptor(key: "id", ascending: false)
@@ -74,7 +77,7 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 	
 	func saveContext() -> Bool {
 		do {
-			try managedObjectContext.save()
+			try moc.save()
 			NotificationCenter.default.post(name: NotificationNames.dataBaseDidChange, object:nil)
 			return true
 		} catch {
@@ -91,7 +94,7 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 		
 		request.returnsObjectsAsFaults = false
 		do {
-			let result = try managedObjectContext.fetch(request)
+			let result = try moc.fetch(request)
 			entity = result.first as? Entity
 		} catch {
 			print("Failed")
@@ -105,9 +108,12 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 		var entities: [T] = []
 		let request = NSFetchRequest<NSFetchRequestResult>(entityName: nsManagedObject.classForCoder.description())
 		
-		for predicate in predicates {
-			request.predicate = predicate
+		if !skipTemp {
+			predicates.append("isTemp", equals: true)
 		}
+		
+		let andPredicate = NSCompoundPredicate(type: NSCompoundPredicate.LogicalType.and, subpredicates: predicates)
+		request.predicate = andPredicate
 		
 		if let sortDiscriptor = sortDiscriptor {
 			request.sortDescriptors = [sortDiscriptor]
@@ -118,7 +124,7 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 		
 		request.returnsObjectsAsFaults = false
 		do {
-			let result = try managedObjectContext.fetch(request)
+			let result = try moc.fetch(request)
 			entities = result as! [T]
 		} catch {
 			print("Failed")
@@ -129,28 +135,14 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 	
 	func getEntitieWith(id: Int64) -> T? {
 		
-		var entitie: T? = nil
-		let request = NSFetchRequest<NSFetchRequestResult>(entityName: nsManagedObject.classForCoder.description())
-		
 		predicates.append("id", equals: id)
-		request.predicate = predicates.first
+		return getEntities().first
 		
-		if let sortDiscriptor = sortDiscriptor {
-			request.sortDescriptors = [sortDiscriptor]
-		}
-		
-		request.returnsObjectsAsFaults = false
-		do {
-			let result = try managedObjectContext.fetch(request).first
-			if let result = result as? T {
-				entitie = result
-			}
-		} catch {
-			predicates = []
-			return entitie
-		}
-		predicates = []
-		return entitie
+	}
+	
+	func getEntitiesWhere(attribute: String, has value: String) -> [T] {
+		predicates.append(attribute, equals: value)
+		return getEntities()
 	}
 	
 	func setSortDescriptor(attributeName: String, ascending: Bool) {
@@ -158,10 +150,10 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 	}
 	
 	func delete(entity: T) -> Bool {
-		managedObjectContext.delete(entity)
+		moc.delete(entity)
 		
 		do {
-			try managedObjectContext.save()
+			try moc.save()
 			NotificationCenter.default.post(name: NotificationNames.dataBaseDidChange, object:nil)
 			print("saved!")
 			return true
@@ -170,6 +162,21 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 			return false
 		} catch {
 			return false
+		}
+	}
+	
+	func deleteAll() // entity = Your_Entity_Name
+	{
+		let deleteFetch = NSFetchRequest<NSFetchRequestResult>(entityName: nsManagedObject.classForCoder.description())
+		let deleteRequest = NSBatchDeleteRequest(fetchRequest: deleteFetch)
+		do
+		{
+			try moc.execute(deleteRequest)
+			try moc.save()
+		}
+		catch
+		{
+			print ("There was an error")
 		}
 	}
 	

@@ -10,6 +10,7 @@ pod 'GoogleAPIClientForREST'
 pod 'GTMOAuth2', '~> 1.1.0'
 pod 'GoogleAPIClientForREST/Calendar', '~> 1.2.1'
 pod 'VerticalSlider'
+pod 'SwiftOCR', :git => 'https://github.com/garnele007/SwiftOCR.git'
 
 target 'SongProjector' do
 

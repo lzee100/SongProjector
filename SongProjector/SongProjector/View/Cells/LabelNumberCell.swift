@@ -25,13 +25,17 @@ class LabelNumberCell: UITableViewCell {
 	var value: Int = 0
 	var delegate: LabelNumerCellDelegate?
 	let preferredHeight: CGFloat = 60
+	var minLimit = 0
+	var maxLimit = 0
 	
-	static func create(id: String, description: String, initialValue: Int, positive: Bool = true) -> LabelNumberCell {
+	static func create(id: String, description: String, initialValue: Int, positive: Bool = true, minLimit: Int, maxLimit: Int) -> LabelNumberCell {
 		let view : LabelNumberCell! = UIView.create(nib: "LabelNumberCell")
 		view.id = id
 		view.descriptionTitle.text = description
 		view.positive = positive
 		view.value = initialValue
+		view.minLimit = minLimit
+		view.maxLimit = maxLimit
 		view.plus.tintColor = themeHighlighted
 		view.minus.tintColor = themeHighlighted
 		view.valueLabel.text = String(initialValue)
@@ -52,7 +56,7 @@ class LabelNumberCell: UITableViewCell {
 	
 	@IBAction func minusPressed(_ sender: UIButton) {
 			if positive {
-				if value > 4 {
+				if value > minLimit {
 					value -= 1
 					self.valueLabel.text = String(value)
 					delegate?.numberChangedForCell(cell: self)
@@ -68,7 +72,7 @@ class LabelNumberCell: UITableViewCell {
 	
 	@IBAction func plusPressed(_ sender: UIButton) {
 			if positive {
-				if value < 49 {
+				if value < maxLimit {
 					value += 1
 					self.valueLabel.text = String(value)
 					delegate?.numberChangedForCell(cell: self)

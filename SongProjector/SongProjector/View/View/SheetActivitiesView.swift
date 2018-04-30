@@ -13,6 +13,7 @@ class SheetActivitiesView: SheetView {
 	@IBOutlet var sheetView: UIView!
 	
 	@IBOutlet var backgroundView: UIView!
+	@IBOutlet var timeLabel: UILabel!
 	@IBOutlet var backgroundImageView: UIImageView!
 	@IBOutlet var descriptionTitle: UILabel!
 	@IBOutlet var titleBackgroundView: UIView!
@@ -20,7 +21,7 @@ class SheetActivitiesView: SheetView {
 	
 	@IBOutlet var titleLeftConstraint: NSLayoutConstraint!
 	@IBOutlet var titleTopConstraint: NSLayoutConstraint!
-	@IBOutlet var titleRightConstraint: NSLayoutConstraint!
+	@IBOutlet var timeLabelRightConstraint: NSLayoutConstraint!
 
 	@IBOutlet var containerLeftConstraint: NSLayoutConstraint!
 	@IBOutlet var containerBottomContraint: NSLayoutConstraint!
@@ -44,6 +45,7 @@ class SheetActivitiesView: SheetView {
 		view.selectedTag = tag
 		view.scaleFactor = scaleFactor
 		view.sheet = sheet
+		view.timeLabel.text = ""
 		if isPreview {
 			view.addPreviewActivities()
 		} else {
@@ -57,13 +59,16 @@ class SheetActivitiesView: SheetView {
 	
 	override func update() {
 		
-		titleLeftConstraint.constant = titleLeftConstraint.constant * (scaleFactor ?? 1)
-		titleTopConstraint.constant = titleTopConstraint.constant * (scaleFactor ?? 1)
-		titleRightConstraint.constant = titleRightConstraint.constant * (scaleFactor ?? 1)
-		containerTopConstraint.constant = containerTopConstraint.constant * (scaleFactor ?? 1)
-		containerLeftConstraint.constant = containerLeftConstraint.constant * (scaleFactor ?? 1)
-		containerBottomContraint.constant = containerBottomContraint.constant * (scaleFactor ?? 1)
-		containerRightConstraint.constant = containerRightConstraint.constant * (scaleFactor ?? 1)
+		if let scaleFactor = scaleFactor, scaleFactor > 1 {
+
+			titleLeftConstraint.constant = (titleLeftConstraint.constant / UIScreen.main.scale)  * scaleFactor
+			titleTopConstraint.constant = (titleTopConstraint.constant / UIScreen.main.scale)  * scaleFactor
+			timeLabelRightConstraint.constant = (timeLabelRightConstraint.constant / UIScreen.main.scale)  * scaleFactor
+			containerTopConstraint.constant = (containerTopConstraint.constant / UIScreen.main.scale)  * scaleFactor
+			containerLeftConstraint.constant = (containerLeftConstraint.constant / UIScreen.main.scale)  * scaleFactor
+			containerBottomContraint.constant = (containerBottomContraint.constant / UIScreen.main.scale)  * scaleFactor
+			containerRightConstraint.constant = (containerRightConstraint.constant / UIScreen.main.scale)  * scaleFactor
+		}
 		
 		var fontName = ""
 		if var attributes = selectedTag?.getTitleAttributes(scaleFactor ?? 1), let font = attributes[.font] as? UIFont {
@@ -78,14 +83,7 @@ class SheetActivitiesView: SheetView {
 		
 		addActivities()
 		
-		if let backgroundImage = selectedTag?.backgroundImage, let imageScaled = UIImage.scaleImageToSize(image: backgroundImage, size: bounds.size) {
-			imageScaled.draw(in: CGRect(x: 0, y: 0, width: 50, height: 50))
-			self.backgroundImageView.isHidden = false
-			self.backgroundImageView.contentMode = .scaleAspectFit
-			self.backgroundImageView.image = imageScaled
-		} else {
-			backgroundImageView.isHidden = true
-		}
+		setBackgroundImage(image: isForExternalDispay ? selectedTag?.backgroundImage : selectedTag?.thumbnail)
 		
 		if let backgroundColor = selectedTag?.sheetBackgroundColor, selectedTag?.backgroundImage == nil {
 			self.backgroundView.backgroundColor = backgroundColor
@@ -228,6 +226,43 @@ class SheetActivitiesView: SheetView {
 			}
 			activitiesContainerView.layoutIfNeeded()
 			activitiesContainerView.layoutSubviews()
+		}
+		
+	}
+	
+	override func changeOpacity(newValue: Float) {
+		if let _ = isForExternalDispay ? selectedTag?.backgroundImage : selectedTag?.thumbnail {
+			backgroundImageView.alpha = CGFloat(newValue)
+		}
+	}
+	
+	override func setBackgroundImage(image: UIImage?) {
+		if let backgroundImage = image {
+			backgroundImageView.isHidden = false
+			backgroundImageView.contentMode = .scaleAspectFill
+			backgroundImageView.image = backgroundImage
+			if let backgroundTransparency = selectedTag?.backgroundTransparency {
+				backgroundImageView.alpha = CGFloat(backgroundTransparency)
+			}
+		} else {
+			backgroundImageView.isHidden = true
+		}
+	}
+	
+	override func updateTime(isOn: Bool) {
+		
+		let test = Date().time
+		if !isOn {
+			timeLabel.text = ""
+			return
+		}
+		
+		if let tag = selectedTag, let scaleFactor = scaleFactor { // is custom sheet
+			
+			timeLabel.attributedText = NSAttributedString(string: test, attributes: tag.getTitleAttributes(scaleFactor))
+			
+		} else {
+			timeLabel.text = test
 		}
 		
 	}

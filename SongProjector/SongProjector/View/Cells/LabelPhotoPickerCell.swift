@@ -68,7 +68,6 @@ class LabelPhotoPickerCell: UITableViewCell, UIImagePickerControllerDelegate, UI
 			imageThumbnail.image = imageView.asImage()
 			pickedImage = image
 			delegate?.didSelectImage(cell: self, image: image)
-
 			layoutIfNeeded()
 		}
 		
@@ -96,9 +95,11 @@ class LabelPhotoPickerCell: UITableViewCell, UIImagePickerControllerDelegate, UI
 	
 	func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
 			if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
-				if let scaledImage = UIImage.scaleImageToSize(image: pickedImage, size: imageThumbnail.frame.size) {
+				let scaledImage = pickedImage.resizeImage(imageThumbnail.frame.size.width, opaque: false)
 					imageThumbnail.image = scaledImage
-				}
+					imageThumbnail.contentMode = .scaleAspectFill
+					imageThumbnail.clipsToBounds = true
+				
 				self.pickedImage = pickedImage
 				delegate?.didSelectImage(cell: self, image: pickedImage)
 			}

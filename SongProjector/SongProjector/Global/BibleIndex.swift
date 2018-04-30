@@ -21,14 +21,12 @@ class BibleIndexx {
 	}
 	
 	func isExisting() -> Bool {
-		return parse(searchRequest: searchText) != nil
+		return parse(searchRequest: searchText, returnScripture: false).1 != nil
 	}
 	
 	func getFullName() -> String? {
-		return parse(searchRequest: searchText)
+		return parse(searchRequest: searchText, returnScripture: false).1
 	}
-	
-	
 	
 	
 	private enum Book: String {
@@ -161,7 +159,7 @@ class BibleIndexx {
 		}
 	}
 	
-	private func parse(searchRequest: String?, returnScripture: Bool) -> String? {
+	private func parse(searchRequest: String?, returnScripture: Bool) -> ([Vers]?, String?) {
 		
 		if let searchRequest = searchRequest, searchRequest.count > 0 {
 			
@@ -186,7 +184,7 @@ class BibleIndexx {
 			while !searchText[index].isNumber {
 				index += 1
 				if index > 100 {
-					return nil
+					return (nil, nil)
 				}
 			}
 			
@@ -197,17 +195,17 @@ class BibleIndexx {
 			}
 			
 			if chapterString.count < 3 {
-				return nil
+				return (nil, nil)
 			}
 			
 			index = 0
 			while index < chapterString.count {
 				if !chapterString[index].lowercased().isLetter {
-					return nil
+					return (nil, nil)
 				}
 				index += 1
 				if index > 100 {
-					return nil
+					return (nil, nil)
 				}
 			}
 			
@@ -226,12 +224,12 @@ class BibleIndexx {
 						break
 					}
 				}else {
-					return nil
+					return (nil, nil)
 				}
 			}
 			
 			if !found {
-				return nil
+				return (nil, nil)
 			}
 			
 			searchText = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -251,18 +249,75 @@ class BibleIndexx {
 				bookChapter = String(searchText.prefix(strIndex.lowerBound.encodedOffset)).trimmingCharacters(in: .whitespacesAndNewlines)
 				vers = String(searchText.suffix(from: strIndex.upperBound)).trimmingCharacters(in: .whitespacesAndNewlines)
 			} else {
-				return nil
+				return (nil, nil)
 			}
 			
+			
+			var versStart = ""
+			if let strIndex = vers.index(of: "-") {
+				let nextIndex = vers.index(strIndex, offsetBy: 0)
+				versStart = String(vers.prefix(upTo: nextIndex).trimmingCharacters(in: .whitespacesAndNewlines))
+			} else {
+				versStart = vers
+			}
+			
+			var versEnd = ""
+			if let strIndex = vers.index(of: "-") {
+				let nextIndex = vers.index(strIndex, offsetBy: 1)
+				versEnd = String(vers.suffix(from: nextIndex)).trimmingCharacters(in: .whitespacesAndNewlines)
+			}
+			
+			if versEnd != "" {
+				CoreChapter.predicates.append("number", equals: bookChapter)
+				if let verses = CoreChapter.getEntities().first?.hasVerses?.allObjects as? [Vers] {
+					if verses.filter({ $0.number == Int16(versEnd) }).count == 0 {
+						return (nil, nil)
+					}
+				} else {
+					return (nil, nil)
+				}
+			}
+			
+			var versRange: [Int] = []
+			
+			let versNumberToUse = Int(versEnd) == nil ? 0 : (Int(versStart) ?? 0)
+			let numberOfVerses = (Int(versEnd) ?? 0 + 1) -  versNumberToUse
+			
+			guard numberOfVerses > 0 else {
+				return (nil, nil)
+			}
+			
+			if numberOfVerses == 1 {
+				versRange.append(Int(versStart) ?? 1)
+			} else {
+				for value in 0...numberOfVerses {
+					versRange.append((Int(versStart) ?? 0) + value)
+				}
+			}
+
 			if returnScripture {
-				CoreVers
+				CoreChapter.predicates.append("hasBook.name", equals: bookName)
+				CoreChapter.predicates.append("number", equals: bookChapter)
+				
+				
+				if let text = (CoreChapter.getEntities().first?.hasVerses?.allObjects as? [Vers]) {
+					
+					var resultText = text.filter({
+						versRange.contains(Int($0.number))
+					})
+					resultText = resultText.sorted(by: { $0.number < $1.number })
+					return (resultText, nil)
+
+				} else {
+					return (nil, nil)
+				}
 				//
 			} else {
-				return bookNumber + " " + bookName + " " + bookChapter + ":" + vers
+				return (nil, bookNumber + " " + bookName + " " + bookChapter + ":" + vers)
 			}
 
 		} else {
-			return nil
+			return (nil, nil)
 		}
 	}
 	
@@ -270,10 +325,15 @@ class BibleIndexx {
 		return Book.all[index].rawValue
 	}
 	
-	public func getBibleTextFor(searchValue: String) -> String {
-		
-		
-		
+	public func getVersesFor(searchValue: String) -> ([Vers]?, Int) {
+		if let verses = parse(searchRequest: searchValue, returnScripture: true).0 {
+			var lenght = 0
+			let allLengths = verses.flatMap{ $0.text?.length }
+			allLengths.forEach{ lenght += $0 }
+			return (verses, lenght)
+		} else {
+			return (nil, 0)
+		}
 	}
 	
 }

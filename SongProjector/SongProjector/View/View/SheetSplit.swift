@@ -13,6 +13,16 @@ class SheetSplit: SheetView {
 	
 	@IBOutlet var sheetBackgroundView: UIView!
 	@IBOutlet var sheetBackgroundImageView: UIImageView!
+	@IBOutlet var timeLabel: UILabel!
+
+	@IBOutlet var titleLeftConstraint: NSLayoutConstraint!
+	@IBOutlet var titleTopConstraint: NSLayoutConstraint!
+	@IBOutlet var timeLabelRightConstraint: NSLayoutConstraint!
+	
+	@IBOutlet var containerTopConstraint: NSLayoutConstraint!
+	@IBOutlet var containerRightConstraint: NSLayoutConstraint!
+	@IBOutlet var containerBottomConstraint: NSLayoutConstraint!
+	@IBOutlet var containerLeftConstraint: NSLayoutConstraint!
 	
 	@IBOutlet var sheetView: UIView!
 	@IBOutlet var descriptionTitle: UILabel!
@@ -43,6 +53,7 @@ class SheetSplit: SheetView {
 		view.sheet = sheet
 		view.position = Int(sheet.position)
 		view.selectedTag = tag
+		view.timeLabel.text = ""
 		view.scaleFactor = scaleFactor
 		view.update()
 		return view
@@ -52,8 +63,18 @@ class SheetSplit: SheetView {
 	override func update() {
 		
 		if let scaleFactor = scaleFactor {
-			titleHeightConstraint.constant = titleHeightConstraint.constant * scaleFactor
 			
+			if scaleFactor > 1 {
+				titleLeftConstraint.constant = (titleLeftConstraint.constant / UIScreen.main.scale) * scaleFactor
+				titleTopConstraint.constant = (titleTopConstraint.constant / UIScreen.main.scale) * scaleFactor
+				timeLabelRightConstraint.constant = (timeLabelRightConstraint.constant / UIScreen.main.scale) * scaleFactor
+				containerTopConstraint.constant = (containerTopConstraint.constant / UIScreen.main.scale) * scaleFactor
+				containerRightConstraint.constant = (containerRightConstraint.constant / UIScreen.main.scale) * scaleFactor
+				containerBottomConstraint.constant = (containerBottomConstraint.constant / UIScreen.main.scale) * scaleFactor
+				containerLeftConstraint.constant = (containerLeftConstraint.constant / UIScreen.main.scale) * scaleFactor
+				titleHeightConstraint.constant = (titleHeightConstraint.constant / UIScreen.main.scale) * scaleFactor
+				titleBottomConstraint.constant = (titleBottomConstraint.constant / UIScreen.main.scale) * scaleFactor
+			}
 			
 			if let songTitle = sheet?.title {
 				if let tag = selectedTag {
@@ -117,14 +138,7 @@ class SheetSplit: SheetView {
 				}
 			}
 			
-			if let backgroundImage = selectedTag?.backgroundImage, let imageScaled = UIImage.scaleImageToSize(image: backgroundImage, size: bounds.size) {
-				imageScaled.draw(in: CGRect(x: 0, y: 0, width: 50, height: 50))
-				self.sheetBackgroundImageView.isHidden = false
-				self.sheetBackgroundImageView.contentMode = .scaleAspectFit
-				self.sheetBackgroundImageView.image = imageScaled
-			} else {
-				 sheetBackgroundImageView.isHidden = true
-			}
+			setBackgroundImage(image: isForExternalDispay ? selectedTag?.backgroundImage : selectedTag?.thumbnail)
 			
 			if let titleBackgroundColor = selectedTag?.backgroundColorTitle, let title = selectedTag?.title, title != "" {
 				if let allHaveTitle = selectedTag?.allHaveTitle, allHaveTitle == false && position < 1 {
@@ -148,10 +162,42 @@ class SheetSplit: SheetView {
 		}
 	}
 	
+	override func changeOpacity(newValue: Float) {
+		if let _ = isForExternalDispay ? selectedTag?.backgroundImage : selectedTag?.thumbnail {
+			sheetBackgroundImageView.alpha = CGFloat(newValue)
+		}
+	}
 	
+	override func setBackgroundImage(image: UIImage?) {
+		if let backgroundImage = image {
+			sheetBackgroundImageView.isHidden = false
+			sheetBackgroundImageView.contentMode = .scaleAspectFill
+			sheetBackgroundImageView.image = backgroundImage
+			if let backgroundTransparency = selectedTag?.backgroundTransparency {
+				sheetBackgroundImageView.alpha = CGFloat(backgroundTransparency)
+			}
+		} else {
+			sheetBackgroundImageView.isHidden = true
+		}
+	}
 	
-	
-	
+	override func updateTime(isOn: Bool) {
+		
+		let test = Date().time
+		if !isOn {
+			timeLabel.text = ""
+			return
+		}
+		
+		if let tag = selectedTag, let scaleFactor = scaleFactor { // is custom sheet
+			
+			timeLabel.attributedText = NSAttributedString(string: test, attributes: tag.getTitleAttributes(scaleFactor))
+			
+		} else {
+			timeLabel.text = test
+		}
+		
+	}
 	
 	
 	

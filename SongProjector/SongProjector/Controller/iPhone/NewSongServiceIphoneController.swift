@@ -29,6 +29,7 @@ class NewSongServiceIphoneController: UITableViewController, SongsControllerDele
 		let navigationController = segue.destination
 		if let songsController = navigationController.childViewControllers.first as? SongsController {
 			songsController.delegate = self
+			songsController.selectedClusters = selectedSongs
 		}
 	}
 

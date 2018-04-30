@@ -33,6 +33,7 @@ class SongsController: UIViewController, UIPopoverPresentationControllerDelegate
 	// MARK: Properties
 
 	var delegate: SongsControllerDelegate?
+	var selectedClusters: [Cluster] = []
 	
 	
 	// MARK: - UIViewController Functions
@@ -237,8 +238,10 @@ class SongsController: UIViewController, UIPopoverPresentationControllerDelegate
 	}
 	
 	private func update() {
-		clusters = CoreCluster.getEntities()
-		CoreTag.predicates.append("isHidden", notEquals: true)
+		let newClusters = Array(Set(CoreCluster.getEntities()).subtracting(selectedClusters))
+		clusters = newClusters
+		CoreTag.predicates.append("isHidden", equals: 0)
+		CoreTag.setSortDescriptor(attributeName: "position", ascending: false)
 		tags = CoreTag.getEntities()
 		filterOnTags()
 		filteredClusters = clusters

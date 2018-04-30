@@ -73,6 +73,7 @@ class TagsIphoneController: UITableViewController, UISearchBarDelegate, UIGestur
 		let itemToMove = filteredTags[sourceIndexPath.row]
 		filteredTags.remove(at: sourceIndexPath.row)
 		filteredTags.insert(itemToMove, at: destinationIndexPath.row)
+		updatePostitions()
 	}
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -117,8 +118,6 @@ class TagsIphoneController: UITableViewController, UISearchBarDelegate, UIGestur
 		
 	}
 	
-	
-	
 	private func setup() {
 		tableView.register(cell: Cells.basicCellid)
 		tableView.keyboardDismissMode = .interactive
@@ -145,9 +144,17 @@ class TagsIphoneController: UITableViewController, UISearchBarDelegate, UIGestur
 	
 	private func update() {
 		CoreTag.predicates.append("isHidden", notEquals: true)
+		CoreTag.setSortDescriptor(attributeName: "position", ascending: false)
 		tags = CoreTag.getEntities()
 		filteredTags = tags
 		tableView.reloadData()
+	}
+	
+	private func updatePostitions() {
+		for (index, tag) in tags.enumerated() {
+			tag.position = Int16(index)
+		}
+		CoreTag.saveContext()
 	}
 	
 	@objc private func editTableView(_ gestureRecognizer: UIGestureRecognizer) {

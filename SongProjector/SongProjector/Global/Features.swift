@@ -17,12 +17,13 @@ enum Feature : String {
 	case more = "More"
 	case tags = "Tags"
 	case settings = "Settings"
+	case `import` = "ImportBible"
 	
 	
 	
 	// MARK: - Properties
 	
-	static let all = [songService, songs, bibleStudy, tags, settings, more]
+	static let all = [songService, songs, bibleStudy, tags, settings, `import`, more]
 	
 	var titel : String {
 		return rawValue
@@ -42,7 +43,8 @@ enum Feature : String {
 			return Text.Settings.title
 		case .more:
 			return Text.More.title
-
+		case .import:
+			return Text.Import.title
 		}
 	}
 	
@@ -55,7 +57,7 @@ enum Feature : String {
 	var isStandaard : Bool {
 		
 		switch self {
-		case .songService, .songs, .bibleStudy, .more, .tags, .settings:
+		case .songService, .songs, .bibleStudy, .more, .tags, .settings, .import:
 			return true
 		}
 	}
@@ -90,6 +92,8 @@ enum Feature : String {
 		case .tags:
 			return (#imageLiteral(resourceName: "Tags"), #imageLiteral(resourceName: "Tags"), #imageLiteral(resourceName: "Tags"))
 		case .settings:
+			return (#imageLiteral(resourceName: "Bullet"), #imageLiteral(resourceName: "BulletSelected"), #imageLiteral(resourceName: "Bullet"))
+		case .import:
 			return (#imageLiteral(resourceName: "Bullet"), #imageLiteral(resourceName: "BulletSelected"), #imageLiteral(resourceName: "Bullet"))
 		}
 		

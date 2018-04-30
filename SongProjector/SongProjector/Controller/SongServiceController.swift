@@ -713,7 +713,7 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 					switch previousSheet?.type {
 					case .none: break
 					case .some(.SheetTitleContent):
-						previousSheetView = SheetTitleContent.createWith(frame: sheetDisplayer.bounds, title: isNextOrPreviousCluster ? previousCluster?.title : selectedCluster?.title, sheet: previousSheet as? SheetTitleContentEntity, tag: isNextOrPreviousCluster ? previousSheet?.hasTag ?? previousCluster?.hasTag : previousSheet?.hasTag ?? selectedCluster?.hasTag, scaleFactor: scaleFactor)
+						previousSheetView = SheetTitleContent.createWith(frame: sheetDisplayer.bounds, title: isNextOrPreviousCluster ? previousCluster?.title : selectedCluster?.title, sheet: previousSheet as? SheetTitleContentEntity, tag: isNextOrPreviousCluster ? getTagForPreviousSheet(sheet: previousSheet) : previousSheet?.hasTag ?? selectedCluster?.hasTag, scaleFactor: scaleFactor)
 					case .some(.SheetTitleImage):
 						previousSheetView = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: previousSheet as! SheetTitleImageEntity, tag: previousSheet?.hasTag, scaleFactor: scaleFactor)
 					case .some(.SheetSplit):

@@ -7,11 +7,13 @@
 //
 
 import UIKit
+import SwiftOCR
 
 class SheetTitleContent: SheetView {
 	
 	@IBOutlet var sheetView: UIView!
 	@IBOutlet var titleLabel: UILabel!
+	@IBOutlet var timeLabel: UILabel!
 	@IBOutlet var titleBackground: UIView!
 	@IBOutlet var lyricsTextView: UITextView!
 	@IBOutlet var backgroundImageView: UIImageView!
@@ -20,7 +22,7 @@ class SheetTitleContent: SheetView {
 	
 	@IBOutlet var titleLeftConstraint: NSLayoutConstraint!
 	@IBOutlet var titleTopConstraint: NSLayoutConstraint!
-	@IBOutlet var titleRightConstraint: NSLayoutConstraint!
+	@IBOutlet var timeRightConstraint: NSLayoutConstraint!
 	@IBOutlet var lyricsLeftConstraint: NSLayoutConstraint!
 	@IBOutlet var lyricsRightConstraint: NSLayoutConstraint!
 	@IBOutlet var lyricsBottomConstraint: NSLayoutConstraint!
@@ -38,6 +40,7 @@ class SheetTitleContent: SheetView {
 		sheetTitleContent.selectedTag = tag
 		sheetTitleContent.songTitle = title
 		sheetTitleContent.lyrics = sheet?.lyrics
+		sheetTitleContent.timeLabel.text = ""
 		sheetTitleContent.position = Int(sheet?.position ?? 0)
 		sheetTitleContent.scaleFactor = scaleFactor
 		sheetTitleContent.update()
@@ -51,8 +54,17 @@ class SheetTitleContent: SheetView {
 	}
 	
 	override func update() {
-		
 		if let scaleFactor = scaleFactor {
+			
+			if scaleFactor != 1 {
+				titleLeftConstraint.constant = (titleLeftConstraint.constant / UIScreen.main.scale) * scaleFactor
+				titleTopConstraint.constant = (titleTopConstraint.constant / UIScreen.main.scale) * scaleFactor
+				timeRightConstraint.constant = (timeRightConstraint.constant / UIScreen.main.scale) * scaleFactor
+				lyricsLeftConstraint.constant = (lyricsLeftConstraint.constant / UIScreen.main.scale) * scaleFactor
+				lyricsBottomConstraint.constant = (lyricsBottomConstraint.constant / UIScreen.main.scale) * scaleFactor
+				lyricsRightConstraint.constant = (lyricsRightConstraint.constant / UIScreen.main.scale) * scaleFactor
+			}
+
 			lyricsTextView.backgroundColor = .clear
 			
 			if isEmptySheet {
@@ -60,30 +72,25 @@ class SheetTitleContent: SheetView {
 				lyrics = nil
 				titleLabel.text = ""
 				lyricsTextView.text = ""
-			}else {
-				titleLeftConstraint.constant = titleLeftConstraint.constant * scaleFactor
-				titleTopConstraint.constant = titleTopConstraint.constant * scaleFactor
-				titleRightConstraint.constant = titleRightConstraint.constant * scaleFactor
-				lyricsLeftConstraint.constant = lyricsLeftConstraint.constant * scaleFactor
-				lyricsBottomConstraint.constant = lyricsBottomConstraint.constant * scaleFactor
-				lyricsRightConstraint.constant = lyricsRightConstraint.constant * scaleFactor
-				
+			} else {
+
 				if let songTitle = songTitle {
-						if let tag = selectedTag { // is custom sheet
-							
-							if !tag.allHaveTitle && position > 0 {
-								titleHeightConstraint.isActive = false
-								zeroHeightConstraint = NSLayoutConstraint(item: titleLabel, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
-								titleLabel.addConstraint(zeroHeightConstraint!)
-							} else {
-								if let zeroHeightConstraint = zeroHeightConstraint {
-									titleLabel.removeConstraint(zeroHeightConstraint)
-								}
-								titleHeightConstraint.isActive = true
-							}
-							titleLabel.attributedText = NSAttributedString(string: songTitle, attributes: tag.getTitleAttributes(scaleFactor))
+					if let tag = selectedTag { // is custom sheet
+						
+						if !tag.allHaveTitle && position > 0 {
+							titleHeightConstraint.isActive = false
+							zeroHeightConstraint = NSLayoutConstraint(item: titleLabel, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
+							titleLabel.addConstraint(zeroHeightConstraint!)
 						} else {
-							titleLabel.text = songTitle
+							if let zeroHeightConstraint = zeroHeightConstraint {
+								titleLabel.removeConstraint(zeroHeightConstraint)
+							}
+							titleHeightConstraint.isActive = true
+						}
+						titleLabel.attributedText = NSAttributedString(string: songTitle, attributes: tag.getTitleAttributes(scaleFactor))
+						updateTime(isOn: tag.displayTime)
+					} else {
+						titleLabel.text = songTitle
 					}
 				}
 				if let lyrics = lyrics {
@@ -95,14 +102,13 @@ class SheetTitleContent: SheetView {
 				}
 			}
 			
-			if let backgroundImage = selectedTag?.backgroundImage, let imageScaled = UIImage.scaleImageToSize(image: backgroundImage, size: bounds.size) {
-				imageScaled.draw(in: CGRect(x: 0, y: 0, width: 50, height: 50))
-				backgroundImageView.isHidden = false
-				backgroundImageView.contentMode = .scaleAspectFit
-				backgroundImageView.image = imageScaled
+			if let backgroundColor = selectedTag?.sheetBackgroundColor, selectedTag?.imagePath == nil {
+				self.sheetBackground.backgroundColor = backgroundColor
 			} else {
-				backgroundImageView.isHidden = true
+				sheetBackground.backgroundColor = .white
 			}
+			
+			setBackgroundImage(image: isForExternalDispay ? selectedTag?.backgroundImage : selectedTag?.thumbnail)
 			
 			if let titleBackgroundColor = selectedTag?.backgroundColorTitle, let title = selectedTag?.title, title != "" {
 				if let allHaveTitle = selectedTag?.allHaveTitle, allHaveTitle == false && position < 1 {
@@ -117,14 +123,48 @@ class SheetTitleContent: SheetView {
 			} else {
 				titleBackground.isHidden = true
 			}
-
-			if let backgroundColor = selectedTag?.sheetBackgroundColor {
-				self.sheetBackground.backgroundColor = backgroundColor
-			} else {
-				sheetBackground.backgroundColor = .white
-			}
 			
 		}
 	}
+	
+	override func changeOpacity(newValue: Float) {
+		if let _ = isForExternalDispay ? selectedTag?.backgroundImage : selectedTag?.thumbnail {
+			sheetBackground.backgroundColor = .black
+			backgroundImageView.alpha = CGFloat(newValue)
+		}
+	}
+	
+	override func setBackgroundImage(image: UIImage?) {
+		
+		if let backgroundImage = image {
+			backgroundImageView.isHidden = false
+			backgroundImageView.contentMode = .scaleAspectFill
+			backgroundImageView.image = backgroundImage
+			if let backgroundTransparency = selectedTag?.backgroundTransparency {
+				sheetBackground.backgroundColor = .black
+				backgroundImageView.alpha = CGFloat(backgroundTransparency)
+			}
+		} else {
+			backgroundImageView.isHidden = true
+		}
+	}
+	
+	override func updateTime(isOn: Bool) {
+		
+		let test = Date().time
+		if !isOn {
+			timeLabel.text = ""
+			return
+		}
+		
+		if let tag = selectedTag, let scaleFactor = scaleFactor { // is custom sheet
+			
+			timeLabel.attributedText = NSAttributedString(string: test, attributes: tag.getTitleAttributes(scaleFactor))
 
+		} else {
+			timeLabel.text = test
+		}
+		
+	}
+	
 }

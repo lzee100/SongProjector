@@ -13,8 +13,7 @@ protocol NewOrEditIphoneControllerDelegate {
 	func didCreate(sheet: Sheet)
 }
 
-class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableViewDataSource, LabelTextFieldCellDelegate, LabelTextViewDelegate, LabelPickerCellDelegate, LabelDoubleSwitchDelegate, LabelNumerCellDelegate, LabelColorPickerCellDelegate, LabelSwitchCellDelegate, LabelPhotoPickerCellDelegate {
-	
+class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableViewDataSource, LabelTextFieldCellDelegate, LabelTextViewDelegate, LabelPickerCellDelegate, LabelDoubleSwitchDelegate, LabelNumerCellDelegate, LabelColorPickerCellDelegate, LabelSwitchCellDelegate, LabelPhotoPickerCellDelegate, LabelSliderDelegate {
 	
 	@IBOutlet var cancel: UIBarButtonItem!
 	@IBOutlet var save: UIBarButtonItem!
@@ -72,10 +71,14 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		case allHaveTitle
 		case backgroundColor
 		case backgroundImage
+		case backgroundTransparency
+		case displayTime
 		
-		static let all = [name, content, asTag, hasEmptySheet, allHaveTitle, backgroundColor, backgroundImage]
+		static let all = [name, content, asTag, hasEmptySheet, allHaveTitle, backgroundColor, backgroundImage, backgroundTransparency, displayTime]
 		
-		static let tag = [name, asTag, hasEmptySheet, allHaveTitle, backgroundColor, backgroundImage]
+		static let tag = [name, asTag, hasEmptySheet, allHaveTitle, backgroundColor, backgroundImage, displayTime]
+		static let tagTransBackground = [name, asTag, hasEmptySheet, allHaveTitle, backgroundColor, backgroundImage, backgroundTransparency, displayTime]
+
 		static let titleContent = [name, content, asTag, backgroundColor, backgroundImage]
 		static let titleImage = [name, content, asTag, backgroundColor, backgroundImage]
 		static let sheetSplit = [name, asTag, backgroundColor, backgroundImage]
@@ -83,10 +86,18 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		static let sheetActivities = [name, asTag, backgroundColor, backgroundImage]
 
 		
-		static func `for`(_ indexPath: IndexPath, type: SheetType, modificationMode: ModificationMode) -> CellGeneral {
+		static func `for`(_ indexPath: IndexPath, type: SheetType, modificationMode: ModificationMode, hasImage: Bool) -> CellGeneral {
 			switch type {
 			case .SheetTitleContent:
-				return (modificationMode == .newTag || modificationMode == .editTag) ? tag[indexPath.row] : titleContent[indexPath.row]
+				if modificationMode == .newTag || modificationMode == .editTag {
+					if hasImage {
+						return tagTransBackground[indexPath.row]
+					} else {
+						return tag[indexPath.row]
+					}
+				} else {
+					return titleContent[indexPath.row]
+				}
 			case .SheetTitleImage:
 				return titleImage[indexPath.row]
 			case .SheetSplit:
@@ -185,14 +196,17 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		case contentMode
 		
 		static let all = [image, hasBorder, borderSize, borderColor, contentMode]
+		static let noBorder = [image, hasBorder, contentMode]
 		
 		static func `for`(_ indexPath: IndexPath) -> CellImage {
 			return all[indexPath.row]
 		}
 		
-		static func `for`(_ indexPath: IndexPath, type: SheetType) -> CellImage? {
-			if type == .SheetTitleImage {
+		static func `for`(_ indexPath: IndexPath, type: SheetType, hasBorder: Bool) -> CellImage? {
+			if type == .SheetTitleImage, hasBorder {
 				return all[indexPath.row]
+			} else if type == .SheetTitleImage {
+				return noBorder[indexPath.row]
 			} else {
 				return nil
 			}
@@ -211,14 +225,15 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 	private var  cellBackgroundColor = LabelColorPickerCell.create(id: "cellBackgroundColor", description: Text.NewTag.descriptionBackgroundColor)
 	private var  cellHasEmptySheet = LabelDoubleSwitchCell.create(id: "cellHasEmptySheet", descriptionSwitchOne: Text.NewTag.descriptionHasEmptySheet, descriptionSwitchTwo: Text.NewTag.descriptionPositionEmptySheet)
 	private let cellAllHaveTitlle = LabelSwitchCell.create(id: "cellAllHaveTitle", description: Text.NewTag.descriptionAllTitle, initialValueIsOn: false)
-	
+	private let cellBackgroundTransparency = LabelSliderCell.create(id: "cellBackgroundTransparency", description: Text.NewTag.descriptionBackgroundTransparency, initialValue: 100)
+	private let cellDisplayTime = LabelSwitchCell.create(id: "cellDisplayTime", description: Text.NewTag.descriptionDisplayTime)
 	
 	// MARK: Title Cells
 	
 	private var  cellTitleFontFamily = LabelPickerCell()
-	private let cellTitleFontSize = LabelNumberCell.create(id: "cellTitleFontSize", description: Text.NewTag.fontSizeDescription, initialValue: 14)
+	private let cellTitleFontSize = LabelNumberCell.create(id: "cellTitleFontSize", description: Text.NewTag.fontSizeDescription, initialValue: 14, minLimit: 6, maxLimit: 40)
 	private let cellTitleAlignment = LabelPickerCell.create(id: "cellTitleFontAlignment", description: Text.NewTag.descriptionAlignment, initialValueName: Text.NewTag.alignLeft, pickerValues: [(Int64(0), Text.NewTag.alignLeft), (Int64(0), Text.NewTag.alignCenter), (Int64(0), Text.NewTag.alignRight)])
-	private let cellTitleBorderSize = LabelNumberCell.create(id: "cellTitleBorderSize", description: Text.NewTag.borderSizeDescription, initialValue: 0, positive: false)
+	private let cellTitleBorderSize = LabelNumberCell.create(id: "cellTitleBorderSize", description: Text.NewTag.borderSizeDescription, initialValue: 0, positive: false, minLimit: 0, maxLimit: 10)
 	private let cellTitleTextColor = LabelColorPickerCell.create(id: "cellTitleTextColor", description: Text.NewTag.textColor)
 	private let cellTitleBackgroundColor = LabelColorPickerCell.create(id: "cellTitleBackgroundColor", description: Text.NewTag.descriptionTitleBackgroundColor)
 	private let cellTitleBorderColor = LabelColorPickerCell.create(id: "cellTitleBorderColor", description: Text.NewTag.borderColor)
@@ -230,9 +245,9 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 	// MARK: Lyrics Cells
 	
 	private var  cellLyricsFontFamily = LabelPickerCell()
-	private let cellLyricsFontSize = LabelNumberCell.create(id: "cellLyricsFontSize", description: Text.NewTag.fontSizeDescription, initialValue: 10)
+	private let cellLyricsFontSize = LabelNumberCell.create(id: "cellLyricsFontSize", description: Text.NewTag.fontSizeDescription, initialValue: 10, minLimit: 6, maxLimit: 40)
 	private let cellLyricslAlignment = LabelPickerCell.create(id: "cellLyricsFontAlignment", description: Text.NewTag.descriptionAlignment, initialValueName: "Left", pickerValues: [(Int64(0), Text.NewTag.alignLeft), (Int64(0), Text.NewTag.alignCenter), (Int64(0), Text.NewTag.alignRight)])
-	private let cellLyricsBorderSize = LabelNumberCell.create(id: "cellLyricsBorderSize", description: Text.NewTag.borderSizeDescription, initialValue: 0, positive: false)
+	private let cellLyricsBorderSize = LabelNumberCell.create(id: "cellLyricsBorderSize", description: Text.NewTag.borderSizeDescription, initialValue: 0, positive: false, minLimit: 0, maxLimit: 10)
 	private let cellLyricsTextColor = LabelColorPickerCell.create(id: "cellLyricsTextColor", description: Text.NewTag.textColor)
 	private let cellLyricsBorderColor = LabelColorPickerCell.create(id: "cellLyricsBorderColor", description: Text.NewTag.borderColor)
 	private let cellLyricsBold = LabelSwitchCell.create(id: "cellLyricsBold", description: Text.NewTag.bold)
@@ -241,7 +256,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 	
 	private var  cellImagePicker = LabelPhotoPickerCell()
 	private let cellImageHasBorder = LabelSwitchCell.create(id: "cellImageHasBorder", description: Text.NewSheetTitleImage.descriptionImageHasBorder)
-	private let cellImageBorderSize = LabelNumberCell.create(id: "cellImageBorderSize", description: Text.NewSheetTitleImage.descriptionImageBorderSize, initialValue: 0)
+	private let cellImageBorderSize = LabelNumberCell.create(id: "cellImageBorderSize", description: Text.NewSheetTitleImage.descriptionImageBorderSize, initialValue: 0, minLimit: 0, maxLimit: 10)
 	private let cellImageBorderColor = LabelColorPickerCell.create(id: "cellImageBorderColor", description: Text.NewSheetTitleImage.descriptionImageBorderColor)
 	private var  cellImageContentMode = LabelPickerCell()
 	
@@ -249,6 +264,8 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 	var tag: Tag!
 	var sheet: Sheet!
 	var delegate: NewOrEditIphoneControllerDelegate?
+	private var sheetImage: UIImage?
+	private var tagImage: UIImage?
 	private var editTagMode: Bool { return !tag.isTemp && sheet.isTemp }
 	private var isSetup = true
 	private var titleAttributes: [NSAttributedStringKey : Any] = [:]
@@ -286,7 +303,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		switch Section.for(section, type: sheet.type) {
 		case .general:
 			switch sheet.type {
-			case .SheetTitleContent: return (modificationMode == .newTag || modificationMode == .editTag) ? CellGeneral.tag.count : CellGeneral.titleContent.count
+			case .SheetTitleContent: return (modificationMode == .newTag || modificationMode == .editTag) ? tagImage != nil ? CellGeneral.tagTransBackground.count : CellGeneral.tag.count : CellGeneral.titleContent.count
 			case .SheetTitleImage: return CellGeneral.titleImage.count
 			case .SheetSplit: return CellGeneral.sheetSplit.count
 			case .SheetEmpty: return CellGeneral.sheetEmpty.count
@@ -310,7 +327,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 			}
 		case .image:
 			switch sheet.type {
-			case .SheetTitleImage: return CellImage.all.count
+			case .SheetTitleImage: return (sheet as! SheetTitleImageEntity).imageHasBorder ? CellImage.all.count : CellImage.noBorder.count
 			default:
 				return 0
 			}
@@ -329,12 +346,13 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 	func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 		switch Section.for(indexPath.section, type: sheet.type) {
 		case .general:
-			switch CellGeneral.for(indexPath, type: sheet.type, modificationMode: modificationMode) {
+			switch CellGeneral.for(indexPath, type: sheet.type, modificationMode: modificationMode, hasImage: cellPhotoPickerBackground.pickedImage != nil) {
 			case .asTag: return cellAsTag.preferredHeight
 			case .content: return cellContent.preferredHeight
 			case .hasEmptySheet: return cellHasEmptySheet.preferredHeight
 			case .backgroundColor: return cellBackgroundColor.preferredHeight
 			case .backgroundImage: return cellPhotoPickerBackground.preferredHeight
+			case .backgroundTransparency: return cellBackgroundTransparency.preferredHeight
 			default:
 				return 60
 			}
@@ -364,7 +382,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 			default: return 60
 			}
 		case .image:
-			switch CellImage.for(indexPath, type: sheet.type) {
+			switch CellImage.for(indexPath, type: sheet.type, hasBorder: (sheet as! SheetTitleImageEntity).imageHasBorder) {
 			case .some(.image): return cellImagePicker.preferredHeight
 			case .some(.borderColor): return cellImageBorderColor.preferredHeight
 			case .some(.contentMode): return cellImageContentMode.preferredHeight
@@ -401,7 +419,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 	func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
 		switch Section.for(indexPath.section, type: sheet.type) {
 		case .general:
-			switch CellGeneral.for(indexPath, type: sheet.type, modificationMode: modificationMode) {
+			switch CellGeneral.for(indexPath, type: sheet.type, modificationMode: modificationMode, hasImage: cellPhotoPickerBackground.pickedImage != nil) {
 			case .backgroundColor: return cellBackgroundColor.isActive ? .none : .delete
 			case .asTag: return cellAsTag.isActive ? .none : .delete
 			case .content: return .delete
@@ -426,7 +444,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 			default: return .none
 			}
 		case .image:
-			switch CellImage.for(indexPath, type: sheet.type) {
+			switch CellImage.for(indexPath, type: sheet.type, hasBorder: (sheet as! SheetTitleImageEntity).imageHasBorder) {
 			case .some(.image): return cellImagePicker.isActive ? .none : .delete
 			case .some(.borderColor): return cellImageBorderColor.isActive ? .none : .delete
 			case .some(.contentMode): return cellImageContentMode.isActive ? .none : .delete
@@ -439,11 +457,12 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		if editingStyle == .delete {
 			switch Section.for(indexPath.section, type: sheet.type) {
 			case .general:
-				switch CellGeneral.for(indexPath, type: sheet.type, modificationMode: modificationMode) {
+				switch CellGeneral.for(indexPath, type: sheet.type, modificationMode: modificationMode, hasImage: cellPhotoPickerBackground.pickedImage != nil) {
 				case .asTag: cellAsTag.setValue(value: nil, id: nil)
 				case .content: cellContent.set(text: nil)
 				case .backgroundColor: cellBackgroundColor.setColor(color: nil)
-				case .backgroundImage: cellPhotoPickerBackground.setImage(image: nil)
+				case .backgroundImage:
+					cellPhotoPickerBackground.setImage(image: nil)
 				default: break
 				}
 			case .title:
@@ -464,11 +483,9 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 				default: break
 				}
 			case .image:
-				switch CellImage.for(indexPath, type: sheet.type) {
-				case .some(.image): cellImagePicker.setImage(image: nil)
-					if let sheet = sheet as? SheetTitleImageEntity, sheet.imagePath != nil {
-						sheet.image = nil
-					}
+				switch CellImage.for(indexPath, type: sheet.type, hasBorder: (sheet as! SheetTitleImageEntity).imageHasBorder) {
+				case .some(.image):
+					cellImagePicker.setImage(image: nil)
 				case .some(.borderColor): cellImageBorderColor.setColor(color: nil)
 				case .some(.contentMode): cellImageContentMode.setValue(value: nil, id: nil)
 				default: break
@@ -480,7 +497,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		switch Section.for(indexPath.section, type: sheet.type) {
 		case .general:
-			switch CellGeneral.for(indexPath, type: sheet.type, modificationMode: modificationMode) {
+			switch CellGeneral.for(indexPath, type: sheet.type, modificationMode: modificationMode, hasImage: cellPhotoPickerBackground.pickedImage != nil) {
 			case .asTag:
 				let cell = cellAsTag
 				cell.isActive = !cell.isActive
@@ -497,6 +514,12 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 				let cell = cellPhotoPickerBackground
 				cell.isActive = !cell.isActive
 				reloadDataWithScrollTo(cell)
+			case .backgroundTransparency:
+				let cell = cellBackgroundTransparency
+				cell.isActive = !cell.isActive
+				DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
+					self.reloadDataWithScrollTo(cell)
+				})
 			default:
 				break
 			}
@@ -555,7 +578,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 				break
 			}
 		case .image:
-			switch CellImage.for(indexPath, type: sheet.type) {
+			switch CellImage.for(indexPath, type: sheet.type, hasBorder: (sheet as! SheetTitleImageEntity).imageHasBorder) {
 			case .some(.image):
 				let cell = cellImagePicker
 				cell.isActive = !cell.isActive
@@ -576,6 +599,13 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 	
 	
 	// MARK: - Delegate functions
+	
+	func sliderValueChanged(cell: LabelSliderCell, value: Float) {
+		if cell.id == "cellBackgroundTransparency" {
+			tag.backgroundTransparency = value
+		}
+		changeTransparency()
+	}
 	
 	func textFieldDidChange(cell: LabelTextFieldCell ,text: String?) {
 		if cell.id == "cellName" {
@@ -828,6 +858,10 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 			} else {
 				titleAttributes.removeValue(forKey: .underlineStyle)
 			}
+		case "cellDisplayTime":
+			tag.displayTime = uiSwitch.isOn
+			isSetup = true
+			updateTime()
 		default:
 			break
 		}
@@ -862,13 +896,12 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		switch cell.id {
 		case "cellImageHasBorder":
 			if let sheet = sheet as? SheetTitleImageEntity {
-				sheet.imageHasBorder = uiSwitch.isOn
-				
 				if !uiSwitch.isOn {
-					sheet.imageHasBorder = uiSwitch.isOn
 					cellImageBorderSize.setValue(value: 0)
 					cellImageBorderColor.setColor(color: nil)
 				}
+				sheet.imageHasBorder = uiSwitch.isOn
+				reloadDataWithScrollTo(cellImageContentMode)
 			}
 		default:
 			break
@@ -883,23 +916,17 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 			if !isSetup {
 				cell.isActive = !cell.isActive
 			}
-			tag.backgroundImage = image
-			tableView.beginUpdates()
-			tableView.endUpdates()
+			tagImage = image
 			tableView.reloadData()
-			generateTag()
-			buildPreview(isSetup: isSetup)
+			changeBackgroundImage()
 		}
-		if cell.id == "cellImagePicker", let sheet = sheet as? SheetTitleImageEntity {
+		if cell.id == "cellImagePicker" {
 			if !isSetup {
 				cell.isActive = !cell.isActive
 			}
-			sheet.image = image
-			tableView.beginUpdates()
-			tableView.endUpdates()
+			sheetImage = image
 			tableView.reloadData()
-			generateTag()
-			buildPreview(isSetup: isSetup)
+			changeSheetImage()
 		}
 	}
 	
@@ -910,7 +937,14 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 	private func setup() {
 		
 		switch modificationMode {
-		case .newTag, .newCustomSheet:
+		case .newCustomSheet:
+			tag = CoreTag.createEntity()
+			tag.title = "tag"
+			tag.isHidden = true
+			tag.isTemp = true
+		case .newTag:
+			sheet = CoreSheetTitleContent.createEntity()
+			sheet.isTemp = true // remove at restart app if user quit app
 			tag = CoreTag.createEntity()
 			tag.title = "tag"
 			tag.isHidden = true
@@ -934,6 +968,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		let fontFamilyValues = UIFont.familyNames.map{ (Int64(0), $0) }.sorted { $0.1 < $1.1 }
 		cellTitleFontFamily = LabelPickerCell.create(id: "cellTitleFontFamily", description: Text.NewTag.fontFamilyDescription, initialValueName: "Avenir", pickerValues: fontFamilyValues)
 		cellLyricsFontFamily = LabelPickerCell.create(id: "cellLyricsFontFamily", description: Text.NewTag.fontFamilyDescription, initialValueName: "Avenir", pickerValues: fontFamilyValues)
+		cellBackgroundTransparency.setup()
 		
 		CoreTag.setSortDescriptor(attributeName: "title", ascending: true)
 		CoreTag.predicates.append("isHidden", notEquals: true)
@@ -962,6 +997,8 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		cellHasEmptySheet.delegate = self
 		cellPhotoPickerBackground.delegate = self
 		cellBackgroundColor.delegate = self
+		cellBackgroundTransparency.delegate = self
+		cellDisplayTime.delegate = self
 		
 		cellTitleFontFamily.delegate = self
 		cellTitleFontSize.delegate = self
@@ -990,7 +1027,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		cellImageBorderColor.delegate = self
 		cellImageContentMode.delegate = self
 		
-		cellImageHasBorder.setSwitchValueTo(value: true)
+		cellImageHasBorder.setSwitchValueTo(value: false)
 		cellImageContentMode = LabelPickerCell.create(id: "cellImageContentMode", description: Text.NewSheetTitleImage.descriptionImageContentMode, initialValueName: dutchContentMode()[2], pickerValues: modeValues)
 		cellTitleFontFamily.setValue(value: "Avenir", id: nil)
 		cellLyricsFontFamily.setValue(value: "Avenir", id: nil)
@@ -1058,7 +1095,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 	}
 	
 	private func getGeneralCellFor(indexPath: IndexPath) -> UITableViewCell {
-		switch CellGeneral.for(indexPath, type: sheet.type, modificationMode: modificationMode) {
+		switch CellGeneral.for(indexPath, type: sheet.type, modificationMode: modificationMode, hasImage: cellPhotoPickerBackground.pickedImage != nil) {
 		case .name: return cellName
 		case .content: return cellContent
 		case .asTag: return cellAsTag
@@ -1066,11 +1103,13 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		case .allHaveTitle: return cellAllHaveTitlle
 		case .backgroundColor: return cellBackgroundColor
 		case .backgroundImage: return cellPhotoPickerBackground
+		case .backgroundTransparency: return cellBackgroundTransparency
+		case .displayTime: return cellDisplayTime
 		}
 	}
 	
 	private func getImageCellFor(indexPath: IndexPath) -> UITableViewCell {
-		switch CellImage.for(indexPath, type: sheet.type) {
+		switch CellImage.for(indexPath, type: sheet.type, hasBorder: (sheet as! SheetTitleImageEntity).imageHasBorder) {
 		case .some(.image): return cellImagePicker
 		case .some(.hasBorder): return cellImageHasBorder
 		case .some(.borderSize): return cellImageBorderSize
@@ -1086,6 +1125,8 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		cellAllHaveTitlle.setSwitchValueTo(value: tag.allHaveTitle)
 		cellHasEmptySheet.setSwitches(first: tag.hasEmptySheet, second: tag.isEmptySheetFirst)
 		cellBackgroundColor.setColor(color: tag.sheetBackgroundColor)
+		cellBackgroundTransparency.set(sliderValue: tag.backgroundTransparency * 100)
+		cellDisplayTime.setSwitchValueTo(value: tag.displayTime)
 		
 		cellTitleFontFamily.setValue(value: tag.titleFontName ?? "Avenir")
 		cellTitleFontSize.setValue(value: Int(tag.titleTextSize))
@@ -1183,7 +1224,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 			}
 			
 			generateTag()
-
+			
 			var newPreviewView = UIView()
 			
 			switch sheet.type {
@@ -1223,7 +1264,58 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 			}
 			
 			previewView.addSubview(newPreviewView)
-
+			changeBackgroundImage()
+			changeSheetImage()
+		}
+	}
+	
+	private func changeTransparency() {
+		if let view = previewView.subviews.first {
+			
+			generateTag(skipImage: true)
+			
+			if let sheet = view as? SheetTitleContent {
+				sheet.changeOpacity(newValue: tag.backgroundTransparency)
+			} else if let sheet = view as? SheetTitleImage {
+				sheet.changeOpacity(newValue: tag.backgroundTransparency)
+			} else if let sheet = view as? SheetSplit {
+				sheet.changeOpacity(newValue: tag.backgroundTransparency)
+			} else if let sheet = view as? SheetEmpty {
+				sheet.changeOpacity(newValue: tag.backgroundTransparency)
+			}
+			if tag.sheetBackgroundColor != .white {
+				isSetup = true
+				cellBackgroundColor.setColor(color: .white)
+				isSetup = false
+			}
+		}
+	}
+	
+	private func changeBackgroundImage() {
+		if let view = previewView.subviews.first {
+			
+			if let sheet = view as? SheetView {
+				sheet.setBackgroundImage(image: tagImage ?? tag.backgroundImage)
+				
+				if let externalDisplay = externalDisplayWindow, let view = externalDisplayWindow?.subviews.first, let sheet = view as? SheetView {
+					sheet.setBackgroundImage(image: tagImage ?? tag.backgroundImage)
+					externalDisplay.addSubview(sheet)
+				}
+				self.view.setNeedsDisplay()
+			}
+			
+		}
+	}
+	
+	private func changeSheetImage() {
+		if let view = previewView.subviews.first, let sheet = view as? SheetTitleImage {
+			sheet.setSheetImage(sheetImage)
+		}
+	}
+	
+	private func updateTime() {
+		if let view = previewView.subviews.first, let sheet = view as? SheetView {
+			sheet.updateTime(isOn: tag.displayTime)
 		}
 	}
 
@@ -1265,7 +1357,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		
 	}
 	
-	private func generateTag() {
+	private func generateTag(skipImage: Bool = false) {
 		
 		if let titleFont = titleAttributes[.font] as? UIFont {
 			tag.titleFontName = titleFont.familyName
@@ -1355,13 +1447,9 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 			tag.isLyricsUnderlined = false
 		}
 		
-		if let image = cellPhotoPickerBackground.pickedImage {
-			tag.backgroundImage = image
-		} else {
-			if tag.imagePath != nil {
-				tag.backgroundImage = nil
-			}
-		}
+		changeBackgroundImage()
+		changeSheetImage()
+		
 	}
 	
 	private func dutchContentMode() -> [String] {
@@ -1372,11 +1460,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 	
 	@IBAction func cancelPressed(_ sender: UIBarButtonItem) {
 		
-		if let externalDisplayWindow = externalDisplayWindow {
-			let view = UIView(frame: externalDisplayWindow.frame)
-			view.backgroundColor = .black
-			externalDisplayWindow.addSubview(view)
-		}
+		
 		
 		switch modificationMode {
 			
@@ -1395,6 +1479,8 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 			
 		}
 		
+		shutDownExternalDisplay()
+		
 		dismiss(animated: true)
 	}
 	
@@ -1411,8 +1497,12 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 			
 			generateTag()
 			
-			if let image = cellImagePicker.pickedImage, let sheet = sheet as? SheetTitleImageEntity {
-				sheet.image = image
+			if let tagImage = tagImage {
+				tag.backgroundImage = tagImage
+			}
+
+			if let sheet = sheet as? SheetTitleImageEntity {
+				sheet.image = sheetImage
 			}
 			
 			switch modificationMode {
@@ -1429,7 +1519,9 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 				tag.isTemp = false
 			}
 
-			_ = CoreEntity.saveContext()
+			let _ = CoreEntity.saveContext()
+			
+			shutDownExternalDisplay()
 			
 			delegate?.didCreate(sheet: sheet)
 			dismiss(animated: true)
@@ -1437,5 +1529,14 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		}
 		
 	}
+	
+	private func shutDownExternalDisplay() {
+		if let externalDisplayWindow = externalDisplayWindow {
+			let view = UIView(frame: externalDisplayWindow.frame)
+			view.backgroundColor = .black
+			externalDisplayWindow.addSubview(view)
+		}
+	}
+	
 }
 

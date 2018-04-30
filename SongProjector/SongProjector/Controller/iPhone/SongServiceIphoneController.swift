@@ -41,6 +41,8 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	@IBOutlet var sheetDisplayerPreviousRatioConstraint: NSLayoutConstraint!
 	@IBOutlet var sheetDisplayerNextRatioConstraint: NSLayoutConstraint!
 	
+	private var playerTimer = Timer()
+	private var displayTimeTimer = Timer()
 	var customSheetDisplayerRatioConstraint: NSLayoutConstraint?
 	var customSheetDisplayerPreviousRatioConstraint: NSLayoutConstraint?
 	var customSheetDisplayerNextRatioConstraint: NSLayoutConstraint?
@@ -92,7 +94,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 			} else {
 				selectedSheet = sheetsForSelectedCluster?.first
 			}
-
+			updateTime()
 		}
 	}
 	
@@ -732,7 +734,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 							print("Title content")
 							
 							// current sheet
-							if let tag = selectedCluster?.hasTag {
+							if let tag = selectedSheet.hasTag ?? selectedCluster?.hasTag {
 								let view = SheetTitleContent.createWith(frame: sheetDisplayer.bounds, title: selectedCluster?.title, sheet: selectedSheet as? SheetTitleContentEntity, tag: tag, scaleFactor: scaleFactor)
 								sheetDisplayer.addSubview(view)
 								
@@ -748,7 +750,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 							if let externalDisplayWindow = externalDisplayWindow {
 								_ = SheetTitleImage.createWith(frame: externalDisplayWindow.bounds, sheet: selectedSheet as! SheetTitleImageEntity, tag: selectedSheet.hasTag, scaleFactor: (externalDisplayWindowWidth / sheetDisplayer.bounds.width) * scaleFactor).toExternalDisplay()
 							}
-								
+							
 						case .SheetSplit:
 							let view = SheetSplit.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetSplitEntity, tag: selectedSheet.hasTag, scaleFactor: scaleFactor)
 							sheetDisplayer.addSubview(view)
@@ -756,7 +758,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 							if let externalDisplayWindow = externalDisplayWindow {
 								_ = SheetSplit.createWith(frame: externalDisplayWindow.bounds, sheet: selectedSheet as! SheetSplitEntity, tag: selectedSheet.hasTag, scaleFactor: (externalDisplayWindowWidth / sheetDisplayer.bounds.width) * scaleFactor).toExternalDisplay()
 							}
-								
+							
 						case .SheetEmpty:
 							let view = SheetEmpty.createWith(frame: sheetDisplayer.bounds, tag: selectedSheet.hasTag, scaleFactor: scaleFactor)
 							sheetDisplayer.addSubview(view)
@@ -821,7 +823,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				if let selectedSheet = selectedSheet {
 					switch selectedSheet.type {
 					case .SheetTitleContent:
-						currentSheetView = SheetTitleContent.createWith(frame: sheetDisplayer.bounds, title: selectedCluster?.title, sheet: selectedSheet as? SheetTitleContentEntity, tag: selectedCluster?.hasTag, scaleFactor: scaleFactor)
+						currentSheetView = SheetTitleContent.createWith(frame: sheetDisplayer.bounds, title: selectedCluster?.title, sheet: selectedSheet as? SheetTitleContentEntity, tag: selectedSheet.hasTag ?? selectedCluster?.hasTag, scaleFactor: scaleFactor)
 					case .SheetTitleImage:
 						currentSheetView = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetTitleImageEntity, tag: selectedSheet.hasTag, scaleFactor: scaleFactor)
 					case .SheetSplit:
@@ -836,7 +838,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 					switch nextSheet?.type {
 					case .none: break
 					case .some(.SheetTitleContent):
-						nextSheetView = SheetTitleContent.createWith(frame: sheetDisplayerNext.bounds, title: selectedCluster?.title, sheet: nextSheet as? SheetTitleContentEntity, tag: isNextOrPreviousCluster ? nextCluster?.hasTag : selectedCluster?.hasTag, scaleFactor: scaleFactor)
+						nextSheetView = SheetTitleContent.createWith(frame: sheetDisplayer.bounds, title: isNextOrPreviousCluster ? nextCluster?.title : selectedCluster?.title, sheet: nextSheet as? SheetTitleContentEntity, tag: isNextOrPreviousCluster ? getTagForNextSheet(sheet: nextSheet) : nextSheet?.hasTag ?? selectedCluster?.hasTag, scaleFactor: scaleFactor)
 					case .some(.SheetTitleImage):
 						nextSheetView = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: nextSheet as! SheetTitleImageEntity, tag: nextSheet?.hasTag, scaleFactor: scaleFactor)
 					case .some(.SheetSplit):
@@ -909,8 +911,8 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 					switch selectedSheet.type {
 					case .SheetTitleContent:
 						
-						currentSheetView = SheetTitleContent.createWith(frame: sheetDisplayer.bounds, title: selectedCluster?.title, sheet: selectedSheet as? SheetTitleContentEntity, tag: selectedCluster?.hasTag, scaleFactor: scaleFactor)
-						
+						currentSheetView = SheetTitleContent.createWith(frame: sheetDisplayer.bounds, title: selectedCluster?.title, sheet: selectedSheet as? SheetTitleContentEntity, tag: selectedSheet.hasTag ?? selectedCluster?.hasTag, scaleFactor: scaleFactor)
+
 					case .SheetTitleImage:
 						
 						currentSheetView = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetTitleImageEntity, tag: selectedSheet.hasTag, scaleFactor: scaleFactor)
@@ -930,7 +932,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 					switch previousSheet?.type {
 					case .none: break
 					case .some(.SheetTitleContent):
-						previousSheetView = SheetTitleContent.createWith(frame: sheetDisplayerPrevious.bounds, title: selectedCluster?.title, sheet: previousSheet as? SheetTitleContentEntity, tag: isNextOrPreviousCluster ? previousCluster?.hasTag : selectedCluster?.hasTag, scaleFactor: scaleFactor)
+						previousSheetView = SheetTitleContent.createWith(frame: sheetDisplayer.bounds, title: isNextOrPreviousCluster ? previousCluster?.title : selectedCluster?.title, sheet: previousSheet as? SheetTitleContentEntity, tag: isNextOrPreviousCluster ? getTagForPreviousSheet(sheet: previousSheet) : previousSheet?.hasTag ?? selectedCluster?.hasTag, scaleFactor: scaleFactor)
 					case .some(.SheetTitleImage):
 						previousSheetView = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: previousSheet as! SheetTitleImageEntity, tag: previousSheet?.hasTag, scaleFactor: scaleFactor)
 					case .some(.SheetSplit):
@@ -991,71 +993,57 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		}
 	}
 	
+	private func updateTime() {
+		if let displayTimeTag = selectedCluster?.hasTag?.displayTime, displayTimeTag {
+			let date = Date()
+			let seconds = Calendar.current.component(.second, from: date)
+			let remainder = 60 - seconds
+			let fireDate = date.addingTimeInterval(.seconds(Double(remainder)))
+			print(fireDate.description)
+			displayTimeTimer = Timer(fireAt: fireDate, interval: 60, target: self, selector: #selector(updateScreen), userInfo: nil, repeats: true)
+			RunLoop.main.add(displayTimeTimer, forMode: RunLoopMode.commonModes)
+			
+		} else {
+			displayTimeTimer.invalidate()
+		}
+	}
+	
+	@objc private func updateScreen() {
+		displaySheets()
+	}
+	
+	
+	// MARK - player
+	
 	private func startPlay() {
-		isPlaying = true
-		
-		// is cluster has time (advertisement)
 		if let time = selectedCluster?.duration {
-			DispatchQueue.main.asyncAfter(deadline: .now() + time, execute: {
-				if self.isPlaying {
-					self.respondToSwipeGesture(self.leftSwipe)
-					
-					// keep doing while isPlaying is true
-					if self.isPlaying {
-						self.startPlay()
-					}
-				}
-			})
+			isPlaying = true
+			playerTimer = Timer.scheduledTimer(timeInterval: time, target: self, selector: #selector(swipeAutomatically), userInfo: nil, repeats: true)
 		}
 		
 		// else if sheet has time (mp3 song)
 		else if let time = selectedSheet?.time, time > 0 {
-			DispatchQueue.main.asyncAfter(deadline: .now() + time, execute: {
-				if self.isPlaying {
-					self.respondToSwipeGesture(self.leftSwipe)
-					
-					// keep doing while isPlaying is true
-					if self.isPlaying {
-						self.startPlay()
-					}
-				}
-			})
+			isPlaying = true
+			playerTimer = Timer.scheduledTimer(timeInterval: time, target: self, selector: #selector(swipeAutomatically), userInfo: nil, repeats: true)
 		}
 	}
 	
+	@objc private func swipeAutomatically() {
+		self.respondToSwipeGesture(self.leftSwipe)
+	}
+	
+	
 	private func stopPlay() {
+		playerTimer.invalidate()
 		isPlaying = false
 	}
+	
+	
 	@IBAction func deleteDB(_ sender: UIBarButtonItem) {
 		
 		if let song = CoreSong.getEntities().first {
 			SoundPlayer.play(song: song)
 		}
-//		SoundPlayer.addAsset()
-//		SoundPlayer.playAssets()
-		
-//		var storeCoordinator = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.persistentStoreCoordinator
-//		do {
-//			if let store = storeCoordinator.persistentStores.first {
-//				try storeCoordinator.remove(store)
-//			}
-//		} catch {
-//			print("error deleting persitant store")
-//		}
-//
-//		do {
-//			if ( storeCoordinator.persistentStores.isEmpty ) {
-//				var container = (UIApplication.shared.delegate as! AppDelegate).persistentContainer
-//
-////				try storeCoordinator.addPersistentStore(container)
-//
-//			}
-//
-//		} catch {
-//
-//			print("false")
-//
-//		}
 	}
 	
 }

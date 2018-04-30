@@ -95,24 +95,59 @@ extension Tag {
 			}
 		}
 		set {
-			if newValue == nil {
-				if let path = imagePath {
-					let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-					let url = documentsDirectory.appendingPathComponent(path)
-					do {
-						try FileManager.default.removeItem(at: url)
-						imagePath = nil
-					} catch let error as NSError {
-						print("Error: \(error.domain)")
-					}
+			if let path = imagePath {
+				let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+				let url = documentsDirectory.appendingPathComponent(path)
+				do {
+					try FileManager.default.removeItem(at: url)
+					imagePath = nil
+				} catch let error as NSError {
+					print("Error: \(error.domain)")
 				}
-			} else {
-				if let data = UIImagePNGRepresentation(newValue!) {
+			}
+			if let newValue = newValue {
+				if let data = UIImageJPEGRepresentation(newValue, 1.0) {
 					let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-					let imagePath = UUID().uuidString + ".png"
+					let imagePath = UUID().uuidString + ".jpg"
 					let filename = documentsDirectory.appendingPathComponent(imagePath)
 					try? data.write(to: filename)
 					self.imagePath = imagePath
+					thumbnail = newValue.resizeImage(UIScreen.main.bounds.width, opaque: false)
+				}
+			} else {
+				thumbnail = nil
+			}
+		}
+	}
+	
+	private(set) var thumbnail: UIImage? {
+		get {
+			if let imagePath = imagePathThumbnail {
+				let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+				let filePath = documentsDirectory.appendingPathComponent(imagePath).path
+				return UIImage(contentsOfFile: filePath)
+			} else {
+				return nil
+			}
+		}
+		set {
+			if let path = imagePathThumbnail {
+				let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+				let url = documentsDirectory.appendingPathComponent(path)
+				do {
+					try FileManager.default.removeItem(at: url)
+					imagePathThumbnail = nil
+				} catch let error as NSError {
+					print("Error: \(error.domain)")
+				}
+			}
+			if let newValue = newValue {
+				if let data = UIImageJPEGRepresentation(newValue, 0.5) {
+					let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+					let imagePathThumbnail = UUID().uuidString + "thumb.jpg"
+					let filename = documentsDirectory.appendingPathComponent(imagePathThumbnail)
+					try? data.write(to: filename)
+					self.imagePathThumbnail = imagePathThumbnail
 				}
 			}
 		}
@@ -219,5 +254,15 @@ extension Tag {
 			attributes[.underlineStyle] = NSUnderlineStyle.styleSingle.rawValue
 		}
 		return attributes
+	}
+	
+	var backgroundTransparency: Float {
+		get { return Float(backgroundTransparencyNumber) }
+		set { backgroundTransparencyNumber = newValue / 100 }
+	}
+	
+	@objc override public func delete() {
+		backgroundImage = nil
+		super.delete()
 	}
 }

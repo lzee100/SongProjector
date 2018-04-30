@@ -45,9 +45,7 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 	private var sheetMode = false
 	
 	private var isCollectionviewSheetsHidden = true
-	
-	private var hasBible = false
-	
+		
 	// MARK: - Functions
 	
 	// MARK: UIViewController Functions
@@ -340,11 +338,6 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 	}
 	
 	@IBAction func done(_ sender: UIBarButtonItem) {
-		if !hasBible {
-			generateBible()
-			hasBible = !hasBible
-			return
-		}
 		
 		if hasTagSelected() {
 			
@@ -416,125 +409,6 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 		let contentInset:UIEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10)
 		textView.contentInset = contentInset
 	}
-	
-	
-	private func generateBible() {
-		
-		for book in CoreBook.getEntities() {
-			CoreBook.delete(entity: book)
-		}
-		for chapter in CoreChapter.getEntities() {
-			CoreChapter.delete(entity: chapter)
-		}
-		for vers in CoreVers.getEntities() {
-			CoreVers.delete(entity: vers)
-		}
-		
-		var hasNextBook = true
-		var hasNextChapter = true
-		var bookNumber = 0
-		var chapterNumber: Int16 = 1
-		var versNumber: Int16 = 1
-		var versString = "\(1)"
-		
-		var nextVersNumber: Int16 = versNumber + 1
-		var nextVersString = "\(nextVersNumber)"
-		
-		var text = textView.text ?? ""
-		
-		
-		// find book range
-		while let bookRange = text.range(of: "xxx") {
-			
-			let book = CoreBook.createEntity()
-			book.name = BibleIndex.getBookFor(index: bookNumber)
-			
-			// get all text in book
-			let start = text.index(text.startIndex, offsetBy: 0)
-			let rangeBook = start..<bookRange.upperBound
-			var bookText = String(text[rangeBook]).trimmingCharacters(in: .whitespacesAndNewlines)
-			
-			text.removeSubrange(rangeBook)
-			
-			// find chapter range
-			while let chapterRange = bookText.range(of: "hhh") {
-				
-				// prepare chapter
-				let chapter = CoreChapter.createEntity()
-				chapter.number = chapterNumber
-				CoreChapter.saveContext()
-				
-				print("chapter\(chapterNumber)")
-				// get all text in book
-				let start = bookText.index(bookText.startIndex, offsetBy: 0)
-				let rangeChapter = start..<chapterRange.upperBound
-				var chapterText = String(bookText[rangeChapter]).trimmingCharacters(in: .whitespacesAndNewlines)
-				
-				// remove text from total
-				bookText.removeSubrange(rangeChapter)
-				
-				while let range = chapterText.range(of: nextVersString) {
-					let start = text.index(text.startIndex, offsetBy: 0)
-					let rangeVers = start..<range.lowerBound
-					let rangeRemove = start..<range.upperBound
-					
-					let vers = CoreVers.createEntity()
-					vers.number = versNumber
-					vers.text = String(chapterText[rangeVers]).trimmingCharacters(in: .whitespacesAndNewlines)
-					vers.hasChapter = chapter
-					CoreVers.saveContext()
-					chapterText.removeSubrange(rangeRemove)
-					
-					versNumber += 1
-					versString = "\(versNumber)"
-					
-					nextVersNumber = versNumber + 1
-					nextVersString = "\(nextVersNumber)"
-					
-				}
-				
-				if chapterText.contains("hhh") {
-					if let range = chapterText.range(of: "hhh") {
-						chapterText.removeSubrange(range)
-					}
-					
-				}
-				if chapterText.contains("xxx") {
-					if let range = chapterText.range(of: "xxx") {
-						bookText.removeSubrange(range)
-					}
-				}
-				
-				let vers = CoreVers.createEntity()
-				vers.number = versNumber
-				vers.text = chapterText.trimmingCharacters(in: .whitespacesAndNewlines)
-				vers.hasChapter = chapter
-				CoreVers.saveContext()
-				chapterText.removeAll()
-				
-				chapter.hasBook = book
-				CoreChapter.saveContext()
-				print(chapterNumber)
-				chapterNumber += 1
-				
-				versNumber = 1
-				versString = "\(versNumber)"
-				
-			}
-			
-			
-			bookText = text.trimmingCharacters(in: .whitespacesAndNewlines)
-			bookNumber += 1
-			
-		}
-		
-		CoreChapter.predicates.append("hasBook.name", equals: "Genesis")
-		print(CoreChapter.getEntities().count)
-		CoreChapter.predicates.append("hasBook.name", equals: "Exodus")
-		print(CoreChapter.getEntities().count)
-		
-	}
-
 	
 }
 

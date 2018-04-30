@@ -12,6 +12,7 @@ import UIKit
 class SheetView: UIView {
 	
 	open var scaleFactor: CGFloat?
+	public private(set) var isForExternalDispay: Bool = false
 	
 	override init(frame: CGRect) {
 		super.init(frame: frame)
@@ -30,13 +31,30 @@ class SheetView: UIView {
 		
 	}
 	
+	open func changeOpacity(newValue: Float) {
+
+	}
+	open func setBackgroundImage(image: UIImage?) {
+
+	}
+	
+	open func updateTime(isOn: Bool) {
+
+	}
+	
 	// EXTERNAl DISPLAY
 	public func toExternalDisplay() {
 		
 		if let externalDisplay = externalDisplayWindow {
 			
-			externalDisplay.addSubview(self)
+			for subview in externalDisplay.subviews {
+				subview.removeFromSuperview()
+			}
 			
+			isForExternalDispay = true
+			update()
+			externalDisplay.addSubview(self)
+			isForExternalDispay = false
 		}
 	}
 	

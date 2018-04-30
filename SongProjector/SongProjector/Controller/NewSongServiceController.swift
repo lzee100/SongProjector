@@ -88,7 +88,7 @@ class NewSongServiceController: UIViewController, UITableViewDelegate, UITableVi
 		} else {
 			selectedSongs.append(filteredSongs[indexPath.row])
 		}
-		tableViewSelectedSongs.reloadData()
+		update()
 	}
 	
 	func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
@@ -197,7 +197,9 @@ class NewSongServiceController: UIViewController, UITableViewDelegate, UITableVi
 	}
 	
 	private func update() {
-		songs = CoreCluster.getEntities()
+		let newClusters = Array(Set(CoreCluster.getEntities()).subtracting(selectedSongs))
+		songs = newClusters
+		CoreTag.predicates.append("isHidden", equals: 0)
 		tags = CoreTag.getEntities()
 		filterOnTags()
 		filteredSongs = songs

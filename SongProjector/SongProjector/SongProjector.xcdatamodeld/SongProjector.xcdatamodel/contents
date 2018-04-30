@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="13772" systemVersion="17D47" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="13772" systemVersion="17D102" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Book" representedClassName="Book" parentEntity="Entity" syncable="YES" codeGenerationType="class">
         <attribute name="name" attributeType="String" syncable="YES"/>
         <relationship name="hasChapters" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Chapter" inverseName="hasBook" inverseEntity="Chapter" syncable="YES"/>
@@ -69,8 +69,11 @@
     <entity name="Tag" representedClassName="Tag" parentEntity="Entity" syncable="YES" codeGenerationType="class">
         <attribute name="allHaveTitle" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="backgroundColor" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="backgroundTransparencyNumber" attributeType="Float" defaultValueString="1" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="displayTime" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="hasEmptySheet" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="imagePath" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="imagePathThumbnail" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="isEmptySheetFirst" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="isHidden" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="isLyricsBold" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
@@ -102,6 +105,8 @@
         <relationship name="hasChapter" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Chapter" inverseName="hasVerses" inverseEntity="Chapter" syncable="YES"/>
     </entity>
     <elements>
+        <element name="Book" positionX="-36" positionY="135" width="128" height="75"/>
+        <element name="Chapter" positionX="-27" positionY="144" width="128" height="90"/>
         <element name="Cluster" positionX="-54" positionY="-9" width="128" height="150"/>
         <element name="Entity" positionX="-63" positionY="-18" width="128" height="120"/>
         <element name="GoogleActivity" positionX="-36" positionY="135" width="128" height="105"/>
@@ -113,9 +118,7 @@
         <element name="SheetTitleContentEntity" positionX="-27" positionY="144" width="128" height="60"/>
         <element name="SheetTitleImageEntity" positionX="-36" positionY="135" width="128" height="150"/>
         <element name="Song" positionX="-36" positionY="135" width="128" height="75"/>
-        <element name="Tag" positionX="-36" positionY="9" width="128" height="465"/>
-        <element name="Book" positionX="-36" positionY="135" width="128" height="75"/>
-        <element name="Chapter" positionX="-27" positionY="144" width="128" height="90"/>
+        <element name="Tag" positionX="-36" positionY="9" width="128" height="510"/>
         <element name="Vers" positionX="-18" positionY="153" width="128" height="90"/>
     </elements>
 </model>

@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SongProjector/Controller/iPhone/SongServiceIphoneController.swift"
-            timestampString = "541154505.470033"
+            timestampString = "543654160.335255"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "493"
-            endingLineNumber = "493"
+            startingLineNumber = "495"
+            endingLineNumber = "495"
             landmarkName = "respondToSwipeGesture(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SongProjector/Controller/iPhone/SongServiceIphoneController.swift"
-            timestampString = "541154505.470111"
+            timestampString = "543654160.335492"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "535"
-            endingLineNumber = "535"
+            startingLineNumber = "537"
+            endingLineNumber = "537"
             landmarkName = "respondToSwipeGesture(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -54,16 +54,64 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SongProjector/Global/BibleIndex.swift"
+            timestampString = "543079003.581913"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "308"
+            endingLineNumber = "308"
+            landmarkName = "parse(searchRequest:returnScripture:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "SongProjector.BibleIndexx.(parse in _6898A775FD0859C1B451E9C7B30349C9)(searchRequest: Swift.Optional&lt;Swift.String&gt;, returnScripture: Swift.Bool) -&gt; Swift.Optional&lt;Swift.String&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/privateDevelopment/SongProjector/SongProjector/SongProjector/Global/BibleIndex.swift"
+                  timestampString = "542650324.051018"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "304"
+                  endingLineNumber = "304"
+                  offsetFromSymbolStart = "23588">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (SongProjector.Vers) -&gt; Swift.Bool in SongProjector.BibleIndexx.(parse in _6898A775FD0859C1B451E9C7B30349C9)(searchRequest: Swift.Optional&lt;Swift.String&gt;, returnScripture: Swift.Bool) -&gt; Swift.Optional&lt;Swift.String&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/privateDevelopment/SongProjector/SongProjector/SongProjector/Global/BibleIndex.swift"
+                  timestampString = "542650324.053461"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "305"
+                  endingLineNumber = "305"
+                  offsetFromSymbolStart = "18">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SongProjector/Controller/iPhone/BibleStudyGeneratorIphoneController.swift"
-            timestampString = "541892262.024019"
+            filePath = "SongProjector/Global/AppDelegate.swift"
+            timestampString = "544390795.445528"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "310"
-            endingLineNumber = "310"
-            landmarkName = "valueChanged(_:)"
+            startingLineNumber = "151"
+            endingLineNumber = "151"
+            landmarkName = "application(_:open:options:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

@@ -33,10 +33,15 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 	private var visibleCells: [IndexPath] = []
 	private var sheetsSorted: [Sheet] { return sheets.sorted { $0.position < $1.position } }
 	private var delaySheetAimation = 0.0
-	private var multiplier: CGFloat = 9/16
+	private var multiplier: CGFloat = externalDisplayWindowRatio
 	private var sheetSize = CGSize(width: 375, height: 281)
 	private var isFirstTime = true
+	private var needsReload = false
+	private var scaleFactor: CGFloat { get { return externalDisplayWindowWidth / sheetSize.width } }
+	private var addEmptySheet = true
+	var position: Int16 = 0
 	
+	private var testImage: UIImage?
 	
 	// MARK: - UIViewController Functions
 	
@@ -44,6 +49,11 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
         super.viewDidLoad()
 		setup()
     }
+	
+	override func viewDidAppear(_ animated: Bool) {
+		super.viewDidAppear(animated)
+		update()
+	}
 	
 	// MARK: - UITableView Functions
 	
@@ -58,8 +68,7 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath) as! BasicCell
 		let fullName = BibleIndexx(searchText: sheets[indexPath.row].title).getFullName()
-		cell.setup(title: fullName ?? sheets[indexPath.row].title ?? "", textColor: fullName != nil ? UIColor.green : UIColor.red)
-		cell.textLabel?.textColor = fullName != nil ? UIColor.green : UIColor.red
+		cell.setup(title: fullName ?? sheets[indexPath.row].title ?? "", textColor: (fullName != nil && (sheets[indexPath.row] as! SheetTitleContentEntity).lyrics != "") ? UIColor.green : UIColor.red)
 		return cell
 	}
 	
@@ -71,19 +80,31 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 	// MARK: - UICollectionView Functions
 	
 	func numberOfSections(in collectionView: UICollectionView) -> Int {
-		return sheets.count
+		return collectionView == collectionViewSheets ? sheets.count : 1
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-		return 1
+		return collectionView == collectionViewSheets ? 1 : tags.count
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 		if collectionView == collectionViewTags {
 			let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.tagCellCollection, for: indexPath) as! TagCellCollection
+			cell.setup(tagName: tags[indexPath.row].title ?? "")
+			cell.isSelectedCell = tags[indexPath.row].id == selectedTag?.id
 			return cell
 		} else {
 			let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.sheetCollectionCell, for: indexPath) as! SheetCollectionCell
+			cell.setPreviewViewAspectRatioConstraint(multiplier: multiplier)
+			
+			for subview in cell.previewView.subviews {
+				subview.removeFromSuperview()
+			}
+			let sheetview = SheetTitleContent.createWith(frame: cell.bounds, title: sheetsSorted[indexPath.section].title, sheet: sheetsSorted[indexPath.section] as? SheetTitleContentEntity, tag: selectedTag)
+			cell.previewView.addSubview(sheetview)
+			let imageView = UIImageView(frame: cell.bounds)
+			imageView.image = testImage
+			cell.previewView.addSubview(imageView)
 			return cell
 		}
 	}
@@ -93,6 +114,15 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 			return CGSize(width: 200, height: 50)
 		} else {
 			return sheetSize
+		}
+	}
+	
+	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+		if collectionView != collectionViewSheets {
+			if selectedTag?.id != tags[indexPath.row].id {
+				selectedTag = tags[indexPath.row]
+				update()
+			}
 		}
 	}
 	
@@ -113,12 +143,15 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 		collectionViewSheets.register(UINib(nibName: Cells.sheetCollectionCell, bundle: nil), forCellWithReuseIdentifier: Cells.sheetCollectionCell)
 		collectionViewTags.register(UINib(nibName: Cells.tagCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.tagCellCollection)
 		
+		NotificationCenter.default.addObserver(forName: NotificationNames.externalDisplayDidChange, object: nil, queue: nil, using: externalDisplayDidChange)
+		
 		tableView.register(cell: Cells.basicCellid)
 		tableView.keyboardDismissMode = .interactive
 		
-		CoreTag.predicates.append("isHidden", notEquals: true)
 		tags = CoreTag.getEntities()
 		
+		setSheetSize()
+
 		textView.backgroundColor = themeWhiteBlackBackground
 		textView.textColor = themeWhiteBlackTextColor
 		
@@ -146,9 +179,6 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 		doubleTab.numberOfTapsRequired = 2
 		view.addGestureRecognizer(doubleTab)
 		
-		let cellHeight = multiplier * (UIScreen.main.bounds.width - 20)
-		sheetSize = CGSize(width: UIScreen.main.bounds.width - 20, height: cellHeight)
-		
 		let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
 		layout.sectionInset = UIEdgeInsets(top: 20, left: 0, bottom: 10, right: 0)
 		layout.itemSize = sheetSize
@@ -162,6 +192,8 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 	}
 	
 	private func update() {
+		CoreTag.predicates.append("isHidden", equals: 0)
+		tags = CoreTag.getEntities()
 		collectionViewTags.reloadData()
 		collectionViewSheets.reloadData()
 		tableView.reloadData()
@@ -188,36 +220,6 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 		}
 		
 		return indexPaths
-	}
-	
-	private func setViewFor(collectionCell: UICollectionViewCell, sheet: Sheet) {
-		
-		if let collectionCell = collectionCell as? SheetCollectionCell {
-			
-			collectionCell.setPreviewViewAspectRatioConstraint(multiplier: multiplier)
-			
-			for subview in collectionCell.previewView.subviews {
-				subview.removeFromSuperview()
-			}
-			
-			var view = UIView()
-			switch sheet.type {
-			case .SheetTitleContent:
-				view = SheetTitleContent.createWith(frame: collectionCell.bounds, title: sheet.title, sheet: sheet as? SheetTitleContentEntity, tag: sheet.hasTag)
-			case .SheetTitleImage:
-				view = SheetTitleImage.createWith(frame: collectionCell.bounds, sheet: sheet as! SheetTitleImageEntity, tag: sheet.hasTag)
-			case .SheetSplit:
-				view = SheetSplit.createWith(frame: collectionCell.bounds, sheet: sheet as! SheetSplitEntity, tag: sheet.hasTag)
-			case .SheetEmpty:
-				view = SheetEmpty.createWith(frame: collectionCell.bounds, tag: sheet.hasTag)
-			case .SheetActivities:
-				print("Sheet Activities biblestudygeneratoriphonecontroller")
-				break
-			}
-			
-			collectionCell.previewView.addSubview(view)
-			
-		}
 	}
 	
 	@objc private func respondToSwipeGesture(_ swipe: UISwipeGestureRecognizer) {
@@ -278,19 +280,54 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 			sheet.delete()
 		}
 		sheets = []
-		var position: Int16 = 0
 
 		// get titles
 		while let range = inputText.range(of: "\n") {
 			let start = inputText.index(inputText.startIndex, offsetBy: 0)
 			let rangeSheet = start..<range.lowerBound
 			let rangeRemove = start..<range.upperBound
-			let sheet = CoreSheet.createEntity()
-			sheet.isTemp = true
-			sheet.title = String(inputText[rangeSheet])
-			sheet.position = position
-			sheets.append(sheet)
-			position += 1
+
+			let verses = BibleIndex.getVersesFor(searchValue: String(inputText[rangeSheet]) ).0
+			let initialTextLength = BibleIndex.getVersesFor(searchValue:  String(inputText[rangeSheet]) ).1
+			
+			if let fontSize = selectedTag?.lyricsTextSize, let verses = verses {
+				var expodential = 1
+				
+				if Int(fontSize) > 10 {
+					expodential = (Int(fontSize) % 10) + 1
+				} else if Int(fontSize) % 10 == 0 {
+					expodential = 1
+				} else {
+					expodential = -(10 - Int(fontSize) % 10)
+				}
+				
+				let factor = externalDisplayWindowWidth < 1000 ? 2.0 : 1.3
+				
+				var sum: CGFloat = 0
+				if expodential > 0 {
+					sum = CGFloat(fontSize) * CGFloat((factor * Double(expodential)))
+				} else {
+					var expodentialMinus: Double = 1
+					switch expodential {
+					case -1:
+						expodentialMinus = 0.5
+					case -2:
+						expodentialMinus = 0.6
+					case -3:
+						expodentialMinus = 0.8
+					default:
+						expodentialMinus = 0.9
+					}
+					sum = CGFloat(fontSize) / CGFloat(abs(expodentialMinus))
+				}
+				let maxCharactersSheet = 8000 / sum
+				
+				buildAllSheetWith(title: String(inputText[rangeSheet]), verses: verses, initialTextLength: initialTextLength, maxTextLenght: Int(maxCharactersSheet))
+
+			}
+			
+		
+			
 			inputText.removeSubrange(rangeRemove)
 		}
 		
@@ -357,4 +394,93 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 		}
 		
 	}
+	
+	private func buildAllSheetWith(title: String, verses: [Vers], initialTextLength: Int, maxTextLenght: Int) {
+		
+		var remainderVerses = verses
+		
+		let titleSpace = 40
+		let spaceTitle = (selectedTag?.allHaveTitle ?? false) ? 40 : 0
+		
+		if initialTextLength < (maxTextLenght - titleSpace) {
+			let sheet = CoreSheetTitleContent.createEntity()
+			sheet.isTemp = true
+			sheet.title = title
+			sheet.lyrics = getTextFor(verses: verses)
+			sheet.position = position
+			position += 1
+			sheets.append(sheet)
+			remainderVerses.removeAll()
+		}
+		
+		
+		while getTextLengthFor(verses: remainderVerses) > (maxTextLenght - spaceTitle) {
+			
+			let sheet = CoreSheetTitleContent.createEntity()
+			sheet.isTemp = true
+			sheet.title = title
+			
+			var totalTextLenght = 0
+			var versesForThisSheet: [Vers] = []
+			while totalTextLenght < maxTextLenght, let nextVers = remainderVerses.first {
+				totalTextLenght += getTextLengthFor(verses: [nextVers])
+				versesForThisSheet.append(nextVers)
+				remainderVerses.remove(at: 0)
+			}
+			
+			sheet.lyrics = getTextFor(verses: versesForThisSheet)
+			sheet.position = position
+			position += 1
+			sheets.append(sheet)
+			
+		}
+		
+		if remainderVerses.count > 0 {
+			let sheet = CoreSheetTitleContent.createEntity()
+			sheet.isTemp = true
+			sheet.title = title
+			sheet.lyrics = getTextFor(verses: remainderVerses)
+			sheet.position = position
+			position += 1
+			sheets.append(sheet)
+			remainderVerses.removeAll()
+		}
+		
+		if addEmptySheet {
+			let sheet = CoreSheetTitleContent.createEntity()
+			sheet.isTemp = true
+			sheet.position = position
+			position += 1
+			sheets.append(sheet)
+			remainderVerses.removeAll()
+		}
+		
+		
+		
+	}
+	
+	private func getTextFor(verses: [Vers]) -> String {
+		var totalString = ""
+		verses.forEach({ totalString += "\($0.number) \( $0.text!) " })
+		return totalString
+	}
+	
+	private func getTextLengthFor(verses: [Vers]) -> Int {
+		var lenght = 0
+		let allLengths = verses.flatMap{ $0.text?.length }
+		allLengths.forEach{ lenght += $0 }
+		return lenght
+	}
+	
+	private func externalDisplayDidChange(notification: Notification) {
+		setSheetSize()
+	}
+	
+	private func setSheetSize() {
+		multiplier = externalDisplayWindowRatio
+		let cellWidth =  200  / multiplier
+		sheetSize = CGSize(width: cellWidth, height: 200)
+		collectionViewSheets.reloadData()
+	}
+	
 }

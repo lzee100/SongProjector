@@ -20,12 +20,22 @@ class BibleStudyIphoneController: UIViewController, UITableViewDelegate, UITable
 	private var tags: [Tag] = []
 	private var sheets: [Sheet] = []
 	private var selectedTag: Tag?
+	private var multiplier = externalDisplayWindowRatio
+	private var delaySheetAimation = 0.0
+	private var isFirstTime = true {
+		willSet { if newValue == true { delaySheetAimation = 0.0 } }
+	}
+	private var sheetSize = CGSize(width: 375, height: 281)
 	
 	override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+		setup()
     }
+	
+	override func viewWillAppear(_ animated: Bool) {
+		super.viewWillAppear(animated)
+		update()
+	}
 
 
     // MARK: - Navigation
@@ -53,16 +63,59 @@ class BibleStudyIphoneController: UIViewController, UITableViewDelegate, UITable
 	}
 	
 	func numberOfSections(in collectionView: UICollectionView) -> Int {
-		return sheets.count
+		if collectionView == collectionViewSheets {
+			return sheets.count
+		} else {
+			return 1
+		}
 	}
 	
+	
 	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-		return 1
+		if collectionView == collectionViewSheets {
+			return 1
+		} else {
+			return tags.count
+		}
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.sheetCollectionCell, for: indexPath) as! SheetCollectionCell
-		return cell
+		
+		if collectionView == collectionViewTags {
+			
+			let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.tagCellCollection, for: indexPath)
+			
+			if let collectionCell = collectionCell as? TagCellCollection {
+				collectionCell.setup(tagName: tags[indexPath.row].title ?? "")
+				collectionCell.isSelectedCell = selectedTag?.id == tags[indexPath.row].id
+			}
+			return collectionCell
+		
+		} else {
+			
+			let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.sheetCollectionCell, for: indexPath) as! SheetCollectionCell
+			
+			return cell
+			
+		}
+		
+	}
+	
+	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+		if collectionView == collectionViewSheets {
+			return sheetSize
+		} else {
+			return CGSize(width: 200, height: 50)
+		}
+	}
+	
+	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+		if collectionView != collectionViewSheets {
+			if selectedTag?.id != tags[indexPath.row].id {
+				selectedTag = tags[indexPath.row]
+				update()
+			}
+		}
 	}
 	
 	
@@ -74,6 +127,24 @@ class BibleStudyIphoneController: UIViewController, UITableViewDelegate, UITable
 	
 	func didFinishGeneratorWith(_ sheets: [Sheet]) {
 		
+	}
+	
+	private func setup() {
+		collectionViewTags.register(UINib(nibName: Cells.tagCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.tagCellCollection)
+		collectionViewSheets.register(UINib(nibName: Cells.sheetCollectionCell, bundle: nil), forCellWithReuseIdentifier: Cells.sheetCollectionCell)
+		
+		let cellHeight = multiplier * (UIScreen.main.bounds.width - 20)
+		sheetSize = CGSize(width: UIScreen.main.bounds.width - 20, height: cellHeight)
+
+		update()
+	}
+	
+	private func update() {
+		CoreTag.setSortDescriptor(attributeName: "position", ascending: false)
+		tags = CoreTag.getEntities()
+		collectionViewTags.reloadData()
+		collectionViewSheets.reloadData()
+		isFirstTime = true
 	}
 	
 	
