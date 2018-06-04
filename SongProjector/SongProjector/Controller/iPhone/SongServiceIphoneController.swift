@@ -9,6 +9,8 @@
 import UIKit
 import QuartzCore
 import MediaPlayer
+import AWSAuthCore
+import AWSAuthUI
 
 extension NSLayoutConstraint {
 	func constraintWithMultiplier(_ multiplier: CGFloat) -> NSLayoutConstraint {
@@ -155,14 +157,32 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		GoogleActivityFetcher.addObserver(self)
+//		GoogleActivityFetcher.addObserver(self)
 		setup()
+		if !AWSSignInManager.sharedInstance().isLoggedIn {
+			AWSAuthUIViewController
+				.presentViewController(with: self.navigationController!,
+									   configuration: nil,
+									   completionHandler: { (provider: AWSSignInProvider, error: Error?) in
+										if error != nil {
+											print("Error occurred: \(String(describing: error))")
+										} else {
+											OrganizationsCRUD.insertOrganizationWith(id: "id", name: "leo")
+										}
+				})
+		} else {
+			OrganizationsCRUD.insertOrganizationWith(id: "id", name: "leo")
+
+		}
+
 	}
 	
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
-		GoogleActivityFetcher.fetch(false)
+//		GoogleActivityFetcher.fetch(false)
 		update()
+		OrganizationsCRUD.insertOrganizationWith(id: "id", name: "leo")
+
 	}
 	
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -290,7 +310,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		
 		new.title = Text.Actions.add
 		swipeUpDownImageView.tintColor = themeHighlighted
-		GoogleActivityFetcher.fetch(true)
+//		GoogleActivityFetcher.fetch(true)
 		view.backgroundColor = themeWhiteBlackBackground
 		emptyViewTableView.backgroundColor = themeWhiteBlackBackground
 		moveUpDownSection.backgroundColor = themeWhiteBlackBackground

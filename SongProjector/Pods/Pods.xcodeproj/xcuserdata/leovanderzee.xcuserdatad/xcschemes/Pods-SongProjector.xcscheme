@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "388FEFF8A28B6391362EFDA26993E838"
+               BlueprintIdentifier = "23699F58FD72A3E0721CC136A8C3556C"
                BuildableName = "Pods_SongProjector.framework"
                BlueprintName = "Pods-SongProjector"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -26,7 +26,6 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      language = ""
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
       </Testables>
@@ -37,7 +36,6 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      language = ""
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
@@ -47,7 +45,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "388FEFF8A28B6391362EFDA26993E838"
+            BlueprintIdentifier = "23699F58FD72A3E0721CC136A8C3556C"
             BuildableName = "Pods_SongProjector.framework"
             BlueprintName = "Pods-SongProjector"
             ReferencedContainer = "container:Pods.xcodeproj">

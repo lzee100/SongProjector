@@ -12,7 +12,7 @@ protocol LabelSwitchCellDelegate {
 	func valueChangedFor(cell: LabelSwitchCell, uiSwitch: UISwitch)
 }
 
-class LabelSwitchCell: UITableViewCell {
+class LabelSwitchCell: ChurchBeamCell {
 
 	@IBOutlet var descriptionLabel: UILabel!
 	@IBOutlet var `switch`: UISwitch!
@@ -21,6 +21,11 @@ class LabelSwitchCell: UITableViewCell {
 	var id = ""
 	var delegate: LabelSwitchCellDelegate?
 	let preferredHeight: CGFloat = 60
+	
+	override func setup(title: String?, tag: TagTemp, sheet: SheetTemp, cellType: CellTitle) {
+		descriptionLabel.text = title
+		switch.isOn = tag.
+	}
 
 	static func create(id: String, description: String, initialValueIsOn: Bool = false) -> LabelSwitchCell {
 		let view : LabelSwitchCell! = UIView.create(nib: "LabelSwitchCell")

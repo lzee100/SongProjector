@@ -12,6 +12,19 @@
   "IdentityManager": {
     "Default": {}
   },
+  "CognitoUserPool": {
+    "Default": {
+      "PoolId": "eu-west-2_MzZoF3gfr",
+      "AppClientId": "1uu89qeqtop9n9r3agj7oo7r2s",
+      "AppClientSecret": "1rf60thsanh20q09ehd2h7vbgdqmr519feg5slmsk8036t4a3stm",
+      "Region": "eu-west-2"
+    }
+  },
+  "DynamoDBObjectMapper": {
+    "Default": {
+      "Region": "eu-west-2"
+    }
+  },
   "PinpointAnalytics": {
     "Default": {
       "AppId": "7f31af98968f4fd7b5fe98a491d9b389",
@@ -22,5 +35,9 @@
     "Default": {
       "Region": "us-east-1"
     }
+  },
+  "GoogleSignIn": {
+    "ClientId-iOS": "1005753122128-dn4qrfc38m5udiag7rv35pfqo1bc38rf.apps.googleusercontent.com",
+    "Permissions": "email,profile,openid"
   }
 }

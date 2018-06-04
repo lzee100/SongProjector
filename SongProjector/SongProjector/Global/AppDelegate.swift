@@ -14,6 +14,10 @@ import GGLSignIn
 import UIKit
 import Google
 import GoogleSignIn
+import AWSMobileClient
+import AWSGoogleSignIn
+import AWSAuthCore
+
 
 var canUsePhotos: Bool {
 
@@ -76,6 +80,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	
 
 	var window: UIWindow?
+	//Used for checking whether Push Notification is enabled in Amazon Pinpoint
+	static let remoteNotificationKey = "RemoteNotification"
+	var isInitialized: Bool = false
 
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
 		setupAndCheckDatabase()
@@ -92,7 +99,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			})
 		}
 		
-		return true
+		AWSGoogleSignInProvider.sharedInstance().setScopes(["profile", "openid"])
+		AWSSignInManager.sharedInstance().register(signInProvider: AWSGoogleSignInProvider.sharedInstance())
+		let didFinishLaunching = AWSSignInManager.sharedInstance().interceptApplication(application, didFinishLaunchingWithOptions: launchOptions)
+		
+		if (!isInitialized) {
+			AWSSignInManager.sharedInstance().resumeSession(completionHandler: { (result: Any?, error: Error?) in
+				print("Result: \(result) \n Error:\(error)")
+			})
+			isInitialized = true
+		}
+		
+		
+		
+		// Initialize the Amazon Cognito credentials provider
+		
+		let credentialsProvider = AWSCognitoCredentialsProvider(regionType:.EUWest2,
+																identityPoolId:"eu-west-2:e0602561-4fd7-4f01-94f2-790acd22d640")
+		let configuration = AWSServiceConfiguration(region:.EUWest2, credentialsProvider: credentialsProvider)
+		
+		AWSServiceManager.default().defaultServiceConfiguration = configuration
+		
+		return AWSMobileClient.sharedInstance().interceptApplication(
+			application, didFinishLaunchingWithOptions:
+			launchOptions)
 	}
 
 	func applicationWillResignActive(_ application: UIApplication) {
@@ -147,7 +177,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	    return container
 	}()
 	
+	func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
+		// print("application application: \(application.description), openURL: \(url.absoluteURL), sourceApplication: \(sourceApplication)")
+		
+		AWSMobileClient.sharedInstance().interceptApplication(
+			application, open: url,
+			sourceApplication: sourceApplication,
+			annotation: annotation)
+		
+		AWSSignInManager.sharedInstance().interceptApplication(application, open: url, sourceApplication: sourceApplication, annotation: annotation)
+		isInitialized = true
+		
+		return true
+	}
+	
 	func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+		
+		return AWSMobileClient.sharedInstance().interceptApplication(
+			app, open: url, sourceApplication: options[UIApplicationOpenURLOptionsKey.sourceApplication] as? String, annotation: options[UIApplicationOpenURLOptionsKey.annotation]!)
+		
 		return GIDSignIn.sharedInstance().handle(url,
 													sourceApplication: options[UIApplicationOpenURLOptionsKey.sourceApplication] as? String,
 													annotation: options[UIApplicationOpenURLOptionsKey.annotation])

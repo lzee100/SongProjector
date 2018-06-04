@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SettingsController: UITableViewController, GoogleCellDelegate{
+class SettingsController: UITableViewController, GoogleCellDelegate {
 	
 	let googleCell = GoogleCell.create(id: "GoogleCell", description: Text.Settings.descriptionGoogle)
 	
@@ -44,6 +44,7 @@ class SettingsController: UITableViewController, GoogleCellDelegate{
 		case .googleAgenda:
 			return googleCell
 		}
+		return UITableViewCell()
 	}
 	
 	override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -51,6 +52,7 @@ class SettingsController: UITableViewController, GoogleCellDelegate{
 		case .googleAgenda:
 			return googleCell.preferredHeight
 		}
+		return 60
 	}
 	
 	

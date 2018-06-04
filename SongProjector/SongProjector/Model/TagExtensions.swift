@@ -266,3 +266,87 @@ extension Tag {
 		super.delete()
 	}
 }
+
+struct TagTemp {
+	var title: String?
+	var allHaveTitle: Bool
+	var hasEmptySheet: Bool
+	var backgroundColor: UIColor?
+	var backgroundTransparancy: Float
+	var displayTime: Bool
+	
+	var titleFontFamily: String
+	var titleFontSize: Float
+	var titleBackgroundColor: UIColor?
+	var titleAlignment: String?
+	var titleBorderSize: Int
+	var titleBorderColor: UIColor?
+	var titleTextColor: UIColor?
+	var titleIsBold: Bool
+	var titleIsItalian: Bool
+	var titleIsUnderLined: Bool
+	
+	var lyricsFontFamily: String
+	var lyricsFontSize: Float
+	var lyricsBackgroundColor: UIColor?
+	var lyricsAlignment: String?
+	var lyricsBorderSize: Int
+	var lyricsBorderColor: UIColor?
+	var lyricsTextColor: UIColor?
+	var lyricsIsBold: Bool
+	var lyricsIsItalian: Bool
+	var lyricsIsUnderLined: Bool
+	
+	var backgroundImage: UIImage?
+	var backgroundImagePath: String?
+	var backgroundThumb: UIImage?
+	var backgroundThumbPath: String?
+	
+	init(tag: Tag) {
+		title = tag.title
+		allHaveTitle = tag.allHaveTitle
+		hasEmptySheet = tag.hasEmptySheet
+		if let color = tag.backgroundColor {
+			backgroundColor = UIColor(hex: color)
+		}
+		backgroundTransparancy = tag.backgroundTransparency
+		displayTime = tag.displayTime
+		
+		titleFontFamily = tag.titleFontName ?? "Avenir"
+		titleFontSize = tag.titleTextSize
+		if let color = tag.titleBackgroundColor {
+			titleBackgroundColor = UIColor(hex: color)
+		}
+		titleAlignment = tag.titleAlignment
+		titleBorderSize = Int(tag.titleBorderSize)
+		if let color = tag.titleBorderColorHex {
+			titleBorderColor = UIColor(hex: color)
+		}
+		if let color = tag.titleTextColorHex {
+			titleTextColor = UIColor(hex: color)
+		}
+		titleIsBold = tag.isTitleBold
+		titleIsItalian = tag.isTitleItalian
+		titleIsUnderLined = tag.isTitleUnderlined
+		
+		lyricsFontFamily = tag.lyricsFontName ?? "Avenir"
+		lyricsFontSize = tag.lyricsTextSize
+		lyricsAlignment = tag.lyricsAlignment
+		lyricsBorderSize = Int(tag.lyricsBorderSize)
+		if let color = tag.lyricsBorderColorHex {
+			lyricsBorderColor = UIColor(hex: color)
+		}
+		if let color = tag.lyricsTextColorHex {
+			lyricsTextColor = UIColor(hex: color)
+		}
+		lyricsIsBold = tag.isLyricsBold
+		lyricsIsItalian = tag.isLyricsItalian
+		lyricsIsUnderLined = tag.isLyricsUnderlined
+		
+		backgroundImage = tag.backgroundImage
+		backgroundImagePath = tag.imagePath
+		backgroundThumb = tag.thumbnail
+		backgroundThumbPath = tag.imagePathThumbnail
+		
+	}
+}

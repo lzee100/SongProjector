@@ -218,8 +218,6 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 	
 	private let cellName = LabelTextFieldCell.create(id: "cellName", description: Text.NewSheetTitleImage.descriptionTitle, placeholder: Text.NewTag.descriptionTitlePlaceholder)
 	private let cellContent = LabelTextView.create(id: "cellContent", description: Text.NewSheetTitleImage.descriptionContent, placeholder: Text.NewSheetTitleImage.placeholderContent)
-	private var cellTextLeft = LabelTextView.create(id: "cellTextLeft", description: Text.NewSheetTitleImage.descriptionTextLeft, placeholder: Text.NewSheetTitleImage.descriptionTextLeft)
-	private var cellTextRight = LabelTextView.create(id: "cellTextRight", description: Text.NewSheetTitleImage.descriptionTextRight, placeholder: Text.NewSheetTitleImage.descriptionTextRight)
 	private var  cellAsTag = LabelPickerCell()
 	private var  cellPhotoPickerBackground = LabelPhotoPickerCell()
 	private var  cellBackgroundColor = LabelColorPickerCell.create(id: "cellBackgroundColor", description: Text.NewTag.descriptionBackgroundColor)
@@ -243,7 +241,8 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 	
 	
 	// MARK: Lyrics Cells
-	
+	private var cellTextLeft = LabelTextView.create(id: "cellTextLeft", description: Text.NewSheetTitleImage.descriptionTextLeft, placeholder: Text.NewSheetTitleImage.descriptionTextLeft)
+	private var cellTextRight = LabelTextView.create(id: "cellTextRight", description: Text.NewSheetTitleImage.descriptionTextRight, placeholder: Text.NewSheetTitleImage.descriptionTextRight)
 	private var  cellLyricsFontFamily = LabelPickerCell()
 	private let cellLyricsFontSize = LabelNumberCell.create(id: "cellLyricsFontSize", description: Text.NewTag.fontSizeDescription, initialValue: 10, minLimit: 6, maxLimit: 40)
 	private let cellLyricslAlignment = LabelPickerCell.create(id: "cellLyricsFontAlignment", description: Text.NewTag.descriptionAlignment, initialValueName: "Left", pickerValues: [(Int64(0), Text.NewTag.alignLeft), (Int64(0), Text.NewTag.alignCenter), (Int64(0), Text.NewTag.alignRight)])
@@ -261,7 +260,8 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 	private var  cellImageContentMode = LabelPickerCell()
 	
 	var modificationMode: ModificationMode = .newTag
-	var tag: Tag!
+	var tag: Tag! { didSet { tagTemp = TagTemp(tag: tag) }}
+	var tagTemp: TagTemp!
 	var sheet: Sheet!
 	var delegate: NewOrEditIphoneControllerDelegate?
 	private var sheetImage: UIImage?

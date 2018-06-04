@@ -34,7 +34,7 @@ class GoogleCell: UITableViewCell, GoogleFetcherLoginDelegate, FetcherObserver {
 	
 	static func create(id: String, description: String) -> GoogleCell {
 		let view : GoogleCell! = UIView.create(nib: "GoogleCell")
-		GoogleActivityFetcher.addObserver(view)
+//		GoogleActivityFetcher.addObserver(view)
 		let userDefaults = UserDefaults.standard
 		let userName = userDefaults.object(forKey: "GoogleUserName")
 		
@@ -121,5 +121,5 @@ class GoogleCell: UITableViewCell, GoogleFetcherLoginDelegate, FetcherObserver {
 	override func setHighlighted(_ highlighted: Bool, animated: Bool) {
 		
 	}
-    
+	
 }
