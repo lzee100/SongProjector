@@ -35,11 +35,8 @@ class SheetSplit: SheetView {
 	@IBOutlet var titleHeightConstraint: NSLayoutConstraint!
 	@IBOutlet var titleBottomConstraint: NSLayoutConstraint!
 	
-	private var sheet: SheetSplitEntity?
-	private var selectedTag: Tag?
 	private var zeroHeightConstraint: NSLayoutConstraint?
 	private var newTitleBottomConstraint: NSLayoutConstraint?
-	var position = 0
 	
 	override func customInit() {
 		Bundle.main.loadNibNamed("SheetSplit", owner: self, options: [:])
@@ -47,64 +44,35 @@ class SheetSplit: SheetView {
 		addSubview(sheetView)
 	}
 	
-	static func createWith(frame: CGRect, sheet: SheetSplitEntity, tag: Tag?, scaleFactor: CGFloat = 1) -> SheetSplit {
-		
-		let view = SheetSplit(frame: frame)
-		view.sheet = sheet
-		view.position = Int(sheet.position)
-		view.selectedTag = tag
-		view.timeLabel.text = ""
-		view.scaleFactor = scaleFactor
-		view.update()
-		return view
-	}
-	
-	
 	override func update() {
-		
+		timeLabel.text = ""
 		if let scaleFactor = scaleFactor {
 			
-			if scaleFactor > 1 {
-				titleLeftConstraint.constant = (titleLeftConstraint.constant / UIScreen.main.scale) * scaleFactor
-				titleTopConstraint.constant = (titleTopConstraint.constant / UIScreen.main.scale) * scaleFactor
-				timeLabelRightConstraint.constant = (timeLabelRightConstraint.constant / UIScreen.main.scale) * scaleFactor
-				containerTopConstraint.constant = (containerTopConstraint.constant / UIScreen.main.scale) * scaleFactor
-				containerRightConstraint.constant = (containerRightConstraint.constant / UIScreen.main.scale) * scaleFactor
-				containerBottomConstraint.constant = (containerBottomConstraint.constant / UIScreen.main.scale) * scaleFactor
-				containerLeftConstraint.constant = (containerLeftConstraint.constant / UIScreen.main.scale) * scaleFactor
-				titleHeightConstraint.constant = (titleHeightConstraint.constant / UIScreen.main.scale) * scaleFactor
-				titleBottomConstraint.constant = (titleBottomConstraint.constant / UIScreen.main.scale) * scaleFactor
-			}
+			titleLeftConstraint.constant = titleLeftConstraint.constant * scaleFactor
+			titleTopConstraint.constant = titleTopConstraint.constant * scaleFactor
+			timeLabelRightConstraint.constant = timeLabelRightConstraint.constant * scaleFactor
+			containerTopConstraint.constant = containerTopConstraint.constant * scaleFactor
+			containerRightConstraint.constant = containerRightConstraint.constant * scaleFactor
+			containerBottomConstraint.constant = containerBottomConstraint.constant * scaleFactor
+			containerLeftConstraint.constant = containerLeftConstraint.constant * scaleFactor
+			titleHeightConstraint.constant = titleHeightConstraint.constant * scaleFactor
+			titleBottomConstraint.constant = titleBottomConstraint.constant * scaleFactor
 			
-			if let songTitle = sheet?.title {
-				if let tag = selectedTag {
-//					if !tag.allHaveTitle && (sheet?.position ?? 0 > 0) {
-//
-//						// set height constraint to zero
-//						titleHeightConstraint.isActive = false
-//						zeroHeightConstraint = NSLayoutConstraint(item: descriptionTitle, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
-//						descriptionTitle.addConstraint(zeroHeightConstraint!)
-//
-////
-////						// set title.bottom - stackView.top constraint to zero
-////						titleBottomConstraint.isActive = false
-////						newTitleBottomConstraint = NSLayoutConstraint(item: stackView, attribute: .top, relatedBy: .equal, toItem: descriptionTitle, attribute: .bottom, multiplier: 1, constant: 0)
-////						descriptionTitle.addConstraint(newTitleBottomConstraint!)
-//
-//					} else {
-						// remove previous height constraint
-						if let zeroHeightConstraint = zeroHeightConstraint {
-							descriptionTitle.removeConstraint(zeroHeightConstraint)
-						}
-						if let newTitleBottomConstraint = newTitleBottomConstraint {
-							descriptionTitle.removeConstraint(newTitleBottomConstraint)
-						}
-						
-						// reset height constraint
-						titleHeightConstraint.isActive = true
-						titleBottomConstraint.isActive = true
-						
-//					}
+			if let songTitle = sheet.title {
+				if let tag = sheetTag {
+					
+					if let zeroHeightConstraint = zeroHeightConstraint {
+						descriptionTitle.removeConstraint(zeroHeightConstraint)
+					}
+					if let newTitleBottomConstraint = newTitleBottomConstraint {
+						descriptionTitle.removeConstraint(newTitleBottomConstraint)
+					}
+					
+					// reset height constraint
+					titleHeightConstraint.isActive = true
+					titleBottomConstraint.isActive = true
+					
+					//					}
 					descriptionTitle.attributedText = NSAttributedString(string: songTitle, attributes: tag.getTitleAttributes(scaleFactor))
 				} else {
 					descriptionTitle.text = songTitle
@@ -114,37 +82,31 @@ class SheetSplit: SheetView {
 				titleHeightConstraint.isActive = false
 				zeroHeightConstraint = NSLayoutConstraint(item: descriptionTitle, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
 				descriptionTitle.addConstraint(zeroHeightConstraint!)
-				
-//				// set title.bottom - stackView.top constraint to zero
-//				titleBottomConstraint.isActive = false
-//				newTitleBottomConstraint = NSLayoutConstraint(item: stackView, attribute: .top, relatedBy: .equal, toItem: descriptionTitle, attribute: .bottom, multiplier: 1, constant: 0)
-//				descriptionTitle.addConstraint(newTitleBottomConstraint!)
-				
 			}
 			
-			if let lyrics = sheet?.textLeft {
-				if let tag = selectedTag {
+			if let sheet = sheet as? SheetSplitEntity, let lyrics = sheet.textLeft {
+				if let tag = sheetTag {
 					textViewLeft.attributedText = NSAttributedString(string: lyrics, attributes: tag.getLyricsAttributes(scaleFactor))
 				} else {
 					textViewLeft.text = lyrics
 				}
 			}
 			
-			if let lyrics = sheet?.textRight {
-				if let tag = selectedTag {
+			if let sheet = sheet as? SheetSplitEntity, let lyrics = sheet.textRight {
+				if let tag = sheetTag {
 					textViewRight.attributedText = NSAttributedString(string: lyrics, attributes: tag.getLyricsAttributes(scaleFactor))
 				} else {
 					textViewRight.text = lyrics
 				}
 			}
 			
-			setBackgroundImage(image: isForExternalDispay ? selectedTag?.backgroundImage : selectedTag?.thumbnail)
+			setBackgroundImage(image: isForExternalDispay ? sheetTag?.backgroundImage : sheetTag?.thumbnail)
 			
-			if let titleBackgroundColor = selectedTag?.backgroundColorTitle, let title = selectedTag?.title, title != "" {
-				if let allHaveTitle = selectedTag?.allHaveTitle, allHaveTitle == false && position < 1 {
+			if let titleBackgroundColor = sheetTag?.backgroundColorTitle, let title = sheetTag?.title, title != "" {
+				if let allHaveTitle = sheetTag?.allHaveTitle, allHaveTitle == false && position < 1 {
 					titleBackgroundView.isHidden = false
 					titleBackgroundView.backgroundColor = titleBackgroundColor
-				} else if  let allHaveTitle = selectedTag?.allHaveTitle, allHaveTitle == true {
+				} else if  let allHaveTitle = sheetTag?.allHaveTitle, allHaveTitle == true {
 					titleBackgroundView.isHidden = false
 					titleBackgroundView.backgroundColor = titleBackgroundColor
 				} else {
@@ -154,7 +116,7 @@ class SheetSplit: SheetView {
 				titleBackgroundView.isHidden = true
 			}
 			
-			if let backgroundColor = selectedTag?.sheetBackgroundColor, selectedTag?.backgroundImage == nil {
+			if let backgroundColor = sheetTag?.sheetBackgroundColor, sheetTag?.backgroundImage == nil {
 				self.sheetBackgroundView.backgroundColor = backgroundColor
 			} else {
 				self.sheetBackgroundView.backgroundColor = .white
@@ -163,7 +125,7 @@ class SheetSplit: SheetView {
 	}
 	
 	override func changeOpacity(newValue: Float) {
-		if let _ = isForExternalDispay ? selectedTag?.backgroundImage : selectedTag?.thumbnail {
+		if let _ = isForExternalDispay ? sheetTag?.backgroundImage : sheetTag?.thumbnail {
 			sheetBackgroundImageView.alpha = CGFloat(newValue)
 		}
 	}
@@ -173,7 +135,7 @@ class SheetSplit: SheetView {
 			sheetBackgroundImageView.isHidden = false
 			sheetBackgroundImageView.contentMode = .scaleAspectFill
 			sheetBackgroundImageView.image = backgroundImage
-			if let backgroundTransparency = selectedTag?.backgroundTransparency {
+			if let backgroundTransparency = sheetTag?.backgroundTransparency {
 				sheetBackgroundImageView.alpha = CGFloat(backgroundTransparency)
 			}
 		} else {
@@ -189,7 +151,7 @@ class SheetSplit: SheetView {
 			return
 		}
 		
-		if let tag = selectedTag, let scaleFactor = scaleFactor { // is custom sheet
+		if let tag = sheetTag, let scaleFactor = scaleFactor { // is custom sheet
 			
 			timeLabel.attributedText = NSAttributedString(string: test, attributes: tag.getTitleAttributes(scaleFactor))
 			

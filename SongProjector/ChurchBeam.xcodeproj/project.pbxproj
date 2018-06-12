@@ -76,8 +76,6 @@
 		E3812DED201CE1D300F10B2C /* GoogleActivityFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3812DEC201CE1D300F10B2C /* GoogleActivityFetcher.swift */; };
 		E38347581FF7AAC9008AE69D /* LabelTextFieldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38347561FF7AAC9008AE69D /* LabelTextFieldCell.swift */; };
 		E38347591FF7AAC9008AE69D /* LabelTextFieldCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E38347571FF7AAC9008AE69D /* LabelTextFieldCell.xib */; };
-		E383475C1FF7DADD008AE69D /* LabelImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E383475A1FF7DADD008AE69D /* LabelImagePicker.swift */; };
-		E383475D1FF7DADD008AE69D /* LabelImagePicker.xib in Resources */ = {isa = PBXBuildFile; fileRef = E383475B1FF7DADD008AE69D /* LabelImagePicker.xib */; };
 		E38347601FF7E8B5008AE69D /* LabelPhotoPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E383475E1FF7E8B5008AE69D /* LabelPhotoPickerCell.swift */; };
 		E38347611FF7E8B5008AE69D /* LabelPhotoPickerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E383475F1FF7E8B5008AE69D /* LabelPhotoPickerCell.xib */; };
 		E38347631FF8434D008AE69D /* ImageExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38347621FF8434D008AE69D /* ImageExtensions.swift */; };
@@ -225,8 +223,6 @@
 		E3812DEC201CE1D300F10B2C /* GoogleActivityFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleActivityFetcher.swift; sourceTree = "<group>"; };
 		E38347561FF7AAC9008AE69D /* LabelTextFieldCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelTextFieldCell.swift; sourceTree = "<group>"; };
 		E38347571FF7AAC9008AE69D /* LabelTextFieldCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelTextFieldCell.xib; sourceTree = "<group>"; };
-		E383475A1FF7DADD008AE69D /* LabelImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelImagePicker.swift; sourceTree = "<group>"; };
-		E383475B1FF7DADD008AE69D /* LabelImagePicker.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelImagePicker.xib; sourceTree = "<group>"; };
 		E383475E1FF7E8B5008AE69D /* LabelPhotoPickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelPhotoPickerCell.swift; sourceTree = "<group>"; };
 		E383475F1FF7E8B5008AE69D /* LabelPhotoPickerCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelPhotoPickerCell.xib; sourceTree = "<group>"; };
 		E38347621FF8434D008AE69D /* ImageExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageExtensions.swift; sourceTree = "<group>"; };
@@ -487,8 +483,6 @@
 				E3D1CEE61FF6930600F9D7D9 /* LabelPickerCell.xib */,
 				E38347561FF7AAC9008AE69D /* LabelTextFieldCell.swift */,
 				E38347571FF7AAC9008AE69D /* LabelTextFieldCell.xib */,
-				E383475A1FF7DADD008AE69D /* LabelImagePicker.swift */,
-				E383475B1FF7DADD008AE69D /* LabelImagePicker.xib */,
 				E383475E1FF7E8B5008AE69D /* LabelPhotoPickerCell.swift */,
 				E383475F1FF7E8B5008AE69D /* LabelPhotoPickerCell.xib */,
 				E3F421A21FFE457500C332B0 /* LabelDoubleSwitchCell.swift */,
@@ -657,7 +651,6 @@
 				E39864D32098B14B00DF5199 /* GoogleService-Info.plist in Resources */,
 				E3F201E2201E2011002FF06E /* ActivityHeader.xib in Resources */,
 				E38347671FFA5099008AE69D /* SheetTitleContent.xib in Resources */,
-				E383475D1FF7DADD008AE69D /* LabelImagePicker.xib in Resources */,
 				E311713E1FE59DA3008D9D51 /* LaunchScreen.storyboard in Resources */,
 				E311713B1FE59DA3008D9D51 /* Assets.xcassets in Resources */,
 				E309DCF81FF48FF100C3D135 /* LabelColorPickerCell.xib in Resources */,
@@ -784,7 +777,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E383475C1FF7DADD008AE69D /* LabelImagePicker.swift in Sources */,
 				E3F201E0201E1AEC002FF06E /* DateExtensions.swift in Sources */,
 				E33268BE2022FCD2002CDA7C /* SoundPlayer.swift in Sources */,
 				E3C2AD122025A5E900ACFFE7 /* MixerView.swift in Sources */,

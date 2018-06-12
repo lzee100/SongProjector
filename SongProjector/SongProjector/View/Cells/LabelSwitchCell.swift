@@ -22,11 +22,6 @@ class LabelSwitchCell: ChurchBeamCell {
 	var delegate: LabelSwitchCellDelegate?
 	let preferredHeight: CGFloat = 60
 	
-	override func setup(title: String?, tag: TagTemp, sheet: SheetTemp, cellType: CellTitle) {
-		descriptionLabel.text = title
-		switch.isOn = tag.
-	}
-
 	static func create(id: String, description: String, initialValueIsOn: Bool = false) -> LabelSwitchCell {
 		let view : LabelSwitchCell! = UIView.create(nib: "LabelSwitchCell")
 		view.id = id

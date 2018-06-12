@@ -95,9 +95,9 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 				for subview in collectionCell.previewView.subviews {
 					subview.removeFromSuperview()
 				}
-				let sheet = sheets.count > 0 ? sheets[indexPath.section] : cluster?.hasSheetsArray[indexPath.section] as? SheetTitleContentEntity
-				let view = SheetTitleContent.createWith(frame: collectionCell.bounds, title: clusterTitle ?? cluster?.title, sheet: sheet, tag: selectedTag ?? cluster?.hasTag)
-				collectionCell.previewView.addSubview(view)
+				if let sheet = sheets.count > 0 ? sheets[indexPath.section] : cluster?.hasSheetsArray[indexPath.section] as? SheetTitleContentEntity {
+					collectionCell.previewView.addSubview(SheetView.createWith(frame: collectionCell.bounds, cluster: cluster, sheet: sheet, tag: selectedTag ?? cluster?.hasTag))
+				}
 				
 				if visibleCells.contains(indexPath) { // is cell was visible to user, animate
 					let y = collectionCell.bounds.minY

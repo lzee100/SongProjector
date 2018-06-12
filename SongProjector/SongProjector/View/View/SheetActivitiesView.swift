@@ -28,9 +28,7 @@ class SheetActivitiesView: SheetView {
 	@IBOutlet var containerTopConstraint: NSLayoutConstraint!
 	@IBOutlet var containerRightConstraint: NSLayoutConstraint!
 	
-	private var selectedTag: Tag?
 	private var activities: [GoogleActivity] = []
-	private var sheet: SheetActivities?
 	
 	override func customInit() {
 		Bundle.main.loadNibNamed("SheetActivitiesView", owner: self, options: [:])
@@ -39,53 +37,42 @@ class SheetActivitiesView: SheetView {
 		addSubview(sheetView)
 	}
 	
-	static func createWith(frame: CGRect, sheet: SheetActivities?, tag: Tag?, scaleFactor: CGFloat = 1, isPreview: Bool = false) -> SheetActivitiesView {
-		
-		let view = SheetActivitiesView(frame: frame)
-		view.selectedTag = tag
-		view.scaleFactor = scaleFactor
-		view.sheet = sheet
-		view.timeLabel.text = ""
-		if isPreview {
-			view.addPreviewActivities()
-		} else {
-			CoreGoogleActivities.setSortDescriptor(attributeName: "startDate", ascending: true)
-			view.activities = CoreGoogleActivities.getEntities()
-		}
-		view.update()
-		
-		return view
-	}
-	
 	override func update() {
 		
-		if let scaleFactor = scaleFactor, scaleFactor > 1 {
-
-			titleLeftConstraint.constant = (titleLeftConstraint.constant / UIScreen.main.scale)  * scaleFactor
-			titleTopConstraint.constant = (titleTopConstraint.constant / UIScreen.main.scale)  * scaleFactor
-			timeLabelRightConstraint.constant = (timeLabelRightConstraint.constant / UIScreen.main.scale)  * scaleFactor
-			containerTopConstraint.constant = (containerTopConstraint.constant / UIScreen.main.scale)  * scaleFactor
-			containerLeftConstraint.constant = (containerLeftConstraint.constant / UIScreen.main.scale)  * scaleFactor
-			containerBottomContraint.constant = (containerBottomContraint.constant / UIScreen.main.scale)  * scaleFactor
-			containerRightConstraint.constant = (containerRightConstraint.constant / UIScreen.main.scale)  * scaleFactor
+		timeLabel.text = ""
+		if isPreview {
+			addPreviewActivities()
+		} else {
+			CoreGoogleActivities.setSortDescriptor(attributeName: "startDate", ascending: true)
+			activities = CoreGoogleActivities.getEntities()
+		}
+		
+		if let scaleFactor = scaleFactor {
+			titleLeftConstraint.constant = titleLeftConstraint.constant  * scaleFactor
+			titleTopConstraint.constant = titleTopConstraint.constant  * scaleFactor
+			timeLabelRightConstraint.constant = timeLabelRightConstraint.constant  * scaleFactor
+			containerTopConstraint.constant = containerTopConstraint.constant  * scaleFactor
+			containerLeftConstraint.constant = containerLeftConstraint.constant  * scaleFactor
+			containerBottomContraint.constant = containerBottomContraint.constant  * scaleFactor
+			containerRightConstraint.constant = containerRightConstraint.constant  * scaleFactor
 		}
 		
 		var fontName = ""
-		if var attributes = selectedTag?.getTitleAttributes(scaleFactor ?? 1), let font = attributes[.font] as? UIFont {
+		if var attributes = sheetTag?.getTitleAttributes(scaleFactor ?? 1), let font = attributes[.font] as? UIFont {
 			fontName = font.fontName
 			attributes[.font] = UIFont(name: fontName, size: (self.descriptionTitle.frame.height / 3) * (scaleFactor ?? 1))
-			descriptionTitle.attributedText = NSAttributedString(string: sheet?.title ?? "", attributes: attributes)
+			descriptionTitle.attributedText = NSAttributedString(string: sheet.title ?? "", attributes: attributes)
 		} else {
-			descriptionTitle.attributedText = NSAttributedString(string: sheet?.title ?? "", attributes: selectedTag?.getTitleAttributes(scaleFactor ?? 1))
+			descriptionTitle.attributedText = NSAttributedString(string: sheet.title ?? "", attributes: sheetTag?.getTitleAttributes(scaleFactor ?? 1))
 		}
 		
 		layoutIfNeeded()
 		
 		addActivities()
 		
-		setBackgroundImage(image: isForExternalDispay ? selectedTag?.backgroundImage : selectedTag?.thumbnail)
+		setBackgroundImage(image: isForExternalDispay ? sheetTag?.backgroundImage : sheetTag?.thumbnail)
 		
-		if let backgroundColor = selectedTag?.sheetBackgroundColor, selectedTag?.backgroundImage == nil {
+		if let backgroundColor = sheetTag?.sheetBackgroundColor, sheetTag?.backgroundImage == nil {
 			self.backgroundView.backgroundColor = backgroundColor
 		} else {
 			self.backgroundView.backgroundColor = .white
@@ -116,12 +103,12 @@ class SheetActivitiesView: SheetView {
 			
 			// add HEADER
 			let frameHeader = CGRect(x: 0, y: 0, width: activitiesContainerView.bounds.width, height: activitiesContainerView.bounds.height / 10)
-			let headerThisWeek = ActivityHeader.createWith(frame: frameHeader, tag: selectedTag, title: Text.ActivitySheet.titleUpcomingTime, scaleFactor: scaleFactor)
+			let headerThisWeek = ActivityHeader.createWith(frame: frameHeader, tag: sheetTag, title: Text.ActivitySheet.titleUpcomingTime, scaleFactor: scaleFactor)
 			activitiesContainerView.addSubview(headerThisWeek)
 			
 			// add ACTIVITY THIS WEEK
 			let frame = CGRect(x: 0, y: activitiesContainerView.bounds.height / 10, width: activitiesContainerView.bounds.width, height: activitiesContainerView.bounds.height / 12)
-			let activityView = ActivityView.createWith(frame: frame, tag: selectedTag, activity: nil, scaleFactor: (scaleFactor ?? 1))
+			let activityView = ActivityView.createWith(frame: frame, tag: sheetTag, activity: nil, scaleFactor: (scaleFactor ?? 1))
 			activitiesContainerView.addSubview(activityView)
 			
 			return
@@ -178,7 +165,7 @@ class SheetActivitiesView: SheetView {
 				// add HEADER THIS WEEK
 				if !hasHeaderThisWeek {
 				let frameHeader = CGRect(x: 0, y: y, width: activitiesContainerView.bounds.width, height: activityHeight * headerPoints)
-				let headerThisWeek = ActivityHeader.createWith(frame: frameHeader, tag: selectedTag, title: Text.ActivitySheet.titleThisWeek, scaleFactor: scaleFactor)
+				let headerThisWeek = ActivityHeader.createWith(frame: frameHeader, tag: sheetTag, title: Text.ActivitySheet.titleThisWeek, scaleFactor: scaleFactor)
 				activitiesContainerView.addSubview(headerThisWeek)
 					y += (activityHeight * headerPoints)
 					hasHeaderThisWeek = true
@@ -186,7 +173,7 @@ class SheetActivitiesView: SheetView {
 				
 				// add ACTIVITY THIS WEEK
 				let frame = CGRect(x: 0, y: y, width: activitiesContainerView.bounds.width, height: activityHeight * 2)
-				let activityView = ActivityView.createWith(frame: frame, tag: selectedTag, activity: activity, scaleFactor: scaleFactor ?? 1)
+				let activityView = ActivityView.createWith(frame: frame, tag: sheetTag, activity: activity, scaleFactor: scaleFactor ?? 1)
 				activitiesContainerView.addSubview(activityView)
 				y += (activityHeight * 2)
 			}
@@ -195,7 +182,7 @@ class SheetActivitiesView: SheetView {
 				// add HEADER NEXT WEEK
 				if !hasHeaderNextWeek {
 					let frameHeader = CGRect(x: 0, y: y, width: activitiesContainerView.bounds.width, height: activityHeight * headerPoints)
-					let headerThisWeek = ActivityHeader.createWith(frame: frameHeader, tag: selectedTag, title: Text.ActivitySheet.titleNextWeek, scaleFactor: scaleFactor)
+					let headerThisWeek = ActivityHeader.createWith(frame: frameHeader, tag: sheetTag, title: Text.ActivitySheet.titleNextWeek, scaleFactor: scaleFactor)
 					activitiesContainerView.addSubview(headerThisWeek)
 					y += (activityHeight * headerPoints)
 					hasHeaderNextWeek = true
@@ -203,7 +190,7 @@ class SheetActivitiesView: SheetView {
 				
 				// add ACTIVITY NEXT WEEK
 				let frame = CGRect(x: 0, y: y, width: activitiesContainerView.bounds.width, height: activityHeight * 2)
-				let activityView = ActivityView.createWith(frame: frame, tag: selectedTag, activity: activity, scaleFactor: scaleFactor ?? 1)
+				let activityView = ActivityView.createWith(frame: frame, tag: sheetTag, activity: activity, scaleFactor: scaleFactor ?? 1)
 				activitiesContainerView.addSubview(activityView)
 				y += (activityHeight * 2)
 			}
@@ -212,7 +199,7 @@ class SheetActivitiesView: SheetView {
 			else {
 				if !hasHeaderUpcoming {
 					let frameHeader = CGRect(x: 0, y: y, width: activitiesContainerView.bounds.width, height: activityHeight * headerPoints)
-					let headerThisWeek = ActivityHeader.createWith(frame: frameHeader, tag: selectedTag, title: Text.ActivitySheet.titleUpcomingTime, scaleFactor: scaleFactor)
+					let headerThisWeek = ActivityHeader.createWith(frame: frameHeader, tag: sheetTag, title: Text.ActivitySheet.titleUpcomingTime, scaleFactor: scaleFactor)
 					activitiesContainerView.addSubview(headerThisWeek)
 					y += (activityHeight * headerPoints)
 					hasHeaderUpcoming = true
@@ -220,7 +207,7 @@ class SheetActivitiesView: SheetView {
 				
 				// add ACTIVITY NEXT WEEK
 				let frame = CGRect(x: 0, y: y, width: activitiesContainerView.bounds.width, height: activityHeight * 2)
-				let activityView = ActivityView.createWith(frame: frame, tag: selectedTag, activity: activity, scaleFactor: scaleFactor ?? 1)
+				let activityView = ActivityView.createWith(frame: frame, tag: sheetTag, activity: activity, scaleFactor: scaleFactor ?? 1)
 				activitiesContainerView.addSubview(activityView)
 				y += (activityHeight * 2)
 			}
@@ -231,7 +218,7 @@ class SheetActivitiesView: SheetView {
 	}
 	
 	override func changeOpacity(newValue: Float) {
-		if let _ = isForExternalDispay ? selectedTag?.backgroundImage : selectedTag?.thumbnail {
+		if let _ = isForExternalDispay ? sheetTag?.backgroundImage : sheetTag?.thumbnail {
 			backgroundImageView.alpha = CGFloat(newValue)
 		}
 	}
@@ -241,7 +228,7 @@ class SheetActivitiesView: SheetView {
 			backgroundImageView.isHidden = false
 			backgroundImageView.contentMode = .scaleAspectFill
 			backgroundImageView.image = backgroundImage
-			if let backgroundTransparency = selectedTag?.backgroundTransparency {
+			if let backgroundTransparency = sheetTag?.backgroundTransparency {
 				backgroundImageView.alpha = CGFloat(backgroundTransparency)
 			}
 		} else {
@@ -257,7 +244,7 @@ class SheetActivitiesView: SheetView {
 			return
 		}
 		
-		if let tag = selectedTag, let scaleFactor = scaleFactor { // is custom sheet
+		if let tag = sheetTag, let scaleFactor = scaleFactor { // is custom sheet
 			
 			timeLabel.attributedText = NSAttributedString(string: test, attributes: tag.getTitleAttributes(scaleFactor))
 			

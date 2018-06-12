@@ -342,97 +342,15 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 					
 					if let selectedSheet = selectedSheet {
 						
-						switch selectedSheet.type {
-						case .SheetTitleContent:
-							print("Title content")
-							
-							// current sheet
-							if let tag = selectedSheet.hasTag ?? selectedCluster?.hasTag {
-								let view = SheetTitleContent.createWith(frame: sheetDisplayer.bounds, title: selectedCluster?.title, sheet: selectedSheet as? SheetTitleContentEntity, tag: tag, scaleFactor: scaleFactor)
-								sheetDisplayer.addSubview(view)
-								
-								if let externalDisplayWindow = externalDisplayWindow {
-									_ = SheetTitleContent.createWith(frame: externalDisplayWindow.bounds, title: selectedCluster?.title, sheet: selectedSheet as? SheetTitleContentEntity, tag: tag, scaleFactor: (externalDisplayWindowWidth / sheetDisplayer.bounds.width) * scaleFactor).toExternalDisplay()
-								}
-							}
-							
-						case .SheetTitleImage:
-							let view = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetTitleImageEntity, tag: selectedSheet.hasTag, scaleFactor: scaleFactor)
-							sheetDisplayer.addSubview(view)
-							
-							if let externalDisplayWindow = externalDisplayWindow {
-								_ = SheetTitleImage.createWith(frame: externalDisplayWindow.bounds, sheet: selectedSheet as! SheetTitleImageEntity, tag: selectedSheet.hasTag, scaleFactor: (externalDisplayWindowWidth / sheetDisplayer.bounds.width) * scaleFactor).toExternalDisplay()
-							}
-							
-						case .SheetSplit:
-							let view = SheetSplit.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetSplitEntity, tag: selectedSheet.hasTag, scaleFactor: scaleFactor)
-							sheetDisplayer.addSubview(view)
-							
-							if let externalDisplayWindow = externalDisplayWindow {
-								_ = SheetSplit.createWith(frame: externalDisplayWindow.bounds, sheet: selectedSheet as! SheetSplitEntity, tag: selectedSheet.hasTag, scaleFactor: (externalDisplayWindowWidth / sheetDisplayer.bounds.width) * scaleFactor).toExternalDisplay()
-							}
-							
-						case .SheetEmpty:
-							let view = SheetEmpty.createWith(frame: sheetDisplayer.bounds, tag: selectedSheet.hasTag, scaleFactor: scaleFactor)
-							sheetDisplayer.addSubview(view)
-							if let externalDisplayWindow = externalDisplayWindow {
-								_ = SheetEmpty.createWith(frame: externalDisplayWindow.bounds, tag: selectedSheet.hasTag, scaleFactor: (externalDisplayWindowWidth / sheetDisplayer.bounds.width) * scaleFactor).toExternalDisplay()
-							}
-							
-						case .SheetActivities:
-							let view = SheetActivitiesView.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as? SheetActivities, tag: selectedSheet.hasTag, scaleFactor: scaleFactor)
-							sheetDisplayer.addSubview(view)
-							if let externalDisplayWindow = externalDisplayWindow {
-								_ = SheetActivitiesView.createWith(frame: externalDisplayWindow.bounds, sheet: selectedSheet as? SheetActivities, tag: selectedSheet.hasTag, scaleFactor: (externalDisplayWindowWidth / sheetDisplayer.bounds.width) * scaleFactor).toExternalDisplay()
-							}
-						}
-					
+						sheetDisplayer.addSubview(SheetView.createWith(frame: sheetDisplayer.bounds, cluster: selectedCluster, sheet: selectedSheet, tag: selectedSheet.hasTag ?? selectedCluster?.hasTag, scaleFactor: scaleFactor, position: Int(selectedSheet.position), toExternalDisplay: true))
+						
 						if let previousSheet = getPreviousSheet() {
 							sheetDisplayerPrevious.isHidden = false
 							let previousScaleFactor: CGFloat = sheetDisplayerPrevious.bounds.height / sheetDisplayer.bounds.height
+							let tag = previousSheet.hasTag ?? getTagForPreviousSheet(sheet: previousSheet)
 							
-							switch previousSheet.type {
-							case .SheetTitleContent:
-								// current sheet
-								if let tag = previousSheet.hasTag ?? getTagForPreviousSheet(sheet: previousSheet) {
-									let view = SheetTitleContent.createWith(frame: sheetDisplayerPrevious.bounds, title: previousCluster?.title ?? selectedCluster?.title, sheet: previousSheet as? SheetTitleContentEntity, tag: tag, scaleFactor: previousScaleFactor)
-									sheetDisplayerPrevious.addSubview(view)
-									
-									if let externalDisplayWindow = externalDisplayWindow {
-										_ = SheetTitleContent.createWith(frame: externalDisplayWindow.bounds, title: previousCluster?.title ?? selectedCluster?.title, sheet: previousSheet as? SheetTitleContentEntity, tag: tag, scaleFactor: (externalDisplayWindowWidth / sheetDisplayerPrevious.bounds.width) * previousScaleFactor).toExternalDisplay()
-									}
-								}
-								
-							case .SheetTitleImage:
-								let view = SheetTitleImage.createWith(frame: sheetDisplayerPrevious.bounds, sheet: previousSheet as! SheetTitleImageEntity, tag: previousSheet.hasTag, scaleFactor: previousScaleFactor)
-								sheetDisplayerPrevious.addSubview(view)
-								
-								if let externalDisplayWindow = externalDisplayWindow {
-									_ = SheetTitleImage.createWith(frame: externalDisplayWindow.bounds, sheet: previousSheet as! SheetTitleImageEntity, tag: previousSheet.hasTag, scaleFactor: (externalDisplayWindowWidth / sheetDisplayerPrevious.bounds.width) * previousScaleFactor).toExternalDisplay()
-								}
-								
-							case .SheetSplit:
-								let view = SheetSplit.createWith(frame: sheetDisplayerPrevious.bounds, sheet: previousSheet as! SheetSplitEntity, tag: previousSheet.hasTag, scaleFactor: previousScaleFactor)
-								sheetDisplayerPrevious.addSubview(view)
-								
-								if let externalDisplayWindow = externalDisplayWindow {
-									_ = SheetSplit.createWith(frame: externalDisplayWindow.bounds, sheet: previousSheet as! SheetSplitEntity, tag: previousSheet.hasTag, scaleFactor: (externalDisplayWindowWidth / sheetDisplayerPrevious.bounds.width) * previousScaleFactor).toExternalDisplay()
-								}
-								
-							case .SheetEmpty:
-								let view = SheetEmpty.createWith(frame: sheetDisplayerPrevious.bounds, tag: previousSheet.hasTag, scaleFactor: previousScaleFactor)
-								sheetDisplayerPrevious.addSubview(view)
-								if let externalDisplayWindow = externalDisplayWindow {
-									_ = SheetEmpty.createWith(frame: externalDisplayWindow.bounds, tag: previousSheet.hasTag, scaleFactor: (externalDisplayWindowWidth / sheetDisplayerPrevious.bounds.width) * previousScaleFactor).toExternalDisplay()
-								}
-								
-							case .SheetActivities:
-								let view = SheetActivitiesView.createWith(frame: sheetDisplayerPrevious.bounds, sheet: previousSheet as? SheetActivities, tag: previousSheet.hasTag, scaleFactor: previousScaleFactor)
-								sheetDisplayerPrevious.addSubview(view)
-								if let externalDisplayWindow = externalDisplayWindow {
-									_ = SheetActivitiesView.createWith(frame: externalDisplayWindow.bounds, sheet: previousSheet as? SheetActivities, tag: previousSheet.hasTag, scaleFactor: (externalDisplayWindowWidth / sheetDisplayerPrevious.bounds.width) * previousScaleFactor).toExternalDisplay()
-								}
-							}
+							sheetDisplayerPrevious.addSubview(SheetView.createWith(frame: sheetDisplayerPrevious.bounds, cluster: selectedCluster, sheet: selectedSheet, tag: tag, scaleFactor: previousScaleFactor, position: Int(selectedSheet.position), toExternalDisplay: true))
+							
 							previousCluster = nil
 							
 						}
@@ -440,51 +358,15 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 							sheetDisplayerPrevious.isHidden = true
 						}
 						
+						// FiXME - iets doen met het ophalen van de juiste cluster // selected cluster of next cluster... voor titel
 						if let nextSheet = getNextSheet() {
 							sheetDisplayerNext.isHidden = false
 							let nextScaleFactor: CGFloat = sheetDisplayerNext.bounds.height / sheetDisplayer.bounds.height
+							let tag = nextSheet.hasTag ?? getTagForNextSheet(sheet: nextSheet)
 							
-							switch nextSheet.type {
-							case .SheetTitleContent:
-								// current sheet
-								if let tag = nextSheet.hasTag ?? getTagForNextSheet(sheet: nextSheet) {
-									let view = SheetTitleContent.createWith(frame: sheetDisplayerNext.bounds, title: nextCluster?.title ?? selectedCluster?.title, sheet: nextSheet as? SheetTitleContentEntity, tag: tag, scaleFactor: nextScaleFactor)
-									sheetDisplayerNext.addSubview(view)
-									
-									if let externalDisplayWindow = externalDisplayWindow {
-										_ = SheetTitleContent.createWith(frame: externalDisplayWindow.bounds, title: nextCluster?.title ?? selectedCluster?.title, sheet: nextSheet as? SheetTitleContentEntity, tag: tag, scaleFactor: (externalDisplayWindowWidth / sheetDisplayerNext.bounds.width) * nextScaleFactor).toExternalDisplay()
-									}
-								}
-								
-							case .SheetTitleImage:
-								let view = SheetTitleImage.createWith(frame: sheetDisplayerNext.bounds, sheet: nextSheet as! SheetTitleImageEntity, tag: nextSheet.hasTag, scaleFactor: nextScaleFactor)
-								sheetDisplayerNext.addSubview(view)
-								
-								if let externalDisplayWindow = externalDisplayWindow {
-									_ = SheetTitleImage.createWith(frame: externalDisplayWindow.bounds, sheet: nextSheet as! SheetTitleImageEntity, tag: nextSheet.hasTag, scaleFactor: (externalDisplayWindowWidth / sheetDisplayerNext.bounds.width) * nextScaleFactor).toExternalDisplay()
-								}
-								
-							case .SheetSplit:
-								let view = SheetSplit.createWith(frame: sheetDisplayerNext.bounds, sheet: nextSheet as! SheetSplitEntity, tag: nextSheet.hasTag, scaleFactor: nextScaleFactor)
-								sheetDisplayerNext.addSubview(view)
-								
-								if let externalDisplayWindow = externalDisplayWindow {
-									_ = SheetSplit.createWith(frame: externalDisplayWindow.bounds, sheet: nextSheet as! SheetSplitEntity, tag: nextSheet.hasTag, scaleFactor: (externalDisplayWindowWidth / sheetDisplayerNext.bounds.width) * nextScaleFactor).toExternalDisplay()
-								}
-								
-							case .SheetEmpty:
-								let view = SheetEmpty.createWith(frame: sheetDisplayerNext.bounds, tag: nextSheet.hasTag, scaleFactor: nextScaleFactor)
-								sheetDisplayerNext.addSubview(view)
-								if let externalDisplayWindow = externalDisplayWindow {
-									_ = SheetEmpty.createWith(frame: externalDisplayWindow.bounds, tag: nextSheet.hasTag, scaleFactor: (externalDisplayWindowWidth / sheetDisplayerNext.bounds.width) * nextScaleFactor).toExternalDisplay()
-								}
-								
-							case .SheetActivities:
-								let view = SheetActivitiesView.createWith(frame: sheetDisplayerNext.bounds, sheet: nextSheet as? SheetActivities, tag: nextSheet.hasTag, scaleFactor: nextScaleFactor)
-								sheetDisplayerNext.addSubview(view)
-								if let externalDisplayWindow = externalDisplayWindow {
-									_ = SheetActivitiesView.createWith(frame: externalDisplayWindow.bounds, sheet: nextSheet as? SheetActivities, tag: nextSheet.hasTag, scaleFactor: (externalDisplayWindowWidth / sheetDisplayerNext.bounds.width) * nextScaleFactor).toExternalDisplay()
-								}
+							
+							sheetDisplayerNext.addSubview(SheetView.createWith(frame: sheetDisplayerNext.bounds, cluster: selectedCluster, sheet: selectedSheet, tag: tag, scaleFactor: nextScaleFactor, position: Int(nextSheet.position), toExternalDisplay: true))
+							
 							}
 							nextCluster = nil
 						}
@@ -492,7 +374,6 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 							sheetDisplayerNext.isHidden = true
 						}
 						
-					}
 				}
 			}
 			
@@ -605,43 +486,12 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 			
 			// current sheet
 			// current sheet, move to left
-			let nextSheet = getNextSheet()
-			var currentSheetView: SheetView?
-			var nextSheetView: SheetView?
+			if let nextSheet = getNextSheet(), let selectedSheet = selectedSheet {
+				let currentSheetView = SheetView.createWith(frame: sheetDisplayer.bounds, cluster: selectedCluster, sheet: selectedSheet, tag: selectedSheet.hasTag ?? selectedCluster?.hasTag, scaleFactor: scaleFactor, toExternalDisplay: true)
 			
-			
-			if let selectedSheet = selectedSheet {
-				switch selectedSheet.type {
-				case .SheetTitleContent:
-					currentSheetView = SheetTitleContent.createWith(frame: sheetDisplayer.bounds, title: selectedCluster?.title, sheet: selectedSheet as? SheetTitleContentEntity, tag: selectedSheet.hasTag ?? selectedCluster?.hasTag, scaleFactor: scaleFactor)
-				case .SheetTitleImage:
-					currentSheetView = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetTitleImageEntity, tag: selectedSheet.hasTag, scaleFactor: scaleFactor)
-				case .SheetSplit:
-					currentSheetView = SheetSplit.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetSplitEntity, tag: selectedSheet.hasTag, scaleFactor: scaleFactor)
-				case .SheetEmpty:
-					currentSheetView = SheetEmpty.createWith(frame: sheetDisplayer.bounds, tag: selectedSheet.hasTag, scaleFactor: scaleFactor)
-				case .SheetActivities:
-					currentSheetView = SheetActivitiesView.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as? SheetActivities, tag: selectedSheet.hasTag, scaleFactor: scaleFactor)
-				}
-				
-				switch nextSheet?.type {
-				case .none: break
-				case .some(.SheetTitleContent):
-					nextSheetView = SheetTitleContent.createWith(frame: sheetDisplayer.bounds, title: isNextOrPreviousCluster ? nextCluster?.title : selectedCluster?.title, sheet: nextSheet as? SheetTitleContentEntity, tag: isNextOrPreviousCluster ? getTagForNextSheet(sheet: nextSheet) : nextSheet?.hasTag ?? selectedCluster?.hasTag, scaleFactor: scaleFactor)
-				case .some(.SheetTitleImage):
-					nextSheetView = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: nextSheet as! SheetTitleImageEntity, tag: nextSheet?.hasTag, scaleFactor: scaleFactor)
-				case .some(.SheetSplit):
-					nextSheetView = SheetSplit.createWith(frame: sheetDisplayer.bounds, sheet: nextSheet as! SheetSplitEntity, tag: nextSheet?.hasTag, scaleFactor: scaleFactor)
-				case .some(.SheetEmpty):
-					nextSheetView = SheetEmpty.createWith(frame: sheetDisplayer.bounds, tag: nextSheet?.hasTag, scaleFactor: scaleFactor)
-				case .some(.SheetActivities):
-					nextSheetView = SheetActivitiesView.createWith(frame: sheetDisplayer.bounds, sheet: nextSheet as? SheetActivities, tag: nextSheet?.hasTag, scaleFactor: scaleFactor)
-				}
-				
-			}
-			
-			if let currentSheetView = currentSheetView, let nextSheetView = nextSheetView {
-				
+				let tag = isNextOrPreviousCluster ? getTagForNextSheet(sheet: nextSheet) : nextSheet.hasTag
+				let nextSheetView = SheetView.createWith(frame: sheetDisplayerNext.bounds, cluster: isNextOrPreviousCluster ? nextCluster : selectedCluster, sheet: nextSheet, tag: tag, scaleFactor: scaleFactor, toExternalDisplay: true)
+
 				let imageCurrentSheet = currentSheetView.asImage()
 				let currentImageView = UIImageView(frame: sheetDisplayer.frame)
 				currentImageView.image = imageCurrentSheet
@@ -649,9 +499,7 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 				let imageNext = nextSheetView.asImage()
 				let nextImageView = UIImageView(frame: sheetDisplayerNext.frame)
 				nextImageView.image = imageNext
-				
-				
-				
+
 				view.addSubview(currentImageView)
 				view.addSubview(nextImageView)
 				
@@ -672,7 +520,6 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 					completion()
 				})
 			}
-			
 		case .right:
 			
 			// show previous sheet
@@ -681,53 +528,13 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 				sheetDisplayerNext.isHidden = position == numberOfSheets ? true : false
 				sheetDisplayerPrevious.isHidden = position == 0 ? true : false
 				
-				let previousSheet = getPreviousSheet()
+				if let previousSheet = getPreviousSheet(), let selectedSheet = selectedSheet {
 				
 				// current sheet
 				// current sheet, move to left
-				var currentSheetView: SheetView?
-				var previousSheetView: SheetView?
-				
-				if let selectedSheet = selectedSheet {
-					switch selectedSheet.type {
-					case .SheetTitleContent:
-						
-						currentSheetView = SheetTitleContent.createWith(frame: sheetDisplayer.bounds, title: selectedCluster?.title, sheet: selectedSheet as? SheetTitleContentEntity, tag: selectedSheet.hasTag ?? selectedCluster?.hasTag, scaleFactor: scaleFactor)
-						
-					case .SheetTitleImage:
-						
-						currentSheetView = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetTitleImageEntity, tag: selectedSheet.hasTag, scaleFactor: scaleFactor)
-						
-						
-					case .SheetSplit:
-						
-						currentSheetView = SheetSplit.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as! SheetSplitEntity, tag: selectedSheet.hasTag, scaleFactor: scaleFactor)
-						
-					case .SheetEmpty:
-						
-						currentSheetView = SheetEmpty.createWith(frame: sheetDisplayer.bounds, tag: selectedSheet.hasTag, scaleFactor: scaleFactor)
-					case .SheetActivities:
-						currentSheetView = SheetActivitiesView.createWith(frame: sheetDisplayer.bounds, sheet: selectedSheet as? SheetActivities, tag: selectedSheet.hasTag, scaleFactor: scaleFactor)
-					}
-					
-					switch previousSheet?.type {
-					case .none: break
-					case .some(.SheetTitleContent):
-						previousSheetView = SheetTitleContent.createWith(frame: sheetDisplayer.bounds, title: isNextOrPreviousCluster ? previousCluster?.title : selectedCluster?.title, sheet: previousSheet as? SheetTitleContentEntity, tag: isNextOrPreviousCluster ? getTagForPreviousSheet(sheet: previousSheet) : previousSheet?.hasTag ?? selectedCluster?.hasTag, scaleFactor: scaleFactor)
-					case .some(.SheetTitleImage):
-						previousSheetView = SheetTitleImage.createWith(frame: sheetDisplayer.bounds, sheet: previousSheet as! SheetTitleImageEntity, tag: previousSheet?.hasTag, scaleFactor: scaleFactor)
-					case .some(.SheetSplit):
-						previousSheetView = SheetSplit.createWith(frame: sheetDisplayer.bounds, sheet: previousSheet as! SheetSplitEntity, tag: previousSheet?.hasTag, scaleFactor: scaleFactor)
-					case .some(.SheetEmpty):
-						previousSheetView = SheetEmpty.createWith(frame: sheetDisplayer.bounds, tag: previousSheet?.hasTag, scaleFactor: scaleFactor)
-					case .some(.SheetActivities):
-						currentSheetView = SheetActivitiesView.createWith(frame: sheetDisplayer.bounds, sheet: previousSheet as? SheetActivities, tag: previousSheet?.hasTag, scaleFactor: scaleFactor)
-					}
-					
-				}
-				
-				if let currentSheetView = currentSheetView, let previousSheetView = previousSheetView {
-					
+					let currentSheetView = SheetView.createWith(frame: sheetDisplayer.bounds, cluster: selectedCluster, sheet: selectedSheet, tag: selectedSheet.hasTag ?? selectedCluster?.hasTag, scaleFactor: scaleFactor)
+					let previousSheetView = SheetView.createWith(frame: sheetDisplayerPrevious.bounds, cluster: isNextOrPreviousCluster ? previousCluster : selectedCluster, sheet: previousSheet, tag: isNextOrPreviousCluster ? getTagForPreviousSheet(sheet: previousSheet) : previousSheet.hasTag, scaleFactor: scaleFactor)
+
 					let imageCurrentSheet = currentSheetView.asImage()
 					let currentImageView = UIImageView(frame: sheetDisplayer.frame)
 					currentImageView.image = imageCurrentSheet
@@ -813,7 +620,7 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 	private func addEmptySheet(_ selectedCluster: Cluster?, isEmptySheetFirst: Bool?) {
 		if let sheet = selectedCluster?.hasSheetsArray.first {
 			emptySheet = sheet.emptySheet
-			emptySheet?.title = Text.Sheet.emptySheetTitle
+			emptySheet?.isEmptySheet = true
 			if let isEmptySheetFirst = isEmptySheetFirst, isEmptySheetFirst {
 				emptySheet?.position = 0
 				if let sheets = selectedCluster?.hasSheets as? Set<Sheet> {

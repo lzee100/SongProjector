@@ -64,11 +64,14 @@ class LabelPhotoPickerCell: UITableViewCell, UIImagePickerControllerDelegate, UI
 		func setImage(image: UIImage?) {
 			button.setTitle(image == nil ? Text.NewTag.buttonBackgroundImagePick : Text.NewTag.buttonBackgroundImageChange, for: .normal)
 			let imageView = UIImageView(frame: imageThumbnail.frame)
+			imageView.contentMode = .scaleAspectFill
+			imageView.clipsToBounds = true
 			imageView.image = image
 			imageThumbnail.image = imageView.asImage()
+			imageThumbnail.layer.cornerRadius = CGFloat(5)
 			pickedImage = image
 			delegate?.didSelectImage(cell: self, image: image)
-			layoutIfNeeded()
+			setNeedsDisplay()
 		}
 		
 		func showImage() {
@@ -94,19 +97,22 @@ class LabelPhotoPickerCell: UITableViewCell, UIImagePickerControllerDelegate, UI
 		}
 	
 	func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-			if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
-				let scaledImage = pickedImage.resizeImage(imageThumbnail.frame.size.width, opaque: false)
-					imageThumbnail.image = scaledImage
-					imageThumbnail.contentMode = .scaleAspectFill
-					imageThumbnail.clipsToBounds = true
+		if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
+			DispatchQueue.main.async {
+				let scaledImage = pickedImage.resizeImage(self.imageThumbnail.frame.size.width, opaque: false)
+				self.imageThumbnail.image = scaledImage
+				self.imageThumbnail.contentMode = .scaleAspectFill
+				self.imageThumbnail.clipsToBounds = true
+				self.setNeedsDisplay()
 				
 				self.pickedImage = pickedImage
-				delegate?.didSelectImage(cell: self, image: pickedImage)
-			}
-			if let sender = sender {
-				sender.dismiss(animated: true)
+				self.delegate?.didSelectImage(cell: self, image: pickedImage)
+				if let sender = self.sender {
+					sender.dismiss(animated: true)
+				}
 			}
 		}
+	}
 		
 	override func setHighlighted(_ highlighted: Bool, animated: Bool) {
 	}

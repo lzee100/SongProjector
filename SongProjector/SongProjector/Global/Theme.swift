@@ -92,7 +92,7 @@ class Theme {
 		let label = UILabel.appearance(whenContainedInInstancesOf: [UITableViewCell.self])
 		label.textColor = .white
 
-		let cellLabel = UILabel.appearance(whenContainedInInstancesOf: [UITableViewCell.self, BasicCell.self, AddButtonCell.self, NewSongSheetCell.self, LabelSwitchCell.self, LabelColorPickerCell.self, LabelNumberCell.self, LabelPickerCell.self, LabelTextFieldCell.self, LabelImagePickerCell.self, LabelPhotoPickerCell.self, LabelDoubleSwitchCell.self])
+		let cellLabel = UILabel.appearance(whenContainedInInstancesOf: [UITableViewCell.self, BasicCell.self, AddButtonCell.self, NewSongSheetCell.self, LabelSwitchCell.self, LabelColorPickerCell.self, LabelNumberCell.self, LabelPickerCell.self, LabelTextFieldCell.self, LabelPhotoPickerCell.self, LabelDoubleSwitchCell.self])
 		cellLabel.textColor = .white
 
 	}

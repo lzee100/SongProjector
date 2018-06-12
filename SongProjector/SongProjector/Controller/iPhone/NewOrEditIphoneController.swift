@@ -1225,45 +1225,8 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 			
 			generateTag()
 			
-			var newPreviewView = UIView()
+			previewView.addSubview(SheetView.createWith(frame: previewView.bounds, cluster: nil, sheet: sheet, tag: tag, toExternalDisplay: true))
 			
-			switch sheet.type {
-			case .SheetTitleContent:
-				if let sheet = sheet as? SheetTitleContentEntity {
-					newPreviewView = SheetTitleContent.createWith(frame: previewView.bounds, title: sheet.title, sheet: sheet, tag: tag)
-					if let externalDisplayWindow = externalDisplayWindow {
-						_ = SheetTitleContent.createWith(frame: externalDisplayWindow.bounds, title: sheet.title, sheet: sheet, tag: tag, scaleFactor: externalDisplayWindowWidth / previewView.bounds.width).toExternalDisplay()
-					}
-				}
-			case .SheetTitleImage:
-				if let sheet = sheet as? SheetTitleImageEntity {
-					newPreviewView = SheetTitleImage.createWith(frame: previewView.bounds, sheet: sheet, tag: tag)
-					if let externalDisplayWindow = externalDisplayWindow {
-						_ = SheetTitleImage.createWith(frame: externalDisplayWindow.bounds, sheet: sheet, tag: tag, scaleFactor: externalDisplayWindowWidth / previewView.bounds.width).toExternalDisplay()
-					}
-				}
-			case .SheetSplit:
-				if let sheet = sheet as? SheetSplitEntity {
-					newPreviewView = SheetSplit.createWith(frame: previewView.bounds, sheet: sheet, tag: tag)
-					if let externalDisplayWindow = externalDisplayWindow {
-						_ = SheetSplit.createWith(frame: externalDisplayWindow.bounds, sheet: sheet, tag: tag, scaleFactor: externalDisplayWindowWidth / previewView.bounds.width).toExternalDisplay()
-					}
-				}
-			case .SheetEmpty:
-				newPreviewView = SheetEmpty.createWith(frame: previewView.bounds, tag: tag)
-				if let externalDisplayWindow = externalDisplayWindow {
-					_ = SheetEmpty.createWith(frame: externalDisplayWindow.bounds, tag: tag, scaleFactor: externalDisplayWindowWidth / previewView.bounds.width).toExternalDisplay()
-				}
-			case .SheetActivities:
-				if let sheet = sheet as? SheetActivities {
-					newPreviewView = SheetActivitiesView.createWith(frame: previewView.bounds, sheet: sheet, tag: tag, isPreview: true)
-					if let externalDisplayWindow = externalDisplayWindow {
-						_ = SheetActivitiesView.createWith(frame: externalDisplayWindow.bounds, sheet: sheet, tag: tag, scaleFactor: externalDisplayWindowWidth / previewView.bounds.width, isPreview: true).toExternalDisplay()
-					}
-				}
-			}
-			
-			previewView.addSubview(newPreviewView)
 			changeBackgroundImage()
 			changeSheetImage()
 		}
@@ -1497,7 +1460,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 			
 			generateTag()
 			
-			if let tagImage = tagImage {
+			if let tagImage = tagImage, let imageRep = UIImagePNGRepresentation(tagImage) {
 				tag.backgroundImage = tagImage
 			}
 

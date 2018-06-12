@@ -37,14 +37,10 @@ class SheetTitleImage: SheetView {
 	@IBOutlet var containerBottomConstraint: NSLayoutConstraint!
 	
 	
-	
-	private var sheet: SheetTitleImageEntity?
-	private var selectedTag: Tag?
 	private var zeroHeightConstraint: NSLayoutConstraint?
 	private var newTitleHeightConstraint: NSLayoutConstraint?
 	private var titleContentConstraint: NSLayoutConstraint?
 	private var newContentHeightConstraint: NSLayoutConstraint?
-	var position = 0
 	
 	override func customInit() {
 		Bundle.main.loadNibNamed("SheetTitleImage", owner: self, options: [:])
@@ -52,77 +48,66 @@ class SheetTitleImage: SheetView {
 		addSubview(sheetView)
 	}
 	
-	static func createWith(frame: CGRect, sheet: SheetTitleImageEntity, tag: Tag?, scaleFactor: CGFloat = 1) -> SheetTitleImage {
-		
-		let view = SheetTitleImage(frame: frame)
-		view.sheet = sheet
-		view.position = Int(sheet.position)
-		view.selectedTag = tag
-		view.imageWidthConstraint.constant = (frame.height * 0.4)
-		view.timeLabel.text = ""
-		
-		if sheet.content == nil || sheet.content == "" {
-			
-			view.contentHeightConstraint.isActive = false
-			
-			view.newContentHeightConstraint = NSLayoutConstraint(item: view.descriptionContent, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
-			
-			view.descriptionContent.addConstraint(view.newContentHeightConstraint!)
-			
-		} else {
-			
-			if let newContentHeightConstraint = view.newContentHeightConstraint {
-				view.descriptionContent.removeConstraint(newContentHeightConstraint)
-			}
-			view.contentHeightConstraint.isActive = true
-		}
-		
-		if sheet.imageHasBorder {
-			view.image.isHidden = true
-			view.imageWithBorder.isHidden = false
-			view.imageWithBorder.layer.borderWidth = CGFloat(CGFloat(sheet.imageBorderSize) * scaleFactor)
-			if let borderColor = sheet.imageBorderColor {
-				view.imageWithBorder.layer.borderColor = UIColor(hex: borderColor)?.cgColor
-			}
-			if let image = sheet.image {
-				view.imageWithBorder.image = image
-			}
-		} else {
-			view.image.isHidden = false
-			view.imageWithBorder.isHidden = true
-			view.image.contentMode = UIViewContentMode(rawValue: Int(sheet.imageContentMode))!
-			if let image = sheet.image {
-				view.image.image = image
-			}
-		}
-		
-		view.scaleFactor = scaleFactor
-		
-		view.update()
-
-		return view
-	}
-	
 	override func update() {
+		
+		imageWidthConstraint.constant = (frame.height * 0.4)
+		timeLabel.text = ""
+		
+		if let sheet = sheet as? SheetTitleImageEntity {
+			if sheet.content == nil || sheet.content == "" {
+				
+				contentHeightConstraint.isActive = false
+				
+				newContentHeightConstraint = NSLayoutConstraint(item: descriptionContent, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
+				
+				descriptionContent.addConstraint(newContentHeightConstraint!)
+				
+			} else {
+				
+				if let newContentHeightConstraint = newContentHeightConstraint {
+					descriptionContent.removeConstraint(newContentHeightConstraint)
+				}
+				contentHeightConstraint.isActive = true
+			}
+			
+			
+			if sheet.imageHasBorder {
+				image.isHidden = true
+				imageWithBorder.isHidden = false
+				imageWithBorder.layer.borderWidth = CGFloat(CGFloat(sheet.imageBorderSize) * scaleFactor!)
+				if let borderColor = sheet.imageBorderColor {
+					imageWithBorder.layer.borderColor = UIColor(hex: borderColor)?.cgColor
+				}
+				if let image = sheet.image {
+					imageWithBorder.image = image
+				}
+			} else {
+				image.isHidden = false
+				imageWithBorder.isHidden = true
+				image.contentMode = UIViewContentMode(rawValue: Int(sheet.imageContentMode))!
+				if let image = sheet.image {
+					self.image.image = image
+				}
+			}
+		}
+		
 		if let scaleFactor = scaleFactor {
 						
-			if scaleFactor > 1 {
-				titleHightConstraint.constant = (titleHightConstraint.constant / UIScreen.main.scale) * scaleFactor
-				contentHeightConstraint.constant = (contentHeightConstraint.constant / UIScreen.main.scale) * scaleFactor
-				titleTopConstraint.constant = (titleTopConstraint.constant / UIScreen.main.scale) * scaleFactor
-				titleRightconstraint.constant = (titleRightconstraint.constant / UIScreen.main.scale) * scaleFactor
-				titleBottomConstraint.constant = (titleBottomConstraint.constant / UIScreen.main.scale) * scaleFactor
-				titleLeftConstraint.constant = (titleLeftConstraint.constant / UIScreen.main.scale) * scaleFactor
+				titleHightConstraint.constant = titleHightConstraint.constant * scaleFactor
+				contentHeightConstraint.constant = contentHeightConstraint.constant * scaleFactor
+				titleTopConstraint.constant = titleTopConstraint.constant * scaleFactor
+				titleRightconstraint.constant = titleRightconstraint.constant * scaleFactor
+				titleBottomConstraint.constant = titleBottomConstraint.constant * scaleFactor
+				titleLeftConstraint.constant = titleLeftConstraint.constant * scaleFactor
 				imageWidthConstraint.constant = (frame.height * 0.45)
 
-				containerLeftConstraint.constant = (containerLeftConstraint.constant / UIScreen.main.scale) * scaleFactor
-				containerRightConstraint.constant = (containerRightConstraint.constant / UIScreen.main.scale) * scaleFactor
-				containerBottomConstraint.constant = (containerBottomConstraint.constant / UIScreen.main.scale) * scaleFactor
-			}
+				containerLeftConstraint.constant = containerLeftConstraint.constant * scaleFactor
+				containerRightConstraint.constant = containerRightConstraint.constant * scaleFactor
+				containerBottomConstraint.constant = containerBottomConstraint.constant * scaleFactor
 			
-			if let songTitle = sheet?.title {
-				if let tag = selectedTag {
-					if !tag.allHaveTitle && (sheet?.position ?? 0 > 0) {
+			if let songTitle = sheet.title {
+				if let tag = sheetTag {
+					if !tag.allHaveTitle && (sheet.position > 0) {
 						
 						// set height constraint to zero
 						titleHightConstraint.isActive = false
@@ -164,21 +149,21 @@ class SheetTitleImage: SheetView {
 				
 			}
 			
-			if let lyrics = sheet?.content {
-				if let tag = selectedTag {
+			if let sheet = sheet as? SheetTitleImageEntity, let lyrics = sheet.content {
+				if let tag = sheetTag {
 					descriptionContent.attributedText = NSAttributedString(string: lyrics, attributes: tag.getLyricsAttributes(scaleFactor))
 				} else {
 					descriptionContent.text = lyrics
 				}
 			}
 			
-			setBackgroundImage(image: isForExternalDispay ? selectedTag?.backgroundImage : selectedTag?.thumbnail)
+			setBackgroundImage(image: isForExternalDispay ? sheetTag?.backgroundImage : sheetTag?.thumbnail)
 			
-			if let titleBackgroundColor = selectedTag?.backgroundColorTitle, let title = selectedTag?.title, title != "" {
-				if let allHaveTitle = selectedTag?.allHaveTitle, allHaveTitle == false && position < 1 {
+			if let titleBackgroundColor = sheetTag?.backgroundColorTitle, let title = sheetTag?.title, title != "" {
+				if let allHaveTitle = sheetTag?.allHaveTitle, allHaveTitle == false && position < 1 {
 					titleBackground.isHidden = false
 					titleBackground.backgroundColor = titleBackgroundColor
-				} else if  let allHaveTitle = selectedTag?.allHaveTitle, allHaveTitle == true {
+				} else if  let allHaveTitle = sheetTag?.allHaveTitle, allHaveTitle == true {
 					titleBackground.isHidden = false
 					titleBackground.backgroundColor = titleBackgroundColor
 				} else {
@@ -188,7 +173,7 @@ class SheetTitleImage: SheetView {
 				titleBackground.isHidden = true
 			}
 			
-			if let backgroundColor = selectedTag?.sheetBackgroundColor, selectedTag?.backgroundImage == nil {
+			if let backgroundColor = sheetTag?.sheetBackgroundColor, sheetTag?.backgroundImage == nil {
 				self.sheetBackgroundView.backgroundColor = backgroundColor
 			} else {
 				self.sheetBackgroundView.backgroundColor = .white
@@ -197,7 +182,7 @@ class SheetTitleImage: SheetView {
 	}
 	
 	override func changeOpacity(newValue: Float) {
-		if let _ = isForExternalDispay ? selectedTag?.backgroundImage : selectedTag?.thumbnail {
+		if let _ = isForExternalDispay ? sheetTag?.backgroundImage : sheetTag?.thumbnail {
 			sheetBackgroundView.alpha = CGFloat(newValue)
 		}
 	}
@@ -208,7 +193,7 @@ class SheetTitleImage: SheetView {
 			backgroundImage.isHidden = false
 			backgroundImage.contentMode = .scaleAspectFill
 			backgroundImage.image = image
-			if let backgroundTransparency = selectedTag?.backgroundTransparency {
+			if let backgroundTransparency = sheetTag?.backgroundTransparency {
 				backgroundImage.alpha = CGFloat(backgroundTransparency)
 			}
 		} else {
@@ -224,7 +209,7 @@ class SheetTitleImage: SheetView {
 			return
 		}
 		
-		if let tag = selectedTag, let scaleFactor = scaleFactor { // is custom sheet
+		if let tag = sheetTag, let scaleFactor = scaleFactor { // is custom sheet
 			
 			timeLabel.attributedText = NSAttributedString(string: test, attributes: tag.getTitleAttributes(scaleFactor))
 			
@@ -235,7 +220,7 @@ class SheetTitleImage: SheetView {
 	}
 	
 	func setSheetImage(_ newValue: UIImage?) {
-		if let sheet = sheet, sheet.imageHasBorder {
+		if let sheet = sheet as? SheetTitleImageEntity, sheet.imageHasBorder {
 			if let image = newValue {
 				imageWithBorder.image = image
 			}

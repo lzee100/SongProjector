@@ -100,7 +100,7 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 			for subview in cell.previewView.subviews {
 				subview.removeFromSuperview()
 			}
-			let sheetview = SheetTitleContent.createWith(frame: cell.bounds, title: sheetsSorted[indexPath.section].title, sheet: sheetsSorted[indexPath.section] as? SheetTitleContentEntity, tag: selectedTag)
+			let sheetview = SheetView.createWith(frame: cell.bounds, cluster: nil, sheet: sheetsSorted[indexPath.section], tag: selectedTag)
 			cell.previewView.addSubview(sheetview)
 			let imageView = UIImageView(frame: cell.bounds)
 			imageView.image = testImage

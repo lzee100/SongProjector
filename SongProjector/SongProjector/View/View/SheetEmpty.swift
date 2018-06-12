@@ -28,31 +28,20 @@ class SheetEmpty: SheetView {
 		addSubview(sheetView)
 	}
 	
-	static func createWith(frame: CGRect, tag: Tag?, scaleFactor: CGFloat = 1) -> SheetEmpty {
-		
-		let view = SheetEmpty(frame: frame)
-		view.selectedTag = tag
-		view.scaleFactor = scaleFactor
-		view.timeLabel.text = ""
-
-		view.update()
-		
-		return view
-	}
-	
 	override func update() {
-		
-		if let scaleFactor = scaleFactor, scaleFactor > 1 {
+		timeLabel.text = ""
 
-			timeLabelTopConstraint.constant = (timeLabelTopConstraint.constant / UIScreen.main.scale) * scaleFactor
-			timeLabelRightConstraint.constant = (timeLabelRightConstraint.constant / UIScreen.main.scale) * scaleFactor
-		}
-		setBackgroundImage(image: isForExternalDispay ? selectedTag?.backgroundImage : selectedTag?.thumbnail)
-		
-		if let backgroundColor = selectedTag?.sheetBackgroundColor, selectedTag?.backgroundImage == nil {
-			self.backgroundView.backgroundColor = backgroundColor
-		} else {
-			self.backgroundView.backgroundColor = .white
+		if let scaleFactor = scaleFactor {
+			
+			timeLabelTopConstraint.constant = timeLabelTopConstraint.constant * scaleFactor
+			timeLabelRightConstraint.constant = timeLabelRightConstraint.constant * scaleFactor
+			setBackgroundImage(image: isForExternalDispay ? selectedTag?.backgroundImage : selectedTag?.thumbnail)
+			
+			if let backgroundColor = selectedTag?.sheetBackgroundColor, selectedTag?.backgroundImage == nil {
+				self.backgroundView.backgroundColor = backgroundColor
+			} else {
+				self.backgroundView.backgroundColor = .white
+			}
 		}
 	}
 	

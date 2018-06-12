@@ -120,6 +120,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		
 		AWSServiceManager.default().defaultServiceConfiguration = configuration
 		
+		AWSDDLog.add(AWSDDTTYLogger.sharedInstance)
+		AWSDDLog.sharedInstance.logLevel = .info
 		return AWSMobileClient.sharedInstance().interceptApplication(
 			application, didFinishLaunchingWithOptions:
 			launchOptions)

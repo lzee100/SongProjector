@@ -381,22 +381,7 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 				subview.removeFromSuperview()
 			}
 			
-			var view = UIView()
-			switch sheet.type {
-			case .SheetTitleContent:
-				view = SheetTitleContent.createWith(frame: collectionCell.bounds, title: sheet.title, sheet: sheet as? SheetTitleContentEntity, tag: sheet.hasTag)
-			case .SheetTitleImage:
-				view = SheetTitleImage.createWith(frame: collectionCell.bounds, sheet: sheet as! SheetTitleImageEntity, tag: sheet.hasTag)
-			case .SheetSplit:
-				view = SheetSplit.createWith(frame: collectionCell.bounds, sheet: sheet as! SheetSplitEntity, tag: sheet.hasTag)
-			case .SheetEmpty:
-				view = SheetEmpty.createWith(frame: collectionCell.bounds, tag: sheet.hasTag)
-			case .SheetActivities:
-				view = SheetActivitiesView.createWith(frame: collectionCell.bounds, sheet: sheet as! SheetActivities, tag: sheet.hasTag, isPreview: true)
-				break
-			}
-			
-			collectionCell.previewView.addSubview(view)
+			collectionCell.previewView.addSubview(SheetView.createWith(frame: collectionCell.bounds, cluster: cluster, sheet: sheet, tag: selectedTag, isPreview: true))
 			
 		}
 	}

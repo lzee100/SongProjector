@@ -10,11 +10,7 @@ import Foundation
 import UIKit
 
 class ChurchBeamCell: UITableViewCell {
-	
-	
-	func setup(title: String?, tag: TagTemp, sheet: SheetTemp) {
-		
-	}
+
 	
 	override func setSelected(_ selected: Bool, animated: Bool) {
 	}
