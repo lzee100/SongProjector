@@ -62,6 +62,8 @@
 		E3314B682007836D00F470C0 /* SheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3314B672007836D00F470C0 /* SheetView.swift */; };
 		E33268BC2022241E002CDA7C /* SongsMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33268BB2022241E002CDA7C /* SongsMenuController.swift */; };
 		E33268BE2022FCD2002CDA7C /* SoundPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33268BD2022FCD2002CDA7C /* SoundPlayer.swift */; };
+		E334FD6B20CF9C0700FC1FAE /* SongHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E334FD6A20CF9C0700FC1FAE /* SongHeaderView.xib */; };
+		E334FD6D20CF9E2E00FC1FAE /* SongHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E334FD6C20CF9E2E00FC1FAE /* SongHeaderView.swift */; };
 		E3355D6F1FEDA645004C03AE /* TextViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3355D6E1FEDA645004C03AE /* TextViewExtensions.swift */; };
 		E3355D711FEE6436004C03AE /* ClusterExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3355D701FEE6436004C03AE /* ClusterExtensions.swift */; };
 		E34ED29B2008D62300534C72 /* SheetSplit.xib in Resources */ = {isa = PBXBuildFile; fileRef = E34ED29A2008D62300534C72 /* SheetSplit.xib */; };
@@ -207,6 +209,8 @@
 		E3314B672007836D00F470C0 /* SheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetView.swift; sourceTree = "<group>"; };
 		E33268BB2022241E002CDA7C /* SongsMenuController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongsMenuController.swift; sourceTree = "<group>"; };
 		E33268BD2022FCD2002CDA7C /* SoundPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundPlayer.swift; sourceTree = "<group>"; };
+		E334FD6A20CF9C0700FC1FAE /* SongHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SongHeaderView.xib; sourceTree = "<group>"; };
+		E334FD6C20CF9E2E00FC1FAE /* SongHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongHeaderView.swift; sourceTree = "<group>"; };
 		E3355D6E1FEDA645004C03AE /* TextViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextViewExtensions.swift; sourceTree = "<group>"; };
 		E3355D701FEE6436004C03AE /* ClusterExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClusterExtensions.swift; sourceTree = "<group>"; };
 		E3481755201B0A5D0021D39B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -551,6 +555,8 @@
 				E3F201E3201E206D002FF06E /* ActivityHeader.swift */,
 				E3C2AD0F2025A5D500ACFFE7 /* MixerView.xib */,
 				E3C2AD112025A5E900ACFFE7 /* MixerView.swift */,
+				E334FD6A20CF9C0700FC1FAE /* SongHeaderView.xib */,
+				E334FD6C20CF9E2E00FC1FAE /* SongHeaderView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -675,6 +681,7 @@
 				E393B7692008D3FC0073D0A9 /* SheetTitleImage.xib in Resources */,
 				E311717C1FE5A1A0008D9D51 /* NewSongSheetCell.xib in Resources */,
 				E326E9081FFECD0E00FEAC9C /* SheetCollectionCell.xib in Resources */,
+				E334FD6B20CF9C0700FC1FAE /* SongHeaderView.xib in Resources */,
 				E38347591FF7AAC9008AE69D /* LabelTextFieldCell.xib in Resources */,
 				E3C2AD102025A5D500ACFFE7 /* MixerView.xib in Resources */,
 				E311717E1FE5A5F5008D9D51 /* StoryboardiPad.storyboard in Resources */,
@@ -842,6 +849,7 @@
 				E3CB6850200634A600F007B2 /* LoadingIndicator.swift in Sources */,
 				E3F201DE201E0CC9002FF06E /* ActivityView.swift in Sources */,
 				E32D4D6520017E0100ED81A7 /* EditSongIphoneController.swift in Sources */,
+				E334FD6D20CF9E2E00FC1FAE /* SongHeaderView.swift in Sources */,
 				E3CAE69F20C47C5F00D3B36F /* TitleLContentViewModel.swift in Sources */,
 				E309DCE81FF44E6A00C3D135 /* TagsIphoneController.swift in Sources */,
 				E31171391FE59DA3008D9D51 /* SongProjector.xcdatamodeld in Sources */,
