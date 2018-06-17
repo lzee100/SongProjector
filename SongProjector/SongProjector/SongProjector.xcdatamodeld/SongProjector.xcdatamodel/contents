@@ -10,8 +10,8 @@
         <relationship name="hasVerses" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Vers" inverseName="hasChapter" inverseEntity="Vers" syncable="YES"/>
     </entity>
     <entity name="Cluster" representedClassName="Cluster" parentEntity="Entity" syncable="YES" codeGenerationType="class">
-        <attribute name="duration" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="position" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="time" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <relationship name="child" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Cluster" inverseName="parent" inverseEntity="Cluster" syncable="YES"/>
         <relationship name="hasSheets" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Sheet" inverseName="hasCluster" inverseEntity="Sheet" syncable="YES"/>
         <relationship name="hasSong" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Song" inverseName="hasCluster" inverseEntity="Song" syncable="YES"/>

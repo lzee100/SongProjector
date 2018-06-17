@@ -34,7 +34,7 @@ var managedObjectContext: NSManagedObjectContext = (UIApplication.shared.delegat
 class CoreDataManager<T: NSManagedObject>: NSObject {
 	
 	var predicates: [NSPredicate] = []
-	var skipTemp = true
+	var getTemp = false
 	private var sortDiscriptor: NSSortDescriptor?
 	
 	private let nsManagedObject: T
@@ -60,7 +60,7 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 		return getNewId()
 	}
 	
-	func createEntity() -> T {
+	func createEntity(fireNotification: Bool = true) -> T {
 		let entityDes = NSEntityDescription.entity(forEntityName: nsManagedObject.classForCoder.description(), in: moc)
 		let entity = NSManagedObject(entity: entityDes!, insertInto: moc) as! T
 		
@@ -71,14 +71,16 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 			entity.id = getNewId()
 			entity.createdAt = Date()
 		}
-		let _ = saveContext() // raise ID
+		let _ = saveContext(fireNotification: fireNotification) // raise ID
 		return entity
 	}
 	
-	func saveContext() -> Bool {
+	func saveContext(fireNotification: Bool = true) -> Bool {
 		do {
 			try moc.save()
-			NotificationCenter.default.post(name: NotificationNames.dataBaseDidChange, object:nil)
+			if fireNotification {
+				NotificationCenter.default.post(name: NotificationNames.dataBaseDidChange, object:nil)
+			}
 			return true
 		} catch {
 			print("Failed saving")
@@ -106,11 +108,9 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 	
 	func getEntities() -> [T] {
 		var entities: [T] = []
-		let request = NSFetchRequest<NSFetchRequestResult>(entityName: nsManagedObject.classForCoder.description())
+		let request = NSFetchRequest<T>(entityName: nsManagedObject.classForCoder.description())
 		
-		if !skipTemp {
-			predicates.append("isTemp", equals: true)
-		}
+		predicates.append("isTemp", equals: getTemp)
 		
 		let andPredicate = NSCompoundPredicate(type: NSCompoundPredicate.LogicalType.and, subpredicates: predicates)
 		request.predicate = andPredicate
@@ -125,7 +125,7 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 		request.returnsObjectsAsFaults = false
 		do {
 			let result = try moc.fetch(request)
-			entities = result as! [T]
+			entities = result
 		} catch {
 			print("Failed")
 		}

@@ -19,7 +19,6 @@ class BasicCell: UITableViewCell {
 	var iconImage: UIImage?
 	var iconSelected: UIImage?
 	var selectedCell = false { didSet { update() } }
-	var isLast = false { didSet { update() } }
 	var isInnerCell = false { didSet { update() } }
 	var customTextColor: UIColor?
 	

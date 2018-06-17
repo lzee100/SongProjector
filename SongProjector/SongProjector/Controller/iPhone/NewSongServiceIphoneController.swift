@@ -16,7 +16,7 @@ class NewSongServiceIphoneController: UITableViewController, SongsControllerDele
 	
 	var selectedSongs: [Cluster] = []
 	var delegate: NewSongServiceDelegate?
-	var noSelectedSongsMessage: Int? = 1
+	var hasNoSongs = true
 	
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,8 +41,8 @@ class NewSongServiceIphoneController: UITableViewController, SongsControllerDele
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-		return selectedSongs.count + (noSelectedSongsMessage ?? 0)
+        let noSelection = hasNoSongs ? 1 : 0
+		return selectedSongs.count + noSelection
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -70,7 +70,11 @@ class NewSongServiceIphoneController: UITableViewController, SongsControllerDele
 			selectedSongs.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)
         }
-		generateNoSelectedSongMessage()
+		tableView.setNeedsDisplay()
+		if tableView.numberOfRows(inSection: 0) == 0 {
+			hasNoSongs = true
+			tableView.reloadData()
+		}
     }
 
     // Override to support rearranging the table view.
@@ -87,7 +91,7 @@ class NewSongServiceIphoneController: UITableViewController, SongsControllerDele
     }
 	
 	func didSelectCluster(cluster: Cluster) {
-		noSelectedSongsMessage = nil
+		hasNoSongs = false
 		selectedSongs.append(cluster)
 		updatePositions()
 		update()
@@ -113,9 +117,7 @@ class NewSongServiceIphoneController: UITableViewController, SongsControllerDele
 		if selectedSongs.count == 0 {
 			performSegue(withIdentifier: "SongsSegue", sender: self)
 		}
-		if selectedSongs.count > 0 {
-			noSelectedSongsMessage = 0
-		}
+		hasNoSongs = selectedSongs.count == 0
 		
 		update()
 	}
@@ -128,11 +130,6 @@ class NewSongServiceIphoneController: UITableViewController, SongsControllerDele
 		for (index, song) in selectedSongs.enumerated() {
 			song.position = Int16(index)
 		}
-	}
-	
-	private func generateNoSelectedSongMessage() {
-		noSelectedSongsMessage = 1
-		tableView.reloadData()
 	}
 	
 	@objc private func editTableView(_ gestureRecognizer: UIGestureRecognizer) {

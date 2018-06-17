@@ -20,36 +20,76 @@ extension NSLayoutConstraint {
 }
 
 class SongService {
-	var songs: [SongObject] = [] { didSet { songs.sort{ $0.cluster.position < $1.cluster.position } }}
-	var selectedSong: SongObject? { return songs.first(where: { $0.selectedSheet != nil }) }
 	
+	private var playerTimer = Timer()
+	private var displayTimeTimer = Timer()
+	
+	var songs: [SongObject] = [] { didSet { songs.sort{ $0.cluster.position < $1.cluster.position } }}
+	var selectedSection: Int?
+	var selectedSong: SongObject? {
+		didSet {
+			if selectedSong != nil {
+				self.startPlay()
+			} else {
+				self.stopPlay()
+			}
+		}
+	}
+	
+	var selectedSheet: Sheet? {
+		didSet {
+			songs.forEach{ $0.selectedSheet = nil }
+			if let sheet = selectedSheet {
+				let newSong = songs.first(where: { $0.sheets.contains(sheet) })
+				if newSong != selectedSong {
+					selectedSong = newSong
+				}
+			}
+			selectedSong?.selectedSheet = selectedSheet
+		}
+	}
 	var selectedTag: Tag? { return selectedSong?.selectedSheet?.hasTag ?? selectedSong?.cluster.hasTag }
 	var previousTag: Tag? { return getPreviousTag() }
 	var nextTag: Tag? { return getNextTag() }
+	var isPlaying = false
+	var swipeLeft: (() -> Void)
+	
+	init(swipeLeft: @escaping (() -> Void)) {
+		self.swipeLeft = swipeLeft
+	}
 	
 	@discardableResult
 	func nextSheet(select: Bool = true) -> Sheet? {
-		if let selectedSong = selectedSong {
-			let selectedSheetPosition = Int(selectedSong.selectedSheet!.position)
+		if let selectedSheet = selectedSheet, let selectedSong = songs.first(where: { $0.sheets.contains(selectedSheet) }) {
+			let selectedSheetPosition = Int(selectedSheet.position)
 			if selectedSheetPosition + 1 < selectedSong.sheets.count {
 				if !select {
 					return selectedSong.sheets[selectedSheetPosition + 1]
 				}
-				selectedSong.selectedSheet = selectedSong.sheets[selectedSheetPosition + 1]
-				return selectedSong.selectedSheet
+				self.selectedSheet = selectedSong.sheets[selectedSheetPosition + 1]
+				return self.selectedSheet
 			} else {
+				
+				if isPlaying {
+					if select {
+						self.selectedSheet = selectedSong.sheets.first
+					}
+					return selectedSong.sheets.first
+				}
+				
 				guard let index = songs.index(where: { $0.selectedSheet != nil }) else {
 					return nil
 				}
 				
-				if index + 1 > songs.count {
+				if index + 1 >= songs.count {
 					return nil
 				}
 				if !select {
 					return songs[index + 1].sheets.first
 				}
 				selectedSong.selectedSheet = nil
-				songs[index + 1].selectedSheet = songs[index + 1].sheets.first
+				selectedSection = index + 1
+				self.selectedSheet = songs[index + 1].sheets.first
 				return selectedSong.selectedSheet
 				
 			}
@@ -64,14 +104,15 @@ class SongService {
 
 	@discardableResult
 	func previousSheet(select: Bool = true) -> Sheet? {
-		if let selectedSong = selectedSong {
-			let selectedSheetPosition = Int(selectedSong.selectedSheet!.position)
-			if selectedSheetPosition - 1 > 0 {
+		
+		if let selectedSheet = selectedSheet, let selectedSong = songs.first(where: { $0.sheets.contains(selectedSheet) }) {
+			let selectedSheetPosition = Int(selectedSheet.position)
+			if selectedSheetPosition - 1 >= 0 {
 				if !select {
 					return selectedSong.sheets[selectedSheetPosition - 1]
 				}
-				selectedSong.selectedSheet = selectedSong.sheets[selectedSheetPosition - 1]
-				return selectedSong.selectedSheet
+				self.selectedSheet = selectedSong.sheets[selectedSheetPosition - 1]
+				return self.selectedSheet
 			} else {
 				guard let index = songs.index(where: { $0.selectedSheet != nil }) else {
 					return nil
@@ -85,8 +126,9 @@ class SongService {
 					return songs[index - 1].sheets.first
 				}
 				
-				selectedSong.selectedSheet = nil
-				songs[index - 1].selectedSheet = songs[index - 1].sheets.first
+				self.selectedSheet = nil
+				selectedSection = index - 1
+				self.selectedSheet = songs[index - 1].sheets.first
 				return selectedSong.selectedSheet
 				
 			}
@@ -105,7 +147,7 @@ class SongService {
 					return nil
 				}
 				
-				if index + 1 > songs.count {
+				if index + 1 >= songs.count {
 					return nil
 				}
 				return IndexPath(row: 0, section: index + 1)
@@ -123,7 +165,7 @@ class SongService {
 		
 		if let selectedSong = selectedSong {
 			let selectedSheetPosition = Int(selectedSong.selectedSheet!.position)
-			if selectedSheetPosition - 1 > 0 {
+			if selectedSheetPosition - 1 >= 0 {
 				return IndexPath(row: selectedSheetPosition - 1, section: Int(selectedSong.cluster.position))
 			} else {
 				guard let index = songs.index(where: { $0.selectedSheet != nil }) else {
@@ -141,11 +183,15 @@ class SongService {
 	}
 	
 	func getSongForNextSheet() -> SongObject? {
+		if isPlaying {
+			return selectedSong
+		}
+		
 		if let position = selectedSong?.selectedSheet?.position, Int(position) + 1 < (selectedSong?.sheets.count ?? 0) {
 			return selectedSong
 		} else {
 			if let index = songs.index(where: { $0.selectedSheet != nil }) {
-				if index + 1 <= songs.count {
+				if index + 1 < songs.count {
 					return songs[index + 1]
 				}
 				return nil
@@ -156,7 +202,7 @@ class SongService {
 	}
 	
 	func getSongForPreviousSheet() -> SongObject? {
-		if let position = selectedSong?.selectedSheet?.position, Int(position) - 1 > 0 {
+		if let position = selectedSong?.selectedSheet?.position, Int(position) - 1 >= 0 {
 			return selectedSong
 		} else {
 			if let index = songs.index(where: { $0.selectedSheet != nil }) {
@@ -173,7 +219,7 @@ class SongService {
 	private func getPreviousTag() -> Tag? {
 		if let selectedSong = selectedSong {
 			let selectedSheetPosition = Int(selectedSong.selectedSheet!.position)
-			if selectedSheetPosition - 1 > 0 {
+			if selectedSheetPosition - 1 >= 0 {
 				return selectedSong.sheets[selectedSheetPosition - 1].hasTag ?? selectedSong.cluster.hasTag
 			} else {
 				guard let index = songs.index(where: { $0.selectedSheet != nil }) else {
@@ -193,6 +239,9 @@ class SongService {
 	}
 	
 	private func getNextTag() -> Tag? {
+		if isPlaying {
+			return selectedTag
+		}
 		if let selectedSong = selectedSong {
 			let selectedSheetPosition = Int(selectedSong.selectedSheet!.position)
 			if selectedSheetPosition + 1 < selectedSong.sheets.count {
@@ -202,7 +251,7 @@ class SongService {
 					return nil
 				}
 				
-				if index + 1 > songs.count {
+				if index + 1 >= songs.count {
 					return nil
 				}
 				return songs[index + 1].sheets.first?.hasTag ?? songs[index + 1].cluster.hasTag
@@ -213,13 +262,70 @@ class SongService {
 		}
 	}
 	
+	private func startPlay() {
+		
+		// is cluster has time (advertisement)
+		let sheetTime = selectedSong?.selectedSheet?.time
+		let time = sheetTime ?? selectedSong?.cluster.time
+		
+		if let time = time {
+			guard time != nil || (sheetTime != nil && (sheetTime ?? -1) > 0) else {
+				return
+			}
+			
+			isPlaying = true
+			playerTimer = Timer.scheduledTimer(timeInterval: time, target: self, selector: #selector(swipeAutomatically), userInfo: nil, repeats: true)
+		}
+			}
+	
+	@objc private func swipeAutomatically() {
+		self.swipeLeft()
+	}
+	
+	private func stopPlay() {
+		playerTimer.invalidate()
+		isPlaying = false
+	}
+	
 }
 
-class SongObject {
-	let cluster: Cluster
-	var sheets: [Sheet] {
-		return cluster.hasSheetsArray
+class SongObject: Comparable {
+	
+	var cluster: Cluster { didSet { addEmptySheet() }}
+	var sheets: [Sheet] = []
+	
+	private func addEmptySheet() {
+		if cluster.hasTag?.hasEmptySheet ?? false {
+			
+			var emptySheetsAdded: [Sheet] = []
+			
+			let emptySheet = CoreSheetTitleContent.createEntity(fireNotification: false)
+			emptySheet.isTemp = true
+			emptySheet.isEmptySheet = true
+
+			
+			if let isEmptySheetFirst = cluster.hasTag?.isEmptySheetFirst {
+				if isEmptySheetFirst {
+					emptySheetsAdded.append(emptySheet)
+					emptySheetsAdded.append(contentsOf: cluster.hasSheetsArray)
+				} else {
+					emptySheetsAdded.append(contentsOf: cluster.hasSheetsArray)
+					emptySheetsAdded.append(emptySheet)
+				}
+			}
+			
+			var position: Int16 = 0
+			emptySheetsAdded.forEach {
+				$0.position = position
+				position += 1
+			}
+			
+			sheets = emptySheetsAdded
+		} else {
+			sheets = cluster.hasSheetsArray
+		}
 	}
+	
 	var selectedSheet: Sheet? { didSet { if let sheet = selectedSheet {	displaySheet(sheet)	} } }
 	var clusterTag: Tag? {
 		return cluster.hasTag
@@ -230,7 +336,17 @@ class SongObject {
 	init(cluster: Cluster, displaySheet: @escaping ((Sheet) -> Void)) {
 		self.cluster = cluster
 		self.displaySheet = displaySheet
+		addEmptySheet()
 	}
+	
+	static func ==(lhs: SongObject, rhs: SongObject) -> Bool {
+		return lhs.cluster.id == rhs.cluster.id
+	}
+	
+	static func < (lhs: SongObject, rhs: SongObject) -> Bool {
+		return lhs.cluster.position < rhs.cluster.position
+	}
+
 }
 
 class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, NewSongServiceDelegate, FetcherObserver {
@@ -286,7 +402,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	
 	// new try
 	
-	private var songService = SongService()
+	private var songService: SongService!
 	private var isAnimatingUpDown = false
 	private var displayMode: displayModeTypes = .normal
 	private var scaleFactor: CGFloat = 1
@@ -352,7 +468,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 			return 1
 			// return only 1 cell if song has but 1 sheet
 		} else {
-			if songService.songs[section].selectedSheet != nil {
+			if songService.selectedSection == section {
 				return songService.songs[section].sheets.count
 			} else {
 				return 0
@@ -370,10 +486,15 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				cell.isSelected = false
 				return cell
 			}
-			
-			cell.setup(title: currentSheet.title, icon: Cells.sheetIcon)
+			let title: String?
+			if let sheet = currentSheet as? SheetTitleContentEntity {
+				title = sheet.isEmptySheet ? Text.Sheet.emptySheetTitle : sheet.title
+			} else {
+				title = currentSheet.title
+			}
+			cell.setup(title: title, icon: Cells.sheetIcon)
 			cell.isInnerCell = true
-			cell.selectedCell = songService.songs[indexPath.section].selectedSheet == currentSheet
+			cell.selectedCell = songService.songs[indexPath.section].selectedSheet?.id == currentSheet.id
 			
 		}
 		return cell
@@ -385,12 +506,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	
 	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		let currentSheet = songService.songs[indexPath.section].sheets[indexPath.row]
-		if currentSheet == songService.songs[indexPath.section].selectedSheet {
-			songService.songs[indexPath.section].selectedSheet = nil
-		} else {
-			songService.songs.forEach { $0.selectedSheet = nil }
-			songService.songs[indexPath.section].selectedSheet = currentSheet
-		}
+		songService.selectedSheet = songService.selectedSheet == currentSheet ? nil : currentSheet
 		update()
 	}
 	
@@ -438,7 +554,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	// MARK: - Private Functions
 	
 	private func setup() {
-		
+		songService = SongService(swipeLeft: swipeAutomatically)
 		navigationController?.title = Text.SongService.title
 		title = Text.SongService.title
 		mixerHeightConstraint.constant = 0
@@ -457,7 +573,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		NotificationCenter.default.addObserver(forName: NotificationNames.externalDisplayDidChange, object: nil, queue: nil, using: externalDisplayDidChange)
 		
 		NotificationCenter.default.addObserver(
-			forName: Notification.Name.UIScreenDidConnect,
+			forName: NotificationNames.dataBaseDidChange,
 			object: nil,
 			queue: nil,
 			using: databaseDidChange)
@@ -492,16 +608,23 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		
 	}
 	
-	private func update() {
+	private func update(scroll: Bool = false) {
+		if songService.selectedSong == nil {
+			shutDownDisplayer()
+		}
 		tableView.reloadData()
+		tableView.setNeedsDisplay()
+		if scroll {
+			if let section = songService.songs.index(where: { $0.selectedSheet != nil }), let row = songService.songs[section].sheets.index(where: { $0 == songService.songs[section].selectedSheet }) {
+			tableView.scrollToRow(at: IndexPath(row: row, section: section), at: .middle, animated: true)
+			}
+		}
 	}
 
 	private func didSelectSection(section: Int) {
-		let nothhingWasSelected = songService.selectedSong == nil
-		songService.songs.forEach { $0.selectedSheet = nil }
-		if nothhingWasSelected {
-			songService.songs[section].selectedSheet = songService.songs[section].sheets.first
-		}
+		songService.songs[section].selectedSheet = songService.selectedSection == section ? nil : songService.songs[section].sheets.first
+		songService.selectedSection = songService.selectedSection == section ? nil : section
+		
 		update()
 	}
 	
@@ -514,19 +637,17 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				
 				if let nextSheet = songService.nextSheet(select: false) {
 					swipeAnimationIsActive = true
+					self.display(sheet: nextSheet)
 					animateSheetsWith(.left, completion: {
 						self.swipeAnimationIsActive = false
-						self.display(sheet: nextSheet)
 						self.songService.nextSheet()
-						self.update()
-						if let indexPath = self.songService.indexPathForNextSheet() {
-							self.tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
-						}
+						self.update(scroll: true)
 					})
 					
 				} else {
 					// don't go to next song but play first sheet again
-					if isPlaying {
+					if songService.isPlaying {
+						swipeAnimationIsActive = true
 						animateSheetsWith(.left, completion: {
 							self.swipeAnimationIsActive = false
 							self.songService.selectedSong?.selectedSheet = self.songService.selectedSong?.sheets.first
@@ -546,11 +667,9 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 					animateSheetsWith(.right, completion: {
 						self.swipeAnimationIsActive = false
 						self.display(sheet: previousSheet)
+
 						self.songService.previousSheet()
-						self.update()
-						if let indexPath = self.songService.indexPathForPreviousSheet() {
-							self.tableView.scrollToRow(at: indexPath, at: .middle, animated: false)
-						}
+						self.update(scroll: true)
 					})
 					
 				}
@@ -701,12 +820,14 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	}
 	
 	func databaseDidChange( _ notification: Notification) {
+		songService.selectedSection = nil
 		songService.selectedSong?.selectedSheet = nil
-		
+
 		if songService.songs.count > 0 {
 			for cluster in songService.songs.compactMap({ $0.cluster }) {
 				CoreCluster.predicates.append("id", equals: cluster.id)
 			}
+			let entities = CoreCluster.getEntities()
 			songService.songs = CoreCluster.getEntities().compactMap { SongObject(cluster: $0, displaySheet: display(sheet:)) }
 		}
 	}
@@ -765,7 +886,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		
 		if !isPlaying {
 			// check if needs to play
-			if let duration = songService.selectedSong?.cluster.duration, duration > 0 {
+			if let duration = songService.selectedSong?.cluster.time, duration > 0 {
 				startPlay()
 			} else if let sheetTime = songService.selectedSong?.selectedSheet?.time, sheetTime > 0 {
 				startPlay()
@@ -929,7 +1050,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	// MARK - player
 	
 	private func startPlay() {
-		if let time = songService.selectedSong?.cluster.duration {
+		if let time = songService.selectedSong?.cluster.time {
 			isPlaying = true
 			playerTimer = Timer.scheduledTimer(timeInterval: time, target: self, selector: #selector(swipeAutomatically), userInfo: nil, repeats: true)
 		}
@@ -941,7 +1062,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		}
 	}
 	
-	@objc private func swipeAutomatically() {
+	@objc func swipeAutomatically() {
 		self.respondToSwipeGesture(self.leftSwipe)
 	}
 	

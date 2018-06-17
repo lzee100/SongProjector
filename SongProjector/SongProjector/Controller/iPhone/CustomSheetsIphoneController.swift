@@ -250,7 +250,7 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 	
 	
 	func numberPickerValueChanged(cell: LabelNumberPickerCell, value: Int) {
-		cluster.duration = Double(value)
+		cluster.time = Double(value)
 	}
 	
 	func textFieldDidChange(cell: LabelTextFieldCell, text: String?) {
@@ -287,7 +287,7 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 		if let title = cluster.title {
 			cellName.setName(name: title)
 		}
-		cellAnimationTime.setValue(Int(cluster.duration))
+		cellAnimationTime.setValue(Int(cluster.time))
 		
 		collectionView.register(UINib(nibName: Cells.sheetCollectionCell, bundle: nil), forCellWithReuseIdentifier: Cells.sheetCollectionCell)
 		collectionViewTags.register(UINib(nibName: Cells.tagCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.tagCellCollection)

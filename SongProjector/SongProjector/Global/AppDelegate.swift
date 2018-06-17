@@ -206,13 +206,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	private func setupAndCheckDatabase() {
 		
 		// remove temporary sheets or tags that were created but session got lost (app terminated durring configuration process)
-		CoreEntity.skipTemp = false
+		CoreEntity.getTemp = true
 		var entities = CoreEntity.getEntities()
 		for entity in entities{
 			print(entity.title)
 			_ = CoreEntity.delete(entity: entity)
 		}
-		CoreEntity.skipTemp = true
+		CoreEntity.getTemp = false
 		
 		let predicate = NSPredicate(format: "title == %@", 0)
 		CoreEntity.predicates.append(and: [predicate])
