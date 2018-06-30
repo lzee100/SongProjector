@@ -83,14 +83,7 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 			
 			let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.sheetCollectionCell, for: indexPath)
 			if let collectionCell = collectionCell as? SheetCollectionCell {
-				collectionCell.setPreviewViewAspectRatioConstraint(multiplier: multiplier)
-				
-				for subview in collectionCell.previewView.subviews {
-					subview.removeFromSuperview()
-				}
-				
-				let view = SheetView.createWith(frame: collectionCell.bounds, cluster: cluster, sheet: sheets[indexPath.section], tag: selectedTag ?? cluster?.hasTag)
-				collectionCell.previewView.addSubview(view)
+				collectionCell.setupWith(cluster: cluster, sheet: sheets[indexPath.section], tag: selectedTag ?? cluster?.hasTag, didDeleteSheet: nil, isDeleteEnabled: false)
 				
 				if visibleCells.contains(indexPath) {
 					let y = collectionCell.bounds.minY
@@ -141,7 +134,7 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 	
 	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
 		if collectionView == collectionViewSheets {
-			return sheetSize
+			return getSizeWith(width: collectionViewSheets.frame.width)
 		} else {
 			return CGSize(width: 200, height: 50)
 		}

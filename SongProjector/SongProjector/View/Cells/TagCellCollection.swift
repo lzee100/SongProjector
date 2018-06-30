@@ -13,6 +13,11 @@ class TagCellCollection: UICollectionViewCell {
 	@IBOutlet var icon: UIImageView!
 	@IBOutlet var title: UILabel!
 	
+	var preferredWidth: CGFloat {
+		title.setNeedsDisplay()
+		return title.intrinsicContentSize.width
+	}
+	
 	var isSelectedCell = false { didSet { update() } }
 	private var tagName: String?
 	

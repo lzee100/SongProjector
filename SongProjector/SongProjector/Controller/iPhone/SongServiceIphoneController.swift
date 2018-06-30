@@ -269,7 +269,7 @@ class SongService {
 		let time = sheetTime ?? selectedSong?.cluster.time
 		
 		if let time = time {
-			guard time != nil || (sheetTime != nil && (sheetTime ?? -1) > 0) else {
+			guard (time != nil && time != 0) || (sheetTime != nil && (sheetTime ?? -1) > 0) else {
 				return
 			}
 			

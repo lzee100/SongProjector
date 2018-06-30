@@ -8,6 +8,23 @@
 import UIKit
 
 extension UIViewController {
+	
+	func unwrap<T:UIViewController>() -> T? {
+		
+		var controller = self
+		
+		if let nav = controller as? UINavigationController, let firstController = nav.viewControllers.first {
+			
+			controller = firstController
+		}
+		
+		if let typedController = controller as? T {
+			return typedController
+		}
+		
+		return nil
+	}
+	
 	func hideKeyboardWhenTappedAround() {
 		let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIViewController.dismissKeyboard))
 		tap.cancelsTouchesInView = false

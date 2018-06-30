@@ -53,7 +53,8 @@ var externalDisplayWindowRatioHeightWidth: CGFloat {
 	if defaults.float(forKey: "lastScreenHeight") != 0 && defaults.float(forKey: "lastScreenWidth") != 0 {
 		return CGFloat(defaults.float(forKey: "lastScreenWidth")) / CGFloat(defaults.float(forKey: "lastScreenHeight"))
 	} else {
-		return 16/9
+		return 4/3
+//		return 16/9
 	}
 }
 
@@ -74,6 +75,17 @@ var externalDisplayWindowWidth: CGFloat {
 		return 1920
 	}
 }
+
+func getSizeWith(height: CGFloat? = nil, width: CGFloat? = nil) -> CGSize {
+	if let height = height {
+		return CGSize(width: height * externalDisplayWindowRatioHeightWidth, height: height)
+	} else if let width = width {
+		return CGSize(width: width, height: width / externalDisplayWindowRatioHeightWidth)
+	} else {
+		return CGSize(width: 10, height: 10)
+	}
+}
+
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {

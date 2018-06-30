@@ -108,6 +108,11 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 		if let controller = segue.destination as? UINavigationController, let songsController = controller.viewControllers.first as? SongsController {
 			songsController.delegate = self
 		}
+		
+		if let controller = segue.destination as? TestView {
+			controller.songService = songService
+		}
+		
 	}
 	
 	
@@ -172,6 +177,7 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 			} else {
 				songService.selectedSong = nil
 				songService.selectedSheet = nil
+				shutDownDisplayer()
 			}
 			
 		} else {
@@ -259,6 +265,7 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 		let nextPreviousScaleFactor: CGFloat = sheetDisplayerNext.bounds.height / sheetDisplayer.bounds.height
 		
 		sheetDisplayer.addSubview(SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.selectedSong?.cluster, sheet: sheet, tag: songService.selectedTag, scaleFactor: scaleFactor, toExternalDisplay: true))
+		sheetDisplayer.isHidden = false
 		
 		if let sheetNext = songService.nextSheet(select: false) {
 			sheetDisplayerNext.isHidden = false

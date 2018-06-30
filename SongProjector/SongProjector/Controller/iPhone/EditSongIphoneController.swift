@@ -90,13 +90,8 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 			
 			let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.sheetCollectionCell, for: indexPath)
 			if let collectionCell = collectionCell as? SheetCollectionCell {
-				collectionCell.setPreviewViewAspectRatioConstraint(multiplier: multiplier)
-				
-				for subview in collectionCell.previewView.subviews {
-					subview.removeFromSuperview()
-				}
 				if let sheet = sheets.count > 0 ? sheets[indexPath.section] : cluster?.hasSheetsArray[indexPath.section] as? SheetTitleContentEntity {
-					collectionCell.previewView.addSubview(SheetView.createWith(frame: collectionCell.bounds, cluster: cluster, sheet: sheet, tag: selectedTag ?? cluster?.hasTag))
+					collectionCell.setupWith(cluster: cluster, sheet: sheet, tag: selectedTag ?? cluster?.hasTag, didDeleteSheet: nil, isDeleteEnabled: true)
 				}
 				
 				if visibleCells.contains(indexPath) { // is cell was visible to user, animate
@@ -148,7 +143,7 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 	
 	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
 		if collectionView == collectionViewSheets {
-			return sheetSize
+			return getSizeWith(height: nil, width: collectionViewSheets.frame.width)
 		} else {
 			return CGSize(width: 200, height: 50)
 		}

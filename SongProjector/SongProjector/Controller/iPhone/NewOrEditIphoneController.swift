@@ -1460,7 +1460,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 			
 			generateTag()
 			
-			if let tagImage = tagImage, let imageRep = UIImagePNGRepresentation(tagImage) {
+			if let tagImage = tagImage {
 				tag.backgroundImage = tagImage
 			}
 

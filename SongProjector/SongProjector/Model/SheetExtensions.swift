@@ -88,6 +88,47 @@ extension Sheet {
 		_ = CoreSheet.delete(entity: self)
 	}
 	
+	var getTemp: Sheet {
+		let sheet: Sheet
+		switch self.type {
+		case .SheetTitleContent:
+			sheet = CoreSheetTitleContent.createEntity()
+			if let sheet = sheet as? SheetTitleContentEntity, let current = self as? SheetTitleContentEntity {
+				sheet.lyrics = current.lyrics
+			}
+		case .SheetTitleImage:
+			sheet = CoreSheetTitleImage.createEntity()
+			if let sheet = sheet as? SheetTitleImageEntity, let current = self as? SheetTitleImageEntity {
+				sheet.hasTitle = current.hasTitle
+				sheet.imageHasBorder = current.imageHasBorder
+				sheet.content = current.content
+				sheet.imageBorderColor = current.imageBorderColor
+				sheet.imageBorderSize = current.imageBorderSize
+				sheet.imagePath = current.imagePath
+				sheet.imageContentMode = current.imageContentMode
+			}
+		case .SheetSplit:
+			sheet = CoreSheetSplit.createEntity()
+			if let sheet = sheet as? SheetSplitEntity, let current = self as? SheetSplitEntity {
+				sheet.textLeft = current.textLeft
+				sheet.textRight = current.textRight
+			}
+		case .SheetEmpty:
+			sheet = CoreSheetEmptySheet.createEntity()
+		case .SheetActivities:
+			sheet = CoreSheetActivities.createEntity()
+			if let sheet = sheet as? SheetActivities, let current = self as? SheetActivities {
+				sheet.hasGoogleActivity = current.hasGoogleActivity
+			}
+		}
+		sheet.title = title
+		sheet.isTemp = true
+		sheet.time = time
+		sheet.position = position
+		sheet.isEmptySheet = isEmptySheet
+		return sheet
+	}
+	
 }
 
 extension SheetTitleImageEntity {

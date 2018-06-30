@@ -95,16 +95,7 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 			return cell
 		} else {
 			let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.sheetCollectionCell, for: indexPath) as! SheetCollectionCell
-			cell.setPreviewViewAspectRatioConstraint(multiplier: multiplier)
-			
-			for subview in cell.previewView.subviews {
-				subview.removeFromSuperview()
-			}
-			let sheetview = SheetView.createWith(frame: cell.bounds, cluster: nil, sheet: sheetsSorted[indexPath.section], tag: selectedTag)
-			cell.previewView.addSubview(sheetview)
-			let imageView = UIImageView(frame: cell.bounds)
-			imageView.image = testImage
-			cell.previewView.addSubview(imageView)
+			cell.setupWith(cluster: nil, sheet: sheetsSorted[indexPath.section], tag: selectedTag, didDeleteSheet: nil)
 			return cell
 		}
 	}
@@ -113,7 +104,7 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 		if collectionView == collectionViewTags {
 			return CGSize(width: 200, height: 50)
 		} else {
-			return sheetSize
+			return getSizeWith(height: collectionView.frame.height)
 		}
 	}
 	

@@ -52,7 +52,7 @@ class NewSongMenuController: UITableViewController {
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		switch Menu.for(indexPath) {
 		case .newSongController:
-			let controller = storyboard?.instantiateViewController(withIdentifier: "NewSongController") as! NewSongController
+			let controller = storyboard?.instantiateViewController(withIdentifier: "CustomSheetsController") as! CustomSheetsController
 			let nav = UINavigationController(rootViewController: controller)
 			DispatchQueue.main.async {
 				self.present(nav, animated: true, completion: {

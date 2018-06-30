@@ -47,7 +47,7 @@ class Text: NSObject {
 	struct NewSong {
 		static let title = "Nieuw liedje"
 		static let SongTitle = "Titel"
-		static let headerTag = "Selecteer hier de thema"
+		static let headerTag = "Selecteer hier het thema"
 		static let headerLyrics = "Voer hier de tekst van het nummer in"
 		static let NoTitleForSheet = "Geen titel gevonden"
 		static let Sheet = "Dia "
@@ -57,6 +57,8 @@ class Text: NSObject {
 		static let segmentTitleText = "Tekst"
 		static let segmentTitleSheets = "Dia's"
 		static let generateSheetsButton = "Genereer dia's"
+		static let titlePlaceholder = "Voer hier een titel in"
+
 	}
 	
 	struct Tags {

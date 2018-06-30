@@ -12,7 +12,7 @@ protocol SongsControllerDelegate {
 	func didSelectCluster(cluster: Cluster)
 }
 
-class SongsController: UIViewController, UIPopoverPresentationControllerDelegate, UITableViewDelegate, UITableViewDataSource, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UISearchBarDelegate {
+class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UISearchBarDelegate {
 	
 	@IBOutlet var new: UIBarButtonItem!
 	@IBOutlet var collectionView: UICollectionView!
@@ -23,6 +23,7 @@ class SongsController: UIViewController, UIPopoverPresentationControllerDelegate
 	
 	// MARK: - Private Properties
 	
+	private var isDeleting = false
 	private var tags: [Tag] = []
 	private var selectedTags: [Tag] = []
 	private var clusters: [Cluster] = []
@@ -49,21 +50,7 @@ class SongsController: UIViewController, UIPopoverPresentationControllerDelegate
 	}
 	
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-		if segue.identifier == "NewSongSegue" {
-			if let nav = segue.destination as? UINavigationController {
-				let controller = nav.topViewController as! NewSongIphoneController
-				controller.editExistingCluster = false
-				selectedCluster = nil
-			}
-		}
-		if segue.identifier == "newSongSegue" {
-			let controller = segue.destination as? NewSongMenuController
-			controller?.modalPresentationStyle = UIModalPresentationStyle.popover
-			controller?.popoverPresentationController!.delegate = self
-//			controller.editExistingCluster = false
-			selectedCluster = nil
-		}
-
+		
 	}
 	
 	
@@ -89,10 +76,12 @@ class SongsController: UIViewController, UIPopoverPresentationControllerDelegate
 	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
 		if editingStyle == .delete {
 			if let index = clusters.index(of: filteredClusters[indexPath.row]) {
-				let _ = CoreCluster.delete(entity: filteredClusters[indexPath.row])
+				isDeleting = !isDeleting
 				clusters.remove(at: index)
+				let _ = CoreCluster.delete(entity: filteredClusters[index])
 				filteredClusters = clusters
 				self.tableView.deleteRows(at: [indexPath], with: .automatic)
+				isDeleting = !isDeleting
 			}
 		}
 	}
@@ -105,51 +94,26 @@ class SongsController: UIViewController, UIPopoverPresentationControllerDelegate
 			}
 			dismiss(animated: true)
 		} else {
-			
-			if selectedCluster!.isTypeSong {
-				if let name = UserDefaults.standard.value(forKey: "device") as? String, name == "ipad" {
-					let controller = storyboard?.instantiateViewController(withIdentifier: "NewSongController") as! NewSongController
-					controller.cluster = selectedCluster!
-					controller.sheets = selectedCluster!.hasSheetsArray as? [SheetTitleContentEntity] ?? []
-					controller.editExistingCluster = true
-					let nav = UINavigationController(rootViewController: controller)
-					DispatchQueue.main.async {
-						self.present(nav, animated: true)
-					}
-				} else {
-					let controller = storyboard?.instantiateViewController(withIdentifier: "NewSongIphoneController") as! NewSongIphoneController
-					controller.cluster = selectedCluster!
-					controller.sheets = selectedCluster!.hasSheetsArray as? [SheetTitleContentEntity] ?? []
-					controller.editExistingCluster = true
-					let nav = UINavigationController(rootViewController: controller)
-					DispatchQueue.main.async {
-						self.present(nav, animated: true)
-					}
+			if let name = UserDefaults.standard.value(forKey: "device") as? String, name == "ipad" {
+				
+				let customController = storyboard?.instantiateViewController(withIdentifier: "CustomSheetsController") as! CustomSheetsController
+				customController.cluster = selectedCluster
+				customController.isNew = false
+				let nav = UINavigationController(rootViewController: customController)
+				DispatchQueue.main.async {
+					self.present(nav, animated: true)
 				}
-
+				
 			} else {
-				if let name = UserDefaults.standard.value(forKey: "device") as? String, name == "ipad" {
-
-					let customController = storyboard?.instantiateViewController(withIdentifier: "CustomSheetsController") as! CustomSheetsController
-					customController.cluster = selectedCluster!
-					customController.sheets = selectedCluster!.hasSheetsArray
-					customController.isNew = false
-					let nav = UINavigationController(rootViewController: customController)
-					DispatchQueue.main.async {
-						self.present(nav, animated: true)
-					}
-					
-				} else {
-					let customController = storyboard?.instantiateViewController(withIdentifier: "CustomSheetsIphoneController") as! CustomSheetsIphoneController
-					customController.cluster = selectedCluster!
-					customController.sheets = selectedCluster!.hasSheetsArray
-					customController.isNew = false
-					let nav = UINavigationController(rootViewController: customController)
-					DispatchQueue.main.async {
-						self.present(nav, animated: true)
-					}
-
+				let customController = storyboard?.instantiateViewController(withIdentifier: "CustomSheetsIphoneController") as! CustomSheetsIphoneController
+				customController.cluster = selectedCluster!
+				customController.sheets = selectedCluster!.hasSheetsArray
+				customController.isNew = false
+				let nav = UINavigationController(rootViewController: customController)
+				DispatchQueue.main.async {
+					self.present(nav, animated: true)
 				}
+
 			}
 		}
 	}
@@ -260,12 +224,10 @@ class SongsController: UIViewController, UIPopoverPresentationControllerDelegate
 		}
 	}
 	
-	func adaptivePresentationStyleForPresentationController(controller: UIPresentationController) -> UIModalPresentationStyle {
-		return UIModalPresentationStyle.none
-	}
-	
 	func dataBaseDidChange(notification: Notification) {
-		update()
+		if !isDeleting {
+			update()
+		}
 	}
 
 	@IBAction func cancelPressed(_ sender: UIBarButtonItem) {

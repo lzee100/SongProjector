@@ -18,6 +18,8 @@ class LabelNumberPickerCell: UITableViewCell, UIPickerViewDataSource, UIPickerVi
 	@IBOutlet var descriptionSubtitle: UILabel!
 	@IBOutlet var picker: UIPickerView!
 	
+	static var identitier: String { return "LabelNumberPickerCell" }
+
 	var id: String = ""
 	var delegate: LabelNumberPickerCellDelegate?
 	var pickerValues: [Int] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,16,18,20,24,28,34,40,60]
@@ -40,6 +42,23 @@ class LabelNumberPickerCell: UITableViewCell, UIPickerViewDataSource, UIPickerVi
 		view.setValue(initialValue)
 		
 		return view
+	}
+	
+	func create(id: String, description: String, subtitle: String?, initialValue: Int? = 0, values: [Int]? = nil) {
+		self.id = id
+		descriptionTitle.text = description
+		
+		if subtitle == nil {
+			descriptionSubtitle.isHidden = true
+		} else {
+			descriptionSubtitle.text = subtitle
+		}
+		
+		if let values = values {
+			pickerValues = values
+		}
+		
+		setValue(initialValue)
 	}
 	
 	func setValue(_ value: Int?) {

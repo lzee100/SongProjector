@@ -28,5 +28,13 @@ extension Cluster {
 		return !hasSheetsArray.contains(where: { $0.hasTag?.isHidden == true  })
 	}
 	
+	public var tempVersion: Cluster {
+		let tempCluster = CoreCluster.createEntity(fireNotification: false)
+		tempCluster.isTemp = true
+		tempCluster.title = title
+		tempCluster.time = time
+		tempCluster.title = title
+		return tempCluster
+	}
 
 }

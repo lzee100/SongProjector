@@ -10,6 +10,8 @@ import UIKit
 
 class SheetPickerMenuController: UITableViewController {
 		
+	@IBOutlet weak var cancelButton: UIBarButtonItem?
+	
 	var sender: NewOrEditIphoneControllerDelegate?
 	var bibleStudyGeneratorIphoneDelegate: BibleStudyGeneratorIphoneDelegate?
 	var bibleStudyGeneratorDelegate: BibleStudyGeneratorDelegate?
@@ -180,6 +182,11 @@ class SheetPickerMenuController: UITableViewController {
 	private func setup() {
 		tableView.register(cell: Cells.basicCellid)
 		tableView.isScrollEnabled = false
+		cancelButton?.title = Text.Actions.cancel
+	}
+	
+	@IBAction func cancelButtonPressed(_ sender: UIBarButtonItem) {
+		dismiss(animated: true)
 	}
 	
 }

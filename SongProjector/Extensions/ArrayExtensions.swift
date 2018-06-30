@@ -198,3 +198,19 @@ public extension Array where Element : NSPredicate {
 	}
 	
 }
+
+extension Array {
+	
+	@discardableResult
+	mutating func delete<T: Entity>(entity: T) -> Bool {
+		if let array = self as? Array<T> {
+			if let index = array.index(where: { $0.id == entity.id }){
+				self.remove(at: index)
+				return true
+			}
+		}
+		return false
+	}
+	
+	
+}

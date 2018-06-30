@@ -85,9 +85,9 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 			return collectionCell
 		} else {
 			
-			let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.sheetCollectionCell, for: indexPath)
+			let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.sheetCollectionCell, for: indexPath) as! SheetCollectionCell
 			
-			setViewFor(collectionCell: collectionCell, sheet: sheetsSorted[indexPath.section])
+			collectionCell.setupWith(cluster: cluster, sheet: sheetsSorted[indexPath.row], tag: sheetsSorted[indexPath.row].hasTag ?? cluster.hasTag, didDeleteSheet: nil, isDeleteEnabled: true)
 			
 			if visibleCells.contains(indexPath) {
 				let y = collectionCell.bounds.minY
@@ -369,21 +369,6 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 		}
 		
 		return indexPaths
-	}
-	
-	private func setViewFor(collectionCell: UICollectionViewCell, sheet: Sheet) {
-		
-		if let collectionCell = collectionCell as? SheetCollectionCell {
-			
-			collectionCell.setPreviewViewAspectRatioConstraint(multiplier: multiplier)
-			
-			for subview in collectionCell.previewView.subviews {
-				subview.removeFromSuperview()
-			}
-			
-			collectionCell.previewView.addSubview(SheetView.createWith(frame: collectionCell.bounds, cluster: cluster, sheet: sheet, tag: selectedTag, isPreview: true))
-			
-		}
 	}
 	
 	@objc private func respondToSwipeGesture(_ swipe: UISwipeGestureRecognizer) {

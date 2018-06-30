@@ -149,12 +149,14 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 		sortDiscriptor = NSSortDescriptor(key: attributeName, ascending: ascending)
 	}
 	
-	func delete(entity: T) -> Bool {
+	func delete(entity: T, fireNotification: Bool = true) -> Bool {
 		moc.delete(entity)
 		
 		do {
 			try moc.save()
-			NotificationCenter.default.post(name: NotificationNames.dataBaseDidChange, object:nil)
+			if fireNotification {
+				NotificationCenter.default.post(name: NotificationNames.dataBaseDidChange, object:nil)
+			}
 			print("saved!")
 			return true
 		} catch let error as NSError  {
