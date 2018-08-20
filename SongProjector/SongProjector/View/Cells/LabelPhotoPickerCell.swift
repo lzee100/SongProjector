@@ -9,12 +9,9 @@
 import UIKit
 import Photos
 
-protocol LabelPhotoPickerCellDelegate {
-	func didSelectImage(cell: LabelPhotoPickerCell, image: UIImage?)
-}
+class LabelPhotoPickerCell: ChurchBeamCell, TagImplementation, SheetImplementation, DynamicHeightCell, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+	
 
-class LabelPhotoPickerCell: UITableViewCell, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-		
 	@IBOutlet var descriptionTitle: UILabel!
 	@IBOutlet var descriptionLastBeamerResolution: UILabel!
 	@IBOutlet var imageThumbnail: UIImageView!
@@ -29,72 +26,147 @@ class LabelPhotoPickerCell: UITableViewCell, UIImagePickerControllerDelegate, UI
 	
 	var id = ""
 	
-		var delegate: LabelPhotoPickerCellDelegate?
-		var isActive = false { didSet { showImage() } }
-		let imagePicker = UIImagePickerController()
-		var pickedImage: UIImage?
-		var sender: UIViewController?
-		var preferredHeight: CGFloat {
-			return isActive ? 162 : 60
+	var sheetTag: Tag?
+	var tagAttribute: TagAttribute?
+	var valueDidChange: ((ChurchBeamCell) -> Void)?
+
+	var sheet: Sheet?
+	var sheetAttribute: SheetAttribute?
+	
+	var isActive = false { didSet { showImage() } }
+	let imagePicker = UIImagePickerController()
+	var pickedImage: UIImage?
+	var sender: UIViewController?
+	var preferredHeight: CGFloat {
+		return isActive ? 162 : 60
+	}
+	
+	override func prepareForReuse() {
+		sheetAttribute = nil
+		tagAttribute = nil
+		valueDidChange = nil
+		sheet = nil
+		let beamerResolution = "\(Int(externalDisplayWindowWidth)) x \(Int(externalDisplayWindowHeight))"
+		descriptionLastBeamerResolution.text = Text.NewTag.descriptionLastBeamerResolution + beamerResolution
+	}
+	
+	static let identifier = "LabelPhotoPickerCell"
+	
+	override func awakeFromNib() {
+		imagePicker.delegate = self
+		descriptionLastBeamerResolution.textColor = themeWhiteBlackBackground
+		buttonContainer.isHidden = true
+		imageThumbnail.contentMode = .scaleAspectFill
+		imageThumbnail.clipsToBounds = true
+		imageThumbnail.layer.cornerRadius = CGFloat(5)
+		let beamerResolution = "\(Int(externalDisplayWindowWidth)) x \(Int(externalDisplayWindowHeight))"
+		descriptionLastBeamerResolution.text = Text.NewTag.descriptionLastBeamerResolution + beamerResolution
+		descriptionLastBeamerResolution.textColor = isThemeLight ? UIColor(red: 0, green: 0, blue: 0, alpha: 0.5) : UIColor(red: 255, green: 255, blue: 255, alpha: 0.4)
+		button.isEnabled = false
+		buttonContainer.backgroundColor = themeWhiteBlackBackground
+		button.backgroundColor = themeHighlighted
+		button.layer.cornerRadius = 5.0
+		button.setTitleColor(.white, for: .normal)
+	}
+	
+	static func create(id: String, description: String, sender: UIViewController) -> LabelPhotoPickerCell {
+		let view : LabelPhotoPickerCell! = UIView.create(nib: "LabelPhotoPickerCell")
+		view.id = id
+		view.descriptionTitle.text = description
+		view.descriptionLastBeamerResolution.textColor = themeWhiteBlackBackground
+		view.buttonContainer.isHidden = true
+		view.imageThumbnail.layer.cornerRadius = CGFloat(5)
+		let beamerResolution = "\(Int(externalDisplayWindowWidth)) x \(Int(externalDisplayWindowHeight))"
+		view.descriptionLastBeamerResolution.text = Text.NewTag.descriptionLastBeamerResolution + beamerResolution
+		view.descriptionLastBeamerResolution.textColor = isThemeLight ? UIColor(red: 0, green: 0, blue: 0, alpha: 0.5) : UIColor(red: 255, green: 255, blue: 255, alpha: 0.4)
+		view.button.isEnabled = false
+		view.buttonContainer.backgroundColor = themeWhiteBlackBackground
+		view.button.backgroundColor = themeHighlighted
+		view.button.layer.cornerRadius = 5.0
+		view.button.setTitleColor(.white, for: .normal)
+		view.sender = sender
+		return view
+	}
+	
+	func setImage(image: UIImage?) {
+		button.setTitle(image == nil ? Text.NewTag.buttonBackgroundImagePick : Text.NewTag.buttonBackgroundImageChange, for: .normal)
+		imageThumbnail.image = image
+		pickedImage = image
+	}
+	
+	func showImage() {
+		button.setTitle(pickedImage == nil ? Text.NewTag.buttonBackgroundImagePick : Text.NewTag.buttonBackgroundImageChange, for: .normal)
+		if isActive {
+			buttonContainer.isHidden = false
+			button.isEnabled = true
+			descriptionBeamerHeightConstraint.constant = 42
+			buttonHeightConstraint.constant = 50
+			buttonBottomConstraint.constant = 10
+		} else {
+			buttonContainer.isHidden = true
+			button.isEnabled = false
+			descriptionBeamerHeightConstraint.constant = 1
+			buttonHeightConstraint.constant = 1
+			buttonBottomConstraint.constant = 0
 		}
 		
-		static func create(id: String, description: String, sender: UIViewController) -> LabelPhotoPickerCell {
-			let view : LabelPhotoPickerCell! = UIView.create(nib: "LabelPhotoPickerCell")
-			view.id = id
-			view.descriptionTitle.text = description
-			view.descriptionLastBeamerResolution.textColor = themeWhiteBlackBackground
-			view.buttonContainer.isHidden = true
-			view.imageThumbnail.layer.cornerRadius = CGFloat(5)
-			let beamerResolution = "\(Int(externalDisplayWindowWidth)) x \(Int(externalDisplayWindowHeight))"
-			view.descriptionLastBeamerResolution.text = Text.NewTag.descriptionLastBeamerResolution + beamerResolution
-			view.descriptionLastBeamerResolution.textColor = isThemeLight ? UIColor(red: 0, green: 0, blue: 0, alpha: 0.5) : UIColor(red: 255, green: 255, blue: 255, alpha: 0.4)
-			view.button.isEnabled = false
-			view.buttonContainer.backgroundColor = themeWhiteBlackBackground
-			view.button.backgroundColor = themeHighlighted
-			view.button.layer.cornerRadius = 5.0
-			view.button.setTitleColor(.white, for: .normal)
-			view.sender = sender
-			return view
+	}
+	
+	func apply(tag: Tag, tagAttribute: TagAttribute) {
+		self.sheetTag = tag
+		self.tagAttribute = tagAttribute
+		self.descriptionTitle.text = tagAttribute.description
+		applyValueToCell()
+	}
+	
+	func apply(sheet: Sheet, sheetAttribute: SheetAttribute) {
+		self.sheet = sheet
+		self.sheetAttribute = sheetAttribute
+		self.descriptionTitle.text = sheetAttribute.description
+		if sheetAttribute.additionalDescription != nil {
+			self.descriptionLastBeamerResolution?.text = sheetAttribute.additionalDescription
 		}
-		
-		func setup() {
-			imagePicker.delegate = self
-		}
-		
-		func setImage(image: UIImage?) {
-			button.setTitle(image == nil ? Text.NewTag.buttonBackgroundImagePick : Text.NewTag.buttonBackgroundImageChange, for: .normal)
-			let imageView = UIImageView(frame: imageThumbnail.frame)
-			imageView.contentMode = .scaleAspectFill
-			imageView.clipsToBounds = true
-			imageView.image = image
-			imageThumbnail.image = imageView.asImage()
-			imageThumbnail.layer.cornerRadius = CGFloat(5)
-			pickedImage = image
-			delegate?.didSelectImage(cell: self, image: image)
-			setNeedsDisplay()
-		}
-		
-		func showImage() {
-			button.setTitle(pickedImage == nil ? Text.NewTag.buttonBackgroundImagePick : Text.NewTag.buttonBackgroundImageChange, for: .normal)
-			if isActive {
-				buttonContainer.isHidden = false
-				button.isEnabled = true
-				descriptionBeamerHeightConstraint.constant = 42
-				buttonHeightConstraint.constant = 50
-				buttonBottomConstraint.constant = 10
-			} else {
-				buttonContainer.isHidden = true
-				button.isEnabled = false
-				descriptionBeamerHeightConstraint.constant = 1
-				buttonHeightConstraint.constant = 1
-				buttonBottomConstraint.constant = 0
+		applyValueToCell()
+	}
+	
+	func applyValueToCell() {
+		if let tag = sheetTag, let tagAttribute = tagAttribute {
+			switch tagAttribute {
+			case .backgroundImage: setImage(image: tag.backgroundImage)
+			default: return
 			}
-			
 		}
-		
-		override func setSelected(_ selected: Bool, animated: Bool) {
-			
+		if let sheet = sheet as? SheetTitleImageEntity {
+			setImage(image: sheet.thumbnail)
 		}
+		if let sheet = sheet as? SheetPastorsEntity {
+			setImage(image: sheet.thumbnail)
+		}
+	}
+	
+	func applyCellValueToTag() {
+		if let tag = sheetTag, let tagAttribute = tagAttribute {
+			switch tagAttribute {
+			case .backgroundImage: tag.backgroundImage = pickedImage
+			default: return
+			}
+		}
+		if let sheet = sheet as? SheetTitleImageEntity {
+			sheet.image = pickedImage
+		} else if let sheet = sheet as? SheetPastorsEntity {
+			sheet.image = pickedImage
+		}
+	}
+	
+	func set(value: Any?) {
+		guard value != nil else {
+			setImage(image: nil)
+			return
+		}
+		if let value = value as? UIImage {
+			setImage(image: value)
+		}
+	}
 	
 	func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
 		if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
@@ -106,16 +178,15 @@ class LabelPhotoPickerCell: UITableViewCell, UIImagePickerControllerDelegate, UI
 				self.setNeedsDisplay()
 				
 				self.pickedImage = pickedImage
-				self.delegate?.didSelectImage(cell: self, image: pickedImage)
+				self.applyCellValueToTag()
+				self.valueDidChange?(self)
 				if let sender = self.sender {
 					sender.dismiss(animated: true)
 				}
 			}
 		}
 	}
-		
-	override func setHighlighted(_ highlighted: Bool, animated: Bool) {
-	}
+	
 	@IBAction func changeImage(_ sender: UIButton) {
 		if !canUsePhotos {
 			PHPhotoLibrary.requestAuthorization({ (status) in

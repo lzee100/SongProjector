@@ -8,17 +8,8 @@
 
 import UIKit
 
-class AddButtonCell: UITableViewCell {
+class AddButtonCell: ChurchBeamCell {
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-    }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-    }
-	
-	override func setHighlighted(_ highlighted: Bool, animated: Bool) {
-	}
+	static let identifier = "AddButtonCell"
     
 }

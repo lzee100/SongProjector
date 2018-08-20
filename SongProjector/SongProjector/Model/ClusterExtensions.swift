@@ -36,5 +36,25 @@ extension Cluster {
 		tempCluster.title = title
 		return tempCluster
 	}
+	
+	func mergeSelfInto(cluster: Cluster) {
+		cluster.isTemp = isTemp
+		cluster.title = title
+		cluster.time = time
+		cluster.title = title
+	}
+	
+	public var hasIntrumentsArray: [Instrument] {
+		
+		if let setHasInstruments = hasInstruments as? Set<Instrument> {
+			return Array(setHasInstruments)
+		} else {
+			return []
+		}
+	}
+	
+	public var hasMusic: Bool {
+		return (hasInstruments?.count ?? 0) > 0
+	}
 
 }

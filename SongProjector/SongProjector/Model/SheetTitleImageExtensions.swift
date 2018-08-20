@@ -23,26 +23,55 @@ extension SheetTitleImageEntity {
 			}
 		}
 		set {
-			if newValue == nil {
-				if let path = imagePath {
+			if let newValue = newValue, let data = UIImageJPEGRepresentation(newValue, 1.0), let resizedImage = newValue.resized(toWidth: 500), let dataResized = UIImageJPEGRepresentation(resizedImage, 0.5) {
+				if let path = self.imagePath {
 					let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
 					let url = documentsDirectory.appendingPathComponent(path)
 					do {
 						try FileManager.default.removeItem(at: url)
-						imagePath = nil
+						self.imagePath = nil
 					} catch let error as NSError {
 						print("Error: \(error.domain)")
 					}
 				}
-			} else {
-				if let data = UIImagePNGRepresentation(newValue!) {
+				
+				if let path = self.thumbnailPath {
 					let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-					let imagePath = String(UUID().uuidString) + ".png"
-					let filename = documentsDirectory.appendingPathComponent(imagePath)
-					try? data.write(to: filename)
-					self.imagePath = imagePath
+					let url = documentsDirectory.appendingPathComponent(path)
+					do {
+						try FileManager.default.removeItem(at: url)
+					} catch let error as NSError {
+						print("Error: \(error.domain)")
+					}
 				}
+				
+				let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+				let imagePath = UUID().uuidString + ".jpg"
+				let imagePathThumbnail = UUID().uuidString + "thumb.jpg"
+				
+				let filename = documentsDirectory.appendingPathComponent(imagePath)
+				let filenameThumb = documentsDirectory.appendingPathComponent(imagePathThumbnail)
+				
+				try? data.write(to: filename)
+				try? dataResized.write(to: filenameThumb)
+				self.imagePath = imagePath
+				self.thumbnailPath = imagePathThumbnail
+				
 			}
+		}
+	}
+	
+	private(set) var thumbnail: UIImage? {
+		get {
+			if let imagePath = thumbnailPath {
+				let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+				let filePath = documentsDirectory.appendingPathComponent(imagePath).path
+				return UIImage(contentsOfFile: filePath)
+			} else {
+				return nil
+			}
+		}
+		set {
 		}
 	}
 	

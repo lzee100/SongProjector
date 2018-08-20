@@ -58,79 +58,95 @@ class SheetSplit: SheetView {
 			titleHeightConstraint.constant = titleHeightConstraint.constant * scaleFactor
 			titleBottomConstraint.constant = titleBottomConstraint.constant * scaleFactor
 			
-			if let songTitle = sheet.title {
-				if let tag = sheetTag {
-					
-					if let zeroHeightConstraint = zeroHeightConstraint {
-						descriptionTitle.removeConstraint(zeroHeightConstraint)
-					}
-					if let newTitleBottomConstraint = newTitleBottomConstraint {
-						descriptionTitle.removeConstraint(newTitleBottomConstraint)
-					}
-					
-					// reset height constraint
-					titleHeightConstraint.isActive = true
-					titleBottomConstraint.isActive = true
-					
-					//					}
-					descriptionTitle.attributedText = NSAttributedString(string: songTitle, attributes: tag.getTitleAttributes(scaleFactor))
-				} else {
-					descriptionTitle.text = songTitle
+			updateTitle()
+			updateContent()
+			updateBackgroundImage()
+			updateOpacity()
+			updateBackgroundColor()
+			
+		}
+	}
+	
+	override func updateTitle() {
+		if let songTitle = self.sheet.title {
+			if let tag = sheetTag {
+				
+				if let zeroHeightConstraint = zeroHeightConstraint {
+					descriptionTitle.removeConstraint(zeroHeightConstraint)
 				}
+				if let newTitleBottomConstraint = newTitleBottomConstraint {
+					descriptionTitle.removeConstraint(newTitleBottomConstraint)
+				}
+				
+				// reset height constraint
+				titleHeightConstraint.isActive = true
+				titleBottomConstraint.isActive = true
+				
+				//					}
+				descriptionTitle.attributedText = NSAttributedString(string: songTitle, attributes: tag.getTitleAttributes(scaleFactor ?? 1))
 			} else {
-				// set height constraint to zero
-				titleHeightConstraint.isActive = false
-				zeroHeightConstraint = NSLayoutConstraint(item: descriptionTitle, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
-				descriptionTitle.addConstraint(zeroHeightConstraint!)
+				descriptionTitle.text = songTitle
 			}
-			
-			if let sheet = sheet as? SheetSplitEntity, let lyrics = sheet.textLeft {
-				if let tag = sheetTag {
-					textViewLeft.attributedText = NSAttributedString(string: lyrics, attributes: tag.getLyricsAttributes(scaleFactor))
-				} else {
-					textViewLeft.text = lyrics
-				}
+		} else {
+			// set height constraint to zero
+			titleHeightConstraint.isActive = false
+			zeroHeightConstraint = NSLayoutConstraint(item: descriptionTitle, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
+			descriptionTitle.addConstraint(zeroHeightConstraint!)
+		}
+	}
+	
+	override func updateContent() {
+		let sheet = self.sheet as! SheetSplitEntity
+		if let content = sheet.textLeft {
+			if let tag = sheetTag {
+				textViewLeft.attributedText = NSAttributedString(string: content, attributes: tag.getLyricsAttributes(scaleFactor ?? 1))
+			} else {
+				textViewLeft.text = content
 			}
-			
-			if let sheet = sheet as? SheetSplitEntity, let lyrics = sheet.textRight {
-				if let tag = sheetTag {
-					textViewRight.attributedText = NSAttributedString(string: lyrics, attributes: tag.getLyricsAttributes(scaleFactor))
-				} else {
-					textViewRight.text = lyrics
-				}
+		} else {
+			textViewLeft.text = nil
+		}
+		if let content = sheet.textRight {
+			if let tag = sheetTag {
+				textViewRight.attributedText = NSAttributedString(string: content, attributes: tag.getLyricsAttributes(scaleFactor ?? 1))
+			} else {
+				textViewRight.text = content
 			}
-			
-			setBackgroundImage(image: isForExternalDispay ? sheetTag?.backgroundImage : sheetTag?.thumbnail)
-			
-			if let titleBackgroundColor = sheetTag?.backgroundColorTitle, let title = sheetTag?.title, title != "" {
-				if let allHaveTitle = sheetTag?.allHaveTitle, allHaveTitle == false && position < 1 {
-					titleBackgroundView.isHidden = false
-					titleBackgroundView.backgroundColor = titleBackgroundColor
-				} else if  let allHaveTitle = sheetTag?.allHaveTitle, allHaveTitle == true {
-					titleBackgroundView.isHidden = false
-					titleBackgroundView.backgroundColor = titleBackgroundColor
-				} else {
-					titleBackgroundView.isHidden = true
-				}
+		} else {
+			textViewRight.text =  nil
+		}
+	}
+	
+	override func updateOpacity() {
+		if let alpha = sheetTag?.backgroundTransparency {
+			sheetBackgroundView.alpha = CGFloat(alpha)
+		}
+	}
+	
+	override func updateBackgroundColor() {
+		if let titleBackgroundColor = sheetTag?.backgroundColorTitle, let title = sheetTag?.title, title != "" {
+			if let allHaveTitle = sheetTag?.allHaveTitle, allHaveTitle == false && position < 1 {
+				titleBackgroundView.isHidden = false
+				titleBackgroundView.backgroundColor = titleBackgroundColor
+			} else if  let allHaveTitle = sheetTag?.allHaveTitle, allHaveTitle == true {
+				titleBackgroundView.isHidden = false
+				titleBackgroundView.backgroundColor = titleBackgroundColor
 			} else {
 				titleBackgroundView.isHidden = true
 			}
-			
-			if let backgroundColor = sheetTag?.sheetBackgroundColor, sheetTag?.backgroundImage == nil {
-				self.sheetBackgroundView.backgroundColor = backgroundColor
-			} else {
-				self.sheetBackgroundView.backgroundColor = .white
-			}
+		} else {
+			titleBackgroundView.isHidden = true
+		}
+		
+		if let backgroundColor = sheetTag?.sheetBackgroundColor, sheetTag?.backgroundImage == nil {
+			self.sheetBackgroundView.backgroundColor = backgroundColor
+		} else {
+			self.sheetBackgroundView.backgroundColor = .white
 		}
 	}
 	
-	override func changeOpacity(newValue: Float) {
-		if let _ = isForExternalDispay ? sheetTag?.backgroundImage : sheetTag?.thumbnail {
-			sheetBackgroundImageView.alpha = CGFloat(newValue)
-		}
-	}
-	
-	override func setBackgroundImage(image: UIImage?) {
+	override func updateBackgroundImage() {
+		let image = isForExternalDispay ? sheetTag?.backgroundImage : sheetTag?.thumbnail
 		if let backgroundImage = image {
 			sheetBackgroundImageView.isHidden = false
 			sheetBackgroundImageView.contentMode = .scaleAspectFill

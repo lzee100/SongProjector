@@ -48,21 +48,24 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 	@IBOutlet var titleTableSheet: UILabel!
 	@IBOutlet var clear: UIBarButtonItem!
 	@IBOutlet var add: UIBarButtonItem!
-	@IBOutlet var mixerHTopConstraint: NSLayoutConstraint!
 	@IBOutlet var mixerContainerView: UIView!
 	@IBOutlet var moveUpDownSection: UIView!
 	
+	@IBOutlet var sheetDisplayerSwipeViewTop: NSLayoutConstraint!
 	@IBOutlet var sheetDisplayerSwipeViewHeight: NSLayoutConstraint!
 	@IBOutlet var sheetDisplayerRatioConstraint: NSLayoutConstraint!
 	@IBOutlet var sheetDisplayerPreviousRatioConstraint: NSLayoutConstraint!
 	@IBOutlet var sheetDisplayerNextRatioConstraint: NSLayoutConstraint!
-	
+	@IBOutlet var moveUpDownSectionTopConstraint: NSLayoutConstraint!
+	@IBOutlet var mixerTopStackViewConstraint: NSLayoutConstraint!
+	@IBOutlet var mixerTopSuperViewConstraint: NSLayoutConstraint!
+
 	var customSheetDisplayerRatioConstraint: NSLayoutConstraint?
 	var customSheetDisplayerPreviousRatioConstraint: NSLayoutConstraint?
 	var customSheetDisplayerNextRatioConstraint: NSLayoutConstraint?
 	var sheetDisplaySwipeViewCustomHeightConstraint: NSLayoutConstraint?
 	var swipeAnimationIsActive = false
-
+	
 	
 	// MARK: - Types
 	
@@ -83,6 +86,7 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 	private var sheetDisplayerSwipeViewInitialHeight: CGFloat = 0
 	private var isPlaying = false
 	private var leftSwipe = UISwipeGestureRecognizer()
+	private var isMixerVisible = false
 	
 	private var songService: SongService!
 	
@@ -103,7 +107,7 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 		if let controller = segue.destination as? UINavigationController, let newSongServiceController = controller.viewControllers.first as? NewSongServiceController {
 			newSongServiceController.delegate = self
-			newSongServiceController.songs = songService.songs.flatMap { $0.cluster }
+			newSongServiceController.selectedSongs = songService.songs.compactMap ({ $0.cluster })
 		}
 		if let controller = segue.destination as? UINavigationController, let songsController = controller.viewControllers.first as? SongsController {
 			songsController.delegate = self
@@ -157,7 +161,7 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 			}
 			if let cell = cell as? BasicCell {
 				cell.setup(title: title, icon: Cells.sheetIcon)
-				cell.selectedCell = songService.selectedSong?.selectedSheet?.id == sheet.id
+				cell.selectedCell = songService.selectedSheet?.id == sheet.id
 			}
 			return cell
 		}
@@ -181,11 +185,13 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 			}
 			
 		} else {
-			let currentSheet = songService.songs[songService.selectedSection!].sheets[indexPath.row]
+			if songService.isPlaying || songService.isAnimating {
+				return
+			}
+			let selectedSheet = songService.songs[songService.selectedSection!].sheets[indexPath.row]
 			let previousSelected = songService.selectedSheet
-			let isNil = previousSelected == nil
-			let notEqual = currentSheet != previousSelected
-			songService.selectedSheet = (notEqual || isNil) ? currentSheet : nil
+			let isEqual = selectedSheet.isEqualTo(previousSelected)
+			songService.selectedSheet = isEqual ? nil : selectedSheet
 		}
 		update()
 	}
@@ -195,7 +201,7 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 	// MARK: NewSongServiceDelegate Functions
 	
 	func didFinishSongServiceSelection(clusters: [Cluster], completion: () -> Void) {
-		songService.songs = clusters.compactMap { SongObject(cluster: $0, displaySheet: display(sheet:)) }
+		songService.songs = clusters.compactMap { SongObject(cluster: $0) }
 		completion()
 	}
 
@@ -204,7 +210,7 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 	// MARK: SongsControllerDelegate Functions
 	
 	func didSelectCluster(cluster: Cluster){
-		songService.songs.append(SongObject(cluster: cluster, displaySheet: display(sheet:)))
+		songService.songs.append(SongObject(cluster: cluster))
 	}
 	
 	
@@ -213,10 +219,11 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 	
 	private func setup() {
 		
-		songService = SongService(swipeLeft: swipeAutomatically)
+		songService = SongService(swipeLeft: swipeAutomatically, displaySheet: display(sheet:), shutDownBeamer: shutDownDisplayer)
 		view.backgroundColor = themeWhiteBlackBackground
-		songService.songs = CoreCluster.getEntities().flatMap { SongObject(cluster: $0, displaySheet: display(sheet:)) }
-		
+		songService.songs = CoreCluster.getEntities().compactMap { SongObject(cluster: $0) }
+		swipeUpDownImageView.image = #imageLiteral(resourceName: "More")
+		swipeUpDownImageView.tintColor = themeHighlighted
 		navigationController?.title = Text.SongService.title
 		titleTableCluster.text = Text.SongService.titleTableClusters
 		titleTableSheet.text = Text.SongService.titleTableSheets
@@ -241,6 +248,13 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 		sheetDisplaySwipeView.addGestureRecognizer(leftSwipe)
 		sheetDisplaySwipeView.addGestureRecognizer(rightSwipe)
 		
+		let downSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGestureUpDown))
+		let upSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGestureUpDown))
+		downSwipe.direction = .down
+		upSwipe.direction = .up
+		moveUpDownSection.addGestureRecognizer(downSwipe)
+		moveUpDownSection.addGestureRecognizer(upSwipe)
+		
 		tableViewClusters.register(cell: Cells.basicCellid)
 		tableViewSheets.register(cell: Cells.basicCellid)
 		
@@ -253,15 +267,22 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 		tableViewClusters.setNeedsDisplay()
 		tableViewSheets.reloadData()
 		tableViewSheets.setNeedsDisplay()
-		if let row = songService.selectedSong?.sheets.index(where: { $0.id == songService.selectedSong?.selectedSheet?.id }) {
-			self.tableViewSheets.scrollToRow(at: IndexPath(row: Int(row), section: 0), at: .middle, animated: true)
+		if scroll, let row = songService.selectedSong?.sheets.index(where: { $0.id == songService.selectedSheet?.id }), tableViewSheets.numberOfRows(inSection: 0) - 1 >= row {
+				self.tableViewSheets.scrollToRow(at: IndexPath(row: Int(row), section: 0), at: .middle, animated: true)
 		}
 	}
 	
 	private func display(sheet: Sheet) {
-			for subview in sheetDisplayer.subviews {
-				subview.removeFromSuperview()
-			}
+		for subview in sheetDisplayer.subviews {
+			subview.removeFromSuperview()
+		}
+		for subview in sheetDisplayerPrevious.subviews {
+			subview.removeFromSuperview()
+		}
+		for subview in sheetDisplayerNext.subviews {
+			subview.removeFromSuperview()
+		}
+		
 		let nextPreviousScaleFactor: CGFloat = sheetDisplayerNext.bounds.height / sheetDisplayer.bounds.height
 		
 		sheetDisplayer.addSubview(SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.selectedSong?.cluster, sheet: sheet, tag: songService.selectedTag, scaleFactor: scaleFactor, toExternalDisplay: true))
@@ -298,9 +319,13 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 		}
 	}
 	
-	@objc private func respondToSwipeGesture(_ sender: UISwipeGestureRecognizer) {
+	@objc private func respondToSwipeGesture(_ sender: UISwipeGestureRecognizer, automatically: Bool = false) {
 		switch sender.direction {
 		case .right:
+			if !automatically && songService.isPlaying {
+				return
+			}
+
 			if let previousSheet = songService.previousSheet(select: false) {
 				self.swipeAnimationIsActive = true
 				self.display(sheet: previousSheet)
@@ -312,12 +337,34 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 			}
 		case .left:
 			if let nextSheet = songService.nextSheet(select: false) {
+				
 				self.swipeAnimationIsActive = true
 				self.display(sheet: nextSheet)
+				
+				guard !songService.isPlaying && displayMode != .mixer else {
+					songService.nextSheet()
+					self.update(scroll: true)
+					return
+				}
+				
 				animateSheetsWith(.left) {
 					self.swipeAnimationIsActive = false
 					self.songService.nextSheet()
 					self.update(scroll: true)
+				}
+				
+			} else {
+				// don't go to next song but play first sheet again
+				if songService.isAnimating {
+					swipeAnimationIsActive = true
+					animateSheetsWith(.left, completion: {
+						self.swipeAnimationIsActive = false
+						self.songService.selectedSheet = self.songService.selectedSong?.sheets.first
+						if let sheet = self.songService.selectedSong?.sheets.first {
+							self.display(sheet: sheet)
+						}
+					})
+					return
 				}
 			}
 		default:
@@ -325,15 +372,69 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 		}
 	}
 	
+	@objc private func respondToSwipeGestureUpDown(_ sender: UISwipeGestureRecognizer) {
+		switch sender.direction {
+		case .up:
+			print("up")
+			if isMixerVisible { // SHOW MIXER
+				
+				// move sheets up
+				sheetDisplayerSwipeViewTop.constant = 0
+				moveUpDownSectionTopConstraint.constant = 0
+				mixerTopSuperViewConstraint.isActive = false
+				mixerTopStackViewConstraint.isActive = true
+				
+				
+				
+				UIView.animate(withDuration: 0.3, animations: {
+					self.view.layoutIfNeeded()
+				}, completion: { (bool) in
+					self.mixerContainerView.subviews.first?.removeFromSuperview()
+					self.isMixerVisible = false
+					self.displayMode = .normal
+					self.isAnimatingUpDown = false
+				})
+			}
+		case .down:
+			print("down")
+			
+			if !isMixerVisible { // SHOW MIXER
+
+				let mixerView = MixerView(frame: CGRect(x: 0, y: 0, width: mixerContainerView.bounds.width, height: mixerContainerView.bounds.height + 100))
+				mixerContainerView.addSubview(mixerView)
+				view.layoutIfNeeded()
+
+				// move sheets up
+				moveUpDownSectionTopConstraint.constant = sheetDisplaySwipeView.bounds.height + 100
+				sheetDisplayerSwipeViewTop.constant = -sheetDisplaySwipeView.bounds.height
+				mixerTopSuperViewConstraint.isActive = true
+				mixerTopStackViewConstraint.isActive = false
+				
+				
+				
+				UIView.animate(withDuration: 0.3, animations: {
+					self.view.layoutIfNeeded()
+				}, completion: { (bool) in
+					self.isMixerVisible = true
+					self.displayMode = .mixer
+					self.isAnimatingUpDown = false
+				})
+			}
+		default:
+			break
+		}
+	}
+
+	
 	@IBAction func clearButtonPressed(_ sender: UIBarButtonItem) {
 		
 	}
 	
-	private func animateSheetsWith(_ direction : AnimationDirection, isNextOrPreviousCluster: Bool = false, completion: @escaping () -> Void) {
+	private func animateSheetsWith(_ direction : AnimationDirection, completion: @escaping () -> Void) {
 		switch direction {
 		case .left:
 
-			if let sheet = songService.selectedSong?.selectedSheet, let nextSheet = songService.nextSheet(select: false) {
+			if let sheet = songService.selectedSheet, let nextSheet = songService.nextSheet(select: false) {
 				let currentSheetView = SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.selectedSong?.cluster, sheet: sheet, tag: songService.selectedTag, scaleFactor: scaleFactor, toExternalDisplay: true)
 				
 				let nextSheetView = SheetView.createWith(frame: sheetDisplayerNext.bounds, cluster: songService.getSongForNextSheet()?.cluster, sheet: nextSheet, tag: songService.nextTag, scaleFactor: sheetDisplayerNext.bounds.height / sheetDisplayer.bounds.height)
@@ -369,7 +470,7 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 			
 		case .right:
 			
-			if let sheet = songService.selectedSong?.selectedSheet, let previousSheet = songService.previousSheet(select: false) {
+			if let sheet = songService.selectedSheet, let previousSheet = songService.previousSheet(select: false) {
 				
 //				sheetDisplayerNext.isHidden = position == numberOfSheets ? true : false
 //				sheetDisplayerPrevious.isHidden = position == 0 ? true : false
@@ -410,21 +511,21 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 	
 	
 	func databaseDidChange( _ notification: Notification) {
-		songService.selectedSong?.selectedSheet = nil
+		songService.selectedSheet = nil
 		songService.selectedSection = nil
 		
 		if songService.songs.count > 0 {
 			for cluster in songService.songs.compactMap({ $0.cluster }) {
 				CoreCluster.predicates.append("id", equals: cluster.id)
 			}
-			songService.songs = CoreCluster.getEntities().flatMap { SongObject(cluster: $0, displaySheet: display(sheet:)) }
+			songService.songs = CoreCluster.getEntities().compactMap { SongObject(cluster: $0) }
 		}
 	}
 	
 	func externalDisplayDidChange(_ notification: Notification) {
 		scaleFactor = 1
 		updateSheetDisplayersRatios()
-		if let sheet = songService.selectedSong?.selectedSheet {
+		if let sheet = songService.selectedSheet {
 			display(sheet: sheet)
 		}
 	}
@@ -468,7 +569,7 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 	}
 	
 	func swipeAutomatically() {
-		respondToSwipeGesture(self.leftSwipe)
+		respondToSwipeGesture(self.leftSwipe, automatically: true)
 	}
 	
 	private func startPlay() {
@@ -489,7 +590,7 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 		}
 		
 			// else if sheet has time (mp3 song)
-		else if let time = songService.selectedSong?.selectedSheet?.time, time > 0 {
+		else if let time = songService.selectedSheet?.time, time > 0 {
 			DispatchQueue.main.asyncAfter(deadline: .now() + time, execute: {
 				if self.isPlaying {
 					self.respondToSwipeGesture(self.leftSwipe)

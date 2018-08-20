@@ -13,36 +13,46 @@ protocol LabelColorPickerCellDelegate {
 	func colorPickerDidChooseColor(cell: LabelColorPickerCell, colorPicker: ChromaColorPicker, color: UIColor?)
 }
 
-class LabelColorPickerCell: UITableViewCell, ChromaColorPickerDelegate {
-
+class LabelColorPickerCell: ChurchBeamCell, TagImplementation, DynamicHeightCell, ChromaColorPickerDelegate {	
+	
 	@IBOutlet var descriptionTitle: UILabel!
 	@IBOutlet var colorPickerContainer: UIView!
 	@IBOutlet var colorPreview: UIView!
+	
+	var delegate: LabelColorPickerCellDelegate?
 	
 	var preferredHeight : CGFloat {
 		return isActive ? 360 : 60
 	}
 	
 	var id = ""
-	var isActive = false { didSet { setupColorPicker() } }
+	var isActive = false { didSet { toggle() } }
 	var colorPicker = ChromaColorPicker()
+	var sheetTag: Tag?
+	var tagAttribute: TagAttribute?
+	var valueDidChange: ((ChurchBeamCell) -> Void)?
+	var selectedColor: UIColor?
+	
+	static let identifier = "LabelColorPickerCell"
+	
+	override func awakeFromNib() {
+		colorPreview.layer.borderColor = themeHighlighted.cgColor
+		colorPreview.layer.borderWidth = 1.0
+		colorPicker.backgroundColor = themeWhiteBlackBackground
+		colorPickerContainer.isHidden = true
+		colorPickerContainer.backgroundColor = themeWhiteBlackBackground
+		
+		
+	}
 	
 	static func create(id: String, description: String) -> LabelColorPickerCell {
 		let view : LabelColorPickerCell! = UIView.create(nib: "LabelColorPickerCell")
 		view.id = id
 		view.descriptionTitle.text = description
-		view.colorPreview.layer.borderColor = themeHighlighted.cgColor
-		view.colorPreview.layer.borderWidth = 1.0
-		view.colorPicker.backgroundColor = themeWhiteBlackBackground
-		view.colorPickerContainer.isHidden = true
-		view.colorPickerContainer.backgroundColor = themeWhiteBlackBackground
 		return view
 	}
 	
-	var delegate: LabelColorPickerCellDelegate?
-	
-	
-	private func setupColorPicker() {
+	private func toggle() {
 		if isActive {
 			colorPicker = ChromaColorPicker(frame: CGRect(x: 0, y: 0, width: 300, height: 300))
 			colorPicker.backgroundColor = themeWhiteBlackBackground
@@ -60,24 +70,80 @@ class LabelColorPickerCell: UITableViewCell, ChromaColorPickerDelegate {
 		}
 	}
 	
+	func apply(tag: Tag, tagAttribute: TagAttribute) {
+		self.sheetTag = tag
+		self.tagAttribute = tagAttribute
+		self.descriptionTitle.text = tagAttribute.description
+		applyValueToCell()
+	}
+	
+	func applyValueToCell() {
+		var color: UIColor? = nil
+		if let tagAttribute = tagAttribute {
+			switch tagAttribute {
+			case .backgroundColor:
+				if let colorHex = sheetTag?.backgroundColor {
+					color = UIColor(hex: colorHex)
+				}
+			case .titleTextColorHex:
+				if let colorHex = sheetTag?.titleTextColorHex {
+					color = UIColor(hex: colorHex)
+				}
+			case .titleBorderColorHex:
+				if let colorHex = sheetTag?.titleBorderColorHex {
+					color = UIColor(hex: colorHex)
+				}
+			case .lyricsTextColorHex:
+				if let colorHex = sheetTag?.lyricsTextColorHex {
+					color = UIColor(hex: colorHex)
+				}
+			case .lyricsBorderColor:
+				if let colorHex = sheetTag?.lyricsBorderColorHex {
+					color = UIColor(hex: colorHex)
+				}
+			default: return
+			}
+		}
+		set(value: color)
+	}
+	
+	func applyCellValueToTag() {
+		if let color = selectedColor?.hexCode, let tagAttribute = tagAttribute {
+			switch tagAttribute {
+			case .backgroundColor: sheetTag?.backgroundColor = color
+			case .titleTextColorHex: sheetTag?.titleTextColorHex = color
+			case .titleBorderColorHex: sheetTag?.titleBorderColorHex = color
+			case .lyricsTextColorHex: sheetTag?.lyricsTextColorHex = color
+			case .lyricsBorderColor: sheetTag?.lyricsBorderColorHex = color
+			default: return
+			}
+		}
+	}
+	
+	func set(value: Any?) {
+		guard value != nil else {
+			colorPreview.backgroundColor = nil
+			return
+		}
+		if let value = value as? UIColor {
+			colorPreview.backgroundColor = value
+		}
+	}
+	
 	func setColor(color: UIColor?) {
-		colorPreview.backgroundColor = color != nil ? color! : id == "cellTitleTextColor" || id == "cellLyricsTextColor" ? .black : .clear
+		colorPreview.backgroundColor = color
+//		colorPreview.backgroundColor = color != nil ? color! : id == "cellTitleTextColor" || id == "cellLyricsTextColor" ? .black : .clear
+		valueDidChange?(self)
 		delegate?.colorPickerDidChooseColor(cell: self, colorPicker: colorPicker, color: color)
 	}
 	
 	func colorPickerDidChooseColor(_ colorPicker: ChromaColorPicker, color: UIColor) {
+		self.selectedColor = color
+		applyCellValueToTag()
+		applyValueToCell()
 		colorPreview.backgroundColor = color
-		isActive = !isActive
+		valueDidChange?(self)
 		delegate?.colorPickerDidChooseColor(cell: self, colorPicker: colorPicker, color: color)
 	}
-	
-	override func setSelected(_ selected: Bool, animated: Bool) {
-		
-	}
-	
-	override func setHighlighted(_ highlighted: Bool, animated: Bool) {
-		
-	}
-	
 	
 }

@@ -42,6 +42,12 @@ extension UITableView {
 		
 	}
 	
+	public func register(cells: [String]) {
+		
+		cells.forEach({ register(nib: $0, identifier: $0) })
+		
+	}
+	
 	public func register(nib: String, identifier: String) {
 		
 		register(UINib(nibName: nib, bundle: nil), forCellReuseIdentifier: identifier)

@@ -12,11 +12,12 @@ import UIKit
 public enum SheetType {
 	case SheetTitleContent
 	case SheetTitleImage
+	case SheetPastors
 	case SheetSplit
 	case SheetEmpty
 	case SheetActivities
 	
-	static let all = [SheetTitleContent, SheetTitleImage, SheetSplit, SheetEmpty, SheetActivities]
+	static let all = [SheetTitleContent, SheetTitleImage, SheetPastors, SheetSplit, SheetEmpty, SheetActivities]
 	
 	static func `for`(_ indexPath: IndexPath) -> SheetType {
 		return all[indexPath.row]
@@ -28,6 +29,8 @@ public enum SheetType {
 			return Cells.bulletOpen
 		case .SheetTitleImage:
 			return Cells.bulletOpen
+		case .SheetPastors:
+			return Cells.bulletOpen
 		case .SheetSplit:
 			return Cells.bulletOpen
 		case .SheetEmpty:
@@ -38,8 +41,44 @@ public enum SheetType {
 	}
 }
 
+enum SheetAttribute {
+	case SheetTitle
+	case SheetContent
+	case SheetContentLeft
+	case SheetContentRight
+	case SheetImage
+	case SheetPastorImage
+	case SheetImageHasBorder
+	case SheetImageBorderSize
+	case SheetImageBorderColor
+	case SheetImageContentMode
+	
+	var description: String? {
+		switch self {
+		case .SheetTitle: return Text.NewSheetTitleImage.descriptionTitle
+		case .SheetContent: return Text.NewSheetTitleImage.descriptionContent
+		case .SheetContentLeft: return Text.NewSheetTitleImage.descriptionTextLeft
+		case .SheetContentRight: return Text.NewSheetTitleImage.descriptionTextRight
+		case .SheetImage, .SheetPastorImage: return Text.NewSheetTitleImage.descriptionImage
+		case .SheetImageHasBorder: return Text.NewSheetTitleImage.descriptionImageHasBorder
+		case .SheetImageBorderSize: return Text.NewSheetTitleImage.descriptionImageBorderSize
+		case .SheetImageBorderColor: return Text.NewSheetTitleImage.descriptionImageBorderColor
+		case .SheetImageContentMode: return Text.NewSheetTitleImage.descriptionImageContentMode
+		}
+	}
+	
+	var additionalDescription: String? {
+		switch self {
+		case .SheetPastorImage: return Text.newPastorsSheet.photoDescription
+		default:
+			return nil
+		}
+	}
+	
+}
+
 extension Sheet {
-			
+		
 	var type: SheetType {
 		if self.entity.isKindOf(entity: SheetTitleContentEntity.entity()){
 			return .SheetTitleContent
@@ -49,39 +88,16 @@ extension Sheet {
 			return .SheetSplit
 		}  else if self.entity.isKindOf(entity: SheetActivities.entity()) {
 			return .SheetActivities
+		} else if self.entity.isKindOf(entity: SheetPastorsEntity.entity()) {
+			return .SheetPastors
 		} else {
 			return .SheetEmpty
 		}
 		
 	}
 	
-	var emptySheet: Sheet {
-		switch type {
-		case .SheetTitleContent:
-			let sheet = CoreSheetTitleContent.createEntityNOTsave()
-			sheet.isTemp = true
-			return sheet
-		case .SheetTitleImage:
-			let sheet = CoreSheetTitleImage.createEntityNOTsave()
-			sheet.isTemp = true
-			return sheet
-		case .SheetSplit:
-			let sheet = CoreSheetSplit.createEntityNOTsave()
-			sheet.isTemp = true
-			return sheet
-		case .SheetEmpty:
-			let sheet = CoreSheetEmptySheet.createEntity()
-			sheet.isTemp = true
-			return sheet
-		case .SheetActivities:
-			let sheet = CoreSheetActivities.createEntity()
-			sheet.isTemp = true
-			return sheet
-		}
-	}
-	
 	override public func delete() {
-		if let tag = hasTag {
+		if let tag = hasTag, tag.isHidden == true {
 			tag.backgroundImage = nil
 			let _ = CoreTag.delete(entity: tag)
 		}
@@ -107,6 +123,13 @@ extension Sheet {
 				sheet.imagePath = current.imagePath
 				sheet.imageContentMode = current.imageContentMode
 			}
+		case .SheetPastors:
+			sheet = CoreSheetPastors.createEntity()
+			if let sheet = sheet as? SheetPastorsEntity, let current = self as? SheetPastorsEntity {
+				sheet.content = current.content
+				sheet.imagePath = current.imagePath
+				sheet.thumbnailPath = current.thumbnailPath
+			}
 		case .SheetSplit:
 			sheet = CoreSheetSplit.createEntity()
 			if let sheet = sheet as? SheetSplitEntity, let current = self as? SheetSplitEntity {
@@ -121,6 +144,9 @@ extension Sheet {
 				sheet.hasGoogleActivity = current.hasGoogleActivity
 			}
 		}
+		if self.hasTag?.isHidden == true {
+			sheet.hasTag = hasTag?.getTemp()
+		}
 		sheet.title = title
 		sheet.isTemp = true
 		sheet.time = time
@@ -129,6 +155,67 @@ extension Sheet {
 		return sheet
 	}
 	
+	func mergeSelfInto(sheet: Sheet, isTemp: Bool = false) {
+		switch self.type {
+		case .SheetTitleContent:
+			let sheet = sheet as! SheetTitleContentEntity
+			let this = self as! SheetTitleContentEntity
+			sheet.lyrics = this.lyrics
+			
+		case .SheetTitleImage:
+			let sheet = sheet as! SheetTitleImageEntity
+			let this = self as! SheetTitleImageEntity
+			sheet.hasTitle = this.hasTitle
+			sheet.imageHasBorder = this.imageHasBorder
+			sheet.content = this.content
+			sheet.imageBorderColor = this.imageBorderColor
+			sheet.imageBorderSize = this.imageBorderSize
+			sheet.imagePath = this.imagePath
+			sheet.imageContentMode = this.imageContentMode
+			
+		case .SheetPastors:
+			let sheet = sheet as! SheetPastorsEntity
+			let this = self as! SheetPastorsEntity
+			sheet.content = this.content
+			sheet.imagePath = this.imagePath
+			sheet.thumbnailPath = this.thumbnailPath
+			
+		case .SheetSplit:
+			let sheet = sheet as! SheetSplitEntity
+			let this = self as! SheetSplitEntity
+			sheet.textLeft = this.textLeft
+			sheet.textRight = this.textRight
+			
+		case .SheetEmpty:
+			break
+		case .SheetActivities:
+			let sheet = sheet as! SheetActivities
+			let this = self as! SheetActivities
+			sheet.hasGoogleActivity = this.hasGoogleActivity
+		}
+		sheet.title = title
+		sheet.isTemp = isTemp
+		sheet.time = time
+		sheet.position = position
+		sheet.isEmptySheet = isEmptySheet
+	}
+	
+	public func isEqualTo(_ object: Any?) -> Bool {
+		if let sheet = object as? Sheet {
+			return self.id == sheet.id
+		}
+		return false
+	}
+}
+
+struct SheetHasSheet {
+	var sheetId: Int64
+	var sheetTempId: Int64
+	
+	init(sheetId: Int64, sheetTempId: Int64) {
+		self.sheetId = sheetId
+		self.sheetTempId = sheetTempId
+	}
 }
 
 extension SheetTitleImageEntity {

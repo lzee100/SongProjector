@@ -58,6 +58,10 @@ class Text: NSObject {
 		static let segmentTitleSheets = "Dia's"
 		static let generateSheetsButton = "Genereer dia's"
 		static let titlePlaceholder = "Voer hier een titel in"
+		static let addSheet = "Voeg dia toe"
+		static let changeLyrics = "Wijzig zangtekst"
+		static let newLyrics = "Nieuwe zangtekst"
+		static let changeTitleTime = "Wijzig titel & tijdsduur"
 
 	}
 	
@@ -143,6 +147,7 @@ class Text: NSObject {
 		static let sampleLyrics = "Lorem Ipsum is slechts een proeftekst uit het drukkerij- en zetterijwezen. Lorem Ipsum is de standaard proeftekst in deze bedrijfstak sinds de 16e eeuw."
 		
 		static let sectionGeneral = "Algemeen"
+		static let sectionInput = "Invoer"
 		static let sectionTitle = "Titel"
 		static let sectionLyrics = "Inhoud"
 		static let sectionBackground = "Achtergrond"
@@ -167,6 +172,7 @@ class Text: NSObject {
 	struct SheetsMenu {
 		static let sheetTitleText = "Dia titel met tekst"
 		static let sheetTitleImage = "Dia: titel met foto"
+		static let sheetPastors = "Dia gebed pastors"
 		static let sheetSplit = "Dia 2 segmenten"
 		static let sheetEmpty = "Lege dia"
 		static let bibleStudyGen = "Bijbelstudie dia generator"
@@ -191,12 +197,12 @@ class Text: NSObject {
 	}
 	
 	struct NewSheetTitleImage {
-		static let title = "Dia titel met foto"
-		static let descriptionTitle = "Naam dia, titel"
+		static let title = "Foto opties"
+		static let descriptionTitle = "Titel"
 		static let descriptionTextLeft = "Tekst links"
 		static let descriptionTextRight = "Tekst rechts"
-		static let descriptionContent = "Ondertitel"
-		static let descriptionImage = "foto"
+		static let descriptionContent = "Tekst"
+		static let descriptionImage = "Foto"
 		static let descriptionImageHasBorder = "Foto heeft rand"
 		static let descriptionImageBorderSize = "Dikte rand"
 		static let descriptionImageBorderColor = "Kleur rand"
@@ -204,6 +210,13 @@ class Text: NSObject {
 		
 		static let placeholderContent = "tekst"
 
+	}
+	
+	struct newPastorsSheet {
+		static let title = "Pastor John and Jessie Doe"
+		static let content = "Mexico city"
+		static let photoDescription = "Vierkante foto waarbij de gezichten in het midden zijn"
+		
 	}
 	
 	struct ActivitySheet {

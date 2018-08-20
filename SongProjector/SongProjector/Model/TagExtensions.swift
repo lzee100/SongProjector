@@ -9,8 +9,79 @@
 import Foundation
 import UIKit
 
-extension Tag {
+enum TagAttribute {
+	case asTag
 	
+	case title
+	
+	case allHaveTitle
+	case displayTime
+	case hasEmptySheet
+	case isEmptySheetFirst
+	case isLyricsBold
+	case isLyricsItalian
+	case isLyricsUnderlined
+	case isTitleBold
+	case isTitleItalian
+	case isTitleUnderlined
+	
+	case backgroundColor
+	case backgroundImage
+	case backgroundTransparancy
+
+	case lyricsAlignment
+	case lyricsBorderColor
+	case lyricsFontName
+	case lyricsTextColorHex
+	case lyricsTextSize
+	case lyricsBorderSize
+	
+	case titleAlignment
+	case titleBackgroundColor
+	case titleBorderColorHex
+	case titleFontName
+	case titleTextColorHex
+	case titleTextSize
+	case titleBorderSize
+	
+	var description: String {
+		switch self {
+		case .asTag: return Text.NewTag.descriptionAsTag
+		case .title: return Text.NewTag.descriptionTitle
+		case .allHaveTitle: return Text.NewTag.descriptionAllTitle
+		case .displayTime: return Text.NewTag.descriptionDisplayTime
+		case .hasEmptySheet: return Text.NewTag.descriptionHasEmptySheet
+		case .isEmptySheetFirst: return Text.NewTag.descriptionPositionEmptySheet
+		case .isLyricsBold: return Text.NewTag.bold
+		case .isLyricsItalian: return Text.NewTag.italic
+		case .isLyricsUnderlined: return Text.NewTag.underlined
+		case .isTitleBold: return Text.NewTag.bold
+		case .isTitleItalian: return Text.NewTag.italic
+		case .isTitleUnderlined: return Text.NewTag.underlined
+			
+		case .backgroundColor: return Text.NewTag.descriptionBackgroundColor
+		case .backgroundImage: return Text.NewTag.backgroundImage
+		case .backgroundTransparancy: return Text.NewTag.descriptionBackgroundTransparency
+		case .lyricsAlignment: return Text.NewTag.descriptionAlignment
+		case .lyricsBorderColor: return Text.NewTag.borderColor
+		case .lyricsBorderSize: return Text.NewTag.borderSizeDescription
+		case .lyricsFontName: return Text.NewTag.fontFamilyDescription
+		case .lyricsTextColorHex: return Text.NewTag.textColor
+		case .lyricsTextSize: return Text.NewTag.fontSizeDescription
+			
+		case .titleAlignment: return Text.NewTag.descriptionAlignment
+		case .titleBackgroundColor: return Text.NewTag.descriptionBackgroundColor
+		case .titleBorderColorHex: return Text.NewTag.borderColor
+		case .titleTextSize: return Text.NewTag.fontSizeDescription
+		case .titleFontName: return Text.NewTag.fontFamilyDescription
+		case .titleTextColorHex: return Text.NewTag.textColor
+		case .titleBorderSize: return Text.NewTag.borderSizeDescription
+			
+		}
+	}
+}
+
+extension Tag {
 	
 	var textColorTitle: UIColor? {
 		get {
@@ -161,24 +232,21 @@ extension Tag {
 			}
 			attributes[.font] = font
 		}
+
+		let paragraph = NSMutableParagraphStyle()
 		
-		if let titleAlignment = titleAlignment {
-			
-			let paragraph = NSMutableParagraphStyle()
-			
-			switch titleAlignment {
-			case Text.NewTag.alignLeft:
-				paragraph.alignment = .left
-				attributes[.paragraphStyle] = paragraph
-			case Text.NewTag.alignCenter:
-				paragraph.alignment = .center
-				attributes[.paragraphStyle] = paragraph
-			case Text.NewTag.alignRight:
-				paragraph.alignment = .right
-				attributes[.paragraphStyle] = paragraph
-			default:
-				break
-			}
+		switch titleAlignmentNumber {
+		case 0:
+			paragraph.alignment = .left
+			attributes[.paragraphStyle] = paragraph
+		case 1:
+			paragraph.alignment = .center
+			attributes[.paragraphStyle] = paragraph
+		case 2:
+			paragraph.alignment = .right
+			attributes[.paragraphStyle] = paragraph
+		default:
+			break
 		}
 		
 		attributes[.strokeWidth] = Int(self.titleBorderSize)
@@ -195,6 +263,7 @@ extension Tag {
 		
 		if self.isTitleUnderlined {
 			attributes[.underlineStyle] = NSUnderlineStyle.styleSingle.rawValue
+			attributes[.underlineColor] = attributes[.foregroundColor]
 		}
 		
 		
@@ -215,23 +284,20 @@ extension Tag {
 			attributes[.font] = font
 		}
 		
-		if let lyricsAlignment = lyricsAlignment {
-			
-			let paragraph = NSMutableParagraphStyle()
-			
-			switch lyricsAlignment {
-			case Text.NewTag.alignLeft:
-				paragraph.alignment = .left
-				attributes[.paragraphStyle] = paragraph
-			case Text.NewTag.alignCenter:
-				paragraph.alignment = .center
-				attributes[.paragraphStyle] = paragraph
-			case Text.NewTag.alignRight:
-				paragraph.alignment = .right
-				attributes[.paragraphStyle] = paragraph
-			default:
-				break
-			}
+		let paragraph = NSMutableParagraphStyle()
+		
+		switch lyricsAlignmentNumber {
+		case 0:
+			paragraph.alignment = .left
+			attributes[.paragraphStyle] = paragraph
+		case 1:
+			paragraph.alignment = .center
+			attributes[.paragraphStyle] = paragraph
+		case 2:
+			paragraph.alignment = .right
+			attributes[.paragraphStyle] = paragraph
+		default:
+			break
 		}
 
 		attributes[.strokeWidth] = Int(self.lyricsBorderSize)
@@ -261,88 +327,82 @@ extension Tag {
 		backgroundImage = nil
 		super.delete()
 	}
-}
-
-struct TagTemp {
-	var title: String?
-	var allHaveTitle: Bool
-	var hasEmptySheet: Bool
-	var backgroundColor: UIColor?
-	var backgroundTransparancy: Float
-	var displayTime: Bool
 	
-	var titleFontFamily: String
-	var titleFontSize: Float
-	var titleBackgroundColor: UIColor?
-	var titleAlignment: String?
-	var titleBorderSize: Int
-	var titleBorderColor: UIColor?
-	var titleTextColor: UIColor?
-	var titleIsBold: Bool
-	var titleIsItalian: Bool
-	var titleIsUnderLined: Bool
-	
-	var lyricsFontFamily: String
-	var lyricsFontSize: Float
-	var lyricsBackgroundColor: UIColor?
-	var lyricsAlignment: String?
-	var lyricsBorderSize: Int
-	var lyricsBorderColor: UIColor?
-	var lyricsTextColor: UIColor?
-	var lyricsIsBold: Bool
-	var lyricsIsItalian: Bool
-	var lyricsIsUnderLined: Bool
-	
-	var backgroundImage: UIImage?
-	var backgroundImagePath: String?
-	var backgroundThumb: UIImage?
-	var backgroundThumbPath: String?
-	
-	init(tag: Tag) {
-		title = tag.title
-		allHaveTitle = tag.allHaveTitle
-		hasEmptySheet = tag.hasEmptySheet
-		if let color = tag.backgroundColor {
-			backgroundColor = UIColor(hex: color)
-		}
-		backgroundTransparancy = tag.backgroundTransparency
-		displayTime = tag.displayTime
+	func getTemp() -> Tag {
+		let tempTag = CoreTag.createEntity(fireNotification: false)
+		tempTag.isTemp = true
+		tempTag.title = title
+		tempTag.allHaveTitle = allHaveTitle
+		tempTag.hasEmptySheet = hasEmptySheet
+		tempTag.backgroundColor = backgroundColor
+		let cgfloatValue = CGFloat(backgroundTransparency)
+		tempTag.backgroundTransparency = Float(cgfloatValue) * 100
+		tempTag.displayTime = displayTime
 		
-		titleFontFamily = tag.titleFontName ?? "Avenir"
-		titleFontSize = tag.titleTextSize
-		if let color = tag.titleBackgroundColor {
-			titleBackgroundColor = UIColor(hex: color)
-		}
-		titleAlignment = tag.titleAlignment
-		titleBorderSize = Int(tag.titleBorderSize)
-		if let color = tag.titleBorderColorHex {
-			titleBorderColor = UIColor(hex: color)
-		}
-		if let color = tag.titleTextColorHex {
-			titleTextColor = UIColor(hex: color)
-		}
-		titleIsBold = tag.isTitleBold
-		titleIsItalian = tag.isTitleItalian
-		titleIsUnderLined = tag.isTitleUnderlined
+		tempTag.titleFontName = titleFontName ?? "Avenir"
+		tempTag.titleTextSize = titleTextSize
+		tempTag.titleBackgroundColor = titleBackgroundColor
+		tempTag.titleAlignmentNumber = titleAlignmentNumber
+		tempTag.titleBorderSize = titleBorderSize
+		tempTag.titleBorderColorHex = titleBorderColorHex
+		tempTag.titleTextColorHex = titleTextColorHex
+		tempTag.isTitleBold = isTitleBold
+		tempTag.isTitleItalian = isTitleItalian
+		tempTag.isTitleUnderlined = isTitleUnderlined
 		
-		lyricsFontFamily = tag.lyricsFontName ?? "Avenir"
-		lyricsFontSize = tag.lyricsTextSize
-		lyricsAlignment = tag.lyricsAlignment
-		lyricsBorderSize = Int(tag.lyricsBorderSize)
-		if let color = tag.lyricsBorderColorHex {
-			lyricsBorderColor = UIColor(hex: color)
-		}
-		if let color = tag.lyricsTextColorHex {
-			lyricsTextColor = UIColor(hex: color)
-		}
-		lyricsIsBold = tag.isLyricsBold
-		lyricsIsItalian = tag.isLyricsItalian
-		lyricsIsUnderLined = tag.isLyricsUnderlined
+		tempTag.lyricsFontName = lyricsFontName ?? "Avenir"
+		tempTag.lyricsTextSize = lyricsTextSize
+		tempTag.lyricsAlignmentNumber = lyricsAlignmentNumber
+		tempTag.lyricsBorderSize = lyricsBorderSize
+		tempTag.lyricsBorderColorHex = lyricsBorderColorHex
+		tempTag.lyricsTextColorHex = lyricsTextColorHex
+		tempTag.isLyricsBold = isLyricsBold
+		tempTag.isLyricsItalian = isLyricsItalian
+		tempTag.isLyricsUnderlined = isLyricsUnderlined
 		
-		backgroundImage = tag.backgroundImage
-		backgroundImagePath = tag.imagePath
-		backgroundThumb = tag.thumbnail
-		backgroundThumbPath = tag.imagePathThumbnail
-		
+		tempTag.imagePath = imagePath
+		tempTag.imagePathThumbnail = imagePathThumbnail
+		tempTag.isHidden = isHidden
+		return tempTag
 	}
+	
+	func mergeSelfInto(tag: Tag, isTemp: Bool = false, sheetType: SheetType) {
+		tag.isTemp = isTemp
+		tag.title = title
+		tag.allHaveTitle = allHaveTitle
+		tag.hasEmptySheet = hasEmptySheet
+		tag.backgroundColor = backgroundColor
+		let cgfloatValue = CGFloat(backgroundTransparency)
+		tag.backgroundTransparency = Float(cgfloatValue) * 100
+		tag.displayTime = displayTime
+		
+		tag.titleFontName = titleFontName ?? "Avenir"
+		tag.titleTextSize = titleTextSize
+		if sheetType != .SheetPastors {
+			tag.titleBackgroundColor = titleBackgroundColor
+			tag.titleAlignmentNumber = titleAlignmentNumber
+		}
+		tag.titleBorderSize = titleBorderSize
+		tag.titleBorderColorHex = titleBorderColorHex
+		tag.titleTextColorHex = titleTextColorHex
+		tag.isTitleBold = isTitleBold
+		tag.isTitleItalian = isTitleItalian
+		tag.isTitleUnderlined = isTitleUnderlined
+		
+		tag.lyricsFontName = lyricsFontName ?? "Avenir"
+		tag.lyricsTextSize = lyricsTextSize
+		if sheetType != .SheetPastors {
+			tag.lyricsAlignmentNumber = lyricsAlignmentNumber
+		}
+		tag.lyricsBorderSize = lyricsBorderSize
+		tag.lyricsBorderColorHex = lyricsBorderColorHex
+		tag.lyricsTextColorHex = lyricsTextColorHex
+		tag.isLyricsBold = isLyricsBold
+		tag.isLyricsItalian = isLyricsItalian
+		tag.isLyricsUnderlined = isLyricsUnderlined
+		
+		tag.imagePath = imagePath
+		tag.imagePathThumbnail = imagePathThumbnail
+	}
+
 }

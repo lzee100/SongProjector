@@ -8,47 +8,129 @@
 
 import UIKit
 
-protocol LabelSwitchCellDelegate {
-	func valueChangedFor(cell: LabelSwitchCell, uiSwitch: UISwitch)
-}
-
-class LabelSwitchCell: ChurchBeamCell {
-
+class LabelSwitchCell: ChurchBeamCell, TagImplementation, SheetImplementation {
+	
+	
 	@IBOutlet var descriptionLabel: UILabel!
 	@IBOutlet var `switch`: UISwitch!
 	
 	
 	var id = ""
-	var delegate: LabelSwitchCellDelegate?
-	let preferredHeight: CGFloat = 60
+	var sheetTag: Tag?
+	var tagAttribute: TagAttribute?
+	var sheet: Sheet?
+	var sheetAttribute: SheetAttribute?
+	var valueDidChange: ((ChurchBeamCell) -> Void)?
+	
+	var switchThumbNailColor: UIColor {
+		return self.switch.isOn ? isThemeLight ? .white : .black : isThemeLight ? .white : UIColor(hex: "FF8324")!
+	}
+	var switchBackgroundColor: UIColor {
+		return self.switch.isOn ? isThemeLight ? .blue : UIColor(hex: "FF8324")! : isThemeLight ? .white : .darkGray
+	}
+
+	static let identifier = "LabelSwitchCell"
+	
+	override func awakeFromNib() {
+		self.switch.isOn = false
+		self.switch.thumbTintColor = switchThumbNailColor
+		self.switch.onTintColor = switchBackgroundColor
+	}
 	
 	static func create(id: String, description: String, initialValueIsOn: Bool = false) -> LabelSwitchCell {
 		let view : LabelSwitchCell! = UIView.create(nib: "LabelSwitchCell")
 		view.id = id
 		view.descriptionLabel.text = description
 		view.switch.isOn = initialValueIsOn
-		view.switch.thumbTintColor = initialValueIsOn ? isThemeLight ? .white : .black : isThemeLight ? .white : UIColor(hex: "FF8324")
-		if !isThemeLight {
-			view.switch.onTintColor = .primary
-			view.switch.tintColor = .primary
-		}
 		return view
 	}
 	
-	func setSwitchValueTo(value: Bool) {
-		self.`switch`.isOn = value
-		valueChanged(`switch`)
+	func apply(tag: Tag, tagAttribute: TagAttribute) {
+		sheetTag = tag
+		self.tagAttribute = tagAttribute
+		descriptionLabel.text = tagAttribute.description
+		applyValueToCell()
 	}
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-    }
 	
-	override func setHighlighted(_ highlighted: Bool, animated: Bool) {
+	func apply(sheet: Sheet, sheetAttribute: SheetAttribute) {
+		self.sheet = sheet
+		self.sheetAttribute = sheetAttribute
+		descriptionLabel.text = sheetAttribute.description
+		applyValueToCell()
+	}
+	
+	func set(value: Any?) {
+		guard value != nil else {
+			setSwitchValueTo(value: false)
+			return
+		}
+		if let value = value as? Bool {
+			setSwitchValueTo(value: value)
+		}
+	}
+	
+	func setSwitchValueTo(value: Bool) {
+		self.switch.isOn = value
+		applyCellValueToTag()
+		valueChanged(self.switch)
+	}
+	
+	func applyCellValueToTag() {
+		if let tagAttribute = tagAttribute {
+			switch tagAttribute {
+			case .allHaveTitle: sheetTag?.allHaveTitle = self.switch.isOn
+			case .displayTime: sheetTag?.displayTime = self.switch.isOn
+			case .hasEmptySheet: sheetTag?.hasEmptySheet = self.switch.isOn
+			case .isEmptySheetFirst: sheetTag?.isEmptySheetFirst = self.switch.isOn
+			case .isLyricsBold: sheetTag?.isLyricsBold = self.switch.isOn
+			case .isLyricsItalian: sheetTag?.isLyricsItalian = self.switch.isOn
+			case .isLyricsUnderlined: sheetTag?.isLyricsUnderlined = self.switch.isOn
+			case .isTitleBold: sheetTag?.isTitleBold = self.switch.isOn
+			case .isTitleItalian: sheetTag?.isTitleItalian = self.switch.isOn
+			case .isTitleUnderlined: sheetTag?.isTitleUnderlined = self.switch.isOn
+			default:
+				return
+			}
+		}
+		if let sheetAttribute = sheetAttribute {
+			switch sheetAttribute {
+			case .SheetImageHasBorder: (sheet as! SheetTitleImageEntity).imageHasBorder = self.switch.isOn
+			default: break
+			}
+		}
+	}
+	
+	func applyValueToCell() {
+		if let tagAttribute = tagAttribute {
+			switch tagAttribute {
+			case .allHaveTitle: self.switch.isOn = sheetTag?.allHaveTitle ?? false
+			case .displayTime: self.switch.isOn = sheetTag?.displayTime ?? false
+			case .hasEmptySheet: self.switch.setOn(sheetTag?.hasEmptySheet ?? false, animated: true)
+			case .isEmptySheetFirst: self.switch.isOn = sheetTag?.isEmptySheetFirst ?? false
+			case .isLyricsBold: self.switch.isOn = sheetTag?.isLyricsBold ?? false
+			case .isLyricsItalian: self.switch.isOn = sheetTag?.isLyricsItalian ?? false
+			case .isLyricsUnderlined: self.switch.isOn = sheetTag?.isLyricsUnderlined ?? false
+			case .isTitleBold:  self.switch.isOn = sheetTag?.isTitleBold ?? false
+			case .isTitleItalian: self.switch.isOn = sheetTag?.isTitleItalian ?? false
+			case .isTitleUnderlined: self.switch.isOn = sheetTag?.isTitleUnderlined ?? false
+			default: return
+			}
+		}
+		if let sheetAttribute = sheetAttribute {
+			switch sheetAttribute {
+			case .SheetImageHasBorder: self.switch.isOn = (sheet as! SheetTitleImageEntity).imageHasBorder
+			default: break
+			}
+		}
+		self.switch.thumbTintColor = switchThumbNailColor
+		self.switch.onTintColor = switchBackgroundColor
 	}
 	
 	@IBAction func valueChanged(_ sender: UISwitch) {
-		`switch`.thumbTintColor = sender.isOn ? isThemeLight ? .white : .black : isThemeLight ? .white : UIColor(hex: "FF8324")
-		delegate?.valueChangedFor(cell: self, uiSwitch: sender)
+		self.switch.thumbTintColor = switchThumbNailColor
+		self.switch.onTintColor = switchBackgroundColor
+		applyCellValueToTag()
+		valueDidChange?(self)
 	}
 	
 	

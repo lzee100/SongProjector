@@ -9,6 +9,32 @@
 import Foundation
 import UIKit
 
+protocol DynamicHeightCell {
+	var isActive: Bool { get set }
+	var preferredHeight: CGFloat { get }
+}
+
+protocol TagImplementation {
+	
+	var sheetTag: Tag? { get set }
+	var tagAttribute: TagAttribute? { get set }
+	var valueDidChange: ((ChurchBeamCell) -> Void)? { get set }
+	
+	func set(value: Any?)
+	func apply(tag: Tag, tagAttribute: TagAttribute)
+	func applyValueToCell()
+	func applyCellValueToTag()
+	
+}
+
+protocol SheetImplementation {
+	var sheet: Sheet? { get set }
+	var sheetAttribute: SheetAttribute? { get set }
+	var valueDidChange: ((ChurchBeamCell) -> Void)? { get set }
+	
+	func apply(sheet: Sheet, sheetAttribute: SheetAttribute)
+}
+
 class ChurchBeamCell: UITableViewCell {
 
 	

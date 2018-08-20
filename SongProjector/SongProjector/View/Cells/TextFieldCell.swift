@@ -1,135 +1,37 @@
 //
 //  TextFieldCell.swift
-//  Leerling
+//  SongProjector
 //
-//  Created by Thomas Dekker on 15-09-16.
-//  Copyright © 2016 SOMtoday. All rights reserved.
+//  Created by Leo van der Zee on 18-08-18.
+//  Copyright © 2018 iozee. All rights reserved.
 //
 
 import UIKit
 
-protocol TextFieldCellDelegate : AnyObject {
-    
-    func textFieldCellShouldReturn(_ cell: TextFieldCell) -> Bool
-    
-}
+class TextFieldCell: UITableViewCell {
 
-class TextFieldCell : UITableViewCell, UITextFieldDelegate {
-    
-    // MARK: - Private Properties
-    
-    private let placeholderLabel = UILabel()
-    
-    
-    
-    // MARK: - Properties
-    
-    weak var delegate : TextFieldCellDelegate?
-    
-    @IBOutlet weak var textField : UITextField! {
-        didSet { textField.delegate = self }
-    }
-    
-    var placeholder : String = "" {
-        didSet { update() }
-    }
-    
-    var placeholderColor : UIColor = .placeholderColor {
-        didSet { update() }
-    }
+	@IBOutlet var descriptionLabel: UILabel!
+	@IBOutlet var textField: UITextField!
 	
-	var placeholderFont : UIFont = .xNormalLight {
-		didSet { update() }
-	}
-    
-    var isSecure : Bool {
-        get { return textField.isSecureTextEntry }
-        set { textField.isSecureTextEntry = newValue }
-    }
-    
-    var value : String {
-        get { return textField.text ?? "" }
-        set {
-            textField.text = newValue
-            update()
-        }
-    }
+	static let identifier = "TextFieldCell"
 	
-	var valueColor : UIColor = .textColorNormal {
-		didSet { update() }
+	private var textFieldDidChange: ((String?) -> Void)?
+	
+	func setup(description: String, content: String?, textFieldDidChange: @escaping ((String?) -> Void)) {
+		descriptionLabel.text = description
+		textField.text = content
+		self.textFieldDidChange = textFieldDidChange
 	}
 	
-	var valueFont : UIFont = .xNormal {
-		didSet { update() }
+	
+	@IBAction func textFieldChanged(_ sender: UITextField) {
+		textFieldDidChange?(sender.text)
 	}
 	
-    
-    var returnKeyType : UIReturnKeyType {
-        get { return textField.returnKeyType }
-        set { textField.returnKeyType = newValue }
-    }
-    
-    
-    
-    // MARK: - Functions
 	
-    
-	func setup() {
-		
-        placeholderLabel.isUserInteractionEnabled = false
-		textField.addTarget(self, action: #selector(update), for: .editingChanged)
-		placeholderLabel.backgroundColor = .clear
-		
-        update()
-        
+    override func setSelected(_ selected: Bool, animated: Bool) {
     }
-    
-	@objc func update() {
-		
-		textField.font = valueFont
-		textField.textColor = valueColor
-		textField.placeholder = ""
-		
-		placeholderLabel.backgroundColor = .clear
-        placeholderLabel.font = placeholderFont
-        placeholderLabel.textColor = .textColorNormal
-        placeholderLabel.text = placeholder
-        placeholderLabel.isHidden = !value.isEmpty
-		
-		
-    }
-    
-    // MARK: UIView Functions
-    
-	override func didMoveToSuperview() {
-		
-        if placeholderLabel.superview == nil, let superview = textField.superview {
-            superview.addSubview(placeholderLabel)
-			layoutIfNeeded()
-		}
-        
-    }
-    
-	override func layoutSubviews() {
-        layoutSubviews()
-        textField.layoutIfNeeded()
-        placeholderLabel.frame = textField.frame
-		
-    }
-	
-    
-    // MARK: UITextFieldDelegate Functions
-    
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-        update()
-    }
-    
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        update()
-    }
-    
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        return delegate?.textFieldCellShouldReturn(self) ?? false
-    }
+	override func setHighlighted(_ highlighted: Bool, animated: Bool) {
+	}
     
 }

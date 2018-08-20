@@ -12,11 +12,10 @@ class SheetPickerMenuController: UITableViewController {
 		
 	@IBOutlet weak var cancelButton: UIBarButtonItem?
 	
-	var sender: NewOrEditIphoneControllerDelegate?
+	var didCreateSheet: ((Sheet) -> Void)?
 	var bibleStudyGeneratorIphoneDelegate: BibleStudyGeneratorIphoneDelegate?
 	var bibleStudyGeneratorDelegate: BibleStudyGeneratorDelegate?
 	var selectedTag: Tag?
-	
 	
 	private enum SheetGroup: String {
 		case customSheets
@@ -120,6 +119,9 @@ class SheetPickerMenuController: UITableViewController {
 			case .SheetTitleImage:
 				cell.setup(title: Text.SheetsMenu.sheetTitleImage, icon: SheetType.iconFor(type: .SheetTitleImage))
 				return cell
+			case .SheetPastors:
+				cell.setup(title: Text.SheetsMenu.sheetPastors, icon: SheetType.iconFor(type: .SheetPastors))
+				return cell
 			case .SheetSplit:
 				cell.setup(title: Text.SheetsMenu.sheetSplit, icon: SheetType.iconFor(type: .SheetSplit))
 				return cell
@@ -146,8 +148,9 @@ class SheetPickerMenuController: UITableViewController {
 			}
 		case .default:
 			let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
-			controller.delegate = sender
+			controller.didCreateSheet = didCreateSheet
 			controller.modificationMode = .newCustomSheet
+			controller.dismissMenu = dismissMenu
 			switch SheetType.for(indexPath){
 			case .SheetTitleContent:
 				let sheet = CoreSheetTitleContent.createEntity()
@@ -155,6 +158,10 @@ class SheetPickerMenuController: UITableViewController {
 				controller.sheet = sheet
 			case .SheetTitleImage:
 				let sheet = CoreSheetTitleImage.createEntity()
+				sheet.isTemp = true
+				controller.sheet = sheet
+			case .SheetPastors:
+				let sheet = CoreSheetPastors.createEntity()
 				sheet.isTemp = true
 				controller.sheet = sheet
 			case .SheetSplit:
@@ -183,6 +190,10 @@ class SheetPickerMenuController: UITableViewController {
 		tableView.register(cell: Cells.basicCellid)
 		tableView.isScrollEnabled = false
 		cancelButton?.title = Text.Actions.cancel
+	}
+	
+	func dismissMenu() {
+		dismiss(animated: false)
 	}
 	
 	@IBAction func cancelButtonPressed(_ sender: UIBarButtonItem) {

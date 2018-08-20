@@ -12,8 +12,7 @@ protocol LabelDoubleSwitchDelegate {
 	func didSelectSwitch(first: Bool?, second: Bool?, cell: LabelDoubleSwitchCell)
 }
 
-class LabelDoubleSwitchCell: UITableViewCell {
-
+class LabelDoubleSwitchCell: ChurchBeamCell, DynamicHeightCell, TagImplementation {
 	
 	@IBOutlet var descriptionSwitchOne: UILabel!
 	@IBOutlet var switchOne: UISwitch!
@@ -26,12 +25,43 @@ class LabelDoubleSwitchCell: UITableViewCell {
 	@IBOutlet var heightImageSwitchTwoConstraint: NSLayoutConstraint!
 	@IBOutlet var heightDescriptionSwitchTwoConstraint: NSLayoutConstraint!
 	@IBOutlet var heightSwitchTwoConstraint: NSLayoutConstraint!
+	
 	var id = ""
+	
+	var sheetTag: Tag?
+	var tagAttribute: TagAttribute?
+	var valueDidChange: ((ChurchBeamCell) -> Void)?
+	
 	var isActive = false { didSet { showSecondSwitch() } }
 	var delegate: LabelDoubleSwitchDelegate?
 	var preferredHeight: CGFloat {
 		return switchOne.isOn ? 120 : 60
 	}
+	
+	private var switchThumbNailColorOne: UIColor {
+		return self.switchOne.isOn ? isThemeLight ? .white : .black : isThemeLight ? .white : UIColor(hex: "FF8324")!
+	}
+	private var switchBackgroundColorOne: UIColor {
+		return self.switchOne.isOn ? isThemeLight ? .blue : UIColor(hex: "FF8324")! : isThemeLight ? .white : .darkGray
+	}
+	private var switchThumbNailColorTwo: UIColor {
+		return self.switchTwo.isOn ? isThemeLight ? .white : .black : isThemeLight ? .white : UIColor(hex: "FF8324")!
+	}
+	private var switchBackgroundColorTwo: UIColor {
+		return self.switchTwo.isOn ? isThemeLight ? .blue : UIColor(hex: "FF8324")! : isThemeLight ? .white : .darkGray
+	}
+	
+	static let identifier = "LabelDoubleSwitchCell"
+	
+	override func awakeFromNib() {
+		imageSwitchTwo.tintColor = themeHighlighted
+		imageSwitchTwo.image = Cells.arrowSub
+		switchOne.isOn = false
+		switchTwo.isOn = false
+		setSwitchColors()
+		showSecondSwitch()
+	}
+
 	
 	static func create(id: String, descriptionSwitchOne: String, descriptionSwitchTwo: String) -> LabelDoubleSwitchCell {
 		let view : LabelDoubleSwitchCell! = UIView.create(nib: "LabelDoubleSwitchCell")
@@ -87,26 +117,68 @@ class LabelDoubleSwitchCell: UITableViewCell {
 		
 	}
 	
-	override func setSelected(_ selected: Bool, animated: Bool) {
-		
+	func apply(tag: Tag, tagAttribute: TagAttribute) {
+		self.sheetTag = tag
+		self.tagAttribute = tagAttribute
+		self.descriptionSwitchOne.text = tagAttribute.description
+		self.descriptionSwitchTwo.text = Text.NewTag.descriptionPositionEmptySheet
+		self.applyValueToCell()
 	}
 	
-	override func setHighlighted(_ highlighted: Bool, animated: Bool) {
+	func applyValueToCell() {
+		if let tag = sheetTag, let tagAttribute = tagAttribute {
+			switch tagAttribute {
+			case .hasEmptySheet: switchOne.isOn = tag.hasEmptySheet
+			case .isEmptySheetFirst: switchTwo.isOn = tag.isEmptySheetFirst
+			default: return
+			}
+		}
+		setSwitchColors()
+	}
+	
+	func applyCellValueToTag() {
+		if let tag = sheetTag, let tagAttribute = tagAttribute {
+			switch tagAttribute {
+			case .hasEmptySheet: tag.hasEmptySheet = switchOne.isOn
+			case .isEmptySheetFirst: tag.isEmptySheetFirst = switchTwo.isOn
+			default: return
+			}
+		}
+	}
+	
+	func set(value: Any?) {
+		if let tagAttribute = tagAttribute, let value = value as? Bool? {
+			switch tagAttribute {
+			case .hasEmptySheet: switchOne.isOn = value ?? false
+			case .isEmptySheetFirst: switchTwo.isOn = value ?? false
+			default: return
+			}
+		}
+	}
+	
+	private func setSwitchColors() {
+		switchOne.thumbTintColor = switchThumbNailColorOne
+		switchTwo.thumbTintColor = switchThumbNailColorTwo
+		switchOne.onTintColor = switchBackgroundColorOne
+		switchTwo.onTintColor = switchBackgroundColorTwo
 	}
 	
 	@IBAction func switchOneChanged(_ sender: UISwitch) {
-		switchOne.thumbTintColor = sender.isOn ? isThemeLight ? .white : .black : isThemeLight ? .white : UIColor(hex: "FF8324")
+		setSwitchColors()
 		if !switchOne.isOn {
 			switchTwo.isOn = false
 			switchTwoChanged(switchTwo)
 		}
+		isActive = switchOne.isOn
 		showSecondSwitch()
-		delegate?.didSelectSwitch(first: sender.isOn, second: nil, cell: self)
+		applyCellValueToTag()
+		valueDidChange?(self)
 	}
 	
 	@IBAction func switchTwoChanged(_ sender: UISwitch) {
-		switchTwo.thumbTintColor = sender.isOn ? isThemeLight ? .white : .black : isThemeLight ? .white : UIColor(hex: "FF8324")
-		delegate?.didSelectSwitch(first: nil, second: sender.isOn, cell: self)
+		setSwitchColors()
+		applyCellValueToTag()
+		valueDidChange?(self)
 	}
 	
 	

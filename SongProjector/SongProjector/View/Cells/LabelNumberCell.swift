@@ -12,7 +12,7 @@ protocol LabelNumerCellDelegate {
 	func numberChangedForCell(cell: LabelNumberCell)
 }
 
-class LabelNumberCell: UITableViewCell {
+class LabelNumberCell: ChurchBeamCell, TagImplementation {
 	
 	@IBOutlet var minus: UIButton!
 	@IBOutlet var plus: UIButton!
@@ -24,9 +24,19 @@ class LabelNumberCell: UITableViewCell {
 	var positive = true
 	var value: Int = 0
 	var delegate: LabelNumerCellDelegate?
-	let preferredHeight: CGFloat = 60
 	var minLimit = 0
 	var maxLimit = 0
+	
+	var sheetTag: Tag?
+	var tagAttribute: TagAttribute?
+	var valueDidChange: ((ChurchBeamCell) -> Void)?
+	
+	static let identifier = "LabelNumberCell"
+	
+	override func awakeFromNib() {
+		plus.tintColor = themeHighlighted
+		minus.tintColor = themeHighlighted
+	}
 	
 	static func create(id: String, description: String, initialValue: Int, positive: Bool = true, minLimit: Int, maxLimit: Int) -> LabelNumberCell {
 		let view : LabelNumberCell! = UIView.create(nib: "LabelNumberCell")
@@ -42,16 +52,73 @@ class LabelNumberCell: UITableViewCell {
 		return view
 	}
 	
+	func setup(initialValue: Int? = nil, minLimit: Int = 5, maxLimit: Int = 60, positive: Bool = true) {
+		if let initialValue = initialValue {
+			self.value = initialValue
+		}
+		valueLabel.text = String(abs(value))
+		self.minLimit = minLimit
+		self.maxLimit = maxLimit
+		self.positive = positive
+	}
+	
 	func setValue(value: Int) {
 		self.value = value
 		valueLabel.text = String(value)
 		delegate?.numberChangedForCell(cell: self)
 	}
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-    }
 	
-	override func setHighlighted(_ highlighted: Bool, animated: Bool) {
+	func apply(tag: Tag, tagAttribute: TagAttribute) {
+		self.sheetTag = tag
+		self.tagAttribute = tagAttribute
+		self.descriptionTitle.text = tagAttribute.description
+		
+		switch tagAttribute {
+		case .titleTextSize, .lyricsTextSize:
+			setup(minLimit: 5, maxLimit: 60, positive: true)
+		case .titleBorderSize, .lyricsBorderSize:
+			setup(minLimit: 0, maxLimit: -15, positive: false)
+		default:
+			break
+		}
+		applyValueToCell()
+	}
+	
+	func applyValueToCell() {
+		if let tagAttribute = tagAttribute, let tag = sheetTag {
+			switch tagAttribute {
+			case .titleTextSize: value = Int(tag.titleTextSize)
+			case .titleBorderSize: value = Int(tag.titleBorderSize)
+			case .lyricsTextSize: value = Int(tag.lyricsTextSize)
+			case .lyricsBorderSize: value = Int(tag.lyricsBorderSize)
+			case .backgroundTransparancy: value = Int(tag.backgroundTransparency)
+			default: break
+			}
+			valueLabel.text = String(abs(value))
+		}
+	}
+	
+	func applyCellValueToTag() {
+		if let tagAttribute = tagAttribute, let tag = sheetTag {
+			switch tagAttribute {
+			case .titleTextSize: tag.titleTextSize = Float(value)
+			case .titleBorderSize: tag.titleBorderSize = Float(value)
+			case .lyricsTextSize: tag.lyricsTextSize = Float(value)
+			case .lyricsBorderSize: tag.lyricsBorderSize = Float(value)
+			case .backgroundTransparancy: tag.backgroundTransparency = Float(value)
+			default: return
+			}
+		}
+	}
+	
+	func set(value: Any?) {
+		guard value != nil else {
+			setValue(value: 0)
+			return
+		}
+		if let value = value as? Int {
+			setValue(value: value)
+		}
 	}
 	
 	@IBAction func minusPressed(_ sender: UIButton) {
@@ -59,33 +126,35 @@ class LabelNumberCell: UITableViewCell {
 				if value > minLimit {
 					value -= 1
 					self.valueLabel.text = String(value)
+					self.applyCellValueToTag()
+					valueDidChange?(self)
 					delegate?.numberChangedForCell(cell: self)
 				}
 			} else {
 				if value < 0 {
 					value += 1
 					self.valueLabel.text = String(abs(value))
+					self.applyCellValueToTag()
+					valueDidChange?(self)
 					delegate?.numberChangedForCell(cell: self)
 				}
 			}
 	}
 	
 	@IBAction func plusPressed(_ sender: UIButton) {
-			if positive {
-				if value < maxLimit {
-					value += 1
-					self.valueLabel.text = String(value)
-					delegate?.numberChangedForCell(cell: self)
-				}
-			} else {
-				if value > -18 {
-					value -= 1
-					self.valueLabel.text = String(abs(value))
-					delegate?.numberChangedForCell(cell: self)
-				}
-				
+		if positive {
+			if value < maxLimit {
+				value += 1
+				self.valueLabel.text = String(value)
+			}
+		} else {
+			if value > maxLimit {
+				value -= 1
+				self.valueLabel.text = String(abs(value))
 			}
 		}
+		self.applyCellValueToTag()
+		valueDidChange?(self)
+	}
 	
-    
 }

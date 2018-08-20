@@ -15,7 +15,6 @@
 		E309DCF71FF48FF100C3D135 /* LabelColorPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E309DCF51FF48FF100C3D135 /* LabelColorPickerCell.swift */; };
 		E309DCF81FF48FF100C3D135 /* LabelColorPickerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E309DCF61FF48FF100C3D135 /* LabelColorPickerCell.xib */; };
 		E309DCFA1FF4954100C3D135 /* TagExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E309DCF91FF4954100C3D135 /* TagExtensions.swift */; };
-		E309DCFD1FF4FC9E00C3D135 /* TextFieldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E309DCFC1FF4FC9E00C3D135 /* TextFieldCell.swift */; };
 		E309DD021FF5127400C3D135 /* LabelNumberCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E309DD001FF5127400C3D135 /* LabelNumberCell.swift */; };
 		E309DD031FF5127400C3D135 /* LabelNumberCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E309DD011FF5127400C3D135 /* LabelNumberCell.xib */; };
 		E309DD051FF5179B00C3D135 /* Cells.swift in Sources */ = {isa = PBXBuildFile; fileRef = E309DD041FF5179B00C3D135 /* Cells.swift */; };
@@ -35,7 +34,6 @@
 		E311715A1FE5A0A3008D9D51 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31171581FE5A0A3008D9D51 /* Notifications.swift */; };
 		E311715B1FE5A0A3008D9D51 /* Features.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31171591FE5A0A3008D9D51 /* Features.swift */; };
 		E31171641FE5A0E7008D9D51 /* MenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E311715C1FE5A0E7008D9D51 /* MenuController.swift */; };
-		E31171651FE5A0E7008D9D51 /* PlayersController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E311715D1FE5A0E7008D9D51 /* PlayersController.swift */; };
 		E31171661FE5A0E7008D9D51 /* SongServiceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E311715E1FE5A0E7008D9D51 /* SongServiceController.swift */; };
 		E31171671FE5A0E7008D9D51 /* MoreController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E311715F1FE5A0E7008D9D51 /* MoreController.swift */; };
 		E31171681FE5A0E7008D9D51 /* SongsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31171601FE5A0E7008D9D51 /* SongsController.swift */; };
@@ -53,10 +51,21 @@
 		E311717E1FE5A5F5008D9D51 /* StoryboardiPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E311717D1FE5A5F5008D9D51 /* StoryboardiPad.storyboard */; };
 		E311A44820725B72007BB6CB /* ImportBibleController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E311A44720725B72007BB6CB /* ImportBibleController.swift */; };
 		E311A44A2072733A007BB6CB /* LoadingBibleController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E311A4492072733A007BB6CB /* LoadingBibleController.swift */; };
+		E31F0B6B20F4F36000C22FD1 /* SheetTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31F0B6A20F4F36000C22FD1 /* SheetTest.swift */; };
+		E31F0B6D20F4F3D100C22FD1 /* SheetPastors.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31F0B6C20F4F3D100C22FD1 /* SheetPastors.swift */; };
+		E31F0B6F20F4F3DD00C22FD1 /* SheetPastors.xib in Resources */ = {isa = PBXBuildFile; fileRef = E31F0B6E20F4F3DD00C22FD1 /* SheetPastors.xib */; };
+		E31F0B7120F5029500C22FD1 /* Pio-Sebastiaan-en-Marilou.jpg in Resources */ = {isa = PBXBuildFile; fileRef = E31F0B7020F5029500C22FD1 /* Pio-Sebastiaan-en-Marilou.jpg */; };
+		E31F0B7320F50A6E00C22FD1 /* Liedjes - wallpaper 16-9.png in Resources */ = {isa = PBXBuildFile; fileRef = E31F0B7220F50A6D00C22FD1 /* Liedjes - wallpaper 16-9.png */; };
+		E31F0B7520F5D1E800C22FD1 /* SheetPastorsExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31F0B7420F5D1E800C22FD1 /* SheetPastorsExtensions.swift */; };
 		E31F87BD1FE7035D00D5D4BA /* Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31F87BC1FE7035D00D5D4BA /* Text.swift */; };
 		E326E9041FFEC9EC00FEAC9C /* CustomSheetsIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E326E9031FFEC9EC00FEAC9C /* CustomSheetsIphoneController.swift */; };
 		E326E9071FFECD0E00FEAC9C /* SheetCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E326E9051FFECD0E00FEAC9C /* SheetCollectionCell.swift */; };
 		E326E9081FFECD0E00FEAC9C /* SheetCollectionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E326E9061FFECD0E00FEAC9C /* SheetCollectionCell.xib */; };
+		E32A02A92116441A00C78410 /* Drums.m4a in Resources */ = {isa = PBXBuildFile; fileRef = E32A02A42116441600C78410 /* Drums.m4a */; };
+		E32A02B12116466200C78410 /* Guitar.m4a in Resources */ = {isa = PBXBuildFile; fileRef = E32A02B02116466200C78410 /* Guitar.m4a */; };
+		E32A02B3211646DA00C78410 /* Keyboard.m4a in Resources */ = {isa = PBXBuildFile; fileRef = E32A02B2211646D900C78410 /* Keyboard.m4a */; };
+		E32A02B521164A8800C78410 /* Bass.m4a in Resources */ = {isa = PBXBuildFile; fileRef = E32A02B421164A8800C78410 /* Bass.m4a */; };
+		E32A02B7211715B300C78410 /* SongService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32A02B6211715B300C78410 /* SongService.swift */; };
 		E32D4D6520017E0100ED81A7 /* EditSongIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32D4D6420017E0100ED81A7 /* EditSongIphoneController.swift */; };
 		E3314B6620077DD100F470C0 /* SheetExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3314B6520077DD100F470C0 /* SheetExtensions.swift */; };
 		E3314B682007836D00F470C0 /* SheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3314B672007836D00F470C0 /* SheetView.swift */; };
@@ -74,6 +83,10 @@
 		E36F41681FEE965200E989E5 /* NewSongIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E36F41671FEE965200E989E5 /* NewSongIphoneController.swift */; };
 		E37137BE205EBB8300DF86F1 /* LabelSliderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37137BC205EBB8300DF86F1 /* LabelSliderCell.swift */; };
 		E37137BF205EBB8300DF86F1 /* LabelSliderCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E37137BD205EBB8300DF86F1 /* LabelSliderCell.xib */; };
+		E37938E92121DE8E0091698D /* LordLoop.m4a in Resources */ = {isa = PBXBuildFile; fileRef = E37938E82121DE8E0091698D /* LordLoop.m4a */; };
+		E37938EC21271EC90091698D /* PickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37938EA21271EC90091698D /* PickerCell.swift */; };
+		E37938ED21271EC90091698D /* PickerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E37938EB21271EC90091698D /* PickerCell.xib */; };
+		E37938EF212723630091698D /* TableViewCellExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37938EE212723630091698D /* TableViewCellExtensions.swift */; };
 		E3812DE7201C972B00F10B2C /* SettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3812DE6201C972B00F10B2C /* SettingsController.swift */; };
 		E3812DEA201C992300F10B2C /* GoogleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3812DE8201C992300F10B2C /* GoogleCell.swift */; };
 		E3812DEB201C992300F10B2C /* GoogleCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3812DE9201C992300F10B2C /* GoogleCell.xib */; };
@@ -104,11 +117,6 @@
 		E3BC6BBA1FFEBECA0039E0CA /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3BC6BB91FFEBECA0039E0CA /* HeaderView.swift */; };
 		E3C2AD102025A5D500ACFFE7 /* MixerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3C2AD0F2025A5D500ACFFE7 /* MixerView.xib */; };
 		E3C2AD122025A5E900ACFFE7 /* MixerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C2AD112025A5E900ACFFE7 /* MixerView.swift */; };
-		E3C2AD172026F26800ACFFE7 /* BassGuitar.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = E3C2AD142026F25F00ACFFE7 /* BassGuitar.mp3 */; };
-		E3C2AD182026F26800ACFFE7 /* Drums.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = E3C2AD152026F26000ACFFE7 /* Drums.mp3 */; };
-		E3C2AD192026F26800ACFFE7 /* Guitar.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = E3C2AD132026F25F00ACFFE7 /* Guitar.mp3 */; };
-		E3C2AD1A2026F26800ACFFE7 /* Piano.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = E3C2AD162026F26000ACFFE7 /* Piano.mp3 */; };
-		E3C2AD1C2027491C00ACFFE7 /* SongExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C2AD1B2027491C00ACFFE7 /* SongExtensions.swift */; };
 		E3C2AD1E202749CD00ACFFE7 /* InstrumentExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C2AD1D202749CD00ACFFE7 /* InstrumentExtensions.swift */; };
 		E3C2AD2220275AE200ACFFE7 /* InstrumentPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C2AD2120275AE200ACFFE7 /* InstrumentPlayer.swift */; };
 		E3CAE69D20C4794400D3B36F /* NewOrEditViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CAE69C20C4794400D3B36F /* NewOrEditViewModel.swift */; };
@@ -118,11 +126,12 @@
 		E3CB6850200634A600F007B2 /* LoadingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CB684F200634A500F007B2 /* LoadingIndicator.swift */; };
 		E3CB6852200634EC00F007B2 /* TimeIntervalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CB6851200634EC00F007B2 /* TimeIntervalExtensions.swift */; };
 		E3CB6854200635D600F007B2 /* LoadingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CB6853200635D600F007B2 /* LoadingViewController.swift */; };
+		E3CD8AB5212818B000EB75BB /* TextFieldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CD8AB3212818B000EB75BB /* TextFieldCell.swift */; };
+		E3CD8AB6212818B000EB75BB /* TextFieldCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3CD8AB4212818B000EB75BB /* TextFieldCell.xib */; };
 		E3D12AAF2018EE2100BD060C /* Fetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D12AAE2018EE2100BD060C /* Fetcher.swift */; };
 		E3D12AB12018EE4800BD060C /* FetcherResultTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D12AB02018EE4800BD060C /* FetcherResultTypes.swift */; };
 		E3D1CEE71FF6930600F9D7D9 /* LabelPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D1CEE51FF6930600F9D7D9 /* LabelPickerCell.swift */; };
 		E3D1CEE81FF6930600F9D7D9 /* LabelPickerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3D1CEE61FF6930600F9D7D9 /* LabelPickerCell.xib */; };
-		E3D9274F1FEC1AFC006EDE75 /* TagsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D9274E1FEC1AFC006EDE75 /* TagsController.swift */; };
 		E3D927511FEC3036006EDE75 /* NewOrEditTagController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D927501FEC3036006EDE75 /* NewOrEditTagController.swift */; };
 		E3D927571FECF622006EDE75 /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D927561FECF622006EDE75 /* ViewExtensions.swift */; };
 		E3D9C28E20D6F11E006EDFE3 /* TestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D9C28D20D6F11E006EDFE3 /* TestView.swift */; };
@@ -147,8 +156,8 @@
 		E3F9964A201285CD00634C5E /* AddButtonCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F99648201285CD00634C5E /* AddButtonCollectionCell.swift */; };
 		E3F9964B201285CD00634C5E /* AddButtonCollectionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3F99649201285CD00634C5E /* AddButtonCollectionCell.xib */; };
 		E3FA3DF5200D45F00038C97B /* NewOrEditIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3FA3DF4200D45F00038C97B /* NewOrEditIphoneController.swift */; };
-		E3FA3DF8200DE8570038C97B /* LabelTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3FA3DF6200DE8570038C97B /* LabelTextView.swift */; };
-		E3FA3DF9200DE8570038C97B /* LabelTextView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3FA3DF7200DE8570038C97B /* LabelTextView.xib */; };
+		E3FA3DF8200DE8570038C97B /* LabelTextViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3FA3DF6200DE8570038C97B /* LabelTextViewCell.swift */; };
+		E3FA3DF9200DE8570038C97B /* LabelTextViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3FA3DF7200DE8570038C97B /* LabelTextViewCell.xib */; };
 		E7226C9E497B8BF49AA031B2 /* Pods_SongProjector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95070415C3C6BD5B7639F73A /* Pods_SongProjector.framework */; };
 /* End PBXBuildFile section */
 
@@ -164,7 +173,6 @@
 		E309DCF51FF48FF100C3D135 /* LabelColorPickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelColorPickerCell.swift; sourceTree = "<group>"; };
 		E309DCF61FF48FF100C3D135 /* LabelColorPickerCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelColorPickerCell.xib; sourceTree = "<group>"; };
 		E309DCF91FF4954100C3D135 /* TagExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagExtensions.swift; sourceTree = "<group>"; };
-		E309DCFC1FF4FC9E00C3D135 /* TextFieldCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextFieldCell.swift; sourceTree = "<group>"; };
 		E309DD001FF5127400C3D135 /* LabelNumberCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelNumberCell.swift; sourceTree = "<group>"; };
 		E309DD011FF5127400C3D135 /* LabelNumberCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelNumberCell.xib; sourceTree = "<group>"; };
 		E309DD041FF5179B00C3D135 /* Cells.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cells.swift; sourceTree = "<group>"; };
@@ -186,7 +194,6 @@
 		E31171581FE5A0A3008D9D51 /* Notifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		E31171591FE5A0A3008D9D51 /* Features.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Features.swift; sourceTree = "<group>"; };
 		E311715C1FE5A0E7008D9D51 /* MenuController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuController.swift; sourceTree = "<group>"; };
-		E311715D1FE5A0E7008D9D51 /* PlayersController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayersController.swift; sourceTree = "<group>"; };
 		E311715E1FE5A0E7008D9D51 /* SongServiceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongServiceController.swift; sourceTree = "<group>"; };
 		E311715F1FE5A0E7008D9D51 /* MoreController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoreController.swift; sourceTree = "<group>"; };
 		E31171601FE5A0E7008D9D51 /* SongsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongsController.swift; sourceTree = "<group>"; };
@@ -204,10 +211,21 @@
 		E311717D1FE5A5F5008D9D51 /* StoryboardiPad.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = StoryboardiPad.storyboard; sourceTree = "<group>"; };
 		E311A44720725B72007BB6CB /* ImportBibleController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportBibleController.swift; sourceTree = "<group>"; };
 		E311A4492072733A007BB6CB /* LoadingBibleController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingBibleController.swift; sourceTree = "<group>"; };
+		E31F0B6A20F4F36000C22FD1 /* SheetTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetTest.swift; sourceTree = "<group>"; };
+		E31F0B6C20F4F3D100C22FD1 /* SheetPastors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetPastors.swift; sourceTree = "<group>"; };
+		E31F0B6E20F4F3DD00C22FD1 /* SheetPastors.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SheetPastors.xib; sourceTree = "<group>"; };
+		E31F0B7020F5029500C22FD1 /* Pio-Sebastiaan-en-Marilou.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "Pio-Sebastiaan-en-Marilou.jpg"; sourceTree = "<group>"; };
+		E31F0B7220F50A6D00C22FD1 /* Liedjes - wallpaper 16-9.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Liedjes - wallpaper 16-9.png"; path = "../../kerk plaatjes/Liedjes - wallpaper 16-9.png"; sourceTree = "<group>"; };
+		E31F0B7420F5D1E800C22FD1 /* SheetPastorsExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetPastorsExtensions.swift; sourceTree = "<group>"; };
 		E31F87BC1FE7035D00D5D4BA /* Text.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Text.swift; sourceTree = "<group>"; };
 		E326E9031FFEC9EC00FEAC9C /* CustomSheetsIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSheetsIphoneController.swift; sourceTree = "<group>"; };
 		E326E9051FFECD0E00FEAC9C /* SheetCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetCollectionCell.swift; sourceTree = "<group>"; };
 		E326E9061FFECD0E00FEAC9C /* SheetCollectionCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SheetCollectionCell.xib; sourceTree = "<group>"; };
+		E32A02A42116441600C78410 /* Drums.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Drums.m4a; sourceTree = "<group>"; };
+		E32A02B02116466200C78410 /* Guitar.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Guitar.m4a; sourceTree = "<group>"; };
+		E32A02B2211646D900C78410 /* Keyboard.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Keyboard.m4a; sourceTree = "<group>"; };
+		E32A02B421164A8800C78410 /* Bass.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Bass.m4a; sourceTree = "<group>"; };
+		E32A02B6211715B300C78410 /* SongService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongService.swift; sourceTree = "<group>"; };
 		E32D4D6420017E0100ED81A7 /* EditSongIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSongIphoneController.swift; sourceTree = "<group>"; };
 		E3314B6520077DD100F470C0 /* SheetExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetExtensions.swift; sourceTree = "<group>"; };
 		E3314B672007836D00F470C0 /* SheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetView.swift; sourceTree = "<group>"; };
@@ -227,6 +245,10 @@
 		E36F41671FEE965200E989E5 /* NewSongIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewSongIphoneController.swift; sourceTree = "<group>"; };
 		E37137BC205EBB8300DF86F1 /* LabelSliderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelSliderCell.swift; sourceTree = "<group>"; };
 		E37137BD205EBB8300DF86F1 /* LabelSliderCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelSliderCell.xib; sourceTree = "<group>"; };
+		E37938E82121DE8E0091698D /* LordLoop.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = LordLoop.m4a; sourceTree = "<group>"; };
+		E37938EA21271EC90091698D /* PickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerCell.swift; sourceTree = "<group>"; };
+		E37938EB21271EC90091698D /* PickerCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PickerCell.xib; sourceTree = "<group>"; };
+		E37938EE212723630091698D /* TableViewCellExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCellExtensions.swift; sourceTree = "<group>"; };
 		E3812DE6201C972B00F10B2C /* SettingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsController.swift; sourceTree = "<group>"; };
 		E3812DE8201C992300F10B2C /* GoogleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleCell.swift; sourceTree = "<group>"; };
 		E3812DE9201C992300F10B2C /* GoogleCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GoogleCell.xib; sourceTree = "<group>"; };
@@ -256,11 +278,6 @@
 		E3BC6BB91FFEBECA0039E0CA /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
 		E3C2AD0F2025A5D500ACFFE7 /* MixerView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MixerView.xib; sourceTree = "<group>"; };
 		E3C2AD112025A5E900ACFFE7 /* MixerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MixerView.swift; sourceTree = "<group>"; };
-		E3C2AD132026F25F00ACFFE7 /* Guitar.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Guitar.mp3; sourceTree = "<group>"; };
-		E3C2AD142026F25F00ACFFE7 /* BassGuitar.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = BassGuitar.mp3; sourceTree = "<group>"; };
-		E3C2AD152026F26000ACFFE7 /* Drums.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Drums.mp3; sourceTree = "<group>"; };
-		E3C2AD162026F26000ACFFE7 /* Piano.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Piano.mp3; sourceTree = "<group>"; };
-		E3C2AD1B2027491C00ACFFE7 /* SongExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongExtensions.swift; sourceTree = "<group>"; };
 		E3C2AD1D202749CD00ACFFE7 /* InstrumentExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstrumentExtensions.swift; sourceTree = "<group>"; };
 		E3C2AD2120275AE200ACFFE7 /* InstrumentPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstrumentPlayer.swift; sourceTree = "<group>"; };
 		E3CAE69C20C4794400D3B36F /* NewOrEditViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewOrEditViewModel.swift; sourceTree = "<group>"; };
@@ -270,13 +287,14 @@
 		E3CB684F200634A500F007B2 /* LoadingIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingIndicator.swift; sourceTree = "<group>"; };
 		E3CB6851200634EC00F007B2 /* TimeIntervalExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeIntervalExtensions.swift; sourceTree = "<group>"; };
 		E3CB6853200635D600F007B2 /* LoadingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingViewController.swift; sourceTree = "<group>"; };
+		E3CD8AB3212818B000EB75BB /* TextFieldCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldCell.swift; sourceTree = "<group>"; };
+		E3CD8AB4212818B000EB75BB /* TextFieldCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TextFieldCell.xib; sourceTree = "<group>"; };
 		E3D12AAE2018EE2100BD060C /* Fetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fetcher.swift; sourceTree = "<group>"; };
 		E3D12AB02018EE4800BD060C /* FetcherResultTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetcherResultTypes.swift; sourceTree = "<group>"; };
 		E3D12AB22019BFEB00BD060C /* BridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BridgingHeader.h; sourceTree = "<group>"; };
 		E3D18C6F20238BDC00CBAAF6 /* KDEAudioPlayer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = KDEAudioPlayer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3D1CEE51FF6930600F9D7D9 /* LabelPickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelPickerCell.swift; sourceTree = "<group>"; };
 		E3D1CEE61FF6930600F9D7D9 /* LabelPickerCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelPickerCell.xib; sourceTree = "<group>"; };
-		E3D9274E1FEC1AFC006EDE75 /* TagsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsController.swift; sourceTree = "<group>"; };
 		E3D927501FEC3036006EDE75 /* NewOrEditTagController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewOrEditTagController.swift; sourceTree = "<group>"; };
 		E3D927561FECF622006EDE75 /* ViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewExtensions.swift; sourceTree = "<group>"; };
 		E3D9C28D20D6F11E006EDFE3 /* TestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestView.swift; sourceTree = "<group>"; };
@@ -301,8 +319,8 @@
 		E3F99648201285CD00634C5E /* AddButtonCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddButtonCollectionCell.swift; sourceTree = "<group>"; };
 		E3F99649201285CD00634C5E /* AddButtonCollectionCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AddButtonCollectionCell.xib; sourceTree = "<group>"; };
 		E3FA3DF4200D45F00038C97B /* NewOrEditIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewOrEditIphoneController.swift; sourceTree = "<group>"; };
-		E3FA3DF6200DE8570038C97B /* LabelTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelTextView.swift; sourceTree = "<group>"; };
-		E3FA3DF7200DE8570038C97B /* LabelTextView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelTextView.xib; sourceTree = "<group>"; };
+		E3FA3DF6200DE8570038C97B /* LabelTextViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelTextViewCell.swift; sourceTree = "<group>"; };
+		E3FA3DF7200DE8570038C97B /* LabelTextViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelTextViewCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -358,11 +376,9 @@
 		E311712F1FE59DA3008D9D51 /* SongProjector */ = {
 			isa = PBXGroup;
 			children = (
+				E31F0B7220F50A6D00C22FD1 /* Liedjes - wallpaper 16-9.png */,
+				E31F0B7020F5029500C22FD1 /* Pio-Sebastiaan-en-Marilou.jpg */,
 				E39864D42098D0E600DF5199 /* Amazon Entities */,
-				E3C2AD142026F25F00ACFFE7 /* BassGuitar.mp3 */,
-				E3C2AD152026F26000ACFFE7 /* Drums.mp3 */,
-				E3C2AD132026F25F00ACFFE7 /* Guitar.mp3 */,
-				E3C2AD162026F26000ACFFE7 /* Piano.mp3 */,
 				E33268BD2022FCD2002CDA7C /* SoundPlayer.swift */,
 				E3C2AD2120275AE200ACFFE7 /* InstrumentPlayer.swift */,
 				E3D12AA22018E9E500BD060C /* Fetchers */,
@@ -391,8 +407,8 @@
 				E3314B6520077DD100F470C0 /* SheetExtensions.swift */,
 				E3A19733200947AB0044DB1B /* SheetTitleImageExtensions.swift */,
 				E3F2020D20205BBF002FF06E /* EntityExtensions.swift */,
-				E3C2AD1B2027491C00ACFFE7 /* SongExtensions.swift */,
 				E3C2AD1D202749CD00ACFFE7 /* InstrumentExtensions.swift */,
+				E31F0B7420F5D1E800C22FD1 /* SheetPastorsExtensions.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -418,8 +434,6 @@
 				E31171621FE5A0E7008D9D51 /* NewSongServiceController.swift */,
 				E31171601FE5A0E7008D9D51 /* SongsController.swift */,
 				E31171611FE5A0E7008D9D51 /* NewSongController.swift */,
-				E311715D1FE5A0E7008D9D51 /* PlayersController.swift */,
-				E3D9274E1FEC1AFC006EDE75 /* TagsController.swift */,
 				E3D927501FEC3036006EDE75 /* NewOrEditTagController.swift */,
 				E309DCE91FF45A8A00C3D135 /* MoreSplitViewController.swift */,
 				E38347641FF9382F008AE69D /* ExternalDisplayController.swift */,
@@ -434,6 +448,7 @@
 				E3D9C28F20D6F4E8006EDFE3 /* SongServiceContainerViewController.swift */,
 				E35099EE20DCD152005CA984 /* LyricsViewController.swift */,
 				E35099F020DD4FA7005CA984 /* SaveNewSongTitleTimeVC.swift */,
+				E31F0B6A20F4F36000C22FD1 /* SheetTest.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -453,6 +468,7 @@
 				E3CB6851200634EC00F007B2 /* TimeIntervalExtensions.swift */,
 				E3A19735200A76EF0044DB1B /* ViewControllerExtensions.swift */,
 				E3F201DF201E1AEC002FF06E /* DateExtensions.swift */,
+				E37938EE212723630091698D /* TableViewCellExtensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -482,7 +498,6 @@
 				E326E9061FFECD0E00FEAC9C /* SheetCollectionCell.xib */,
 				E31171731FE5A1A0008D9D51 /* TagCellCollection.swift */,
 				E31171701FE5A1A0008D9D51 /* TagCellCollection.xib */,
-				E309DCFC1FF4FC9E00C3D135 /* TextFieldCell.swift */,
 				E31171711FE5A1A0008D9D51 /* AddButtonCell.swift */,
 				E31171721FE5A1A0008D9D51 /* AddButtonCell.xib */,
 				E311716D1FE5A1A0008D9D51 /* BasicCell.swift */,
@@ -503,14 +518,18 @@
 				E383475F1FF7E8B5008AE69D /* LabelPhotoPickerCell.xib */,
 				E3F421A21FFE457500C332B0 /* LabelDoubleSwitchCell.swift */,
 				E3F421A31FFE457500C332B0 /* LabelDoubleSwitchCell.xib */,
-				E3FA3DF6200DE8570038C97B /* LabelTextView.swift */,
-				E3FA3DF7200DE8570038C97B /* LabelTextView.xib */,
+				E3FA3DF6200DE8570038C97B /* LabelTextViewCell.swift */,
+				E3FA3DF7200DE8570038C97B /* LabelTextViewCell.xib */,
 				E3F99644201209F100634C5E /* LabelNumberPickerCell.swift */,
 				E3F99645201209F100634C5E /* LabelNumberPickerCell.xib */,
 				E3812DE8201C992300F10B2C /* GoogleCell.swift */,
 				E3812DE9201C992300F10B2C /* GoogleCell.xib */,
 				E37137BC205EBB8300DF86F1 /* LabelSliderCell.swift */,
 				E37137BD205EBB8300DF86F1 /* LabelSliderCell.xib */,
+				E37938EA21271EC90091698D /* PickerCell.swift */,
+				E37938EB21271EC90091698D /* PickerCell.xib */,
+				E3CD8AB3212818B000EB75BB /* TextFieldCell.swift */,
+				E3CD8AB4212818B000EB75BB /* TextFieldCell.xib */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -539,6 +558,11 @@
 		E39864D42098D0E600DF5199 /* Amazon Entities */ = {
 			isa = PBXGroup;
 			children = (
+				E37938E82121DE8E0091698D /* LordLoop.m4a */,
+				E32A02B421164A8800C78410 /* Bass.m4a */,
+				E32A02A42116441600C78410 /* Drums.m4a */,
+				E32A02B02116466200C78410 /* Guitar.m4a */,
+				E32A02B2211646D900C78410 /* Keyboard.m4a */,
 				E39864DD2098D5BC00DF5199 /* Organizations.swift */,
 				E39864D92098D24100DF5199 /* OrganizationsCRUD.swift */,
 			);
@@ -555,6 +579,8 @@
 				E38347681FFA512D008AE69D /* SheetTitleContent.swift */,
 				E393B7682008D3FC0073D0A9 /* SheetTitleImage.xib */,
 				E393B76A2008D40A0073D0A9 /* SheetTitleImage.swift */,
+				E31F0B6C20F4F3D100C22FD1 /* SheetPastors.swift */,
+				E31F0B6E20F4F3DD00C22FD1 /* SheetPastors.xib */,
 				E34ED29A2008D62300534C72 /* SheetSplit.xib */,
 				E34ED29C2008D63700534C72 /* SheetSplit.swift */,
 				E393B7642008D20B0073D0A9 /* SheetEmpty.xib */,
@@ -578,6 +604,7 @@
 			children = (
 				E3CAE69C20C4794400D3B36F /* NewOrEditViewModel.swift */,
 				E3CAE69E20C47C5F00D3B36F /* TitleLContentViewModel.swift */,
+				E32A02B6211715B300C78410 /* SongService.swift */,
 			);
 			path = NewOrEditIphoneModels;
 			sourceTree = "<group>";
@@ -660,40 +687,46 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3CD8AB6212818B000EB75BB /* TextFieldCell.xib in Resources */,
 				E31171761FE5A1A0008D9D51 /* BasicCell.xib in Resources */,
-				E3C2AD172026F26800ACFFE7 /* BassGuitar.mp3 in Resources */,
 				E38347611FF7E8B5008AE69D /* LabelPhotoPickerCell.xib in Resources */,
 				E3812DEB201C992300F10B2C /* GoogleCell.xib in Resources */,
 				E34ED29B2008D62300534C72 /* SheetSplit.xib in Resources */,
 				E31171781FE5A1A0008D9D51 /* TagCellCollection.xib in Resources */,
+				E32A02B3211646DA00C78410 /* Keyboard.m4a in Resources */,
 				E39864D32098B14B00DF5199 /* GoogleService-Info.plist in Resources */,
 				E3F201E2201E2011002FF06E /* ActivityHeader.xib in Resources */,
 				E38347671FFA5099008AE69D /* SheetTitleContent.xib in Resources */,
+				E32A02B521164A8800C78410 /* Bass.m4a in Resources */,
 				E311713E1FE59DA3008D9D51 /* LaunchScreen.storyboard in Resources */,
 				E311713B1FE59DA3008D9D51 /* Assets.xcassets in Resources */,
 				E309DCF81FF48FF100C3D135 /* LabelColorPickerCell.xib in Resources */,
+				E31F0B6F20F4F3DD00C22FD1 /* SheetPastors.xib in Resources */,
 				E309DD031FF5127400C3D135 /* LabelNumberCell.xib in Resources */,
+				E32A02B12116466200C78410 /* Guitar.m4a in Resources */,
+				E37938E92121DE8E0091698D /* LordLoop.m4a in Resources */,
 				E3D1CEE81FF6930600F9D7D9 /* LabelPickerCell.xib in Resources */,
-				E3C2AD192026F26800ACFFE7 /* Guitar.mp3 in Resources */,
 				E3F9964B201285CD00634C5E /* AddButtonCollectionCell.xib in Resources */,
 				E3F201DC201E0BD0002FF06E /* ActivityView.xib in Resources */,
 				E3BC6BB71FFEBE350039E0CA /* HeaderView.xib in Resources */,
 				E3F201D8201E0685002FF06E /* SheetActivitiesView.xib in Resources */,
-				E3C2AD1A2026F26800ACFFE7 /* Piano.mp3 in Resources */,
 				E393B7652008D20B0073D0A9 /* SheetEmpty.xib in Resources */,
 				E31171361FE59DA3008D9D51 /* Main.storyboard in Resources */,
 				E39864E0209A0FA700DF5199 /* awsconfiguration.json in Resources */,
 				E309DCF41FF48F0800C3D135 /* LabelSwitchCell.xib in Resources */,
+				E31F0B7320F50A6E00C22FD1 /* Liedjes - wallpaper 16-9.png in Resources */,
+				E37938ED21271EC90091698D /* PickerCell.xib in Resources */,
 				E3F421A51FFE457500C332B0 /* LabelDoubleSwitchCell.xib in Resources */,
-				E3C2AD182026F26800ACFFE7 /* Drums.mp3 in Resources */,
 				E311717A1FE5A1A0008D9D51 /* AddButtonCell.xib in Resources */,
+				E31F0B7120F5029500C22FD1 /* Pio-Sebastiaan-en-Marilou.jpg in Resources */,
 				E37137BF205EBB8300DF86F1 /* LabelSliderCell.xib in Resources */,
 				E3F99647201209F100634C5E /* LabelNumberPickerCell.xib in Resources */,
-				E3FA3DF9200DE8570038C97B /* LabelTextView.xib in Resources */,
+				E3FA3DF9200DE8570038C97B /* LabelTextViewCell.xib in Resources */,
 				E393B7692008D3FC0073D0A9 /* SheetTitleImage.xib in Resources */,
 				E311717C1FE5A1A0008D9D51 /* NewSongSheetCell.xib in Resources */,
 				E326E9081FFECD0E00FEAC9C /* SheetCollectionCell.xib in Resources */,
 				E334FD6B20CF9C0700FC1FAE /* SongHeaderView.xib in Resources */,
+				E32A02A92116441A00C78410 /* Drums.m4a in Resources */,
 				E38347591FF7AAC9008AE69D /* LabelTextFieldCell.xib in Resources */,
 				E3C2AD102025A5D500ACFFE7 /* MixerView.xib in Resources */,
 				E311717E1FE5A5F5008D9D51 /* StoryboardiPad.storyboard in Resources */,
@@ -807,12 +840,12 @@
 				E3C2AD1E202749CD00ACFFE7 /* InstrumentExtensions.swift in Sources */,
 				E311715B1FE5A0A3008D9D51 /* Features.swift in Sources */,
 				E3CAE69D20C4794400D3B36F /* NewOrEditViewModel.swift in Sources */,
+				E37938EF212723630091698D /* TableViewCellExtensions.swift in Sources */,
 				E309DCF31FF48F0800C3D135 /* LabelSwitchCell.swift in Sources */,
 				E309DD051FF5179B00C3D135 /* Cells.swift in Sources */,
 				E31171521FE5A071008D9D51 /* StringExtensions.swift in Sources */,
 				E3F421A41FFE457500C332B0 /* LabelDoubleSwitchCell.swift in Sources */,
 				E3CAE6A120C5137000D3B36F /* ChurchBeamCell.swift in Sources */,
-				E309DCFD1FF4FC9E00C3D135 /* TextFieldCell.swift in Sources */,
 				E3812DE7201C972B00F10B2C /* SettingsController.swift in Sources */,
 				E3D9C29020D6F4E8006EDFE3 /* SongServiceContainerViewController.swift in Sources */,
 				E399EA87202F574600E8CE0E /* NewSongMenuController.swift in Sources */,
@@ -824,12 +857,12 @@
 				E393B76B2008D40A0073D0A9 /* SheetTitleImage.swift in Sources */,
 				E38347581FF7AAC9008AE69D /* LabelTextFieldCell.swift in Sources */,
 				E31171691FE5A0E7008D9D51 /* NewSongController.swift in Sources */,
+				E31F0B7520F5D1E800C22FD1 /* SheetPastorsExtensions.swift in Sources */,
 				E399EA89202F73D700E8CE0E /* CustomSheetsController.swift in Sources */,
 				E3F8C9D4201690FC00C94292 /* BibleStudyIphoneController.swift in Sources */,
 				E311A44820725B72007BB6CB /* ImportBibleController.swift in Sources */,
 				E31171791FE5A1A0008D9D51 /* AddButtonCell.swift in Sources */,
 				E309DCE61FF26CB700C3D135 /* NewSongServiceIphoneController.swift in Sources */,
-				E3C2AD1C2027491C00ACFFE7 /* SongExtensions.swift in Sources */,
 				E3355D711FEE6436004C03AE /* ClusterExtensions.swift in Sources */,
 				E31F87BD1FE7035D00D5D4BA /* Text.swift in Sources */,
 				E311715A1FE5A0A3008D9D51 /* Notifications.swift in Sources */,
@@ -846,20 +879,23 @@
 				E38347651FF9382F008AE69D /* ExternalDisplayController.swift in Sources */,
 				E3A19736200A76EF0044DB1B /* ViewControllerExtensions.swift in Sources */,
 				E326E9041FFEC9EC00FEAC9C /* CustomSheetsIphoneController.swift in Sources */,
-				E31171651FE5A0E7008D9D51 /* PlayersController.swift in Sources */,
 				E3D9C28E20D6F11E006EDFE3 /* TestView.swift in Sources */,
 				E3F8C9D82017153A00C94292 /* SheetPickerMenuController.swift in Sources */,
 				E31171771FE5A1A0008D9D51 /* NewSongSheetCell.swift in Sources */,
 				E35099F120DD4FA7005CA984 /* SaveNewSongTitleTimeVC.swift in Sources */,
+				E37938EC21271EC90091698D /* PickerCell.swift in Sources */,
 				E3812DED201CE1D300F10B2C /* GoogleActivityFetcher.swift in Sources */,
 				E31171331FE59DA3008D9D51 /* ViewController.swift in Sources */,
 				E31171311FE59DA3008D9D51 /* AppDelegate.swift in Sources */,
 				E38347601FF7E8B5008AE69D /* LabelPhotoPickerCell.swift in Sources */,
+				E3CD8AB5212818B000EB75BB /* TextFieldCell.swift in Sources */,
+				E32A02B7211715B300C78410 /* SongService.swift in Sources */,
 				E31171491FE59EBD008D9D51 /* CoreDataManager.swift in Sources */,
 				E311A44A2072733A007BB6CB /* LoadingBibleController.swift in Sources */,
 				E399EA8B203074DD00E8CE0E /* BibleStudyGeneratorController.swift in Sources */,
 				E309DCF71FF48FF100C3D135 /* LabelColorPickerCell.swift in Sources */,
 				E3A19734200947AB0044DB1B /* SheetTitleImageExtensions.swift in Sources */,
+				E31F0B6D20F4F3D100C22FD1 /* SheetPastors.swift in Sources */,
 				E3314B6620077DD100F470C0 /* SheetExtensions.swift in Sources */,
 				E3CB6850200634A600F007B2 /* LoadingIndicator.swift in Sources */,
 				E3F201DE201E0CC9002FF06E /* ActivityView.swift in Sources */,
@@ -869,6 +905,7 @@
 				E309DCE81FF44E6A00C3D135 /* TagsIphoneController.swift in Sources */,
 				E31171391FE59DA3008D9D51 /* SongProjector.xcdatamodeld in Sources */,
 				E326E9071FFECD0E00FEAC9C /* SheetCollectionCell.swift in Sources */,
+				E31F0B6B20F4F36000C22FD1 /* SheetTest.swift in Sources */,
 				E3F9964A201285CD00634C5E /* AddButtonCollectionCell.swift in Sources */,
 				E3812DEA201C992300F10B2C /* GoogleCell.swift in Sources */,
 				E3D927571FECF622006EDE75 /* ViewExtensions.swift in Sources */,
@@ -879,7 +916,7 @@
 				E3D927511FEC3036006EDE75 /* NewOrEditTagController.swift in Sources */,
 				E31171551FE5A071008D9D51 /* UIFontExtensions.swift in Sources */,
 				E3355D6F1FEDA645004C03AE /* TextViewExtensions.swift in Sources */,
-				E3FA3DF8200DE8570038C97B /* LabelTextView.swift in Sources */,
+				E3FA3DF8200DE8570038C97B /* LabelTextViewCell.swift in Sources */,
 				E31171661FE5A0E7008D9D51 /* SongServiceController.swift in Sources */,
 				E3CB6852200634EC00F007B2 /* TimeIntervalExtensions.swift in Sources */,
 				E39864DA2098D24100DF5199 /* OrganizationsCRUD.swift in Sources */,
@@ -896,7 +933,6 @@
 				E309DD021FF5127400C3D135 /* LabelNumberCell.swift in Sources */,
 				E31171681FE5A0E7008D9D51 /* SongsController.swift in Sources */,
 				E31171751FE5A1A0008D9D51 /* BasicCell.swift in Sources */,
-				E3D9274F1FEC1AFC006EDE75 /* TagsController.swift in Sources */,
 				E31171561FE5A071008D9D51 /* NSManagedObjectExtension.swift in Sources */,
 				E34ED29D2008D63700534C72 /* SheetSplit.swift in Sources */,
 				E38347691FFA512D008AE69D /* SheetTitleContent.swift in Sources */,

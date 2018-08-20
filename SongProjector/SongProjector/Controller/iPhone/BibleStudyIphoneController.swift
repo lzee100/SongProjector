@@ -43,7 +43,7 @@ class BibleStudyIphoneController: UIViewController, UITableViewDelegate, UITable
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 		if segue.identifier == "SheetsPickerMenuSegue" {
 			let controller = segue.destination as! SheetPickerMenuController
-			controller.sender = self
+			controller.didCreateSheet = didCreate(sheet:)
 			controller.bibleStudyGeneratorIphoneDelegate = self
 			controller.selectedTag = selectedTag
 		}

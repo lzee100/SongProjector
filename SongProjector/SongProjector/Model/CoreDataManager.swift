@@ -18,9 +18,9 @@ let CoreSheet = CoreDataManager(nsManagedObject: Sheet())
 let CoreSheetSplit = CoreDataManager(nsManagedObject: SheetSplitEntity())
 let CoreSheetTitleContent = CoreDataManager(nsManagedObject: SheetTitleContentEntity())
 let CoreSheetTitleImage = CoreDataManager(nsManagedObject: SheetTitleImageEntity())
+let CoreSheetPastors = CoreDataManager(nsManagedObject: SheetPastorsEntity())
 let CoreSheetEmptySheet = CoreDataManager(nsManagedObject: SheetEmptyEntity())
 let CoreCluster = CoreDataManager(nsManagedObject: Cluster())
-let CoreSong = CoreDataManager(nsManagedObject: Song())
 let CoreInstrument = CoreDataManager(nsManagedObject: Instrument())
 
 let CoreBook = CoreDataManager(nsManagedObject: Book())
@@ -75,6 +75,7 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 		return entity
 	}
 	
+	@discardableResult
 	func saveContext(fireNotification: Bool = true) -> Bool {
 		do {
 			try moc.save()
@@ -180,6 +181,31 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 		{
 			print ("There was an error")
 		}
+	}
+	
+	func deleteTemps() {
+		var entities: [T] = []
+		let request = NSFetchRequest<T>(entityName: nsManagedObject.classForCoder.description())
+		
+		predicates.append("isTemp", equals: true)
+		
+		let andPredicate = NSCompoundPredicate(type: NSCompoundPredicate.LogicalType.and, subpredicates: predicates)
+		request.predicate = andPredicate
+		
+		request.returnsObjectsAsFaults = false
+		
+		do {
+			let result = try moc.fetch(request)
+			entities = result
+			
+			for entity in entities {
+				moc.delete(entity)
+			}
+
+		} catch {
+			print("Failed")
+		}
+		
 	}
 	
 }

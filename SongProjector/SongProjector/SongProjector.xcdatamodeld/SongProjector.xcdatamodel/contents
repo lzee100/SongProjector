@@ -13,8 +13,8 @@
         <attribute name="position" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="time" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <relationship name="child" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Cluster" inverseName="parent" inverseEntity="Cluster" syncable="YES"/>
+        <relationship name="hasInstruments" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Instrument" inverseName="hasCluster" inverseEntity="Instrument" syncable="YES"/>
         <relationship name="hasSheets" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Sheet" inverseName="hasCluster" inverseEntity="Sheet" syncable="YES"/>
-        <relationship name="hasSong" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Song" inverseName="hasCluster" inverseEntity="Song" syncable="YES"/>
         <relationship name="hasTag" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Tag" inverseName="hasCluster" inverseEntity="Tag" syncable="YES"/>
         <relationship name="parent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Cluster" inverseName="child" inverseEntity="Cluster" syncable="YES"/>
     </entity>
@@ -32,9 +32,10 @@
         <relationship name="hasSheetsActivities" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SheetActivities" inverseName="hasGoogleActivity" inverseEntity="SheetActivities" syncable="YES"/>
     </entity>
     <entity name="Instrument" representedClassName="Instrument" parentEntity="Entity" syncable="YES" codeGenerationType="class">
+        <attribute name="isLoop" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="resourcePath" attributeType="String" syncable="YES"/>
         <attribute name="typeString" attributeType="String" defaultValueString="Piano" syncable="YES"/>
-        <relationship name="hasSong" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Song" inverseName="hasIntruments" inverseEntity="Song" syncable="YES"/>
+        <relationship name="hasCluster" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Cluster" inverseName="hasInstruments" inverseEntity="Cluster" syncable="YES"/>
     </entity>
     <entity name="Sheet" representedClassName="Sheet" parentEntity="Entity" syncable="YES" codeGenerationType="class">
         <attribute name="isEmptySheet" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
@@ -47,6 +48,11 @@
         <relationship name="hasGoogleActivity" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="GoogleActivity" inverseName="hasSheetsActivities" inverseEntity="GoogleActivity" syncable="YES"/>
     </entity>
     <entity name="SheetEmptyEntity" representedClassName="SheetEmptyEntity" parentEntity="Sheet" syncable="YES" codeGenerationType="class"/>
+    <entity name="SheetPastorsEntity" representedClassName="SheetPastorsEntity" parentEntity="Sheet" syncable="YES" codeGenerationType="class">
+        <attribute name="content" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="imagePath" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="thumbnailPath" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <entity name="SheetSplitEntity" representedClassName="SheetSplitEntity" parentEntity="Sheet" syncable="YES" codeGenerationType="class">
         <attribute name="textLeft" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="textRight" optional="YES" attributeType="String" syncable="YES"/>
@@ -62,10 +68,7 @@
         <attribute name="imageContentMode" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="imageHasBorder" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="imagePath" optional="YES" attributeType="String" syncable="YES"/>
-    </entity>
-    <entity name="Song" representedClassName="Song" parentEntity="Entity" syncable="YES" codeGenerationType="class">
-        <relationship name="hasCluster" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Cluster" inverseName="hasSong" inverseEntity="Cluster" syncable="YES"/>
-        <relationship name="hasIntruments" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Instrument" inverseName="hasSong" inverseEntity="Instrument" syncable="YES"/>
+        <attribute name="thumbnailPath" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="Tag" representedClassName="Tag" parentEntity="Entity" syncable="YES" codeGenerationType="class">
         <attribute name="allHaveTitle" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
@@ -83,17 +86,17 @@
         <attribute name="isTitleBold" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="isTitleItalian" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="isTitleUnderlined" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="lyricsAlignment" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="lyricsAlignmentNumber" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="lyricsBorderColorHex" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="lyricsBorderSize" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="lyricsBorderSize" optional="YES" attributeType="Float" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="lyricsFontName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="lyricsTextColorHex" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="lyricsTextSize" attributeType="Float" defaultValueString="10" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="position" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="titleAlignment" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="titleAlignmentNumber" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="titleBackgroundColor" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="titleBorderColorHex" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="titleBorderSize" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="titleBorderSize" attributeType="Float" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="titleFontName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="titleTextColorHex" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="titleTextSize" attributeType="Float" defaultValueString="14" usesScalarValueType="YES" syncable="YES"/>
@@ -111,14 +114,14 @@
         <element name="Cluster" positionX="-54" positionY="-9" width="128" height="150"/>
         <element name="Entity" positionX="-63" positionY="-18" width="128" height="120"/>
         <element name="GoogleActivity" positionX="-36" positionY="135" width="128" height="105"/>
-        <element name="Instrument" positionX="-36" positionY="135" width="128" height="90"/>
+        <element name="Instrument" positionX="-36" positionY="135" width="128" height="105"/>
         <element name="Sheet" positionX="-18" positionY="27" width="128" height="120"/>
         <element name="SheetActivities" positionX="-27" positionY="144" width="128" height="60"/>
         <element name="SheetEmptyEntity" positionX="-18" positionY="153" width="128" height="45"/>
+        <element name="SheetPastorsEntity" positionX="-36" positionY="135" width="128" height="90"/>
         <element name="SheetSplitEntity" positionX="-36" positionY="135" width="128" height="75"/>
         <element name="SheetTitleContentEntity" positionX="-27" positionY="144" width="128" height="60"/>
-        <element name="SheetTitleImageEntity" positionX="-36" positionY="135" width="128" height="150"/>
-        <element name="Song" positionX="-36" positionY="135" width="128" height="75"/>
+        <element name="SheetTitleImageEntity" positionX="-36" positionY="135" width="128" height="165"/>
         <element name="Tag" positionX="-36" positionY="9" width="128" height="510"/>
         <element name="Vers" positionX="-18" positionY="153" width="128" height="90"/>
     </elements>

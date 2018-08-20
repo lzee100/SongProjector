@@ -105,7 +105,7 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 				}
 				
 			} else {
-				let customController = storyboard?.instantiateViewController(withIdentifier: "CustomSheetsIphoneController") as! CustomSheetsIphoneController
+				let customController = storyboard?.instantiateViewController(withIdentifier: "CustomSheetsIphoneController") as! CustomSheetsController
 				customController.cluster = selectedCluster!
 				customController.sheets = selectedCluster!.hasSheetsArray
 				customController.isNew = false

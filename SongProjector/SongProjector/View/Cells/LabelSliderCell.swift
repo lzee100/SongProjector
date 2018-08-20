@@ -12,7 +12,8 @@ protocol LabelSliderDelegate {
 	func sliderValueChanged(cell: LabelSliderCell, value: Float)
 }
 
-class LabelSliderCell: UITableViewCell {
+class LabelSliderCell: ChurchBeamCell, TagImplementation, DynamicHeightCell {
+	
 
 	@IBOutlet var descriptionTitle: UILabel!
 	@IBOutlet var percentagePreview: UILabel!
@@ -26,11 +27,29 @@ class LabelSliderCell: UITableViewCell {
 	}
 	
 	var id = ""
+	
+	var sheetTag: Tag?
+	var tagAttribute: TagAttribute?
+	var valueDidChange: ((ChurchBeamCell) -> Void)?
+	
 	var isActive = false { didSet { setupTextView() } }
 	var textView = UITextView()
 	var customText = ""
 	var delegate: LabelSliderDelegate?
 	
+	static let identifier = "LabelSliderCell"
+	
+	override func awakeFromNib() {
+		slider.minimumValue = 0
+		slider.maximumValue = 100
+		slider.value = 100
+		slider.tintColor = themeHighlighted
+		descriptionTitle.textColor = themeWhiteBlackTextColor
+		percentagePreview.textColor = themeWhiteBlackTextColor
+		viewBeforeSlider.backgroundColor = themeWhiteBlackBackground
+		setPreviewWith(value: slider.value)
+		slider.addTarget(self, action: #selector(sliderValueChanged), for: .valueChanged)
+	}
 	static func create(id: String, description: String, initialValue: Float) -> LabelSliderCell {
 		let view : LabelSliderCell! = UIView.create(nib: "LabelSliderCell")
 		view.id = id
@@ -43,10 +62,6 @@ class LabelSliderCell: UITableViewCell {
 		view.percentagePreview.textColor = themeWhiteBlackTextColor
 		view.viewBeforeSlider.backgroundColor = themeWhiteBlackBackground
 		return view
-	}
-	
-	func setup() {
-		slider.addTarget(self, action: #selector(sliderValueChanged), for: .valueChanged)
 	}
 	
 	private func setupTextView() {
@@ -63,20 +78,54 @@ class LabelSliderCell: UITableViewCell {
 		}
 	}
 	
+	func apply(tag: Tag, tagAttribute: TagAttribute) {
+		self.sheetTag = tag
+		self.tagAttribute = tagAttribute
+		self.descriptionTitle.text = tagAttribute.description
+		applyValueToCell()
+	}
+	
+	func applyValueToCell() {
+		if let tag = sheetTag, let tagAttribute = tagAttribute {
+			switch tagAttribute {
+			case .backgroundTransparancy: set(sliderValue: tag.backgroundTransparency * 100)
+			default: return
+			}
+		}
+	}
+	
+	func applyCellValueToTag() {
+		if let tag = sheetTag, let tagAttribute = tagAttribute {
+			switch tagAttribute {
+			case .backgroundTransparancy: tag.backgroundTransparency = slider.value
+			default: return
+			}
+		}
+	}
+	
+	func set(value: Any?) {
+		if let value = value as? Float {
+			set(sliderValue: value)
+		} else {
+			slider.value = 0
+		}
+	}
+	
 	func set(sliderValue: Float?) {
 		if let sliderValue = sliderValue {
 			setPreviewWith(value: sliderValue)
 			slider.setValue(sliderValue, animated: false)
-			delegate?.sliderValueChanged(cell: self, value: sliderValue)
 		}
 	}
 	
 	private func setPreviewWith(value: Float) {
-		percentagePreview.text = String(100-Int(value)) + "%"
+		percentagePreview.text = String(Int(100 - value)) + "%"
 	}
 	
 	@objc private func sliderValueChanged() {
 		set(sliderValue: slider.value)
+		applyCellValueToTag()
+		valueDidChange?(self)
 	}
 	
 	

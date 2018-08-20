@@ -12,5 +12,6 @@ import MediaPlayer
 class InstrumentPlayer: AVAudioPlayer {
 	
 	var instrumentType: InstrumentType?
+	var isLoop: Bool = false
 
 }

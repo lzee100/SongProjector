@@ -70,7 +70,7 @@ class SheetActivitiesView: SheetView {
 		
 		addActivities()
 		
-		setBackgroundImage(image: isForExternalDispay ? sheetTag?.backgroundImage : sheetTag?.thumbnail)
+		updateBackgroundImage()
 		
 		if let backgroundColor = sheetTag?.sheetBackgroundColor, sheetTag?.backgroundImage == nil {
 			self.backgroundView.backgroundColor = backgroundColor
@@ -217,17 +217,17 @@ class SheetActivitiesView: SheetView {
 		
 	}
 	
-	override func changeOpacity(newValue: Float) {
-		if let _ = isForExternalDispay ? sheetTag?.backgroundImage : sheetTag?.thumbnail {
-			backgroundImageView.alpha = CGFloat(newValue)
+	override func updateOpacity() {
+		if let _ = isForExternalDispay ? sheetTag?.backgroundImage : sheetTag?.thumbnail, let alpha = sheetTag?.backgroundTransparency {
+			backgroundImageView.alpha = CGFloat(alpha)
 		}
 	}
 	
-	override func setBackgroundImage(image: UIImage?) {
-		if let backgroundImage = image {
+	override func updateBackgroundImage() {
+		if let image = isForExternalDispay ? sheetTag?.backgroundImage : sheetTag?.thumbnail {
 			backgroundImageView.isHidden = false
 			backgroundImageView.contentMode = .scaleAspectFill
-			backgroundImageView.image = backgroundImage
+			backgroundImageView.image = image
 			if let backgroundTransparency = sheetTag?.backgroundTransparency {
 				backgroundImageView.alpha = CGFloat(backgroundTransparency)
 			}

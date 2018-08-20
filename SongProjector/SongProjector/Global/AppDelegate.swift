@@ -53,8 +53,7 @@ var externalDisplayWindowRatioHeightWidth: CGFloat {
 	if defaults.float(forKey: "lastScreenHeight") != 0 && defaults.float(forKey: "lastScreenWidth") != 0 {
 		return CGFloat(defaults.float(forKey: "lastScreenWidth")) / CGFloat(defaults.float(forKey: "lastScreenHeight"))
 	} else {
-		return 4/3
-//		return 16/9
+		return 16/9
 	}
 }
 
@@ -255,58 +254,179 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			let _ = CoreTag.saveContext()
 		}
 		
-		CoreSong.predicates.append("title", equals: "testSong")
-		let songs = CoreSong.getEntities()
-		if songs.count == 0 {
-			let song = CoreSong.createEntity()
-			song.title = "testSong"
-			CoreSong.saveContext()
+		CoreInstrument.predicates.append("resourcePath", equals: "LordLoop")
+		let lord = CoreInstrument.getEntities()
+		if lord.count == 0 {
+			let lord = CoreInstrument.createEntity()
+			lord.type = .piano
+			lord.resourcePath = "LordLoop"
+			lord.isLoop = true
 		}
 		
-		CoreSong.predicates.append("title", equals: "testSong")
-		
-		if let song = CoreSong.getEntities().first {
-			
-			CoreInstrument.predicates.append("typeString", equals: "piano")
-			let pianos = CoreInstrument.getEntities()
-			if pianos.count == 0 {
-				let piano = CoreInstrument.createEntity()
-				piano.type = .piano
-				piano.resourcePath = "Piano"
-				piano.hasSong = song
-			}
-			
-			CoreInstrument.predicates.append("typeString", equals: "guitar")
-			let guitars = CoreInstrument.getEntities()
-			if guitars.count == 0 {
-				let guitar = CoreInstrument.createEntity()
-				guitar.type = .guitar
-				guitar.resourcePath = "Guitar"
-				guitar.hasSong = song
-			}
-			
-			CoreInstrument.predicates.append("typeString", equals: "bassGuitar")
-			let bassGuitars = CoreInstrument.getEntities()
-			if bassGuitars.count == 0 {
-				let bassGuitar = CoreInstrument.createEntity()
-				bassGuitar.type = .bassGuitar
-				bassGuitar.resourcePath = "BassGuitar"
-				bassGuitar.hasSong = song
-			}
-			
-			CoreInstrument.predicates.append("typeString", equals: "drums")
-			let drums = CoreInstrument.getEntities()
-			if drums.count == 0 {
-				let drum = CoreInstrument.createEntity()
-				drum.type = .drums
-				drum.resourcePath = "Drums"
-				drum.hasSong = song
-			}
-			
-			let _ = CoreInstrument.saveContext()
-
+		CoreInstrument.predicates.append("typeString", equals: "Keyboard")
+		let pianos = CoreInstrument.getEntities()
+		if pianos.count == 0 {
+			let piano = CoreInstrument.createEntity()
+			piano.type = .piano
+			piano.resourcePath = "Keyboard"
 		}
+		
+		CoreInstrument.predicates.append("typeString", equals: "Guitar")
+		let guitars = CoreInstrument.getEntities()
+		if guitars.count == 0 {
+			let guitar = CoreInstrument.createEntity()
+			guitar.type = .guitar
+			guitar.resourcePath = "Guitar"
+		}
+		
+		CoreInstrument.predicates.append("typeString", equals: "Bass")
+		let bassGuitars = CoreInstrument.getEntities()
+		if bassGuitars.count == 0 {
+			let bassGuitar = CoreInstrument.createEntity()
+			bassGuitar.type = .bassGuitar
+			bassGuitar.resourcePath = "Bass"
+		}
+		
+		CoreInstrument.predicates.append("typeString", equals: "Drums")
+		let drums = CoreInstrument.getEntities()
+		if drums.count == 0 {
+			let drum = CoreInstrument.createEntity()
+			drum.type = .drums
+			drum.resourcePath = "Drums"
+		}
+		
+		let _ = CoreInstrument.saveContext()
 
+		CoreCluster.predicates.append("title", equals: "Ik zing vol blijdschap en lach")
+		if CoreCluster.getEntities().count == 0 {
+			let ikZing = CoreCluster.createEntity()
+			ikZing.title = "Ik zing vol blijdschap en lach"
+			
+			CoreTag.predicates.append("title", equals: "Security")
+			let tag = CoreTag.getEntities().first
+			
+			ikZing.hasTag = tag
+			
+			let sheet1 = CoreSheetTitleContent.createEntity()
+			sheet1.title = "Ik zing vol blijdschap en lach"
+			sheet1.lyrics = """
+			Ik zing vol blijdschap en lach
+			Want de vreugde van God is mijn kracht
+			Wij buigen neer aanbidden Hem nu,
+			hoe groot en machtig is Hij
+			Iedereen zingt, iedereen zingt
+			"""
+			sheet1.time = 36
+			sheet1.hasCluster = ikZing
+			sheet1.position = 0
+			
+			let sheet2 = CoreSheetTitleContent.createEntity()
+			sheet2.title = "Heilig is de heer"
+			sheet2.lyrics = """
+			Heilig is de Heer, God almachtig
+			de aarde is vol van Zijn glorie (2x)
+			"""
+			sheet2.time = 26.80
+			sheet2.hasCluster = ikZing
+			sheet2.position = 1
+			
+			let sheet3 = CoreSheetTitleContent.createEntity()
+			sheet3.title = "Ik zing vol blijdschap en lach"
+			sheet3.lyrics = """
+			Ik zing vol blijdschap en lach
+			Want de vreugde van God is mijn kracht
+			Wij buigen neer aanbidden Hem nu,
+			hoe groot en machtig is Hij
+			Iedereen zingt, iedereen zingt
+			"""
+			sheet3.time = 29.70
+			sheet3.hasCluster = ikZing
+			sheet3.position = 2
+			
+			
+			let sheet4 = CoreSheetTitleContent.createEntity()
+			sheet4.title = "Heilig is de heer"
+			sheet4.lyrics = """
+			Heilig is de Heer, God almachtig
+			de aarde is vol van Zijn glorie (2x)
+			"""
+			sheet4.time = 27
+			sheet4.hasCluster = ikZing
+			sheet4.position = 3
+			
+			let sheet5 = CoreSheetTitleContent.createEntity()
+			sheet5.title = "Hij komt terug"
+			sheet5.lyrics = """
+			Hij komt terug, Hij heeft het beloofd
+			voor iedereen die in Hem geloofd (2X)
+			"""
+			sheet5.time = 24.10
+			sheet5.hasCluster = ikZing
+			sheet5.position = 4
+			
+			
+			let sheet6 = CoreSheetTitleContent.createEntity()
+			sheet6.title = "Iedereen zingt"
+			sheet6.lyrics = """
+			Iedereen zingt, iedereen zingt
+			"""
+			sheet6.time = 10
+			sheet6.hasCluster = ikZing
+			sheet6.position = 5
+			
+			let sheet7 = CoreSheetTitleContent.createEntity()
+			sheet7.title = "Heilig is de heer"
+			sheet7.lyrics = """
+			Heilig is de Heer, God almachtig
+			de aarde is vol van Zijn glorie (2x)
+			"""
+			sheet7.time = 59
+			sheet7.hasCluster = ikZing
+			sheet7.position = 6
+			
+			CoreInstrument.predicates.append("resourcePath", notEquals: "LordLoop")
+			let instruments = CoreInstrument.getEntities()
+			
+			for instrument in instruments {
+				instrument.hasCluster = ikZing
+			}
+		}
+		
+		CoreCluster.predicates.append("title", equals: "He is Lord")
+		if CoreCluster.getEntities().count == 0 {
+			let heIsLord = CoreCluster.createEntity()
+			heIsLord.title = "He is Lord"
+			heIsLord.isTemp = false
+			
+			CoreTag.predicates.append("title", equals: "instrumentalBlackSheets")
+			let blackTag: Tag
+			if let existingTag = CoreTag.getEntities().first {
+				blackTag = existingTag
+			} else {
+				let newTag = CoreTag.createEntity()
+				newTag.title = "instrumentalBlackSheets"
+				newTag.isTemp = false
+				newTag.isHidden = true
+				newTag.sheetBackgroundColor = UIColor.black
+				blackTag = newTag
+			}
+			
+			heIsLord.hasTag = blackTag
+			
+			let blackSheet = CoreSheetTitleContent.createEntity()
+			blackSheet.time = Double.greatestFiniteMagnitude
+			blackSheet.hasCluster = heIsLord
+			blackSheet.position = 0
+			
+			CoreInstrument.predicates.append("resourcePath", equals: "LordLoop")
+			let lordLoop = CoreInstrument.getEntities().first
+			
+			lordLoop?.hasCluster = heIsLord
+			CoreCluster.saveContext()
+		}
+		
+		
+		
 	}
 	
 	private func setupAirPlay() {

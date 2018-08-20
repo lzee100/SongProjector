@@ -19,9 +19,6 @@ class SheetEmpty: SheetView {
 	@IBOutlet var timeLabelTopConstraint: NSLayoutConstraint!
 	@IBOutlet var timeLabelRightConstraint: NSLayoutConstraint!
 	
-	
-	private var selectedTag: Tag?
-	
 	override func customInit() {
 		Bundle.main.loadNibNamed("SheetEmpty", owner: self, options: [:])
 		sheetView.frame = self.frame
@@ -35,32 +32,39 @@ class SheetEmpty: SheetView {
 			
 			timeLabelTopConstraint.constant = timeLabelTopConstraint.constant * scaleFactor
 			timeLabelRightConstraint.constant = timeLabelRightConstraint.constant * scaleFactor
-			setBackgroundImage(image: isForExternalDispay ? selectedTag?.backgroundImage : selectedTag?.thumbnail)
+
+			updateBackgroundImage()
+			updateBackgroundColor()
+			updateOpacity()
 			
-			if let backgroundColor = selectedTag?.sheetBackgroundColor, selectedTag?.backgroundImage == nil {
-				self.backgroundView.backgroundColor = backgroundColor
-			} else {
-				self.backgroundView.backgroundColor = .white
-			}
 		}
 	}
 	
-	override func changeOpacity(newValue: Float) {
-		if let _ = isForExternalDispay ? selectedTag?.backgroundImage : selectedTag?.thumbnail {
-			backgroundImageView.alpha = CGFloat(newValue)
+	override func updateOpacity() {
+		if let alpha = sheetTag?.backgroundTransparency {
+			backgroundImageView.alpha = CGFloat(alpha)
 		}
 	}
 	
-	override func setBackgroundImage(image: UIImage?) {
+	override func updateBackgroundImage() {
+		let image = isForExternalDispay ? sheetTag?.backgroundImage : sheetTag?.thumbnail
 		if let backgroundImage = image {
 			backgroundImageView.isHidden = false
 			backgroundImageView.contentMode = .scaleAspectFill
 			backgroundImageView.image = backgroundImage
-			if let backgroundTransparency = selectedTag?.backgroundTransparency {
+			if let backgroundTransparency = sheetTag?.backgroundTransparency {
 				backgroundImageView.alpha = CGFloat(backgroundTransparency)
 			}
 		} else {
 			backgroundImageView.isHidden = true
+		}
+	}
+	
+	override func updateBackgroundColor() {
+		if let backgroundColor = sheetTag?.sheetBackgroundColor, sheetTag?.backgroundImage == nil {
+			self.backgroundView.backgroundColor = backgroundColor
+		} else {
+			self.backgroundView.backgroundColor = .white
 		}
 	}
 	
@@ -72,7 +76,7 @@ class SheetEmpty: SheetView {
 			return
 		}
 		
-		if let tag = selectedTag, let scaleFactor = scaleFactor { // is custom sheet
+		if let tag = sheetTag, let scaleFactor = scaleFactor { // is custom sheet
 			
 			timeLabel.attributedText = NSAttributedString(string: test, attributes: tag.getTitleAttributes(scaleFactor))
 			

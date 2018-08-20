@@ -11,7 +11,9 @@ import UIKit
 
 class SheetView: UIView {
 	
-	open var position: Int = 0
+	open var position: Int {
+		return Int(sheet.position)
+	}
 	open var scaleFactor: CGFloat?
 	open var isForExternalDispay: Bool = false
 	open var cluster: Cluster?
@@ -42,7 +44,6 @@ class SheetView: UIView {
 		view.sheetTag = tag
 		view.scaleFactor = scaleFactor
 		view.isPreview = isPreview
-		view.position = Int(sheet.position)
 		if toExternalDisplay, let externalDisplay = externalDisplayWindow {
 			sendToExternalDisplay(frame: externalDisplay.frame, sheet: sheet, tag: tag, scaleFactor: externalDisplay.frame.width / frame.width * (scaleFactor ?? 1))
 		}
@@ -59,6 +60,8 @@ class SheetView: UIView {
 			view = SheetTitleContent(frame: frame)
 		case .SheetTitleImage:
 			view = SheetTitleImage(frame: frame)
+		case .SheetPastors:
+			view = SheetPastors(frame: frame)
 		case .SheetSplit:
 			view = SheetSplit(frame: frame)
 		case .SheetEmpty:
@@ -90,13 +93,13 @@ class SheetView: UIView {
 		
 		view.isForExternalDispay = true
 		
-		view.update()
 		if let externalDisplay = externalDisplayWindow {
 			for subview in externalDisplay.subviews {
 				subview.removeFromSuperview()
 			}
 			externalDisplay.addSubview(view)
 		}
+		view.update()
 	}
 	
 	private func getViewFor(sheet: Sheet, frame: CGRect) -> SheetView {
@@ -107,6 +110,8 @@ class SheetView: UIView {
 			view = SheetTitleContent(frame: frame)
 		case .SheetTitleImage:
 			view = SheetTitleImage(frame: frame)
+		case .SheetPastors:
+			view = SheetPastors(frame: frame)
 		case .SheetSplit:
 			view = SheetSplit(frame: frame)
 		case .SheetEmpty:
@@ -118,22 +123,31 @@ class SheetView: UIView {
 	}
 	
 	
-	open func customInit() {
+	func customInit() {
 	}
 	
-	open func update() {
-		
+	func update() {
 	}
 	
-	open func changeOpacity(newValue: Float) {
-
-	}
-	open func setBackgroundImage(image: UIImage?) {
-
+	func updateTitle() {
 	}
 	
-	open func updateTime(isOn: Bool) {
-
+	func updateContent() {
+	}
+	
+	func updateOpacity() {
+	}
+	
+	func updateBackgroundImage() {
+	}
+	
+	func updateSheetImage() {
+	}
+	
+	func updateBackgroundColor() {
+	}
+	
+	func updateTime(isOn: Bool) {
 	}
 	
 }

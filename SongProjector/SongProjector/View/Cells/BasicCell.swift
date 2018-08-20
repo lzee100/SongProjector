@@ -22,6 +22,8 @@ class BasicCell: UITableViewCell {
 	var isInnerCell = false { didSet { update() } }
 	var customTextColor: UIColor?
 	
+	static let identifier = "BasicCell"
+	
 	
 	override func awakeFromNib() {
 		super.awakeFromNib()

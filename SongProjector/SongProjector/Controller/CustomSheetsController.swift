@@ -16,14 +16,13 @@ class CustomSheetsController: UIViewController, UICollectionViewDelegate, UIColl
 	
 	@IBOutlet var cancel: UIBarButtonItem!
 	@IBOutlet var save: UIBarButtonItem!
+	@IBOutlet weak var edit: UIBarButtonItem?
 	
 	@IBOutlet var collectionViewTags: UICollectionView!
 	@IBOutlet var collectionView: UICollectionView!
 	
-	@IBOutlet var addLyricsButton: UIButton!
-	@IBOutlet var addSheetButton: UIButton!
-	
-	
+	@IBOutlet weak var addLyricsButton: UIButton?
+	@IBOutlet weak var addSheetButton: UIButton?
 	
 	var isNew = true
 	var tags: [Tag] = []
@@ -49,16 +48,29 @@ class CustomSheetsController: UIViewController, UICollectionViewDelegate, UIColl
 	var sheets: [Sheet] = [] {
 		didSet {
 			sheetsTemp = []
+			sheetHasSheet = []
 			save.isEnabled = sheets.count > 0
 			for (index, sheet) in sheets.enumerated() {
 				sheet.position = Int16(index)
 				let tempSheet = sheet.getTemp
-				tempSheet.hasTag = sheet.hasTag
+				sheetHasSheet.append(SheetHasSheet(sheetId: sheet.id, sheetTempId: tempSheet.id))
 				sheetsTemp.append(tempSheet)
 			}
 		}
 	}
-	var sheetsTemp: [Sheet] = [] { didSet { sheetsTemp.sort(by: { $0.position < $1.position }) } }
+	var sheetsTemp: [Sheet] = [] {
+		didSet {
+			var index: Int16 = 0
+			sheetsTemp.forEach({
+				$0.hasCluster = clusterTemp
+				$0.position = index
+				index += 1
+			})
+			sheetsTemp.sort(by: { $0.position < $1.position })
+			save.isEnabled = sheetsTemp.count > 0
+		}
+	}
+	var sheetHasSheet: [SheetHasSheet] = []
 	
 	// MARK: Private properties
 	private var sheetSize = CGSize(width: 250*externalDisplayWindowRatioHeightWidth, height: 250)
@@ -81,7 +93,7 @@ class CustomSheetsController: UIViewController, UICollectionViewDelegate, UIColl
 	
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 		if let controller = segue.destination.unwrap() as? SheetPickerMenuController {
-			controller.sender = self
+			controller.didCreateSheet = didCreate(sheet:)
 			controller.selectedTag = selectedTag
 		}
 		
@@ -140,7 +152,7 @@ class CustomSheetsController: UIViewController, UICollectionViewDelegate, UIColl
 				return CGSize(width: 200, height: 50)
 			}
 		} else {
-			return getSizeWith(height: collectionView.frame.height)
+			return UIDevice.current.userInterfaceIdiom == .pad ? getSizeWith(height: collectionView.frame.height) : getSizeWith(height: nil, width: collectionView.frame.width)
 		}
 	}
 	
@@ -153,7 +165,7 @@ class CustomSheetsController: UIViewController, UICollectionViewDelegate, UIColl
 			let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
 			controller.modificationMode = .editCustomSheet
 			controller.sheet = sheet
-			controller.delegate = self
+			controller.didCreateSheet = didCreate(sheet:)
 			let nav = UINavigationController(rootViewController: controller)
 			present(nav, animated: true)
 		}
@@ -175,13 +187,15 @@ class CustomSheetsController: UIViewController, UICollectionViewDelegate, UIColl
 	// MARK: - Delegate Functions
 	
 	func didCreate(sheet: Sheet) {
-		
-		sheetsTemp.append(sheet)
+		if sheetsTemp.first(where: {  $0.id == sheet.id }) == nil {
+			sheets.append(sheet)
+		}
 		
 		isEdited = true
 		checkAddButton()
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-			if let index = self.sheetsTemp.index(of: sheet) {
+			let sheetTempId = self.sheetHasSheet.first(where: { $0.sheetId == sheet.id })?.sheetTempId
+			if let id = sheetTempId, let index = self.sheetsTemp.index(where: { $0.id == id }) {
 				self.collectionView.insertItems(at: [IndexPath(row: index, section: 0)])
 			}
 		}
@@ -213,36 +227,44 @@ class CustomSheetsController: UIViewController, UICollectionViewDelegate, UIColl
 	}
 	
 	func didDeleteSheet(sheet: Sheet) {
-		if let index = sheetsTemp.index(where: { $0 == sheet }) {
-			sheetsTemp.delete(entity: sheet)
-			collectionView.deleteItems(at: [IndexPath(row: index, section: 0)])
+		
+		if let sheetId = sheetHasSheet.first(where: { $0.sheetTempId == sheet.id })?.sheetId, let sheet = sheets.first(where: { $0.id == sheetId }) {
+			if let index = sheets.index(where: { $0 == sheet }) {
+				sheets.delete(entity: sheet)
+				collectionView.deleteItems(at: [IndexPath(row: index, section: 0)])
+			}
 		}
+		
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+			self.collectionView.reloadData()
+		}
+		
 	}
 	
 	func didSaveSongWith(title: String, time: Double) {
-		var newCluster = clusterTemp ?? cluster
-		if newCluster == nil {
-			newCluster = CoreCluster.createEntity()
-		}
 		
-		newCluster?.isTemp = false
-		newCluster?.hasTag = selectedTag
-		newCluster?.title = title
-		newCluster?.time = time
+		clusterTemp?.isTemp = true
+		clusterTemp?.hasTag = selectedTag
+		clusterTemp?.title = title
+		clusterTemp?.time = time
+		
+		if let cluster = cluster {
+			clusterTemp?.mergeSelfInto(cluster: cluster)
+		}
 
-		var index: Int16 = 0
 		for sheet in sheetsTemp {
-			sheet.position = index
-			sheet.hasCluster = newCluster
-			sheet.isTemp = false
-			index += 1
+			if let sheetId = sheetHasSheet.first(where: { $0.sheetTempId == sheet.id })?.sheetId, let sheetOriginal = sheets.first(where: { $0.id == sheetId }) {
+				sheet.mergeSelfInto(sheet: sheetOriginal)
+				if let tag = sheet.hasTag, let originalTag = sheetOriginal.hasTag {
+					tag.mergeSelfInto(tag: originalTag, sheetType: sheet.type)
+				}
+			}
 		}
 		
-		let _ = CoreCluster.saveContext()
-		
-		for sheet in sheets {
-			sheet.delete()
-		}
+		cluster?.hasSheets = NSSet(array: sheets)
+		cluster?.isTemp = false
+		cluster?.hasTag = selectedTag
+		CoreCluster.saveContext()
 		
 		CoreEntity.predicates.append("isTemp", equals: true)
 		let tempEntities = CoreEntity.getEntities()
@@ -264,15 +286,21 @@ class CustomSheetsController: UIViewController, UICollectionViewDelegate, UIColl
 		if let cluster = cluster {
 			selectedTag = cluster.hasTag
 		}
-		
+		if clusterTemp == nil {
+			cluster = CoreCluster.createEntity(fireNotification: false)
+			cluster?.isTemp = true
+			clusterTemp = CoreCluster.createEntity(fireNotification: false)
+			clusterTemp?.isTemp = true
+		}
 		save.title = Text.Actions.save
 		cancel.title = Text.Actions.cancel
-		addSheetButton.backgroundColor = themeHighlighted
-		addSheetButton.setTitleColor(themeWhiteBlackTextColor, for: .normal)
-		addSheetButton.layer.cornerRadius = 5
-		addLyricsButton.backgroundColor = themeHighlighted
-		addLyricsButton.setTitleColor(themeWhiteBlackTextColor, for: .normal)
-		addLyricsButton.layer.cornerRadius = 5
+		edit?.title = Text.Actions.edit
+		addSheetButton?.backgroundColor = themeHighlighted
+		addSheetButton?.setTitleColor(themeWhiteBlackTextColor, for: .normal)
+		addSheetButton?.layer.cornerRadius = 5
+		addLyricsButton?.backgroundColor = themeHighlighted
+		addLyricsButton?.setTitleColor(themeWhiteBlackTextColor, for: .normal)
+		addLyricsButton?.layer.cornerRadius = 5
 		
 		navigationController?.title = Text.CustomSheets.title
 		title = Text.CustomSheets.title
@@ -290,7 +318,7 @@ class CustomSheetsController: UIViewController, UICollectionViewDelegate, UIColl
 		tags = CoreTag.getEntities()
 		
 		let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
-		layout.scrollDirection = .horizontal
+		layout.scrollDirection = (UIDevice.current.userInterfaceIdiom == .pad) ? .horizontal : .vertical
 		layout.itemSize = sheetSize
 		layout.minimumInteritemSpacing = 0
 		layout.minimumLineSpacing = 30
@@ -310,9 +338,9 @@ class CustomSheetsController: UIViewController, UICollectionViewDelegate, UIColl
 	private func checkAddButton() {
 		if !isNew || isEdited {
 			if cluster?.isTypeSong ?? clusterTemp?.isTypeSong ?? false {
-				addSheetButton.removeFromSuperview()
+				addSheetButton?.removeFromSuperview()
 			} else {
-				addLyricsButton.removeFromSuperview()
+				addLyricsButton?.removeFromSuperview()
 			}
 		}
 	}
@@ -474,5 +502,43 @@ class CustomSheetsController: UIViewController, UICollectionViewDelegate, UIColl
 		}
 	}
 	
+	@IBAction func saveIphonePressed(_ sender: UIBarButtonItem) {
+		if hasTagSelected() {
+			performSegue(withIdentifier: "saveNewSongSegue", sender: self)
+		}
+	}
+	
+	@IBAction func editPressed(_ sender: UIBarButtonItem) {
+		
+		let hasLyrics = getTextFromSheets() != ""
+		
+		let optionsMenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+		
+		let changeGeneralSettings = UIAlertAction(title: Text.NewSong.changeTitleTime, style: .default) { _ in
+			self.performSegue(withIdentifier: "changeTitleTimeSegue", sender: self)
+		}
+		let addSheet = UIAlertAction(title: Text.NewSong.addSheet, style: .default) { _ in
+			self.performSegue(withIdentifier: "SheetPickerMenuControllerSegue", sender: self)
+		}
+		let changeLyrics = UIAlertAction(title: hasLyrics ? Text.NewSong.changeLyrics : Text.NewSong.newLyrics, style: .default) { _ in
+			self.performSegue(withIdentifier: "ChangeLyricsSegue", sender: self)
+		}
+		let cancel = UIAlertAction(title: Text.Actions.cancel, style: .cancel)
+		
+		if sheetsTemp.count == 0 {
+			optionsMenu.addAction(addSheet)
+			optionsMenu.addAction(changeLyrics)
+		} else {
+			if sheetsTemp.contains(where: { $0.hasTag?.isHidden == true }) {
+				optionsMenu.addAction(addSheet)
+				optionsMenu.addAction(changeGeneralSettings)
+			} else {
+				optionsMenu.addAction(changeLyrics)
+			}
+		}
+		optionsMenu.addAction(cancel)
+		
+		present(optionsMenu, animated: true)
+	}
 	
 }

@@ -8,24 +8,70 @@
 
 import UIKit
 
-class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, NewOrEditIphoneControllerDelegate, LabelNumberPickerCellDelegate, LabelTextFieldCellDelegate {
+class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIGestureRecognizerDelegate, NewOrEditIphoneControllerDelegate {
 	
 	
 	// MARK: - Properties
 
 	@IBOutlet var cancel: UIBarButtonItem!
+	@IBOutlet var edit: UIBarButtonItem!
 	@IBOutlet var save: UIBarButtonItem!
-	@IBOutlet var segmentControl: UISegmentedControl!
 	
 	@IBOutlet var collectionViewTags: UICollectionView!
 	@IBOutlet var collectionView: UICollectionView!
-	@IBOutlet var tableView: UITableView!
 	
 	var isNew = true
-	var cluster: Cluster!
 	var tags: [Tag] = []
-	var selectedTag: Tag? { didSet { collectionViewTags.reloadData() }}
-	var sheets: [Sheet] = [] { didSet { save.isEnabled = sheets.count > 0 } }
+	var selectedTag: Tag? {
+		didSet {
+			clusterTemp?.hasTag = selectedTag
+			collectionView.reloadData()
+		}
+	}
+	
+	var isEdited = false
+	
+	var cluster: Cluster? {
+		didSet {
+			if let cluster = cluster {
+				clusterTemp = cluster.tempVersion
+				sheets = cluster.hasSheetsArray
+			}
+		}
+	}
+	
+	private var clusterTemp: Cluster?
+	
+	var sheets: [Sheet] = [] {
+		didSet {
+			sheetsTemp = []
+			sheetHasSheet = []
+			save.isEnabled = sheets.count > 0
+			for (index, sheet) in sheets.enumerated() {
+				sheet.position = Int16(index)
+				let tempSheet = sheet.getTemp
+				sheetHasSheet.append(SheetHasSheet(sheetId: sheet.id, sheetTempId: tempSheet.id))
+				sheetsTemp.append(tempSheet)
+			}
+		}
+	}
+	
+	private var sheetsTemp: [Sheet] = [] {
+		didSet {
+			sheetsTemp.forEach({ $0.hasCluster = clusterTemp })
+			var index: Int16 = 0
+			sheetsTemp.forEach({
+				$0.hasCluster = clusterTemp
+				$0.position = index
+				index += 1
+			})
+			sheetsTemp.sort(by: { $0.position < $1.position })
+			save.isEnabled = sheetsTemp.count > 0
+		}
+	}
+	
+	var sheetHasSheet: [SheetHasSheet] = []
+	
 	
 	// MARK: Private properties
 	private var visibleCells: [IndexPath] = []
@@ -38,10 +84,7 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 		willSet { if newValue == true { delaySheetAimation = 0.0 } }
 	}
 	private var delay = 0.0
-	private let cellName = LabelTextFieldCell.create(id: "cellName", description: Text.CustomSheets.descriptionName, placeholder: Text.NewTag.descriptionTitlePlaceholder)
-	private let cellAnimationTime = LabelNumberPickerCell.create(id: "cellAnimationTime", description: Text.CustomSheets.descriptionTime, subtitle: Text.CustomSheets.descriptionTimeAdd)
 	
-
 	
 	
 	// MARK - UIView functions
@@ -60,7 +103,7 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 		if segue.identifier == "SheetPickerMenuControllerSegue" {
 			let controller = segue.destination as! SheetPickerMenuController
-			controller.sender = self
+			controller.didCreateSheet = didCreate(sheet:)
 			controller.selectedTag = selectedTag
 		}
 	}
@@ -69,11 +112,11 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 	// MARK: - UICollectionView Functions
 
 	func numberOfSections(in collectionView: UICollectionView) -> Int {
-		return collectionView == collectionViewTags ? 1 : sheetsSorted.count
+		return 1
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-		return collectionView == collectionViewTags ? tags.count : 1
+		return collectionView == collectionViewTags ? tags.count : sheets.count
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -87,7 +130,11 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 			
 			let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.sheetCollectionCell, for: indexPath) as! SheetCollectionCell
 			
-			collectionCell.setupWith(cluster: cluster, sheet: sheetsSorted[indexPath.row], tag: sheetsSorted[indexPath.row].hasTag ?? cluster.hasTag, didDeleteSheet: nil, isDeleteEnabled: true)
+			collectionCell.setupWith(
+				cluster: clusterTemp,
+				sheet: sheetsTemp[indexPath.row],
+				tag: sheetsTemp[indexPath.row].hasTag ?? clusterTemp?.hasTag,
+				didDeleteSheet: didDeleteSheet(sheet:))
 			
 			if visibleCells.contains(indexPath) {
 				let y = collectionCell.bounds.minY
@@ -133,98 +180,29 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 			let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
 			controller.modificationMode = .editCustomSheet
 			controller.sheet = sheet
-			controller.delegate = self
+			controller.didCreateSheet = didCreate(sheet:)
 			let nav = UINavigationController(rootViewController: controller)
 			present(nav, animated: true)
 		}
 	}
 	
-	
-	// MARK: - UItableView functions
-	
-	func numberOfSections(in tableView: UITableView) -> Int {
-		return 2
+	func collectionView(_ collectionView: UICollectionView, canMoveItemAt indexPath: IndexPath) -> Bool {
+		return true
 	}
 	
-	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return section == 0 ? 2 : sheetsSorted.count
+	func collectionView(_ collectionView: UICollectionView, moveItemAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+		let sourceItem = sheetsTemp[sourceIndexPath.row]
+		sheetsTemp.remove(at: sourceIndexPath.row)
+		sheetsTemp.insert(sourceItem, at: destinationIndexPath.row)
+		collectionView.visibleCells.forEach { $0.layer.removeAllAnimations() }
 	}
 	
-	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		
-		if indexPath.section == 0 {
-			
-			return indexPath.row == 0 ? cellName : cellAnimationTime
-			
-		} else {
-			
-			let cell = tableView.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath) as! BasicCell
-			cell.setup(title: sheetsSorted[indexPath.row].title, icon: nil, iconSelected: nil)
-			return cell
-			
-		}
-		
-	}
 	
-	func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
-		return indexPath.section == 0 ? .none : .delete
-	}
-	
-	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-		if editingStyle == .delete {
-			if let tag = sheetsSorted[indexPath.row].hasTag {
-				
-				_ = CoreTag.delete(entity: tag)
-			}
-			_ = CoreSheet.delete(entity: sheetsSorted[indexPath.row])
-			let id = sheetsSorted[indexPath.row].id
-			if let index = sheets.index(where: { $0.id == id }) {
-				sheets.remove(at: index)
-			}
-			tableView.deleteRows(at: [indexPath], with: .fade)
-		}
-	}
-	
-	func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-		return indexPath.section == 0 ? false : true
-	}
-	
-	func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-		if destinationIndexPath.section == 0 {
-			tableView.reloadData()
-			return
-		}
-		let itemToMove = sheets[sourceIndexPath.row]
-		sheets.remove(at: sourceIndexPath.row)
-		sheets.insert(itemToMove, at: destinationIndexPath.row)
-		var index: Int16 = 0
-		for sheet in sheets {
-			sheet.position = index
-			index += 1
-		}
-	}
-	
-	func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-		return 60
-	}
-	
-	func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-		let view = HeaderView(frame: CGRect(x: 0, y: 0, width: tableView.bounds.width, height: 60))
-		view.descriptionLabel.text = section == 0 ? Text.CustomSheets.tableViewHeaderGeneral.uppercased() : Text.CustomSheets.tableViewHeaderSheets.uppercased()
-		return view
-	}
-	
-	func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-		return 60
-	}
 	
 	// MARK: - Delegate Functions
 	
 	func didCreate(sheet: Sheet) {
-		if segmentControl.selectedSegmentIndex != 1 {
-			segmentControl.selectedSegmentIndex = 1
-			segmentChanged(segmentControl)
-		}
+		
 		if !sheets.contains(where: { $0.id == sheet.id }) {
 			sheet.position = Int16(sheets.count)
 			sheets.append(sheet)
@@ -248,13 +226,16 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 		}
 	}
 	
-	
 	func numberPickerValueChanged(cell: LabelNumberPickerCell, value: Int) {
-		cluster.time = Double(value)
+		cluster?.time = Double(value)
 	}
 	
 	func textFieldDidChange(cell: LabelTextFieldCell, text: String?) {
-		cluster.title = text
+		cluster?.title = text
+	}
+	
+	func didDeleteSheet(sheet: Sheet) {
+		
 	}
 	
 	
@@ -264,7 +245,7 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 		
 		if cluster == nil {
 			cluster = CoreCluster.createEntity()
-			cluster.isTemp = true
+			cluster?.isTemp = true
 		}
 		save.title = Text.Actions.save
 		cancel.title = Text.Actions.cancel
@@ -277,48 +258,20 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 		
 		multiplier = externalDisplayWindowRatio
 		
-		sheetSize = CGSize(width: collectionView.bounds.width, height: collectionView.bounds.width * multiplier)
+		sheetSize = getSizeWith(height: nil, width: collectionView.frame.width)
 		
-		cellName.delegate = self
-		cellAnimationTime.delegate = self
-		
-		cellName.textField.attributedPlaceholder = NSAttributedString(string: Text.CustomSheets.namePlaceHolder, attributes: [NSAttributedStringKey.foregroundColor: UIColor.placeholderColor])
-		
-		if let title = cluster.title {
-			cellName.setName(name: title)
-		}
-		cellAnimationTime.setValue(Int(cluster.time))
+//		cellName.textField.attributedPlaceholder = NSAttributedString(string: Text.CustomSheets.namePlaceHolder, attributes: [NSAttributedStringKey.foregroundColor: UIColor.placeholderColor])
+//
+//		if let title = cluster.title {
+//			cellName.setName(name: title)
+//		}
+//		cellAnimationTime.setValue(Int(cluster.time))
 		
 		collectionView.register(UINib(nibName: Cells.sheetCollectionCell, bundle: nil), forCellWithReuseIdentifier: Cells.sheetCollectionCell)
 		collectionViewTags.register(UINib(nibName: Cells.tagCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.tagCellCollection)
 
-		tableView.register(cell: Cells.basicCellid)
-		tableView.keyboardDismissMode = .interactive
-
 		CoreTag.predicates.append("isHidden", notEquals: true)
 		tags = CoreTag.getEntities()
-		
-		segmentControl.setTitle(Text.CustomSheets.segmentChange, forSegmentAt: 0)
-		segmentControl.setTitle(Text.CustomSheets.segmentSheets, forSegmentAt: 1)
-		segmentControl.selectedSegmentIndex = cluster != nil ? 1 : 0 // show sheets when editing
-		
-		let leftSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))
-		let rightSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))
-		
-		leftSwipe.direction = .left
-		rightSwipe.direction = .right
-		
-		tableView.addGestureRecognizer(leftSwipe)
-		collectionView.addGestureRecognizer(rightSwipe)
-		
-		let longPressGesture:UILongPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(self.editTableView(_:)))
-		longPressGesture.minimumPressDuration = 0.7
-		longPressGesture.delegate = self
-		self.tableView.addGestureRecognizer(longPressGesture)
-		
-		let doubleTab = UITapGestureRecognizer(target: self, action: #selector(self.editTableView(_:)))
-		doubleTab.numberOfTapsRequired = 2
-		view.addGestureRecognizer(doubleTab)
 		
 		let cellHeight = multiplier * (UIScreen.main.bounds.width - 20)
 		sheetSize = CGSize(width: UIScreen.main.bounds.width - 20, height: cellHeight)
@@ -331,8 +284,8 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 		collectionView!.collectionViewLayout = layout
 		
 		if cluster != nil {
-			sheets = cluster.hasSheetsArray
-			selectedTag = cluster.hasTag
+			sheets = cluster?.hasSheetsArray ?? []
+			selectedTag = cluster?.hasTag
 		}
 		
 		collectionView.keyboardDismissMode = .interactive
@@ -345,14 +298,13 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 	private func update() {
 		collectionViewTags.reloadData()
 		collectionView.reloadData()
-		tableView.reloadData()
 		isFirstTime = true
 	}
 	
 	private func getMaxVisiblecells() -> [IndexPath] {
 		
-		let completeCellsVisible = Int(tableView.bounds.height / sheetSize.height)
-		let remainder = tableView.bounds.height.truncatingRemainder(dividingBy: sheetSize.height)
+		let completeCellsVisible = Int(collectionView.bounds.height / sheetSize.height)
+		let remainder = collectionView.bounds.height.truncatingRemainder(dividingBy: sheetSize.height)
 		let remainderInt = remainder > 0 ? 1 : 0
 		let sum = completeCellsVisible + remainderInt
 		var indexPaths: [IndexPath] = []
@@ -371,19 +323,6 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 		return indexPaths
 	}
 	
-	@objc private func respondToSwipeGesture(_ swipe: UISwipeGestureRecognizer) {
-		
-		swipe.cancelsTouchesInView = false
-		if swipe.direction == .left {
-			segmentControl.selectedSegmentIndex = 1
-			segmentChanged(segmentControl)
-		} else if swipe.direction == .right {
-			segmentControl.selectedSegmentIndex = 0
-			segmentChanged(segmentControl)
-		}
-		
-	}
-	
 	private func hasTagSelected() -> Bool {
 		if selectedTag != nil {
 			return true
@@ -397,7 +336,7 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 	}
 	
 	private func hasName() -> Bool {
-		if let title = cluster.title, title != "" {
+		if let title = cluster?.title, title != "" {
 			return true
 		} else {
 			let alert = UIAlertController(title: Text.CustomSheets.errorTitle, message: Text.CustomSheets.errorNoName, preferredStyle: .alert)
@@ -408,44 +347,7 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 		}
 	}
 	
-	@IBAction func segmentChanged(_ sender: UISegmentedControl) {
-		
-		if sender.selectedSegmentIndex == 1 {
-			isFirstTime = false
-			collectionView.isHidden = false
-			cellName.textField.resignFirstResponder()
-			update()
-		} else {
-			isFirstTime = true
-			visibleCells = collectionView.indexPathsForVisibleItems
-			isFirstTime = true
-			collectionView.isHidden = true
-			collectionViewTags.reloadData()
-			tableView.reloadData()
-		}
-		
-	}
 	
-	@objc private func editTableView(_ gestureRecognizer: UIGestureRecognizer) {
-		if let gestureRecognizer = gestureRecognizer as? UILongPressGestureRecognizer {
-			if gestureRecognizer.state == UIGestureRecognizerState.began {
-				changeEditingState()
-			}
-		} // for double tab
-		else if let _ = gestureRecognizer as? UITapGestureRecognizer, tableView.isEditing {
-			changeEditingState()
-		}
-	}
-	
-	private func changeEditingState(_ onlyIfEditing: Bool? = nil) {
-		if let _ = onlyIfEditing {
-			if tableView.isEditing {
-				tableView.setEditing(false, animated: false)
-			}
-		} else {
-			tableView.setEditing(tableView.isEditing ? false : true, animated: false)
-		}
-	}
 	
 	@IBAction func cancel(_ sender: UIBarButtonItem) {
 		// remove all
@@ -470,6 +372,33 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 		dismiss(animated: true)
 	}
 	
+	@IBAction func edit(_ sender: UIBarButtonItem) {
+		let optionsMenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+		
+		let changeGeneralSettings = UIAlertAction(title: Text.NewSong.changeTitleTime, style: .default) { _ in
+			self.performSegue(withIdentifier: "changeTitleTimeSegue", sender: self)
+		}
+		let addSheet = UIAlertAction(title: Text.NewSong.addSheet, style: .default) { _ in
+			self.performSegue(withIdentifier: "SheetPickerMenuControllerSegue", sender: self)
+		}
+		let changeLyrics = UIAlertAction(title: Text.NewSong.changeLyrics, style: .default) { _ in
+			self.performSegue(withIdentifier: "ChangeLyricsSegue", sender: self)
+		}
+		
+		if sheetsTemp.count == 0 {
+			optionsMenu.addAction(addSheet)
+			optionsMenu.addAction(changeLyrics)
+		} else {
+			if sheetsTemp.contains(where: { $0.hasTag?.isHidden == true }) {
+				optionsMenu.addAction(addSheet)
+				optionsMenu.addAction(changeGeneralSettings)
+			} else {
+				optionsMenu.addAction(changeLyrics)
+			}
+		}
+		present(optionsMenu, animated: true)
+	}
+	
 	@IBAction func savedPressed(_ sender: UIBarButtonItem) {
 
 		if hasTagSelected() {
@@ -477,8 +406,8 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 				if cluster == nil {
 					cluster = CoreCluster.createEntity()
 				}
-				cluster.isTemp = false
-				cluster.hasTag = selectedTag
+				cluster?.isTemp = false
+				cluster?.hasTag = selectedTag
 				
 				var index: Int16 = 0
 				for sheet in sheets {
@@ -513,7 +442,7 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 	}
 	
 	@IBAction func textfieldDidChange(_ sender: UITextField) {
-		cluster.title = sender.text
+		cluster?.title = sender.text
 	}
 	
 	

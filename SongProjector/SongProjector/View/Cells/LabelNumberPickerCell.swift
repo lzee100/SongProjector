@@ -12,7 +12,7 @@ protocol LabelNumberPickerCellDelegate {
 	func numberPickerValueChanged(cell: LabelNumberPickerCell, value: Int)
 }
 
-class LabelNumberPickerCell: UITableViewCell, UIPickerViewDataSource, UIPickerViewDelegate {
+class LabelNumberPickerCell: ChurchBeamCell, UIPickerViewDataSource, UIPickerViewDelegate {
 
 	@IBOutlet var descriptionTitle: UILabel!
 	@IBOutlet var descriptionSubtitle: UILabel!
@@ -23,6 +23,8 @@ class LabelNumberPickerCell: UITableViewCell, UIPickerViewDataSource, UIPickerVi
 	var id: String = ""
 	var delegate: LabelNumberPickerCellDelegate?
 	var pickerValues: [Int] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,16,18,20,24,28,34,40,60]
+	
+	static let identifier = "LabelNumberPickerCell"
 	
 	static func create(id: String, description: String, subtitle: String?, initialValue: Int? = nil, values: [Int]? = nil) -> LabelNumberPickerCell {
 		let view : LabelNumberPickerCell! = UIView.create(nib: "LabelNumberPickerCell")
@@ -93,14 +95,4 @@ class LabelNumberPickerCell: UITableViewCell, UIPickerViewDataSource, UIPickerVi
 	}
 	
 	
-	
-	// MARK: - UItableviewCell functions
-	
-	override func setSelected(_ selected: Bool, animated: Bool) {
-		
-	}
-	
-	override func setHighlighted(_ highlighted: Bool, animated: Bool) {
-		
-	}
 }

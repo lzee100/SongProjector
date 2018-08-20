@@ -32,6 +32,8 @@ class GoogleCell: UITableViewCell, GoogleFetcherLoginDelegate, FetcherObserver {
 	var id = ""
 	var sender = UIViewController()
 	
+	static let identifier = "GoogleCell"
+	
 	static func create(id: String, description: String) -> GoogleCell {
 		let view : GoogleCell! = UIView.create(nib: "GoogleCell")
 //		GoogleActivityFetcher.addObserver(view)

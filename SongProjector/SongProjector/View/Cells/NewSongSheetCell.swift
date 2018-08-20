@@ -25,6 +25,8 @@ class NewSongSheetCell: UITableViewCell, UITextViewDelegate {
 	var lyrics: String? { didSet { update() } }
 	var index: Int?
 	
+	static let identifier = "NewSongSheetCell"
+	
 	override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

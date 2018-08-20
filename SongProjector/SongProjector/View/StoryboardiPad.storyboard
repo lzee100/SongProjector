@@ -818,7 +818,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="e03-Yz-5IM">
-                                <rect key="frame" x="312" y="314" width="400" height="250"/>
+                                <rect key="frame" x="312" y="344" width="400" height="250"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="250" id="lRP-Cs-c4c"/>
                                     <constraint firstAttribute="width" constant="400" id="p7q-Jc-cSR"/>
@@ -1056,11 +1056,12 @@
                             <constraint firstItem="cE6-1b-sFA" firstAttribute="top" secondItem="JNt-5o-hB0" secondAttribute="top" id="9Gp-ry-eb7"/>
                             <constraint firstItem="6uu-fa-Few" firstAttribute="top" secondItem="cE6-1b-sFA" secondAttribute="bottom" id="HHn-vv-H2n"/>
                             <constraint firstItem="cE6-1b-sFA" firstAttribute="leading" secondItem="Ztb-4X-y8k" secondAttribute="leading" id="Rxw-sr-zhj"/>
+                            <constraint firstItem="e03-Yz-5IM" firstAttribute="top" secondItem="ivg-V7-fj1" secondAttribute="top" id="SsS-43-ki9"/>
                             <constraint firstItem="e03-Yz-5IM" firstAttribute="centerX" secondItem="JNt-5o-hB0" secondAttribute="centerX" id="ZJZ-I5-BBI"/>
                             <constraint firstAttribute="trailing" secondItem="cE6-1b-sFA" secondAttribute="trailing" id="dxb-2V-LbD"/>
                             <constraint firstAttribute="trailing" secondItem="ivg-V7-fj1" secondAttribute="trailing" id="eFy-mv-Fa7"/>
+                            <constraint firstItem="e03-Yz-5IM" firstAttribute="top" secondItem="Ztb-4X-y8k" secondAttribute="topMargin" priority="999" id="lHL-Zr-3Ep"/>
                             <constraint firstAttribute="trailing" secondItem="6uu-fa-Few" secondAttribute="trailing" id="tDR-js-NHD"/>
-                            <constraint firstItem="e03-Yz-5IM" firstAttribute="top" secondItem="Ztb-4X-y8k" secondAttribute="topMargin" constant="250" id="wwi-EO-UbY"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="JNt-5o-hB0"/>
                     </view>
@@ -1080,9 +1081,11 @@
                     <connections>
                         <outlet property="add" destination="8Ct-Nj-7sI" id="1zS-3q-v2f"/>
                         <outlet property="clear" destination="57H-90-FiG" id="mYe-aw-Eaq"/>
-                        <outlet property="mixerContainerView" destination="e03-Yz-5IM" id="vHQ-bQ-HQi"/>
-                        <outlet property="mixerHTopConstraint" destination="wwi-EO-UbY" id="OcV-9X-yZo"/>
+                        <outlet property="mixerContainerView" destination="e03-Yz-5IM" id="Uuv-xt-Jzt"/>
+                        <outlet property="mixerTopStackViewConstraint" destination="SsS-43-ki9" id="2Lt-Ka-i5h"/>
+                        <outlet property="mixerTopSuperViewConstraint" destination="lHL-Zr-3Ep" id="NKM-X1-jRl"/>
                         <outlet property="moveUpDownSection" destination="6uu-fa-Few" id="DlR-Y8-ysc"/>
+                        <outlet property="moveUpDownSectionTopConstraint" destination="HHn-vv-H2n" id="QrL-k3-9PV"/>
                         <outlet property="sheetDisplaySwipeView" destination="cE6-1b-sFA" id="GSJ-ss-7ss"/>
                         <outlet property="sheetDisplayer" destination="Fyh-AJ-WMP" id="md7-Nq-hIO"/>
                         <outlet property="sheetDisplayerNext" destination="20a-3h-Jr2" id="knH-eP-aed"/>
@@ -1091,6 +1094,7 @@
                         <outlet property="sheetDisplayerPreviousRatioConstraint" destination="das-cH-vbr" id="O5z-nB-2eu"/>
                         <outlet property="sheetDisplayerRatioConstraint" destination="xrq-vv-Wyy" id="nsg-rm-T2N"/>
                         <outlet property="sheetDisplayerSwipeViewHeight" destination="7fc-AJ-6tk" id="qFU-I5-UgI"/>
+                        <outlet property="sheetDisplayerSwipeViewTop" destination="9Gp-ry-eb7" id="2LV-xx-Lmy"/>
                         <outlet property="swipeUpDownImageView" destination="sKE-74-hml" id="74o-OK-Djg"/>
                         <outlet property="tableViewClusters" destination="3bH-bG-IHm" id="AF9-Ap-hB9"/>
                         <outlet property="tableViewSheets" destination="MWu-Js-kuq" id="oT6-vN-ZZX"/>
@@ -1852,7 +1856,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="500" height="360"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <view key="tableFooterView" contentMode="scaleToFill" id="VZq-W5-Kvk">
+                        <view key="tableFooterView" contentMode="scaleToFill" misplaced="YES" id="VZq-W5-Kvk">
                             <rect key="frame" x="0.0" y="72" width="500" height="44"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

@@ -67,45 +67,19 @@ class MixerView: UIView {
 	}
 	
 	@objc func pianoSliderChanged() {
-		
-		if let index = SoundPlayer.players.index(where: { $0.instrumentType == .piano }) {
-			let player = SoundPlayer.players[index]
-			player.setVolume(pianoControl.value, fadeDuration: 0)
-		}
-		
-		print(pianoControl.value)
-		
+		SoundPlayer.playerFor(instrumentType: .piano)?.setVolume(pianoControl.value, fadeDuration: 0)
 	}
 	
 	@objc func guitarSliderChanged() {
-		
-		if let index = SoundPlayer.players.index(where: { $0.instrumentType == .guitar }) {
-			let player = SoundPlayer.players[index]
-			player.setVolume(guitarControl.value, fadeDuration: 0)
-		}
-		
-		print(guitarControl.value)
-		
+		SoundPlayer.playerFor(instrumentType: .guitar)?.setVolume(guitarControl.value, fadeDuration: 0)
 	}
 	
 	@objc func bassGuitarSliderChanged() {
-		
-		if let index = SoundPlayer.players.index(where: { $0.instrumentType == .bassGuitar }) {
-			let player = SoundPlayer.players[index]
-			player.setVolume(bassGuitarControl.value, fadeDuration: 0)
-			
-		}
-		print(bassGuitarControl.value)
+		SoundPlayer.playerFor(instrumentType: .bassGuitar)?.setVolume(bassGuitarControl.value, fadeDuration: 0)
 	}
 	
 	@objc func drumsSliderChanged() {
-		
-		if let index = SoundPlayer.players.index(where: { $0.instrumentType == .drums }) {
-			let player = SoundPlayer.players[index]
-			player.setVolume(drumsControl.value, fadeDuration: 0)
-		}
-		
-		print(drumsControl.value)
+		SoundPlayer.playerFor(instrumentType: .drums)?.setVolume(drumsControl.value, fadeDuration: 0)
 	}
 	
 	

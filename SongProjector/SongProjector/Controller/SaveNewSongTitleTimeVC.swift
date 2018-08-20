@@ -8,63 +8,106 @@
 
 import UIKit
 
-class SaveNewSongTitleTimeVC: UITableViewController, LabelTextFieldCellDelegate, LabelNumberPickerCellDelegate {
+class SaveNewSongTitleTimeVC: UITableViewController {
 	
 	
 	@IBOutlet var saveButton: UIBarButtonItem!
 	@IBOutlet var cancelButton: UIBarButtonItem!
+	
+	enum Section {
+		case song
+		case custom
+		
+		static let all = [song, custom]
+	}
+	
+	
+	enum Row {
+		case title
+		case time
+		
+		static func `for`(indexPath: IndexPath) -> Row {
+			switch Section.all[indexPath.section] {
+			case .song: return title
+			case .custom: return time
+			}
+		}
+		
+		var identifier: String {
+			switch self {
+			case .title: return TextFieldCell.identifier
+			case .time: return PickerCell.identifier
+			}
+		}
+		
+	}
 	
 	var songTitle = ""
 	var time: Double = 0
 	var isSong = false
 	var selectedTag: Tag?
 	
+	var timeValues: [Int] {
+		var values: [Int] = []
+		for int in 0...60 {
+			values.append(int)
+		}
+		return values
+	}
+	var selectedIndex: Int {
+		if let index = timeValues.index(where: { $0 == Int(time) }) {
+			return index
+		}
+		return 0
+	}
+	
 	var didSave: ((String, Double) -> Void)?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        tableView.register(cell: LabelTextFieldCell.identitier)
-		tableView.register(cell: LabelNumberPickerCell.identitier)
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+		cancelButton.title = Text.Actions.cancel
+		saveButton.title = Text.Actions.save
+		tableView.register(cells: [TextFieldCell.identifier, PickerCell.identifier])
+		tableView.rowHeight = UITableViewAutomaticDimension
     }
 	
 	override func numberOfSections(in tableView: UITableView) -> Int {
-		return 1
+		return 2
 	}
 	
 	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return 1 + (isSong ? 0 : 1)
-	}
-	
-	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		if indexPath.row == 0 {
-			let cell = tableView.dequeueReusableCell(withIdentifier: LabelTextFieldCell.identitier) as! LabelTextFieldCell
-			cell.create(id: LabelTextFieldCell.identitier, description: Text.NewSong.title, placeholder: Text.NewSong.titlePlaceholder)
-			cell.setName(name: songTitle)
-			cell.delegate = self
-			return cell
-		} else {
-			let cell = tableView.dequeueReusableCell(withIdentifier: LabelNumberPickerCell.identitier) as! LabelNumberPickerCell
-			cell.create(id: LabelNumberPickerCell.identitier, description: Text.CustomSheets.descriptionTime, subtitle: Text.CustomSheets.descriptionTimeAdd)
-			cell.delegate = self
-			return cell
+		switch Section.all[section] {
+		case .song:
+			return 1
+		case .custom:
+			return isSong ? 0 : 1
 		}
 	}
 	
-	func textFieldDidChange(cell: LabelTextFieldCell, text: String?) {
-		songTitle = text ?? ""
+	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		let cell = tableView.dequeueReusableCell(withIdentifier: Row.for(indexPath: indexPath).identifier)!
+		
+		switch Row.for(indexPath: indexPath) {
+		case .title:
+			(cell as! TextFieldCell).setup(description: Text.NewSong.title, content: songTitle, textFieldDidChange: textFieldDidChange(text:))
+		case .time:
+			(cell as! PickerCell).setupWith(description: Text.CustomSheets.descriptionTime, values: timeValues, selectedIndex: selectedIndex, didSelectValue: pickerDidChange(value:))
+		}
+		return cell
 	}
-	
-	func numberPickerValueChanged(cell: LabelNumberPickerCell, value: Int) {
-		time = Double(value)
-	}
-	
 
+	
+	func textFieldDidChange(text: String?) {
+		songTitle = text ?? ""
+
+	}
+	
+	func pickerDidChange(value: Any) {
+		if let value = value as? Int {
+			time = Double(value)
+		}
+	}
+	
 	@IBAction func cancelButton(_ sender: UIBarButtonItem) {
 		self.dismiss(animated: true)
 	}
@@ -77,7 +120,7 @@ class SaveNewSongTitleTimeVC: UITableViewController, LabelTextFieldCellDelegate,
 	}
 	
 	private func hasName() -> Bool {
-		let cellName = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! LabelTextFieldCell
+		let cellName = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! TextFieldCell
 		if songTitle != "" {
 			cellName.textField.layer.borderColor = nil
 			cellName.textField.layer.borderWidth = 0

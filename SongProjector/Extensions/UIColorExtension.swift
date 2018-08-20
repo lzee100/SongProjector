@@ -67,26 +67,42 @@ extension UIColor {
 	
 	// MARK: - Convenience Methods
 	
-	var toHex: String? {
-		// Extract Components
-		guard let components = cgColor.components, components.count >= 3 else {
-			return nil
-		}
+//	var toHex: String? {
+//		// Extract Components
+//		guard let components = cgColor.components, components.count >= 3 else {
+//			return nil
+//		}
+//
+//		// Helpers
+//		let r = Float(components[0])
+//		let g = Float(components[1])
+//		let b = Float(components[2])
+//		var a = Float(1.0)
+//
+//		if components.count >= 4 {
+//			a = Float(components[3])
+//		}
+//
+//		// Create Hex String
+//		let hex = String(format: "%02lX%02lX%02lX%02lX", lroundf(r * 255), lroundf(g * 255), lroundf(b * 255), lroundf(a * 255))
+//
+//		return hex
+//	}
+	
+	var toHex: String {
+		var r: CGFloat = 0
+		var g: CGFloat = 0
+		var b: CGFloat = 0
+		var a: CGFloat = 0
 		
-		// Helpers
-		let r = Float(components[0])
-		let g = Float(components[1])
-		let b = Float(components[2])
-		var a = Float(1.0)
+		self.getRed(&r, green: &g, blue: &b, alpha: &a)
 		
-		if components.count >= 4 {
-			a = Float(components[3])
-		}
-		
-		// Create Hex String
-		let hex = String(format: "%02lX%02lX%02lX%02lX", lroundf(r * 255), lroundf(g * 255), lroundf(b * 255), lroundf(a * 255))
-		
-		return hex
+		return String(
+			format: "%02X%02X%02X",
+			Int(r * 0xff),
+			Int(g * 0xff),
+			Int(b * 0xff)
+		)
 	}
 	
 }

@@ -29,7 +29,13 @@ class SheetTitleContent: SheetView {
 	@IBOutlet var lyricsBottomConstraint: NSLayoutConstraint!
 	@IBOutlet var lyricsTopToTitle: NSLayoutConstraint!
 	
-	var songTitle: String? { return cluster?.title ?? sheet.title }
+	var songTitle: String? {
+		if ((sheetTag?.allHaveTitle ?? true) || position == 0) {
+			return cluster?.title ?? sheet.title ?? sheetTag?.title
+		} else {
+			return nil
+		}
+	}
 	var lyrics: String? {
 		if let sheet = sheet as? SheetTitleContentEntity {
 			return sheet.lyrics
@@ -64,68 +70,66 @@ class SheetTitleContent: SheetView {
 				lyricsTextView.text = ""
 			} else {
 
-				if let songTitle = songTitle {
-					if let tag = sheetTag { // is custom sheet
-						
-						if !tag.allHaveTitle && position > 0 {
-							titleHeightConstraint.isActive = false
-							zeroHeightConstraint = NSLayoutConstraint(item: titleLabel, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
-							titleLabel.addConstraint(zeroHeightConstraint!)
-						} else {
-							if let zeroHeightConstraint = zeroHeightConstraint {
-								titleLabel.removeConstraint(zeroHeightConstraint)
-							}
-							titleHeightConstraint.isActive = true
-						}
-						titleLabel.attributedText = NSAttributedString(string: songTitle, attributes: tag.getTitleAttributes(scaleFactor))
-						updateTime(isOn: tag.displayTime)
-					} else {
-						titleLabel.text = songTitle
-					}
-				}
-				if let lyrics = lyrics {
-					if let tag = sheetTag {
-						lyricsTextView.attributedText = NSAttributedString(string: lyrics, attributes: tag.getLyricsAttributes(scaleFactor))
-					} else {
-					lyricsTextView.text = lyrics
-					}
-				}
+				updateTitle()
+				
 			}
 			
-			if let backgroundColor = sheetTag?.sheetBackgroundColor, sheetTag?.imagePath == nil {
-				self.sheetBackground.backgroundColor = backgroundColor
-			} else {
-				sheetBackground.backgroundColor = .white
-			}
+			updateContent()
+			updateBackgroundImage()
+			updateBackgroundColor()
+			updateOpacity()
 			
-			setBackgroundImage(image: isForExternalDispay ? sheetTag?.backgroundImage : sheetTag?.thumbnail)
-			
-			if let titleBackgroundColor = sheetTag?.backgroundColorTitle, let title = sheetTag?.title, title != "" {
-				if let allHaveTitle = sheetTag?.allHaveTitle, allHaveTitle == false && position < 1 {
-					titleBackground.isHidden = false
-					titleBackground.backgroundColor = titleBackgroundColor
-				} else if  let allHaveTitle = sheetTag?.allHaveTitle, allHaveTitle == true {
-					titleBackground.isHidden = false
-					titleBackground.backgroundColor = titleBackgroundColor
+		}
+	}
+	
+	override func updateTitle() {
+		if let songTitle = songTitle {
+			if let tag = sheetTag { // is custom sheet
+				
+				if !tag.allHaveTitle && position > 0 {
+					titleHeightConstraint.isActive = false
+					zeroHeightConstraint = NSLayoutConstraint(item: titleLabel, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
+					titleLabel.addConstraint(zeroHeightConstraint!)
 				} else {
-					titleBackground.isHidden = true
+					if let zeroHeightConstraint = zeroHeightConstraint {
+						titleLabel.removeConstraint(zeroHeightConstraint)
+					}
+					titleHeightConstraint.isActive = true
 				}
+				titleLabel.attributedText = NSAttributedString(string: songTitle, attributes: tag.getTitleAttributes(scaleFactor ?? 1))
+				updateTime(isOn: tag.displayTime)
 			} else {
-				titleBackground.isHidden = true
+				titleLabel.text = songTitle
 			}
-			
+		} else {
+			titleLabel.text = nil
 		}
 	}
 	
-	override func changeOpacity(newValue: Float) {
-		if let _ = isForExternalDispay ? sheetTag?.backgroundImage : sheetTag?.thumbnail {
+	override func updateContent() {
+		let sheet = self.sheet as! SheetTitleContentEntity
+		if let lyrics = sheet.lyrics {
+			if let tag = sheetTag {
+				lyricsTextView.attributedText = NSAttributedString(string: lyrics, attributes: tag.getLyricsAttributes(scaleFactor ?? 1))
+			} else {
+				lyricsTextView.text = lyrics
+			}
+		} else {
+			lyricsTextView.text = nil
+		}
+	}
+	
+	
+	
+	override func updateOpacity() {
+		if let alpha = sheetTag?.backgroundTransparency, alpha != 1 {
 			sheetBackground.backgroundColor = .black
-			backgroundImageView.alpha = CGFloat(newValue)
+			backgroundImageView.alpha = CGFloat(alpha)
 		}
 	}
 	
-	override func setBackgroundImage(image: UIImage?) {
-		
+	override func updateBackgroundImage() {
+		let image = isForExternalDispay ? sheetTag?.backgroundImage : sheetTag?.thumbnail
 		if let backgroundImage = image {
 			backgroundImageView.isHidden = false
 			backgroundImageView.contentMode = .scaleAspectFill
@@ -137,6 +141,28 @@ class SheetTitleContent: SheetView {
 			}
 		} else {
 			backgroundImageView.isHidden = true
+		}
+	}
+	
+	override func updateBackgroundColor() {
+		if let titleBackgroundColor = sheetTag?.backgroundColorTitle, let title = sheetTag?.title, title != "" {
+			if let allHaveTitle = sheetTag?.allHaveTitle, allHaveTitle == false && position < 1 {
+				titleBackground.isHidden = false
+				titleBackground.backgroundColor = titleBackgroundColor
+			} else if  let allHaveTitle = sheetTag?.allHaveTitle, allHaveTitle == true {
+				titleBackground.isHidden = false
+				titleBackground.backgroundColor = titleBackgroundColor
+			} else {
+				titleBackground.isHidden = true
+			}
+		} else {
+			titleBackground.isHidden = true
+		}
+		
+		if let backgroundColor = sheetTag?.sheetBackgroundColor, sheetTag?.imagePath == nil {
+			self.sheetBackground.backgroundColor = backgroundColor
+		} else {
+			sheetBackground.backgroundColor = .white
 		}
 	}
 	
