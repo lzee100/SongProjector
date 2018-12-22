@@ -54,17 +54,17 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SongProjector/Amazon Entities/OrganizationsCRUD.swift"
-            timestampString = "549921380.763611"
+            filePath = "../../../Library/Developer/Xcode/DerivedData/ChurchBeam-fcjuaivbbqrvknaxprijydgbdcyg/Build/Intermediates.noindex/ChurchBeam.build/Debug-iphoneos/SongProjector.build/DerivedSources/CoreDataGenerated/SongProjector/Cluster+CoreDataProperties.swift"
+            timestampString = "566493533.203655"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "38"
-            endingLineNumber = "38"
-            landmarkName = "insertOrganizationWith(id:name:)"
-            landmarkType = "7">
+            startingLineNumber = "22"
+            endingLineNumber = "22"
+            landmarkName = "Cluster"
+            landmarkType = "21">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -73,14 +73,46 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SongProjector/Controller/iPhone/SongServiceIphoneController.swift"
-            timestampString = "556211552.383436"
+            filePath = "SongProjector/SoundPlayer.swift"
+            timestampString = "566861764.722339"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "291"
-            endingLineNumber = "291"
-            landmarkName = "update(scroll:)"
+            startingLineNumber = "66"
+            endingLineNumber = "66"
+            landmarkName = "playerFor(instrumentType:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ChurchBeam.SoundPlay.playerFor(instrumentType: ChurchBeam.InstrumentType) -&gt; Swift.Optional&lt;ChurchBeam.InstrumentPlayer&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/privateDevelopment/SongProjector/SongProjector/SongProjector/SoundPlayer.swift"
+                  timestampString = "567035018.22717"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "66"
+                  endingLineNumber = "66"
+                  offsetFromSymbolStart = "40">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (ChurchBeam.InstrumentPlayer) -&gt; Swift.Bool in ChurchBeam.SoundPlay.playerFor(instrumentType: ChurchBeam.InstrumentType) -&gt; Swift.Optional&lt;ChurchBeam.InstrumentPlayer&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/privateDevelopment/SongProjector/SongProjector/SongProjector/SoundPlayer.swift"
+                  timestampString = "567035018.2309279"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "66"
+                  endingLineNumber = "66"
+                  offsetFromSymbolStart = "32">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

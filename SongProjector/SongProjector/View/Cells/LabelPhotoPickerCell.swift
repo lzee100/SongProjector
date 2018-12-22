@@ -132,7 +132,12 @@ class LabelPhotoPickerCell: ChurchBeamCell, TagImplementation, SheetImplementati
 	func applyValueToCell() {
 		if let tag = sheetTag, let tagAttribute = tagAttribute {
 			switch tagAttribute {
-			case .backgroundImage: setImage(image: tag.backgroundImage)
+			case .backgroundImage:
+				if tag.isBackgroundImageDeleted {
+					setImage(image: nil)
+				} else {
+					setImage(image: tag.backgroundImage)
+				}
 			default: return
 			}
 		}
@@ -147,7 +152,13 @@ class LabelPhotoPickerCell: ChurchBeamCell, TagImplementation, SheetImplementati
 	func applyCellValueToTag() {
 		if let tag = sheetTag, let tagAttribute = tagAttribute {
 			switch tagAttribute {
-			case .backgroundImage: tag.backgroundImage = pickedImage
+			case .backgroundImage:
+				if pickedImage != nil {
+					tag.backgroundImage = pickedImage
+					tag.isBackgroundImageDeleted = false
+				} else {
+					tag.isBackgroundImageDeleted = true
+				}
 			default: return
 			}
 		}
@@ -159,13 +170,13 @@ class LabelPhotoPickerCell: ChurchBeamCell, TagImplementation, SheetImplementati
 	}
 	
 	func set(value: Any?) {
-		guard value != nil else {
+		if value == nil {
 			setImage(image: nil)
-			return
-		}
-		if let value = value as? UIImage {
+		} else if let value = value as? UIImage {
 			setImage(image: value)
 		}
+		applyCellValueToTag()
+		self.valueDidChange?(self)
 	}
 	
 	func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {

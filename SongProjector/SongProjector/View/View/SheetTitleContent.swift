@@ -123,20 +123,18 @@ class SheetTitleContent: SheetView {
 	
 	override func updateOpacity() {
 		if let alpha = sheetTag?.backgroundTransparency, alpha != 1 {
-			sheetBackground.backgroundColor = .black
 			backgroundImageView.alpha = CGFloat(alpha)
 		}
 	}
 	
 	override func updateBackgroundImage() {
 		let image = isForExternalDispay ? sheetTag?.backgroundImage : sheetTag?.thumbnail
-		if let backgroundImage = image {
+		if let backgroundImage = image, !(sheetTag?.isBackgroundImageDeleted ?? true) {
 			backgroundImageView.isHidden = false
 			backgroundImageView.contentMode = .scaleAspectFill
 			backgroundImageView.image = backgroundImage
 			backgroundImageView.clipsToBounds = true
 			if let backgroundTransparency = sheetTag?.backgroundTransparency {
-				sheetBackground.backgroundColor = .black
 				backgroundImageView.alpha = CGFloat(backgroundTransparency)
 			}
 		} else {
@@ -159,10 +157,10 @@ class SheetTitleContent: SheetView {
 			titleBackground.isHidden = true
 		}
 		
-		if let backgroundColor = sheetTag?.sheetBackgroundColor, sheetTag?.imagePath == nil {
+		if let backgroundColor = sheetTag?.sheetBackgroundColor {
 			self.sheetBackground.backgroundColor = backgroundColor
 		} else {
-			sheetBackground.backgroundColor = .white
+			self.sheetBackground.backgroundColor = .white
 		}
 	}
 	

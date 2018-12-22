@@ -1,0 +1,21 @@
+{
+  "name": "church-beam-rest-service",
+  "version": "1.0.0",
+  "description": "A node js restful api project for church beam project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "church",
+    "beam",
+    "rest",
+    "service",
+    "api"
+  ],
+  "author": "Leo van der Zee",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}

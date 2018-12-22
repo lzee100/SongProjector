@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Nkp-Wd-T9G">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Nkp-Wd-T9G">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
-        <capability name="Navigation items with more than one left or right bar item" minToolsVersion="7.0"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -15,7 +13,7 @@
         <!--Sheet Test-->
         <scene sceneID="jrZ-yR-sLu">
             <objects>
-                <viewController id="loR-UG-Lte" customClass="SheetTest" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="loR-UG-Lte" customClass="SheetTest" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="JCk-cp-ZZU">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -47,7 +45,7 @@
         <!--Menu Controller-->
         <scene sceneID="2BO-WN-jlh">
             <objects>
-                <tabBarController storyboardIdentifier="MenuController" id="Nkp-Wd-T9G" customClass="MenuController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <tabBarController storyboardIdentifier="MenuController" id="Nkp-Wd-T9G" customClass="MenuController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="uX8-Ez-Drh">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -61,7 +59,7 @@
         <!--SongServiceController-->
         <scene sceneID="Ut0-Ii-k0r">
             <objects>
-                <viewController storyboardIdentifier="SongServiceController" title="SongServiceController" id="Yak-wD-RHo" customClass="SongServiceIphoneController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SongServiceController" title="SongServiceController" id="Yak-wD-RHo" customClass="SongServiceIphoneController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Cy1-13-eZP">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -102,21 +100,21 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fa5-qt-hcH">
                                 <rect key="frame" x="0.0" y="64" width="375" height="150"/>
                                 <subviews>
-                                    <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Wxo-Zu-clA" customClass="SheetView" customModule="SongProjector" customModuleProvider="target">
-                                        <rect key="frame" x="87" y="0.0" width="200" height="150"/>
+                                    <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Wxo-Zu-clA" customClass="SheetView" customModule="ChurchBeam" customModuleProvider="target">
+                                        <rect key="frame" x="87.5" y="0.0" width="200" height="150"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="Wxo-Zu-clA" secondAttribute="height" multiplier="4:3" id="EeB-3h-6Bq"/>
                                         </constraints>
                                     </view>
-                                    <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dnu-SA-L3o" customClass="SheetView" customModule="SongProjector" customModuleProvider="target">
+                                    <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dnu-SA-L3o" customClass="SheetView" customModule="ChurchBeam" customModuleProvider="target">
                                         <rect key="frame" x="175" y="0.0" width="200" height="150"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="dnu-SA-L3o" secondAttribute="height" multiplier="4:3" id="GFU-SP-nT7"/>
                                         </constraints>
                                     </view>
-                                    <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rbL-K4-QOV" customClass="SheetView" customModule="SongProjector" customModuleProvider="target">
+                                    <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rbL-K4-QOV" customClass="SheetView" customModule="ChurchBeam" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="200" height="150"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
@@ -152,7 +150,7 @@
                                         </constraints>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fJ8-Ld-wX4">
-                                        <rect key="frame" x="275" y="12" width="100" height="1"/>
+                                        <rect key="frame" x="275" y="12.5" width="100" height="1"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="100" id="2Uz-Hw-8Ha"/>
@@ -160,7 +158,7 @@
                                         </constraints>
                                     </view>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="More" translatesAutoresizingMaskIntoConstraints="NO" id="x7l-2k-fwB">
-                                        <rect key="frame" x="167" y="5.5" width="40" height="15"/>
+                                        <rect key="frame" x="167.5" y="5.5" width="40" height="15"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="40" id="HL7-wd-lPW"/>
                                             <constraint firstAttribute="height" constant="15" id="gfb-F4-gcb"/>
@@ -244,7 +242,7 @@
         <!--New Song Service Iphone Controller-->
         <scene sceneID="bdK-uF-AoC">
             <objects>
-                <tableViewController storyboardIdentifier="NewSongServiceIphoneController" id="BQj-sh-72t" customClass="NewSongServiceIphoneController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="NewSongServiceIphoneController" id="BQj-sh-72t" customClass="NewSongServiceIphoneController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="mvi-sb-tMf">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -294,7 +292,7 @@
         <!--SongsController-->
         <scene sceneID="J7G-8O-kaW">
             <objects>
-                <viewController storyboardIdentifier="SongsController" title="SongsController" modalTransitionStyle="flipHorizontal" id="NyT-Qk-CRU" customClass="SongsController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SongsController" title="SongsController" modalTransitionStyle="flipHorizontal" id="NyT-Qk-CRU" customClass="SongsController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="PeN-FV-IDe">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -404,7 +402,7 @@
         <!--Sheet Controller-->
         <scene sceneID="vle-A1-UYk">
             <objects>
-                <viewController storyboardIdentifier="SheetController" id="Umu-7w-n7W" customClass="SheetController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SheetController" id="Umu-7w-n7W" customClass="SheetController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="3no-l6-q6H">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="281"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -543,7 +541,7 @@
         <!--Root View Controller-->
         <scene sceneID="RUl-8Z-dbk">
             <objects>
-                <tableViewController storyboardIdentifier="Master" clearsSelectionOnViewWillAppear="NO" id="Xe3-Sa-b1m" customClass="MoreController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="Master" clearsSelectionOnViewWillAppear="NO" id="Xe3-Sa-b1m" customClass="MoreController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="oFe-OZ-1eX">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -656,7 +654,7 @@
         <!--Tags Iphone Controller-->
         <scene sceneID="rzc-qc-UfP">
             <objects>
-                <tableViewController storyboardIdentifier="TagsController" extendedLayoutIncludesOpaqueBars="YES" clearsSelectionOnViewWillAppear="NO" id="Ncj-iT-hrn" customClass="TagsIphoneController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="TagsController" extendedLayoutIncludesOpaqueBars="YES" clearsSelectionOnViewWillAppear="NO" id="Ncj-iT-hrn" customClass="TagsIphoneController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="cf5-Yr-UGt">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -709,14 +707,14 @@
         <!--Settings Controller-->
         <scene sceneID="4Zb-Fo-dpk">
             <objects>
-                <tableViewController storyboardIdentifier="SettingsController" id="iOC-ZS-fsx" customClass="SettingsController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="EXm-FC-7IQ">
+                <tableViewController storyboardIdentifier="SettingsController" id="iOC-ZS-fsx" customClass="SettingsController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="EXm-FC-7IQ">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="603"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="V8E-Wi-S1Z">
-                                <rect key="frame" x="0.0" y="28" width="375" height="44"/>
+                                <rect key="frame" x="0.0" y="55.5" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="V8E-Wi-S1Z" id="Q5H-RO-SPn">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
@@ -739,7 +737,7 @@
         <!--Loading View Controller-->
         <scene sceneID="tOi-sH-I5P">
             <objects>
-                <viewController id="CoM-bw-OLX" customClass="LoadingViewController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="CoM-bw-OLX" customClass="LoadingViewController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="emr-YG-yZD">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -825,7 +823,7 @@
         <!--Custom Sheets Controller-->
         <scene sceneID="0AK-KJ-qdQ">
             <objects>
-                <viewController storyboardIdentifier="CustomSheetsIphoneController" id="ptK-pt-qc3" customClass="CustomSheetsController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CustomSheetsIphoneController" id="ptK-pt-qc3" customClass="CustomSheetsController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="R6s-sZ-TGz">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -932,7 +930,7 @@
         <!--Lyrics View Controller-->
         <scene sceneID="X8x-ro-8JJ">
             <objects>
-                <viewController id="Df3-PR-e4k" customClass="LyricsViewController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="Df3-PR-e4k" customClass="LyricsViewController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="ijE-ad-ahz">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -991,7 +989,7 @@
         <!--Sheet Picker Menu Controller-->
         <scene sceneID="yHg-gW-qiw">
             <objects>
-                <tableViewController id="u9p-Rw-9Rj" customClass="SheetPickerMenuController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="u9p-Rw-9Rj" customClass="SheetPickerMenuController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="ijY-hG-kkk">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1051,7 +1049,7 @@
         <!--New Or Edit Iphone Controller-->
         <scene sceneID="Fnu-Xd-D3p">
             <objects>
-                <viewController storyboardIdentifier="NewOrEditIphoneController" id="slK-A2-jgD" customClass="NewOrEditIphoneController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NewOrEditIphoneController" id="slK-A2-jgD" customClass="NewOrEditIphoneController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="tm6-5f-JH8">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1067,8 +1065,8 @@
                             <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZKL-pL-SCz">
                                 <rect key="frame" x="0.0" y="64" width="375" height="200"/>
                                 <subviews>
-                                    <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GnH-vb-Ivb" customClass="SheetView" customModule="SongProjector" customModuleProvider="target">
-                                        <rect key="frame" x="53.5" y="0.0" width="267" height="200"/>
+                                    <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GnH-vb-Ivb" customClass="SheetView" customModule="ChurchBeam" customModuleProvider="target">
+                                        <rect key="frame" x="54" y="0.0" width="267" height="200"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="GnH-vb-Ivb" secondAttribute="height" multiplier="4:3" id="T1M-Sq-yrm"/>
@@ -1144,7 +1142,7 @@
         <!--Bible Study Generator Iphone Controller-->
         <scene sceneID="9QJ-Ka-dkO">
             <objects>
-                <viewController storyboardIdentifier="BibleStudyGeneratorIphoneController" id="RDd-bz-3AY" customClass="BibleStudyGeneratorIphoneController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="BibleStudyGeneratorIphoneController" id="RDd-bz-3AY" customClass="BibleStudyGeneratorIphoneController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="1NQ-UG-OBg">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1182,7 +1180,7 @@
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="SheetCollectionCell" id="8of-Ss-EhJ" customClass="SheetCollectionCell" customModule="SongProjector" customModuleProvider="target">
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="SheetCollectionCell" id="8of-Ss-EhJ" customClass="SheetCollectionCell" customModule="ChurchBeam" customModuleProvider="target">
                                         <rect key="frame" x="10" y="0.0" width="355" height="190"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
@@ -1312,7 +1310,7 @@
         <!--Bible Study Iphone Controller-->
         <scene sceneID="Mrk-SS-auw">
             <objects>
-                <viewController storyboardIdentifier="BibleStudyController" id="Fe5-hn-slL" customClass="BibleStudyIphoneController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="BibleStudyController" id="Fe5-hn-slL" customClass="BibleStudyIphoneController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="5L1-6u-UUO">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1439,7 +1437,7 @@
         <!--Sheet Picker Menu Controller-->
         <scene sceneID="VAC-I1-HJY">
             <objects>
-                <tableViewController storyboardIdentifier="SheetPickerMenuController" id="lrb-f2-QmF" customClass="SheetPickerMenuController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="SheetPickerMenuController" id="lrb-f2-QmF" customClass="SheetPickerMenuController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="rRz-Vx-Nba">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1511,7 +1509,7 @@
         <!--Import Bible Controller-->
         <scene sceneID="jnd-rN-zB7">
             <objects>
-                <viewController storyboardIdentifier="ImportBibleController" id="SqW-aV-crg" customClass="ImportBibleController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ImportBibleController" id="SqW-aV-crg" customClass="ImportBibleController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="zwp-6s-sXO">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="603"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1553,7 +1551,7 @@
                                 <rect key="frame" x="375" y="0.0" width="375" height="603"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ae5-AD-X41">
-                                        <rect key="frame" x="67" y="232" width="240" height="138"/>
+                                        <rect key="frame" x="67.5" y="232.5" width="240" height="138"/>
                                         <subviews>
                                             <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="Ewj-Xz-s2x">
                                                 <rect key="frame" x="20" y="65" width="200" height="3"/>
@@ -1668,7 +1666,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ytl-dz-poc">
-                                <rect key="frame" x="67" y="274.5" width="240" height="138"/>
+                                <rect key="frame" x="67.5" y="274.5" width="240" height="138"/>
                                 <subviews>
                                     <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="4Qk-e1-6Ml">
                                         <rect key="frame" x="20" y="65" width="200" height="3"/>
@@ -1780,7 +1778,7 @@
         <!--Save New Song Title TimeVC-->
         <scene sceneID="ggB-Le-fio">
             <objects>
-                <tableViewController id="dgK-B3-aJg" customClass="SaveNewSongTitleTimeVC" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="dgK-B3-aJg" customClass="SaveNewSongTitleTimeVC" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="wqj-Ob-pPW">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

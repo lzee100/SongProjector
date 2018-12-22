@@ -13,6 +13,8 @@ class BasicCell: UITableViewCell {
 	@IBOutlet var icon: UIImageView!
 	@IBOutlet var title: UILabel!
 	@IBOutlet var seperator: UIView!
+	@IBOutlet var pianoCircleView: UIView!
+	@IBOutlet var pianoIcon: UIImageView!
 	@IBOutlet var iconWidthContraint: NSLayoutConstraint!
 	@IBOutlet var iconLeftConstraint: NSLayoutConstraint!
 	
@@ -27,15 +29,20 @@ class BasicCell: UITableViewCell {
 	
 	override func awakeFromNib() {
 		super.awakeFromNib()
-		// Initialization code
+		pianoCircleView.layer.borderWidth = 2
+		pianoCircleView.layer.borderColor = themeWhiteBlackTextColor.cgColor
+		pianoCircleView.layer.cornerRadius = pianoCircleView.bounds.width / 2
+		pianoIcon.tintColor = themeWhiteBlackTextColor
 	}
 	
-	func setup(title: String?, icon: UIImage? = nil, iconSelected: UIImage? = nil, textColor: UIColor? = nil) {
+	func setup(title: String?, icon: UIImage? = nil, iconSelected: UIImage? = nil, textColor: UIColor? = nil, hasPianoOnly: Bool = false) {
 		self.iconImage = icon
 		self.iconSelected = iconSelected
 		self.icon.image = icon
 		self.customTextColor = textColor
 		self.title.text = title
+		pianoIcon.isHidden = !hasPianoOnly
+		pianoCircleView.isHidden = !hasPianoOnly
 		update()
 	}
 	

@@ -110,32 +110,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			})
 		}
 		
-		AWSGoogleSignInProvider.sharedInstance().setScopes(["profile", "openid"])
-		AWSSignInManager.sharedInstance().register(signInProvider: AWSGoogleSignInProvider.sharedInstance())
-		let didFinishLaunching = AWSSignInManager.sharedInstance().interceptApplication(application, didFinishLaunchingWithOptions: launchOptions)
-		
-		if (!isInitialized) {
-			AWSSignInManager.sharedInstance().resumeSession(completionHandler: { (result: Any?, error: Error?) in
-				print("Result: \(result) \n Error:\(error)")
-			})
-			isInitialized = true
-		}
-		
-		
-		
-		// Initialize the Amazon Cognito credentials provider
-		
-		let credentialsProvider = AWSCognitoCredentialsProvider(regionType:.EUWest2,
-																identityPoolId:"eu-west-2:e0602561-4fd7-4f01-94f2-790acd22d640")
-		let configuration = AWSServiceConfiguration(region:.EUWest2, credentialsProvider: credentialsProvider)
-		
-		AWSServiceManager.default().defaultServiceConfiguration = configuration
-		
-		AWSDDLog.add(AWSDDTTYLogger.sharedInstance)
-		AWSDDLog.sharedInstance.logLevel = .info
-		return AWSMobileClient.sharedInstance().interceptApplication(
-			application, didFinishLaunchingWithOptions:
-			launchOptions)
+//		AWSGoogleSignInProvider.sharedInstance().setScopes(["profile", "openid"])
+//		AWSSignInManager.sharedInstance().register(signInProvider: AWSGoogleSignInProvider.sharedInstance())
+//		let didFinishLaunching = AWSSignInManager.sharedInstance().interceptApplication(application, didFinishLaunchingWithOptions: launchOptions)
+//
+//		if (!isInitialized) {
+//			AWSSignInManager.sharedInstance().resumeSession(completionHandler: { (result: Any?, error: Error?) in
+//				print("Result: \(result) \n Error:\(error)")
+//			})
+//			isInitialized = true
+//		}
+//
+//
+//
+//		// Initialize the Amazon Cognito credentials provider
+//
+//		let credentialsProvider = AWSCognitoCredentialsProvider(regionType:.EUWest2,
+//																identityPoolId:"eu-west-2:e0602561-4fd7-4f01-94f2-790acd22d640")
+//		let configuration = AWSServiceConfiguration(region:.EUWest2, credentialsProvider: credentialsProvider)
+//
+//		AWSServiceManager.default().defaultServiceConfiguration = configuration
+//
+//		AWSDDLog.add(AWSDDTTYLogger.sharedInstance)
+//		AWSDDLog.sharedInstance.logLevel = .info
+//		return AWSMobileClient.sharedInstance().interceptApplication(
+//			application, didFinishLaunchingWithOptions:
+//			launchOptions)
+		return true
 	}
 
 	func applicationWillResignActive(_ application: UIApplication) {
@@ -220,7 +221,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		CoreEntity.getTemp = true
 		var entities = CoreEntity.getEntities()
 		for entity in entities{
-			print(entity.title)
 			_ = CoreEntity.delete(entity: entity)
 		}
 		CoreEntity.getTemp = false
@@ -237,6 +237,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		if tags.count == 0 {
 			let tag = CoreTag.createEntity()
 			tag.title = "Player"
+			tag.isTemp = false
 			let _ = CoreTag.saveContext()
 		}
 		CoreTag.predicates.append("title", equals: "Songs")
@@ -244,23 +245,50 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		if tags.count == 0 {
 			let tag = CoreTag.createEntity()
 			tag.title = "Songs"
+			tag.isTemp = false
 			let _ = CoreTag.saveContext()
 		}
 		CoreTag.predicates.append("title", equals: "Security")
 		tags = CoreTag.getEntities()
 		if tags.count == 0 {
 			let tag = CoreTag.createEntity()
+			tag.isTemp = false
 			tag.title = "Security"
 			let _ = CoreTag.saveContext()
 		}
+		
+		CoreInstrument.predicates.append("resourcePath", equals: "kort")
+		let kort = CoreInstrument.getEntities()
+		if kort.count == 0 {
+			let kort = CoreInstrument.createEntity()
+			kort.type = .piano
+			kort.resourcePath = "kort"
+			kort.isLoop = false
+			kort.isTemp = false
+			kort.title = "kort"
+		}
+
 		
 		CoreInstrument.predicates.append("resourcePath", equals: "LordLoop")
 		let lord = CoreInstrument.getEntities()
 		if lord.count == 0 {
 			let lord = CoreInstrument.createEntity()
-			lord.type = .piano
+			lord.type = .pianoSolo
 			lord.resourcePath = "LordLoop"
 			lord.isLoop = true
+			lord.isTemp = false
+			lord.title = "LordLoop"
+		}
+		
+		CoreInstrument.predicates.append("resourcePath", equals: "LordSong")
+		let lordSong = CoreInstrument.getEntities()
+		if lordSong.count == 0 {
+			let lordSong = CoreInstrument.createEntity()
+			lordSong.type = .piano
+			lordSong.resourcePath = "LordSong"
+			lordSong.isLoop = true
+			lordSong.isTemp = false
+			lordSong.title = "LordSong"
 		}
 		
 		CoreInstrument.predicates.append("typeString", equals: "Keyboard")
@@ -269,6 +297,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			let piano = CoreInstrument.createEntity()
 			piano.type = .piano
 			piano.resourcePath = "Keyboard"
+			piano.title = "piano"
+			piano.isTemp = false
 		}
 		
 		CoreInstrument.predicates.append("typeString", equals: "Guitar")
@@ -277,6 +307,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			let guitar = CoreInstrument.createEntity()
 			guitar.type = .guitar
 			guitar.resourcePath = "Guitar"
+			guitar.title = "guitar"
+			guitar.isTemp = false
 		}
 		
 		CoreInstrument.predicates.append("typeString", equals: "Bass")
@@ -285,6 +317,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			let bassGuitar = CoreInstrument.createEntity()
 			bassGuitar.type = .bassGuitar
 			bassGuitar.resourcePath = "Bass"
+			bassGuitar.title = "bassGuitar"
+			bassGuitar.isTemp = false
 		}
 		
 		CoreInstrument.predicates.append("typeString", equals: "Drums")
@@ -293,6 +327,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			let drum = CoreInstrument.createEntity()
 			drum.type = .drums
 			drum.resourcePath = "Drums"
+			drum.title = "drums"
+			drum.isTemp = false
 		}
 		
 		let _ = CoreInstrument.saveContext()
@@ -301,7 +337,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		if CoreCluster.getEntities().count == 0 {
 			let ikZing = CoreCluster.createEntity()
 			ikZing.title = "Ik zing vol blijdschap en lach"
-			
+			ikZing.isTemp = false
+
 			CoreTag.predicates.append("title", equals: "Security")
 			let tag = CoreTag.getEntities().first
 			
@@ -319,7 +356,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			sheet1.time = 36
 			sheet1.hasCluster = ikZing
 			sheet1.position = 0
-			
+			sheet1.isTemp = false
+
 			let sheet2 = CoreSheetTitleContent.createEntity()
 			sheet2.title = "Heilig is de heer"
 			sheet2.lyrics = """
@@ -329,7 +367,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			sheet2.time = 26.80
 			sheet2.hasCluster = ikZing
 			sheet2.position = 1
-			
+			sheet2.isTemp = false
+
 			let sheet3 = CoreSheetTitleContent.createEntity()
 			sheet3.title = "Ik zing vol blijdschap en lach"
 			sheet3.lyrics = """
@@ -342,7 +381,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			sheet3.time = 29.70
 			sheet3.hasCluster = ikZing
 			sheet3.position = 2
-			
+			sheet3.isTemp = false
+
 			
 			let sheet4 = CoreSheetTitleContent.createEntity()
 			sheet4.title = "Heilig is de heer"
@@ -353,7 +393,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			sheet4.time = 27
 			sheet4.hasCluster = ikZing
 			sheet4.position = 3
-			
+			sheet4.isTemp = false
+
 			let sheet5 = CoreSheetTitleContent.createEntity()
 			sheet5.title = "Hij komt terug"
 			sheet5.lyrics = """
@@ -363,7 +404,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			sheet5.time = 24.10
 			sheet5.hasCluster = ikZing
 			sheet5.position = 4
-			
+			sheet5.isTemp = false
+
 			
 			let sheet6 = CoreSheetTitleContent.createEntity()
 			sheet6.title = "Iedereen zingt"
@@ -373,6 +415,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			sheet6.time = 10
 			sheet6.hasCluster = ikZing
 			sheet6.position = 5
+			sheet6.isTemp = false
 			
 			let sheet7 = CoreSheetTitleContent.createEntity()
 			sheet7.title = "Heilig is de heer"
@@ -383,8 +426,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			sheet7.time = 59
 			sheet7.hasCluster = ikZing
 			sheet7.position = 6
+			sheet7.isTemp = false
 			
 			CoreInstrument.predicates.append("resourcePath", notEquals: "LordLoop")
+			CoreInstrument.predicates.append("resourcePath", notEquals: "kort")
 			let instruments = CoreInstrument.getEntities()
 			
 			for instrument in instruments {
@@ -392,37 +437,98 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			}
 		}
 		
-		CoreCluster.predicates.append("title", equals: "He is Lord")
+		CoreCluster.predicates.append("title", equals: "Hij is heer")
 		if CoreCluster.getEntities().count == 0 {
 			let heIsLord = CoreCluster.createEntity()
-			heIsLord.title = "He is Lord"
+			heIsLord.title = "Hij is heer"
 			heIsLord.isTemp = false
+			heIsLord.isLoop = true
 			
-			CoreTag.predicates.append("title", equals: "instrumentalBlackSheets")
-			let blackTag: Tag
+			CoreTag.predicates.append("title", equals: "Songs")
+			let songsTag: Tag
 			if let existingTag = CoreTag.getEntities().first {
-				blackTag = existingTag
+				songsTag = existingTag
 			} else {
 				let newTag = CoreTag.createEntity()
-				newTag.title = "instrumentalBlackSheets"
+				newTag.title = "Songs"
 				newTag.isTemp = false
 				newTag.isHidden = true
-				newTag.sheetBackgroundColor = UIColor.black
-				blackTag = newTag
+				songsTag = newTag
 			}
 			
-			heIsLord.hasTag = blackTag
+			heIsLord.hasTag = songsTag
 			
-			let blackSheet = CoreSheetTitleContent.createEntity()
-			blackSheet.time = Double.greatestFiniteMagnitude
-			blackSheet.hasCluster = heIsLord
-			blackSheet.position = 0
+			let lordSheet = CoreSheetTitleContent.createEntity()
+			lordSheet.title = "Hij is heer."
+			lordSheet.time = Double.greatestFiniteMagnitude
+			lordSheet.hasCluster = heIsLord
+			lordSheet.position = 0
+			lordSheet.lyrics = """
+			Want Hij is heer, Hij is heer.
+			Hij is opgestaan, want Jezus Hij is heer.
+			Elke knie zal zich buigen, elke tong belijden.
+			Dat Jezus, Hij is heer.
+			"""
 			
 			CoreInstrument.predicates.append("resourcePath", equals: "LordLoop")
 			let lordLoop = CoreInstrument.getEntities().first
 			
+			CoreInstrument.predicates.append("resourcePath", equals: "LordSong")
+			let lordSong = CoreInstrument.getEntities()
+			
+			lordSong.forEach({ $0.hasCluster = heIsLord })
+			
 			lordLoop?.hasCluster = heIsLord
 			CoreCluster.saveContext()
+		}
+		
+		CoreCluster.predicates.append("title", equals: "Test kort")
+		if CoreCluster.getEntities().count == 0 {
+			let kort = CoreCluster.createEntity()
+			kort.title = "Test kort"
+			kort.isTemp = false
+			
+			CoreTag.predicates.append("title", equals: "Security")
+			let tag = CoreTag.getEntities().first
+			
+			kort.hasTag = tag
+			
+			let sheet1 = CoreSheetTitleContent.createEntity()
+			sheet1.title = "Test kort"
+			sheet1.lyrics = """
+			Test kort
+			"""
+			sheet1.time = 3
+			sheet1.hasCluster = kort
+			sheet1.position = 0
+			sheet1.isTemp = false
+			
+			let sheet2 = CoreSheetTitleContent.createEntity()
+			sheet2.title = "Test Kort 1"
+			sheet2.lyrics = """
+			test kort 1
+			"""
+			sheet2.time = 3
+			sheet2.hasCluster = kort
+			sheet2.position = 1
+			sheet2.isTemp = false
+			
+			let sheet3 = CoreSheetTitleContent.createEntity()
+			sheet3.title = "Test kort 2"
+			sheet3.lyrics = """
+			Test kort 2
+			"""
+			sheet3.time = Double.infinity
+			sheet3.hasCluster = kort
+			sheet3.position = 2
+			sheet3.isTemp = false
+			
+			CoreInstrument.predicates.append("resourcePath", equals: "kort")
+			let instruments = CoreInstrument.getEntities()
+			
+			for instrument in instruments {
+				instrument.hasCluster = kort
+			}
 		}
 		
 		

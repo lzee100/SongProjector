@@ -13,9 +13,10 @@ class SettingsController: UITableViewController, GoogleCellDelegate {
 	let googleCell = GoogleCell.create(id: "GoogleCell", description: Text.Settings.descriptionGoogle)
 	
 	enum Section: String {
+		case songService
 		case googleAgenda
 		
-		static let all = [googleAgenda]
+		static let all = [songService, googleAgenda]
 		
 		static func `for`(_ section: Int) -> Section {
 			return all[section]
@@ -41,10 +42,11 @@ class SettingsController: UITableViewController, GoogleCellDelegate {
 	
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		switch Section.for(indexPath.row) {
+		case .songService:
+			
 		case .googleAgenda:
 			return googleCell
 		}
-		return UITableViewCell()
 	}
 	
 	override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -52,7 +54,6 @@ class SettingsController: UITableViewController, GoogleCellDelegate {
 		case .googleAgenda:
 			return googleCell.preferredHeight
 		}
-		return 60
 	}
 	
 	

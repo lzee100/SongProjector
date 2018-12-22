@@ -138,7 +138,7 @@ class SheetSplit: SheetView {
 			titleBackgroundView.isHidden = true
 		}
 		
-		if let backgroundColor = sheetTag?.sheetBackgroundColor, sheetTag?.backgroundImage == nil {
+		if let backgroundColor = sheetTag?.sheetBackgroundColor {
 			self.sheetBackgroundView.backgroundColor = backgroundColor
 		} else {
 			self.sheetBackgroundView.backgroundColor = .white
@@ -147,7 +147,7 @@ class SheetSplit: SheetView {
 	
 	override func updateBackgroundImage() {
 		let image = isForExternalDispay ? sheetTag?.backgroundImage : sheetTag?.thumbnail
-		if let backgroundImage = image {
+		if let backgroundImage = image, !(sheetTag?.isBackgroundImageDeleted ?? true) {
 			sheetBackgroundImageView.isHidden = false
 			sheetBackgroundImageView.contentMode = .scaleAspectFill
 			sheetBackgroundImageView.image = backgroundImage

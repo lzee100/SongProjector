@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <tableViewCell contentMode="scaleToFill" restorationIdentifier="BasicCell" selectionStyle="default" indentationWidth="10" reuseIdentifier="BasicCell" rowHeight="60" id="Ake-CL-Z5S" customClass="BasicCell" customModule="SongProjector" customModuleProvider="target">
+        <tableViewCell contentMode="scaleToFill" restorationIdentifier="BasicCell" selectionStyle="default" indentationWidth="10" reuseIdentifier="BasicCell" rowHeight="60" id="Ake-CL-Z5S" customClass="BasicCell" customModule="ChurchBeam" customModuleProvider="target">
             <rect key="frame" x="0.0" y="0.0" width="320" height="60"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Ake-CL-Z5S" id="nFr-yL-i41">
@@ -40,16 +39,47 @@
                             <constraint firstAttribute="height" constant="1" id="TVc-Mc-F6x"/>
                         </constraints>
                     </view>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fVe-b7-uaI">
+                        <rect key="frame" x="256.5" y="8" width="43.5" height="43.5"/>
+                        <subviews>
+                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="TVS-bh-ymK" customClass="MixerAnimationView" customModule="ChurchBeam" customModuleProvider="target">
+                                <rect key="frame" x="9.5" y="9.5" width="25" height="25"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="25" id="OLn-wc-zDk"/>
+                                    <constraint firstAttribute="width" secondItem="TVS-bh-ymK" secondAttribute="height" id="nv8-h2-TkV"/>
+                                </constraints>
+                            </view>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Piano" translatesAutoresizingMaskIntoConstraints="NO" id="H2l-DB-xme">
+                                <rect key="frame" x="9.5" y="9.5" width="25" height="25"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="25" id="2Aj-28-wDM"/>
+                                    <constraint firstAttribute="width" secondItem="H2l-DB-xme" secondAttribute="height" multiplier="1:1" id="hg4-FH-zHt"/>
+                                </constraints>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="TVS-bh-ymK" firstAttribute="centerX" secondItem="fVe-b7-uaI" secondAttribute="centerX" id="5gc-YG-yDO"/>
+                            <constraint firstItem="TVS-bh-ymK" firstAttribute="centerY" secondItem="fVe-b7-uaI" secondAttribute="centerY" id="THK-TZ-wf8"/>
+                            <constraint firstItem="H2l-DB-xme" firstAttribute="centerX" secondItem="fVe-b7-uaI" secondAttribute="centerX" id="foV-Nn-yf7"/>
+                            <constraint firstAttribute="width" secondItem="fVe-b7-uaI" secondAttribute="height" id="qiO-qJ-D0e"/>
+                            <constraint firstItem="H2l-DB-xme" firstAttribute="centerY" secondItem="fVe-b7-uaI" secondAttribute="centerY" id="wnE-eI-uO9"/>
+                        </constraints>
+                    </view>
                 </subviews>
                 <constraints>
                     <constraint firstAttribute="trailing" secondItem="rUF-jx-Ejd" secondAttribute="trailing" id="1xn-QR-Yqs"/>
                     <constraint firstItem="FOs-DM-vm4" firstAttribute="top" secondItem="nFr-yL-i41" secondAttribute="top" id="7mn-PY-Q1Y"/>
                     <constraint firstAttribute="trailing" secondItem="FOs-DM-vm4" secondAttribute="trailing" constant="10" id="IWE-nA-SHQ"/>
+                    <constraint firstAttribute="trailing" secondItem="fVe-b7-uaI" secondAttribute="trailing" constant="20" id="J0j-3K-Zef"/>
                     <constraint firstAttribute="bottom" secondItem="FOs-DM-vm4" secondAttribute="bottom" id="Me2-xd-7vH"/>
                     <constraint firstItem="xmk-uH-QIf" firstAttribute="leading" secondItem="nFr-yL-i41" secondAttribute="leading" constant="30" id="Vzc-3E-CzV"/>
                     <constraint firstItem="xmk-uH-QIf" firstAttribute="centerY" secondItem="nFr-yL-i41" secondAttribute="centerY" id="ceM-Qd-D5m"/>
                     <constraint firstItem="FOs-DM-vm4" firstAttribute="leading" secondItem="xmk-uH-QIf" secondAttribute="trailing" constant="10" id="eMj-qf-lOq"/>
                     <constraint firstAttribute="bottom" secondItem="rUF-jx-Ejd" secondAttribute="bottom" constant="-1" id="ePr-fB-tHY"/>
+                    <constraint firstItem="fVe-b7-uaI" firstAttribute="top" secondItem="nFr-yL-i41" secondAttribute="top" constant="8" id="mGk-ro-9I7"/>
+                    <constraint firstAttribute="bottom" secondItem="fVe-b7-uaI" secondAttribute="bottom" constant="8" id="sVk-V9-lha"/>
                     <constraint firstItem="rUF-jx-Ejd" firstAttribute="leading" secondItem="nFr-yL-i41" secondAttribute="leadingMargin" constant="10" id="zAL-od-Ch0"/>
                 </constraints>
             </tableViewCellContentView>
@@ -58,9 +88,14 @@
                 <outlet property="icon" destination="xmk-uH-QIf" id="v9f-zB-Jd7"/>
                 <outlet property="iconLeftConstraint" destination="Vzc-3E-CzV" id="IJ7-Mi-heO"/>
                 <outlet property="iconWidthContraint" destination="FqY-JI-8ZC" id="F8d-Rr-2yp"/>
+                <outlet property="pianoCircleView" destination="fVe-b7-uaI" id="tyS-tI-4DU"/>
+                <outlet property="pianoIcon" destination="H2l-DB-xme" id="UJu-YL-TZ7"/>
                 <outlet property="seperator" destination="rUF-jx-Ejd" id="CHm-WY-cIO"/>
                 <outlet property="title" destination="FOs-DM-vm4" id="GCc-Bt-fkg"/>
             </connections>
         </tableViewCell>
     </objects>
+    <resources>
+        <image name="Piano" width="267" height="267"/>
+    </resources>
 </document>

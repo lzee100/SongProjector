@@ -48,7 +48,7 @@ class SheetEmpty: SheetView {
 	
 	override func updateBackgroundImage() {
 		let image = isForExternalDispay ? sheetTag?.backgroundImage : sheetTag?.thumbnail
-		if let backgroundImage = image {
+		if let backgroundImage = image, !(sheetTag?.isBackgroundImageDeleted ?? true) {
 			backgroundImageView.isHidden = false
 			backgroundImageView.contentMode = .scaleAspectFill
 			backgroundImageView.image = backgroundImage
@@ -61,7 +61,7 @@ class SheetEmpty: SheetView {
 	}
 	
 	override func updateBackgroundColor() {
-		if let backgroundColor = sheetTag?.sheetBackgroundColor, sheetTag?.backgroundImage == nil {
+		if let backgroundColor = sheetTag?.sheetBackgroundColor {
 			self.backgroundView.backgroundColor = backgroundColor
 		} else {
 			self.backgroundView.backgroundColor = .white

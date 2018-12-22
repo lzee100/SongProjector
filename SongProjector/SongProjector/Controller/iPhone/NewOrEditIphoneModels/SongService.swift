@@ -288,10 +288,11 @@ class SongService {
 		
 		if let time = time, time > 0 {
 			
-			if let song = selectedSong?.cluster, song.hasMusic {
-				if SoundPlayer.isPlaying {
-					SoundPlayer.stop()
-				}
+			if let song = selectedSong?.cluster, song.hasMusic, !SoundPlayer.isPlaying {
+				
+//				if !SoundPlayer.isLooping, Int(selectedSheet?.position ?? 0) == (song.hasSheets?.count ?? 0) - 1 {
+//					SoundPlayer.stop()
+//				}
 				SoundPlayer.play(song: song)
 				isPlaying = true
 			} else {

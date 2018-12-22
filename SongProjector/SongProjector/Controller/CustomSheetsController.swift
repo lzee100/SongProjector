@@ -160,7 +160,7 @@ class CustomSheetsController: UIViewController, UICollectionViewDelegate, UIColl
 		if collectionView == collectionViewTags {
 			selectedTag = selectedTag == tags[indexPath.row] ? nil : tags[indexPath.row]
 			update()
-		} else if !(cluster?.isTypeSong ?? false){
+		} else {
 			let sheet = sheetsTemp[indexPath.row]
 			let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
 			controller.modificationMode = .editCustomSheet

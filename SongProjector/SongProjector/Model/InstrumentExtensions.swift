@@ -23,6 +23,7 @@ extension Instrument {
 
 enum InstrumentType : String {
 	
+	case pianoSolo
 	case piano
 	case guitar
 	case bassGuitar

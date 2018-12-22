@@ -57,6 +57,26 @@ extension SheetTitleImageEntity {
 				self.imagePath = imagePath
 				self.thumbnailPath = imagePathThumbnail
 				
+			} else {
+				if let path = self.imagePath {
+					let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+					let url = documentsDirectory.appendingPathComponent(path)
+					do {
+						try FileManager.default.removeItem(at: url)
+					} catch let error as NSError {
+						print("Error: \(error.domain)")
+					}
+				}
+				if let path = self.thumbnailPath {
+					let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+					let url = documentsDirectory.appendingPathComponent(path)
+					do {
+						try FileManager.default.removeItem(at: url)
+					} catch let error as NSError {
+						print("Error: \(error.domain)")
+					}
+				}
+				
 			}
 		}
 	}

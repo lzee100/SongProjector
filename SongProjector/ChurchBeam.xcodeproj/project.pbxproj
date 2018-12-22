@@ -75,14 +75,20 @@
 		E334FD6D20CF9E2E00FC1FAE /* SongHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E334FD6C20CF9E2E00FC1FAE /* SongHeaderView.swift */; };
 		E3355D6F1FEDA645004C03AE /* TextViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3355D6E1FEDA645004C03AE /* TextViewExtensions.swift */; };
 		E3355D711FEE6436004C03AE /* ClusterExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3355D701FEE6436004C03AE /* ClusterExtensions.swift */; };
+		E34EA3A521CECCA100A65719 /* SongServiceSettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E34EA3A321CECCA100A65719 /* SongServiceSettingsCell.swift */; };
+		E34EA3A621CECCA100A65719 /* SongServiceSettingsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E34EA3A421CECCA100A65719 /* SongServiceSettingsCell.xib */; };
 		E34ED29B2008D62300534C72 /* SheetSplit.xib in Resources */ = {isa = PBXBuildFile; fileRef = E34ED29A2008D62300534C72 /* SheetSplit.xib */; };
 		E34ED29D2008D63700534C72 /* SheetSplit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E34ED29C2008D63700534C72 /* SheetSplit.swift */; };
 		E35099EF20DCD152005CA984 /* LyricsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E35099EE20DCD152005CA984 /* LyricsViewController.swift */; };
 		E35099F120DD4FA7005CA984 /* SaveNewSongTitleTimeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E35099F020DD4FA7005CA984 /* SaveNewSongTitleTimeVC.swift */; };
+		E361E88421C994C00011A544 /* kort.m4a in Resources */ = {isa = PBXBuildFile; fileRef = E361E88321C994C00011A544 /* kort.m4a */; };
+		E3635A09217CAEC5002758D5 /* MixerAnimationView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3635A08217CAEC5002758D5 /* MixerAnimationView.xib */; };
+		E3635A0B217CAF98002758D5 /* MixerAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3635A0A217CAF98002758D5 /* MixerAnimationView.swift */; };
 		E36F41661FEE8CDA00E989E5 /* SongServiceIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E36F41651FEE8CDA00E989E5 /* SongServiceIphoneController.swift */; };
 		E36F41681FEE965200E989E5 /* NewSongIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E36F41671FEE965200E989E5 /* NewSongIphoneController.swift */; };
 		E37137BE205EBB8300DF86F1 /* LabelSliderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37137BC205EBB8300DF86F1 /* LabelSliderCell.swift */; };
 		E37137BF205EBB8300DF86F1 /* LabelSliderCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E37137BD205EBB8300DF86F1 /* LabelSliderCell.xib */; };
+		E37498F821BD5DB800974126 /* LordSong.m4a in Resources */ = {isa = PBXBuildFile; fileRef = E37498F721BD5DB800974126 /* LordSong.m4a */; };
 		E37938E92121DE8E0091698D /* LordLoop.m4a in Resources */ = {isa = PBXBuildFile; fileRef = E37938E82121DE8E0091698D /* LordLoop.m4a */; };
 		E37938EC21271EC90091698D /* PickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37938EA21271EC90091698D /* PickerCell.swift */; };
 		E37938ED21271EC90091698D /* PickerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E37938EB21271EC90091698D /* PickerCell.xib */; };
@@ -236,15 +242,21 @@
 		E3355D6E1FEDA645004C03AE /* TextViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextViewExtensions.swift; sourceTree = "<group>"; };
 		E3355D701FEE6436004C03AE /* ClusterExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClusterExtensions.swift; sourceTree = "<group>"; };
 		E3481755201B0A5D0021D39B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		E34EA3A321CECCA100A65719 /* SongServiceSettingsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongServiceSettingsCell.swift; sourceTree = "<group>"; };
+		E34EA3A421CECCA100A65719 /* SongServiceSettingsCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SongServiceSettingsCell.xib; sourceTree = "<group>"; };
 		E34ED29A2008D62300534C72 /* SheetSplit.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SheetSplit.xib; sourceTree = "<group>"; };
 		E34ED29C2008D63700534C72 /* SheetSplit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetSplit.swift; sourceTree = "<group>"; };
 		E35099EE20DCD152005CA984 /* LyricsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsViewController.swift; sourceTree = "<group>"; };
 		E35099F020DD4FA7005CA984 /* SaveNewSongTitleTimeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveNewSongTitleTimeVC.swift; sourceTree = "<group>"; };
 		E356F2A61FF666E5002A3F3A /* ChromaColorPicker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ChromaColorPicker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E361E88321C994C00011A544 /* kort.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = kort.m4a; sourceTree = "<group>"; };
+		E3635A08217CAEC5002758D5 /* MixerAnimationView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MixerAnimationView.xib; sourceTree = "<group>"; };
+		E3635A0A217CAF98002758D5 /* MixerAnimationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MixerAnimationView.swift; sourceTree = "<group>"; };
 		E36F41651FEE8CDA00E989E5 /* SongServiceIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongServiceIphoneController.swift; sourceTree = "<group>"; };
 		E36F41671FEE965200E989E5 /* NewSongIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewSongIphoneController.swift; sourceTree = "<group>"; };
 		E37137BC205EBB8300DF86F1 /* LabelSliderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelSliderCell.swift; sourceTree = "<group>"; };
 		E37137BD205EBB8300DF86F1 /* LabelSliderCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelSliderCell.xib; sourceTree = "<group>"; };
+		E37498F721BD5DB800974126 /* LordSong.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = LordSong.m4a; sourceTree = "<group>"; };
 		E37938E82121DE8E0091698D /* LordLoop.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = LordLoop.m4a; sourceTree = "<group>"; };
 		E37938EA21271EC90091698D /* PickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerCell.swift; sourceTree = "<group>"; };
 		E37938EB21271EC90091698D /* PickerCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PickerCell.xib; sourceTree = "<group>"; };
@@ -530,6 +542,8 @@
 				E37938EB21271EC90091698D /* PickerCell.xib */,
 				E3CD8AB3212818B000EB75BB /* TextFieldCell.swift */,
 				E3CD8AB4212818B000EB75BB /* TextFieldCell.xib */,
+				E34EA3A321CECCA100A65719 /* SongServiceSettingsCell.swift */,
+				E34EA3A421CECCA100A65719 /* SongServiceSettingsCell.xib */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -558,6 +572,8 @@
 		E39864D42098D0E600DF5199 /* Amazon Entities */ = {
 			isa = PBXGroup;
 			children = (
+				E361E88321C994C00011A544 /* kort.m4a */,
+				E37498F721BD5DB800974126 /* LordSong.m4a */,
 				E37938E82121DE8E0091698D /* LordLoop.m4a */,
 				E32A02B421164A8800C78410 /* Bass.m4a */,
 				E32A02A42116441600C78410 /* Drums.m4a */,
@@ -595,6 +611,8 @@
 				E3C2AD112025A5E900ACFFE7 /* MixerView.swift */,
 				E334FD6A20CF9C0700FC1FAE /* SongHeaderView.xib */,
 				E334FD6C20CF9E2E00FC1FAE /* SongHeaderView.swift */,
+				E3635A08217CAEC5002758D5 /* MixerAnimationView.xib */,
+				E3635A0A217CAF98002758D5 /* MixerAnimationView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -694,6 +712,7 @@
 				E34ED29B2008D62300534C72 /* SheetSplit.xib in Resources */,
 				E31171781FE5A1A0008D9D51 /* TagCellCollection.xib in Resources */,
 				E32A02B3211646DA00C78410 /* Keyboard.m4a in Resources */,
+				E3635A09217CAEC5002758D5 /* MixerAnimationView.xib in Resources */,
 				E39864D32098B14B00DF5199 /* GoogleService-Info.plist in Resources */,
 				E3F201E2201E2011002FF06E /* ActivityHeader.xib in Resources */,
 				E38347671FFA5099008AE69D /* SheetTitleContent.xib in Resources */,
@@ -704,6 +723,7 @@
 				E31F0B6F20F4F3DD00C22FD1 /* SheetPastors.xib in Resources */,
 				E309DD031FF5127400C3D135 /* LabelNumberCell.xib in Resources */,
 				E32A02B12116466200C78410 /* Guitar.m4a in Resources */,
+				E361E88421C994C00011A544 /* kort.m4a in Resources */,
 				E37938E92121DE8E0091698D /* LordLoop.m4a in Resources */,
 				E3D1CEE81FF6930600F9D7D9 /* LabelPickerCell.xib in Resources */,
 				E3F9964B201285CD00634C5E /* AddButtonCollectionCell.xib in Resources */,
@@ -714,6 +734,7 @@
 				E31171361FE59DA3008D9D51 /* Main.storyboard in Resources */,
 				E39864E0209A0FA700DF5199 /* awsconfiguration.json in Resources */,
 				E309DCF41FF48F0800C3D135 /* LabelSwitchCell.xib in Resources */,
+				E37498F821BD5DB800974126 /* LordSong.m4a in Resources */,
 				E31F0B7320F50A6E00C22FD1 /* Liedjes - wallpaper 16-9.png in Resources */,
 				E37938ED21271EC90091698D /* PickerCell.xib in Resources */,
 				E3F421A51FFE457500C332B0 /* LabelDoubleSwitchCell.xib in Resources */,
@@ -722,6 +743,7 @@
 				E37137BF205EBB8300DF86F1 /* LabelSliderCell.xib in Resources */,
 				E3F99647201209F100634C5E /* LabelNumberPickerCell.xib in Resources */,
 				E3FA3DF9200DE8570038C97B /* LabelTextViewCell.xib in Resources */,
+				E34EA3A621CECCA100A65719 /* SongServiceSettingsCell.xib in Resources */,
 				E393B7692008D3FC0073D0A9 /* SheetTitleImage.xib in Resources */,
 				E311717C1FE5A1A0008D9D51 /* NewSongSheetCell.xib in Resources */,
 				E326E9081FFECD0E00FEAC9C /* SheetCollectionCell.xib in Resources */,
@@ -876,6 +898,7 @@
 				E31171671FE5A0E7008D9D51 /* MoreController.swift in Sources */,
 				E3CB6854200635D600F007B2 /* LoadingViewController.swift in Sources */,
 				E39864DE2098D5BD00DF5199 /* Organizations.swift in Sources */,
+				E34EA3A521CECCA100A65719 /* SongServiceSettingsCell.swift in Sources */,
 				E38347651FF9382F008AE69D /* ExternalDisplayController.swift in Sources */,
 				E3A19736200A76EF0044DB1B /* ViewControllerExtensions.swift in Sources */,
 				E326E9041FFEC9EC00FEAC9C /* CustomSheetsIphoneController.swift in Sources */,
@@ -885,6 +908,7 @@
 				E35099F120DD4FA7005CA984 /* SaveNewSongTitleTimeVC.swift in Sources */,
 				E37938EC21271EC90091698D /* PickerCell.swift in Sources */,
 				E3812DED201CE1D300F10B2C /* GoogleActivityFetcher.swift in Sources */,
+				E3635A0B217CAF98002758D5 /* MixerAnimationView.swift in Sources */,
 				E31171331FE59DA3008D9D51 /* ViewController.swift in Sources */,
 				E31171311FE59DA3008D9D51 /* AppDelegate.swift in Sources */,
 				E38347601FF7E8B5008AE69D /* LabelPhotoPickerCell.swift in Sources */,
@@ -1079,6 +1103,7 @@
 				INFOPLIST_FILE = SongProjector/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.iozee.ChurchBeam;
+				PRODUCT_MODULE_NAME = ChurchBeam;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1095,6 +1120,7 @@
 				INFOPLIST_FILE = SongProjector/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.iozee.ChurchBeam;
+				PRODUCT_MODULE_NAME = ChurchBeam;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

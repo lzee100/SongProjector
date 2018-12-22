@@ -91,21 +91,21 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		super.viewDidLoad()
 //		GoogleActivityFetcher.addObserver(self)
 		setup()
-		if !AWSSignInManager.sharedInstance().isLoggedIn {
-			AWSAuthUIViewController
-				.presentViewController(with: self.navigationController!,
-									   configuration: nil,
-									   completionHandler: { (provider: AWSSignInProvider, error: Error?) in
-										if error != nil {
-											print("Error occurred: \(String(describing: error))")
-										} else {
-											OrganizationsCRUD.insertOrganizationWith(id: "id", name: "leo")
-										}
-				})
-		} else {
-			OrganizationsCRUD.insertOrganizationWith(id: "id", name: "leo")
-
-		}
+//		if !AWSSignInManager.sharedInstance().isLoggedIn {
+//			AWSAuthUIViewController
+//				.presentViewController(with: self.navigationController!,
+//									   configuration: nil,
+//									   completionHandler: { (provider: AWSSignInProvider, error: Error?) in
+//										if error != nil {
+//											print("Error occurred: \(String(describing: error))")
+//										} else {
+//											OrganizationsCRUD.insertOrganizationWith(id: "id", name: "leo")
+//										}
+//				})
+//		} else {
+//			OrganizationsCRUD.insertOrganizationWith(id: "id", name: "leo")
+//
+//		}
 
 	}
 	
@@ -187,7 +187,11 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		let view = SongHeaderView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 60))
 		let song = songService.songs[section]
 		view.didSelectHeader = didSelectSection(section:)
-		view.setup(title: song.cluster.title, icon: Cells.songIcon, isSelected: section == songService.selectedSection, tag: section)
+		view.didSelectPiano = didSelectPianoInSection(section:)
+		view.setup(title: song.cluster.title, icon: Cells.songIcon, isSelected: section == songService.selectedSection, tag: section, hasPianoSolo: song.cluster.hasPianoSolo)
+		if SoundPlayer.isPianoOnlyPlaying && SoundPlayer.isPlaying {
+			view.togglePianoPlay()
+		}
 		return view
 	}
 	
@@ -252,8 +256,8 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 			using: databaseDidChange)
 
 		
-		let upSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))
-		let downSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))
+		let upSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.didSwipeManually))
+		let downSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.didSwipeManually))
 		
 		upSwipe.direction = .up
 		downSwipe.direction = .down
@@ -261,8 +265,8 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		moveUpDownSection.addGestureRecognizer(upSwipe)
 		moveUpDownSection.addGestureRecognizer(downSwipe)
 		
-		leftSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))
-		let rightSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))
+		leftSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.didSwipeManually))
+		let rightSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.didSwipeManually))
 
 		leftSwipe.direction = .left
 		rightSwipe.direction = .right
@@ -295,13 +299,39 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	}
 
 	private func didSelectSection(section: Int) {
+		SoundPlayer.stop()
 		songService.selectedSong = songService.selectedSection == section ? nil : songService.songs[section]
 		songService.selectedSection = songService.selectedSection == section ? nil : section
 		
 		update()
 	}
 	
-	@objc private func respondToSwipeGesture(_ sender: UISwipeGestureRecognizer, automatically: Bool = false) {
+	private func didSelectPianoInSection(section: Int) {
+		
+		shutDownDisplayer()
+		
+		if !SoundPlayer.isPianoOnlyPlaying {
+			
+			songService.selectedSong = nil
+			songService.selectedSection = nil
+
+			let song = songService.songs[section].cluster
+			SoundPlayer.play(song: song, pianoSolo: true)
+		} else {
+			songService.selectedSong = nil
+			songService.selectedSection = nil
+		}
+
+		update()
+
+	}
+	
+	@objc private func didSwipeManually(_ sender: UISwipeGestureRecognizer) {
+		respondToSwipeGesture(sender, automatically: false)
+	}
+
+	
+	private func respondToSwipeGesture(_ sender: UISwipeGestureRecognizer, automatically: Bool = false) {
 		
 		if sender.view == sheetDisplaySwipeView {
 			switch sender.direction {
@@ -343,7 +373,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				}
 				
 			case .right:
-				guard !songService.isPlaying else {
+				if songService.isPlaying {
 					return
 				}
 				

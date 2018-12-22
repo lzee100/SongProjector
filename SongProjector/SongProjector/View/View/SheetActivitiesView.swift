@@ -253,5 +253,33 @@ class SheetActivitiesView: SheetView {
 		}
 		
 	}
+	
+	override func updateTitle() {
+		let sheet = self.sheet as! SheetActivities
+		if let songTitle = sheet.title {
+			if let tag = sheetTag {
+				descriptionTitle.attributedText = NSAttributedString(string: songTitle, attributes: tag.getTitleAttributes(scaleFactor ?? 0))
+			} else {
+				descriptionTitle.text = ""
+			}
+		}
+		self.setNeedsLayout()
+	}
+	
+	override func updateContent() {
+		if let tag = sheetTag {
+			activitiesContainerView.subviews.compactMap({ $0 as? ActivityView }).compactMap({ $0.descriptionTime }).forEach({ $0.attributedText = NSAttributedString(string: $0.text ?? "", attributes: tag.getLyricsAttributes(scaleFactor ?? 1)) })
+			activitiesContainerView.subviews.compactMap({ $0 as? ActivityView }).compactMap({ $0.descriptionActivity }).forEach({ $0.attributedText = NSAttributedString(string: $0.text ?? "", attributes: tag.getLyricsAttributes(scaleFactor ?? 1)) })
+		}
+	}
+	
+	override func updateBackgroundColor() {
+		if let backgroundColor = sheetTag?.sheetBackgroundColor {
+			self.backgroundView.backgroundColor = backgroundColor
+		} else {
+			self.backgroundView.backgroundColor = .white
+		}
+	}
+	
 }
 

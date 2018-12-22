@@ -371,6 +371,8 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 	private var newSheetContainerViewHeightConstraint: NSLayoutConstraint?
 	private var activeIndexPath: IndexPath?
 	
+	
+	
 	// MARK: - Functions
 	
 	// MARK: UIViewController functions
@@ -393,7 +395,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		case .SheetEmpty:
 			return Section.sheetEmpty.count
 		case .SheetActivities:
-			return Section.titleContent.count
+			return Section.activity.count
 		}
 	}
 	
@@ -408,7 +410,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 			}
 		case .general:
 			if modificationMode == .newTag || modificationMode == .editTag {
-				return tagTemp.backgroundImage != nil ? CellGeneral.tag.count : CellGeneral.tagTransBackground.count
+				return tagTemp.backgroundImage != nil ? CellGeneral.tagTransBackground.count : CellGeneral.tag.count
 			} else {
 				return tagTemp.backgroundImage != nil ? CellGeneral.sheetCellsTransBackground.count : CellGeneral.sheetCells.count
 			}
@@ -576,7 +578,6 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		case .title, .titleBorderSize, .titleFontName, .titleTextSize, .titleAlignment, .titleTextColorHex, .titleBorderColorHex, .isTitleBold, .isTitleItalian, .isTitleUnderlined: updateSheetTitle()
 			case .lyricsFontName, .lyricsTextSize, .lyricsTextColorHex, .lyricsAlignment, .lyricsBorderColor, .lyricsBorderSize, .isLyricsBold, .isLyricsItalian, .isLyricsUnderlined: updateSheetContent()
 			case .backgroundImage:
-				let cell = cell as! LabelPhotoPickerCell
 				updateBackgroundImage()
 				needsReload = true
 			case .backgroundColor, .titleBackgroundColor: updateBackgroundColor()
@@ -646,14 +647,15 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 			tag.isHidden = false
 			tag.isTemp = true
 			tag.titleTextSize = 14
-			tag.titleTextColorHex = UIColor.black.hexCode
+			tag.textColorTitle = .black
 			tag.lyricsTextSize = 10
-			tag.lyricsTextColorHex = UIColor.black.hexCode
+			tag.textColorLyrics = .black
 			tag.titleFontName = "Avenir"
 			tag.lyricsFontName = "Avenir"
 			tag.backgroundTransparency = 100
 			tag.titleAlignmentNumber = 0
 			tag.lyricsAlignmentNumber = 0
+			tag.backgroundColor = UIColor.white.hexCode
 			self.tag = tag
 			
 		case .editTag:
@@ -677,6 +679,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 			tag.hasEmptySheet = false
 			tag.titleAlignmentNumber = 0
 			tag.lyricsAlignmentNumber = 0
+			tag.backgroundColor = UIColor.white.hexCode
 			sheetTemp.title = Text.NewTag.sampleTitle
 			if let sheet = sheetTemp as? SheetTitleContentEntity {
 				sheet.lyrics = Text.NewTag.sampleLyrics
@@ -689,8 +692,8 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 				sheet.textRight = Text.NewTag.sampleLyrics
 			}
 			if let sheet = sheet as? SheetPastorsEntity, let sheetTemp = sheetTemp as? SheetPastorsEntity {
-				tag.textColorTitle = .white
-				tag.textColorLyrics = .white
+				tag.textColorTitle = .black
+				tag.textColorLyrics = .black
 				tag.isTitleItalian = true
 				tag.isLyricsItalian = true
 				tag.titleAlignmentNumber = 1
@@ -755,10 +758,6 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 	
 	private func updateTransparency() {
 		if let view = previewView.subviews.first {
-			
-			if tagTemp.sheetBackgroundColor != .black {
-				tagTemp.sheetBackgroundColor = .black
-			}
 			
 			if let sheet = view as? SheetView {
 				sheet.updateOpacity()
@@ -911,6 +910,10 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 			case .newTag, .editTag:
 				sheetTemp.delete()
 				tagTemp.mergeSelfInto(tag: tag, sheetType: sheetTemp.type)
+				if tag.isBackgroundImageDeleted {
+					tag.backgroundImage = nil
+					tag.isBackgroundImageDeleted = false
+				}
 			case .newCustomSheet, .editCustomSheet:
 				tagTemp.mergeSelfInto(tag: tag, isTemp: true, sheetType: sheetTemp.type)
 				sheetTemp.mergeSelfInto(sheet: sheet, isTemp: true)

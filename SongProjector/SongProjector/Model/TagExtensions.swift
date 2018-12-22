@@ -203,6 +203,26 @@ extension Tag {
 				self.imagePathThumbnail = imagePathThumbnail
 
 			}
+			else if newValue == nil {
+				if let path = self.imagePath {
+					let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+					let url = documentsDirectory.appendingPathComponent(path)
+					do {
+						try FileManager.default.removeItem(at: url)
+					} catch let error as NSError {
+						print("Error: \(error.domain)")
+					}
+				}
+				if let path = self.imagePathThumbnail {
+					let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+					let url = documentsDirectory.appendingPathComponent(path)
+					do {
+						try FileManager.default.removeItem(at: url)
+					} catch let error as NSError {
+						print("Error: \(error.domain)")
+					}
+				}
+			}
 		}
 	}
 	
@@ -323,10 +343,10 @@ extension Tag {
 		set { backgroundTransparencyNumber = newValue / 100 }
 	}
 	
-	@objc override public func delete() {
-		backgroundImage = nil
-		super.delete()
-	}
+//	@objc override public func delete() {
+//		backgroundImage = nil
+//		super.delete()
+//	}
 	
 	func getTemp() -> Tag {
 		let tempTag = CoreTag.createEntity(fireNotification: false)
@@ -359,6 +379,7 @@ extension Tag {
 		tempTag.isLyricsBold = isLyricsBold
 		tempTag.isLyricsItalian = isLyricsItalian
 		tempTag.isLyricsUnderlined = isLyricsUnderlined
+		tempTag.isBackgroundImageDeleted = isBackgroundImageDeleted
 		
 		tempTag.imagePath = imagePath
 		tempTag.imagePathThumbnail = imagePathThumbnail
@@ -400,6 +421,7 @@ extension Tag {
 		tag.isLyricsBold = isLyricsBold
 		tag.isLyricsItalian = isLyricsItalian
 		tag.isLyricsUnderlined = isLyricsUnderlined
+		tag.isBackgroundImageDeleted = isBackgroundImageDeleted
 		
 		tag.imagePath = imagePath
 		tag.imagePathThumbnail = imagePathThumbnail

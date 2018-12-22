@@ -170,7 +170,7 @@ class SheetTitleImage: SheetView {
 	override func updateBackgroundImage() {
 		let image = isForExternalDispay ? sheetTag?.backgroundImage : sheetTag?.thumbnail
 
-		if let image = image {
+		if let image = image, !(sheetTag?.isBackgroundImageDeleted ?? true) {
 			backgroundImage.isHidden = false
 			backgroundImage.contentMode = .scaleAspectFill
 			backgroundImage.image = image
@@ -197,7 +197,7 @@ class SheetTitleImage: SheetView {
 			titleBackground.isHidden = true
 		}
 		
-		if let backgroundColor = sheetTag?.sheetBackgroundColor, sheetTag?.backgroundImage == nil {
+		if let backgroundColor = sheetTag?.sheetBackgroundColor {
 			self.sheetBackgroundView.backgroundColor = backgroundColor
 		} else {
 			self.sheetBackgroundView.backgroundColor = .white

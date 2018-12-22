@@ -170,13 +170,15 @@ class SheetPastors: SheetView {
 	override func updateBackgroundColor() {
 		if let color = sheetTag?.backgroundColor {
 			backgroundColor = UIColor(hex: color)
+		} else {
+			backgroundColor = .white
 		}
 	}
 	
 	override func updateBackgroundImage() {
 		let image = isForExternalDispay ? sheetTag?.backgroundImage : sheetTag?.thumbnail
 		
-		if let image = image {
+		if let image = image, !(sheetTag?.isBackgroundImageDeleted ?? true) {
 			sheetBackgroundImageView.isHidden = false
 			sheetBackgroundImageView.contentMode = .scaleAspectFill
 			sheetBackgroundImageView.image = image

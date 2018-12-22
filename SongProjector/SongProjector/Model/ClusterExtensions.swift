@@ -44,13 +44,17 @@ extension Cluster {
 		cluster.title = title
 	}
 	
-	public var hasIntrumentsArray: [Instrument] {
+	public var hasInstrumentsArray: [Instrument] {
 		
 		if let setHasInstruments = hasInstruments as? Set<Instrument> {
 			return Array(setHasInstruments)
 		} else {
 			return []
 		}
+	}
+	
+	public var hasPianoSolo: Bool {
+		return hasInstrumentsArray.contains(where: { $0.type == .pianoSolo })
 	}
 	
 	public var hasMusic: Bool {
