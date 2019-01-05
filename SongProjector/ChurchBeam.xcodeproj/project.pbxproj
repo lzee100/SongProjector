@@ -119,6 +119,11 @@
 		E39D29F020308F4E00C1C0D9 /* BibleStudyController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E39D29EF20308F4E00C1C0D9 /* BibleStudyController.swift */; };
 		E3A19734200947AB0044DB1B /* SheetTitleImageExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A19733200947AB0044DB1B /* SheetTitleImageExtensions.swift */; };
 		E3A19736200A76EF0044DB1B /* ViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A19735200A76EF0044DB1B /* ViewControllerExtensions.swift */; };
+		E3A4702E21E0CBF9000CB3D3 /* BaseRestService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A4702D21E0CBF9000CB3D3 /* BaseRestService.swift */; };
+		E3A4703021E0CC80000CB3D3 /* ChurchBeamConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A4702F21E0CC80000CB3D3 /* ChurchBeamConfiguration.swift */; };
+		E3A4703221E10B57000CB3D3 /* RequestOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A4703121E10B57000CB3D3 /* RequestOperation.swift */; };
+		E3A4703421E10D35000CB3D3 /* AsynchronousOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A4703321E10D35000CB3D3 /* AsynchronousOperation.swift */; };
+		E3A4703821E113E6000CB3D3 /* ManagedObjectCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A4703721E113E6000CB3D3 /* ManagedObjectCodable.swift */; };
 		E3BC6BB71FFEBE350039E0CA /* HeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3BC6BB61FFEBE350039E0CA /* HeaderView.xib */; };
 		E3BC6BBA1FFEBECA0039E0CA /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3BC6BB91FFEBECA0039E0CA /* HeaderView.swift */; };
 		E3C2AD102025A5D500ACFFE7 /* MixerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3C2AD0F2025A5D500ACFFE7 /* MixerView.xib */; };
@@ -286,6 +291,11 @@
 		E39D29EF20308F4E00C1C0D9 /* BibleStudyController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BibleStudyController.swift; sourceTree = "<group>"; };
 		E3A19733200947AB0044DB1B /* SheetTitleImageExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetTitleImageExtensions.swift; sourceTree = "<group>"; };
 		E3A19735200A76EF0044DB1B /* ViewControllerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewControllerExtensions.swift; sourceTree = "<group>"; };
+		E3A4702D21E0CBF9000CB3D3 /* BaseRestService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseRestService.swift; sourceTree = "<group>"; };
+		E3A4702F21E0CC80000CB3D3 /* ChurchBeamConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChurchBeamConfiguration.swift; sourceTree = "<group>"; };
+		E3A4703121E10B57000CB3D3 /* RequestOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestOperation.swift; sourceTree = "<group>"; };
+		E3A4703321E10D35000CB3D3 /* AsynchronousOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsynchronousOperation.swift; sourceTree = "<group>"; };
+		E3A4703721E113E6000CB3D3 /* ManagedObjectCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedObjectCodable.swift; sourceTree = "<group>"; };
 		E3BC6BB61FFEBE350039E0CA /* HeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HeaderView.xib; sourceTree = "<group>"; };
 		E3BC6BB91FFEBECA0039E0CA /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
 		E3C2AD0F2025A5D500ACFFE7 /* MixerView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MixerView.xib; sourceTree = "<group>"; };
@@ -388,6 +398,7 @@
 		E311712F1FE59DA3008D9D51 /* SongProjector */ = {
 			isa = PBXGroup;
 			children = (
+				E3A4702C21E00FE1000CB3D3 /* fetchers */,
 				E31F0B7220F50A6D00C22FD1 /* Liedjes - wallpaper 16-9.png */,
 				E31F0B7020F5029500C22FD1 /* Pio-Sebastiaan-en-Marilou.jpg */,
 				E39864D42098D0E600DF5199 /* Amazon Entities */,
@@ -585,6 +596,14 @@
 			path = "Amazon Entities";
 			sourceTree = "<group>";
 		};
+		E3A4702C21E00FE1000CB3D3 /* fetchers */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = fetchers;
+			path = "New Group";
+			sourceTree = "<group>";
+		};
 		E3BC6BB81FFEBEA80039E0CA /* View */ = {
 			isa = PBXGroup;
 			children = (
@@ -634,6 +653,11 @@
 				E3D12AB02018EE4800BD060C /* FetcherResultTypes.swift */,
 				E3812DEC201CE1D300F10B2C /* GoogleActivityFetcher.swift */,
 				E3F201D5201E04FC002FF06E /* FetcherTimeInterval.swift */,
+				E3A4702D21E0CBF9000CB3D3 /* BaseRestService.swift */,
+				E3A4702F21E0CC80000CB3D3 /* ChurchBeamConfiguration.swift */,
+				E3A4703121E10B57000CB3D3 /* RequestOperation.swift */,
+				E3A4703321E10D35000CB3D3 /* AsynchronousOperation.swift */,
+				E3A4703721E113E6000CB3D3 /* ManagedObjectCodable.swift */,
 			);
 			path = Fetchers;
 			sourceTree = "<group>";
@@ -860,8 +884,10 @@
 				E3314B682007836D00F470C0 /* SheetView.swift in Sources */,
 				E36F41661FEE8CDA00E989E5 /* SongServiceIphoneController.swift in Sources */,
 				E3C2AD1E202749CD00ACFFE7 /* InstrumentExtensions.swift in Sources */,
+				E3A4703821E113E6000CB3D3 /* ManagedObjectCodable.swift in Sources */,
 				E311715B1FE5A0A3008D9D51 /* Features.swift in Sources */,
 				E3CAE69D20C4794400D3B36F /* NewOrEditViewModel.swift in Sources */,
+				E3A4703421E10D35000CB3D3 /* AsynchronousOperation.swift in Sources */,
 				E37938EF212723630091698D /* TableViewCellExtensions.swift in Sources */,
 				E309DCF31FF48F0800C3D135 /* LabelSwitchCell.swift in Sources */,
 				E309DD051FF5179B00C3D135 /* Cells.swift in Sources */,
@@ -892,6 +918,7 @@
 				E38347631FF8434D008AE69D /* ImageExtensions.swift in Sources */,
 				E31171531FE5A071008D9D51 /* ArrayExtensions.swift in Sources */,
 				E3F8C9DA20175A8800C94292 /* BibleIndex.swift in Sources */,
+				E3A4703221E10B57000CB3D3 /* RequestOperation.swift in Sources */,
 				E311716A1FE5A0E7008D9D51 /* NewSongServiceController.swift in Sources */,
 				E31171541FE5A071008D9D51 /* UIColorExtension.swift in Sources */,
 				E311717B1FE5A1A0008D9D51 /* TagCellCollection.swift in Sources */,
@@ -901,6 +928,7 @@
 				E34EA3A521CECCA100A65719 /* SongServiceSettingsCell.swift in Sources */,
 				E38347651FF9382F008AE69D /* ExternalDisplayController.swift in Sources */,
 				E3A19736200A76EF0044DB1B /* ViewControllerExtensions.swift in Sources */,
+				E3A4703021E0CC80000CB3D3 /* ChurchBeamConfiguration.swift in Sources */,
 				E326E9041FFEC9EC00FEAC9C /* CustomSheetsIphoneController.swift in Sources */,
 				E3D9C28E20D6F11E006EDFE3 /* TestView.swift in Sources */,
 				E3F8C9D82017153A00C94292 /* SheetPickerMenuController.swift in Sources */,
@@ -936,6 +964,7 @@
 				E3CB684E2003900D00F007B2 /* Theme.swift in Sources */,
 				E3C2AD2220275AE200ACFFE7 /* InstrumentPlayer.swift in Sources */,
 				E39D29F020308F4E00C1C0D9 /* BibleStudyController.swift in Sources */,
+				E3A4702E21E0CBF9000CB3D3 /* BaseRestService.swift in Sources */,
 				E3D12AAF2018EE2100BD060C /* Fetcher.swift in Sources */,
 				E3D927511FEC3036006EDE75 /* NewOrEditTagController.swift in Sources */,
 				E31171551FE5A071008D9D51 /* UIFontExtensions.swift in Sources */,

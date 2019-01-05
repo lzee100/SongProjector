@@ -11,6 +11,12 @@ import Foundation
 
 class Text: NSObject {
 	
+	struct environments {
+		static let localHost = "Localhost"
+		static let development = "Ontwikkel"
+		static let production = "Productie"
+	}
+	
 	struct Actions {
 		static let cancel = "Annuleer"
 		static let close = "Sluit"
