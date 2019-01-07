@@ -16,8 +16,8 @@ class LabelSwitchCell: ChurchBeamCell, TagImplementation, SheetImplementation {
 	
 	
 	var id = ""
-	var sheetTag: Tag?
-	var tagAttribute: TagAttribute?
+	var sheetTheme: VTheme?
+	var themeAttribute: ThemeAttribute?
 	var sheet: Sheet?
 	var sheetAttribute: SheetAttribute?
 	var valueDidChange: ((ChurchBeamCell) -> Void)?
@@ -45,10 +45,10 @@ class LabelSwitchCell: ChurchBeamCell, TagImplementation, SheetImplementation {
 		return view
 	}
 	
-	func apply(tag: Tag, tagAttribute: TagAttribute) {
-		sheetTag = tag
-		self.tagAttribute = tagAttribute
-		descriptionLabel.text = tagAttribute.description
+	func apply(theme: VTheme, themeAttribute: ThemeAttribute) {
+		sheetTheme = theme
+		self.themeAttribute = themeAttribute
+		descriptionLabel.text = themeAttribute.description
 		applyValueToCell()
 	}
 	
@@ -76,18 +76,18 @@ class LabelSwitchCell: ChurchBeamCell, TagImplementation, SheetImplementation {
 	}
 	
 	func applyCellValueToTag() {
-		if let tagAttribute = tagAttribute {
-			switch tagAttribute {
-			case .allHaveTitle: sheetTag?.allHaveTitle = self.switch.isOn
-			case .displayTime: sheetTag?.displayTime = self.switch.isOn
-			case .hasEmptySheet: sheetTag?.hasEmptySheet = self.switch.isOn
-			case .isEmptySheetFirst: sheetTag?.isEmptySheetFirst = self.switch.isOn
-			case .isLyricsBold: sheetTag?.isLyricsBold = self.switch.isOn
-			case .isLyricsItalian: sheetTag?.isLyricsItalian = self.switch.isOn
-			case .isLyricsUnderlined: sheetTag?.isLyricsUnderlined = self.switch.isOn
-			case .isTitleBold: sheetTag?.isTitleBold = self.switch.isOn
-			case .isTitleItalian: sheetTag?.isTitleItalian = self.switch.isOn
-			case .isTitleUnderlined: sheetTag?.isTitleUnderlined = self.switch.isOn
+		if let themeAttribute = themeAttribute {
+			switch themeAttribute {
+			case .allHaveTitle: sheetTheme?.allHaveTitle = self.switch.isOn
+			case .displayTime: sheetTheme?.displayTime = self.switch.isOn
+			case .hasEmptySheet: sheetTheme?.hasEmptySheet = self.switch.isOn
+			case .isEmptySheetFirst: sheetTheme?.isEmptySheetFirst = self.switch.isOn
+			case .isLyricsBold: sheetTheme?.isLyricsBold = self.switch.isOn
+			case .isLyricsItalian: sheetTheme?.isLyricsItalian = self.switch.isOn
+			case .isLyricsUnderlined: sheetTheme?.isLyricsUnderlined = self.switch.isOn
+			case .isTitleBold: sheetTheme?.isTitleBold = self.switch.isOn
+			case .isTitleItalian: sheetTheme?.isTitleItalian = self.switch.isOn
+			case .isTitleUnderlined: sheetTheme?.isTitleUnderlined = self.switch.isOn
 			default:
 				return
 			}
@@ -101,18 +101,18 @@ class LabelSwitchCell: ChurchBeamCell, TagImplementation, SheetImplementation {
 	}
 	
 	func applyValueToCell() {
-		if let tagAttribute = tagAttribute {
-			switch tagAttribute {
-			case .allHaveTitle: self.switch.isOn = sheetTag?.allHaveTitle ?? false
-			case .displayTime: self.switch.isOn = sheetTag?.displayTime ?? false
-			case .hasEmptySheet: self.switch.setOn(sheetTag?.hasEmptySheet ?? false, animated: true)
-			case .isEmptySheetFirst: self.switch.isOn = sheetTag?.isEmptySheetFirst ?? false
-			case .isLyricsBold: self.switch.isOn = sheetTag?.isLyricsBold ?? false
-			case .isLyricsItalian: self.switch.isOn = sheetTag?.isLyricsItalian ?? false
-			case .isLyricsUnderlined: self.switch.isOn = sheetTag?.isLyricsUnderlined ?? false
-			case .isTitleBold:  self.switch.isOn = sheetTag?.isTitleBold ?? false
-			case .isTitleItalian: self.switch.isOn = sheetTag?.isTitleItalian ?? false
-			case .isTitleUnderlined: self.switch.isOn = sheetTag?.isTitleUnderlined ?? false
+		if let themeAttribute = themeAttribute {
+			switch themeAttribute {
+			case .allHaveTitle: self.switch.isOn = sheetTheme?.allHaveTitle ?? false
+			case .displayTime: self.switch.isOn = sheetTheme?.displayTime ?? false
+			case .hasEmptySheet: self.switch.setOn(sheetTheme?.hasEmptySheet ?? false, animated: true)
+			case .isEmptySheetFirst: self.switch.isOn = sheetTheme?.isEmptySheetFirst ?? false
+			case .isLyricsBold: self.switch.isOn = sheetTheme?.isLyricsBold ?? false
+			case .isLyricsItalian: self.switch.isOn = sheetTheme?.isLyricsItalian ?? false
+			case .isLyricsUnderlined: self.switch.isOn = sheetTheme?.isLyricsUnderlined ?? false
+			case .isTitleBold:  self.switch.isOn = sheetTheme?.isTitleBold ?? false
+			case .isTitleItalian: self.switch.isOn = sheetTheme?.isTitleItalian ?? false
+			case .isTitleUnderlined: self.switch.isOn = sheetTheme?.isTitleUnderlined ?? false
 			default: return
 			}
 		}

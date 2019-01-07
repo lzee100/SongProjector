@@ -1,87 +1,201 @@
 //
-//  themeExtensions.swift
+//  VTheme.swift
 //  SongProjector
 //
-//  Created by Leo van der Zee on 28-12-17.
-//  Copyright © 2017 iozee. All rights reserved.
+//  Created by Leo van der Zee on 06/01/2019.
+//  Copyright © 2019 iozee. All rights reserved.
 //
 
 import Foundation
 import UIKit
 
-enum ThemeAttribute {
-	case asTheme
-	
-	case title
-	
-	case allHaveTitle
-	case displayTime
-	case hasEmptySheet
-	case isEmptySheetFirst
-	case isLyricsBold
-	case isLyricsItalian
-	case isLyricsUnderlined
-	case isTitleBold
-	case isTitleItalian
-	case isTitleUnderlined
-	
-	case backgroundColor
-	case backgroundImage
-	case backgroundTransparancy
 
-	case lyricsAlignment
-	case lyricsBorderColor
-	case lyricsFontName
-	case lyricsTextColorHex
-	case lyricsTextSize
-	case lyricsBorderSize
+class VTheme: NSObject, Codable, NSCopying {
 	
-	case titleAlignment
-	case titleBackgroundColor
-	case titleBorderColorHex
-	case titleFontName
-	case titleTextColorHex
-	case titleTextSize
-	case titleBorderSize
-	
-	var description: String {
-		switch self {
-		case .asTheme: return Text.NewTheme.descriptionAsTheme
-		case .title: return Text.NewTheme.descriptionTitle
-		case .allHaveTitle: return Text.NewTheme.descriptionAllTitle
-		case .displayTime: return Text.NewTheme.descriptionDisplayTime
-		case .hasEmptySheet: return Text.NewTheme.descriptionHasEmptySheet
-		case .isEmptySheetFirst: return Text.NewTheme.descriptionPositionEmptySheet
-		case .isLyricsBold: return Text.NewTheme.bold
-		case .isLyricsItalian: return Text.NewTheme.italic
-		case .isLyricsUnderlined: return Text.NewTheme.underlined
-		case .isTitleBold: return Text.NewTheme.bold
-		case .isTitleItalian: return Text.NewTheme.italic
-		case .isTitleUnderlined: return Text.NewTheme.underlined
-			
-		case .backgroundColor: return Text.NewTheme.descriptionBackgroundColor
-		case .backgroundImage: return Text.NewTheme.backgroundImage
-		case .backgroundTransparancy: return Text.NewTheme.descriptionBackgroundTransparency
-		case .lyricsAlignment: return Text.NewTheme.descriptionAlignment
-		case .lyricsBorderColor: return Text.NewTheme.borderColor
-		case .lyricsBorderSize: return Text.NewTheme.borderSizeDescription
-		case .lyricsFontName: return Text.NewTheme.fontFamilyDescription
-		case .lyricsTextColorHex: return Text.NewTheme.textColor
-		case .lyricsTextSize: return Text.NewTheme.fontSizeDescription
-			
-		case .titleAlignment: return Text.NewTheme.descriptionAlignment
-		case .titleBackgroundColor: return Text.NewTheme.descriptionBackgroundColor
-		case .titleBorderColorHex: return Text.NewTheme.borderColor
-		case .titleTextSize: return Text.NewTheme.fontSizeDescription
-		case .titleFontName: return Text.NewTheme.fontFamilyDescription
-		case .titleTextColorHex: return Text.NewTheme.textColor
-		case .titleBorderSize: return Text.NewTheme.borderSizeDescription
-			
-		}
+	static func getThemes(getHidden: Bool = false) -> [VTheme] {
+		CoreTheme.predicates.append("isHidden", notEquals: !getHidden)
+		return CoreTheme.getEntities().map({ VTheme.convert($0) })
 	}
+	
+	static func getTheme(id: Int64) -> VTheme? {
+		CoreTheme.predicates.append("id", equals: id)
+		if let entity = CoreTheme.getEntities().first {
+			return convert(entity)
+		}
+		return nil
+	}
+	
+	
+	public var id: Int64 = 0
+	public var title: String? = ""
+	public var createdAt: Date = Date()
+	public var updatedAt: Date = Date()
+	public var deletedAt: Date? = nil
+	
+	public var allHaveTitle: Bool = false
+	public var backgroundColor: String? = "FFFFFF"
+	public var backgroundTransparency: Float = 0.0
+	public var displayTime: Bool = false
+	public var hasEmptySheet: Bool = false
+	public var imagePath: String? = nil
+	public var imagePathThumbnail: String? = nil
+	public var isBackgroundImageDeleted: Bool = false
+	public var isEmptySheetFirst: Bool = false
+	public var isHidden: Bool = false
+	public var isLyricsBold: Bool = false
+	public var isLyricsItalian: Bool = false
+	public var isLyricsUnderlined: Bool = false
+	public var isTitleBold: Bool = false
+	public var isTitleItalian: Bool = false
+	public var isTitleUnderlined: Bool = false
+	public var lyricsAlignment: Int16 = 0
+	public var lyricsBorderColorHex: String? = nil
+	public var lyricsBorderSize: Float = 0
+	public var lyricsFontName: String? = nil
+	public var lyricsTextColorHex: String? = nil
+	public var lyricsTextSize: Float = 14.0
+	public var position: Int16 = 0
+	public var titleAlignment: Int16 = 0
+	public var titleBackgroundColor: String? = nil
+	public var titleBorderColorHex: String? = nil
+	public var titleBorderSize: Float = 0
+	public var titleFontName: String? = nil
+	public var titleTextColorHex: String? = nil
+	public var titleTextSize: Float = 14
+	public var hasClusters: [VCluster] = []
+	public var hasSheets: [VSheet] = []
+	
+	
+	var trans: Text.Actions.Type {
+		return Text.Actions.self
+	}
+	
+	
+	enum CodingKeys:String,CodingKey
+	{
+		case id
+		case title
+		case createdAt
+		case updatedAt
+		case deletedAt
+		case allHaveTitle
+		case backgroundColor
+		case backgroundTransparency
+		case displayTime
+		case hasEmptySheet
+		case imagePath
+		case imagePathThumbnail
+		case isBackgroundImageDeleted
+		case isEmptySheetFirst
+		case isHidden
+		case isLyricsBold
+		case isLyricsItalian
+		case isLyricsUnderlined
+		case isTitleBold
+		case isTitleItalian
+		case isTitleUnderlined
+		case lyricsAlignment
+		case lyricsBorderColorHex
+		case lyricsBorderSize
+		case lyricsFontName
+		case lyricsTextColorHex
+		case lyricsTextSize
+		case position
+		case titleAlignment
+		case titleBackgroundColor
+		case titleBorderColorHex
+		case titleBorderSize
+		case titleFontName
+		case titleTextColorHex
+		case titleTextSize
+	}
+	
+	static func convert(_ theme: Theme) -> VTheme {
+		let vTheme = VTheme()
+		vTheme.id = theme.id
+		vTheme.title = theme.title
+		vTheme.createdAt = theme.createdAt ?? Date()
+		vTheme.updatedAt = theme.updatedAt ?? Date()
+		vTheme.deletedAt = theme.deletedAt
+		vTheme.title = theme.title
+		vTheme.allHaveTitle = theme.allHaveTitle
+		vTheme.backgroundColor = theme.backgroundColor
+		vTheme.backgroundTransparency = theme.backgroundTransparency
+		vTheme.displayTime = theme.displayTime
+		vTheme.hasEmptySheet = theme.hasEmptySheet
+		vTheme.imagePath = theme.imagePath
+		vTheme.imagePathThumbnail = theme.imagePathThumbnail
+		vTheme.isBackgroundImageDeleted = theme.isBackgroundImageDeleted
+		vTheme.isEmptySheetFirst = theme.isEmptySheetFirst
+		vTheme.isHidden = theme.isHidden
+		vTheme.isLyricsBold = theme.isLyricsBold
+		vTheme.isLyricsItalian = theme.isLyricsItalian
+		vTheme.isLyricsUnderlined = theme.isLyricsUnderlined
+		vTheme.isTitleBold = theme.isTitleBold
+		vTheme.isTitleItalian = theme.isTitleItalian
+		vTheme.isTitleUnderlined = theme.isTitleUnderlined
+		vTheme.lyricsAlignment = Int16(theme.lyricsAlignmentNumber)
+		vTheme.lyricsBorderColorHex = theme.lyricsBorderColorHex
+		vTheme.lyricsBorderSize = theme.lyricsBorderSize
+		vTheme.lyricsFontName = theme.lyricsFontName
+		vTheme.lyricsTextColorHex = theme.lyricsTextColorHex
+		vTheme.lyricsTextSize = theme.lyricsTextSize
+		vTheme.position = theme.position
+		vTheme.titleAlignment = Int16(theme.titleAlignmentNumber)
+		vTheme.titleBackgroundColor = theme.titleBackgroundColor
+		vTheme.titleBorderColorHex = theme.titleBorderColorHex
+		vTheme.titleBorderSize = theme.titleBorderSize
+		vTheme.titleFontName = theme.titleFontName
+		vTheme.titleTextColorHex = theme.titleTextColorHex
+		vTheme.titleTextSize = theme.titleTextSize
+		return vTheme
+	}
+	
+	func copy(with zone: NSZone? = nil) -> Any {
+		let vTheme = VTheme()
+		vTheme.id = id
+		vTheme.title = title
+		vTheme.createdAt = createdAt
+		vTheme.updatedAt = updatedAt
+		vTheme.deletedAt = deletedAt
+		vTheme.title = title
+		vTheme.allHaveTitle = allHaveTitle
+		vTheme.backgroundColor = backgroundColor
+		vTheme.backgroundTransparency = backgroundTransparency
+		vTheme.displayTime = displayTime
+		vTheme.hasEmptySheet = hasEmptySheet
+		vTheme.imagePath = imagePath
+		vTheme.imagePathThumbnail = imagePathThumbnail
+		vTheme.isBackgroundImageDeleted = isBackgroundImageDeleted
+		vTheme.isEmptySheetFirst = isEmptySheetFirst
+		vTheme.isHidden = isHidden
+		vTheme.isLyricsBold = isLyricsBold
+		vTheme.isLyricsItalian = isLyricsItalian
+		vTheme.isLyricsUnderlined = isLyricsUnderlined
+		vTheme.isTitleBold = isTitleBold
+		vTheme.isTitleItalian = isTitleItalian
+		vTheme.isTitleUnderlined = isTitleUnderlined
+		vTheme.lyricsAlignment = lyricsAlignment
+		vTheme.lyricsBorderColorHex = lyricsBorderColorHex
+		vTheme.lyricsBorderSize = lyricsBorderSize
+		vTheme.lyricsFontName = lyricsFontName
+		vTheme.lyricsTextColorHex = lyricsTextColorHex
+		vTheme.lyricsTextSize = lyricsTextSize
+		vTheme.position = position
+		vTheme.titleAlignment = titleAlignment
+		vTheme.titleBackgroundColor = titleBackgroundColor
+		vTheme.titleBorderColorHex = titleBorderColorHex
+		vTheme.titleBorderSize = titleBorderSize
+		vTheme.titleFontName = titleFontName
+		vTheme.titleTextColorHex = titleTextColorHex
+		vTheme.titleTextSize = titleTextSize
+		return vTheme
+	}
+	
+	
 }
 
-extension Theme {
+extension VTheme {
 	
 	var textColorTitle: UIColor? {
 		get {
@@ -193,15 +307,15 @@ extension Theme {
 				let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
 				let imagePath = UUID().uuidString + ".jpg"
 				let imagePathThumbnail = UUID().uuidString + "thumb.jpg"
-
+				
 				let filename = documentsDirectory.appendingPathComponent(imagePath)
 				let filenameThumb = documentsDirectory.appendingPathComponent(imagePathThumbnail)
-
+				
 				try? data.write(to: filename)
 				try? dataResized.write(to: filenameThumb)
 				self.imagePath = imagePath
 				self.imagePathThumbnail = imagePathThumbnail
-
+				
 			}
 			else if newValue == nil {
 				if let path = self.imagePath {
@@ -252,10 +366,10 @@ extension Theme {
 			}
 			attributes[.font] = font
 		}
-
+		
 		let paragraph = NSMutableParagraphStyle()
 		
-		switch titleAlignmentNumber {
+		switch titleAlignment{
 		case 0:
 			paragraph.alignment = .left
 			attributes[.paragraphStyle] = paragraph
@@ -306,7 +420,7 @@ extension Theme {
 		
 		let paragraph = NSMutableParagraphStyle()
 		
-		switch lyricsAlignmentNumber {
+		switch lyricsAlignment {
 		case 0:
 			paragraph.alignment = .left
 			attributes[.paragraphStyle] = paragraph
@@ -319,7 +433,7 @@ extension Theme {
 		default:
 			break
 		}
-
+		
 		attributes[.strokeWidth] = Int(self.lyricsBorderSize)
 		
 		if let textColor = self.textColorLyrics {
@@ -337,96 +451,4 @@ extension Theme {
 		}
 		return attributes
 	}
-	
-	var backgroundTransparency: Float {
-		get { return Float(backgroundTransparencyNumber) }
-		set { backgroundTransparencyNumber = newValue / 100 }
-	}
-	
-//	@objc override public func delete() {
-//		backgroundImage = nil
-//		super.delete()
-//	}
-	
-	func getTemp() -> Theme {
-		let tempTheme = CoreTheme.createEntity(fireNotification: false)
-		tempTheme.isTemp = true
-		tempTheme.title = title
-		tempTheme.allHaveTitle = allHaveTitle
-		tempTheme.hasEmptySheet = hasEmptySheet
-		tempTheme.backgroundColor = backgroundColor
-		let cgfloatValue = CGFloat(backgroundTransparency)
-		tempTheme.backgroundTransparency = Float(cgfloatValue) * 100
-		tempTheme.displayTime = displayTime
-		
-		tempTheme.titleFontName = titleFontName ?? "Avenir"
-		tempTheme.titleTextSize = titleTextSize
-		tempTheme.titleBackgroundColor = titleBackgroundColor
-		tempTheme.titleAlignmentNumber = titleAlignmentNumber
-		tempTheme.titleBorderSize = titleBorderSize
-		tempTheme.titleBorderColorHex = titleBorderColorHex
-		tempTheme.titleTextColorHex = titleTextColorHex
-		tempTheme.isTitleBold = isTitleBold
-		tempTheme.isTitleItalian = isTitleItalian
-		tempTheme.isTitleUnderlined = isTitleUnderlined
-		
-		tempTheme.lyricsFontName = lyricsFontName ?? "Avenir"
-		tempTheme.lyricsTextSize = lyricsTextSize
-		tempTheme.lyricsAlignmentNumber = lyricsAlignmentNumber
-		tempTheme.lyricsBorderSize = lyricsBorderSize
-		tempTheme.lyricsBorderColorHex = lyricsBorderColorHex
-		tempTheme.lyricsTextColorHex = lyricsTextColorHex
-		tempTheme.isLyricsBold = isLyricsBold
-		tempTheme.isLyricsItalian = isLyricsItalian
-		tempTheme.isLyricsUnderlined = isLyricsUnderlined
-		tempTheme.isBackgroundImageDeleted = isBackgroundImageDeleted
-		
-		tempTheme.imagePath = imagePath
-		tempTheme.imagePathThumbnail = imagePathThumbnail
-		tempTheme.isHidden = isHidden
-		return tempTheme
-	}
-	
-	func mergeSelfInto(theme: Theme, isTemp: Bool = false, sheetType: SheetType) {
-		if isTemp {
-			theme.isDeleted = Date()
-		}
-		theme.title = title
-		theme.allHaveTitle = allHaveTitle
-		theme.hasEmptySheet = hasEmptySheet
-		theme.backgroundColor = backgroundColor
-		let cgfloatValue = CGFloat(backgroundTransparency)
-		theme.backgroundTransparency = Float(cgfloatValue) * 100
-		theme.displayTime = displayTime
-		
-		theme.titleFontName = titleFontName ?? "Avenir"
-		theme.titleTextSize = titleTextSize
-		if sheetType != .SheetPastors {
-			theme.titleBackgroundColor = titleBackgroundColor
-			theme.titleAlignmentNumber = titleAlignmentNumber
-		}
-		theme.titleBorderSize = titleBorderSize
-		theme.titleBorderColorHex = titleBorderColorHex
-		theme.titleTextColorHex = titleTextColorHex
-		theme.isTitleBold = isTitleBold
-		theme.isTitleItalian = isTitleItalian
-		theme.isTitleUnderlined = isTitleUnderlined
-		
-		theme.lyricsFontName = lyricsFontName ?? "Avenir"
-		theme.lyricsTextSize = lyricsTextSize
-		if sheetType != .SheetPastors {
-			theme.lyricsAlignmentNumber = lyricsAlignmentNumber
-		}
-		theme.lyricsBorderSize = lyricsBorderSize
-		theme.lyricsBorderColorHex = lyricsBorderColorHex
-		theme.lyricsTextColorHex = lyricsTextColorHex
-		theme.isLyricsBold = isLyricsBold
-		theme.isLyricsItalian = isLyricsItalian
-		theme.isLyricsUnderlined = isLyricsUnderlined
-		theme.isBackgroundImageDeleted = isBackgroundImageDeleted
-		
-		theme.imagePath = imagePath
-		theme.imagePathThumbnail = imagePathThumbnail
-	}
-
 }

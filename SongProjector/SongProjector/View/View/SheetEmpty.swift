@@ -41,18 +41,18 @@ class SheetEmpty: SheetView {
 	}
 	
 	override func updateOpacity() {
-		if let alpha = sheetTag?.backgroundTransparency {
+		if let alpha = sheetTheme?.backgroundTransparency {
 			backgroundImageView.alpha = CGFloat(alpha)
 		}
 	}
 	
 	override func updateBackgroundImage() {
-		let image = isForExternalDispay ? sheetTag?.backgroundImage : sheetTag?.thumbnail
-		if let backgroundImage = image, !(sheetTag?.isBackgroundImageDeleted ?? true) {
+		let image = isForExternalDispay ? sheetTheme?.backgroundImage : sheetTheme?.thumbnail
+		if let backgroundImage = image, !(sheetTheme?.isBackgroundImageDeleted ?? true) {
 			backgroundImageView.isHidden = false
 			backgroundImageView.contentMode = .scaleAspectFill
 			backgroundImageView.image = backgroundImage
-			if let backgroundTransparency = sheetTag?.backgroundTransparency {
+			if let backgroundTransparency = sheetTheme?.backgroundTransparency {
 				backgroundImageView.alpha = CGFloat(backgroundTransparency)
 			}
 		} else {
@@ -61,7 +61,7 @@ class SheetEmpty: SheetView {
 	}
 	
 	override func updateBackgroundColor() {
-		if let backgroundColor = sheetTag?.sheetBackgroundColor {
+		if let backgroundColor = sheetTheme?.sheetBackgroundColor {
 			self.backgroundView.backgroundColor = backgroundColor
 		} else {
 			self.backgroundView.backgroundColor = .white
@@ -76,7 +76,7 @@ class SheetEmpty: SheetView {
 			return
 		}
 		
-		if let tag = sheetTag, let scaleFactor = scaleFactor { // is custom sheet
+		if let tag = sheetTheme, let scaleFactor = scaleFactor { // is custom sheet
 			
 			timeLabel.attributedText = NSAttributedString(string: test, attributes: tag.getTitleAttributes(scaleFactor))
 			

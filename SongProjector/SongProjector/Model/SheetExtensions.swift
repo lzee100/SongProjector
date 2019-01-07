@@ -97,9 +97,9 @@ extension Sheet {
 	}
 	
 	override public func delete() {
-		if let tag = hasTag, tag.isHidden == true {
-			tag.backgroundImage = nil
-			let _ = CoreTag.delete(entity: tag)
+		if let theme = hasTheme, theme.isHidden == true {
+			theme.backgroundImage = nil
+			let _ = CoreTheme.delete(entity: theme)
 		}
 		_ = CoreSheet.delete(entity: self)
 	}
@@ -144,11 +144,11 @@ extension Sheet {
 				sheet.hasGoogleActivity = current.hasGoogleActivity
 			}
 		}
-		if self.hasTag?.isHidden == true {
-			sheet.hasTag = hasTag?.getTemp()
+		if self.hasTheme?.isHidden == true {
+			sheet.hasTheme = hasTheme?.getTemp()
 		}
 		sheet.title = title
-		sheet.isTemp = true
+		sheet.deletedAt = Date()
 		sheet.time = time
 		sheet.position = position
 		sheet.isEmptySheet = isEmptySheet
@@ -194,7 +194,7 @@ extension Sheet {
 			sheet.hasGoogleActivity = this.hasGoogleActivity
 		}
 		sheet.title = title
-		sheet.isTemp = isTemp
+		sheet.deletedAt = deletedAt
 		sheet.time = time
 		sheet.position = position
 		sheet.isEmptySheet = isEmptySheet

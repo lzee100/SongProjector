@@ -51,8 +51,7 @@ enum FetcherReloadTime {
 let OrganizationLogoFetcher = Fetcher()
 let IddinkLogoFetcher = Fetcher()
 
-class Fetcher: FetcherType {
-	
+class Fetcher<T: Decodable>: BaseRS, FetcherType {
 	
 	var fetcherDependencies: [FetcherType] = []
 	
@@ -61,22 +60,19 @@ class Fetcher: FetcherType {
 	var updateTime: FetcherReloadTime = .hour
 	
 	func needsUpdate() -> Bool {
-		<#code#>
-	}
-	
-
-
-	struct Constants {
-		static let iddinkId = "logoLastUpdatedIddink"
-		static let organizationId = "logoLastUpdateOrganization"
+		return true
 	}
 
 	var observers: [FetcherObserver] = []
+	
+	var params: [String: Any] = [:]
+	var range: CountableRange = CountableRange(0...200)
 
-	var url: URL = URL(fileURLWithPath: "")
+	var url: String = ""
 	var needsUpdating : Bool {
 		return needsRefresh()
 	}
+
 
 	func addObserver(_ controller: FetcherObserver) {
 		observers.append(controller)
@@ -84,15 +80,19 @@ class Fetcher: FetcherType {
 
 	func fetch(_ force: Bool) {
 		
-		BaseRestService.req
-		DispatchQueue.global(qos: .background).async {
-			self.fetchDependencies(self.fetcherDependencies.compactMap({ $0 as? Foundation.Operation }))
-			if self.needsUpdating || force {
-				self.downloadImage(url: self.url)
-			} else {
-				self.fetchFinished(result: .OK(.notUpdated))
+		if needsUpdate() || force {
+			getEntities(success: { (result, response) in
+				
+			}) { (error,response,decodedError) in
+				print(error ?? "")
 			}
+		} else {
+			
 		}
+	}
+	
+	func getEntities(success: @escaping (_ response: HTTPURLResponse?, _ result: [T]?) -> Void, failure: @escaping (_ error: NSError?, _ response: HTTPURLResponse?, _ result: VTheme?) -> Void){
+		super.requestGet(RequestMethod.get, url: url, parameters: params, success: success, failure: failure, queue: Queues.background)
 	}
 
 	func fetchFinished(result: ResultTypes) {
@@ -103,37 +103,6 @@ class Fetcher: FetcherType {
 		let operationQueue = OperationQueue()
 		operationQueue.addOperations(dependencies, waitUntilFinished: true)
 	}
-	
-	
-
-//	private func downloadImage(url: URL) {
-//		observers.forEach { $0.logoFetcherDidStart() }
-//
-//		getDataFromUrl(url: url) { data, response, error in
-//			if error != nil {
-//				DispatchQueue.main.async {
-//					self.observers.forEach { $0.logoFetcherDidFinish(result: ResultTypes.error) }
-//				}
-//			} else if let data = data {
-//				DispatchQueue.main.async {
-//					if let image = UIImage(data: data) {
-//						self.saveImageLocaly(image: image)
-//						self.observers.forEach { $0.logoFetcherDidFinish(result: .OK) }
-//					} else {
-//						self.observers.forEach { $0.logoFetcherDidFinish(result: .imageError) }
-//					}
-//				}
-//			} else {
-//				self.observers.forEach { $0.logoFetcherDidFinish(result: .error) }
-//			}
-//		}
-//	}
-//
-//	private func getDataFromUrl(url: URL, completion: @escaping (Data?, URLResponse?, Error?) -> ()) {
-//		URLSession.shared.dataTask(with: url) { data, response, error in
-//			completion(data, response, error)
-//			}.resume()
-//	}
 
 	func needsRefresh() -> Bool {
 		return true

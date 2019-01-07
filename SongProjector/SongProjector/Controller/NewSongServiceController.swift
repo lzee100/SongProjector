@@ -35,8 +35,8 @@ class NewSongServiceController: UIViewController, UITableViewDelegate, UITableVi
 	var filteredSongs: [Cluster] = []
 	var songs: [Cluster] = []
 	var selectedSongs: [Cluster] = []
-	var tags: [Tag] = []
-	var selectedTag: Tag?
+	var themes: [VTheme] = []
+	var selectedTheme: VTheme?
 
 	
 	override func viewDidLoad() {
@@ -115,24 +115,24 @@ class NewSongServiceController: UIViewController, UITableViewDelegate, UITableVi
 	
 	
 	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-		return tags.count
+		return themes.count
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 		let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.tagCellCollection, for: indexPath)
 		
 		if let collectionCell = collectionCell as? TagCellCollection {
-			collectionCell.setup(tagName: tags[indexPath.row].title ?? "")
-			collectionCell.isSelectedCell = selectedTag?.id == tags[indexPath.row].id
+			collectionCell.setup(tagName: themes[indexPath.row].title ?? "")
+			collectionCell.isSelectedCell = selectedTheme?.id == themes[indexPath.row].id
 		}
 		return collectionCell
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-		if selectedTag?.id == tags[indexPath.row].id {
-			selectedTag = tags[indexPath.row]
+		if selectedTheme?.id == themes[indexPath.row].id {
+			selectedTheme = themes[indexPath.row]
 		} else {
-			selectedTag = nil
+			selectedTheme = nil
 		}
 		update()
 	}
@@ -196,8 +196,7 @@ class NewSongServiceController: UIViewController, UITableViewDelegate, UITableVi
 	private func update() {
 		let newClusters = Array(Set(CoreCluster.getEntities()).subtracting(selectedSongs))
 		songs = newClusters
-		CoreTag.predicates.append("isHidden", equals: 0)
-		tags = CoreTag.getEntities()
+		themes = VTheme.getThemes()
 		filterOnTags()
 		filteredSongs = songs
 		
@@ -227,9 +226,9 @@ class NewSongServiceController: UIViewController, UITableViewDelegate, UITableVi
 	}
 	
 	private func filterOnTags() {
-		if let selectedTag = selectedTag {
+		if let selectedTheme = selectedTheme {
 			songs = songs.filter { (song) -> Bool in
-				song.hasTag?.id == selectedTag.id
+				song.hasTheme?.id == selectedTheme.id
 			}
 		}
 	}

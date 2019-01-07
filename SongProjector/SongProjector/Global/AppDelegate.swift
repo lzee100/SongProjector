@@ -99,7 +99,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		setupAndCheckDatabase()
 		setupAirPlay()
 		application.statusBarStyle = .lightContent
-		Theme.setup()
+		AppTheme.setup()
 		if PHPhotoLibrary.authorizationStatus() == .notDetermined {
 			PHPhotoLibrary.requestAuthorization({ (status) in
 				if status == PHAuthorizationStatus.authorized {
@@ -232,29 +232,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			_ = CoreEntity.delete(entity: entity)
 		}
 	
-		CoreTag.predicates.append("title", equals: "Player")
-		var tags = CoreTag.getEntities()
+		CoreTheme.predicates.append("title", equals: "Player")
+		var tags = CoreTheme.getEntities()
 		if tags.count == 0 {
-			let tag = CoreTag.createEntity()
+			let tag = CoreTheme.createEntity()
 			tag.title = "Player"
-			tag.isTemp = false
-			let _ = CoreTag.saveContext()
+			tag.deletedAt = Date()
+			let _ = CoreTheme.saveContext()
 		}
-		CoreTag.predicates.append("title", equals: "Songs")
-		tags = CoreTag.getEntities()
+		CoreTheme.predicates.append("title", equals: "Songs")
+		tags = CoreTheme.getEntities()
 		if tags.count == 0 {
-			let tag = CoreTag.createEntity()
+			let tag = CoreTheme.createEntity()
 			tag.title = "Songs"
-			tag.isTemp = false
-			let _ = CoreTag.saveContext()
+			tag.deletedAt = Date()
+			let _ = CoreTheme.saveContext()
 		}
-		CoreTag.predicates.append("title", equals: "Security")
-		tags = CoreTag.getEntities()
+		CoreTheme.predicates.append("title", equals: "Security")
+		tags = CoreTheme.getEntities()
 		if tags.count == 0 {
-			let tag = CoreTag.createEntity()
-			tag.isTemp = false
+			let tag = CoreTheme.createEntity()
+			tag.deletedAt = Date()
 			tag.title = "Security"
-			let _ = CoreTag.saveContext()
+			let _ = CoreTheme.saveContext()
 		}
 		
 		CoreInstrument.predicates.append("resourcePath", equals: "kort")
@@ -264,7 +264,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			kort.type = .piano
 			kort.resourcePath = "kort"
 			kort.isLoop = false
-			kort.isTemp = false
+			kort.deletedAt = Date()
 			kort.title = "kort"
 		}
 
@@ -276,7 +276,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			lord.type = .pianoSolo
 			lord.resourcePath = "LordLoop"
 			lord.isLoop = true
-			lord.isTemp = false
+			lord.deletedAt = Date()
 			lord.title = "LordLoop"
 		}
 		
@@ -287,7 +287,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			lordSong.type = .piano
 			lordSong.resourcePath = "LordSong"
 			lordSong.isLoop = true
-			lordSong.isTemp = false
+			lordSong.deletedAt = Date()
 			lordSong.title = "LordSong"
 		}
 		
@@ -298,7 +298,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			piano.type = .piano
 			piano.resourcePath = "Keyboard"
 			piano.title = "piano"
-			piano.isTemp = false
+			piano.deletedAt = Date()
 		}
 		
 		CoreInstrument.predicates.append("typeString", equals: "Guitar")
@@ -308,7 +308,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			guitar.type = .guitar
 			guitar.resourcePath = "Guitar"
 			guitar.title = "guitar"
-			guitar.isTemp = false
+			guitar.deletedAt = Date()
 		}
 		
 		CoreInstrument.predicates.append("typeString", equals: "Bass")
@@ -318,7 +318,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			bassGuitar.type = .bassGuitar
 			bassGuitar.resourcePath = "Bass"
 			bassGuitar.title = "bassGuitar"
-			bassGuitar.isTemp = false
+			bassGuitar.deletedAt = Date()
 		}
 		
 		CoreInstrument.predicates.append("typeString", equals: "Drums")
@@ -328,7 +328,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			drum.type = .drums
 			drum.resourcePath = "Drums"
 			drum.title = "drums"
-			drum.isTemp = false
+			drum.deletedAt = Date()
 		}
 		
 		let _ = CoreInstrument.saveContext()
@@ -337,10 +337,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		if CoreCluster.getEntities().count == 0 {
 			let ikZing = CoreCluster.createEntity()
 			ikZing.title = "Ik zing vol blijdschap en lach"
-			ikZing.isTemp = false
+			ikZing.deletedAt = Date()
 
-			CoreTag.predicates.append("title", equals: "Security")
-			let tag = CoreTag.getEntities().first
+			CoreTheme.predicates.append("title", equals: "Security")
+			let tag = CoreTheme.getEntities().first
 			
 			ikZing.hasTag = tag
 			
@@ -356,7 +356,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			sheet1.time = 36
 			sheet1.hasCluster = ikZing
 			sheet1.position = 0
-			sheet1.isTemp = false
+			sheet1.deletedAt = Date()
 
 			let sheet2 = CoreSheetTitleContent.createEntity()
 			sheet2.title = "Heilig is de heer"
@@ -367,7 +367,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			sheet2.time = 26.80
 			sheet2.hasCluster = ikZing
 			sheet2.position = 1
-			sheet2.isTemp = false
+			sheet2.deletedAt = Date()
 
 			let sheet3 = CoreSheetTitleContent.createEntity()
 			sheet3.title = "Ik zing vol blijdschap en lach"
@@ -381,7 +381,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			sheet3.time = 29.70
 			sheet3.hasCluster = ikZing
 			sheet3.position = 2
-			sheet3.isTemp = false
+			sheet3.deletedAt = Date()
 
 			
 			let sheet4 = CoreSheetTitleContent.createEntity()
@@ -393,7 +393,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			sheet4.time = 27
 			sheet4.hasCluster = ikZing
 			sheet4.position = 3
-			sheet4.isTemp = false
+			sheet4.deletedAt = Date()
 
 			let sheet5 = CoreSheetTitleContent.createEntity()
 			sheet5.title = "Hij komt terug"
@@ -404,7 +404,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			sheet5.time = 24.10
 			sheet5.hasCluster = ikZing
 			sheet5.position = 4
-			sheet5.isTemp = false
+			sheet5.deletedAt = Date()
 
 			
 			let sheet6 = CoreSheetTitleContent.createEntity()
@@ -415,7 +415,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			sheet6.time = 10
 			sheet6.hasCluster = ikZing
 			sheet6.position = 5
-			sheet6.isTemp = false
+			sheet6.deletedAt = Date()
 			
 			let sheet7 = CoreSheetTitleContent.createEntity()
 			sheet7.title = "Heilig is de heer"
@@ -426,7 +426,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			sheet7.time = 59
 			sheet7.hasCluster = ikZing
 			sheet7.position = 6
-			sheet7.isTemp = false
+			sheet7.deletedAt = Date()
 			
 			CoreInstrument.predicates.append("resourcePath", notEquals: "LordLoop")
 			CoreInstrument.predicates.append("resourcePath", notEquals: "kort")
@@ -441,22 +441,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		if CoreCluster.getEntities().count == 0 {
 			let heIsLord = CoreCluster.createEntity()
 			heIsLord.title = "Hij is heer"
-			heIsLord.isTemp = false
+			heIsLord.deletedAt = Date()
 			heIsLord.isLoop = true
 			
-			CoreTag.predicates.append("title", equals: "Songs")
-			let songsTag: Tag
-			if let existingTag = CoreTag.getEntities().first {
-				songsTag = existingTag
+			CoreTheme.predicates.append("title", equals: "Songs")
+			let songsTheme: VTheme
+			if let existingTheme = CoreTheme.getEntities().first {
+				songsTheme = existingTheme
 			} else {
-				let newTag = CoreTag.createEntity()
-				newTag.title = "Songs"
-				newTag.isTemp = false
-				newTag.isHidden = true
-				songsTag = newTag
+				let newTheme = CoreTheme.createEntity()
+				newTheme.title = "Songs"
+				newTheme.deletedAt = Date()
+				newTheme.isHidden = true
+				songsTheme = newTheme
 			}
 			
-			heIsLord.hasTag = songsTag
+			heIsLord.hasTheme = songsTheme
 			
 			let lordSheet = CoreSheetTitleContent.createEntity()
 			lordSheet.title = "Hij is heer."
@@ -486,10 +486,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		if CoreCluster.getEntities().count == 0 {
 			let kort = CoreCluster.createEntity()
 			kort.title = "Test kort"
-			kort.isTemp = false
+			kort.deletedAt = Date()
 			
-			CoreTag.predicates.append("title", equals: "Security")
-			let tag = CoreTag.getEntities().first
+			CoreTheme.predicates.append("title", equals: "Security")
+			let tag = CoreTheme.getEntities().first
 			
 			kort.hasTag = tag
 			
@@ -501,7 +501,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			sheet1.time = 3
 			sheet1.hasCluster = kort
 			sheet1.position = 0
-			sheet1.isTemp = false
+			sheet1.deletedAt = Date()
 			
 			let sheet2 = CoreSheetTitleContent.createEntity()
 			sheet2.title = "Test Kort 1"
@@ -511,7 +511,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			sheet2.time = 3
 			sheet2.hasCluster = kort
 			sheet2.position = 1
-			sheet2.isTemp = false
+			sheet2.deletedAt = Date()
 			
 			let sheet3 = CoreSheetTitleContent.createEntity()
 			sheet3.title = "Test kort 2"
@@ -521,7 +521,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			sheet3.time = Double.infinity
 			sheet3.hasCluster = kort
 			sheet3.position = 2
-			sheet3.isTemp = false
+			sheet3.deletedAt = Date()
 			
 			CoreInstrument.predicates.append("resourcePath", equals: "kort")
 			let instruments = CoreInstrument.getEntities()

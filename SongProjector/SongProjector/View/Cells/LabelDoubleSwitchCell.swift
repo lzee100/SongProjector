@@ -28,8 +28,8 @@ class LabelDoubleSwitchCell: ChurchBeamCell, DynamicHeightCell, TagImplementatio
 	
 	var id = ""
 	
-	var sheetTag: Tag?
-	var tagAttribute: TagAttribute?
+	var sheetTheme: VTheme?
+	var tagAttribute: ThemeAttribute?
 	var valueDidChange: ((ChurchBeamCell) -> Void)?
 	
 	var isActive = false { didSet { showSecondSwitch() } }
@@ -117,16 +117,16 @@ class LabelDoubleSwitchCell: ChurchBeamCell, DynamicHeightCell, TagImplementatio
 		
 	}
 	
-	func apply(tag: Tag, tagAttribute: TagAttribute) {
-		self.sheetTag = tag
-		self.tagAttribute = tagAttribute
-		self.descriptionSwitchOne.text = tagAttribute.description
-		self.descriptionSwitchTwo.text = Text.NewTag.descriptionPositionEmptySheet
+	func apply(theme: VTheme, themeAttribute: ThemeAttribute) {
+		self.sheetTheme = theme
+		self.tagAttribute = themeAttribute
+		self.descriptionSwitchOne.text = themeAttribute.description
+		self.descriptionSwitchTwo.text = Text.NewTheme.descriptionPositionEmptySheet
 		self.applyValueToCell()
 	}
 	
 	func applyValueToCell() {
-		if let tag = sheetTag, let tagAttribute = tagAttribute {
+		if let tag = sheetTheme, let tagAttribute = tagAttribute {
 			switch tagAttribute {
 			case .hasEmptySheet: switchOne.isOn = tag.hasEmptySheet
 			case .isEmptySheetFirst: switchTwo.isOn = tag.isEmptySheetFirst
@@ -137,7 +137,7 @@ class LabelDoubleSwitchCell: ChurchBeamCell, DynamicHeightCell, TagImplementatio
 	}
 	
 	func applyCellValueToTag() {
-		if let tag = sheetTag, let tagAttribute = tagAttribute {
+		if let tag = sheetTheme, let tagAttribute = tagAttribute {
 			switch tagAttribute {
 			case .hasEmptySheet: tag.hasEmptySheet = switchOne.isOn
 			case .isEmptySheetFirst: tag.isEmptySheetFirst = switchTwo.isOn

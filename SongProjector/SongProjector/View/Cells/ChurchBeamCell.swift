@@ -16,12 +16,12 @@ protocol DynamicHeightCell {
 
 protocol TagImplementation {
 	
-	var sheetTag: Tag? { get set }
-	var tagAttribute: TagAttribute? { get set }
+	var sheetTheme: VTheme? { get set }
+	var themeAttribute: ThemeAttribute? { get set }
 	var valueDidChange: ((ChurchBeamCell) -> Void)? { get set }
 	
 	func set(value: Any?)
-	func apply(tag: Tag, tagAttribute: TagAttribute)
+	func apply(theme: VTheme, themeAttribute: ThemeAttribute)
 	func applyValueToCell()
 	func applyCellValueToTag()
 	

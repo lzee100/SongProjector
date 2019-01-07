@@ -35,7 +35,7 @@ var themeMainColor: UIColor {
 	return UIColor(hex: "FF8324") ?? .primary
 }
 
-class Theme {
+class AppTheme {
 	
 	static func setup(){
 		

@@ -18,7 +18,7 @@ class SheetView: UIView {
 	open var isForExternalDispay: Bool = false
 	open var cluster: Cluster?
 	open var sheet: Sheet!
-	open var sheetTag: Tag?
+	open var sheetTheme: VTheme?
 	open var isPreview: Bool = false
 	
 	
@@ -32,7 +32,7 @@ class SheetView: UIView {
 		customInit()
 	}
 	
-	func set(frame: CGRect, cluster: Cluster? = nil, sheet: Sheet, tag: Tag?, scaleFactor: CGFloat? = 1, isPreview: Bool = false, position: Int = 0, toExternalDisplay: Bool = false) {
+	func set(frame: CGRect, cluster: Cluster? = nil, sheet: Sheet, theme: VTheme?, scaleFactor: CGFloat? = 1, isPreview: Bool = false, position: Int = 0, toExternalDisplay: Bool = false) {
 		
 		for view in subviews {
 			view.removeFromSuperview()
@@ -41,17 +41,17 @@ class SheetView: UIView {
 		view.frame = frame
 		view.cluster = cluster
 		view.sheet = sheet
-		view.sheetTag = tag
+		view.sheetTheme = theme
 		view.scaleFactor = scaleFactor
 		view.isPreview = isPreview
 		if toExternalDisplay, let externalDisplay = externalDisplayWindow {
-			sendToExternalDisplay(frame: externalDisplay.frame, sheet: sheet, tag: tag, scaleFactor: externalDisplay.frame.width / frame.width * (scaleFactor ?? 1))
+			sendToExternalDisplay(frame: externalDisplay.frame, sheet: sheet, theme: theme, scaleFactor: externalDisplay.frame.width / frame.width * (scaleFactor ?? 1))
 		}
 		view.update()
 		addSubview(view)
 	}
 	
-	static func createWith(frame: CGRect, cluster: Cluster? = nil, sheet: Sheet, tag: Tag?, scaleFactor: CGFloat? = 1, isPreview: Bool = false, position: Int = 0, toExternalDisplay: Bool = false) -> SheetView {
+	static func createWith(frame: CGRect, cluster: Cluster? = nil, sheet: Sheet, theme: VTheme?, scaleFactor: CGFloat? = 1, isPreview: Bool = false, position: Int = 0, toExternalDisplay: Bool = false) -> SheetView {
 		
 		let view: SheetView
 		
@@ -72,22 +72,22 @@ class SheetView: UIView {
 		
 		view.cluster = cluster
 		view.sheet = sheet
-		view.sheetTag = tag
+		view.sheetTheme = theme
 		view.scaleFactor = scaleFactor
 		view.isPreview = isPreview
 		
 		view.update()
 		
 		if toExternalDisplay, let externalDisplay = externalDisplayWindow {
-			view.sendToExternalDisplay(frame: externalDisplay.frame, sheet: sheet, tag: tag, scaleFactor: externalDisplay.frame.width / view.frame.width * (scaleFactor ?? 1))
+			view.sendToExternalDisplay(frame: externalDisplay.frame, sheet: sheet, theme: theme, scaleFactor: externalDisplay.frame.width / view.frame.width * (scaleFactor ?? 1))
 		}
 		return view
 	}
 	
-	private func sendToExternalDisplay(frame: CGRect, sheet: Sheet, tag: Tag?, scaleFactor: CGFloat? = 1, isPreview: Bool = false) {
+	private func sendToExternalDisplay(frame: CGRect, sheet: Sheet, theme: VTheme?, scaleFactor: CGFloat? = 1, isPreview: Bool = false) {
 		let view = getViewFor(sheet: sheet, frame: frame)
 		view.sheet = sheet
-		view.sheetTag = tag
+		view.sheetTheme = theme
 		view.isPreview = isPreview
 		view.scaleFactor = scaleFactor
 		

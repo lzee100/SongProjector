@@ -15,7 +15,7 @@ class SheetPickerMenuController: UITableViewController {
 	var didCreateSheet: ((Sheet) -> Void)?
 	var bibleStudyGeneratorIphoneDelegate: BibleStudyGeneratorIphoneDelegate?
 	var bibleStudyGeneratorDelegate: BibleStudyGeneratorDelegate?
-	var selectedTag: Tag?
+	var selectedTheme: VTheme?
 	
 	private enum SheetGroup: String {
 		case customSheets
@@ -70,13 +70,13 @@ class SheetPickerMenuController: UITableViewController {
 		if segue.identifier == "BibleStudyIphoneGeneratorSegue" {
 			let controller = segue.destination as! BibleStudyGeneratorIphoneController
 			controller.delegate = bibleStudyGeneratorIphoneDelegate
-			controller.selectedTag = selectedTag
+			controller.selectedTheme = selectedTheme
 		}
 		if segue.identifier == "BibleStudyGeneratorSegue" {
 			let nav = segue.destination as! UINavigationController
 			let controller = nav.topViewController as! BibleStudyGeneratorController
 			controller.delegate = bibleStudyGeneratorDelegate
-			controller.selectedTag = selectedTag
+			controller.selectedTheme = selectedTheme
 		}
 	}
 
@@ -154,27 +154,27 @@ class SheetPickerMenuController: UITableViewController {
 			switch SheetType.for(indexPath){
 			case .SheetTitleContent:
 				let sheet = CoreSheetTitleContent.createEntity()
-				sheet.isTemp = true
+				sheet.deletedAt = Date()
 				controller.sheet = sheet
 			case .SheetTitleImage:
 				let sheet = CoreSheetTitleImage.createEntity()
-				sheet.isTemp = true
+				sheet.deletedAt = Date()
 				controller.sheet = sheet
 			case .SheetPastors:
 				let sheet = CoreSheetPastors.createEntity()
-				sheet.isTemp = true
+				sheet.deletedAt = Date()
 				controller.sheet = sheet
 			case .SheetSplit:
 				let sheet = CoreSheetSplit.createEntity()
-				sheet.isTemp = true
+				sheet.deletedAt = Date()
 				controller.sheet = sheet
 			case .SheetEmpty:
 				let sheet = CoreSheetEmptySheet.createEntity()
-				sheet.isTemp = true
+				sheet.deletedAt = Date()
 				controller.sheet = sheet
 			case .SheetActivities:
 				let sheet = CoreSheetActivities.createEntity()
-				sheet.isTemp = true
+				sheet.deletedAt = Date()
 				controller.sheet = sheet
 			}
 			let nav = UINavigationController(rootViewController: controller)

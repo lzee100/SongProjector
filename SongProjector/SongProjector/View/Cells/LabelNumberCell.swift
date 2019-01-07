@@ -27,8 +27,8 @@ class LabelNumberCell: ChurchBeamCell, TagImplementation {
 	var minLimit = 0
 	var maxLimit = 0
 	
-	var sheetTag: Tag?
-	var tagAttribute: TagAttribute?
+	var sheetTheme: VTheme?
+	var themeAttribute: ThemeAttribute?
 	var valueDidChange: ((ChurchBeamCell) -> Void)?
 	
 	static let identifier = "LabelNumberCell"
@@ -68,12 +68,12 @@ class LabelNumberCell: ChurchBeamCell, TagImplementation {
 		delegate?.numberChangedForCell(cell: self)
 	}
 	
-	func apply(tag: Tag, tagAttribute: TagAttribute) {
-		self.sheetTag = tag
-		self.tagAttribute = tagAttribute
-		self.descriptionTitle.text = tagAttribute.description
+	func apply(theme: VTheme, themeAttribute: ThemeAttribute) {
+		self.sheetTheme = theme
+		self.themeAttribute = themeAttribute
+		self.descriptionTitle.text = themeAttribute.description
 		
-		switch tagAttribute {
+		switch themeAttribute {
 		case .titleTextSize, .lyricsTextSize:
 			setup(minLimit: 5, maxLimit: 60, positive: true)
 		case .titleBorderSize, .lyricsBorderSize:
@@ -85,7 +85,7 @@ class LabelNumberCell: ChurchBeamCell, TagImplementation {
 	}
 	
 	func applyValueToCell() {
-		if let tagAttribute = tagAttribute, let tag = sheetTag {
+		if let tagAttribute = themeAttribute, let tag = sheetTheme {
 			switch tagAttribute {
 			case .titleTextSize: value = Int(tag.titleTextSize)
 			case .titleBorderSize: value = Int(tag.titleBorderSize)
@@ -99,13 +99,13 @@ class LabelNumberCell: ChurchBeamCell, TagImplementation {
 	}
 	
 	func applyCellValueToTag() {
-		if let tagAttribute = tagAttribute, let tag = sheetTag {
-			switch tagAttribute {
-			case .titleTextSize: tag.titleTextSize = Float(value)
-			case .titleBorderSize: tag.titleBorderSize = Float(value)
-			case .lyricsTextSize: tag.lyricsTextSize = Float(value)
-			case .lyricsBorderSize: tag.lyricsBorderSize = Float(value)
-			case .backgroundTransparancy: tag.backgroundTransparency = Float(value)
+		if let themeAttribute = themeAttribute, let theme = sheetTheme {
+			switch themeAttribute {
+			case .titleTextSize: theme.titleTextSize = Float(value)
+			case .titleBorderSize: theme.titleBorderSize = Float(value)
+			case .lyricsTextSize: theme.lyricsTextSize = Float(value)
+			case .lyricsBorderSize: theme.lyricsBorderSize = Float(value)
+			case .backgroundTransparancy: theme.backgroundTransparency = Float(value)
 			default: return
 			}
 		}

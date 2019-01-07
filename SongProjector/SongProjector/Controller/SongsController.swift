@@ -24,8 +24,8 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 	// MARK: - Private Properties
 	
 	private var isDeleting = false
-	private var tags: [Tag] = []
-	private var selectedTags: [Tag] = []
+	private var themes: [VTheme] = []
+	private var selectedThemes: [VTheme] = []
 	private var clusters: [Cluster] = []
 	private var selectedCluster: Cluster?
 	private var filteredClusters: [Cluster] = []
@@ -123,24 +123,24 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-		return tags.count
+		return themes.count
 	}
 
 	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 		let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.tagCellCollection, for: indexPath)
 		
 		if let collectionCell = collectionCell as? TagCellCollection {
-			collectionCell.setup(tagName: tags[indexPath.row].title ?? "")
-			collectionCell.isSelectedCell = selectedTags.contains(tags[indexPath.row])
+			collectionCell.setup(tagName: themes[indexPath.row].title ?? "")
+			collectionCell.isSelectedCell = themes.contains(themes[indexPath.row])
 		}
 		return collectionCell
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-		if selectedTags.contains(tags[indexPath.row]), let index = selectedTags.index(of: tags[indexPath.row]) {
-			self.selectedTags.remove(at: index)
+		if themes.contains(themes[indexPath.row]), let index = themes.index(of: themes[indexPath.row]) {
+			self.themes.remove(at: index)
 		} else {
-			self.selectedTags.append(tags[indexPath.row])
+			self.themes.append(themes[indexPath.row])
 		}
 		update()
 	}
@@ -204,9 +204,9 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 	private func update() {
 		let newClusters = Array(Set(CoreCluster.getEntities()).subtracting(selectedClusters))
 		clusters = newClusters
-		CoreTag.predicates.append("isHidden", equals: 0)
-		CoreTag.setSortDescriptor(attributeName: "position", ascending: false)
-		tags = CoreTag.getEntities()
+		CoreTheme.predicates.append("isHidden", equals: 0)
+		CoreTheme.setSortDescriptor(attributeName: "position", ascending: false)
+		themes = VTheme.getEntities()
 		filterOnTags()
 		filteredClusters = clusters
 		tableView.reloadData()
@@ -214,12 +214,12 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 	}
 	
 	private func filterOnTags() {
-		if selectedTags.count == 0 {
+		if themes.count == 0 {
 			return
 		}
 		clusters = clusters.filter { (cluster) -> Bool in
-			if let tag = cluster.hasTag {
-				return selectedTags.contains(tag)
+			if let theme = cluster.hasTheme {
+				return themes.contains(theme)
 			} else {return false}
 		}
 	}

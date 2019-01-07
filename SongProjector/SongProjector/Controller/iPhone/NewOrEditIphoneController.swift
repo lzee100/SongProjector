@@ -75,7 +75,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		
 		static let all = [title, content, contentLeft, contentRight]
 		
-		static let tag = [title]
+		static let theme = [title]
 		static let sheetTitleContent = [title, content]
 		static let sheetSplit = [title, contentLeft, contentRight]
 		
@@ -90,11 +90,11 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 			}
 		}
 		
-		func set(tagAttribute: inout TagAttribute?, sheetAttribute: inout SheetAttribute?, identifier: inout String?, modificationMode: ModificationMode) {
+		func set(themeAttribute: inout ThemeAttribute?, sheetAttribute: inout SheetAttribute?, identifier: inout String?, modificationMode: ModificationMode) {
 			switch self {
 			case .title:
 				if modificationMode == .newTag || modificationMode == .editTag {
-					tagAttribute = TagAttribute.title
+					themeAttribute = ThemeAttribute.title
 				} else {
 					sheetAttribute = .SheetTitle
 				}
@@ -123,8 +123,8 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		
 		static let all = [asTag, hasEmptySheet, allHaveTitle, backgroundColor, backgroundImage, backgroundTransparancy, displayTime]
 		
-		static let tag = [asTag, hasEmptySheet, allHaveTitle, backgroundColor, backgroundImage, displayTime]
-		static let tagTransBackground = [asTag, hasEmptySheet, allHaveTitle, backgroundColor, backgroundImage, backgroundTransparancy, displayTime]
+		static let theme = [asTag, hasEmptySheet, allHaveTitle, backgroundColor, backgroundImage, displayTime]
+		static let themeTransBackground = [asTag, hasEmptySheet, allHaveTitle, backgroundColor, backgroundImage, backgroundTransparancy, displayTime]
 
 		static let sheetCells = [asTag, backgroundColor, backgroundImage]
 		static let sheetCellsTransBackground = [asTag, backgroundColor, backgroundImage, backgroundTransparancy]
@@ -133,13 +133,13 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		static func `for`(_ indexPath: IndexPath, type: SheetType, modificationMode: ModificationMode, hasImage: Bool) -> CellGeneral {
 
 				if modificationMode == .newTag || modificationMode == .editTag {
-					return hasImage ? tagTransBackground[indexPath.row] : tag[indexPath.row]
+					return hasImage ? themeTransBackground[indexPath.row] : theme[indexPath.row]
 				} else {
 					return hasImage ? sheetCellsTransBackground[indexPath.row] : sheetCells[indexPath.row]
 				}
 		}
 		
-		var cellIdentifier: (TagAttribute, String) {
+		var cellIdentifier: (ThemeAttribute, String) {
 			switch self {
 			case .asTag: return (.asTag ,LabelPickerCell.identifier)
 			case .hasEmptySheet: return (.hasEmptySheet, LabelDoubleSwitchCell.identifier)
@@ -190,37 +190,37 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 			}
 		}
 		
-		func set( tagAttribute: inout TagAttribute?, sheetAttribute: inout SheetAttribute?, identifier: inout String?) {
+		func set( themeAttribute: inout ThemeAttribute?, sheetAttribute: inout SheetAttribute?, identifier: inout String?) {
 			switch self {
 			case .fontFamily:
-				tagAttribute = .titleFontName
+				themeAttribute = .titleFontName
 				identifier = LabelPickerCell.identifier
 			case .fontSize:
-				tagAttribute = .titleTextSize
+				themeAttribute = .titleTextSize
 				identifier = LabelNumberCell.identifier
 			case .backgroundColor:
-				tagAttribute = .titleBackgroundColor
+				themeAttribute = .titleBackgroundColor
 				identifier = LabelColorPickerCell.identifier
 			case .alignment:
-				tagAttribute = .titleAlignment
+				themeAttribute = .titleAlignment
 				identifier = LabelPickerCell.identifier
 			case .borderSize:
-				tagAttribute = .titleBorderSize
+				themeAttribute = .titleBorderSize
 				identifier = LabelNumberCell.identifier
 			case .textColor:
-				tagAttribute = .titleTextColorHex
+				themeAttribute = .titleTextColorHex
 				identifier = LabelColorPickerCell.identifier
 			case .borderColor:
-				tagAttribute = .titleBorderColorHex
+				themeAttribute = .titleBorderColorHex
 				identifier = LabelColorPickerCell.identifier
 			case .bold:
-				tagAttribute = .isTitleBold
+				themeAttribute = .isTitleBold
 				identifier = LabelSwitchCell.identifier
 			case .italic:
-				tagAttribute = .isTitleItalian
+				themeAttribute = .isTitleItalian
 				identifier = LabelSwitchCell.identifier
 			case .underlined:
-				tagAttribute = .isTitleUnderlined
+				themeAttribute = .isTitleUnderlined
 				identifier = LabelSwitchCell.identifier
 			}
 		}
@@ -239,7 +239,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		
 		static let all = [fontFamily, fontSize, alignment, borderSize, textColor, borderColor, bold, italic, underlined]
 		
-		static let tagTitleContent = [fontFamily, fontSize, alignment, borderSize, textColor, borderColor, bold, italic, underlined]
+		static let themeTitleContent = [fontFamily, fontSize, alignment, borderSize, textColor, borderColor, bold, italic, underlined]
 		static let sheetTitleContent = [fontFamily, fontSize, alignment, borderSize, textColor, borderColor, bold, italic, underlined]
 		static let titleImage = [fontFamily, fontSize, alignment, borderSize, textColor, borderColor, bold, italic, underlined]
 		static let sheetSplit = [fontFamily, fontSize, alignment, borderSize, textColor, borderColor, bold, italic, underlined]
@@ -249,7 +249,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		static func `for`(_ indexPath: IndexPath, type: SheetType, modificationMode: ModificationMode) -> CellLyrics? {
 			switch  type{
 			case .SheetTitleContent:
-				return (modificationMode == .newCustomSheet || modificationMode == .editCustomSheet) ? sheetTitleContent[indexPath.row] : tagTitleContent[indexPath.row]
+				return (modificationMode == .newCustomSheet || modificationMode == .editCustomSheet) ? sheetTitleContent[indexPath.row] : themeTitleContent[indexPath.row]
 			case .SheetTitleImage, .SheetPastors:
 				return titleImage[indexPath.row]
 			case .SheetSplit:
@@ -261,34 +261,34 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 			}
 		}
 		
-		func set( tagAttribute: inout TagAttribute?, sheetAttribute: inout SheetAttribute?, identifier: inout String?) {
+		func set( themeAttribute: inout ThemeAttribute?, sheetAttribute: inout SheetAttribute?, identifier: inout String?) {
 			switch self {
 			case .fontFamily:
-				tagAttribute = .lyricsFontName
+				themeAttribute = .lyricsFontName
 				identifier = LabelPickerCell.identifier
 			case .fontSize:
-				tagAttribute = .lyricsTextSize
+				themeAttribute = .lyricsTextSize
 				identifier = LabelNumberCell.identifier
 			case .alignment:
-				tagAttribute = .lyricsAlignment
+				themeAttribute = .lyricsAlignment
 				identifier = LabelPickerCell.identifier
 			case .borderSize:
-				tagAttribute = .lyricsBorderSize
+				themeAttribute = .lyricsBorderSize
 				identifier = LabelNumberCell.identifier
 			case .textColor:
-				tagAttribute = .lyricsTextColorHex
+				themeAttribute = .lyricsTextColorHex
 				identifier = LabelColorPickerCell.identifier
 			case .borderColor:
-				tagAttribute = .lyricsBorderColor
+				themeAttribute = .lyricsBorderColor
 				identifier = LabelColorPickerCell.identifier
 			case .bold:
-				tagAttribute = .isLyricsBold
+				themeAttribute = .isLyricsBold
 				identifier = LabelSwitchCell.identifier
 			case .italic:
-				tagAttribute = .isLyricsItalian
+				themeAttribute = .isLyricsItalian
 				identifier = LabelSwitchCell.identifier
 			case .underlined:
-				tagAttribute = .isLyricsUnderlined
+				themeAttribute = .isLyricsUnderlined
 				identifier = LabelSwitchCell.identifier
 			}
 		}
@@ -339,23 +339,23 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 	private var  cellImageContentMode = LabelPickerCell()
 	
 	var modificationMode: ModificationMode = .newTag
-	var tag: Tag! {
+	var theme: VTheme! {
 		didSet {
-			tagTemp = tag.getTemp()
+			themeTemp = theme.copy() as! VTheme
 			if sheetTemp != nil {
-				sheetTemp.hasTag = tagTemp
+				sheetTemp.hasTag = themeTemp
 			}
 		}
 	}
-	var tagTemp: Tag!
+	var themeTemp: VTheme!
 	var sheet: Sheet! {
 		didSet {
 			sheetTemp = sheet.getTemp
-			if tagTemp != nil {
-				sheetTemp.hasTag = tagTemp
+			if themeTemp != nil {
+				sheetTemp.hasTag = themeTemp
 			}
 			if sheet.hasTag?.isHidden == true {
-				tag = sheet.hasTag
+				theme = sheet.hasTag
 			}
 		}
 	}
@@ -404,15 +404,15 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		case .input:
 			let isTag = modificationMode == .newTag || modificationMode == .editTag
 			switch sheetTemp.type {
-			case .SheetTitleContent, .SheetTitleImage, .SheetPastors: return isTag ? CellInput.tag.count : CellInput.sheetTitleContent.count
+			case .SheetTitleContent, .SheetTitleImage, .SheetPastors: return isTag ? CellInput.theme.count : CellInput.sheetTitleContent.count
 			case .SheetSplit: return CellInput.sheetSplit.count
 			default: return 0
 			}
 		case .general:
 			if modificationMode == .newTag || modificationMode == .editTag {
-				return tagTemp.backgroundImage != nil ? CellGeneral.tagTransBackground.count : CellGeneral.tag.count
+				return themeTemp.backgroundImage != nil ? CellGeneral.themeTransBackground.count : CellGeneral.theme.count
 			} else {
-				return tagTemp.backgroundImage != nil ? CellGeneral.sheetCellsTransBackground.count : CellGeneral.sheetCells.count
+				return themeTemp.backgroundImage != nil ? CellGeneral.sheetCellsTransBackground.count : CellGeneral.sheetCells.count
 			}
 		case .title:
 			switch sheetTemp.type {
@@ -426,7 +426,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		case .content:
 			let isSheet = (modificationMode == .newCustomSheet || modificationMode == .editCustomSheet)
 			switch sheetTemp.type {
-			case .SheetTitleContent: return isSheet ? CellLyrics.sheetTitleContent.count : CellLyrics.tagTitleContent.count
+			case .SheetTitleContent: return isSheet ? CellLyrics.sheetTitleContent.count : CellLyrics.themeTitleContent.count
 			case .SheetTitleImage, .SheetPastors: return CellLyrics.titleImage.count
 			case .SheetSplit: return CellLyrics.sheetSplit.count
 			case .SheetEmpty: return CellLyrics.sheetEmpty.count
@@ -444,23 +444,23 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 	
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		var cell: UITableViewCell? = nil
-		var tagAttribute: TagAttribute? = nil
+		var themeAttribute: ThemeAttribute? = nil
 		var sheetAttribute: SheetAttribute? = nil
 		var identifier: String? = nil
 		
 		switch Section.for(indexPath.section, type: sheetTemp.type) {
 		
 		case .input:
-			CellInput.for(indexPath: indexPath, sheetType: sheetTemp.type, modificationMode: modificationMode)!.set(tagAttribute: &tagAttribute, sheetAttribute: &sheetAttribute, identifier: &identifier, modificationMode: modificationMode)
+			CellInput.for(indexPath: indexPath, sheetType: sheetTemp.type, modificationMode: modificationMode)!.set(themeAttribute: &themeAttribute, sheetAttribute: &sheetAttribute, identifier: &identifier, modificationMode: modificationMode)
 		case .general:
-			let hasImage = tagTemp.backgroundImage != nil
-			tagAttribute = CellGeneral.for(indexPath, type: sheetTemp.type, modificationMode: modificationMode, hasImage: hasImage).cellIdentifier.0
+			let hasImage = themeTemp.backgroundImage != nil
+			themeAttribute = CellGeneral.for(indexPath, type: sheetTemp.type, modificationMode: modificationMode, hasImage: hasImage).cellIdentifier.0
 			identifier = CellGeneral.for(indexPath, type: sheetTemp.type, modificationMode: modificationMode, hasImage: hasImage).cellIdentifier.1
 		case .title:
-			CellTitle.for(indexPath, type: sheetTemp.type, modificationMode: modificationMode)?.set(tagAttribute: &tagAttribute, sheetAttribute: &sheetAttribute, identifier: &identifier)
+			CellTitle.for(indexPath, type: sheetTemp.type, modificationMode: modificationMode)?.set(themeAttribute: &themeAttribute, sheetAttribute: &sheetAttribute, identifier: &identifier)
 			
 		case .content:
-			CellLyrics.for(indexPath, type: sheetTemp.type, modificationMode: modificationMode)?.set(tagAttribute: &tagAttribute, sheetAttribute: &sheetAttribute, identifier: &identifier)
+			CellLyrics.for(indexPath, type: sheetTemp.type, modificationMode: modificationMode)?.set(themeAttribute: &themeAttribute, sheetAttribute: &sheetAttribute, identifier: &identifier)
 			
 		case .image:
 			var imageHasBorder = false
@@ -482,11 +482,11 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 				cell.sender = self
 			}
 			
-			if let tagAttribute = tagAttribute, var cell = cell as? TagImplementation {
+			if let themeAttribute = themeAttribute, var cell = cell as? TagImplementation {
 				if let cell = cell as? LabelTextFieldCell {
 					cell.getModificationMode = getModificationMode
 				}
-				cell.apply(tag: tagTemp, tagAttribute: tagAttribute)
+				cell.apply(theme: themeTemp, themeAttribute: themeAttribute)
 				cell.valueDidChange = valueDidChange(cell:)
 			}
 			
@@ -527,13 +527,13 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		let view = HeaderView(frame: frame)
 		switch Section.for(section, type: sheetTemp.type) {
 		case .input:
-			view.descriptionLabel.text = Text.NewTag.sectionInput.uppercased()
+			view.descriptionLabel.text = Text.NewTheme.sectionInput.uppercased()
 		case .general:
-			view.descriptionLabel.text = Text.NewTag.sectionGeneral.uppercased()
+			view.descriptionLabel.text = Text.NewTheme.sectionGeneral.uppercased()
 		case .title:
-			view.descriptionLabel.text = Text.NewTag.sectionTitle.uppercased()
+			view.descriptionLabel.text = Text.NewTheme.sectionTitle.uppercased()
 		case .content:
-			view.descriptionLabel.text = Text.NewTag.sectionLyrics.uppercased()
+			view.descriptionLabel.text = Text.NewTheme.sectionLyrics.uppercased()
 		case .image:
 			view.descriptionLabel.text = Text.NewSheetTitleImage.title.uppercased()
 		}
@@ -571,9 +571,9 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 	
 	func valueDidChange(cell: UITableViewCell) {
 		var needsReload = false
-		if let cell = cell as? TagImplementation, let tagAttribute = cell.tagAttribute {
+		if let cell = cell as? TagImplementation, let themeAttribute = cell.themeAttribute {
 			
-			switch tagAttribute {
+			switch themeAttribute {
 			case .backgroundTransparancy: updateTransparency()
 		case .title, .titleBorderSize, .titleFontName, .titleTextSize, .titleAlignment, .titleTextColorHex, .titleBorderColorHex, .isTitleBold, .isTitleItalian, .isTitleUnderlined: updateSheetTitle()
 			case .lyricsFontName, .lyricsTextSize, .lyricsTextColorHex, .lyricsAlignment, .lyricsBorderColor, .lyricsBorderSize, .isLyricsBold, .isLyricsItalian, .isLyricsUnderlined: updateSheetContent()
@@ -581,11 +581,10 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 				updateBackgroundImage()
 				needsReload = true
 			case .backgroundColor, .titleBackgroundColor: updateBackgroundColor()
-			case .asTag:
+			case .asTheme:
 				let cell = cell as! LabelPickerCell
-				CoreTag.predicates.append("id", equals: cell.pickerValues[cell.selectedIndex].0)
-				let tag = CoreTag.getEntities().first
-				updateAsTag(tag)
+				let asTheme = VTheme.getTheme(id: cell.pickerValues[cell.selectedIndex].0)
+				updateAsTheme(asTheme)
 			default: break
 			}
 		}
@@ -638,73 +637,73 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 			
 		case .newTag:
 			let sheet = CoreSheetTitleContent.createEntity()
-			sheet.isTemp = true // remove at restart app if user quit app
-			sheet.title = Text.NewTag.sampleTitle
-			sheet.lyrics = Text.NewTag.sampleLyrics
+			sheet.deletedAt = Date() // remove at restart app if user quit app
+			sheet.title = Text.NewTheme.sampleTitle
+			sheet.lyrics = Text.NewTheme.sampleLyrics
 			self.sheet = sheet
-			let tag = CoreTag.createEntity()
-			tag.title = Text.NewTag.sampleTitle
-			tag.isHidden = false
-			tag.isTemp = true
-			tag.titleTextSize = 14
-			tag.textColorTitle = .black
-			tag.lyricsTextSize = 10
-			tag.textColorLyrics = .black
-			tag.titleFontName = "Avenir"
-			tag.lyricsFontName = "Avenir"
-			tag.backgroundTransparency = 100
-			tag.titleAlignmentNumber = 0
-			tag.lyricsAlignmentNumber = 0
-			tag.backgroundColor = UIColor.white.hexCode
-			self.tag = tag
+			let theme = VTheme()
+			theme.title = Text.NewTheme.sampleTitle
+			theme.isHidden = false
+			theme.isTemp = true
+			theme.titleTextSize = 14
+			theme.textColorTitle = .black
+			theme.lyricsTextSize = 10
+			theme.textColorLyrics = .black
+			theme.titleFontName = "Avenir"
+			theme.lyricsFontName = "Avenir"
+			theme.backgroundTransparency = 100
+			theme.titleAlignment = 0
+			theme.lyricsAlignment = 0
+			theme.backgroundColor = UIColor.white.hexCode
+			self.theme = theme
 			
 		case .editTag:
 			let sheet = CoreSheetTitleContent.createEntity()
-			sheet.isTemp = true // remove at restart app if user quit app
-			sheet.title = Text.NewTag.sampleTitle
-			sheet.lyrics = Text.NewTag.sampleLyrics
+			sheet.deletedAt = Date() // remove at restart app if user quit app
+			sheet.title = Text.NewTheme.sampleTitle
+			sheet.lyrics = Text.NewTheme.sampleLyrics
 			self.sheet = sheet
 			
 		case .newCustomSheet:
-			let tag = CoreTag.createEntity()
-			tag.title = "tag"
-			tag.isHidden = true
-			tag.isTemp = true
-			tag.titleTextSize = 14
-			tag.textColorTitle = .black
-			tag.lyricsTextSize = 10
-			tag.textColorLyrics = .black
-			tag.backgroundTransparency = 100
-			tag.allHaveTitle = true
-			tag.hasEmptySheet = false
-			tag.titleAlignmentNumber = 0
-			tag.lyricsAlignmentNumber = 0
-			tag.backgroundColor = UIColor.white.hexCode
-			sheetTemp.title = Text.NewTag.sampleTitle
+			let theme = VTheme()
+			theme.title = "theme"
+			theme.isHidden = true
+			theme.deletedAt = Date()
+			theme.titleTextSize = 14
+			theme.textColorTitle = .black
+			theme.lyricsTextSize = 10
+			theme.textColorLyrics = .black
+			theme.backgroundTransparency = 100
+			theme.allHaveTitle = true
+			theme.hasEmptySheet = false
+			theme.titleAlignment = 0
+			theme.lyricsAlignment = 0
+			theme.backgroundColor = UIColor.white.hexCode
+			sheetTemp.title = Text.NewTheme.sampleTitle
 			if let sheet = sheetTemp as? SheetTitleContentEntity {
-				sheet.lyrics = Text.NewTag.sampleLyrics
+				sheet.lyrics = Text.NewTheme.sampleLyrics
 			}
 			if let sheet = sheetTemp as? SheetTitleImageEntity {
-				sheet.content = Text.NewTag.sampleLyrics
+				sheet.content = Text.NewTheme.sampleLyrics
 			}
 			if let sheet = sheetTemp as? SheetSplitEntity {
-				sheet.textLeft = Text.NewTag.sampleLyrics
-				sheet.textRight = Text.NewTag.sampleLyrics
+				sheet.textLeft = Text.NewTheme.sampleLyrics
+				sheet.textRight = Text.NewTheme.sampleLyrics
 			}
 			if let sheet = sheet as? SheetPastorsEntity, let sheetTemp = sheetTemp as? SheetPastorsEntity {
-				tag.textColorTitle = .black
-				tag.textColorLyrics = .black
-				tag.isTitleItalian = true
-				tag.isLyricsItalian = true
-				tag.titleAlignmentNumber = 1
-				tag.lyricsAlignmentNumber = 1
+				theme.textColorTitle = .black
+				theme.textColorLyrics = .black
+				theme.isTitleItalian = true
+				theme.isLyricsItalian = true
+				theme.titleAlignment = 1
+				theme.lyricsAlignment = 1
 				
 				sheet.title = Text.newPastorsSheet.title
 				sheet.content = Text.newPastorsSheet.content
 				sheetTemp.title = sheet.title
 				sheetTemp.content = sheet.content
 			}
-			self.tag = tag
+			self.theme = theme
 			
 		case .editCustomSheet:
 			break
@@ -751,7 +750,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 				subview.removeFromSuperview()
 			}
 			
-			previewView.addSubview(SheetView.createWith(frame: previewView.bounds, cluster: nil, sheet: sheetTemp, tag: tagTemp, toExternalDisplay: true))
+			previewView.addSubview(SheetView.createWith(frame: previewView.bounds, cluster: nil, sheet: sheetTemp, tag: themeTemp, toExternalDisplay: true))
 			
 		}
 	}
@@ -827,17 +826,25 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 	
 	private func updateTime() {
 		if let view = previewView.subviews.first, let sheet = view as? SheetView {
-			sheet.updateTime(isOn: tagTemp.displayTime)
+			sheet.updateTime(isOn: themeTemp.displayTime)
 		}
 		if let view = externalDisplayWindow?.subviews.first as? SheetView {
-			view.updateTime(isOn: tagTemp.displayTime)
+			view.updateTime(isOn: themeTemp.displayTime)
 		}
 	}
 	
-	private func updateAsTag(_ tag: Tag?) {
-		let tagTitle = tagTemp.title
-		tag?.mergeSelfInto(tag: tagTemp, isTemp: true, sheetType: sheetTemp.type)
-		tagTemp.title = tagTitle
+	private func updateAsTheme(_ theme: VTheme?) {
+		let themeTitle = themeTemp.title
+		let asTheme = theme?.copy() as! VTheme
+		asTheme.deletedAt = Date()
+		asTheme.id = 0
+		if sheetTemp.type == .SheetPastors {
+			asTheme.titleBackgroundColor = "000000"
+			asTheme.titleAlignment = 1
+			asTheme.lyricsAlignment = 1
+		}
+
+		themeTemp.title = themeTitle
 		tableView.reloadData()
 		buildPreview(isSetup: false)
 	}
@@ -881,8 +888,6 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 	}
 	
 	@IBAction func cancelPressed(_ sender: UIBarButtonItem) {
-		
-		tagTemp.delete()
 		sheetTemp.delete()
 		shutDownExternalDisplay()
 		
@@ -893,13 +898,13 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		
 		var showError = false
 		switch modificationMode {
-		case .newTag, .editTag: showError = (tagTemp.title == "" || tagTemp.title == nil)
+		case .newTag, .editTag: showError = (themeTemp.title == "" || themeTemp.title == nil)
 		case .newCustomSheet, .editCustomSheet: showError = (sheetTemp.title == "" || sheetTemp.title == nil)
 		}
 		
 		if showError {
-			let message = UIAlertController(title: Text.NewTag.errorTitle, message:
-				Text.NewTag.errorMessage, preferredStyle: UIAlertControllerStyle.alert)
+			let message = UIAlertController(title: Text.NewTheme.errorTitle, message:
+				Text.NewTheme.errorMessage, preferredStyle: UIAlertControllerStyle.alert)
 			message.addAction(UIAlertAction(title: Text.Actions.close, style: UIAlertActionStyle.default,handler: nil))
 			
 			self.present(message, animated: true, completion: nil)
@@ -909,13 +914,13 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 			switch modificationMode {
 			case .newTag, .editTag:
 				sheetTemp.delete()
-				tagTemp.mergeSelfInto(tag: tag, sheetType: sheetTemp.type)
+				themeTemp.mergeSelfInto(tag: tag, sheetType: sheetTemp.type)
 				if tag.isBackgroundImageDeleted {
 					tag.backgroundImage = nil
 					tag.isBackgroundImageDeleted = false
 				}
 			case .newCustomSheet, .editCustomSheet:
-				tagTemp.mergeSelfInto(tag: tag, isTemp: true, sheetType: sheetTemp.type)
+				themeTemp.mergeSelfInto(theme: theme, isTemp: true, sheetType: sheetTemp.type)
 				sheetTemp.mergeSelfInto(sheet: sheet, isTemp: true)
 				sheet.hasTag = tag
 			}

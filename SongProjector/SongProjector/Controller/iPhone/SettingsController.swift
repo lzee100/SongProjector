@@ -43,9 +43,9 @@ class SettingsController: UITableViewController, GoogleCellDelegate {
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		switch Section.for(indexPath.row) {
 		case .songService:
-			
 		case .googleAgenda:
 			return googleCell
+		default: return UITableViewCell()
 		}
 	}
 	
@@ -54,6 +54,7 @@ class SettingsController: UITableViewController, GoogleCellDelegate {
 		case .googleAgenda:
 			return googleCell.preferredHeight
 		}
+		return CGFloat.leastNormalMagnitude
 	}
 	
 	

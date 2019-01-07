@@ -69,7 +69,7 @@ class SheetSplit: SheetView {
 	
 	override func updateTitle() {
 		if let songTitle = self.sheet.title {
-			if let tag = sheetTag {
+			if let theme = sheetTheme {
 				
 				if let zeroHeightConstraint = zeroHeightConstraint {
 					descriptionTitle.removeConstraint(zeroHeightConstraint)
@@ -83,7 +83,7 @@ class SheetSplit: SheetView {
 				titleBottomConstraint.isActive = true
 				
 				//					}
-				descriptionTitle.attributedText = NSAttributedString(string: songTitle, attributes: tag.getTitleAttributes(scaleFactor ?? 1))
+				descriptionTitle.attributedText = NSAttributedString(string: songTitle, attributes: theme.getTitleAttributes(scaleFactor ?? 1))
 			} else {
 				descriptionTitle.text = songTitle
 			}
@@ -98,7 +98,7 @@ class SheetSplit: SheetView {
 	override func updateContent() {
 		let sheet = self.sheet as! SheetSplitEntity
 		if let content = sheet.textLeft {
-			if let tag = sheetTag {
+			if let tag = sheetTheme {
 				textViewLeft.attributedText = NSAttributedString(string: content, attributes: tag.getLyricsAttributes(scaleFactor ?? 1))
 			} else {
 				textViewLeft.text = content
@@ -107,7 +107,7 @@ class SheetSplit: SheetView {
 			textViewLeft.text = nil
 		}
 		if let content = sheet.textRight {
-			if let tag = sheetTag {
+			if let tag = sheetTheme {
 				textViewRight.attributedText = NSAttributedString(string: content, attributes: tag.getLyricsAttributes(scaleFactor ?? 1))
 			} else {
 				textViewRight.text = content
@@ -118,17 +118,17 @@ class SheetSplit: SheetView {
 	}
 	
 	override func updateOpacity() {
-		if let alpha = sheetTag?.backgroundTransparency {
+		if let alpha = sheetTheme?.backgroundTransparency {
 			sheetBackgroundView.alpha = CGFloat(alpha)
 		}
 	}
 	
 	override func updateBackgroundColor() {
-		if let titleBackgroundColor = sheetTag?.backgroundColorTitle, let title = sheetTag?.title, title != "" {
-			if let allHaveTitle = sheetTag?.allHaveTitle, allHaveTitle == false && position < 1 {
+		if let titleBackgroundColor = sheetTheme?.backgroundColorTitle, let title = sheetTheme?.title, title != "" {
+			if let allHaveTitle = sheetTheme?.allHaveTitle, allHaveTitle == false && position < 1 {
 				titleBackgroundView.isHidden = false
 				titleBackgroundView.backgroundColor = titleBackgroundColor
-			} else if  let allHaveTitle = sheetTag?.allHaveTitle, allHaveTitle == true {
+			} else if  let allHaveTitle = sheetTheme?.allHaveTitle, allHaveTitle == true {
 				titleBackgroundView.isHidden = false
 				titleBackgroundView.backgroundColor = titleBackgroundColor
 			} else {
@@ -138,7 +138,7 @@ class SheetSplit: SheetView {
 			titleBackgroundView.isHidden = true
 		}
 		
-		if let backgroundColor = sheetTag?.sheetBackgroundColor {
+		if let backgroundColor = sheetTheme?.sheetBackgroundColor {
 			self.sheetBackgroundView.backgroundColor = backgroundColor
 		} else {
 			self.sheetBackgroundView.backgroundColor = .white
@@ -146,12 +146,12 @@ class SheetSplit: SheetView {
 	}
 	
 	override func updateBackgroundImage() {
-		let image = isForExternalDispay ? sheetTag?.backgroundImage : sheetTag?.thumbnail
-		if let backgroundImage = image, !(sheetTag?.isBackgroundImageDeleted ?? true) {
+		let image = isForExternalDispay ? sheetTheme?.backgroundImage : sheetTheme?.thumbnail
+		if let backgroundImage = image, !(sheetTheme?.isBackgroundImageDeleted ?? true) {
 			sheetBackgroundImageView.isHidden = false
 			sheetBackgroundImageView.contentMode = .scaleAspectFill
 			sheetBackgroundImageView.image = backgroundImage
-			if let backgroundTransparency = sheetTag?.backgroundTransparency {
+			if let backgroundTransparency = sheetTheme?.backgroundTransparency {
 				sheetBackgroundImageView.alpha = CGFloat(backgroundTransparency)
 			}
 		} else {
@@ -167,7 +167,7 @@ class SheetSplit: SheetView {
 			return
 		}
 		
-		if let tag = sheetTag, let scaleFactor = scaleFactor { // is custom sheet
+		if let tag = sheetTheme, let scaleFactor = scaleFactor { // is custom sheet
 			
 			timeLabel.attributedText = NSAttributedString(string: test, attributes: tag.getTitleAttributes(scaleFactor))
 			

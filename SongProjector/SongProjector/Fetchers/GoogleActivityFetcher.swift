@@ -20,7 +20,7 @@ protocol GoogleFetcherLoginDelegate {
 	func presentLoginViewController(vc: UIViewController)
 }
 
-class GoogleActivityFetch: NSObject, Fetcher, GIDSignInDelegate, GIDSignInUIDelegate {
+class GoogleActivityFetch: NSObject, GIDSignInDelegate, GIDSignInUIDelegate {
 
 	var loginDelegate: GoogleFetcherLoginDelegate?
 

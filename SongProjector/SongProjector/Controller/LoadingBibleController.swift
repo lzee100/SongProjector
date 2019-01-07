@@ -88,7 +88,6 @@ class LoadingBibleController: UIViewController {
 		while let bookRange = text.range(of: "xxx"), !isCancelled {
 			
 			let book = CoreBook.createEntity()
-			book.isTemp = false
 			book.name = BibleIndex.getBookFor(index: bookNumber)
 			book.title = book.name
 			
@@ -104,7 +103,6 @@ class LoadingBibleController: UIViewController {
 				
 				// prepare chapter
 				let chapter = CoreChapter.createEntity()
-				chapter.isTemp = false
 				chapter.number = chapterNumber
 				chapter.title = String(chapterNumber)
 				
@@ -123,7 +121,6 @@ class LoadingBibleController: UIViewController {
 					let rangeRemove = start..<range.upperBound
 					
 					let vers = CoreVers.createEntity()
-					vers.isTemp = false
 					vers.number = versNumber
 					vers.title = String(versNumber)
 					vers.text = String(chapterText[rangeVers]).trimmingCharacters(in: .whitespacesAndNewlines)
@@ -148,7 +145,6 @@ class LoadingBibleController: UIViewController {
 				}
 				
 				let vers = CoreVers.createEntity()
-				vers.isTemp = false
 				vers.number = versNumber
 				vers.title = String(versNumber)
 				vers.text = chapterText.trimmingCharacters(in: .whitespacesAndNewlines)

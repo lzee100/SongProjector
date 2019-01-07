@@ -47,37 +47,43 @@ class BaseRS: NSObject {
 //		} else{
 //			return OAuthStore.authorizationHeader()
 //		}
-		request.authorization = "Basic unknown"
+		request.authorization = AccountStore.accountID
 	}
 	
-	func request<E: Mappable>(_ method: RequestMethod, url: String, parameters: [String: Any]?, range: CountableRange<Int>? = nil, success: @escaping (_ response: HTTPURLResponse?) -> Void, failure: @escaping (_ error: NSError?, _ response: HTTPURLResponse?, _ object: E?) -> Void, context:AuthContext? = nil, queue: DispatchQueue) {
-		
-		self.dispatchRequest(method, url: url, inputBody: nil, parameters: parameters, range: range, success: {   (response, data) -> Void in
-			
-			success(response)
-			
-		}, failure: {   (error, response, data) -> Void in
-			
-			failure(error, response, ObjectMapping.mapSingle(data: data))
-			
-		}, context:context, queue: queue)
-	}
+//	func request<E: Decodable>(_ method: RequestMethod, url: String, parameters: [String: Any]?, range: CountableRange<Int>? = nil, success: @escaping (_ response: HTTPURLResponse?) -> Void, failure: @escaping (_ error: NSError?, _ response: HTTPURLResponse?, _ object: E?) -> Void, queue: DispatchQueue) {
+//
+//		self.dispatchRequest(method, url: url, inputBody: nil, parameters: parameters, range: range, success: {   (response, data) -> Void in
+//
+//			success(response)
+//
+//		}, failure: {   (error, response, data) -> Void in
+//
+//			let object: E? = self.decode(data: data)
+//
+//			failure(error, response, object)
+//
+//		}, queue: queue)
+//	}
 	
 	
-	func request<O: Decodable, E: Decodable>(_ method: RequestMethod, url: String, parameters: [String: Any]?, range: CountableRange<Int>? = nil, success: @escaping (_ response: HTTPURLResponse?, _ result: O?) -> Void, failure: @escaping (_ error: NSError?, _ response: HTTPURLResponse?, _ object: E?) -> Void, context:AuthContext? = nil, queue: DispatchQueue) {
+	func requestGet<O: Decodable, E: Decodable>(_ method: RequestMethod, url: String, parameters: [String: Any]?, range: CountableRange<Int>? = nil, success: @escaping (_ response: HTTPURLResponse?, _ result: [O]?) -> Void, failure: @escaping (_ error: NSError?, _ response: HTTPURLResponse?, _ object: E?) -> Void, queue: DispatchQueue) {
 		
 		self.dispatchRequest(method, url: url, inputBody: nil, parameters: parameters, range: range, success: {  (response, data) -> Void in
 			
-			success(response, ObjectMapping.mapSingle(data: data))
+			let result : [O]? = self.decode(data: data)
+			
+			success(response, result)
 			
 		}, failure: {  (error, response, data) -> Void in
 			
-			failure(error, response, ObjectMapping.mapSingle(data: data))
+			let object : E? = self.decode(data: data)
 			
-		}, context:context, queue: queue)
+			failure(error, response, object)
+			
+		}, queue: queue)
 	}
 	
-	func request<I: Encodable, O: Decodable, E: Decodable>(_ method: RequestMethod, url: String, object: I?, parameters: [String: Any]?, range: CountableRange<Int>? = nil, success: @escaping (_ response: HTTPURLResponse?, _ result: O?) -> Void, failure: @escaping (_ error: NSError?, _ response: HTTPURLResponse?, _ object: E?) -> Void, queue: DispatchQueue) {
+	func requestSend<I: Encodable, O: Decodable, E: Decodable>(_ method: RequestMethod, url: String, object: I?, parameters: [String: Any]?, range: CountableRange<Int>? = nil, success: @escaping (_ response: HTTPURLResponse?, _ result: O?) -> Void, failure: @escaping (_ error: NSError?, _ response: HTTPURLResponse?, _ object: E?) -> Void, queue: DispatchQueue) {
 		
 		var inputBody: Data? = nil
 		if let object = object {
@@ -92,17 +98,24 @@ class BaseRS: NSObject {
 			
 			let result : O?
 			if let data = data {
-				result = JSONDecoder().decode(<#T##type: Decodable.Protocol##Decodable.Protocol#>, from: data)
+				do {
+					result = try JSONDecoder().decode(O.self, from: data)
+				} catch (let error){
+					print("Error \(error)")
+				}
 			}
 			success(response, result)
 			
 			
 		}, failure: {   (error, response, data) -> Void in
 			
-			let object: E? = ObjectMapping.mapSingle(data: data)
-			
-			if let object = object, let json = object.toJSONString(prettyPrint: true) {
-				BaseRestService.logger.error(json)
+			let object : E?
+			if let data = data {
+				do {
+					object = try JSONDecoder().decode(E.self, from: data)
+				} catch (let error){
+					print("Error \(error)")
+				}
 			}
 			
 			failure(error, response, object)
@@ -129,9 +142,7 @@ class BaseRS: NSObject {
 		if let url = URL.fromString(url, parameters: parameters) {
 			
 			let operation = RequestOperation(method: method, url: url, batched: false, body: inputBody)
-			let currentContext = AccountStore.currentContextId
-			let authContext = AccountStore.currentAuthentication //context ?? currentContext?.authContext
-			let headers = createHeaderParameters(using: authContext)
+			let headers = createHeaderParameters()
 			
 			operation.accept = contentType
 			operation.contentType = contentType
@@ -140,55 +151,61 @@ class BaseRS: NSObject {
 			operation.batched = false
 			operation.userAgent = UserDefaults.standard.string(forKey: "UserAgent")
 			
-			if let authContext = authContext{
-				addAuthorisation(operation, using:authContext)
-			}
+			addAuthorisation(operation)
 			
 			let finishOperation = BlockOperation {
 				
 				queue.async {
-					
-					if AccountStore.currentContextId == currentContext{
-						if operation.isSuccess, let response = operation.responses.first {
-							
-							success(response, operation.output?.first)
-						} else {
-							
-							failure(operation.error as NSError?, operation.responses.first, operation.output?.first)
-						}
+					if operation.isSuccess, let response = operation.responses.first {
+						
+						success(response, operation.output?.first)
+					} else {
+						
+						failure(operation.error as NSError?, operation.responses.first, operation.output?.first)
 					}
 				}
 			}
 			
-			let operations : [Foundation.Operation] = [OAuthRefreshOperation(), operation, finishOperation]
+			let operations : [Foundation.Operation] = [operation, finishOperation]
 			Operation.dependenciesInOrder(operations)
 			Operation.Queue.addOperations(operations, waitUntilFinished: false)
 			
 		} else {
-			
-			Log.error("Failed create base URL for call: %@", url)
+			print("Failed create base URL for call: \n\( url)")
 			failure(nil, nil, nil)
 		}
 	}
 	
-	fileprivate func recordError(_ error: NSError?, request: URLRequest?, response: HTTPURLResponse?, data: Data?) {
-		
-		var dict: [String: Any] = [:]
-		
-		if let data = data, let dataString = NSString(data: data, encoding: String.Encoding.utf8.rawValue) {
-			dict["data"] = dataString
+//	fileprivate func recordError(_ error: NSError?, request: URLRequest?, response: HTTPURLResponse?, data: Data?) {
+//
+//		var dict: [String: Any] = [:]
+//
+//		if let data = data, let dataString = NSString(data: data, encoding: String.Encoding.utf8.rawValue) {
+//			dict["data"] = dataString
+//		}
+//		if let code = response?.statusCode {
+//			dict["statuscode"] = "\(code)" as AnyObject?
+//		}
+//		if let url = request?.url?.absoluteString {
+//			dict["url"] = url
+//		}
+//		if let error = error {
+//			dict["error"] = error
+//		}
+//
+//		Metrics.Error.fireError(NSError(domain: "REST Call Error", code: response?.statusCode ?? 0, userInfo: dict))
+//	}
+	
+	func decode<O: Decodable>(data: Data?) -> O? {
+		let result : O?
+		if let data = data {
+			do {
+				result = try JSONDecoder().decode(O.self, from: data)
+			} catch (let error){
+				print("Error \(error)")
+			}
 		}
-		if let code = response?.statusCode {
-			dict["statuscode"] = "\(code)" as AnyObject?
-		}
-		if let url = request?.url?.absoluteString {
-			dict["url"] = url
-		}
-		if let error = error {
-			dict["error"] = error
-		}
-		
-		Metrics.Error.fireError(NSError(domain: "REST Call Error", code: response?.statusCode ?? 0, userInfo: dict))
+		return result
 	}
 }
 

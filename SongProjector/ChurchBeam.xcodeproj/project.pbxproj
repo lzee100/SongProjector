@@ -93,6 +93,27 @@
 		E37938EC21271EC90091698D /* PickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37938EA21271EC90091698D /* PickerCell.swift */; };
 		E37938ED21271EC90091698D /* PickerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E37938EB21271EC90091698D /* PickerCell.xib */; };
 		E37938EF212723630091698D /* TableViewCellExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37938EE212723630091698D /* TableViewCellExtensions.swift */; };
+		E37C49CB21E1F5A0009906A4 /* VTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37C49CA21E1F5A0009906A4 /* VTheme.swift */; };
+		E37C49CD21E1F72B009906A4 /* VSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37C49CC21E1F72B009906A4 /* VSheet.swift */; };
+		E37C49CF21E1F74C009906A4 /* VCluster.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37C49CE21E1F74C009906A4 /* VCluster.swift */; };
+		E37C49D121E24BB7009906A4 /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37C49D021E24BB7009906A4 /* Account.swift */; };
+		E37C49D421E24D06009906A4 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E37C49D321E24D06009906A4 /* CloudKit.framework */; };
+		E37C49D621E24EA2009906A4 /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37C49D521E24EA2009906A4 /* Operation.swift */; };
+		E37C49D821E24F83009906A4 /* HTTPURLResponseExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37C49D721E24F82009906A4 /* HTTPURLResponseExtensions.swift */; };
+		E37C49DA21E24FAD009906A4 /* HTTPError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37C49D921E24FAD009906A4 /* HTTPError.swift */; };
+		E37C49DC21E25032009906A4 /* URLExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37C49DB21E25032009906A4 /* URLExtensions.swift */; };
+		E37C49DF21E2ACFB009906A4 /* VInstrument.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37C49DE21E2ACFB009906A4 /* VInstrument.swift */; };
+		E37C49E121E2AF91009906A4 /* VSheetActivities.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37C49E021E2AF91009906A4 /* VSheetActivities.swift */; };
+		E37C49E321E2B060009906A4 /* VGoogleActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37C49E221E2B060009906A4 /* VGoogleActivity.swift */; };
+		E37C49E521E2B545009906A4 /* VSheetPastorEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37C49E421E2B545009906A4 /* VSheetPastorEntity.swift */; };
+		E37C49E721E2B554009906A4 /* VSheetEmptyEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37C49E621E2B554009906A4 /* VSheetEmptyEntity.swift */; };
+		E37C49E921E2B573009906A4 /* VSheetSplitEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37C49E821E2B573009906A4 /* VSheetSplitEntity.swift */; };
+		E37C49EB21E2B582009906A4 /* VSheetTitleConstentEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37C49EA21E2B582009906A4 /* VSheetTitleConstentEntity.swift */; };
+		E37C49ED21E2B59A009906A4 /* VSheetTitleImageEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37C49EC21E2B59A009906A4 /* VSheetTitleImageEntity.swift */; };
+		E37C49EF21E2B5A9009906A4 /* VBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37C49EE21E2B5A9009906A4 /* VBook.swift */; };
+		E37C49F121E2B5B2009906A4 /* VChapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37C49F021E2B5B2009906A4 /* VChapter.swift */; };
+		E37C49F321E2B5BF009906A4 /* VVers.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37C49F221E2B5BF009906A4 /* VVers.swift */; };
+		E37C49F521E32E30009906A4 /* Entity.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37C49F421E32E30009906A4 /* Entity.swift */; };
 		E3812DE7201C972B00F10B2C /* SettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3812DE6201C972B00F10B2C /* SettingsController.swift */; };
 		E3812DEA201C992300F10B2C /* GoogleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3812DE8201C992300F10B2C /* GoogleCell.swift */; };
 		E3812DEB201C992300F10B2C /* GoogleCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3812DE9201C992300F10B2C /* GoogleCell.xib */; };
@@ -266,6 +287,28 @@
 		E37938EA21271EC90091698D /* PickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerCell.swift; sourceTree = "<group>"; };
 		E37938EB21271EC90091698D /* PickerCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PickerCell.xib; sourceTree = "<group>"; };
 		E37938EE212723630091698D /* TableViewCellExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCellExtensions.swift; sourceTree = "<group>"; };
+		E37C49CA21E1F5A0009906A4 /* VTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VTheme.swift; sourceTree = "<group>"; };
+		E37C49CC21E1F72B009906A4 /* VSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VSheet.swift; sourceTree = "<group>"; };
+		E37C49CE21E1F74C009906A4 /* VCluster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCluster.swift; sourceTree = "<group>"; };
+		E37C49D021E24BB7009906A4 /* Account.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
+		E37C49D221E24D03009906A4 /* SongProjector.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SongProjector.entitlements; sourceTree = "<group>"; };
+		E37C49D321E24D06009906A4 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
+		E37C49D521E24EA2009906A4 /* Operation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operation.swift; sourceTree = "<group>"; };
+		E37C49D721E24F82009906A4 /* HTTPURLResponseExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPURLResponseExtensions.swift; sourceTree = "<group>"; };
+		E37C49D921E24FAD009906A4 /* HTTPError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPError.swift; sourceTree = "<group>"; };
+		E37C49DB21E25032009906A4 /* URLExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLExtensions.swift; sourceTree = "<group>"; };
+		E37C49DE21E2ACFB009906A4 /* VInstrument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VInstrument.swift; sourceTree = "<group>"; };
+		E37C49E021E2AF91009906A4 /* VSheetActivities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VSheetActivities.swift; sourceTree = "<group>"; };
+		E37C49E221E2B060009906A4 /* VGoogleActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGoogleActivity.swift; sourceTree = "<group>"; };
+		E37C49E421E2B545009906A4 /* VSheetPastorEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VSheetPastorEntity.swift; sourceTree = "<group>"; };
+		E37C49E621E2B554009906A4 /* VSheetEmptyEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VSheetEmptyEntity.swift; sourceTree = "<group>"; };
+		E37C49E821E2B573009906A4 /* VSheetSplitEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VSheetSplitEntity.swift; sourceTree = "<group>"; };
+		E37C49EA21E2B582009906A4 /* VSheetTitleConstentEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VSheetTitleConstentEntity.swift; sourceTree = "<group>"; };
+		E37C49EC21E2B59A009906A4 /* VSheetTitleImageEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VSheetTitleImageEntity.swift; sourceTree = "<group>"; };
+		E37C49EE21E2B5A9009906A4 /* VBook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VBook.swift; sourceTree = "<group>"; };
+		E37C49F021E2B5B2009906A4 /* VChapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VChapter.swift; sourceTree = "<group>"; };
+		E37C49F221E2B5BF009906A4 /* VVers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VVers.swift; sourceTree = "<group>"; };
+		E37C49F421E32E30009906A4 /* Entity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entity.swift; sourceTree = "<group>"; };
 		E3812DE6201C972B00F10B2C /* SettingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsController.swift; sourceTree = "<group>"; };
 		E3812DE8201C992300F10B2C /* GoogleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleCell.swift; sourceTree = "<group>"; };
 		E3812DE9201C992300F10B2C /* GoogleCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GoogleCell.xib; sourceTree = "<group>"; };
@@ -351,6 +394,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E7226C9E497B8BF49AA031B2 /* Pods_SongProjector.framework in Frameworks */,
+				E37C49D421E24D06009906A4 /* CloudKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -360,6 +404,7 @@
 		9768F81D7D85F2A651153E7A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E37C49D321E24D06009906A4 /* CloudKit.framework */,
 				E3D18C6F20238BDC00CBAAF6 /* KDEAudioPlayer.framework */,
 				E356F2A61FF666E5002A3F3A /* ChromaColorPicker.framework */,
 				95070415C3C6BD5B7639F73A /* Pods_SongProjector.framework */,
@@ -398,6 +443,7 @@
 		E311712F1FE59DA3008D9D51 /* SongProjector */ = {
 			isa = PBXGroup;
 			children = (
+				E37C49D221E24D03009906A4 /* SongProjector.entitlements */,
 				E3A4702C21E00FE1000CB3D3 /* fetchers */,
 				E31F0B7220F50A6D00C22FD1 /* Liedjes - wallpaper 16-9.png */,
 				E31F0B7020F5029500C22FD1 /* Pio-Sebastiaan-en-Marilou.jpg */,
@@ -424,6 +470,7 @@
 		E31171451FE59E98008D9D51 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				E37C49C721E1F555009906A4 /* VEntitiies */,
 				E31171481FE59EBD008D9D51 /* CoreDataManager.swift */,
 				E3355D701FEE6436004C03AE /* ClusterExtensions.swift */,
 				E309DCF91FF4954100C3D135 /* TagExtensions.swift */,
@@ -492,6 +539,8 @@
 				E3A19735200A76EF0044DB1B /* ViewControllerExtensions.swift */,
 				E3F201DF201E1AEC002FF06E /* DateExtensions.swift */,
 				E37938EE212723630091698D /* TableViewCellExtensions.swift */,
+				E37C49D721E24F82009906A4 /* HTTPURLResponseExtensions.swift */,
+				E37C49DB21E25032009906A4 /* URLExtensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -507,6 +556,7 @@
 				E309DD041FF5179B00C3D135 /* Cells.swift */,
 				E3CB684D2003900D00F007B2 /* Theme.swift */,
 				E3F8C9D920175A8800C94292 /* BibleIndex.swift */,
+				E37C49D021E24BB7009906A4 /* Account.swift */,
 			);
 			path = Global;
 			sourceTree = "<group>";
@@ -578,6 +628,28 @@
 				E311A44720725B72007BB6CB /* ImportBibleController.swift */,
 			);
 			path = iPhone;
+			sourceTree = "<group>";
+		};
+		E37C49C721E1F555009906A4 /* VEntitiies */ = {
+			isa = PBXGroup;
+			children = (
+				E37C49CA21E1F5A0009906A4 /* VTheme.swift */,
+				E37C49CC21E1F72B009906A4 /* VSheet.swift */,
+				E37C49CE21E1F74C009906A4 /* VCluster.swift */,
+				E37C49DE21E2ACFB009906A4 /* VInstrument.swift */,
+				E37C49E021E2AF91009906A4 /* VSheetActivities.swift */,
+				E37C49E221E2B060009906A4 /* VGoogleActivity.swift */,
+				E37C49E421E2B545009906A4 /* VSheetPastorEntity.swift */,
+				E37C49E621E2B554009906A4 /* VSheetEmptyEntity.swift */,
+				E37C49E821E2B573009906A4 /* VSheetSplitEntity.swift */,
+				E37C49EA21E2B582009906A4 /* VSheetTitleConstentEntity.swift */,
+				E37C49EC21E2B59A009906A4 /* VSheetTitleImageEntity.swift */,
+				E37C49EE21E2B5A9009906A4 /* VBook.swift */,
+				E37C49F021E2B5B2009906A4 /* VChapter.swift */,
+				E37C49F221E2B5BF009906A4 /* VVers.swift */,
+				E37C49F421E32E30009906A4 /* Entity.swift */,
+			);
+			path = VEntitiies;
 			sourceTree = "<group>";
 		};
 		E39864D42098D0E600DF5199 /* Amazon Entities */ = {
@@ -658,6 +730,8 @@
 				E3A4703121E10B57000CB3D3 /* RequestOperation.swift */,
 				E3A4703321E10D35000CB3D3 /* AsynchronousOperation.swift */,
 				E3A4703721E113E6000CB3D3 /* ManagedObjectCodable.swift */,
+				E37C49D521E24EA2009906A4 /* Operation.swift */,
+				E37C49D921E24FAD009906A4 /* HTTPError.swift */,
 			);
 			path = Fetchers;
 			sourceTree = "<group>";
@@ -700,6 +774,12 @@
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.Push = {
+								enabled = 1;
+							};
+							com.apple.iCloud = {
 								enabled = 1;
 							};
 						};
@@ -877,6 +957,7 @@
 			files = (
 				E3F201E0201E1AEC002FF06E /* DateExtensions.swift in Sources */,
 				E33268BE2022FCD2002CDA7C /* SoundPlayer.swift in Sources */,
+				E37C49F321E2B5BF009906A4 /* VVers.swift in Sources */,
 				E3C2AD122025A5E900ACFFE7 /* MixerView.swift in Sources */,
 				E3F201DA201E0698002FF06E /* SheetActivitiesView.swift in Sources */,
 				E311716B1FE5A0E7008D9D51 /* SplashScreen.swift in Sources */,
@@ -909,7 +990,9 @@
 				E399EA89202F73D700E8CE0E /* CustomSheetsController.swift in Sources */,
 				E3F8C9D4201690FC00C94292 /* BibleStudyIphoneController.swift in Sources */,
 				E311A44820725B72007BB6CB /* ImportBibleController.swift in Sources */,
+				E37C49DA21E24FAD009906A4 /* HTTPError.swift in Sources */,
 				E31171791FE5A1A0008D9D51 /* AddButtonCell.swift in Sources */,
+				E37C49EB21E2B582009906A4 /* VSheetTitleConstentEntity.swift in Sources */,
 				E309DCE61FF26CB700C3D135 /* NewSongServiceIphoneController.swift in Sources */,
 				E3355D711FEE6436004C03AE /* ClusterExtensions.swift in Sources */,
 				E31F87BD1FE7035D00D5D4BA /* Text.swift in Sources */,
@@ -917,26 +1000,34 @@
 				E36F41681FEE965200E989E5 /* NewSongIphoneController.swift in Sources */,
 				E38347631FF8434D008AE69D /* ImageExtensions.swift in Sources */,
 				E31171531FE5A071008D9D51 /* ArrayExtensions.swift in Sources */,
+				E37C49DC21E25032009906A4 /* URLExtensions.swift in Sources */,
 				E3F8C9DA20175A8800C94292 /* BibleIndex.swift in Sources */,
 				E3A4703221E10B57000CB3D3 /* RequestOperation.swift in Sources */,
 				E311716A1FE5A0E7008D9D51 /* NewSongServiceController.swift in Sources */,
 				E31171541FE5A071008D9D51 /* UIColorExtension.swift in Sources */,
 				E311717B1FE5A1A0008D9D51 /* TagCellCollection.swift in Sources */,
+				E37C49CD21E1F72B009906A4 /* VSheet.swift in Sources */,
 				E31171671FE5A0E7008D9D51 /* MoreController.swift in Sources */,
 				E3CB6854200635D600F007B2 /* LoadingViewController.swift in Sources */,
 				E39864DE2098D5BD00DF5199 /* Organizations.swift in Sources */,
 				E34EA3A521CECCA100A65719 /* SongServiceSettingsCell.swift in Sources */,
 				E38347651FF9382F008AE69D /* ExternalDisplayController.swift in Sources */,
+				E37C49E521E2B545009906A4 /* VSheetPastorEntity.swift in Sources */,
 				E3A19736200A76EF0044DB1B /* ViewControllerExtensions.swift in Sources */,
 				E3A4703021E0CC80000CB3D3 /* ChurchBeamConfiguration.swift in Sources */,
 				E326E9041FFEC9EC00FEAC9C /* CustomSheetsIphoneController.swift in Sources */,
 				E3D9C28E20D6F11E006EDFE3 /* TestView.swift in Sources */,
+				E37C49D821E24F83009906A4 /* HTTPURLResponseExtensions.swift in Sources */,
 				E3F8C9D82017153A00C94292 /* SheetPickerMenuController.swift in Sources */,
 				E31171771FE5A1A0008D9D51 /* NewSongSheetCell.swift in Sources */,
 				E35099F120DD4FA7005CA984 /* SaveNewSongTitleTimeVC.swift in Sources */,
 				E37938EC21271EC90091698D /* PickerCell.swift in Sources */,
+				E37C49E321E2B060009906A4 /* VGoogleActivity.swift in Sources */,
 				E3812DED201CE1D300F10B2C /* GoogleActivityFetcher.swift in Sources */,
+				E37C49D121E24BB7009906A4 /* Account.swift in Sources */,
 				E3635A0B217CAF98002758D5 /* MixerAnimationView.swift in Sources */,
+				E37C49E921E2B573009906A4 /* VSheetSplitEntity.swift in Sources */,
+				E37C49EF21E2B5A9009906A4 /* VBook.swift in Sources */,
 				E31171331FE59DA3008D9D51 /* ViewController.swift in Sources */,
 				E31171311FE59DA3008D9D51 /* AppDelegate.swift in Sources */,
 				E38347601FF7E8B5008AE69D /* LabelPhotoPickerCell.swift in Sources */,
@@ -945,9 +1036,12 @@
 				E31171491FE59EBD008D9D51 /* CoreDataManager.swift in Sources */,
 				E311A44A2072733A007BB6CB /* LoadingBibleController.swift in Sources */,
 				E399EA8B203074DD00E8CE0E /* BibleStudyGeneratorController.swift in Sources */,
+				E37C49E721E2B554009906A4 /* VSheetEmptyEntity.swift in Sources */,
+				E37C49CB21E1F5A0009906A4 /* VTheme.swift in Sources */,
 				E309DCF71FF48FF100C3D135 /* LabelColorPickerCell.swift in Sources */,
 				E3A19734200947AB0044DB1B /* SheetTitleImageExtensions.swift in Sources */,
 				E31F0B6D20F4F3D100C22FD1 /* SheetPastors.swift in Sources */,
+				E37C49DF21E2ACFB009906A4 /* VInstrument.swift in Sources */,
 				E3314B6620077DD100F470C0 /* SheetExtensions.swift in Sources */,
 				E3CB6850200634A600F007B2 /* LoadingIndicator.swift in Sources */,
 				E3F201DE201E0CC9002FF06E /* ActivityView.swift in Sources */,
@@ -955,11 +1049,15 @@
 				E334FD6D20CF9E2E00FC1FAE /* SongHeaderView.swift in Sources */,
 				E3CAE69F20C47C5F00D3B36F /* TitleLContentViewModel.swift in Sources */,
 				E309DCE81FF44E6A00C3D135 /* TagsIphoneController.swift in Sources */,
+				E37C49D621E24EA2009906A4 /* Operation.swift in Sources */,
 				E31171391FE59DA3008D9D51 /* SongProjector.xcdatamodeld in Sources */,
+				E37C49E121E2AF91009906A4 /* VSheetActivities.swift in Sources */,
 				E326E9071FFECD0E00FEAC9C /* SheetCollectionCell.swift in Sources */,
 				E31F0B6B20F4F36000C22FD1 /* SheetTest.swift in Sources */,
+				E37C49CF21E1F74C009906A4 /* VCluster.swift in Sources */,
 				E3F9964A201285CD00634C5E /* AddButtonCollectionCell.swift in Sources */,
 				E3812DEA201C992300F10B2C /* GoogleCell.swift in Sources */,
+				E37C49F121E2B5B2009906A4 /* VChapter.swift in Sources */,
 				E3D927571FECF622006EDE75 /* ViewExtensions.swift in Sources */,
 				E3CB684E2003900D00F007B2 /* Theme.swift in Sources */,
 				E3C2AD2220275AE200ACFFE7 /* InstrumentPlayer.swift in Sources */,
@@ -985,8 +1083,10 @@
 				E3D1CEE71FF6930600F9D7D9 /* LabelPickerCell.swift in Sources */,
 				E309DD021FF5127400C3D135 /* LabelNumberCell.swift in Sources */,
 				E31171681FE5A0E7008D9D51 /* SongsController.swift in Sources */,
+				E37C49ED21E2B59A009906A4 /* VSheetTitleImageEntity.swift in Sources */,
 				E31171751FE5A1A0008D9D51 /* BasicCell.swift in Sources */,
 				E31171561FE5A071008D9D51 /* NSManagedObjectExtension.swift in Sources */,
+				E37C49F521E32E30009906A4 /* Entity.swift in Sources */,
 				E34ED29D2008D63700534C72 /* SheetSplit.swift in Sources */,
 				E38347691FFA512D008AE69D /* SheetTitleContent.swift in Sources */,
 				E3BC6BBA1FFEBECA0039E0CA /* HeaderView.swift in Sources */,
@@ -1127,6 +1227,7 @@
 			baseConfigurationReference = 346D1C5C5532C9E10C448104 /* Pods-SongProjector.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = SongProjector/SongProjector.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = LXU7BA48AY;
 				INFOPLIST_FILE = SongProjector/Info.plist;
@@ -1144,6 +1245,7 @@
 			baseConfigurationReference = 8300EFE78A26AC2834037C54 /* Pods-SongProjector.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = SongProjector/SongProjector.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = LXU7BA48AY;
 				INFOPLIST_FILE = SongProjector/Info.plist;

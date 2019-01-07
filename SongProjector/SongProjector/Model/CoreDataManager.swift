@@ -13,7 +13,7 @@ import CoreData
 let CoreEntity = CoreDataManager(nsManagedObject: Entity())
 let CoreSheetActivities = CoreDataManager(nsManagedObject: SheetActivities())
 let CoreGoogleActivities = CoreDataManager(nsManagedObject: GoogleActivity())
-let CoreTag = CoreDataManager(nsManagedObject: Tag())
+let CoreTheme = CoreDataManager(nsManagedObject: Theme())
 let CoreSheet = CoreDataManager(nsManagedObject: Sheet())
 let CoreSheetSplit = CoreDataManager(nsManagedObject: SheetSplitEntity())
 let CoreSheetTitleContent = CoreDataManager(nsManagedObject: SheetTitleContentEntity())

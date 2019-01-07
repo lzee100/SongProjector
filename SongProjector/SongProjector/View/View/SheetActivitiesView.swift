@@ -58,12 +58,12 @@ class SheetActivitiesView: SheetView {
 		}
 		
 		var fontName = ""
-		if var attributes = sheetTag?.getTitleAttributes(scaleFactor ?? 1), let font = attributes[.font] as? UIFont {
+		if var attributes = sheetTheme?.getTitleAttributes(scaleFactor ?? 1), let font = attributes[.font] as? UIFont {
 			fontName = font.fontName
 			attributes[.font] = UIFont(name: fontName, size: (self.descriptionTitle.frame.height / 3) * (scaleFactor ?? 1))
 			descriptionTitle.attributedText = NSAttributedString(string: sheet.title ?? "", attributes: attributes)
 		} else {
-			descriptionTitle.attributedText = NSAttributedString(string: sheet.title ?? "", attributes: sheetTag?.getTitleAttributes(scaleFactor ?? 1))
+			descriptionTitle.attributedText = NSAttributedString(string: sheet.title ?? "", attributes: sheetTheme?.getTitleAttributes(scaleFactor ?? 1))
 		}
 		
 		layoutIfNeeded()
@@ -72,7 +72,7 @@ class SheetActivitiesView: SheetView {
 		
 		updateBackgroundImage()
 		
-		if let backgroundColor = sheetTag?.sheetBackgroundColor, sheetTag?.backgroundImage == nil {
+		if let backgroundColor = sheetTheme?.sheetBackgroundColor, sheetTheme?.backgroundImage == nil {
 			self.backgroundView.backgroundColor = backgroundColor
 		} else {
 			self.backgroundView.backgroundColor = .white
@@ -103,12 +103,12 @@ class SheetActivitiesView: SheetView {
 			
 			// add HEADER
 			let frameHeader = CGRect(x: 0, y: 0, width: activitiesContainerView.bounds.width, height: activitiesContainerView.bounds.height / 10)
-			let headerThisWeek = ActivityHeader.createWith(frame: frameHeader, tag: sheetTag, title: Text.ActivitySheet.titleUpcomingTime, scaleFactor: scaleFactor)
+			let headerThisWeek = ActivityHeader.createWith(frame: frameHeader, tag: sheetTheme, title: Text.ActivitySheet.titleUpcomingTime, scaleFactor: scaleFactor)
 			activitiesContainerView.addSubview(headerThisWeek)
 			
 			// add ACTIVITY THIS WEEK
 			let frame = CGRect(x: 0, y: activitiesContainerView.bounds.height / 10, width: activitiesContainerView.bounds.width, height: activitiesContainerView.bounds.height / 12)
-			let activityView = ActivityView.createWith(frame: frame, tag: sheetTag, activity: nil, scaleFactor: (scaleFactor ?? 1))
+			let activityView = ActivityView.createWith(frame: frame, tag: sheetTheme, activity: nil, scaleFactor: (scaleFactor ?? 1))
 			activitiesContainerView.addSubview(activityView)
 			
 			return
@@ -165,7 +165,7 @@ class SheetActivitiesView: SheetView {
 				// add HEADER THIS WEEK
 				if !hasHeaderThisWeek {
 				let frameHeader = CGRect(x: 0, y: y, width: activitiesContainerView.bounds.width, height: activityHeight * headerPoints)
-				let headerThisWeek = ActivityHeader.createWith(frame: frameHeader, tag: sheetTag, title: Text.ActivitySheet.titleThisWeek, scaleFactor: scaleFactor)
+				let headerThisWeek = ActivityHeader.createWith(frame: frameHeader, tag: sheetTheme, title: Text.ActivitySheet.titleThisWeek, scaleFactor: scaleFactor)
 				activitiesContainerView.addSubview(headerThisWeek)
 					y += (activityHeight * headerPoints)
 					hasHeaderThisWeek = true
@@ -173,7 +173,7 @@ class SheetActivitiesView: SheetView {
 				
 				// add ACTIVITY THIS WEEK
 				let frame = CGRect(x: 0, y: y, width: activitiesContainerView.bounds.width, height: activityHeight * 2)
-				let activityView = ActivityView.createWith(frame: frame, tag: sheetTag, activity: activity, scaleFactor: scaleFactor ?? 1)
+				let activityView = ActivityView.createWith(frame: frame, tag: sheetTheme, activity: activity, scaleFactor: scaleFactor ?? 1)
 				activitiesContainerView.addSubview(activityView)
 				y += (activityHeight * 2)
 			}
@@ -182,7 +182,7 @@ class SheetActivitiesView: SheetView {
 				// add HEADER NEXT WEEK
 				if !hasHeaderNextWeek {
 					let frameHeader = CGRect(x: 0, y: y, width: activitiesContainerView.bounds.width, height: activityHeight * headerPoints)
-					let headerThisWeek = ActivityHeader.createWith(frame: frameHeader, tag: sheetTag, title: Text.ActivitySheet.titleNextWeek, scaleFactor: scaleFactor)
+					let headerThisWeek = ActivityHeader.createWith(frame: frameHeader, tag: sheetTheme, title: Text.ActivitySheet.titleNextWeek, scaleFactor: scaleFactor)
 					activitiesContainerView.addSubview(headerThisWeek)
 					y += (activityHeight * headerPoints)
 					hasHeaderNextWeek = true
@@ -190,7 +190,7 @@ class SheetActivitiesView: SheetView {
 				
 				// add ACTIVITY NEXT WEEK
 				let frame = CGRect(x: 0, y: y, width: activitiesContainerView.bounds.width, height: activityHeight * 2)
-				let activityView = ActivityView.createWith(frame: frame, tag: sheetTag, activity: activity, scaleFactor: scaleFactor ?? 1)
+				let activityView = ActivityView.createWith(frame: frame, tag: sheetTheme, activity: activity, scaleFactor: scaleFactor ?? 1)
 				activitiesContainerView.addSubview(activityView)
 				y += (activityHeight * 2)
 			}
@@ -199,7 +199,7 @@ class SheetActivitiesView: SheetView {
 			else {
 				if !hasHeaderUpcoming {
 					let frameHeader = CGRect(x: 0, y: y, width: activitiesContainerView.bounds.width, height: activityHeight * headerPoints)
-					let headerThisWeek = ActivityHeader.createWith(frame: frameHeader, tag: sheetTag, title: Text.ActivitySheet.titleUpcomingTime, scaleFactor: scaleFactor)
+					let headerThisWeek = ActivityHeader.createWith(frame: frameHeader, tag: sheetTheme, title: Text.ActivitySheet.titleUpcomingTime, scaleFactor: scaleFactor)
 					activitiesContainerView.addSubview(headerThisWeek)
 					y += (activityHeight * headerPoints)
 					hasHeaderUpcoming = true
@@ -207,7 +207,7 @@ class SheetActivitiesView: SheetView {
 				
 				// add ACTIVITY NEXT WEEK
 				let frame = CGRect(x: 0, y: y, width: activitiesContainerView.bounds.width, height: activityHeight * 2)
-				let activityView = ActivityView.createWith(frame: frame, tag: sheetTag, activity: activity, scaleFactor: scaleFactor ?? 1)
+				let activityView = ActivityView.createWith(frame: frame, tag: sheetTheme, activity: activity, scaleFactor: scaleFactor ?? 1)
 				activitiesContainerView.addSubview(activityView)
 				y += (activityHeight * 2)
 			}
@@ -218,17 +218,17 @@ class SheetActivitiesView: SheetView {
 	}
 	
 	override func updateOpacity() {
-		if let _ = isForExternalDispay ? sheetTag?.backgroundImage : sheetTag?.thumbnail, let alpha = sheetTag?.backgroundTransparency {
+		if let _ = isForExternalDispay ? sheetTheme?.backgroundImage : sheetTheme?.thumbnail, let alpha = sheetTheme?.backgroundTransparency {
 			backgroundImageView.alpha = CGFloat(alpha)
 		}
 	}
 	
 	override func updateBackgroundImage() {
-		if let image = isForExternalDispay ? sheetTag?.backgroundImage : sheetTag?.thumbnail {
+		if let image = isForExternalDispay ? sheetTheme?.backgroundImage : sheetTheme?.thumbnail {
 			backgroundImageView.isHidden = false
 			backgroundImageView.contentMode = .scaleAspectFill
 			backgroundImageView.image = image
-			if let backgroundTransparency = sheetTag?.backgroundTransparency {
+			if let backgroundTransparency = sheetTheme?.backgroundTransparency {
 				backgroundImageView.alpha = CGFloat(backgroundTransparency)
 			}
 		} else {
@@ -244,7 +244,7 @@ class SheetActivitiesView: SheetView {
 			return
 		}
 		
-		if let tag = sheetTag, let scaleFactor = scaleFactor { // is custom sheet
+		if let tag = sheetTheme, let scaleFactor = scaleFactor { // is custom sheet
 			
 			timeLabel.attributedText = NSAttributedString(string: test, attributes: tag.getTitleAttributes(scaleFactor))
 			
@@ -257,7 +257,7 @@ class SheetActivitiesView: SheetView {
 	override func updateTitle() {
 		let sheet = self.sheet as! SheetActivities
 		if let songTitle = sheet.title {
-			if let tag = sheetTag {
+			if let tag = sheetTheme {
 				descriptionTitle.attributedText = NSAttributedString(string: songTitle, attributes: tag.getTitleAttributes(scaleFactor ?? 0))
 			} else {
 				descriptionTitle.text = ""
@@ -267,14 +267,14 @@ class SheetActivitiesView: SheetView {
 	}
 	
 	override func updateContent() {
-		if let tag = sheetTag {
-			activitiesContainerView.subviews.compactMap({ $0 as? ActivityView }).compactMap({ $0.descriptionTime }).forEach({ $0.attributedText = NSAttributedString(string: $0.text ?? "", attributes: tag.getLyricsAttributes(scaleFactor ?? 1)) })
-			activitiesContainerView.subviews.compactMap({ $0 as? ActivityView }).compactMap({ $0.descriptionActivity }).forEach({ $0.attributedText = NSAttributedString(string: $0.text ?? "", attributes: tag.getLyricsAttributes(scaleFactor ?? 1)) })
+		if let theme = sheetTheme {
+			activitiesContainerView.subviews.compactMap({ $0 as? ActivityView }).compactMap({ $0.descriptionTime }).forEach({ $0.attributedText = NSAttributedString(string: $0.text ?? "", attributes: theme.getLyricsAttributes(scaleFactor ?? 1)) })
+			activitiesContainerView.subviews.compactMap({ $0 as? ActivityView }).compactMap({ $0.descriptionActivity }).forEach({ $0.attributedText = NSAttributedString(string: $0.text ?? "", attributes: theme.getLyricsAttributes(scaleFactor ?? 1)) })
 		}
 	}
 	
 	override func updateBackgroundColor() {
-		if let backgroundColor = sheetTag?.sheetBackgroundColor {
+		if let backgroundColor = sheetTheme?.sheetBackgroundColor {
 			self.backgroundView.backgroundColor = backgroundColor
 		} else {
 			self.backgroundView.backgroundColor = .white

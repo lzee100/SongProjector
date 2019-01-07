@@ -14,7 +14,7 @@ class ActivityHeader: UIView {
 	@IBOutlet var descriptionTitle: UILabel!
 	
 	
-	private var selectedTag: Tag?
+	private var selectedTheme: VTheme?
 	private var scaleFactor: CGFloat = 1
 	private var titleDescription = ""
 	
@@ -34,10 +34,10 @@ class ActivityHeader: UIView {
 		addSubview(activityHeaderView)
 	}
 	
-	static func createWith(frame: CGRect, tag: Tag?, title: String, scaleFactor: CGFloat? = 1) -> ActivityHeader {
+	static func createWith(frame: CGRect, theme: VTheme?, title: String, scaleFactor: CGFloat? = 1) -> ActivityHeader {
 		
 		let view = ActivityHeader(frame: frame)
-		view.selectedTag = tag
+		view.selectedTheme = theme
 		view.scaleFactor = scaleFactor ?? 1
 		view.titleDescription = title
 		view.update()
@@ -47,12 +47,12 @@ class ActivityHeader: UIView {
 	
 	func update() {
 		var fontName = ""
-		if var attributes = selectedTag?.getTitleAttributes(scaleFactor), let font = attributes[.font] as? UIFont {
+		if var attributes = selectedTheme?.getTitleAttributes(scaleFactor), let font = attributes[.font] as? UIFont {
 			fontName = font.fontName
 			attributes[.font] = UIFont(name: fontName, size: (self.descriptionTitle.frame.height / 3) * scaleFactor)
 			descriptionTitle.attributedText = NSAttributedString(string: titleDescription, attributes: attributes)
 		} else {
-			descriptionTitle.attributedText = NSAttributedString(string: titleDescription, attributes: selectedTag?.getTitleAttributes(scaleFactor))
+			descriptionTitle.attributedText = NSAttributedString(string: titleDescription, attributes: selectedTheme?.getTitleAttributes(scaleFactor))
 		}
 	}
 }

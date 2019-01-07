@@ -124,11 +124,11 @@ class Text: NSObject {
 		static let googleSignOutButton = "Uitloggen"
 	}
 	
-	struct NewTag {
+	struct NewTheme {
 		static let title = "Nieuw thema"
 		static let descriptionTitle = "Naam nieuw thema"
 		static let descriptionTitlePlaceholder = "Naam"
-		static let descriptionAsTag = "Gelijk aan thema"
+		static let descriptionAsTheme = "Gelijk aan thema"
 		static let descriptionTitleBackgroundColor = "Achtergrond kleur"
 		static let pageDescription = "Voer een nieuwe thema's toe"
 		static let descriptionBackgroundColor = "Kleur achtergrond"

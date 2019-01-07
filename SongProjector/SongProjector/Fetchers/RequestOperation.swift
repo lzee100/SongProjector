@@ -134,7 +134,7 @@ open class RequestOperation : AsynchronousOperation, ShiftOutOperation {
 		if let range = range {
 			requestPrint += " (\(range.startIndex)-\(range.endIndex))"
 		}
-		Log.info(requestPrint)
+		print(requestPrint)
 		
 		let task = createTask(session: session, request: request)
 		
@@ -187,6 +187,15 @@ open class RequestOperation : AsynchronousOperation, ShiftOutOperation {
 			delegate: nil,
 			delegateQueue: Operation.Queue
 		)
+	}
+	
+}
+
+extension CountableRange {
+	
+	public func next() -> CountableRange<Element>{
+		let distance = startIndex.distance(to: endIndex)
+		return endIndex..<endIndex.advanced(by: distance)
 	}
 	
 }

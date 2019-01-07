@@ -41,9 +41,9 @@ class SongService {
 			}
 		}
 	}
-	var selectedTag: Tag? { return selectedSheet?.hasTag ?? selectedSong?.cluster.hasTag }
-	var previousTag: Tag? { return getPreviousTag() }
-	var nextTag: Tag? { return getNextTag() }
+	var selectedTheme: VTheme? { return selectedSheet?.hasTag ?? selectedSong?.cluster.hasTag }
+	var previousTheme: VTheme? { return getPreviousTag() }
+	var nextTheme: VTheme? { return getNextTag() }
 	var isPlaying = false
 	var isAnimating = false
 	let swipeLeft: (() -> Void)
@@ -215,7 +215,7 @@ class SongService {
 		}
 	}
 	
-	private func getPreviousTag() -> Tag? {
+	private func getPreviousTheme() -> VTheme? {
 		if let selectedSong = selectedSong {
 			let selectedSheetPosition = Int(selectedSheet!.position)
 			if selectedSheetPosition - 1 >= 0 {
@@ -237,9 +237,9 @@ class SongService {
 		}
 	}
 	
-	private func getNextTag() -> Tag? {
+	private func getNextTheme() -> VTheme? {
 //		if isAnimating {
-//			return selectedTag
+//			return selectedTheme
 //		}
 		if let selectedSong = selectedSong {
 			
@@ -335,7 +335,7 @@ class SongObject: Comparable {
 			var emptySheetsAdded: [Sheet] = []
 			
 			let emptySheet = CoreSheetTitleContent.createEntity(fireNotification: false)
-			emptySheet.isTemp = true
+			emptySheet.deletedAt = Date()
 			emptySheet.isEmptySheet = true
 			
 			if let isEmptySheetFirst = cluster.hasTag?.isEmptySheetFirst {

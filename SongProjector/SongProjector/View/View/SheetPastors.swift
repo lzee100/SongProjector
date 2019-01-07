@@ -137,7 +137,7 @@ class SheetPastors: SheetView {
 	override func updateTitle() {
 		let sheet = self.sheet as! SheetPastorsEntity
 		if let title = sheet.title {
-			if let tag = sheetTag {
+			if let tag = sheetTheme {
 				titleLabel.attributedText = NSAttributedString(string: title, attributes: tag.getTitleAttributes(scaleFactor ?? 0))
 				titleLabelTrans.attributedText = NSAttributedString(string: title, attributes: tag.getTitleAttributes(scaleFactor ?? 0))
 			} else {
@@ -151,7 +151,7 @@ class SheetPastors: SheetView {
 	override func updateContent() {
 		let sheet = self.sheet as! SheetPastorsEntity
 		if let content = sheet.content {
-			if let tag = sheetTag {
+			if let tag = sheetTheme {
 				descriptionLabel.attributedText = NSAttributedString(string: content, attributes: tag.getTitleAttributes(scaleFactor ?? 0))
 				descriptionLabelTrans.attributedText = NSAttributedString(string: content, attributes: tag.getTitleAttributes(scaleFactor ?? 0))
 			} else {
@@ -168,7 +168,7 @@ class SheetPastors: SheetView {
 	}
 	
 	override func updateBackgroundColor() {
-		if let color = sheetTag?.backgroundColor {
+		if let color = sheetTheme?.backgroundColor {
 			backgroundColor = UIColor(hex: color)
 		} else {
 			backgroundColor = .white
@@ -176,13 +176,13 @@ class SheetPastors: SheetView {
 	}
 	
 	override func updateBackgroundImage() {
-		let image = isForExternalDispay ? sheetTag?.backgroundImage : sheetTag?.thumbnail
+		let image = isForExternalDispay ? sheetTheme?.backgroundImage : sheetTheme?.thumbnail
 		
-		if let image = image, !(sheetTag?.isBackgroundImageDeleted ?? true) {
+		if let image = image, !(sheetTheme?.isBackgroundImageDeleted ?? true) {
 			sheetBackgroundImageView.isHidden = false
 			sheetBackgroundImageView.contentMode = .scaleAspectFill
 			sheetBackgroundImageView.image = image
-			if let backgroundTransparency = sheetTag?.backgroundTransparency {
+			if let backgroundTransparency = sheetTheme?.backgroundTransparency {
 				sheetBackgroundImageView.alpha = CGFloat(backgroundTransparency)
 			}
 		} else {
@@ -191,7 +191,7 @@ class SheetPastors: SheetView {
 	}
 	
 	override func updateOpacity() {
-		if let alpha = sheetTag?.backgroundTransparency {
+		if let alpha = sheetTheme?.backgroundTransparency {
 			backgroundColor = .black
 			sheetBackgroundImageView.alpha = CGFloat(alpha)
 		}

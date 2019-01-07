@@ -45,7 +45,7 @@ class SaveNewSongTitleTimeVC: UITableViewController {
 	var songTitle = ""
 	var time: Double = 0
 	var isSong = false
-	var selectedTag: Tag?
+	var selectedTheme: VTheme?
 	
 	var timeValues: [Int] {
 		var values: [Int] = []

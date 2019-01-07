@@ -43,8 +43,8 @@ class LabelPickerCell: ChurchBeamCell, TagImplementation, DynamicHeightCell, She
 	var picker = UIPickerView()
 	var selectedIndex: Int = 0
 	
-	var sheetTag: Tag?
-	var tagAttribute: TagAttribute?
+	var sheetTheme: VTheme?
+	var themeAttribute: ThemeAttribute?
 	var valueDidChange: ((ChurchBeamCell) -> Void)?
 	
 	static let identifier = "LabelPickerCell"
@@ -91,9 +91,9 @@ class LabelPickerCell: ChurchBeamCell, TagImplementation, DynamicHeightCell, She
 		}
 	}
 	
-	func apply(tag: Tag, tagAttribute: TagAttribute) {
+	func apply(theme: VTheme, themeAttribute: ThemeAttribute) {
 		
-		switch tagAttribute {
+		switch themeAttribute {
 		case .asTag: setupAsTag()
 		case .titleFontName, .lyricsFontName: setupFonts()
 		case .titleAlignment, .lyricsAlignment: setupFontAlignment()
@@ -101,9 +101,9 @@ class LabelPickerCell: ChurchBeamCell, TagImplementation, DynamicHeightCell, She
 			break
 		}
 		
-		self.sheetTag = tag
-		self.tagAttribute = tagAttribute
-		self.descriptionTitel.text = tagAttribute.description
+		self.sheetTheme = tag
+		self.themeAttribute = themeAttribute
+		self.descriptionTitel.text = themeAttribute.description
 		applyValueToCell()
 	}
 	
@@ -115,12 +115,12 @@ class LabelPickerCell: ChurchBeamCell, TagImplementation, DynamicHeightCell, She
 	}
 	
 	func applyValueToCell() {
-		if let tagAttribute = tagAttribute, let tag = sheetTag {
-			switch tagAttribute {
-			case .lyricsFontName: fontLabel.text = tag.lyricsFontName
-			case .titleFontName: fontLabel.text = tag.titleFontName
-			case .titleAlignment: fontLabel.text = pickerValues[Int(tag.titleAlignmentNumber)].1
-			case .lyricsAlignment: fontLabel.text = pickerValues[Int(tag.lyricsAlignmentNumber)].1
+		if let themeAttribute = themeAttribute, let theme = sheetTheme {
+			switch themeAttribute {
+			case .lyricsFontName: fontLabel.text = theme.lyricsFontName
+			case .titleFontName: fontLabel.text = theme.titleFontName
+			case .titleAlignment: fontLabel.text = pickerValues[theme.titleAlignment].1
+			case .lyricsAlignment: fontLabel.text = pickerValues[theme.lyricsAlignment].1
 			case .asTag: fontLabel.text = ""
 			default: return
 			}
@@ -131,12 +131,12 @@ class LabelPickerCell: ChurchBeamCell, TagImplementation, DynamicHeightCell, She
 	}
 	
 	func applyCellValueToTag() {
-		if let tagAttribute = tagAttribute, let tag = sheetTag {
-			switch tagAttribute {
-			case .lyricsFontName: tag.lyricsFontName = fontLabel.text
-			case .titleFontName: tag.titleFontName = fontLabel.text
-			case .titleAlignment: tag.titleAlignmentNumber = Int16(selectedIndex)
-			case .lyricsAlignment: tag.lyricsAlignmentNumber = Int16(selectedIndex)
+		if let themeAttribute = themeAttribute, let theme = sheetTheme {
+			switch themeAttribute {
+			case .lyricsFontName: theme.lyricsFontName = fontLabel.text
+			case .titleFontName: theme.titleFontName = fontLabel.text
+			case .titleAlignment: theme.titleAlignment = Int16(selectedIndex)
+			case .lyricsAlignment: theme.lyricsAlignment = Int16(selectedIndex)
 			default: return
 			}
 		}
@@ -187,9 +187,9 @@ class LabelPickerCell: ChurchBeamCell, TagImplementation, DynamicHeightCell, She
 	
 	
 	private func setupAsTag() {
-		CoreTag.setSortDescriptor(attributeName: "title", ascending: true)
-		CoreTag.predicates.append("isHidden", notEquals: true)
-		let tags = CoreTag.getEntities().map{ ($0.id, $0.title ?? "") }
+		CoreTheme.setSortDescriptor(attributeName: "title", ascending: true)
+		CoreTheme.predicates.append("isHidden", notEquals: true)
+		let tags = CoreTheme.getEntities().map{ ($0.id, $0.title ?? "") }
 		pickerValues = tags
 	}
 	
@@ -208,8 +208,8 @@ class LabelPickerCell: ChurchBeamCell, TagImplementation, DynamicHeightCell, She
 	}
 	
 	private func setupFontAlignment() {
-		pickerValues = [(Int64(0), Text.NewTag.alignLeft), (Int64(1), Text.NewTag.alignCenter), (Int64(2), Text.NewTag.alignRight)]
-		set(value: Text.NewTag.alignLeft)
+		pickerValues = [(Int64(0), Text.NewTheme.alignLeft), (Int64(1), Text.NewTheme.alignCenter), (Int64(2), Text.NewTag.alignRight)]
+		set(value: Text.NewTheme.alignLeft)
 	}
 	
 	private func dutchContentMode() -> [String] {

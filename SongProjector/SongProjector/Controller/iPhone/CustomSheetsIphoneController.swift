@@ -21,10 +21,10 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 	@IBOutlet var collectionView: UICollectionView!
 	
 	var isNew = true
-	var tags: [Tag] = []
-	var selectedTag: Tag? {
+	var themes: [VTheme] = []
+	var selectedTheme: VTheme? {
 		didSet {
-			clusterTemp?.hasTag = selectedTag
+			clusterTemp?.hasTag = selectedTheme
 			collectionView.reloadData()
 		}
 	}
@@ -104,7 +104,7 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 		if segue.identifier == "SheetPickerMenuControllerSegue" {
 			let controller = segue.destination as! SheetPickerMenuController
 			controller.didCreateSheet = didCreate(sheet:)
-			controller.selectedTag = selectedTag
+			controller.selectedTheme = selectedTheme
 		}
 	}
 	
@@ -116,15 +116,15 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-		return collectionView == collectionViewTags ? tags.count : sheets.count
+		return collectionView == collectionViewTags ? themes.count : sheets.count
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 		
 		if collectionView == collectionViewTags {
 			let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.tagCellCollection, for: indexPath) as! TagCellCollection
-			collectionCell.setup(tagName: tags[indexPath.row].title ?? "")
-			collectionCell.isSelectedCell = selectedTag == tags[indexPath.row]
+			collectionCell.setup(tagName: themes[indexPath.row].title ?? "")
+			collectionCell.isSelectedCell = selectedTheme == themes[indexPath.row]
 			return collectionCell
 		} else {
 			
@@ -174,7 +174,7 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 	
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		if collectionView == collectionViewTags {
-			selectedTag = selectedTag == tags[indexPath.row] ? nil : tags[indexPath.row]
+			selectedTheme = selectedTheme == themes[indexPath.row] ? nil : themes[indexPath.row]
 		} else {
 			let sheet = sheetsSorted[indexPath.section]
 			let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
@@ -245,7 +245,7 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 		
 		if cluster == nil {
 			cluster = CoreCluster.createEntity()
-			cluster?.isTemp = true
+			cluster?.deletedAt = Date()
 		}
 		save.title = Text.Actions.save
 		cancel.title = Text.Actions.cancel
@@ -270,9 +270,8 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 		collectionView.register(UINib(nibName: Cells.sheetCollectionCell, bundle: nil), forCellWithReuseIdentifier: Cells.sheetCollectionCell)
 		collectionViewTags.register(UINib(nibName: Cells.tagCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.tagCellCollection)
 
-		CoreTag.predicates.append("isHidden", notEquals: true)
-		tags = CoreTag.getEntities()
-		
+		themes = VTheme.getThemes()
+
 		let cellHeight = multiplier * (UIScreen.main.bounds.width - 20)
 		sheetSize = CGSize(width: UIScreen.main.bounds.width - 20, height: cellHeight)
 		
@@ -285,7 +284,7 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 		
 		if cluster != nil {
 			sheets = cluster?.hasSheetsArray ?? []
-			selectedTag = cluster?.hasTag
+			selectedTheme = cluster?.hasTag
 		}
 		
 		collectionView.keyboardDismissMode = .interactive
@@ -324,7 +323,7 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 	}
 	
 	private func hasTagSelected() -> Bool {
-		if selectedTag != nil {
+		if selectedTheme != nil {
 			return true
 		} else {
 			let alert = UIAlertController(title: Text.NewSong.errorTitleNoTag, message: Text.NewSong.erorrMessageNoTag, preferredStyle: .alert)
@@ -406,14 +405,12 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 				if cluster == nil {
 					cluster = CoreCluster.createEntity()
 				}
-				cluster?.isTemp = false
-				cluster?.hasTag = selectedTag
+				cluster?.hasTag = selectedTheme
 				
 				var index: Int16 = 0
 				for sheet in sheets {
 					sheet.position = index
 					sheet.hasCluster = cluster
-					sheet.isTemp = false
 					index += 1
 				}
 				
