@@ -109,14 +109,11 @@ class ImportBibleController: UIViewController {
 		
 		var text = self.textView.text ?? ""
 
-		CoreBook.deleteAll()
-		CoreChapter.deleteAll()
-		CoreVers.deleteAll()
+		CoreEntity.getTemp = true
+		CoreEntity.getEntities().forEach({ $0.delete(false) })
+		CoreEntity.saveContext(fireNotification: false)
 		
-		let privateMOC = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-		privateMOC.parent = managedObjectContext
-		
-		privateMOC.perform {
+		mocBackground.perform {
 			
 			var hasNextBook = true
 			var hasNextChapter = true
@@ -132,9 +129,9 @@ class ImportBibleController: UIViewController {
 				return "\(nextVersNumber)"
 			}
 			
-			CoreBook.moc = privateMOC
-			CoreChapter.moc = privateMOC
-			CoreVers.moc = privateMOC
+			CoreBook.managedObjectContext = mocBackground
+			CoreChapter.managedObjectContext = mocBackground
+			CoreVers.managedObjectContext = mocBackground
 			
 			
 			
@@ -142,7 +139,7 @@ class ImportBibleController: UIViewController {
 			while let bookRange = text.range(of: "xxx"), !self.isCancelled {
 				
 				let book = CoreBook.createEntity()
-				book.isTemp = false
+				book.deleteDate = nil
 				book.name = BibleIndex.getBookFor(index: bookNumber)
 				book.title = book.name
 				
@@ -158,7 +155,7 @@ class ImportBibleController: UIViewController {
 					
 					// prepare chapter
 					let chapter = CoreChapter.createEntity()
-					chapter.isTemp = false
+					chapter.deleteDate = nil
 					chapter.number = chapterNumber
 					chapter.title = String(chapterNumber)
 					
@@ -177,7 +174,7 @@ class ImportBibleController: UIViewController {
 						let rangeRemove = start..<range.upperBound
 						
 						let vers = CoreVers.createEntity()
-						vers.isTemp = false
+						vers.deleteDate = nil
 						vers.number = versNumber
 						vers.title = String(versNumber)
 						vers.text = String(chapterText[rangeVers]).trimmingCharacters(in: .whitespacesAndNewlines)
@@ -202,7 +199,7 @@ class ImportBibleController: UIViewController {
 					}
 					
 					let vers = CoreVers.createEntity()
-					vers.isTemp = false
+					vers.deleteDate = nil
 					vers.number = versNumber
 					vers.title = String(versNumber)
 					vers.text = chapterText.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -226,9 +223,9 @@ class ImportBibleController: UIViewController {
 			}
 			
 			if self.isCancelled {
-				CoreBook.deleteAll()
-				CoreChapter.deleteAll()
-				CoreVers.deleteAll()
+				CoreEntity.getTemp = true
+				CoreEntity.getEntities().forEach({ $0.delete(false) })
+				CoreEntity.saveContext(fireNotification: false)
 				DispatchQueue.main.async {
 					self.coverViewLeftConstraint.constant = UIScreen.main.bounds.width
 				}
@@ -238,24 +235,20 @@ class ImportBibleController: UIViewController {
 					self.coverViewLeftConstraint.constant = UIScreen.main.bounds.width
 				}
 			}
-			do {
-				try privateMOC.save()
-				managedObjectContext.performAndWait {
-					do {
-						try managedObjectContext.save()
-					} catch {
-						fatalError("Failure to save context: \(error)")
-					}
+			mocBackground.performAndWait {
+				do {
+					try mocBackground.save()
+					try moc.save()
+				} catch {
+					fatalError("Failure to save context: \(error)")
 				}
-			} catch {
-				CoreBook.moc = managedObjectContext
-				CoreChapter.moc = managedObjectContext
-				CoreVers.moc = managedObjectContext
-				fatalError("Failure to save context: \(error)")
+				CoreBook.managedObjectContext = moc
+				CoreChapter.managedObjectContext = moc
+				CoreVers.managedObjectContext = moc
+
 			}
+		
 		}
-		
-		
 		
 		
 		CoreChapter.predicates.append("hasBook.name", equals: "Genesis")

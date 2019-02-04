@@ -8,11 +8,17 @@
 
 import UIKit
 
-class TagsIphoneController: UITableViewController, UISearchBarDelegate, UIGestureRecognizerDelegate, UIPopoverPresentationControllerDelegate, NewOrEditIphoneControllerDelegate {
+class TagsIphoneController: ChurchBeamTableViewController, UISearchBarDelegate, UIGestureRecognizerDelegate, UIPopoverPresentationControllerDelegate, NewOrEditIphoneControllerDelegate {
+	
+	
 
 	@IBOutlet var add: UIBarButtonItem!
 	@IBOutlet var searchBar: UISearchBar!
 	@IBOutlet var emptyView: UIView!
+	
+	override var requesterId: String {
+		return "TagsIphoneController"
+	}
 	
 	private var tags: [Tag] = []
 	private var filteredTags: [Tag] = []
@@ -26,6 +32,7 @@ class TagsIphoneController: UITableViewController, UISearchBarDelegate, UIGestur
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		update()
+		TagFetcher.request(force: false)
 	}
 	
 	override func numberOfSections(in tableView: UITableView) -> Int {
@@ -59,9 +66,9 @@ class TagsIphoneController: UITableViewController, UISearchBarDelegate, UIGestur
 	
 	override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
 		if editingStyle == .delete {
-			let _ = CoreTag.delete(entity: tags[indexPath.row])
-			tags.remove(at: indexPath.row)
-			update()
+			
+			TagSubmitter.submit(tags[indexPath.row], requestMethod: .delete)
+			
 		}
 	}
 	
@@ -81,6 +88,7 @@ class TagsIphoneController: UITableViewController, UISearchBarDelegate, UIGestur
 		let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
 		controller.tag = selectedTag
 		controller.modificationMode = .editTag
+		controller.delegate = self
 		let nav = UINavigationController(rootViewController: controller)
 		present(nav, animated: true)
 	}
@@ -115,7 +123,22 @@ class TagsIphoneController: UITableViewController, UISearchBarDelegate, UIGestur
 	}
 	
 	func didCreate(sheet: Sheet) {
-		
+	}
+	
+	func didCloseNewOrEditIphoneController() {
+		presentedViewController?.dismiss(animated: true, completion: nil)
+	}
+	
+	
+	override func handleRequestFinish(result: AnyObject?) {
+		let submittedTag = result as? Tag
+		if let index = self.tags.firstIndex(where: { $0.id == submittedTag?.id }) {
+			tableView.deleteRow(at: IndexPath(row: index, section: 0), with: .left)
+		} else {
+			Queues.main.async {
+				self.update()
+			}
+		}
 	}
 	
 	private func setup() {
@@ -123,6 +146,10 @@ class TagsIphoneController: UITableViewController, UISearchBarDelegate, UIGestur
 		tableView.keyboardDismissMode = .interactive
 		navigationController?.title = Text.Songs.title
 		title = Text.Tags.title
+		
+		TagFetcher.addObserver(self)
+		TagSubmitter.addObserver(self)
+		TagSubmitter.requestMethod = .delete
 		
 		searchBar.showsCancelButton = true
 		searchBar.placeholder = Text.Tags.searchBarPlaceholderText
@@ -139,7 +166,6 @@ class TagsIphoneController: UITableViewController, UISearchBarDelegate, UIGestur
 		let doubleTab = UITapGestureRecognizer(target: self, action: #selector(self.editTableView(_:)))
 		doubleTab.numberOfTapsRequired = 2
 		view.addGestureRecognizer(doubleTab)
-		update()
 	}
 	
 	private func update() {

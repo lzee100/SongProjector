@@ -89,16 +89,20 @@ class LabelColorPickerCell: ChurchBeamCell, TagImplementation, DynamicHeightCell
 				if let colorHex = sheetTag?.titleTextColorHex {
 					color = UIColor(hex: colorHex)
 				}
+			case .titleBackgroundColor:
+				if let colorHex = sheetTag?.titleBackgroundColor {
+					color = UIColor(hex: colorHex)
+				}
 			case .titleBorderColorHex:
 				if let colorHex = sheetTag?.titleBorderColorHex {
 					color = UIColor(hex: colorHex)
 				}
-			case .lyricsTextColorHex:
-				if let colorHex = sheetTag?.lyricsTextColorHex {
+			case .contentTextColorHex:
+				if let colorHex = sheetTag?.contentTextColorHex {
 					color = UIColor(hex: colorHex)
 				}
-			case .lyricsBorderColor:
-				if let colorHex = sheetTag?.lyricsBorderColorHex {
+			case .contentBorderColor:
+				if let colorHex = sheetTag?.contentBorderColorHex {
 					color = UIColor(hex: colorHex)
 				}
 			default: return
@@ -108,33 +112,31 @@ class LabelColorPickerCell: ChurchBeamCell, TagImplementation, DynamicHeightCell
 	}
 	
 	func applyCellValueToTag() {
-		if let color = selectedColor?.hexCode, let tagAttribute = tagAttribute {
+		if let tagAttribute = tagAttribute {
+			let color = selectedColor?.hexCode
 			switch tagAttribute {
 			case .backgroundColor: sheetTag?.backgroundColor = color
 			case .titleTextColorHex: sheetTag?.titleTextColorHex = color
 			case .titleBorderColorHex: sheetTag?.titleBorderColorHex = color
-			case .lyricsTextColorHex: sheetTag?.lyricsTextColorHex = color
-			case .lyricsBorderColor: sheetTag?.lyricsBorderColorHex = color
+			case .contentTextColorHex: sheetTag?.contentTextColorHex = color
+			case .contentBorderColor: sheetTag?.contentBorderColorHex = color
+			case .titleBackgroundColor: sheetTag?.titleBackgroundColor = color
 			default: return
 			}
 		}
 	}
 	
 	func set(value: Any?) {
-		guard value != nil else {
+		if value == nil {
 			colorPreview.backgroundColor = nil
-			return
+			selectedColor = nil
+			applyCellValueToTag()
 		}
 		if let value = value as? UIColor {
 			colorPreview.backgroundColor = value
+			selectedColor = value
+			applyCellValueToTag()
 		}
-	}
-	
-	func setColor(color: UIColor?) {
-		colorPreview.backgroundColor = color
-//		colorPreview.backgroundColor = color != nil ? color! : id == "cellTitleTextColor" || id == "cellLyricsTextColor" ? .black : .clear
-		valueDidChange?(self)
-		delegate?.colorPickerDidChooseColor(cell: self, colorPicker: colorPicker, color: color)
 	}
 	
 	func colorPickerDidChooseColor(_ colorPicker: ChromaColorPicker, color: UIColor) {
@@ -143,7 +145,6 @@ class LabelColorPickerCell: ChurchBeamCell, TagImplementation, DynamicHeightCell
 		applyValueToCell()
 		colorPreview.backgroundColor = color
 		valueDidChange?(self)
-		delegate?.colorPickerDidChooseColor(cell: self, colorPicker: colorPicker, color: color)
 	}
 	
 }

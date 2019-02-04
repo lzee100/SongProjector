@@ -23,11 +23,9 @@ class TextFieldCell: UITableViewCell {
 		self.textFieldDidChange = textFieldDidChange
 	}
 	
-	
-	@IBAction func textFieldChanged(_ sender: UITextField) {
+	@IBAction func textfieldDidEdit(_ sender: UITextField) {
 		textFieldDidChange?(sender.text)
 	}
-	
 	
     override func setSelected(_ selected: Bool, animated: Bool) {
     }

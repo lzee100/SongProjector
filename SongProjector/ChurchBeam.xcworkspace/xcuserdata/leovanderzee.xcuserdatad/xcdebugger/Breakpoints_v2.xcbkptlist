@@ -6,49 +6,17 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SongProjector/Global/BibleIndex.swift"
-            timestampString = "549873113.546169"
+            filePath = "SongProjector/Controller/SongsController.swift"
+            timestampString = "570959568.665321"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "308"
-            endingLineNumber = "308"
-            landmarkName = "parse(searchRequest:returnScripture:)"
+            startingLineNumber = "17"
+            endingLineNumber = "17"
+            landmarkName = "didCloseCustomSheet()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "SongProjector.BibleIndexx.(parse in _6898A775FD0859C1B451E9C7B30349C9)(searchRequest: Swift.Optional&lt;Swift.String&gt;, returnScripture: Swift.Bool) -&gt; Swift.Optional&lt;Swift.String&gt;"
-                  moduleName = "SongProjector"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/leovanderzee/privateDevelopment/SongProjector/SongProjector/SongProjector/Global/BibleIndex.swift"
-                  timestampString = "542650324.051018"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "304"
-                  endingLineNumber = "304"
-                  offsetFromSymbolStart = "23588">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #2 (SongProjector.Vers) -&gt; Swift.Bool in SongProjector.BibleIndexx.(parse in _6898A775FD0859C1B451E9C7B30349C9)(searchRequest: Swift.Optional&lt;Swift.String&gt;, returnScripture: Swift.Bool) -&gt; Swift.Optional&lt;Swift.String&gt;"
-                  moduleName = "SongProjector"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/leovanderzee/privateDevelopment/SongProjector/SongProjector/SongProjector/Global/BibleIndex.swift"
-                  timestampString = "542650324.053461"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "305"
-                  endingLineNumber = "305"
-                  offsetFromSymbolStart = "18">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -57,62 +25,14 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../../../Library/Developer/Xcode/DerivedData/ChurchBeam-fcjuaivbbqrvknaxprijydgbdcyg/Build/Intermediates.noindex/ChurchBeam.build/Debug-iphoneos/SongProjector.build/DerivedSources/CoreDataGenerated/SongProjector/Cluster+CoreDataProperties.swift"
-            timestampString = "566493533.203655"
+            filePath = "SongProjector/RestService/Base/Requester.swift"
+            timestampString = "570959568.6654119"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "22"
-            endingLineNumber = "22"
-            landmarkName = "Cluster"
-            landmarkType = "21">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SongProjector/SoundPlayer.swift"
-            timestampString = "566861764.722339"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "66"
-            endingLineNumber = "66"
-            landmarkName = "playerFor(instrumentType:)"
+            startingLineNumber = "250"
+            endingLineNumber = "250"
+            landmarkName = "requestSend(url:object:parameters:range:success:failure:queue:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ChurchBeam.SoundPlay.playerFor(instrumentType: ChurchBeam.InstrumentType) -&gt; Swift.Optional&lt;ChurchBeam.InstrumentPlayer&gt;"
-                  moduleName = "SongProjector"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/leovanderzee/privateDevelopment/SongProjector/SongProjector/SongProjector/SoundPlayer.swift"
-                  timestampString = "567035018.22717"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "66"
-                  endingLineNumber = "66"
-                  offsetFromSymbolStart = "40">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (ChurchBeam.InstrumentPlayer) -&gt; Swift.Bool in ChurchBeam.SoundPlay.playerFor(instrumentType: ChurchBeam.InstrumentType) -&gt; Swift.Optional&lt;ChurchBeam.InstrumentPlayer&gt;"
-                  moduleName = "SongProjector"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/leovanderzee/privateDevelopment/SongProjector/SongProjector/SongProjector/SoundPlayer.swift"
-                  timestampString = "567035018.2309279"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "66"
-                  endingLineNumber = "66"
-                  offsetFromSymbolStart = "32">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

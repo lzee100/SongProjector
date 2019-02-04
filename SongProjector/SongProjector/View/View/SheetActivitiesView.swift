@@ -84,8 +84,8 @@ class SheetActivitiesView: SheetView {
 		var index: Double = 0
 		while index < 8 {
 			let activity = CoreGoogleActivities.createEntityNOTsave()
-			activity.isTemp = true
-			activity.startDate = Date().addingTimeInterval(.days(index * 3))
+			activity.deleteDate = NSDate()
+			activity.startDate = Date().addingTimeInterval(.days(index * 3)) as NSDate
 			activity.eventDescription = Text.ActivitySheet.previewDescription
 			index += 1
 			activities.append(activity)
@@ -116,7 +116,7 @@ class SheetActivitiesView: SheetView {
 		
 		var hasThisWeek = false
 		for activity in activities {
-			if let startDate = activity.startDate, startDate.isThisWeek {
+			if let startDate = activity.startDate, (startDate as Date).isThisWeek {
 				hasThisWeek = true
 				break
 			}
@@ -124,7 +124,7 @@ class SheetActivitiesView: SheetView {
 		
 		var hasNextWeek = false
 		for activity in activities {
-			if let startDate = activity.startDate, startDate.isNextWeek {
+			if let startDate = activity.startDate, (startDate as Date).isNextWeek {
 				hasNextWeek = true
 				break
 			}
@@ -132,7 +132,7 @@ class SheetActivitiesView: SheetView {
 		
 		var hasUpcoming = false
 		for activity in activities {
-			if let startDate = activity.startDate, !startDate.isThisWeek, !startDate.isNextWeek {
+			if let startDate = activity.startDate, (startDate as Date).isThisWeek, !(startDate as Date).isNextWeek {
 				hasUpcoming = true
 				break
 			}
@@ -160,7 +160,7 @@ class SheetActivitiesView: SheetView {
 		for activity in activities {
 			
 			// THIS WEEK
-			if let startDate = activity.startDate, startDate.isThisWeek {
+			if let startDate = activity.startDate, (startDate as Date).isThisWeek {
 				
 				// add HEADER THIS WEEK
 				if !hasHeaderThisWeek {
@@ -178,7 +178,7 @@ class SheetActivitiesView: SheetView {
 				y += (activityHeight * 2)
 			}
 			// NEXT WEEK
-			else if let startDate = activity.startDate, startDate.isNextWeek {
+			else if let startDate = activity.startDate, (startDate as Date).isThisWeek {
 				// add HEADER NEXT WEEK
 				if !hasHeaderNextWeek {
 					let frameHeader = CGRect(x: 0, y: y, width: activitiesContainerView.bounds.width, height: activityHeight * headerPoints)
@@ -218,7 +218,7 @@ class SheetActivitiesView: SheetView {
 	}
 	
 	override func updateOpacity() {
-		if let _ = isForExternalDispay ? sheetTag?.backgroundImage : sheetTag?.thumbnail, let alpha = sheetTag?.backgroundTransparency {
+		if let _ = isForExternalDispay ? sheetTag?.backgroundImage : sheetTag?.thumbnail, let alpha = sheetTag?.backgroundTransparancy {
 			backgroundImageView.alpha = CGFloat(alpha)
 		}
 	}
@@ -228,7 +228,7 @@ class SheetActivitiesView: SheetView {
 			backgroundImageView.isHidden = false
 			backgroundImageView.contentMode = .scaleAspectFill
 			backgroundImageView.image = image
-			if let backgroundTransparency = sheetTag?.backgroundTransparency {
+			if let backgroundTransparency = sheetTag?.backgroundTransparancy {
 				backgroundImageView.alpha = CGFloat(backgroundTransparency)
 			}
 		} else {
@@ -255,7 +255,7 @@ class SheetActivitiesView: SheetView {
 	}
 	
 	override func updateTitle() {
-		let sheet = self.sheet as! SheetActivities
+		let sheet = self.sheet as! SheetActivitiesEntity
 		if let songTitle = sheet.title {
 			if let tag = sheetTag {
 				descriptionTitle.attributedText = NSAttributedString(string: songTitle, attributes: tag.getTitleAttributes(scaleFactor ?? 0))

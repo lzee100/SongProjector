@@ -335,7 +335,7 @@ class SongObject: Comparable {
 			var emptySheetsAdded: [Sheet] = []
 			
 			let emptySheet = CoreSheetTitleContent.createEntity(fireNotification: false)
-			emptySheet.isTemp = true
+			emptySheet.deleteDate = NSDate()
 			emptySheet.isEmptySheet = true
 			
 			if let isEmptySheetFirst = cluster.hasTag?.isEmptySheetFirst {

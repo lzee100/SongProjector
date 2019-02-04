@@ -126,31 +126,25 @@ class LabelDoubleSwitchCell: ChurchBeamCell, DynamicHeightCell, TagImplementatio
 	}
 	
 	func applyValueToCell() {
-		if let tag = sheetTag, let tagAttribute = tagAttribute {
-			switch tagAttribute {
-			case .hasEmptySheet: switchOne.isOn = tag.hasEmptySheet
-			case .isEmptySheetFirst: switchTwo.isOn = tag.isEmptySheetFirst
-			default: return
-			}
-		}
+		switchOne.isOn = sheetTag?.hasEmptySheet ?? false
+		switchTwo.isOn = sheetTag?.isEmptySheetFirst ?? false
 		setSwitchColors()
 	}
 	
 	func applyCellValueToTag() {
-		if let tag = sheetTag, let tagAttribute = tagAttribute {
-			switch tagAttribute {
-			case .hasEmptySheet: tag.hasEmptySheet = switchOne.isOn
-			case .isEmptySheetFirst: tag.isEmptySheetFirst = switchTwo.isOn
-			default: return
-			}
-		}
+		sheetTag?.hasEmptySheet = switchOne.isOn
+		sheetTag?.isEmptySheetFirst = switchTwo.isOn
 	}
 	
 	func set(value: Any?) {
 		if let tagAttribute = tagAttribute, let value = value as? Bool? {
 			switch tagAttribute {
-			case .hasEmptySheet: switchOne.isOn = value ?? false
-			case .isEmptySheetFirst: switchTwo.isOn = value ?? false
+			case .hasEmptySheet:
+				switchOne.isOn = value ?? false
+				switchTwo.isOn = value ?? false
+			case .isEmptySheetFirst:
+				switchOne.isOn = value ?? false
+				switchTwo.isOn = value ?? false
 			default: return
 			}
 		}

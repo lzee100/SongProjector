@@ -8,8 +8,12 @@
 
 import UIKit
 
+protocol CustomSheetsControllerDelegate {
+	func didCloseCustomSheet()
+}
 
-class CustomSheetsController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIGestureRecognizerDelegate, NewOrEditIphoneControllerDelegate {
+class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIGestureRecognizerDelegate, NewOrEditIphoneControllerDelegate {
+	
 	
 	
 	// MARK: - Properties
@@ -35,6 +39,7 @@ class CustomSheetsController: UIViewController, UICollectionViewDelegate, UIColl
 		}
 	}
 	var isEdited = false
+	var delegate: CustomSheetsControllerDelegate?
 	
 	var cluster: Cluster? {
 		didSet {
@@ -43,6 +48,9 @@ class CustomSheetsController: UIViewController, UICollectionViewDelegate, UIColl
 				sheets = cluster.hasSheetsArray
 			}
 		}
+	}
+	override var requesterId: String {
+		return "CustomSheetsController"
 	}
 	var clusterTemp: Cluster?
 	var sheets: [Sheet] = [] {
@@ -72,8 +80,10 @@ class CustomSheetsController: UIViewController, UICollectionViewDelegate, UIColl
 	}
 	var sheetHasSheet: [SheetHasSheet] = []
 	
+	
+	
 	// MARK: Private properties
-	private var sheetSize = CGSize(width: 250*externalDisplayWindowRatioHeightWidth, height: 250)
+	private var sheetSize = CGSize(width: 250 * externalDisplayWindowRatioHeightWidth, height: 250)
 	private var longPressGesture: UILongPressGestureRecognizer!
 	
 	
@@ -85,10 +95,9 @@ class CustomSheetsController: UIViewController, UICollectionViewDelegate, UIColl
 		setup()
 	}
 	
-	override func viewDidAppear(_ animated: Bool) {
-		super.viewDidAppear(animated)
+	override func viewWillAppear(_ animated: Bool) {
+		super.viewWillAppear(animated)
 		update()
-		
 	}
 	
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -104,9 +113,7 @@ class CustomSheetsController: UIViewController, UICollectionViewDelegate, UIColl
 		
 		if let controller = segue.destination.unwrap() as? SaveNewSongTitleTimeVC {
 			controller.didSave = didSaveSongWith
-			controller.title = clusterTemp?.title ?? Text.NewSong.title
-			controller.songTitle = clusterTemp?.title ?? ""
-			controller.time = clusterTemp?.time ?? 0
+			controller.cluster = clusterTemp
 			controller.selectedTag = selectedTag
 		}
 	}
@@ -161,11 +168,15 @@ class CustomSheetsController: UIViewController, UICollectionViewDelegate, UIColl
 			selectedTag = selectedTag == tags[indexPath.row] ? nil : tags[indexPath.row]
 			update()
 		} else {
+			if clusterTemp?.isTypeSong ?? false {
+				performSegue(withIdentifier: "ChangeLyricsSegue", sender: self)
+				return
+			}
 			let sheet = sheetsTemp[indexPath.row]
 			let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
 			controller.modificationMode = .editCustomSheet
 			controller.sheet = sheet
-			controller.didCreateSheet = didCreate(sheet:)
+			controller.delegate = self
 			let nav = UINavigationController(rootViewController: controller)
 			present(nav, animated: true)
 		}
@@ -198,6 +209,20 @@ class CustomSheetsController: UIViewController, UICollectionViewDelegate, UIColl
 			if let id = sheetTempId, let index = self.sheetsTemp.index(where: { $0.id == id }) {
 				self.collectionView.insertItems(at: [IndexPath(row: index, section: 0)])
 			}
+		}
+	}
+	
+	func didCloseNewOrEditIphoneController() {
+		delegate?.didCloseCustomSheet()
+	}
+	
+	
+	
+	// MARK: - Submit Observer Functions
+	
+	override func handleRequestFinish(result: AnyObject?) {
+		Queues.main.async {
+			self.delegate?.didCloseCustomSheet()
 		}
 	}
 	
@@ -241,12 +266,8 @@ class CustomSheetsController: UIViewController, UICollectionViewDelegate, UIColl
 		
 	}
 	
-	func didSaveSongWith(title: String, time: Double) {
-		
-		clusterTemp?.isTemp = true
+	func didSaveSongWith() {
 		clusterTemp?.hasTag = selectedTag
-		clusterTemp?.title = title
-		clusterTemp?.time = time
 		
 		if let cluster = cluster {
 			clusterTemp?.mergeSelfInto(cluster: cluster)
@@ -262,18 +283,16 @@ class CustomSheetsController: UIViewController, UICollectionViewDelegate, UIColl
 		}
 		
 		cluster?.hasSheets = NSSet(array: sheets)
-		cluster?.isTemp = false
 		cluster?.hasTag = selectedTag
-		CoreCluster.saveContext()
+		cluster?.tagId = selectedTag?.id ?? 0
 		
-		CoreEntity.predicates.append("isTemp", equals: true)
-		let tempEntities = CoreEntity.getEntities()
-		for entity in tempEntities {
-			entity.delete()
-		}
-		
-		DispatchQueue.main.async {
-			self.dismiss(animated: true)
+		if let cluster = cluster {
+			let method: RequestMethod = cluster.isTemp ? .post : .put
+			ClusterSubmitter.submit(cluster, requestMethod: method)
+		} else {
+			Queues.main.async {
+				self.dismiss(animated: true)
+			}
 		}
 	}
 	
@@ -283,14 +302,16 @@ class CustomSheetsController: UIViewController, UICollectionViewDelegate, UIColl
 	
 	private func setup() {
 		
-		if let cluster = cluster {
-			selectedTag = cluster.hasTag
+		ClusterSubmitter.addObserver(self)
+		
+		if let tagId = cluster?.tagId {
+			cluster?.hasTag = CoreTag.getEntitieWith(id: tagId)
+			selectedTag = cluster?.hasTag
 		}
 		if clusterTemp == nil {
-			cluster = CoreCluster.createEntity(fireNotification: false)
-			cluster?.isTemp = true
-			clusterTemp = CoreCluster.createEntity(fireNotification: false)
-			clusterTemp?.isTemp = true
+			cluster = CoreCluster.createEntityNOTsave()
+			clusterTemp = CoreCluster.createEntityNOTsave()
+			clusterTemp?.deleteDate = NSDate()
 		}
 		save.title = Text.Actions.save
 		cancel.title = Text.Actions.cancel
@@ -360,53 +381,53 @@ class CustomSheetsController: UIViewController, UICollectionViewDelegate, UIColl
 	private func buildSheets(fromText: String) {
 		let newCluster: Cluster?
 		if cluster == nil {
-			newCluster = CoreCluster.createEntity()
+			newCluster = CoreCluster.createEntityNOTsave()
 		} else {
 			newCluster = cluster?.tempVersion
 		}
 		
-		newCluster?.isTemp = false
+		newCluster?.deleteDate = nil
 		newCluster?.hasTag = selectedTag
 		
-		var lyricsToDevide = fromText + "\n\n"
+		var contentToDevide = fromText + "\n\n"
 		
 		// get title
-		if let range = lyricsToDevide.range(of: "\n\n") {
-			let start = lyricsToDevide.index(lyricsToDevide.startIndex, offsetBy: 0)
+		if let range = contentToDevide.range(of: "\n\n") {
+			let start = contentToDevide.index(contentToDevide.startIndex, offsetBy: 0)
 			let rangeSheet = start..<range.lowerBound
 			let rangeRemove = start..<range.upperBound
-			newCluster?.title = String(lyricsToDevide[rangeSheet])
-			lyricsToDevide.removeSubrange(rangeRemove)
+			newCluster?.title = String(contentToDevide[rangeSheet])
+			contentToDevide.removeSubrange(rangeRemove)
 		}
 		
 		var position: Int16 = 0
 		var newSheets: [Sheet] = []
 		// get sheets
-		while let range = lyricsToDevide.range(of: "\n\n") {
+		while let range = contentToDevide.range(of: "\n\n") {
 			
-			// get lyrics
-			let start = lyricsToDevide.index(lyricsToDevide.startIndex, offsetBy: 0)
+			// get content
+			let start = contentToDevide.index(contentToDevide.startIndex, offsetBy: 0)
 			let rangeSheet = start..<range.lowerBound
 			let rangeRemove = start..<range.upperBound
 			
-			let sheetLyrics = String(lyricsToDevide[rangeSheet])
+			let sheetLyrics = String(contentToDevide[rangeSheet])
 			var sheetTitle: String = Text.NewSong.NoTitleForSheet
 			
 			// get title
-			if let rangeTitle = lyricsToDevide.range(of: "\n") {
-				let startTitle = lyricsToDevide.index(lyricsToDevide.startIndex, offsetBy: 0)
+			if let rangeTitle = contentToDevide.range(of: "\n") {
+				let startTitle = contentToDevide.index(contentToDevide.startIndex, offsetBy: 0)
 				let rangeSheetTitle = startTitle..<rangeTitle.lowerBound
-				sheetTitle = String(lyricsToDevide[rangeSheetTitle])
+				sheetTitle = String(contentToDevide[rangeSheetTitle])
 			}
 			
 			let newSheet = CoreSheetTitleContent.createEntityNOTsave()
 			newSheet.title = sheetTitle
-			newSheet.lyrics = sheetLyrics
+			newSheet.content = sheetLyrics
 			newSheet.position = position
 			
 			newSheets.append(newSheet)
 			
-			lyricsToDevide.removeSubrange(rangeRemove)
+			contentToDevide.removeSubrange(rangeRemove)
 			position += 1
 		}
 		
@@ -414,9 +435,9 @@ class CustomSheetsController: UIViewController, UICollectionViewDelegate, UIColl
 		
 		if let sheets = newSheets as? [SheetTitleContentEntity] {
 			for tempSheet in sheets {
-				let sheet = CoreSheetTitleContent.createEntity()
+				let sheet = CoreSheetTitleContent.createEntityNOTsave()
 				sheet.title = tempSheet.title
-				sheet.lyrics = tempSheet.lyrics
+				sheet.content = tempSheet.content
 				sheet.position = tempSheet.position
 				newCluster?.addToHasSheets(sheet)
 			}
@@ -432,7 +453,7 @@ class CustomSheetsController: UIViewController, UICollectionViewDelegate, UIColl
 			var totalString = (cluster?.title ?? "") + "\n\n"
 			let tempSheets:[SheetTitleContentEntity] = sheets.count > 0 ? sheets : cluster?.hasSheetsArray as? [SheetTitleContentEntity] ?? []
 			for (index, sheet) in tempSheets.enumerated() {
-				totalString += sheet.lyrics ?? ""
+				totalString += sheet.content ?? ""
 				if index < tempSheets.count - 1 { // add only \n\n to second last, not the last one, or it will add empty sheet
 					totalString +=  "\n\n"
 				}
@@ -489,9 +510,12 @@ class CustomSheetsController: UIViewController, UICollectionViewDelegate, UIColl
 	
 	@IBAction func cancel(_ sender: UIBarButtonItem) {
 		// remove all
+		if cluster?.isTemp ?? false {
+			cluster?.delete()
+		}
 		clusterTemp?.delete()
 		for sheet in sheetsTemp {
-			sheet.delete()
+			sheet.delete(false)
 		}
 		dismiss(animated: true)
 	}
@@ -509,6 +533,11 @@ class CustomSheetsController: UIViewController, UICollectionViewDelegate, UIColl
 	}
 	
 	@IBAction func editPressed(_ sender: UIBarButtonItem) {
+		
+		if (clusterTemp?.isTypeSong ?? false) && getTextFromSheets().length > 0 {
+			self.performSegue(withIdentifier: "ChangeLyricsSegue", sender: self)
+			return
+		}
 		
 		let hasLyrics = getTextFromSheets() != ""
 		

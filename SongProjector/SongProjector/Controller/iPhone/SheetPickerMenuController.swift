@@ -8,7 +8,8 @@
 
 import UIKit
 
-class SheetPickerMenuController: UITableViewController {
+class SheetPickerMenuController: UITableViewController, NewOrEditIphoneControllerDelegate {
+	
 		
 	@IBOutlet weak var cancelButton: UIBarButtonItem?
 	
@@ -148,42 +149,49 @@ class SheetPickerMenuController: UITableViewController {
 			}
 		case .default:
 			let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
-			controller.didCreateSheet = didCreateSheet
+			controller.delegate = self
 			controller.modificationMode = .newCustomSheet
 			controller.dismissMenu = dismissMenu
 			switch SheetType.for(indexPath){
 			case .SheetTitleContent:
-				let sheet = CoreSheetTitleContent.createEntity()
-				sheet.isTemp = true
+				let sheet = CoreSheetTitleContent.createEntityNOTsave()
 				controller.sheet = sheet
 			case .SheetTitleImage:
-				let sheet = CoreSheetTitleImage.createEntity()
-				sheet.isTemp = true
+				let sheet = CoreSheetTitleImage.createEntityNOTsave()
 				controller.sheet = sheet
 			case .SheetPastors:
-				let sheet = CoreSheetPastors.createEntity()
-				sheet.isTemp = true
+				let sheet = CoreSheetPastors.createEntityNOTsave()
 				controller.sheet = sheet
 			case .SheetSplit:
-				let sheet = CoreSheetSplit.createEntity()
-				sheet.isTemp = true
+				let sheet = CoreSheetSplit.createEntityNOTsave()
 				controller.sheet = sheet
 			case .SheetEmpty:
-				let sheet = CoreSheetEmptySheet.createEntity()
-				sheet.isTemp = true
+				let sheet = CoreSheetEmptySheet.createEntityNOTsave()
 				controller.sheet = sheet
 			case .SheetActivities:
-				let sheet = CoreSheetActivities.createEntity()
-				sheet.isTemp = true
+				let sheet = CoreSheetActivities.createEntityNOTsave()
 				controller.sheet = sheet
 			}
 			let nav = UINavigationController(rootViewController: controller)
-			present(nav, animated: true)
+			Queues.main.async {
+				self.present(nav, animated: true)
+			}
 		}
 	}
 	
 	override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 		return 60
+	}
+	
+	
+	// MARK: - NewOrEditIphoneControllerDelegate Functions
+	
+	func didCreate(sheet: Sheet) {
+		
+	}
+	
+	func didCloseNewOrEditIphoneController() {
+		presentedViewController?.dismiss(animated: true, completion: nil)
 	}
 
 	private func setup() {

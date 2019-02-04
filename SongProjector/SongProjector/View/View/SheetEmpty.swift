@@ -41,7 +41,7 @@ class SheetEmpty: SheetView {
 	}
 	
 	override func updateOpacity() {
-		if let alpha = sheetTag?.backgroundTransparency {
+		if let alpha = sheetTag?.backgroundTransparancy {
 			backgroundImageView.alpha = CGFloat(alpha)
 		}
 	}
@@ -52,7 +52,7 @@ class SheetEmpty: SheetView {
 			backgroundImageView.isHidden = false
 			backgroundImageView.contentMode = .scaleAspectFill
 			backgroundImageView.image = backgroundImage
-			if let backgroundTransparency = sheetTag?.backgroundTransparency {
+			if let backgroundTransparency = sheetTag?.backgroundTransparancy {
 				backgroundImageView.alpha = CGFloat(backgroundTransparency)
 			}
 		} else {

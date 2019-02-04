@@ -88,7 +88,7 @@ class LabelSliderCell: ChurchBeamCell, TagImplementation, DynamicHeightCell {
 	func applyValueToCell() {
 		if let tag = sheetTag, let tagAttribute = tagAttribute {
 			switch tagAttribute {
-			case .backgroundTransparancy: set(sliderValue: tag.backgroundTransparency * 100)
+			case .backgroundTransparancy: set(sliderValue: tag.backgroundTransparancy * 100)
 			default: return
 			}
 		}
@@ -97,7 +97,7 @@ class LabelSliderCell: ChurchBeamCell, TagImplementation, DynamicHeightCell {
 	func applyCellValueToTag() {
 		if let tag = sheetTag, let tagAttribute = tagAttribute {
 			switch tagAttribute {
-			case .backgroundTransparancy: tag.backgroundTransparency = slider.value
+			case .backgroundTransparancy: tag.backgroundTransparancy = slider.value
 			default: return
 			}
 		}

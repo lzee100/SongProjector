@@ -182,7 +182,7 @@ class SheetPastors: SheetView {
 			sheetBackgroundImageView.isHidden = false
 			sheetBackgroundImageView.contentMode = .scaleAspectFill
 			sheetBackgroundImageView.image = image
-			if let backgroundTransparency = sheetTag?.backgroundTransparency {
+			if let backgroundTransparency = sheetTag?.backgroundTransparancy {
 				sheetBackgroundImageView.alpha = CGFloat(backgroundTransparency)
 			}
 		} else {
@@ -191,7 +191,7 @@ class SheetPastors: SheetView {
 	}
 	
 	override func updateOpacity() {
-		if let alpha = sheetTag?.backgroundTransparency {
+		if let alpha = sheetTag?.backgroundTransparancy {
 			backgroundColor = .black
 			sheetBackgroundImageView.alpha = CGFloat(alpha)
 		}

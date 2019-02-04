@@ -20,7 +20,7 @@ protocol GoogleFetcherLoginDelegate {
 	func presentLoginViewController(vc: UIViewController)
 }
 
-class GoogleActivityFetch: NSObject, Fetcher, GIDSignInDelegate, GIDSignInUIDelegate {
+class GoogleActivityFetch: NSObject, GIDSignInDelegate, GIDSignInUIDelegate {
 
 	var loginDelegate: GoogleFetcherLoginDelegate?
 
@@ -39,7 +39,6 @@ class GoogleActivityFetch: NSObject, Fetcher, GIDSignInDelegate, GIDSignInUIDele
 	}
 
 	private let scopes = [kGTLRAuthScopeCalendarReadonly]
-	private var observers: [FetcherObserver] = []
 
 	private let service = GTLRCalendarService()
 
@@ -49,7 +48,7 @@ class GoogleActivityFetch: NSObject, Fetcher, GIDSignInDelegate, GIDSignInUIDele
 		// Initialize sign-in
 		var configureError: NSError?
 		GGLContext.sharedInstance().configureWithError(&configureError)
-		assert(configureError == nil, "Error configuring Google services: \(configureError)")
+		assert(configureError == nil, "Error configuring Google services: \(String(describing: configureError))")
 
 		GIDSignIn.sharedInstance().uiDelegate = self
 		GIDSignIn.sharedInstance().delegate = self
@@ -71,7 +70,7 @@ class GoogleActivityFetch: NSObject, Fetcher, GIDSignInDelegate, GIDSignInUIDele
 			self.service.authorizer = user.authentication.fetcherAuthorizer()
 			let userDefaults = UserDefaults.standard
 			userDefaults.set(user.profile.name, forKey: "GoogleUserName")
-			fetchFinished(result: .OK)
+//			fetchFinished(result: .OK(.updated))
 		}
 	}
 
@@ -82,12 +81,6 @@ class GoogleActivityFetch: NSObject, Fetcher, GIDSignInDelegate, GIDSignInUIDele
 			GIDSignIn.sharedInstance().signInSilently()
 
 			fetchEvents()
-		}
-	}
-
-	func fetchFinished(result: ResultTypes) {
-		observers.forEach {
-			$0.FetcherDidFinish(result: result)
 		}
 	}
 
@@ -111,7 +104,7 @@ class GoogleActivityFetch: NSObject, Fetcher, GIDSignInDelegate, GIDSignInUIDele
 		error : NSError?) {
 
 		if error != nil {
-			fetchFinished(result: .error)
+//			fetchFinished(result: .error(error?.localizedDescription ?? ""))
 			return
 		}
 
@@ -123,14 +116,14 @@ class GoogleActivityFetch: NSObject, Fetcher, GIDSignInDelegate, GIDSignInUIDele
 		if let events = response.items, !events.isEmpty {
 			for event in events {
 				let activity = CoreGoogleActivities.createEntity()
-				activity.startDate = event.start?.dateTime?.date
-				activity.endDate = event.end?.dateTime?.date
+				activity.startDate = event.start?.dateTime?.date as NSDate?
+				activity.endDate = event.end?.dateTime?.date as NSDate?
 				activity.eventDescription = event.summary
 			}
 		}
 
 		_ = CoreGoogleActivities.saveContext()
-		fetchFinished(result: .OK)
+//		fetchFinished(result: .OK(.updated))
 	}
 
 
@@ -141,10 +134,6 @@ class GoogleActivityFetch: NSObject, Fetcher, GIDSignInDelegate, GIDSignInUIDele
 
 	func sign(_ signIn: GIDSignIn!, dismiss viewController: UIViewController!) {
 		viewController.dismiss(animated: true)
-	}
-
-	func addObserver(_ fetcherObserver: FetcherObserver) {
-		observers.append(fetcherObserver)
 	}
 
 

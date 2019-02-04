@@ -32,23 +32,25 @@ class LyricsViewController: UIViewController {
 		
 		lyricsTextView.text = text
 		
-		lyricsTextView.text = """
-		Cuppy Cake Song
-		
-		You're my honeybunch, sugar plum
-		Pumpy-umpy-umpkin
-		You're my sweetie pie
-		You're my cuppycake, gumdrop
-		Snoogums, boogums, you're
-		The apple of my eye
-		
-		And I love you so
-		And I want you to know
-		That I'm always be right here
-		And I want to sing
-		Sweet songs to you
-		Because you are so dear...
-		"""
+		if lyricsTextView.text == "" {
+			lyricsTextView.text = """
+			Cuppy Cake Song
+			
+			You're my honeybunch, sugar plum
+			Pumpy-umpy-umpkin
+			You're my sweetie pie
+			You're my cuppycake, gumdrop
+			Snoogums, boogums, you're
+			The apple of my eye
+			
+			And I love you so
+			And I want you to know
+			That I'm always be right here
+			And I want to sing
+			Sweet songs to you
+			Because you are so dear...
+			"""
+		}
     }
 
 	@IBAction func cancelPressed(_ sender: UIBarButtonItem) {

@@ -56,17 +56,11 @@ class LoadingBibleController: UIViewController {
 	}
 	
 	private func generateBible() {
-		
-		for book in CoreBook.getEntities() {
-			_ = CoreBook.delete(entity: book)
-		}
-		for chapter in CoreChapter.getEntities() {
-			_ = CoreChapter.delete(entity: chapter)
-		}
-		for vers in CoreVers.getEntities() {
-			_ = CoreVers.delete(entity: vers)
-		}
-		
+		CoreBook.getEntities().forEach({ $0.delete(false) })
+		CoreChapter.getEntities().forEach({ $0.delete(false) })
+		CoreVers.getEntities().forEach({ $0.delete(false) })
+		CoreEntity.saveContext(fireNotification: false)
+
 		var hasNextBook = true
 		var hasNextChapter = true
 		var bookNumber = 0
@@ -88,7 +82,7 @@ class LoadingBibleController: UIViewController {
 		while let bookRange = text.range(of: "xxx"), !isCancelled {
 			
 			let book = CoreBook.createEntity()
-			book.isTemp = false
+			book.deleteDate = nil
 			book.name = BibleIndex.getBookFor(index: bookNumber)
 			book.title = book.name
 			
@@ -104,7 +98,7 @@ class LoadingBibleController: UIViewController {
 				
 				// prepare chapter
 				let chapter = CoreChapter.createEntity()
-				chapter.isTemp = false
+				chapter.deleteDate = nil
 				chapter.number = chapterNumber
 				chapter.title = String(chapterNumber)
 				
@@ -123,7 +117,7 @@ class LoadingBibleController: UIViewController {
 					let rangeRemove = start..<range.upperBound
 					
 					let vers = CoreVers.createEntity()
-					vers.isTemp = false
+					vers.deleteDate = nil
 					vers.number = versNumber
 					vers.title = String(versNumber)
 					vers.text = String(chapterText[rangeVers]).trimmingCharacters(in: .whitespacesAndNewlines)
@@ -148,7 +142,7 @@ class LoadingBibleController: UIViewController {
 				}
 				
 				let vers = CoreVers.createEntity()
-				vers.isTemp = false
+				vers.deleteDate = nil
 				vers.number = versNumber
 				vers.title = String(versNumber)
 				vers.text = chapterText.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -172,20 +166,14 @@ class LoadingBibleController: UIViewController {
 		}
 		
 		if isCancelled {
-			for book in CoreBook.getEntities() {
-				_ = CoreBook.delete(entity: book)
-			}
-			for chapter in CoreChapter.getEntities() {
-				_ = CoreChapter.delete(entity: chapter)
-			}
-			for vers in CoreVers.getEntities() {
-				_ = CoreVers.delete(entity: vers)
-			}
+			CoreBook.getEntities().forEach({ $0.delete(false) })
+			CoreChapter.getEntities().forEach({ $0.delete(false) })
+			CoreVers.getEntities().forEach({ $0.delete(false) })
 			self.remove()
 		} else {
-			_ = CoreChapter.saveContext()
 			self.remove()
 		}
+		CoreEntity.saveContext(fireNotification: false)
 		
 		CoreChapter.predicates.append("hasBook.name", equals: "Genesis")
 		print(CoreChapter.getEntities().count)

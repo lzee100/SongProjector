@@ -68,7 +68,7 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath) as! BasicCell
 		let fullName = BibleIndexx(searchText: sheets[indexPath.row].title).getFullName()
-		cell.setup(title: fullName ?? sheets[indexPath.row].title ?? "", textColor: (fullName != nil && (sheets[indexPath.row] as! SheetTitleContentEntity).lyrics != "") ? UIColor.green : UIColor.red)
+		cell.setup(title: fullName ?? sheets[indexPath.row].title ?? "", textColor: (fullName != nil && (sheets[indexPath.row] as! SheetTitleContentEntity).content != "") ? UIColor.green : UIColor.red)
 		return cell
 	}
 	
@@ -268,7 +268,7 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 		var inputText = textView.text + "\n"
 		
 		for sheet in sheets {
-			sheet.delete()
+			sheet.delete(false)
 		}
 		sheets = []
 
@@ -281,7 +281,7 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 			let verses = BibleIndex.getVersesFor(searchValue: String(inputText[rangeSheet]) ).0
 			let initialTextLength = BibleIndex.getVersesFor(searchValue:  String(inputText[rangeSheet]) ).1
 			
-			if let fontSize = selectedTag?.lyricsTextSize, let verses = verses {
+			if let fontSize = selectedTag?.contentTextSize, let verses = verses {
 				var expodential = 1
 				
 				if Int(fontSize) > 10 {
@@ -395,9 +395,9 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 		
 		if initialTextLength < (maxTextLenght - titleSpace) {
 			let sheet = CoreSheetTitleContent.createEntity()
-			sheet.isTemp = true
+			sheet.deleteDate = NSDate()
 			sheet.title = title
-			sheet.lyrics = getTextFor(verses: verses)
+			sheet.content = getTextFor(verses: verses)
 			sheet.position = position
 			position += 1
 			sheets.append(sheet)
@@ -408,7 +408,7 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 		while getTextLengthFor(verses: remainderVerses) > (maxTextLenght - spaceTitle) {
 			
 			let sheet = CoreSheetTitleContent.createEntity()
-			sheet.isTemp = true
+			sheet.deleteDate = NSDate()
 			sheet.title = title
 			
 			var totalTextLenght = 0
@@ -419,7 +419,7 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 				remainderVerses.remove(at: 0)
 			}
 			
-			sheet.lyrics = getTextFor(verses: versesForThisSheet)
+			sheet.content = getTextFor(verses: versesForThisSheet)
 			sheet.position = position
 			position += 1
 			sheets.append(sheet)
@@ -428,9 +428,9 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 		
 		if remainderVerses.count > 0 {
 			let sheet = CoreSheetTitleContent.createEntity()
-			sheet.isTemp = true
+			sheet.deleteDate = NSDate()
 			sheet.title = title
-			sheet.lyrics = getTextFor(verses: remainderVerses)
+			sheet.content = getTextFor(verses: remainderVerses)
 			sheet.position = position
 			position += 1
 			sheets.append(sheet)
@@ -439,7 +439,7 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 		
 		if addEmptySheet {
 			let sheet = CoreSheetTitleContent.createEntity()
-			sheet.isTemp = true
+			sheet.deleteDate = NSDate()
 			sheet.position = position
 			position += 1
 			sheets.append(sheet)
@@ -458,7 +458,7 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 	
 	private func getTextLengthFor(verses: [Vers]) -> Int {
 		var lenght = 0
-		let allLengths = verses.flatMap{ $0.text?.length }
+		let allLengths = verses.compactMap({ $0.text?.length })
 		allLengths.forEach{ lenght += $0 }
 		return lenght
 	}

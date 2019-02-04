@@ -94,7 +94,7 @@ class LabelTextViewCell: ChurchBeamCell, DynamicHeightCell, SheetImplementation,
 			if let sheet = sheet as? SheetSplitEntity {
 				set(text: sheet.textLeft)
 			} else if let sheet = sheet as? SheetTitleContentEntity {
-				set(text: sheet.lyrics)
+				set(text: sheet.content)
 			} else if let sheet = sheet as? SheetTitleImageEntity {
 				set(text: sheet.content)
 			}else if let sheet = sheet as? SheetPastorsEntity {
@@ -120,7 +120,7 @@ class LabelTextViewCell: ChurchBeamCell, DynamicHeightCell, SheetImplementation,
 		customText = textView.text
 		
 		if let sheet = sheet as? SheetTitleContentEntity {
-			sheet.lyrics = textView.text
+			sheet.content = textView.text
 		} else if let sheet = sheet as? SheetTitleImageEntity {
 			sheet.content = textView.text
 		} else if let sheet = sheet as? SheetPastorsEntity {

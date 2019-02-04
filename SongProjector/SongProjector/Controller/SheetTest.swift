@@ -15,29 +15,29 @@ class SheetTest: UIViewController {
 	override func viewDidLoad() {
 		
 		let sheet = CoreSheetPastors.createEntity()
-		sheet.isTemp = true
+		sheet.deleteDate = NSDate()
 
 		
 		let tag = CoreTag.createEntity()
 		tag.title = "tag"
 		tag.isHidden = true
-		tag.isTemp = true
+		tag.deleteDate = NSDate()
 		tag.titleTextSize = 14
 		tag.textColorTitle = .black
-		tag.lyricsTextSize = 10
+		tag.contentTextSize = 10
 		tag.textColorLyrics = .black
-		tag.backgroundTransparency = 100
+		tag.backgroundTransparancy = 100
 		tag.allHaveTitle = true
 		tag.hasEmptySheet = false
 		tag.titleAlignmentNumber = 0
-		tag.lyricsAlignmentNumber = 0
+		tag.contentAlignmentNumber = 0
 
 		tag.textColorTitle = .white
 		tag.textColorLyrics = .white
-		tag.isTitleItalian = true
-		tag.isLyricsItalian = true
+		tag.isTitleItalic = true
+		tag.isContentItalic = true
 		tag.titleAlignmentNumber = 1
-		tag.lyricsAlignmentNumber = 1
+		tag.contentAlignmentNumber = 1
 		
 		sheet.title = Text.newPastorsSheet.title
 		sheet.content = Text.newPastorsSheet.content

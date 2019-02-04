@@ -12,7 +12,13 @@ protocol SongsControllerDelegate {
 	func didSelectCluster(cluster: Cluster)
 }
 
-class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UISearchBarDelegate {
+class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UISearchBarDelegate, CustomSheetsControllerDelegate {
+	func didCloseCustomSheet() {
+		presentedViewController?.dismiss(animated: true, completion: nil)
+	}
+	
+	
+	
 	
 	@IBOutlet var new: UIBarButtonItem!
 	@IBOutlet var collectionView: UICollectionView!
@@ -21,9 +27,10 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 	@IBOutlet var cancel: UIBarButtonItem!
 	@IBOutlet var emptyView: UIView!
 	
+	
+	
 	// MARK: - Private Properties
 	
-	private var isDeleting = false
 	private var tags: [Tag] = []
 	private var selectedTags: [Tag] = []
 	private var clusters: [Cluster] = []
@@ -31,21 +38,29 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 	private var filteredClusters: [Cluster] = []
 	
 	
+	
 	// MARK: Properties
 
 	var delegate: SongsControllerDelegate?
 	var selectedClusters: [Cluster] = []
+	override var requesterId: String {
+		return "SongsController"
+	}
 	
 	
 	// MARK: - UIViewController Functions
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
+		ClusterFetcher.addObserver(self)
+		ClusterSubmitter.addObserver(self)
 		setup()
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
+		ClusterFetcher.fetch(force: false)
+		searchBarCancelButtonClicked(searchBar)
 		update()
 	}
 	
@@ -76,12 +91,7 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
 		if editingStyle == .delete {
 			if let index = clusters.index(of: filteredClusters[indexPath.row]) {
-				isDeleting = !isDeleting
-				clusters.remove(at: index)
-				let _ = CoreCluster.delete(entity: filteredClusters[index])
-				filteredClusters = clusters
-				self.tableView.deleteRows(at: [indexPath], with: .automatic)
-				isDeleting = !isDeleting
+				ClusterSubmitter.submit(clusters[index], requestMethod: .delete)
 			}
 		}
 	}
@@ -108,6 +118,7 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 				let customController = storyboard?.instantiateViewController(withIdentifier: "CustomSheetsIphoneController") as! CustomSheetsController
 				customController.cluster = selectedCluster!
 				customController.sheets = selectedCluster!.hasSheetsArray
+				customController.delegate = self
 				customController.isNew = false
 				let nav = UINavigationController(rootViewController: customController)
 				DispatchQueue.main.async {
@@ -173,13 +184,21 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 		self.tableView.reloadData()
 	}
 	
+	override func handleRequestFinish(result: AnyObject?) {
+		if let deletedCluster = result as? Cluster, let index = clusters.index(where: { $0.id == deletedCluster.id }) {
+			clusters.remove(at: index)
+			filteredClusters = clusters
+			self.tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
+		} else {
+			update()
+		}
+	}
+	
 	private func setup() {
 		
 		tableView.register(cell: Cells.basicCellid)
 		collectionView.register(UINib(nibName: Cells.tagCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.tagCellCollection)
 		
-		NotificationCenter.default.addObserver(forName: NotificationNames.dataBaseDidChange, object: nil, queue: nil, using: dataBaseDidChange)
-
 		hideKeyboardWhenTappedAround()
 		view.backgroundColor = themeWhiteBlackBackground
 		
@@ -218,15 +237,7 @@ class SongsController: UIViewController, UITableViewDelegate, UITableViewDataSou
 			return
 		}
 		clusters = clusters.filter { (cluster) -> Bool in
-			if let tag = cluster.hasTag {
-				return selectedTags.contains(tag)
-			} else {return false}
-		}
-	}
-	
-	func dataBaseDidChange(notification: Notification) {
-		if !isDeleting {
-			update()
+			return selectedTags.contains(where: { $0.id == cluster.tagId })
 		}
 	}
 

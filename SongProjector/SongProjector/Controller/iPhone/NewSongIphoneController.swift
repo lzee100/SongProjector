@@ -218,44 +218,44 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 	
 	private func buildSheets(fromText: String) {
 		sheets = []
-		var lyricsToDevide = fromText + "\n\n"
+		var contentToDevide = fromText + "\n\n"
 		
 		// get title
-		if let range = lyricsToDevide.range(of: "\n\n") {
-			let start = lyricsToDevide.index(lyricsToDevide.startIndex, offsetBy: 0)
+		if let range = contentToDevide.range(of: "\n\n") {
+			let start = contentToDevide.index(contentToDevide.startIndex, offsetBy: 0)
 			let rangeSheet = start..<range.lowerBound
 			let rangeRemove = start..<range.upperBound
-			cluster?.title = String(lyricsToDevide[rangeSheet])
-			lyricsToDevide.removeSubrange(rangeRemove)
+			cluster?.title = String(contentToDevide[rangeSheet])
+			contentToDevide.removeSubrange(rangeRemove)
 		}
 		
 		var position: Int16 = 0
 		// get sheets
-		while let range = lyricsToDevide.range(of: "\n\n") {
+		while let range = contentToDevide.range(of: "\n\n") {
 			
-			// get lyrics
-			let start = lyricsToDevide.index(lyricsToDevide.startIndex, offsetBy: 0)
+			// get content
+			let start = contentToDevide.index(contentToDevide.startIndex, offsetBy: 0)
 			let rangeSheet = start..<range.lowerBound
 			let rangeRemove = start..<range.upperBound
 			
-			let sheetLyrics = String(lyricsToDevide[rangeSheet])
+			let sheetcontent = String(contentToDevide[rangeSheet])
 			var sheetTitle: String = Text.NewSong.NoTitleForSheet
 			
 			// get title
-			if let rangeTitle = lyricsToDevide.range(of: "\n") {
-				let startTitle = lyricsToDevide.index(lyricsToDevide.startIndex, offsetBy: 0)
+			if let rangeTitle = contentToDevide.range(of: "\n") {
+				let startTitle = contentToDevide.index(contentToDevide.startIndex, offsetBy: 0)
 				let rangeSheetTitle = startTitle..<rangeTitle.lowerBound
-				sheetTitle = String(lyricsToDevide[rangeSheetTitle])
+				sheetTitle = String(contentToDevide[rangeSheetTitle])
 			}
 			
 			let newSheet = CoreSheetTitleContent.createEntityNOTsave()
 			newSheet.title = sheetTitle
-			newSheet.lyrics = sheetLyrics
+			newSheet.content = sheetcontent
 			newSheet.position = position
 			
 			sheets.append(newSheet)
 			
-			lyricsToDevide.removeSubrange(rangeRemove)
+			contentToDevide.removeSubrange(rangeRemove)
 			position += 1
 		}
 		
@@ -312,7 +312,7 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 		var totalString = (cluster?.title ?? "") + "\n\n"
 		let tempSheets:[SheetTitleContentEntity] = sheets.count > 0 ? sheets : cluster?.hasSheetsArray as? [SheetTitleContentEntity] ?? []
 		for (index, sheet) in tempSheets.enumerated() {
-			totalString += sheet.lyrics ?? ""
+			totalString += sheet.content ?? ""
 			if index < tempSheets.count - 1 { // add only \n\n to second last, not the last one, or it will add empty sheet
 				totalString +=  "\n\n"
 			}
@@ -325,7 +325,7 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 	
 	@IBAction func cancel(_ sender: UIBarButtonItem) {
 		if !editExistingCluster, let cluster = cluster {
-			let _ = CoreCluster.delete(entity: cluster)
+			cluster.delete(true)
 		}
 		dismiss(animated: true)
 	}
@@ -348,7 +348,7 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 			for tempSheet in sheets {
 				let sheet = CoreSheetTitleContent.createEntity()
 				sheet.title = tempSheet.title
-				sheet.lyrics = tempSheet.lyrics
+				sheet.content = tempSheet.content
 				sheet.position = tempSheet.position
 				sheet.hasCluster = cluster
 				sheets.append(sheet)

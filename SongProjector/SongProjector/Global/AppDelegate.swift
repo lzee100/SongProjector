@@ -96,8 +96,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	var isInitialized: Bool = false
 
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-		setupAndCheckDatabase()
+//		setupAndCheckDatabase()
 		setupAirPlay()
+		
+		let entities = CoreEntity.getEntities()
+		entities.forEach({ $0.delete(false) })
+		CoreEntity.saveContext(fireNotification: true)
+		
 		application.statusBarStyle = .lightContent
 		Theme.setup()
 		if PHPhotoLibrary.authorizationStatus() == .notDetermined {
@@ -162,34 +167,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		// Saves changes in the application's managed object context before the application terminates.
 	}
 
-	// MARK: - Core Data stack
-
-	lazy var persistentContainer: NSPersistentContainer = {
-	    /*
-	     The persistent container for the application. This implementation
-	     creates and returns a container, having loaded the store for the
-	     application to it. This property is optional since there are legitimate
-	     error conditions that could cause the creation of the store to fail.
-	    */
-	    let container = NSPersistentContainer(name: "SongProjector")
-	    container.loadPersistentStores(completionHandler: { (storeDescription, error) in
-	        if let error = error as NSError? {
-	            // Replace this implementation with code to handle the error appropriately.
-	            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-	             
-	            /*
-	             Typical reasons for an error here include:
-	             * The parent directory does not exist, cannot be created, or disallows writing.
-	             * The persistent store is not accessible, due to permissions or data protection when the device is locked.
-	             * The device is out of space.
-	             * The store could not be migrated to the current model version.
-	             Check the error message to determine what the actual problem was.
-	             */
-	            fatalError("Unresolved error \(error), \(error.userInfo)")
-	        }
-	    })
-	    return container
-	}()
+	
 	
 	func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
 		// print("application application: \(application.description), openURL: \(url.absoluteURL), sourceApplication: \(sourceApplication)")
@@ -215,325 +193,329 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 													annotation: options[UIApplicationOpenURLOptionsKey.annotation])
 	}
 
-	private func setupAndCheckDatabase() {
-		
-		// remove temporary sheets or tags that were created but session got lost (app terminated durring configuration process)
-		CoreEntity.getTemp = true
-		var entities = CoreEntity.getEntities()
-		for entity in entities{
-			_ = CoreEntity.delete(entity: entity)
-		}
-		CoreEntity.getTemp = false
-		
-		let predicate = NSPredicate(format: "title == %@", 0)
-		CoreEntity.predicates.append(and: [predicate])
-		entities = CoreEntity.getEntities()
-		for entity in entities {
-			_ = CoreEntity.delete(entity: entity)
-		}
-	
-		CoreTag.predicates.append("title", equals: "Player")
-		var tags = CoreTag.getEntities()
-		if tags.count == 0 {
-			let tag = CoreTag.createEntity()
-			tag.title = "Player"
-			tag.isTemp = false
-			let _ = CoreTag.saveContext()
-		}
-		CoreTag.predicates.append("title", equals: "Songs")
-		tags = CoreTag.getEntities()
-		if tags.count == 0 {
-			let tag = CoreTag.createEntity()
-			tag.title = "Songs"
-			tag.isTemp = false
-			let _ = CoreTag.saveContext()
-		}
-		CoreTag.predicates.append("title", equals: "Security")
-		tags = CoreTag.getEntities()
-		if tags.count == 0 {
-			let tag = CoreTag.createEntity()
-			tag.isTemp = false
-			tag.title = "Security"
-			let _ = CoreTag.saveContext()
-		}
-		
-		CoreInstrument.predicates.append("resourcePath", equals: "kort")
-		let kort = CoreInstrument.getEntities()
-		if kort.count == 0 {
-			let kort = CoreInstrument.createEntity()
-			kort.type = .piano
-			kort.resourcePath = "kort"
-			kort.isLoop = false
-			kort.isTemp = false
-			kort.title = "kort"
-		}
-
-		
-		CoreInstrument.predicates.append("resourcePath", equals: "LordLoop")
-		let lord = CoreInstrument.getEntities()
-		if lord.count == 0 {
-			let lord = CoreInstrument.createEntity()
-			lord.type = .pianoSolo
-			lord.resourcePath = "LordLoop"
-			lord.isLoop = true
-			lord.isTemp = false
-			lord.title = "LordLoop"
-		}
-		
-		CoreInstrument.predicates.append("resourcePath", equals: "LordSong")
-		let lordSong = CoreInstrument.getEntities()
-		if lordSong.count == 0 {
-			let lordSong = CoreInstrument.createEntity()
-			lordSong.type = .piano
-			lordSong.resourcePath = "LordSong"
-			lordSong.isLoop = true
-			lordSong.isTemp = false
-			lordSong.title = "LordSong"
-		}
-		
-		CoreInstrument.predicates.append("typeString", equals: "Keyboard")
-		let pianos = CoreInstrument.getEntities()
-		if pianos.count == 0 {
-			let piano = CoreInstrument.createEntity()
-			piano.type = .piano
-			piano.resourcePath = "Keyboard"
-			piano.title = "piano"
-			piano.isTemp = false
-		}
-		
-		CoreInstrument.predicates.append("typeString", equals: "Guitar")
-		let guitars = CoreInstrument.getEntities()
-		if guitars.count == 0 {
-			let guitar = CoreInstrument.createEntity()
-			guitar.type = .guitar
-			guitar.resourcePath = "Guitar"
-			guitar.title = "guitar"
-			guitar.isTemp = false
-		}
-		
-		CoreInstrument.predicates.append("typeString", equals: "Bass")
-		let bassGuitars = CoreInstrument.getEntities()
-		if bassGuitars.count == 0 {
-			let bassGuitar = CoreInstrument.createEntity()
-			bassGuitar.type = .bassGuitar
-			bassGuitar.resourcePath = "Bass"
-			bassGuitar.title = "bassGuitar"
-			bassGuitar.isTemp = false
-		}
-		
-		CoreInstrument.predicates.append("typeString", equals: "Drums")
-		let drums = CoreInstrument.getEntities()
-		if drums.count == 0 {
-			let drum = CoreInstrument.createEntity()
-			drum.type = .drums
-			drum.resourcePath = "Drums"
-			drum.title = "drums"
-			drum.isTemp = false
-		}
-		
-		let _ = CoreInstrument.saveContext()
-
-		CoreCluster.predicates.append("title", equals: "Ik zing vol blijdschap en lach")
-		if CoreCluster.getEntities().count == 0 {
-			let ikZing = CoreCluster.createEntity()
-			ikZing.title = "Ik zing vol blijdschap en lach"
-			ikZing.isTemp = false
-
-			CoreTag.predicates.append("title", equals: "Security")
-			let tag = CoreTag.getEntities().first
-			
-			ikZing.hasTag = tag
-			
-			let sheet1 = CoreSheetTitleContent.createEntity()
-			sheet1.title = "Ik zing vol blijdschap en lach"
-			sheet1.lyrics = """
-			Ik zing vol blijdschap en lach
-			Want de vreugde van God is mijn kracht
-			Wij buigen neer aanbidden Hem nu,
-			hoe groot en machtig is Hij
-			Iedereen zingt, iedereen zingt
-			"""
-			sheet1.time = 36
-			sheet1.hasCluster = ikZing
-			sheet1.position = 0
-			sheet1.isTemp = false
-
-			let sheet2 = CoreSheetTitleContent.createEntity()
-			sheet2.title = "Heilig is de heer"
-			sheet2.lyrics = """
-			Heilig is de Heer, God almachtig
-			de aarde is vol van Zijn glorie (2x)
-			"""
-			sheet2.time = 26.80
-			sheet2.hasCluster = ikZing
-			sheet2.position = 1
-			sheet2.isTemp = false
-
-			let sheet3 = CoreSheetTitleContent.createEntity()
-			sheet3.title = "Ik zing vol blijdschap en lach"
-			sheet3.lyrics = """
-			Ik zing vol blijdschap en lach
-			Want de vreugde van God is mijn kracht
-			Wij buigen neer aanbidden Hem nu,
-			hoe groot en machtig is Hij
-			Iedereen zingt, iedereen zingt
-			"""
-			sheet3.time = 29.70
-			sheet3.hasCluster = ikZing
-			sheet3.position = 2
-			sheet3.isTemp = false
-
-			
-			let sheet4 = CoreSheetTitleContent.createEntity()
-			sheet4.title = "Heilig is de heer"
-			sheet4.lyrics = """
-			Heilig is de Heer, God almachtig
-			de aarde is vol van Zijn glorie (2x)
-			"""
-			sheet4.time = 27
-			sheet4.hasCluster = ikZing
-			sheet4.position = 3
-			sheet4.isTemp = false
-
-			let sheet5 = CoreSheetTitleContent.createEntity()
-			sheet5.title = "Hij komt terug"
-			sheet5.lyrics = """
-			Hij komt terug, Hij heeft het beloofd
-			voor iedereen die in Hem geloofd (2X)
-			"""
-			sheet5.time = 24.10
-			sheet5.hasCluster = ikZing
-			sheet5.position = 4
-			sheet5.isTemp = false
-
-			
-			let sheet6 = CoreSheetTitleContent.createEntity()
-			sheet6.title = "Iedereen zingt"
-			sheet6.lyrics = """
-			Iedereen zingt, iedereen zingt
-			"""
-			sheet6.time = 10
-			sheet6.hasCluster = ikZing
-			sheet6.position = 5
-			sheet6.isTemp = false
-			
-			let sheet7 = CoreSheetTitleContent.createEntity()
-			sheet7.title = "Heilig is de heer"
-			sheet7.lyrics = """
-			Heilig is de Heer, God almachtig
-			de aarde is vol van Zijn glorie (2x)
-			"""
-			sheet7.time = 59
-			sheet7.hasCluster = ikZing
-			sheet7.position = 6
-			sheet7.isTemp = false
-			
-			CoreInstrument.predicates.append("resourcePath", notEquals: "LordLoop")
-			CoreInstrument.predicates.append("resourcePath", notEquals: "kort")
-			let instruments = CoreInstrument.getEntities()
-			
-			for instrument in instruments {
-				instrument.hasCluster = ikZing
-			}
-		}
-		
-		CoreCluster.predicates.append("title", equals: "Hij is heer")
-		if CoreCluster.getEntities().count == 0 {
-			let heIsLord = CoreCluster.createEntity()
-			heIsLord.title = "Hij is heer"
-			heIsLord.isTemp = false
-			heIsLord.isLoop = true
-			
-			CoreTag.predicates.append("title", equals: "Songs")
-			let songsTag: Tag
-			if let existingTag = CoreTag.getEntities().first {
-				songsTag = existingTag
-			} else {
-				let newTag = CoreTag.createEntity()
-				newTag.title = "Songs"
-				newTag.isTemp = false
-				newTag.isHidden = true
-				songsTag = newTag
-			}
-			
-			heIsLord.hasTag = songsTag
-			
-			let lordSheet = CoreSheetTitleContent.createEntity()
-			lordSheet.title = "Hij is heer."
-			lordSheet.time = Double.greatestFiniteMagnitude
-			lordSheet.hasCluster = heIsLord
-			lordSheet.position = 0
-			lordSheet.lyrics = """
-			Want Hij is heer, Hij is heer.
-			Hij is opgestaan, want Jezus Hij is heer.
-			Elke knie zal zich buigen, elke tong belijden.
-			Dat Jezus, Hij is heer.
-			"""
-			
-			CoreInstrument.predicates.append("resourcePath", equals: "LordLoop")
-			let lordLoop = CoreInstrument.getEntities().first
-			
-			CoreInstrument.predicates.append("resourcePath", equals: "LordSong")
-			let lordSong = CoreInstrument.getEntities()
-			
-			lordSong.forEach({ $0.hasCluster = heIsLord })
-			
-			lordLoop?.hasCluster = heIsLord
-			CoreCluster.saveContext()
-		}
-		
-		CoreCluster.predicates.append("title", equals: "Test kort")
-		if CoreCluster.getEntities().count == 0 {
-			let kort = CoreCluster.createEntity()
-			kort.title = "Test kort"
-			kort.isTemp = false
-			
-			CoreTag.predicates.append("title", equals: "Security")
-			let tag = CoreTag.getEntities().first
-			
-			kort.hasTag = tag
-			
-			let sheet1 = CoreSheetTitleContent.createEntity()
-			sheet1.title = "Test kort"
-			sheet1.lyrics = """
-			Test kort
-			"""
-			sheet1.time = 3
-			sheet1.hasCluster = kort
-			sheet1.position = 0
-			sheet1.isTemp = false
-			
-			let sheet2 = CoreSheetTitleContent.createEntity()
-			sheet2.title = "Test Kort 1"
-			sheet2.lyrics = """
-			test kort 1
-			"""
-			sheet2.time = 3
-			sheet2.hasCluster = kort
-			sheet2.position = 1
-			sheet2.isTemp = false
-			
-			let sheet3 = CoreSheetTitleContent.createEntity()
-			sheet3.title = "Test kort 2"
-			sheet3.lyrics = """
-			Test kort 2
-			"""
-			sheet3.time = Double.infinity
-			sheet3.hasCluster = kort
-			sheet3.position = 2
-			sheet3.isTemp = false
-			
-			CoreInstrument.predicates.append("resourcePath", equals: "kort")
-			let instruments = CoreInstrument.getEntities()
-			
-			for instrument in instruments {
-				instrument.hasCluster = kort
-			}
-		}
-		
-		
-		
-	}
+//	private func setupAndCheckDatabase() {
+//
+//		// remove temporary sheets or tags that were created but session got lost (app terminated durring configuration process)
+//		CoreEntity.getTemp = true
+//		var entities = CoreEntity.getEntities()
+//		entities.forEach({ $0.delete(false) })
+//		CoreEntity.saveContext(fireNotification: false)
+//		CoreEntity.getTemp = false
+//
+//		let predicate = NSPredicate(format: "title == %@", 0)
+//		CoreEntity.predicates.append(and: [predicate])
+//		entities = CoreEntity.getEntities()
+//		for entity in entities {
+//			_ = CoreEntity.delete(entity: entity)
+//		}
+//
+//		entities = CoreTag.getEntities()
+//		for entity in entities {
+//			_ = CoreEntity.delete(entity: entity)
+//		}
+//
+//		CoreTag.predicates.append("title", equals: "Player")
+//		var tags = CoreTag.getEntities()
+//		if tags.count == 0 {
+//			let tag = CoreTag.createEntity()
+//			tag.title = "Player"
+//			tag.deleteDate = nil
+//			let _ = CoreTag.saveContext()
+//		}
+//		CoreTag.predicates.append("title", equals: "Songs")
+//		tags = CoreTag.getEntities()
+//		if tags.count == 0 {
+//			let tag = CoreTag.createEntity()
+//			tag.title = "Songs"
+//			tag.deleteDate = nil
+//			let _ = CoreTag.saveContext()
+//		}
+//		CoreTag.predicates.append("title", equals: "Security")
+//		tags = CoreTag.getEntities()
+//		if tags.count == 0 {
+//			let tag = CoreTag.createEntity()
+//			tag.deleteDate = nil
+//			tag.title = "Security"
+//			let _ = CoreTag.saveContext()
+//		}
+//
+//		CoreInstrument.predicates.append("resourcePath", equals: "kort")
+//		let kort = CoreInstrument.getEntities()
+//		if kort.count == 0 {
+//			let kort = CoreInstrument.createEntity()
+//			kort.type = .piano
+//			kort.resourcePath = "kort"
+//			kort.isLoop = false
+//			kort.deleteDate = nil
+//			kort.title = "kort"
+//		}
+//
+//
+//		CoreInstrument.predicates.append("resourcePath", equals: "LordLoop")
+//		let lord = CoreInstrument.getEntities()
+//		if lord.count == 0 {
+//			let lord = CoreInstrument.createEntity()
+//			lord.type = .pianoSolo
+//			lord.resourcePath = "LordLoop"
+//			lord.isLoop = true
+//			lord.deleteDate = nil
+//			lord.title = "LordLoop"
+//		}
+//
+//		CoreInstrument.predicates.append("resourcePath", equals: "LordSong")
+//		let lordSong = CoreInstrument.getEntities()
+//		if lordSong.count == 0 {
+//			let lordSong = CoreInstrument.createEntity()
+//			lordSong.type = .piano
+//			lordSong.resourcePath = "LordSong"
+//			lordSong.isLoop = true
+//			lordSong.deleteDate = nil
+//			lordSong.title = "LordSong"
+//		}
+//
+//		CoreInstrument.predicates.append("typeString", equals: "Keyboard")
+//		let pianos = CoreInstrument.getEntities()
+//		if pianos.count == 0 {
+//			let piano = CoreInstrument.createEntity()
+//			piano.type = .piano
+//			piano.resourcePath = "Keyboard"
+//			piano.title = "piano"
+//			piano.deleteDate = nil
+//		}
+//
+//		CoreInstrument.predicates.append("typeString", equals: "Guitar")
+//		let guitars = CoreInstrument.getEntities()
+//		if guitars.count == 0 {
+//			let guitar = CoreInstrument.createEntity()
+//			guitar.type = .guitar
+//			guitar.resourcePath = "Guitar"
+//			guitar.title = "guitar"
+//			guitar.deleteDate = nil
+//		}
+//
+//		CoreInstrument.predicates.append("typeString", equals: "Bass")
+//		let bassGuitars = CoreInstrument.getEntities()
+//		if bassGuitars.count == 0 {
+//			let bassGuitar = CoreInstrument.createEntity()
+//			bassGuitar.type = .bassGuitar
+//			bassGuitar.resourcePath = "Bass"
+//			bassGuitar.title = "bassGuitar"
+//			bassGuitar.deleteDate = nil
+//		}
+//
+//		CoreInstrument.predicates.append("typeString", equals: "Drums")
+//		let drums = CoreInstrument.getEntities()
+//		if drums.count == 0 {
+//			let drum = CoreInstrument.createEntity()
+//			drum.type = .drums
+//			drum.resourcePath = "Drums"
+//			drum.title = "drums"
+//			drum.deleteDate = nil
+//		}
+//
+//		let _ = CoreInstrument.saveContext()
+//
+//		CoreCluster.predicates.append("title", equals: "Ik zing vol blijdschap en lach")
+//		if CoreCluster.getEntities().count == 0 {
+//			let ikZing = CoreCluster.createEntity()
+//			ikZing.title = "Ik zing vol blijdschap en lach"
+//			ikZing.deleteDate = nil
+//
+//			CoreTag.predicates.append("title", equals: "Security")
+//			let tag = CoreTag.getEntities().first
+//
+//			ikZing.hasTag = tag
+//
+//			let sheet1 = CoreSheetTitleContent.createEntity()
+//			sheet1.title = "Ik zing vol blijdschap en lach"
+//			sheet1.content = """
+//			Ik zing vol blijdschap en lach
+//			Want de vreugde van God is mijn kracht
+//			Wij buigen neer aanbidden Hem nu,
+//			hoe groot en machtig is Hij
+//			Iedereen zingt, iedereen zingt
+//			"""
+//			sheet1.time = 36
+//			sheet1.hasCluster = ikZing
+//			sheet1.position = 0
+//			sheet1.deleteDate = nil
+//
+//			let sheet2 = CoreSheetTitleContent.createEntity()
+//			sheet2.title = "Heilig is de heer"
+//			sheet2.content = """
+//			Heilig is de Heer, God almachtig
+//			de aarde is vol van Zijn glorie (2x)
+//			"""
+//			sheet2.time = 26.80
+//			sheet2.hasCluster = ikZing
+//			sheet2.position = 1
+//			sheet2.deleteDate = nil
+//
+//			let sheet3 = CoreSheetTitleContent.createEntity()
+//			sheet3.title = "Ik zing vol blijdschap en lach"
+//			sheet3.content = """
+//			Ik zing vol blijdschap en lach
+//			Want de vreugde van God is mijn kracht
+//			Wij buigen neer aanbidden Hem nu,
+//			hoe groot en machtig is Hij
+//			Iedereen zingt, iedereen zingt
+//			"""
+//			sheet3.time = 29.70
+//			sheet3.hasCluster = ikZing
+//			sheet3.position = 2
+//			sheet3.deleteDate = nil
+//
+//
+//			let sheet4 = CoreSheetTitleContent.createEntity()
+//			sheet4.title = "Heilig is de heer"
+//			sheet4.content = """
+//			Heilig is de Heer, God almachtig
+//			de aarde is vol van Zijn glorie (2x)
+//			"""
+//			sheet4.time = 27
+//			sheet4.hasCluster = ikZing
+//			sheet4.position = 3
+//			sheet4.deleteDate = nil
+//
+//			let sheet5 = CoreSheetTitleContent.createEntity()
+//			sheet5.title = "Hij komt terug"
+//			sheet5.content = """
+//			Hij komt terug, Hij heeft het beloofd
+//			voor iedereen die in Hem geloofd (2X)
+//			"""
+//			sheet5.time = 24.10
+//			sheet5.hasCluster = ikZing
+//			sheet5.position = 4
+//			sheet5.deleteDate = nil
+//
+//
+//			let sheet6 = CoreSheetTitleContent.createEntity()
+//			sheet6.title = "Iedereen zingt"
+//			sheet6.content = """
+//			Iedereen zingt, iedereen zingt
+//			"""
+//			sheet6.time = 10
+//			sheet6.hasCluster = ikZing
+//			sheet6.position = 5
+//			sheet6.deleteDate = nil
+//
+//			let sheet7 = CoreSheetTitleContent.createEntity()
+//			sheet7.title = "Heilig is de heer"
+//			sheet7.content = """
+//			Heilig is de Heer, God almachtig
+//			de aarde is vol van Zijn glorie (2x)
+//			"""
+//			sheet7.time = 59
+//			sheet7.hasCluster = ikZing
+//			sheet7.position = 6
+//			sheet7.deleteDate = nil
+//
+//			CoreInstrument.predicates.append("resourcePath", notEquals: "LordLoop")
+//			CoreInstrument.predicates.append("resourcePath", notEquals: "kort")
+//			let instruments = CoreInstrument.getEntities()
+//
+//			for instrument in instruments {
+//				instrument.hasCluster = ikZing
+//			}
+//		}
+//
+//		CoreCluster.predicates.append("title", equals: "Hij is heer")
+//		if CoreCluster.getEntities().count == 0 {
+//			let heIsLord = CoreCluster.createEntity()
+//			heIsLord.title = "Hij is heer"
+//			heIsLord.deleteDate = nil
+//			heIsLord.isLoop = true
+//
+//			CoreTag.predicates.append("title", equals: "Songs")
+//			let songsTag: Tag
+//			if let existingTag = CoreTag.getEntities().first {
+//				songsTag = existingTag
+//			} else {
+//				let newTag = CoreTag.createEntity()
+//				newTag.title = "Songs"
+//				newTag.deleteDate = nil
+//				newTag.isHidden = true
+//				songsTag = newTag
+//			}
+//
+//			heIsLord.hasTag = songsTag
+//
+//			let lordSheet = CoreSheetTitleContent.createEntity()
+//			lordSheet.title = "Hij is heer."
+//			lordSheet.time = Double.greatestFiniteMagnitude
+//			lordSheet.hasCluster = heIsLord
+//			lordSheet.position = 0
+//			lordSheet.content = """
+//			Want Hij is heer, Hij is heer.
+//			Hij is opgestaan, want Jezus Hij is heer.
+//			Elke knie zal zich buigen, elke tong belijden.
+//			Dat Jezus, Hij is heer.
+//			"""
+//
+//			CoreInstrument.predicates.append("resourcePath", equals: "LordLoop")
+//			let lordLoop = CoreInstrument.getEntities().first
+//
+//			CoreInstrument.predicates.append("resourcePath", equals: "LordSong")
+//			let lordSong = CoreInstrument.getEntities()
+//
+//			lordSong.forEach({ $0.hasCluster = heIsLord })
+//
+//			lordLoop?.hasCluster = heIsLord
+//			CoreCluster.saveContext()
+//		}
+//
+//		CoreCluster.predicates.append("title", equals: "Test kort")
+//		if CoreCluster.getEntities().count == 0 {
+//			let kort = CoreCluster.createEntity()
+//			kort.title = "Test kort"
+//			kort.deleteDate = nil
+//
+//			CoreTag.predicates.append("title", equals: "Security")
+//			let tag = CoreTag.getEntities().first
+//
+//			kort.hasTag = tag
+//
+//			let sheet1 = CoreSheetTitleContent.createEntity()
+//			sheet1.title = "Test kort"
+//			sheet1.content = """
+//			Test kort
+//			"""
+//			sheet1.time = 3
+//			sheet1.hasCluster = kort
+//			sheet1.position = 0
+//			sheet1.deleteDate = nil
+//
+//			let sheet2 = CoreSheetTitleContent.createEntity()
+//			sheet2.title = "Test Kort 1"
+//			sheet2.content = """
+//			test kort 1
+//			"""
+//			sheet2.time = 3
+//			sheet2.hasCluster = kort
+//			sheet2.position = 1
+//			sheet2.deleteDate = nil
+//
+//			let sheet3 = CoreSheetTitleContent.createEntity()
+//			sheet3.title = "Test kort 2"
+//			sheet3.content = """
+//			Test kort 2
+//			"""
+//			sheet3.time = Double.infinity
+//			sheet3.hasCluster = kort
+//			sheet3.position = 2
+//			sheet3.deleteDate = nil
+//
+//			CoreInstrument.predicates.append("resourcePath", equals: "kort")
+//			let instruments = CoreInstrument.getEntities()
+//
+//			for instrument in instruments {
+//				instrument.hasCluster = kort
+//			}
+//		}
+//
+//
+//
+//	}
 	
 	private func setupAirPlay() {
 		

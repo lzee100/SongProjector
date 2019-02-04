@@ -16,7 +16,7 @@ class SheetTitleContent: SheetView {
 	@IBOutlet var titleLabel: UILabel!
 	@IBOutlet var timeLabel: UILabel!
 	@IBOutlet var titleBackground: UIView!
-	@IBOutlet var lyricsTextView: UITextView!
+	@IBOutlet var contentTextView: UITextView!
 	@IBOutlet var backgroundImageView: UIImageView!
 	@IBOutlet var sheetBackground: UIView!
 	@IBOutlet var titleHeightConstraint: NSLayoutConstraint!
@@ -24,10 +24,10 @@ class SheetTitleContent: SheetView {
 	@IBOutlet var titleLeftConstraint: NSLayoutConstraint!
 	@IBOutlet var titleTopConstraint: NSLayoutConstraint!
 	@IBOutlet var timeRightConstraint: NSLayoutConstraint!
-	@IBOutlet var lyricsLeftConstraint: NSLayoutConstraint!
-	@IBOutlet var lyricsRightConstraint: NSLayoutConstraint!
-	@IBOutlet var lyricsBottomConstraint: NSLayoutConstraint!
-	@IBOutlet var lyricsTopToTitle: NSLayoutConstraint!
+	@IBOutlet var contentLeftConstraint: NSLayoutConstraint!
+	@IBOutlet var contentRightConstraint: NSLayoutConstraint!
+	@IBOutlet var contentBottomConstraint: NSLayoutConstraint!
+	@IBOutlet var contentTopToTitle: NSLayoutConstraint!
 	
 	var songTitle: String? {
 		if ((sheetTag?.allHaveTitle ?? true) || position == 0) {
@@ -36,9 +36,9 @@ class SheetTitleContent: SheetView {
 			return nil
 		}
 	}
-	var lyrics: String? {
+	var content: String? {
 		if let sheet = sheet as? SheetTitleContentEntity {
-			return sheet.lyrics
+			return sheet.content
 		}
 		return nil
 	}
@@ -58,16 +58,16 @@ class SheetTitleContent: SheetView {
 			titleLeftConstraint.constant = titleLeftConstraint.constant * scaleFactor
 			titleTopConstraint.constant = titleTopConstraint.constant * scaleFactor
 			timeRightConstraint.constant = timeRightConstraint.constant * scaleFactor
-			lyricsLeftConstraint.constant = lyricsLeftConstraint.constant * scaleFactor
-			lyricsBottomConstraint.constant = lyricsBottomConstraint.constant * scaleFactor
-			lyricsRightConstraint.constant = lyricsRightConstraint.constant * scaleFactor
-			lyricsTopToTitle.constant = lyricsTopToTitle.constant * scaleFactor
+			contentLeftConstraint.constant = contentLeftConstraint.constant * scaleFactor
+			contentBottomConstraint.constant = contentBottomConstraint.constant * scaleFactor
+			contentRightConstraint.constant = contentRightConstraint.constant * scaleFactor
+			contentTopToTitle.constant = contentTopToTitle.constant * scaleFactor
 
-			lyricsTextView.backgroundColor = .clear
+			contentTextView.backgroundColor = .clear
 			
 			if sheet.isEmptySheet {
 				titleLabel.text = ""
-				lyricsTextView.text = ""
+				contentTextView.text = ""
 			} else {
 
 				updateTitle()
@@ -108,21 +108,21 @@ class SheetTitleContent: SheetView {
 	
 	override func updateContent() {
 		let sheet = self.sheet as! SheetTitleContentEntity
-		if let lyrics = sheet.lyrics {
+		if let content = sheet.content {
 			if let tag = sheetTag {
-				lyricsTextView.attributedText = NSAttributedString(string: lyrics, attributes: tag.getLyricsAttributes(scaleFactor ?? 1))
+				contentTextView.attributedText = NSAttributedString(string: content, attributes: tag.getLyricsAttributes(scaleFactor ?? 1))
 			} else {
-				lyricsTextView.text = lyrics
+				contentTextView.text = content
 			}
 		} else {
-			lyricsTextView.text = nil
+			contentTextView.text = nil
 		}
 	}
 	
 	
 	
 	override func updateOpacity() {
-		if let alpha = sheetTag?.backgroundTransparency, alpha != 1 {
+		if let alpha = sheetTag?.backgroundTransparancy, alpha != 1 {
 			backgroundImageView.alpha = CGFloat(alpha)
 		}
 	}
@@ -134,7 +134,7 @@ class SheetTitleContent: SheetView {
 			backgroundImageView.contentMode = .scaleAspectFill
 			backgroundImageView.image = backgroundImage
 			backgroundImageView.clipsToBounds = true
-			if let backgroundTransparency = sheetTag?.backgroundTransparency {
+			if let backgroundTransparency = sheetTag?.backgroundTransparancy {
 				backgroundImageView.alpha = CGFloat(backgroundTransparency)
 			}
 		} else {

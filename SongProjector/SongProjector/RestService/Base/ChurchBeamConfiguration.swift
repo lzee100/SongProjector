@@ -69,7 +69,7 @@ class Config: NSObject {
 					return env
 				}
 			}
-			return Environment.production
+			return Environment.localhost
 		}
 		set {
 			if environment != newValue {
@@ -110,10 +110,10 @@ enum Environment: Int {
 		}
 	}
 	
-	var geonEndpoint: String {
+	var endpoint: String {
 		switch self {
 		case .localhost:
-			return "localhost:3000/"
+			return "http://127.0.0.1:3000/"
 		case .dev:
 			return "https://rest-ontwikkel.parro.com/rest/v1/"
 		case .production:

@@ -161,8 +161,7 @@ class SheetTitleImage: SheetView {
 	}
 	
 	override func updateOpacity() {
-		if let alpha = sheetTag?.backgroundTransparency {
-			sheetBackgroundView.backgroundColor = .black
+		if let alpha = sheetTag?.backgroundTransparancy, alpha != 1 {
 			sheetBackgroundView.alpha = CGFloat(alpha)
 		}
 	}
@@ -174,7 +173,7 @@ class SheetTitleImage: SheetView {
 			backgroundImage.isHidden = false
 			backgroundImage.contentMode = .scaleAspectFill
 			backgroundImage.image = image
-			if let backgroundTransparency = sheetTag?.backgroundTransparency {
+			if let backgroundTransparency = sheetTag?.backgroundTransparancy {
 				backgroundImage.alpha = CGFloat(backgroundTransparency)
 			}
 		} else {

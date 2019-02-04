@@ -8,7 +8,8 @@
 
 import UIKit
 
-class BibleStudyIphoneController: UIViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, BibleStudyGeneratorIphoneDelegate, NewOrEditIphoneControllerDelegate {
+class BibleStudyIphoneController: UIViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, BibleStudyGeneratorIphoneDelegate {
+	
 	
 
 	@IBOutlet var tableView: UITableView!
@@ -37,6 +38,7 @@ class BibleStudyIphoneController: UIViewController, UITableViewDelegate, UITable
 		update()
 	}
 
+	
 
     // MARK: - Navigation
 
@@ -48,6 +50,10 @@ class BibleStudyIphoneController: UIViewController, UITableViewDelegate, UITable
 			controller.selectedTag = selectedTag
 		}
     }
+	
+	
+	// MARK: - UITableview Functions
+
 	
 	func numberOfSections(in tableView: UITableView) -> Int {
 		return 1
@@ -70,6 +76,10 @@ class BibleStudyIphoneController: UIViewController, UITableViewDelegate, UITable
 		}
 	}
 	
+	
+	
+	
+	// MARK: - UICollectionView Functions
 	
 	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
 		if collectionView == collectionViewSheets {
@@ -119,15 +129,23 @@ class BibleStudyIphoneController: UIViewController, UITableViewDelegate, UITable
 	}
 	
 	
+	
 	// MARK: - Custom Delegate Functions
 	
 	func didCreate(sheet: Sheet) {
 		
 	}
 	
+	func didCloseNewOrEditIphoneController() {
+		
+	}
+	
 	func didFinishGeneratorWith(_ sheets: [Sheet]) {
 		
 	}
+	
+	
+	// MARK: - Private Functions
 	
 	private func setup() {
 		collectionViewTags.register(UINib(nibName: Cells.tagCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.tagCellCollection)

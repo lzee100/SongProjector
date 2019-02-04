@@ -1,12 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const mysql = require('mysql');
+const print = require('../util/print')
 
 const db = mysql.createConnection({
     host    : 'localhost',
     user    : 'root',
     password: 'Leovanderzee1986',
-    database: 'localhostchurchbeam'
+    database: 'localhostchurchbeam',
+    timezone: 'UTC'
 });
 
 db.connect((err) => {
@@ -23,12 +25,23 @@ db.connect((err) => {
 // DELETE — remove a particular resource’s object
 
 router.get('/', (req, res , next) => {
-    let sqlAllThemes = `SELECT * FROM theme`
+
+    let after = req.query.updatedsince
+    var where = ""
+    if (after) {
+        where = ` WHERE updatedAt >"${after}"`
+    }
+    console.log(after)
+    let sqlAllThemes = `SELECT * FROM theme` + where 
+    console.log(sqlAllThemes)
     db.query(sqlAllThemes, (err, result) => {
-        if(err) throw err;
-        res.status(200).json({
-            themes: result
-        });
+        if(err) {
+            res.status(500).json(err)
+        } else {
+            print.print('themes returned', result)
+            res.status(200).json(result)
+        }
+
     });
 });
 
@@ -48,17 +61,21 @@ router.get('/:themeId', (req, res , next) => {
 
 router.post('/', (req, res , next) => {
 
+    let organizationID = req.get("organizationID")
+    console.log(organizationID)
     var newTheme = req.body;
+    if (newTheme.id) {
+        delete newTheme.id
+    }
+    newTheme.organization_id = organizationID
     var title = req.body.title;
     console.log(`posted theme: ${title}`)
-
+ 
     let sql = 'INSERT INTO theme SET ?';
     db.query(sql, newTheme, (err, result) => {
         if (err) throw err;
         getTheme(result.insertId, callback => {
-            res.status(200).json({
-                theme: callback
-            });
+            res.status(200).json(callback[0]);
         })
     });
 
@@ -67,14 +84,18 @@ router.post('/', (req, res , next) => {
 router.put('/:themeId', (req, res , next) => {
     console.log('in update theme')
     var theme = req.body;
+    let organizationID = req.get("organizationID")
+    console.log(organizationID)
+    theme.organization_id = organizationID
+    console.log("theme id")
+    console.log(req.params.themeId)
 
+    print.print('theme submitted', theme)
+    
     db.query(`UPDATE theme SET ? WHERE id = ${req.params.themeId}`, [theme], (err, result) => {
         if (err) throw err;
-        console.log('successfully updated theme');
         getTheme(req.params.themeId, callback => {
-            res.status(200).json({
-                theme: callback
-            });
+            res.status(200).json(callback[0]);
         })
     });
 
@@ -99,17 +120,21 @@ router.delete('/:themeId', (req, res , next) => {
     console.log('in delete theme')
     let themeId = req.params.themeId
 
-    let deleteTheme = 'DELETE FROM theme WHERE id = ? '
-    Promise.all(queryDb(deleteTheme, [themeId])).then(function() {
-        console.log('Theme deleted')
-        res.status(200).json({})
-    })
-    // query(deleteTheme, [themeId], callback => {
-    //     console.log('theme deleted');
-    //     res.status(200).json({
+    let date = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+    
+    console.log(`UPDATE theme SET deletedAt = "${date}" WHERE id = ${themeId}`)
 
-    //     });
-    // });
+    db.query(`UPDATE theme SET deletedAt = "${date}" WHERE id = ${themeId}`, (err, result) => {
+        if (err) {
+            res.status(500).json({
+                error: result
+            })
+        }
+        console.log('successfully deleted theme');
+        getTheme(req.params.themeId, callback => {
+            res.status(200).json(callback[0]);
+        })
+    });
 });
 
 function queryDb(query, ids) {
@@ -121,30 +146,9 @@ function queryDb(query, ids) {
             resolve(result)
         })
     }))
-}
+};
 
-// function query(query, ids, callback) {
-//     var totalResult = [];
-//     var totalObjectsToDelete = ids.length;
-//     var totalDeleted = 0;
-
-
-
-//     for (var id of ids) {
-//         db.query(query, id, (err, result) => {
-//             if(err) throw err;
-//             totalDeleted += 1;
-//             Array.prototype.push.apply(totalResult, result);
-
-//             if (totalDeleted == totalObjectsToDelete) {
-//                 console.log(totalResult);
-//                 callback(totalResult);
-//             }
-//         });
-//     };
-// };
-
-module.exports = router;
+module.exports = router
 
 // {
 // 	"allHaveTitle" : "0",
@@ -156,17 +160,17 @@ module.exports = router;
 // 	"imagePathThumbnail" : "",
 // 	"isEmptySheetFirst" : "0",
 // 	"isHidden": "0",
-// 	"isLyricsBold" : "0",
-// 	"isLyricsItalic" : "0",
-// 	"isLyricsUnderlined" : "0",
+// 	"isContentBold" : "0",
+// 	"isContentItalic" : "0",
+// 	"isContentUnderlined" : "0",
 // 	"isTitleBold" : "0",
 // 	"isTitleItalic" : "0",
 // 	"isTitleUnderlined" : "0",
-// 	"lyricsAlignmentNumber" : "0",
-// 	"lyricsBorderColor" : "FFFFFF",
-// 	"lyricsBorderSize" : "0",
-// 	"lyricsFontName" : "Helvetica Neu",
-// 	"lyricsTextColor" : "FFFFFF",
+// 	"ContentAlignmentNumber" : "0",
+// 	"ContentBorderColor" : "FFFFFF",
+// 	"ContentBorderSize" : "0",
+// 	"ContentFontName" : "Helvetica Neu",
+// 	"ContentTextColor" : "FFFFFF",
 // 	"position" : "0",
 // 	"titleAlignmentNumber" : "0",
 // 	"titleBackgroundColor" : "FFFFFF",

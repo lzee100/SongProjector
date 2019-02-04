@@ -11,6 +11,7 @@ import UIKit
 class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIGestureRecognizerDelegate, NewOrEditIphoneControllerDelegate {
 	
 	
+	
 	// MARK: - Properties
 
 	@IBOutlet var cancel: UIBarButtonItem!
@@ -180,7 +181,7 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 			let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
 			controller.modificationMode = .editCustomSheet
 			controller.sheet = sheet
-			controller.didCreateSheet = didCreate(sheet:)
+			controller.delegate = self
 			let nav = UINavigationController(rootViewController: controller)
 			present(nav, animated: true)
 		}
@@ -226,6 +227,10 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 		}
 	}
 	
+	func didCloseNewOrEditIphoneController() {
+		presentedViewController?.dismiss(animated: true, completion: nil)
+	}
+	
 	func numberPickerValueChanged(cell: LabelNumberPickerCell, value: Int) {
 		cluster?.time = Double(value)
 	}
@@ -245,7 +250,7 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 		
 		if cluster == nil {
 			cluster = CoreCluster.createEntity()
-			cluster?.isTemp = true
+			cluster?.deleteDate = NSDate()
 		}
 		save.title = Text.Actions.save
 		cancel.title = Text.Actions.cancel
@@ -350,25 +355,6 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 	
 	
 	@IBAction func cancel(_ sender: UIBarButtonItem) {
-		// remove all
-		if isNew {
-			managedObjectContext.rollback()
-			for sheet in sheets {
-				if let sheet = sheet as? SheetTitleImageEntity {
-					sheet.delete()
-				} else {
-					sheet.delete()
-				}
-				let _ = CoreSheet.delete(entity: sheet)
-			}
-			
-			if let cluster = cluster {
-				let _ = CoreCluster.delete(entity: cluster)
-			}
-			let _ = CoreCluster.saveContext()
-		} else {
-			managedObjectContext.rollback()
-		}
 		dismiss(animated: true)
 	}
 	
@@ -406,31 +392,30 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 				if cluster == nil {
 					cluster = CoreCluster.createEntity()
 				}
-				cluster?.isTemp = false
 				cluster?.hasTag = selectedTag
 				
 				var index: Int16 = 0
 				for sheet in sheets {
 					sheet.position = index
 					sheet.hasCluster = cluster
-					sheet.isTemp = false
 					index += 1
 				}
-				
-				CoreGoogleActivities.predicates.append("isTemp", equals: true)
+				CoreGoogleActivities.predicates.append("deleteDate", isNotNil: true)
 				let activities = CoreGoogleActivities.getEntities()
 				for activity in activities {
 					activity.delete()
 				}
 
 				let _ = CoreCluster.saveContext()
-				CoreSheet.predicates.append("isTemp", equals: true)
+				CoreSheet.predicates.append("deleteDate", isNotNil: true)
 				let tempSheets = CoreSheet.getEntities()
 				for sheet in tempSheets {
 					sheet.delete()
 				}
 				
 				sheets = []
+				
+				CoreEntity.saveContext()
 				
 				update()
 				

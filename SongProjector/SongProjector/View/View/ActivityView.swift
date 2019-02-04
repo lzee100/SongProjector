@@ -59,7 +59,7 @@ class ActivityView: UIView {
 		
 		var dateTime = ""
 		if let date = activity?.startDate {
-			dateTime += date.toString
+			dateTime += (date as Date).toString
 		}
 		if dateTime.isEmpty {
 			dateTime = Text.ActivitySheet.dayActivity

@@ -5,13 +5,12 @@
 //  Created by Leo van der Zee on 05/01/2019.
 //  Copyright © 2019 iozee. All rights reserved.
 //
-
 import Foundation
 
 public enum RequestMethod : String {
 	case get = "GET"
-	case post = "POST"
-	case put = "PUT"
+	case post = "POST" // new
+	case put = "PUT" // update
 	case delete = "DELETE"
 }
 
@@ -134,7 +133,7 @@ open class RequestOperation : AsynchronousOperation, ShiftOutOperation {
 		if let range = range {
 			requestPrint += " (\(range.startIndex)-\(range.endIndex))"
 		}
-		Log.info(requestPrint)
+		print(requestPrint)
 		
 		let task = createTask(session: session, request: request)
 		
@@ -187,6 +186,15 @@ open class RequestOperation : AsynchronousOperation, ShiftOutOperation {
 			delegate: nil,
 			delegateQueue: Operation.Queue
 		)
+	}
+	
+}
+
+extension CountableRange {
+	
+	public func next() -> CountableRange<Element>{
+		let distance = startIndex.distance(to: endIndex)
+		return endIndex..<endIndex.advanced(by: distance)
 	}
 	
 }

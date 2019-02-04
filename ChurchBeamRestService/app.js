@@ -1,3 +1,5 @@
+//nodemon server.js
+
 const express = require('express');
 const mysql = require('mysql');
 
@@ -10,18 +12,20 @@ const orderRoutes = require('./api/routes/orders');
 const appointmentsRoutes = require('./api/routes/appointments');
 const bookRoutes = require('./api/routes/books');
 const themeRoutes = require('./api/routes/themes');
+const clusterRoutes = require('./api/routes/clusters');
 
 
 const db = mysql.createConnection({
     host    : 'localhost',
     user    : 'root',
     password: 'Leovanderzee1986',
-    database: 'localhostchurchbeam'
+    database: 'localhostchurchbeam',
+    timezone: 'UTC'
 });
 
 db.connect((err) => {
     if (err) {
-        throw err;
+        throw err; 
     }
     console.log('MySql connected...')
 });
@@ -49,6 +53,7 @@ app.use('/orders', orderRoutes);
 app.use('/appointments', appointmentsRoutes);
 app.use('/books', bookRoutes);
 app.use('/themes', themeRoutes);
+app.use('/clusters', clusterRoutes);
 
 
 app.use((req, res, next) => {

@@ -74,9 +74,9 @@ class LabelNumberCell: ChurchBeamCell, TagImplementation {
 		self.descriptionTitle.text = tagAttribute.description
 		
 		switch tagAttribute {
-		case .titleTextSize, .lyricsTextSize:
+		case .titleTextSize, .contentTextSize:
 			setup(minLimit: 5, maxLimit: 60, positive: true)
-		case .titleBorderSize, .lyricsBorderSize:
+		case .titleBorderSize, .contentBorderSize:
 			setup(minLimit: 0, maxLimit: -15, positive: false)
 		default:
 			break
@@ -89,9 +89,9 @@ class LabelNumberCell: ChurchBeamCell, TagImplementation {
 			switch tagAttribute {
 			case .titleTextSize: value = Int(tag.titleTextSize)
 			case .titleBorderSize: value = Int(tag.titleBorderSize)
-			case .lyricsTextSize: value = Int(tag.lyricsTextSize)
-			case .lyricsBorderSize: value = Int(tag.lyricsBorderSize)
-			case .backgroundTransparancy: value = Int(tag.backgroundTransparency)
+			case .contentTextSize: value = Int(tag.contentTextSize)
+			case .contentBorderSize: value = Int(tag.contentBorderSize)
+			case .backgroundTransparancy: value = Int(tag.backgroundTransparancy)
 			default: break
 			}
 			valueLabel.text = String(abs(value))
@@ -103,9 +103,9 @@ class LabelNumberCell: ChurchBeamCell, TagImplementation {
 			switch tagAttribute {
 			case .titleTextSize: tag.titleTextSize = Float(value)
 			case .titleBorderSize: tag.titleBorderSize = Float(value)
-			case .lyricsTextSize: tag.lyricsTextSize = Float(value)
-			case .lyricsBorderSize: tag.lyricsBorderSize = Float(value)
-			case .backgroundTransparancy: tag.backgroundTransparency = Float(value)
+			case .contentTextSize: tag.contentTextSize = Float(value)
+			case .contentBorderSize: tag.contentBorderSize = Float(value)
+			case .backgroundTransparancy: tag.backgroundTransparancy = Float(value)
 			default: return
 			}
 		}

@@ -10,47 +10,105 @@ import Foundation
 import UIKit
 import CoreData
 
-let CoreEntity = CoreDataManager(nsManagedObject: Entity())
-let CoreSheetActivities = CoreDataManager(nsManagedObject: SheetActivities())
-let CoreGoogleActivities = CoreDataManager(nsManagedObject: GoogleActivity())
-let CoreTag = CoreDataManager(nsManagedObject: Tag())
-let CoreSheet = CoreDataManager(nsManagedObject: Sheet())
-let CoreSheetSplit = CoreDataManager(nsManagedObject: SheetSplitEntity())
-let CoreSheetTitleContent = CoreDataManager(nsManagedObject: SheetTitleContentEntity())
-let CoreSheetTitleImage = CoreDataManager(nsManagedObject: SheetTitleImageEntity())
-let CoreSheetPastors = CoreDataManager(nsManagedObject: SheetPastorsEntity())
-let CoreSheetEmptySheet = CoreDataManager(nsManagedObject: SheetEmptyEntity())
-let CoreCluster = CoreDataManager(nsManagedObject: Cluster())
-let CoreInstrument = CoreDataManager(nsManagedObject: Instrument())
+let CoreEntity = CrEntity()
+let CoreSheetActivities = CrSheetActivities()
+let CoreGoogleActivities = CrGoogleAct()
+let CoreTag = CrTag()
+let CoreSheet = CrSheet()
+let CoreSheetSplit = CrSplit()
+let CoreSheetTitleContent = CrTitleContent()
+let CoreSheetTitleImage = CrTitleImage()
+let CoreSheetPastors = CrPastors()
+let CoreSheetEmptySheet = CrEmptySheet()
+let CoreCluster = CrCluster()
+let CoreInstrument = CrInstrument()
+let CoreBook = CrBook()
+let CoreChapter = CrChapter()
+let CoreVers = CrVers()
 
-let CoreBook = CoreDataManager(nsManagedObject: Book())
-let CoreChapter = CoreDataManager(nsManagedObject: Chapter())
-let CoreVers = CoreDataManager(nsManagedObject: Vers())
+// MARK: - Core Data stack
+
+let Store = STR()
+
+class STR {
+	lazy var persistentContainer: NSPersistentContainer = {
+		/*
+		The persistent container for the application. This implementation
+		creates and returns a container, having loaded the store for the
+		application to it. This property is optional since there are legitimate
+		error conditions that could cause the creation of the store to fail.
+		*/
+		let container = NSPersistentContainer(name: "SongProjector")
+		container.loadPersistentStores(completionHandler: { (storeDescription, error) in
+			if let error = error as NSError? {
+				// Replace this implementation with code to handle the error appropriately.
+				// fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+				
+				/*
+				Typical reasons for an error here include:
+				* The parent directory does not exist, cannot be created, or disallows writing.
+				* The persistent store is not accessible, due to permissions or data protection when the device is locked.
+				* The device is out of space.
+				* The store could not be migrated to the current model version.
+				Check the error message to determine what the actual problem was.
+				*/
+				fatalError("Unresolved error \(error), \(error.userInfo)")
+			}
+		})
+		return container
+	}()
+}
 
 
-var managedObjectContext: NSManagedObjectContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
+
+var moc: NSManagedObjectContext = Store.persistentContainer.viewContext
+var mocTemp: NSManagedObjectContext = {
+	let context = NSManagedObjectContext(concurrencyType: NSManagedObjectContextConcurrencyType.mainQueueConcurrencyType)
+	context.parent = moc
+	return context
+}()
+
+var mocBackground: NSManagedObjectContext = {
+	return Store.persistentContainer.newBackgroundContext()
+}()
+
+
+class CrEntity: CoreDataManager<Entity> { }
+class CrSheetActivities: CoreDataManager<SheetActivitiesEntity> { }
+class CrGoogleAct: CoreDataManager<GoogleActivity> { }
+class CrTag: CoreDataManager<Tag> { }
+class CrSheet: CoreDataManager<Sheet> { }
+class CrSplit: CoreDataManager<SheetSplitEntity> { }
+class CrTitleContent: CoreDataManager<SheetTitleContentEntity> { }
+class CrTitleImage: CoreDataManager<SheetTitleImageEntity> { }
+class CrPastors: CoreDataManager<SheetPastorsEntity> { }
+class CrEmptySheet: CoreDataManager<SheetEmptyEntity> { }
+class CrCluster: CoreDataManager<Cluster> { }
+class CrInstrument: CoreDataManager<Instrument> { }
+class CrBook: CoreDataManager<Book> { }
+class CrChapter: CoreDataManager<Chapter> { }
+class CrVers: CoreDataManager<Vers> { }
 
 class CoreDataManager<T: NSManagedObject>: NSObject {
-	
+
 	var predicates: [NSPredicate] = []
 	var getTemp = false
 	private var sortDiscriptor: NSSortDescriptor?
+
+	var managedObjectContext: NSManagedObjectContext = moc
 	
-	private let nsManagedObject: T
-	
-	var moc: NSManagedObjectContext = managedObjectContext
-	
-	init(nsManagedObject: T) {
-		self.nsManagedObject = nsManagedObject
+	var entityName: String {
+		return T.classForCoder().description().deletingPrefix("ChurchBeam.")
 	}
 	
 	func createEntityNOTsave() -> T {
-		let entityDes = NSEntityDescription.entity(forEntityName: nsManagedObject.classForCoder.description(), in: moc)
-		let entity = NSManagedObject(entity: entityDes!, insertInto: moc) as! T
+		let entityDes = NSEntityDescription.entity(forEntityName: entityName, in: managedObjectContext)
+		let entity = NSManagedObject(entity: entityDes!, insertInto: managedObjectContext) as! T
 		
 		if let entity = entity as? Entity {
-			entity.id = getNewId()
+			entity.id = Int64.random(in: 1...Int64.max)
+			entity.isTemp = true
 		}
 		
 		return entity
@@ -61,15 +119,13 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 	}
 	
 	func createEntity(fireNotification: Bool = true) -> T {
-		let entityDes = NSEntityDescription.entity(forEntityName: nsManagedObject.classForCoder.description(), in: moc)
-		let entity = NSManagedObject(entity: entityDes!, insertInto: moc) as! T
+		let entity = T(context: moc)
 		
 		// get ID
 		sortDiscriptor = NSSortDescriptor(key: "id", ascending: false)
 		
 		if let entity = entity as? Entity {
 			entity.id = getNewId()
-			entity.createdAt = Date()
 		}
 		let _ = saveContext(fireNotification: fireNotification) // raise ID
 		return entity
@@ -80,7 +136,9 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 		do {
 			try moc.save()
 			if fireNotification {
-				NotificationCenter.default.post(name: NotificationNames.dataBaseDidChange, object:nil)
+				Queues.main.async {
+					NotificationCenter.default.post(name: NotificationNames.dataBaseDidChange, object:nil)
+				}
 			}
 			return true
 		} catch {
@@ -107,12 +165,16 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 	}
 	
 	
-	func getEntities() -> [T] {
+	func getEntities(onlyDeleted: Bool = false) -> [T] {
 		var entities: [T] = []
-		let request = NSFetchRequest<T>(entityName: nsManagedObject.classForCoder.description())
-		
-		predicates.append("isTemp", equals: getTemp)
-		
+		let request = NSFetchRequest<T>(entityName: entityName)
+
+		if getTemp || onlyDeleted {
+			predicates.append(NSPredicate(format: "deleteDate != nil"))
+		} else {
+			predicates.append(NSPredicate(format: "deleteDate == nil"))
+		}
+
 		let andPredicate = NSCompoundPredicate(type: NSCompoundPredicate.LogicalType.and, subpredicates: predicates)
 		request.predicate = andPredicate
 		
@@ -125,20 +187,18 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 		
 		request.returnsObjectsAsFaults = false
 		do {
-			let result = try moc.fetch(request)
+			let result = try managedObjectContext.fetch(request)
 			entities = result
 		} catch {
 			print("Failed")
 		}
-		predicates = []
+		clearSettings()
 		return entities
 	}
 	
 	func getEntitieWith(id: Int64) -> T? {
-		
 		predicates.append("id", equals: id)
 		return getEntities().first
-		
 	}
 	
 	func getEntitiesWhere(attribute: String, has value: String) -> [T] {
@@ -150,62 +210,10 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 		sortDiscriptor = NSSortDescriptor(key: attributeName, ascending: ascending)
 	}
 	
-	func delete(entity: T, fireNotification: Bool = true) -> Bool {
-		moc.delete(entity)
-		
-		do {
-			try moc.save()
-			if fireNotification {
-				NotificationCenter.default.post(name: NotificationNames.dataBaseDidChange, object:nil)
-			}
-			print("saved!")
-			return true
-		} catch let error as NSError  {
-			print("Could not save \(error), \(error.userInfo)")
-			return false
-		} catch {
-			return false
-		}
-	}
-	
-	func deleteAll() // entity = Your_Entity_Name
-	{
-		let deleteFetch = NSFetchRequest<NSFetchRequestResult>(entityName: nsManagedObject.classForCoder.description())
-		let deleteRequest = NSBatchDeleteRequest(fetchRequest: deleteFetch)
-		do
-		{
-			try moc.execute(deleteRequest)
-			try moc.save()
-		}
-		catch
-		{
-			print ("There was an error")
-		}
-	}
-	
-	func deleteTemps() {
-		var entities: [T] = []
-		let request = NSFetchRequest<T>(entityName: nsManagedObject.classForCoder.description())
-		
-		predicates.append("isTemp", equals: true)
-		
-		let andPredicate = NSCompoundPredicate(type: NSCompoundPredicate.LogicalType.and, subpredicates: predicates)
-		request.predicate = andPredicate
-		
-		request.returnsObjectsAsFaults = false
-		
-		do {
-			let result = try moc.fetch(request)
-			entities = result
-			
-			for entity in entities {
-				moc.delete(entity)
-			}
-
-		} catch {
-			print("Failed")
-		}
-		
+	private func clearSettings() {
+		predicates = []
+		getTemp = false
+		managedObjectContext = moc
 	}
 	
 }

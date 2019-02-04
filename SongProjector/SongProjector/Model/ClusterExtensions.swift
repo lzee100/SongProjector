@@ -29,8 +29,8 @@ extension Cluster {
 	}
 	
 	public var tempVersion: Cluster {
-		let tempCluster = CoreCluster.createEntity(fireNotification: false)
-		tempCluster.isTemp = true
+		let tempCluster = CoreCluster.createEntityNOTsave()
+		tempCluster.deleteDate = NSDate()
 		tempCluster.title = title
 		tempCluster.time = time
 		tempCluster.title = title
@@ -38,10 +38,11 @@ extension Cluster {
 	}
 	
 	func mergeSelfInto(cluster: Cluster) {
-		cluster.isTemp = isTemp
+		cluster.deleteDate = nil
 		cluster.title = title
 		cluster.time = time
 		cluster.title = title
+		print("merged cluster")
 	}
 	
 	public var hasInstrumentsArray: [Instrument] {

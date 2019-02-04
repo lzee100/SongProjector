@@ -19,8 +19,10 @@ extension NSLayoutConstraint {
 	}
 }
 
-class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, NewSongServiceDelegate, FetcherObserver {
+class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, NewSongServiceDelegate, RequestObserver {
+	
 
+	
 	@IBOutlet var new: UIBarButtonItem!
 	@IBOutlet var sheetDisplaySwipeView: UIView!
 
@@ -66,7 +68,13 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		case mixer
 	}
 	
-	// MARK: - Private Properties
+	// MARK: - Properties
+	var requesterId: String {
+		return "SongServiceIphoneController"
+	}
+
+	
+	// MARK: Private Properties
 	
 	private var newSheetDisplayerSwipeViewTopConstraint: NSLayoutConstraint?
 	
@@ -219,13 +227,20 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	
 	// MARK: Fetcher Functions
 	
-	func FetcherDidStart() {
+	func requesterDidStart() {
 		
 	}
 	
-	func FetcherDidFinish(result: ResultTypes) {
-		update()
+	func requestDidFinish(requesterID: String, response: ResponseType, result: AnyObject?) {
+		switch response {
+		case .OK(let result):
+			if result == .updated {
+				update()
+			}
+		default: return
+		}
 	}
+	
 	
 	
 	// MARK: - Private Functions

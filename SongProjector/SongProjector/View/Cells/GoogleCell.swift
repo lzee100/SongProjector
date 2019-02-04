@@ -14,7 +14,8 @@ protocol GoogleCellDelegate {
 	func showInstructions(cell: GoogleCell)
 }
 
-class GoogleCell: UITableViewCell, GoogleFetcherLoginDelegate, FetcherObserver {
+class GoogleCell: UITableViewCell, GoogleFetcherLoginDelegate, RequestObserver {
+	
 	
 	@IBOutlet var descriptionTitle: UILabel!
 	@IBOutlet var descriptionValue: UILabel!
@@ -27,6 +28,9 @@ class GoogleCell: UITableViewCell, GoogleFetcherLoginDelegate, FetcherObserver {
 
 	var preferredHeight : CGFloat {
 		return 151
+	}
+	var requesterId: String {
+		return "GoogleCell"
 	}
 	
 	var id = ""
@@ -81,20 +85,23 @@ class GoogleCell: UITableViewCell, GoogleFetcherLoginDelegate, FetcherObserver {
 	}
 	
 	
+	
 	// MARK: - Fetcher Delegates
 	
-	func FetcherDidStart() {
-		
+	func requesterDidStart() {
 	}
 	
-	func FetcherDidFinish(result: ResultTypes) {
-		if result == .OK {
-			signInButton.removeFromSuperview()
-			descriptionValue.text = UserDefaults.standard.object(forKey: "GoogleUserName") as? String
-			addSignOutButton()
+	func requestDidFinish(requesterID: String, response: ResponseType, result: AnyObject?) {
+		switch response {
+		case .OK(let option):
+			if option == .updated {
+				signInButton.removeFromSuperview()
+				descriptionValue.text = UserDefaults.standard.object(forKey: "GoogleUserName") as? String
+				addSignOutButton()
+			}
+		default: return
 		}
 	}
-	
 	
 	// MARK: Google Fetcher Delegates
 	

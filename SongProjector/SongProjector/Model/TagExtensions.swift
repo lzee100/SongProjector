@@ -18,23 +18,23 @@ enum TagAttribute {
 	case displayTime
 	case hasEmptySheet
 	case isEmptySheetFirst
-	case isLyricsBold
-	case isLyricsItalian
-	case isLyricsUnderlined
+	case isContentBold
+	case isContentItalic
+	case isContentUnderlined
 	case isTitleBold
-	case isTitleItalian
+	case isTitleItalic
 	case isTitleUnderlined
 	
 	case backgroundColor
 	case backgroundImage
 	case backgroundTransparancy
 
-	case lyricsAlignment
-	case lyricsBorderColor
-	case lyricsFontName
-	case lyricsTextColorHex
-	case lyricsTextSize
-	case lyricsBorderSize
+	case contentAlignment
+	case contentBorderColor
+	case contentFontName
+	case contentTextColorHex
+	case contentTextSize
+	case contentBorderSize
 	
 	case titleAlignment
 	case titleBackgroundColor
@@ -52,22 +52,22 @@ enum TagAttribute {
 		case .displayTime: return Text.NewTag.descriptionDisplayTime
 		case .hasEmptySheet: return Text.NewTag.descriptionHasEmptySheet
 		case .isEmptySheetFirst: return Text.NewTag.descriptionPositionEmptySheet
-		case .isLyricsBold: return Text.NewTag.bold
-		case .isLyricsItalian: return Text.NewTag.italic
-		case .isLyricsUnderlined: return Text.NewTag.underlined
+		case .isContentBold: return Text.NewTag.bold
+		case .isContentItalic: return Text.NewTag.italic
+		case .isContentUnderlined: return Text.NewTag.underlined
 		case .isTitleBold: return Text.NewTag.bold
-		case .isTitleItalian: return Text.NewTag.italic
+		case .isTitleItalic: return Text.NewTag.italic
 		case .isTitleUnderlined: return Text.NewTag.underlined
 			
 		case .backgroundColor: return Text.NewTag.descriptionBackgroundColor
 		case .backgroundImage: return Text.NewTag.backgroundImage
 		case .backgroundTransparancy: return Text.NewTag.descriptionBackgroundTransparency
-		case .lyricsAlignment: return Text.NewTag.descriptionAlignment
-		case .lyricsBorderColor: return Text.NewTag.borderColor
-		case .lyricsBorderSize: return Text.NewTag.borderSizeDescription
-		case .lyricsFontName: return Text.NewTag.fontFamilyDescription
-		case .lyricsTextColorHex: return Text.NewTag.textColor
-		case .lyricsTextSize: return Text.NewTag.fontSizeDescription
+		case .contentAlignment: return Text.NewTag.descriptionAlignment
+		case .contentBorderColor: return Text.NewTag.borderColor
+		case .contentBorderSize: return Text.NewTag.borderSizeDescription
+		case .contentFontName: return Text.NewTag.fontFamilyDescription
+		case .contentTextColorHex: return Text.NewTag.textColor
+		case .contentTextSize: return Text.NewTag.fontSizeDescription
 			
 		case .titleAlignment: return Text.NewTag.descriptionAlignment
 		case .titleBackgroundColor: return Text.NewTag.descriptionBackgroundColor
@@ -133,24 +133,24 @@ extension Tag {
 	
 	var textColorLyrics: UIColor? {
 		get {
-			guard let hex = lyricsTextColorHex else { return nil }
+			guard let hex = contentTextColorHex else { return nil }
 			return UIColor(hex: hex)
 		}
 		set(newColor) {
 			if let newColor = newColor {
-				lyricsTextColorHex = newColor.toHex
+				contentTextColorHex = newColor.toHex
 			}
 		}
 	}
 	
 	var borderColorLyrics: UIColor? {
 		get {
-			guard let hex = lyricsBorderColorHex else { return nil }
+			guard let hex = contentBorderColorHex else { return nil }
 			return UIColor(hex: hex)
 		}
 		set(newColor) {
 			if let newColor = newColor {
-				lyricsBorderColorHex = newColor.toHex
+				contentBorderColorHex = newColor.toHex
 			}
 		}
 	}
@@ -247,7 +247,7 @@ extension Tag {
 			if self.isTitleBold {
 				font = font?.setBoldFnc()
 			}
-			if self.isTitleItalian {
+			if self.isTitleItalic {
 				font = font?.setItalicFnc()
 			}
 			attributes[.font] = font
@@ -293,12 +293,12 @@ extension Tag {
 	
 	func getLyricsAttributes(_ scaleFactor: CGFloat = 1) -> [NSAttributedStringKey: Any] {
 		var attributes : [NSAttributedStringKey: Any] = [:]
-		if let fontFamily = self.lyricsFontName {
-			var font = UIFont(name: fontFamily, size: (CGFloat(self.lyricsTextSize) * scaleFactor))
-			if self.isLyricsBold {
+		if let fontFamily = self.contentFontName {
+			var font = UIFont(name: fontFamily, size: (CGFloat(self.contentTextSize) * scaleFactor))
+			if self.isContentBold {
 				font = font?.setBoldFnc()
 			}
-			if self.isLyricsItalian {
+			if self.isContentItalic {
 				font = font?.setItalicFnc()
 			}
 			attributes[.font] = font
@@ -306,7 +306,7 @@ extension Tag {
 		
 		let paragraph = NSMutableParagraphStyle()
 		
-		switch lyricsAlignmentNumber {
+		switch contentAlignmentNumber {
 		case 0:
 			paragraph.alignment = .left
 			attributes[.paragraphStyle] = paragraph
@@ -320,7 +320,7 @@ extension Tag {
 			break
 		}
 
-		attributes[.strokeWidth] = Int(self.lyricsBorderSize)
+		attributes[.strokeWidth] = Int(self.contentBorderSize)
 		
 		if let textColor = self.textColorLyrics {
 			attributes[.foregroundColor] = textColor
@@ -332,15 +332,15 @@ extension Tag {
 			attributes[.strokeColor] = borderColor
 		}
 		
-		if self.isLyricsUnderlined {
+		if self.isContentUnderlined {
 			attributes[.underlineStyle] = NSUnderlineStyle.styleSingle.rawValue
 		}
 		return attributes
 	}
 	
-	var backgroundTransparency: Float {
-		get { return Float(backgroundTransparencyNumber) }
-		set { backgroundTransparencyNumber = newValue / 100 }
+	var backgroundTransparancy: Float {
+		get { return Float(backgroundTransparancyNumber) }
+		set { backgroundTransparancyNumber = newValue / 100 }
 	}
 	
 //	@objc override public func delete() {
@@ -350,13 +350,14 @@ extension Tag {
 	
 	func getTemp() -> Tag {
 		let tempTag = CoreTag.createEntity(fireNotification: false)
-		tempTag.isTemp = true
+		tempTag.deleteDate = NSDate()
 		tempTag.title = title
 		tempTag.allHaveTitle = allHaveTitle
 		tempTag.hasEmptySheet = hasEmptySheet
+		tempTag.isEmptySheetFirst = isEmptySheetFirst
 		tempTag.backgroundColor = backgroundColor
-		let cgfloatValue = CGFloat(backgroundTransparency)
-		tempTag.backgroundTransparency = Float(cgfloatValue) * 100
+		let cgfloatValue = CGFloat(backgroundTransparancy)
+		tempTag.backgroundTransparancy = Float(cgfloatValue) * 100
 		tempTag.displayTime = displayTime
 		
 		tempTag.titleFontName = titleFontName ?? "Avenir"
@@ -367,18 +368,18 @@ extension Tag {
 		tempTag.titleBorderColorHex = titleBorderColorHex
 		tempTag.titleTextColorHex = titleTextColorHex
 		tempTag.isTitleBold = isTitleBold
-		tempTag.isTitleItalian = isTitleItalian
+		tempTag.isTitleItalic = isTitleItalic
 		tempTag.isTitleUnderlined = isTitleUnderlined
 		
-		tempTag.lyricsFontName = lyricsFontName ?? "Avenir"
-		tempTag.lyricsTextSize = lyricsTextSize
-		tempTag.lyricsAlignmentNumber = lyricsAlignmentNumber
-		tempTag.lyricsBorderSize = lyricsBorderSize
-		tempTag.lyricsBorderColorHex = lyricsBorderColorHex
-		tempTag.lyricsTextColorHex = lyricsTextColorHex
-		tempTag.isLyricsBold = isLyricsBold
-		tempTag.isLyricsItalian = isLyricsItalian
-		tempTag.isLyricsUnderlined = isLyricsUnderlined
+		tempTag.contentFontName = contentFontName ?? "Avenir"
+		tempTag.contentTextSize = contentTextSize
+		tempTag.contentAlignmentNumber = contentAlignmentNumber
+		tempTag.contentBorderSize = contentBorderSize
+		tempTag.contentBorderColorHex = contentBorderColorHex
+		tempTag.contentTextColorHex = contentTextColorHex
+		tempTag.isContentBold = isContentBold
+		tempTag.isContentItalic = isContentItalic
+		tempTag.isContentUnderlined = isContentUnderlined
 		tempTag.isBackgroundImageDeleted = isBackgroundImageDeleted
 		
 		tempTag.imagePath = imagePath
@@ -387,14 +388,15 @@ extension Tag {
 		return tempTag
 	}
 	
-	func mergeSelfInto(tag: Tag, isTemp: Bool = false, sheetType: SheetType) {
-		tag.isTemp = isTemp
+	func mergeSelfInto(tag: Tag, isTemp: NSDate? = nil, sheetType: SheetType) {
+		tag.deleteDate = isTemp
 		tag.title = title
 		tag.allHaveTitle = allHaveTitle
 		tag.hasEmptySheet = hasEmptySheet
+		tag.isEmptySheetFirst = isEmptySheetFirst
 		tag.backgroundColor = backgroundColor
-		let cgfloatValue = CGFloat(backgroundTransparency)
-		tag.backgroundTransparency = Float(cgfloatValue) * 100
+		let cgfloatValue = CGFloat(backgroundTransparancy)
+		tag.backgroundTransparancy = Float(cgfloatValue) * 100
 		tag.displayTime = displayTime
 		
 		tag.titleFontName = titleFontName ?? "Avenir"
@@ -407,24 +409,32 @@ extension Tag {
 		tag.titleBorderColorHex = titleBorderColorHex
 		tag.titleTextColorHex = titleTextColorHex
 		tag.isTitleBold = isTitleBold
-		tag.isTitleItalian = isTitleItalian
+		tag.isTitleItalic = isTitleItalic
 		tag.isTitleUnderlined = isTitleUnderlined
 		
-		tag.lyricsFontName = lyricsFontName ?? "Avenir"
-		tag.lyricsTextSize = lyricsTextSize
+		tag.contentFontName = contentFontName ?? "Avenir"
+		tag.contentTextSize = contentTextSize
 		if sheetType != .SheetPastors {
-			tag.lyricsAlignmentNumber = lyricsAlignmentNumber
+			tag.contentAlignmentNumber = contentAlignmentNumber
 		}
-		tag.lyricsBorderSize = lyricsBorderSize
-		tag.lyricsBorderColorHex = lyricsBorderColorHex
-		tag.lyricsTextColorHex = lyricsTextColorHex
-		tag.isLyricsBold = isLyricsBold
-		tag.isLyricsItalian = isLyricsItalian
-		tag.isLyricsUnderlined = isLyricsUnderlined
+		tag.contentBorderSize = contentBorderSize
+		tag.contentBorderColorHex = contentBorderColorHex
+		tag.contentTextColorHex = contentTextColorHex
+		tag.isContentBold = isContentBold
+		tag.isContentItalic = isContentItalic
+		tag.isContentUnderlined = isContentUnderlined
 		tag.isBackgroundImageDeleted = isBackgroundImageDeleted
 		
 		tag.imagePath = imagePath
 		tag.imagePathThumbnail = imagePathThumbnail
+		
+		if isBackgroundImageDeleted {
+			tag.backgroundImage = nil
+			tag.isBackgroundImageDeleted = false
+		}
+		
+		print("merged tag")
+
 	}
 
 }

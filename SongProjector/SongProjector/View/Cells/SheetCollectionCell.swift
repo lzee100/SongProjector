@@ -43,7 +43,7 @@ class SheetCollectionCell: UICollectionViewCell {
 	}
 	
 	private func update() {
-		deleteIcon.tintColor = themeHighlighted
+		deleteIcon.tintColor = .black
 		deleteIcon.isHidden = !isDeleteEnabled
 	}
 	

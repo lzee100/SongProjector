@@ -223,44 +223,44 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 	
 	private func buildSheets(fromText: String) {
 		
-		var lyricsToDevide = fromText + "\n\n"
+		var contentToDevide = fromText + "\n\n"
 		
 		// get title
-		if let range = lyricsToDevide.range(of: "\n\n") {
-			let start = lyricsToDevide.index(lyricsToDevide.startIndex, offsetBy: 0)
+		if let range = contentToDevide.range(of: "\n\n") {
+			let start = contentToDevide.index(contentToDevide.startIndex, offsetBy: 0)
 			let rangeSheet = start..<range.lowerBound
 			let rangeRemove = start..<range.upperBound
-			clusterTitle = String(lyricsToDevide[rangeSheet])
-			lyricsToDevide.removeSubrange(rangeRemove)
+			clusterTitle = String(contentToDevide[rangeSheet])
+			contentToDevide.removeSubrange(rangeRemove)
 		}
 		
 		var position: Int16 = 0
 		// get sheets
-		while let range = lyricsToDevide.range(of: "\n\n") {
+		while let range = contentToDevide.range(of: "\n\n") {
 			
-			// get lyrics
-			let start = lyricsToDevide.index(lyricsToDevide.startIndex, offsetBy: 0)
+			// get content
+			let start = contentToDevide.index(contentToDevide.startIndex, offsetBy: 0)
 			let rangeSheet = start..<range.lowerBound
 			let rangeRemove = start..<range.upperBound
 			
-			let sheetLyrics = String(lyricsToDevide[rangeSheet])
+			let sheetLyrics = String(contentToDevide[rangeSheet])
 			var sheetTitle: String = Text.NewSong.NoTitleForSheet
 			
 			// get title
-			if let rangeTitle = lyricsToDevide.range(of: "\n") {
-				let startTitle = lyricsToDevide.index(lyricsToDevide.startIndex, offsetBy: 0)
+			if let rangeTitle = contentToDevide.range(of: "\n") {
+				let startTitle = contentToDevide.index(contentToDevide.startIndex, offsetBy: 0)
 				let rangeSheetTitle = startTitle..<rangeTitle.lowerBound
-				sheetTitle = String(lyricsToDevide[rangeSheetTitle])
+				sheetTitle = String(contentToDevide[rangeSheetTitle])
 			}
 			
 			let newSheet = CoreSheetTitleContent.createEntityNOTsave()
 			newSheet.title = sheetTitle
-			newSheet.lyrics = sheetLyrics
+			newSheet.content = sheetLyrics
 			newSheet.position = position
 			
 			sheets.append(newSheet)
 			
-			lyricsToDevide.removeSubrange(rangeRemove)
+			contentToDevide.removeSubrange(rangeRemove)
 			position += 1
 		}
 		
@@ -273,7 +273,7 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 //		view.isEmptySheet = false
 //		view.selectedTag =  selectedTag ?? cluster?.hasTag
 //		view.songTitle = clusterTitle ?? cluster?.title
-//		view.lyrics = sheet?.lyrics
+//		view.content = sheet?.content
 //		view.position = Int(sheet?.position ?? 0)
 //		view.isEditable = true
 //		view.update()
@@ -313,7 +313,7 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 		var totalString = (cluster?.title ?? "") + "\n\n"
 		let tempSheets:[SheetTitleContentEntity] = sheets.count > 0 ? sheets : cluster?.hasSheetsArray as? [SheetTitleContentEntity] ?? []
 		for (index, sheet) in tempSheets.enumerated() {
-			totalString += sheet.lyrics ?? ""
+			totalString += sheet.content ?? ""
 			if index < tempSheets.count - 1 { // add only \n\n to second last, not the last one, or it will add empty sheet
 				totalString +=  "\n\n"
 			}
@@ -336,15 +336,13 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 			if sheets.count > 0 { // if made changes to text // else made changes to tag
 				
 				if let sheets = cluster.hasSheets as? Set<Sheet> {
-					for sheet in sheets {
-						let _ = CoreSheet.delete(entity: sheet)
-					}
+					sheets.forEach({ $0.delete(false) })
 				}
 				
 				for tempSheet in sheets {
 					let sheet = CoreSheetTitleContent.createEntity()
 					sheet.title = tempSheet.title
-					sheet.lyrics = tempSheet.lyrics
+					sheet.content = tempSheet.content
 					sheet.position = tempSheet.position
 					sheet.hasCluster = cluster
 					cluster.addToHasSheets(sheet)

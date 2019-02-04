@@ -82,11 +82,11 @@ class LabelSwitchCell: ChurchBeamCell, TagImplementation, SheetImplementation {
 			case .displayTime: sheetTag?.displayTime = self.switch.isOn
 			case .hasEmptySheet: sheetTag?.hasEmptySheet = self.switch.isOn
 			case .isEmptySheetFirst: sheetTag?.isEmptySheetFirst = self.switch.isOn
-			case .isLyricsBold: sheetTag?.isLyricsBold = self.switch.isOn
-			case .isLyricsItalian: sheetTag?.isLyricsItalian = self.switch.isOn
-			case .isLyricsUnderlined: sheetTag?.isLyricsUnderlined = self.switch.isOn
+			case .isContentBold: sheetTag?.isContentBold = self.switch.isOn
+			case .isContentItalic: sheetTag?.isContentItalic = self.switch.isOn
+			case .isContentUnderlined: sheetTag?.isContentUnderlined = self.switch.isOn
 			case .isTitleBold: sheetTag?.isTitleBold = self.switch.isOn
-			case .isTitleItalian: sheetTag?.isTitleItalian = self.switch.isOn
+			case .isTitleItalic: sheetTag?.isTitleItalic = self.switch.isOn
 			case .isTitleUnderlined: sheetTag?.isTitleUnderlined = self.switch.isOn
 			default:
 				return
@@ -107,11 +107,11 @@ class LabelSwitchCell: ChurchBeamCell, TagImplementation, SheetImplementation {
 			case .displayTime: self.switch.isOn = sheetTag?.displayTime ?? false
 			case .hasEmptySheet: self.switch.setOn(sheetTag?.hasEmptySheet ?? false, animated: true)
 			case .isEmptySheetFirst: self.switch.isOn = sheetTag?.isEmptySheetFirst ?? false
-			case .isLyricsBold: self.switch.isOn = sheetTag?.isLyricsBold ?? false
-			case .isLyricsItalian: self.switch.isOn = sheetTag?.isLyricsItalian ?? false
-			case .isLyricsUnderlined: self.switch.isOn = sheetTag?.isLyricsUnderlined ?? false
+			case .isContentBold: self.switch.isOn = sheetTag?.isContentBold ?? false
+			case .isContentItalic: self.switch.isOn = sheetTag?.isContentItalic ?? false
+			case .isContentUnderlined: self.switch.isOn = sheetTag?.isContentUnderlined ?? false
 			case .isTitleBold:  self.switch.isOn = sheetTag?.isTitleBold ?? false
-			case .isTitleItalian: self.switch.isOn = sheetTag?.isTitleItalian ?? false
+			case .isTitleItalic: self.switch.isOn = sheetTag?.isTitleItalic ?? false
 			case .isTitleUnderlined: self.switch.isOn = sheetTag?.isTitleUnderlined ?? false
 			default: return
 			}

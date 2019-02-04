@@ -11,6 +11,7 @@ import ChromaColorPicker
 
 protocol NewOrEditIphoneControllerDelegate {
 	func didCreate(sheet: Sheet)
+	func didCloseNewOrEditIphoneController()
 }
 
 enum ModificationMode: String {
@@ -20,7 +21,9 @@ enum ModificationMode: String {
 	case editCustomSheet
 }
 
-class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, UITableViewDataSource {
+	
+	
 	
 	@IBOutlet var cancel: UIBarButtonItem!
 	@IBOutlet var save: UIBarButtonItem!
@@ -217,7 +220,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 				tagAttribute = .isTitleBold
 				identifier = LabelSwitchCell.identifier
 			case .italic:
-				tagAttribute = .isTitleItalian
+				tagAttribute = .isTitleItalic
 				identifier = LabelSwitchCell.identifier
 			case .underlined:
 				tagAttribute = .isTitleUnderlined
@@ -264,31 +267,31 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		func set( tagAttribute: inout TagAttribute?, sheetAttribute: inout SheetAttribute?, identifier: inout String?) {
 			switch self {
 			case .fontFamily:
-				tagAttribute = .lyricsFontName
+				tagAttribute = .contentFontName
 				identifier = LabelPickerCell.identifier
 			case .fontSize:
-				tagAttribute = .lyricsTextSize
+				tagAttribute = .contentTextSize
 				identifier = LabelNumberCell.identifier
 			case .alignment:
-				tagAttribute = .lyricsAlignment
+				tagAttribute = .contentAlignment
 				identifier = LabelPickerCell.identifier
 			case .borderSize:
-				tagAttribute = .lyricsBorderSize
+				tagAttribute = .contentBorderSize
 				identifier = LabelNumberCell.identifier
 			case .textColor:
-				tagAttribute = .lyricsTextColorHex
+				tagAttribute = .contentTextColorHex
 				identifier = LabelColorPickerCell.identifier
 			case .borderColor:
-				tagAttribute = .lyricsBorderColor
+				tagAttribute = .contentBorderColor
 				identifier = LabelColorPickerCell.identifier
 			case .bold:
-				tagAttribute = .isLyricsBold
+				tagAttribute = .isContentBold
 				identifier = LabelSwitchCell.identifier
 			case .italic:
-				tagAttribute = .isLyricsItalian
+				tagAttribute = .isContentItalic
 				identifier = LabelSwitchCell.identifier
 			case .underlined:
-				tagAttribute = .isLyricsUnderlined
+				tagAttribute = .isContentUnderlined
 				identifier = LabelSwitchCell.identifier
 			}
 		}
@@ -338,10 +341,15 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 	
 	private var  cellImageContentMode = LabelPickerCell()
 	
+	override var requesterId: String {
+		return "NewOrEditIphoneController"
+	}
+	
+	var delegate: NewOrEditIphoneControllerDelegate?
 	var modificationMode: ModificationMode = .newTag
 	var tag: Tag! {
 		didSet {
-			tagTemp = tag.getTemp()
+			tagTemp = (tag.copy() as! Tag)
 			if sheetTemp != nil {
 				sheetTemp.hasTag = tagTemp
 			}
@@ -361,12 +369,11 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 	}
 	var sheetTemp: Sheet!
 	var selectedSheetImage: UIImage?
-	var didCreateSheet: ((Sheet) -> Void)?
 	var dismissMenu: (() -> Void)?
 	
 	private var isSetup = true
 	private var titleAttributes: [NSAttributedStringKey : Any] = [:]
-	private var lyricsAttributes: [NSAttributedStringKey: Any] = [:]
+	private var contentAttributes: [NSAttributedStringKey: Any] = [:]
 	private var externalDisplayRatioConstraint: NSLayoutConstraint?
 	private var newSheetContainerViewHeightConstraint: NSLayoutConstraint?
 	private var activeIndexPath: IndexPath?
@@ -551,11 +558,14 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
 		if editingStyle == .delete, let cell = tableView.cellForRow(at: indexPath) as? TagImplementation {
 			cell.set(value: nil)
+			if cell is LabelColorPickerCell {
+				updateBackgroundColor()
+			}
 		}
 	}
 	
 	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		activeIndexPath = (activeIndexPath?.row == indexPath.row && activeIndexPath?.section == indexPath.section) ? nil : indexPath
+		activeIndexPath = activeIndexPath == indexPath ? nil : indexPath
 		if let cell = tableView.cellForRow(at: indexPath), cell is DynamicHeightCell {
 			if activeIndexPath != nil {
 				self.reloadDataWithScrollTo(cell)
@@ -575,8 +585,8 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 			
 			switch tagAttribute {
 			case .backgroundTransparancy: updateTransparency()
-		case .title, .titleBorderSize, .titleFontName, .titleTextSize, .titleAlignment, .titleTextColorHex, .titleBorderColorHex, .isTitleBold, .isTitleItalian, .isTitleUnderlined: updateSheetTitle()
-			case .lyricsFontName, .lyricsTextSize, .lyricsTextColorHex, .lyricsAlignment, .lyricsBorderColor, .lyricsBorderSize, .isLyricsBold, .isLyricsItalian, .isLyricsUnderlined: updateSheetContent()
+		case .title, .titleBorderSize, .titleFontName, .titleTextSize, .titleAlignment, .titleTextColorHex, .titleBorderColorHex, .isTitleBold, .isTitleItalic, .isTitleUnderlined: updateSheetTitle()
+			case .contentFontName, .contentTextSize, .contentTextColorHex, .contentAlignment, .contentBorderColor, .contentBorderSize, .isContentBold, .isContentItalic, .isContentUnderlined: updateSheetContent()
 			case .backgroundImage:
 				updateBackgroundImage()
 				needsReload = true
@@ -624,65 +634,79 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 		
 	}
 	
-	
-	
 	func getModificationMode() -> ModificationMode {
 		return modificationMode
 	}
+	
+	
+	
+	// MARK:  Submit Delegate Functions
+	
+	override func handleRequestFinish(result: AnyObject?) {
+		tagTemp.delete()
+		sheetTemp.delete()
+		CoreEntity.saveContext()
+		shutDownExternalDisplay()
+		delegate?.didCloseNewOrEditIphoneController()
+	}
+	
+	
 	
 	// MARK: - Private Functions
 	
 	private func setup() {
 		
+		TagSubmitter.addObserver(self)
+		
 		switch modificationMode {
 			
 		case .newTag:
-			let sheet = CoreSheetTitleContent.createEntity()
-			sheet.isTemp = true // remove at restart app if user quit app
+			let sheet = CoreSheetTitleContent.createEntityNOTsave()
+			sheet.deleteDate = NSDate() // remove at restart app if user quit app
 			sheet.title = Text.NewTag.sampleTitle
-			sheet.lyrics = Text.NewTag.sampleLyrics
+			sheet.content = Text.NewTag.sampleLyrics
 			self.sheet = sheet
-			let tag = CoreTag.createEntity()
+			let tag = CoreTag.createEntityNOTsave()
 			tag.title = Text.NewTag.sampleTitle
 			tag.isHidden = false
-			tag.isTemp = true
+			tag.deleteDate = NSDate()
 			tag.titleTextSize = 14
 			tag.textColorTitle = .black
-			tag.lyricsTextSize = 10
+			tag.contentTextSize = 10
 			tag.textColorLyrics = .black
 			tag.titleFontName = "Avenir"
-			tag.lyricsFontName = "Avenir"
-			tag.backgroundTransparency = 100
+			tag.contentFontName = "Avenir"
+			tag.backgroundTransparancy = 100
 			tag.titleAlignmentNumber = 0
-			tag.lyricsAlignmentNumber = 0
+			tag.contentAlignmentNumber = 0
 			tag.backgroundColor = UIColor.white.hexCode
 			self.tag = tag
 			
 		case .editTag:
-			let sheet = CoreSheetTitleContent.createEntity()
-			sheet.isTemp = true // remove at restart app if user quit app
+			let sheet = CoreSheetTitleContent.createEntityNOTsave()
+			sheet.deleteDate = NSDate() // remove at restart app if user quit app
 			sheet.title = Text.NewTag.sampleTitle
-			sheet.lyrics = Text.NewTag.sampleLyrics
+			sheet.content = Text.NewTag.sampleLyrics
 			self.sheet = sheet
 			
 		case .newCustomSheet:
-			let tag = CoreTag.createEntity()
+			let tag = CoreTag.createEntityNOTsave()
 			tag.title = "tag"
 			tag.isHidden = true
-			tag.isTemp = true
+			tag.deleteDate = NSDate()
 			tag.titleTextSize = 14
 			tag.textColorTitle = .black
-			tag.lyricsTextSize = 10
+			tag.contentTextSize = 10
 			tag.textColorLyrics = .black
-			tag.backgroundTransparency = 100
+			tag.backgroundTransparancy = 100
 			tag.allHaveTitle = true
 			tag.hasEmptySheet = false
 			tag.titleAlignmentNumber = 0
-			tag.lyricsAlignmentNumber = 0
+			tag.contentAlignmentNumber = 0
 			tag.backgroundColor = UIColor.white.hexCode
 			sheetTemp.title = Text.NewTag.sampleTitle
 			if let sheet = sheetTemp as? SheetTitleContentEntity {
-				sheet.lyrics = Text.NewTag.sampleLyrics
+				sheet.content = Text.NewTag.sampleLyrics
 			}
 			if let sheet = sheetTemp as? SheetTitleImageEntity {
 				sheet.content = Text.NewTag.sampleLyrics
@@ -694,10 +718,10 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 			if let sheet = sheet as? SheetPastorsEntity, let sheetTemp = sheetTemp as? SheetPastorsEntity {
 				tag.textColorTitle = .black
 				tag.textColorLyrics = .black
-				tag.isTitleItalian = true
-				tag.isLyricsItalian = true
+				tag.isTitleItalic = true
+				tag.isContentItalic = true
 				tag.titleAlignmentNumber = 1
-				tag.lyricsAlignmentNumber = 1
+				tag.contentAlignmentNumber = 1
 				
 				sheet.title = Text.newPastorsSheet.title
 				sheet.content = Text.newPastorsSheet.content
@@ -836,7 +860,7 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 	
 	private func updateAsTag(_ tag: Tag?) {
 		let tagTitle = tagTemp.title
-		tag?.mergeSelfInto(tag: tagTemp, isTemp: true, sheetType: sheetTemp.type)
+		tag?.mergeSelfInto(tag: tagTemp, isTemp: NSDate(), sheetType: sheetTemp.type)
 		tagTemp.title = tagTitle
 		tableView.reloadData()
 		buildPreview(isSetup: false)
@@ -881,12 +905,9 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 	}
 	
 	@IBAction func cancelPressed(_ sender: UIBarButtonItem) {
-		
-		tagTemp.delete()
-		sheetTemp.delete()
-		shutDownExternalDisplay()
-		
-		dismiss(animated: true)
+		moc.reset()
+		self.shutDownExternalDisplay()
+		self.dismiss(animated: true)
 	}
 	
 	@IBAction func savePressed(_ sender: UIBarButtonItem) {
@@ -909,24 +930,24 @@ class NewOrEditIphoneController: UIViewController, UITableViewDelegate, UITableV
 			switch modificationMode {
 			case .newTag, .editTag:
 				sheetTemp.delete()
+				
 				tagTemp.mergeSelfInto(tag: tag, sheetType: sheetTemp.type)
-				if tag.isBackgroundImageDeleted {
-					tag.backgroundImage = nil
-					tag.isBackgroundImageDeleted = false
-				}
+				let requestMethod: RequestMethod = modificationMode == .newTag ? .post : .put
+				TagSubmitter.submit(tag, requestMethod: requestMethod)
+				
 			case .newCustomSheet, .editCustomSheet:
-				tagTemp.mergeSelfInto(tag: tag, isTemp: true, sheetType: sheetTemp.type)
-				sheetTemp.mergeSelfInto(sheet: sheet, isTemp: true)
+				tagTemp.mergeSelfInto(tag: tag, isTemp: NSDate(), sheetType: sheetTemp.type)
+				sheetTemp.mergeSelfInto(sheet: sheet, isTemp: NSDate())
 				sheet.hasTag = tag
+				let _ = CoreEntity.saveContext()
+				shutDownExternalDisplay()
+				
+				delegate?.didCreate(sheet: sheet)
+				dismissMenu?()
+				dismiss(animated: true)
 			}
 
-			let _ = CoreEntity.saveContext()
 			
-			shutDownExternalDisplay()
-			
-			didCreateSheet?(sheet)
-			dismissMenu?()
-			dismiss(animated: true)
 			
 		}
 		

@@ -95,8 +95,8 @@ class LabelPickerCell: ChurchBeamCell, TagImplementation, DynamicHeightCell, She
 		
 		switch tagAttribute {
 		case .asTag: setupAsTag()
-		case .titleFontName, .lyricsFontName: setupFonts()
-		case .titleAlignment, .lyricsAlignment: setupFontAlignment()
+		case .titleFontName, .contentFontName: setupFonts()
+		case .titleAlignment, .contentAlignment: setupFontAlignment()
 		default:
 			break
 		}
@@ -117,10 +117,10 @@ class LabelPickerCell: ChurchBeamCell, TagImplementation, DynamicHeightCell, She
 	func applyValueToCell() {
 		if let tagAttribute = tagAttribute, let tag = sheetTag {
 			switch tagAttribute {
-			case .lyricsFontName: fontLabel.text = tag.lyricsFontName
+			case .contentFontName: fontLabel.text = tag.contentFontName
 			case .titleFontName: fontLabel.text = tag.titleFontName
 			case .titleAlignment: fontLabel.text = pickerValues[Int(tag.titleAlignmentNumber)].1
-			case .lyricsAlignment: fontLabel.text = pickerValues[Int(tag.lyricsAlignmentNumber)].1
+			case .contentAlignment: fontLabel.text = pickerValues[Int(tag.contentAlignmentNumber)].1
 			case .asTag: fontLabel.text = ""
 			default: return
 			}
@@ -133,10 +133,10 @@ class LabelPickerCell: ChurchBeamCell, TagImplementation, DynamicHeightCell, She
 	func applyCellValueToTag() {
 		if let tagAttribute = tagAttribute, let tag = sheetTag {
 			switch tagAttribute {
-			case .lyricsFontName: tag.lyricsFontName = fontLabel.text
+			case .contentFontName: tag.contentFontName = fontLabel.text
 			case .titleFontName: tag.titleFontName = fontLabel.text
 			case .titleAlignment: tag.titleAlignmentNumber = Int16(selectedIndex)
-			case .lyricsAlignment: tag.lyricsAlignmentNumber = Int16(selectedIndex)
+			case .contentAlignment: tag.contentAlignmentNumber = Int16(selectedIndex)
 			default: return
 			}
 		}

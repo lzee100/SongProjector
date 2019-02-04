@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="ipad12_9" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SheetTitleContent" customModule="SongProjector" customModuleProvider="target">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SheetTitleContent" customModule="ChurchBeam" customModuleProvider="target">
             <connections>
                 <outlet property="backgroundImageView" destination="UF3-Hj-dt7" id="E8u-yG-mnd"/>
-                <outlet property="lyricsBottomConstraint" destination="Ig9-gg-TQi" id="K5p-1P-nkH"/>
-                <outlet property="lyricsLeftConstraint" destination="S4r-WP-D8E" id="FEB-Gs-ovL"/>
-                <outlet property="lyricsRightConstraint" destination="gZb-ON-nuw" id="gqr-De-RZr"/>
-                <outlet property="lyricsTextView" destination="o79-HF-K3e" id="f5u-2Z-75z"/>
-                <outlet property="lyricsTopToTitle" destination="ilf-CR-sQ0" id="9MK-5q-fEl"/>
+                <outlet property="contentBottomConstraint" destination="Ig9-gg-TQi" id="CSu-pD-Ue1"/>
+                <outlet property="contentLeftConstraint" destination="S4r-WP-D8E" id="Wg0-Ui-1ts"/>
+                <outlet property="contentRightConstraint" destination="gZb-ON-nuw" id="d7F-Kl-t1f"/>
+                <outlet property="contentTextView" destination="o79-HF-K3e" id="dly-WH-Yxt"/>
+                <outlet property="contentTopToTitle" destination="ilf-CR-sQ0" id="Bwb-c9-jwr"/>
                 <outlet property="sheetBackground" destination="RRi-xG-ex4" id="ent-8x-ISM"/>
                 <outlet property="sheetView" destination="iN0-l3-epB" id="kep-Sv-sQ8"/>
                 <outlet property="timeLabel" destination="aGg-AI-4s9" id="Zar-FW-dc9"/>
@@ -55,7 +55,7 @@
                     <nil key="highlightedColor"/>
                 </label>
                 <textView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="o79-HF-K3e">
-                    <rect key="frame" x="10" y="25" width="380" height="265"/>
+                    <rect key="frame" x="10" y="30" width="380" height="260"/>
                     <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="14"/>
                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                 </textView>
@@ -83,7 +83,7 @@
                 <constraint firstItem="RRi-xG-ex4" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="fwr-Bk-BSx"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="o79-HF-K3e" secondAttribute="trailing" constant="10" id="gZb-ON-nuw"/>
                 <constraint firstItem="aGg-AI-4s9" firstAttribute="bottom" secondItem="hnb-bU-00a" secondAttribute="bottom" id="iNG-GY-zVi"/>
-                <constraint firstItem="o79-HF-K3e" firstAttribute="top" secondItem="hnb-bU-00a" secondAttribute="bottom" constant="5" id="ilf-CR-sQ0"/>
+                <constraint firstItem="o79-HF-K3e" firstAttribute="top" secondItem="hnb-bU-00a" secondAttribute="bottom" constant="10" id="ilf-CR-sQ0"/>
                 <constraint firstItem="aGg-AI-4s9" firstAttribute="leading" secondItem="hnb-bU-00a" secondAttribute="trailing" constant="10" id="lnD-dS-j7s"/>
                 <constraint firstAttribute="trailing" secondItem="aGg-AI-4s9" secondAttribute="trailing" constant="10" id="mTL-ET-Kyc"/>
                 <constraint firstItem="UF3-Hj-dt7" firstAttribute="bottom" secondItem="iN0-l3-epB" secondAttribute="bottom" id="nRB-vW-wDx"/>

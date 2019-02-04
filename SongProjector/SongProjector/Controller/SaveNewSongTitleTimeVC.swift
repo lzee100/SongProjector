@@ -42,10 +42,8 @@ class SaveNewSongTitleTimeVC: UITableViewController {
 		
 	}
 	
-	var songTitle = ""
-	var time: Double = 0
-	var isSong = false
-	var selectedTag: Tag?
+	weak var cluster: Cluster?
+	weak var selectedTag: Tag?
 	
 	var timeValues: [Int] {
 		var values: [Int] = []
@@ -55,20 +53,22 @@ class SaveNewSongTitleTimeVC: UITableViewController {
 		return values
 	}
 	var selectedIndex: Int {
-		if let index = timeValues.index(where: { $0 == Int(time) }) {
+		if let index = timeValues.index(where: { $0 == Int(cluster?.time ?? 0) }) {
 			return index
 		}
 		return 0
 	}
 	
-	var didSave: ((String, Double) -> Void)?
+	var didSave: (() -> Void)?
 
     override func viewDidLoad() {
         super.viewDidLoad()
 		cancelButton.title = Text.Actions.cancel
 		saveButton.title = Text.Actions.save
 		tableView.register(cells: [TextFieldCell.identifier, PickerCell.identifier])
+		title = cluster?.title ?? Text.NewSong.title
 		tableView.rowHeight = UITableViewAutomaticDimension
+		tableView.tableFooterView = UIView()
     }
 	
 	override func numberOfSections(in tableView: UITableView) -> Int {
@@ -80,7 +80,7 @@ class SaveNewSongTitleTimeVC: UITableViewController {
 		case .song:
 			return 1
 		case .custom:
-			return isSong ? 0 : 1
+			return (cluster?.isTypeSong ?? false) ? 0 : 1
 		}
 	}
 	
@@ -89,7 +89,7 @@ class SaveNewSongTitleTimeVC: UITableViewController {
 		
 		switch Row.for(indexPath: indexPath) {
 		case .title:
-			(cell as! TextFieldCell).setup(description: Text.NewSong.title, content: songTitle, textFieldDidChange: textFieldDidChange(text:))
+			(cell as! TextFieldCell).setup(description: Text.NewSong.title, content: cluster?.title ?? "", textFieldDidChange: textFieldDidChange(text:))
 		case .time:
 			(cell as! PickerCell).setupWith(description: Text.CustomSheets.descriptionTime, values: timeValues, selectedIndex: selectedIndex, didSelectValue: pickerDidChange(value:))
 		}
@@ -98,13 +98,12 @@ class SaveNewSongTitleTimeVC: UITableViewController {
 
 	
 	func textFieldDidChange(text: String?) {
-		songTitle = text ?? ""
-
+		cluster?.title = text ?? ""
 	}
 	
 	func pickerDidChange(value: Any) {
 		if let value = value as? Int {
-			time = Double(value)
+			cluster?.time = Double(value)
 		}
 	}
 	
@@ -114,14 +113,15 @@ class SaveNewSongTitleTimeVC: UITableViewController {
 	
 	@IBAction func savePressed(_ sender: UIBarButtonItem) {
 		if hasName() {
-			didSave?(songTitle, time)
-			self.dismiss(animated: true)
+			self.dismiss(animated: true) {
+				self.didSave?()
+			}
 		}
 	}
 	
 	private func hasName() -> Bool {
 		let cellName = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! TextFieldCell
-		if songTitle != "" {
+		if cluster?.title != "" {
 			cellName.textField.layer.borderColor = nil
 			cellName.textField.layer.borderWidth = 0
 			cellName.textField.layer.cornerRadius = 0

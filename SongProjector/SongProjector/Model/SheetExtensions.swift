@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-public enum SheetType {
+public enum SheetType: String, Codable {
 	case SheetTitleContent
 	case SheetTitleImage
 	case SheetPastors
@@ -37,6 +37,17 @@ public enum SheetType {
 			return Cells.bulletOpen
 		case .SheetActivities:
 			return Cells.bulletOpen
+		}
+	}
+	
+	var metatype: Sheet.Type {
+		switch self {
+		case .SheetTitleContent: return SheetTitleContentEntity.self
+		case .SheetTitleImage: return SheetTitleImageEntity.self
+		case .SheetSplit: return SheetSplitEntity.self
+		case .SheetEmpty: return SheetEmptyEntity.self
+		case .SheetPastors: return SheetPastorsEntity.self
+		case .SheetActivities: return SheetActivitiesEntity.self
 		}
 	}
 }
@@ -86,7 +97,7 @@ extension Sheet {
 			return .SheetTitleImage
 		} else if self.entity.isKindOf(entity: SheetSplitEntity.entity()) {
 			return .SheetSplit
-		}  else if self.entity.isKindOf(entity: SheetActivities.entity()) {
+		}  else if self.entity.isKindOf(entity: SheetActivitiesEntity.entity()) {
 			return .SheetActivities
 		} else if self.entity.isKindOf(entity: SheetPastorsEntity.entity()) {
 			return .SheetPastors
@@ -96,24 +107,30 @@ extension Sheet {
 		
 	}
 	
-	override public func delete() {
+	override public func delete(_ save: Bool = false) {
 		if let tag = hasTag, tag.isHidden == true {
 			tag.backgroundImage = nil
-			let _ = CoreTag.delete(entity: tag)
 		}
-		_ = CoreSheet.delete(entity: self)
+		moc.delete(self)
+		if save {
+			do {
+				try moc.save()
+			} catch {
+				print(error)
+			}
+		}
 	}
 	
 	var getTemp: Sheet {
 		let sheet: Sheet
 		switch self.type {
 		case .SheetTitleContent:
-			sheet = CoreSheetTitleContent.createEntity()
+			sheet = CoreSheetTitleContent.createEntityNOTsave()
 			if let sheet = sheet as? SheetTitleContentEntity, let current = self as? SheetTitleContentEntity {
-				sheet.lyrics = current.lyrics
+				sheet.content = current.content
 			}
 		case .SheetTitleImage:
-			sheet = CoreSheetTitleImage.createEntity()
+			sheet = CoreSheetTitleImage.createEntityNOTsave()
 			if let sheet = sheet as? SheetTitleImageEntity, let current = self as? SheetTitleImageEntity {
 				sheet.hasTitle = current.hasTitle
 				sheet.imageHasBorder = current.imageHasBorder
@@ -124,23 +141,23 @@ extension Sheet {
 				sheet.imageContentMode = current.imageContentMode
 			}
 		case .SheetPastors:
-			sheet = CoreSheetPastors.createEntity()
+			sheet = CoreSheetPastors.createEntityNOTsave()
 			if let sheet = sheet as? SheetPastorsEntity, let current = self as? SheetPastorsEntity {
 				sheet.content = current.content
 				sheet.imagePath = current.imagePath
 				sheet.thumbnailPath = current.thumbnailPath
 			}
 		case .SheetSplit:
-			sheet = CoreSheetSplit.createEntity()
+			sheet = CoreSheetSplit.createEntityNOTsave()
 			if let sheet = sheet as? SheetSplitEntity, let current = self as? SheetSplitEntity {
 				sheet.textLeft = current.textLeft
 				sheet.textRight = current.textRight
 			}
 		case .SheetEmpty:
-			sheet = CoreSheetEmptySheet.createEntity()
+			sheet = CoreSheetEmptySheet.createEntityNOTsave()
 		case .SheetActivities:
-			sheet = CoreSheetActivities.createEntity()
-			if let sheet = sheet as? SheetActivities, let current = self as? SheetActivities {
+			sheet = CoreSheetActivities.createEntityNOTsave()
+			if let sheet = sheet as? SheetActivitiesEntity, let current = self as? SheetActivitiesEntity {
 				sheet.hasGoogleActivity = current.hasGoogleActivity
 			}
 		}
@@ -148,19 +165,19 @@ extension Sheet {
 			sheet.hasTag = hasTag?.getTemp()
 		}
 		sheet.title = title
-		sheet.isTemp = true
+		sheet.deleteDate = NSDate()
 		sheet.time = time
 		sheet.position = position
 		sheet.isEmptySheet = isEmptySheet
 		return sheet
 	}
 	
-	func mergeSelfInto(sheet: Sheet, isTemp: Bool = false) {
+	func mergeSelfInto(sheet: Sheet, isTemp: NSDate? = nil) {
 		switch self.type {
 		case .SheetTitleContent:
 			let sheet = sheet as! SheetTitleContentEntity
 			let this = self as! SheetTitleContentEntity
-			sheet.lyrics = this.lyrics
+			sheet.content = this.content
 			
 		case .SheetTitleImage:
 			let sheet = sheet as! SheetTitleImageEntity
@@ -189,15 +206,16 @@ extension Sheet {
 		case .SheetEmpty:
 			break
 		case .SheetActivities:
-			let sheet = sheet as! SheetActivities
-			let this = self as! SheetActivities
+			let sheet = sheet as! SheetActivitiesEntity
+			let this = self as! SheetActivitiesEntity
 			sheet.hasGoogleActivity = this.hasGoogleActivity
 		}
 		sheet.title = title
-		sheet.isTemp = isTemp
+		sheet.deleteDate = isTemp
 		sheet.time = time
 		sheet.position = position
 		sheet.isEmptySheet = isEmptySheet
+		print("merged sheet")
 	}
 	
 	public func isEqualTo(_ object: Any?) -> Bool {
@@ -219,8 +237,8 @@ struct SheetHasSheet {
 }
 
 extension SheetTitleImageEntity {
-	override public func delete() {
-		super.delete()
+	override public func delete(_ save: Bool) {
 		image = nil
+		super.delete(save)
 	}
 }
