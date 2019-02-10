@@ -119,12 +119,25 @@ class LabelTextViewCell: ChurchBeamCell, DynamicHeightCell, SheetImplementation,
 	public func textViewDidChange(_ textView: UITextView) {
 		customText = textView.text
 		
-		if let sheet = sheet as? SheetTitleContentEntity {
-			sheet.content = textView.text
-		} else if let sheet = sheet as? SheetTitleImageEntity {
-			sheet.content = textView.text
-		} else if let sheet = sheet as? SheetPastorsEntity {
-			sheet.content = textView.text
+		if let sheetAttribute = sheetAttribute {
+			switch sheetAttribute {
+			case .SheetContent, .SheetContentLeft:
+				if let sheet = sheet as? SheetSplitEntity {
+					sheet.textLeft = textView.text
+				} else if let sheet = sheet as? SheetTitleContentEntity {
+					sheet.content = textView.text
+				} else if let sheet = sheet as? SheetTitleImageEntity {
+					sheet.content = textView.text
+				}else if let sheet = sheet as? SheetPastorsEntity {
+					sheet.content = textView.text
+				}
+			case .SheetContentRight:
+				if let sheet = sheet as? SheetSplitEntity {
+					sheet.textRight = textView.text
+				}
+			default:
+				break
+			}
 		}
 		
 		valueDidChange?(self)

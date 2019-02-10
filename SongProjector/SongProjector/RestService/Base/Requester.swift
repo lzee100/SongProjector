@@ -51,7 +51,7 @@ class Requester<T, S: Decodable>: BaseRS, RequesterType, RequestObserver where T
 	
 	var range: CountableRange = CountableRange(0...200)
 	
-	var body: T?
+	var body: [T]?
 	
 	private(set) var minRefreshDate: Date = Date()
 	
@@ -75,6 +75,12 @@ class Requester<T, S: Decodable>: BaseRS, RequesterType, RequestObserver where T
 		}
 	}
 	
+	func removeObserver(_ controller: RequestObserver) {
+		if let index = observers.firstIndex(where: {  $0.requesterId == controller.requesterId }) {
+			observers.remove(at: index)
+		}
+	}
+	
 	func request(force: Bool) {
 		if force || needsUpdating || isSubmitter {
 			observers.forEach({ $0.requesterDidStart() })
@@ -90,7 +96,7 @@ class Requester<T, S: Decodable>: BaseRS, RequesterType, RequestObserver where T
 		}
 	}
 	
-	func submit(_ entity: T, requestMethod: RequestMethod) {
+	func submit(_ entity: [T], requestMethod: RequestMethod) {
 		body = entity
 		self.requestMethod = requestMethod
 		self.request(force: true)
@@ -120,7 +126,7 @@ class Requester<T, S: Decodable>: BaseRS, RequesterType, RequestObserver where T
 			requestSend(url: url, object: body, parameters: params, range: range, success: { (resonpse, result) in
 				var saveResult: [T]? = nil
 				if let result = result {
-					saveResult = [result]
+					saveResult = result
 				}
 				self.saveLocal(entities: saveResult)
 				self.requestFinished(response: .OK(.updated), result: saveResult)
@@ -167,7 +173,7 @@ class Requester<T, S: Decodable>: BaseRS, RequesterType, RequestObserver where T
 		
 	}
 	
-	func proces(entities: [T]) {
+	func processDeletion(entities: [T]) {
 		
 	}
 	
@@ -198,30 +204,33 @@ class Requester<T, S: Decodable>: BaseRS, RequesterType, RequestObserver where T
 	func requestGet(_ method: RequestMethod = .get, url: String, parameters: [String: Any]?, range: CountableRange<Int>? = nil, success: @escaping (_ response: HTTPURLResponse?, _ result: [T]?) -> Void, failure: @escaping (_ error: NSError?, _ response: HTTPURLResponse?, _ object: T?) -> Void, queue: DispatchQueue) {
 		
 		super.dispatchRequest(method, url: url, inputBody: nil, parameters: parameters, range: range, success: {  (response, data) -> Void in
-
 			
-			if let data = data {
-				
-				do {
-					if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [[String: Any]] {
-						print(String(data: try! JSONSerialization.data(withJSONObject: json, options: .prettyPrinted), encoding: .utf8 )!)
-					}
-				} catch (let error){
-					print("Error \(error)")
+			// delete all the old that we have based on new with their id's
+			
+			let entities: [T]? = super.decode(data: data)
+			
+			if let old = entities, old.count > 0 {
+				if let oldEntity = old as? [Entity] {
+					oldEntity.forEach({
+						CoreEntity.predicates.append("id", equals: $0.id)
+						CoreEntity.getEntities().forEach({ $0.delete(false) })
+					})
 				}
+				
+				mocBackground.performAndWait {
+					do {
+						try mocBackground.save()
+						try moc.save()
+					} catch {
+						print(error)
+					}
+					
+					success(response, entities)
+
+				}
+			} else {
+				success(response, entities)
 			}
-			
-			let deleteOld: [Entity]? = super.decode(data: data)
-			if let old = deleteOld {
-				old.forEach({ $0.deleteBackground(false) })
-			}
-			
-			let result : [T]? = super.decode(data: data)
-			if let result = result {
-				self.proces(entities: result)
-			}
-			
-			success(response, result)
 			
 		}, failure: {  (error, response, data) -> Void in
 			
@@ -233,7 +242,7 @@ class Requester<T, S: Decodable>: BaseRS, RequesterType, RequestObserver where T
 	}
 	
 	/// supports only 1 object
-	func requestSend<O: Encodable>(url: String, object: O?, parameters: [String: Any]?, range: CountableRange<Int>? = nil, success: @escaping (_ response: HTTPURLResponse?, _ result: T?) -> Void, failure: @escaping (_ error: NSError?, _ response: HTTPURLResponse?, _ object: T?) -> Void, queue: DispatchQueue) {
+	func requestSend<O: Encodable>(url: String, object: [O]?, parameters: [String: Any]?, range: CountableRange<Int>? = nil, success: @escaping (_ response: HTTPURLResponse?, _ result: [T]?) -> Void, failure: @escaping (_ error: NSError?, _ response: HTTPURLResponse?, _ object: T?) -> Void, queue: DispatchQueue) {
 		
 		var inputBody: Data? = nil
 		if let object = object {
@@ -244,58 +253,75 @@ class Requester<T, S: Decodable>: BaseRS, RequesterType, RequestObserver where T
 			}
 		}
 		
-		if let data = inputBody {
-			do {
-				let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
-				print(String(data: try! JSONSerialization.data(withJSONObject: json!, options: .prettyPrinted), encoding: .utf8 )!)
-			} catch {
-				print("could not demap cluster with relation // see requester")
-			}
-		}
+
+//		if let data = inputBody {
+//			do {
+//				let json = try JSONSerialization.jsonObject(with: data, options: []) as Any
+//				print("posting: ==========")
+//				print(String(data: try! JSONSerialization.data(withJSONObject: json, options: .prettyPrinted), encoding: .utf8 )!)
+//			} catch {
+//				print("could not demap cluster with relation // see requester")
+//			}
+//		}
 		
 		super.dispatchRequest(self.requestMethod, url: url, inputBody: inputBody, parameters: parameters, range: range, success: {  (response, data) -> Void in
 			
-			// reset all pending changes
-			moc.reset()
-			mocTemp.reset()
-			mocBackground.reset()
+//			data?.printToJson()
 			
-			var searchResult: S? = nil
+			// delete all the old that we have based on new with their id's
 			
-			if let data = data {
+			if let entities = self.body as?[Entity] {
+				entities.forEach({ $0.delete(false) })
 				do {
-					searchResult = try JSONDecoder().decode(S.self, from: data)
-				} catch (let error) {
-					print("Error \(error)")
-				}
-			}
-			
-			self.coreDataManager.managedObjectContext = mocBackground
-			if let searchResult = searchResult as? SubmittedID, let entity = self.coreDataManager.getEntitieWith(id: searchResult.id) as? Entity {
-				entity.deleteBackground(true)
-			}
-
-			if let data = data {
-				do {
-					let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
-					print(String(data: try! JSONSerialization.data(withJSONObject: json!, options: .prettyPrinted), encoding: .utf8 )!)
+					try moc.save()
 				} catch {
-					print("could not demap cluster with relation // see requester")
+					print(error)
 				}
 			}
 			
-			var result : T? = nil
-			if let data = data {
-				do {
-					result = try JSONDecoder().decode(T.self, from: data)
-				} catch (let error){
-					print("Error \(error)")
-				}
-			}
-			
+			mocBackground.perform({
+				
+				let deleteOld: [T]? = super.decode(data: data)
 
-			success(response, result)
+				if let old = deleteOld, old.count > 0 {
+					if let oldEntity = old as? [Entity] {
+						print("old items to delete: \(oldEntity.count)")
+						oldEntity.forEach({
+							CoreEntity.managedObjectContext = mocBackground
+							CoreEntity.predicates.append("id", equals: $0.id)
+							let ent = CoreEntity.getEntities().filter({ $0.updatedAt != nil })
+							if ent.count > 1 {
+								let oldEntities = ent.sorted(by: { (($0.updatedAt ?? NSDate()) as Date) < (($1.updatedAt ?? NSDate()) as Date) })
+								oldEntities.first?.deleteBackground(false)
+							}
+						})
+					}
+					mocBackground.performAndWait {
+						do {
+							try mocBackground.save()
+							try moc.save()
+						} catch {
+							print(error)
+						}
+						
+						success(response, old)
+						
+					}
+				} else {
+					
+					var result : [T]? = nil
+					if let data = data {
+						do {
+							result = try JSONDecoder().decode([T].self, from: data)
+						} catch (let error){
+							print("Error \(error)")
+						}
+					}
+					
+					success(response, result)
+				}
 			
+			})
 			
 		}, failure: {   (error, response, data) -> Void in
 			

@@ -1,25 +1,11 @@
-const mysql = require('mysql');
 const print = require('../util/print')
+var db = require('../util/db');
 
 class Themes {
 
     static put (changeTheme, organizationId) {
 
         print.print('put theme with id', changeTheme.id)
-
-        const db = mysql.createConnection({
-            host    : 'localhost',
-            user    : 'root',
-            password: 'Leovanderzee1986',
-            database: 'localhostchurchbeam',
-            timezone: 'UTC'
-        });
-        
-        db.connect((err) => {
-            if (err) {
-                throw err;
-            }
-        });
 
         console.log('in put new theme')
         let theme = changeTheme
@@ -46,35 +32,24 @@ class Themes {
     }
 
     static post (theme, organizationId) {
-        let newTheme = theme
+        print.print('in post theme: ', theme)
 
-        if (newTheme) {
+        var newTheme = theme
+
+        if (newTheme.id) {
             delete newTheme.id
-            newTheme.organization_id = organizationId
         }
-
-        console.log('in post theme')
-        const db = mysql.createConnection({
-            host    : 'localhost',
-            user    : 'root',
-            password: 'Leovanderzee1986',
-            database: 'localhostchurchbeam',
-            timezone: 'UTC'
-        });
         
-        db.connect((err) => {
-            if (err) {
-                throw err;
-            }
-        });
-              
-        let insertPromise = new Promise ((resolve, reject) => {
+        newTheme.organization_id = organizationId
+        
+        var insertPromise = new Promise ((resolve, reject) => {
             if (!newTheme) {
                 print.print('no theme to post: ', newTheme)
                 resolve()
             } else {
                 db.query(`INSERT INTO theme SET ?`, newTheme, (err, result) => {
                     if (err) {
+                        print.print('error inserting theme: ', err)
                         reject(err)
                     } else {
                         resolve(result.insertId)
@@ -85,31 +60,18 @@ class Themes {
 
         return new Promise((resolve, reject) => {
             insertPromise
-            .then(Themes.getTheme)
-            .then(resolve)
+            .then(themeId => {
+                print.print('inserted theme id ', themeId)
+                Themes.getTheme(themeId)
+                .then(resolve)
+                .catch(reject)
+            })
             .catch(reject)
         })
     }
 
     static getTheme(themeId) {
         console.log(`get theme with ID: ${themeId}`)
-        
-        const mysql = require('mysql');
-
-        const db = mysql.createConnection({
-            host    : 'localhost',
-            user    : 'root',
-            password: 'Leovanderzee1986',
-            database: 'localhostchurchbeam',
-            timezone: 'UTC'
-        });
-        
-        db.connect((err) => {
-            if (err) {
-                throw err;
-            }
-            console.log('MySql connected...');
-        });
 
         return new Promise((resolve, reject) => {
             
@@ -126,7 +88,7 @@ class Themes {
                     resolve()
                 } else {
                     print.print("success with theme")
-                    resolve(result[0]);
+                    resolve(result[0])
                 }
             })
         })

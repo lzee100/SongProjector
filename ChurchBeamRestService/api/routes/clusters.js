@@ -1,23 +1,9 @@
 const Themes = require("./themesClass");
 const express = require('express');
 const router = express.Router();
-const mysql = require('mysql');
 const print = require('../util/print')
 
-const db = mysql.createConnection({
-    host    : 'localhost',
-    user    : 'root',
-    password: 'Leovanderzee1986',
-    database: 'localhostchurchbeam',
-    timezone: 'UTC'
-});
-
-db.connect((err) => {
-    if (err) {
-        throw err;
-    }
-    console.log('MySql connected...');
-});
+var db = require('../util/db');
 
 // GET — retrieve a particular resource’s object or list all objects
 // POST — create a new resource’s object
@@ -48,145 +34,200 @@ router.get('/', (req, res , next) => {
     })
 })
 
-router.get('/:clusterId', (req, res , next) => {
-    print.print('bla', req.params.clusterId)
-
-    getCluster(req.params.clusterId).then(function(result){
-        res.status(200).json(result);
-    }).catch(function(err){
-        res.status(500).json(err);
-    })
-
-    getCluster(req.params.clusterId, callback => {
-        if (callback == null) {
-            res.status(404).json({
-                cluster: callback
-            });
-        } else {
-            res.status(200).json({
-                cluster: callback
-            });
-        }
-    });
-});
-
 router.post('/', (req, res , next) => {
+    var newClusters = req.body
 
-    console.log("put cluster")
-
+    print.print('post cluster ---------------------------------------', newClusters)
     let organizationID = req.get("organizationID")
-    
-    var newCluster = req.body
-    newCluster.organization_id = organizationID
+    print.print('org id', organizationID)
 
-    let sheets = newCluster.sheets
-    let themeId = newCluster.tag
-    let instruments = newCluster.instruments
-    
-    delete newCluster.sheets
-    delete newCluster.tag
-    delete newCluster.instruments
-    if (newCluster.id) {
-        delete newCluster.id
-    }
+    // newClusters.map(cluster => 
+    //     cluster.organization_id = organizationID,
+    //     delete cluster.id,
+    //     delete cluster.instruments
+    //     )
+    newClusters.map(cluster => cluster.organization_id = organizationID)
+    newClusters.map(cluster => delete cluster.id)
+    newClusters.map(cluster => delete cluster.instruments)
 
-    sheets.forEach(function(part, index) {
-        if (sheets[index].id) {
-            delete sheets[index].id
-        }
-        if (sheets[index].tag) {
-            if (sheets[index].tag.id) {
-                delete sheets[index].tag.id
-            }
-        }
-      }, sheets); // use arr as this
-
-     print.print('sheets', sheets)
-
-    var insertCluster = function(themeId) {
-        newCluster.theme_id = themeId
-        return new Promise((resolve, reject) => {
-            var sql = 'INSERT INTO cluster SET ?'
-            db.query(sql, newCluster, (err, result) => {
-                if (err) {
-                    print.print('error insert cluster: ', err)
-                    reject(err)
-                } else { 
-                    print.print('cluster inserted with id: ', result.insertId)
-                    resolve(result.insertId)
-                }
-            })
-        })
-    }
-
-    var insertSheet = function(clusterId, sheet) {
-        let newSheet = sheet
-        newSheet.cluster_id = clusterId
-
-        return new Promise((resolve, reject) => {
-            var sql = 'INSERT INTO sheet SET ?'
-            db.query(sql, sheet, (err, result) => {
-                if (err) {
-                    reject(err)
-                } else {
-                    resolve()
-                }
-            })
-        })
-    }
-    
-    var insertSheetAndTheme = function(clusterId, sheet) {
-        let newSheet = sheet
-        return new Promise((resolve, reject) => {
-            Themes.post(sheet.tag, organizationID)
-            .then(function(result){
-                return new Promise((resolve, reject) => {
-                    if (result) {
-                        newSheet.theme_id = result.id
-                    }
-                    resolve()
-                })
-            })
-            .then(function() {
-                return insertSheet(clusterId, newSheet)
-            })
-            .then(resolve)
-            .catch(reject)
-        })
-    }
-
-    var insertAllSheets = function(clusterId) {
-        return new Promise((resolve, reject) => {
-            Promise.all(sheets.map(sheet => insertSheetAndTheme(clusterId, sheet))).then(resolve(clusterId)).catch(reject)
-        })
-    }
-
-
-    insertCluster(themeId)
-    .then(insertAllSheets)
-    .then(getCluster)
-    .then(function(result) {
-        res.status(201).json(result)
-    }).catch(function(err) {
+    print.print('cleaned clusters', newClusters)
+    Promise.all(newClusters.map(cluster => postCluster(cluster)))
+    .then(clusters => {
+        print.print('in result function ----------------------', clusters)
+        res.status(201).json(clusters)
+    })
+    .catch(err => {
+        print.print('in err function ----------------------', err)
         res.status(500).json(err)
     })
 
-});
+})
 
-router.put('/:clusterId', (req, res , next) => {
+router.put('/', (req, res , next) => {
     console.log('in update cluster')
-    let cluster = req.body;
+    let object = req.body;
+
+    Promise.all(object.map(cluster => putCluster(cluster)))
+    .then(clusters => {
+        print.print('in put cluster 201', clusters)
+        res.status(201).json(clusters)
+    })
+    .catch(err => {
+        print.print('in put cluster 500', err)
+        res.status(500).json(err)
+    })
+    
+})
+
+function postCluster(cluster) {
+
+    let newCluster = cluster
+    let organizationID = cluster.organization_id
+ 
+    let sheets = newCluster.sheets
+    let themeId = newCluster.theme_id
+    
+    delete newCluster.sheets
+    delete newCluster.theme_id
+
+    return new Promise((resolve, reject) => {
+        sheets.forEach(function(part, index) {
+            if (sheets[index].id) {
+                delete sheets[index].id
+            }
+            if (sheets[index].tag) {
+                if (sheets[index].tag.id) {
+                    delete sheets[index].tag.id
+                }
+            }
+          }, sheets); // use arr as this
+    
+        print.print('sheets', sheets)
+    
+        var insertCluster = function(themeId) {
+            newCluster.theme_id = themeId
+            print.print('cluster to insert', newCluster)
+            return new Promise((resolve, reject) => {
+                var sql = 'INSERT INTO cluster SET ?'
+                db.query(sql, newCluster, (err, result) => {
+                    if (err) {
+                        print.print('error insert cluster: ', err)
+                        reject(err)
+                    } else { 
+                        print.print('cluster inserted with id: ', result.insertId)
+                        resolve(result.insertId)
+                    }
+                })
+            })
+        }
+    
+        var insertSheet = function(clusterId, sheet) {
+            let newSheet = sheet
+            newSheet.cluster_id = clusterId
+            if (newSheet.tag) {
+                delete newSheet.tag
+            }
+            print.print('isnerting sheet', newSheet)
+            return new Promise((resolve, reject) => {
+                var sql = 'INSERT INTO sheet SET ?'
+                db.query(sql, sheet, (err, result) => {
+                    if (err) {
+                        print.print('error,', err)
+                        reject(err)
+                    } else {
+                        resolve()
+                    }
+                })
+            })
+        }
+
+        var insertSheetTheme = function(sheet, organizationID) {
+            var newSheet = sheet
+            print.print('insert sheet ---', sheet)
+            return new Promise((resolve, reject) => {
+                if (newSheet.tag) {
+                    print.print('trying sheet tag')
+                    Themes.post(newSheet.tag, organizationID)
+                    .then(theme => {
+                        print.print('sheet theme posted', theme)
+                        if (theme) {
+                            newSheet.theme_id = theme.id
+                        }
+                        if (newSheet.tag) {
+                            delete newSheet.tag
+                        }
+                        resolve(newSheet)
+                    })
+                    .catch(err => {
+                        print.print('error asdfsadfsdf', err)
+                        reject(err)
+                    })
+                } else {
+                    print.print('instant resolving')
+                    resolve(sheet)
+                }
+            })
+        }
         
+        var insertSheetAndTheme = function(clusterId, sheet) {
+            print.print('in insertsheetandtheme', sheet)
+            print.print('with cluster id', clusterId)
+            let newSheet = sheet
+            newSheet.cluster_id = clusterId
+            return new Promise((resolve, reject) => {
+                insertSheetTheme(newSheet, organizationID)
+                .then(sheet => {
+                    return insertSheet(clusterId, sheet)
+                })
+                .then(function(){ 
+                    print.print('in resolve')
+                    resolve()
+                })
+                .catch(function(err) {
+                    print.print('error inser', err)
+                    reject(err)
+                })
+            })
+        }
+    
+        var insertAllSheets = function(clusterId) {
+            return new Promise((resolve, reject) => {
+                Promise.all(sheets.map(sheet => insertSheetAndTheme(clusterId, sheet)))
+                .then(function() {
+                    print.print('in resolve with cluster bla')
+                    resolve(clusterId)
+                })
+                .catch(err => {
+                    print.print('in error with cluster bla', err)
+                    reject(err)
+                })
+            })
+        }
+    
+    
+        insertCluster(themeId)
+        .then(insertAllSheets)
+        .then(getCluster)
+        .then(cluster => {
+            print.print('success posting 1 cluster', cluster)
+            resolve(cluster)
+        }).catch(err => {
+            print.print('error in posting 1 cluster')
+            reject(err)
+        })
+    })
+
+}
+
+function putCluster(clusterToPut) {
+    var cluster = clusterToPut
+    cluster.organization_id = 1
+    
     let sheets = cluster.sheets
-    let clusterTheme = cluster.tag
     let instruments = cluster.instruments
 
     if (sheets) {
         delete cluster.sheets
-    }
-    if (clusterTheme) {
-        cluster.theme_id = clusterTheme
-        delete cluster.tag
     }
     if (instruments){
         delete cluster.instruments
@@ -206,7 +247,7 @@ router.put('/:clusterId', (req, res , next) => {
                     print.print('in resolve cluster xxxxxxxxxxxx')
                     resolve()
                 }
-            });
+            })
         })
     }
 
@@ -217,6 +258,7 @@ router.put('/:clusterId', (req, res , next) => {
                 resolve()
             } else {
                 let newtheme = theme
+                newtheme.organization_id = 1
                 if (newtheme.id) {
                     delete newtheme.id
                 }
@@ -271,12 +313,182 @@ router.put('/:clusterId', (req, res , next) => {
         })
     }
 
+    var getSheetsToDelete = function() {
+        print.print('in delete sheets')
+        return new Promise((resolve, reject) => {
+            db.query(`SELECT * FROM sheet WHERE cluster_id = ${cluster.id}`, (err, result) => {
+                if (err) {
+                    print.print('error deleting sheet', err)
+                    reject(err)
+                } else {
+                    print.print("sheets to delete", result)
+                    resolve(result)
+                }
+            })
+        })
+    }
+    
+    return new Promise((resolve, reject) => {
+        updateCluster(cluster)
+        .then(getSheetsToDelete)
+        .then(deleteSheets)
+        .then(function() {
+            return saveAllSheets(sheets)
+        })
+        .then(function() {
+            return getCluster(cluster.id)
+        })
+        .then(cluster => {
+            resolve(cluster)
+        })
+        .catch(err => {
+            reject(err)
+        })
+    })
+}
+
+function getCluster(clusterId) {
+    print.print('getting cluster function', clusterId)
+    let getCluster = function(clusterId) {
+        return new Promise((resolve, reject) => {
+            let sql = `SELECT * FROM cluster WHERE id=${clusterId}`
+            db.query(sql, (err, result) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(result[0])
+                }
+            })
+        })
+    }
+
+    let getSheets = function(cluster) {
+        let newCluster = cluster
+        return new Promise((resolve, reject) => {
+            let sql = `SELECT * FROM sheet WHERE cluster_id=${clusterId}`
+            db.query(sql, (err, result) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    print.print('success getting sheets')
+                    newCluster.sheets = result
+                    resolve(newCluster)
+                }
+            })
+        })
+    }
+
+    let getSheetThemes = function(sheet) {
+        return new Promise((resolve, reject) => {
+            if (!sheet.theme_id) {
+                resolve(sheet)
+            }
+            let themeId = sheet.theme_id
+            let sql = `SELECT * FROM theme WHERE id=${themeId}`
+            db.query(sql, (err, result) => {
+                if (err) {
+                    reject(err)
+                } else if (result.length == 0) {
+                    resolve(sheet)
+                } else {
+                    var newSheet = sheet
+                    newSheet.tag = result[0]
+                    resolve(newSheet)
+                }
+            })
+        })
+    }
+
+    return new Promise((resolve, reject) => {
+        getCluster(clusterId)
+        .then(function(cluster) {
+            let newCluster = cluster
+            let themeId = newCluster.theme_id
+            return new Promise((resolve, reject) => {
+                Themes.getTheme(themeId).then(function(theme){
+                    newCluster.theme_id = theme.id
+                    resolve(newCluster)
+                }).catch(reject)
+            })
+        })
+        .then(getSheets)
+        .then(function(cluster) {
+            let newCluster = cluster
+            let sheets = newCluster.sheets
+            if (newCluster.sheets) {
+                delete newCluster.sheets
+            }
+            return new Promise ((resolve, reject) => {
+                Promise.all(sheets.map(sheet => getSheetThemes(sheet)))
+                .then(function(sheetAndThemes) {
+                    newCluster.sheets = sheetAndThemes
+                    resolve(newCluster)
+                }).catch(reject)
+            })
+        }).then(function(result) {
+            print.print('return cluster: ', result)
+            resolve(result)
+        }).catch(reject)
+    })
+
+};
+
+router.delete('/', (req, res , next) => {
+    console.log('in delete cluster')
+    let clusters = req.body
+
+    Promise.all(clusters.map(cluster => deleteCluster(cluster)))
+    .then(cluster => {
+        print.print('deletedCluster', cluster)
+        res.status(201).json(cluster)
+    }).catch(err => {
+        print.print('error deleting cluster', err)
+        res.status(500).json(err)
+    })
+
+})
+
+function deleteCluster(cluster) {
+    let clusterId = cluster.id
+
+    var deleteCluster = function() {
+        return new Promise((resolve, reject) => {
+            let date = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+            db.query(`UPDATE cluster SET deletedAt = "${date}" WHERE id = ${clusterId}`, (err, result) => {
+                if (err) {
+                  reject(err)
+                } else {
+                    resolve(cluster.sheets)
+                }
+            })
+        })
+    }
+
+    return new Promise((resolve, reject) => { 
+        deleteCluster()
+        .then(deleteSheets)
+        .then(function() {
+            getCluster(clusterId)
+            .then(cluster => {
+                resolve(cluster)
+            })
+            .catch(err => {
+                reject(err)
+            })
+        })
+        .catch(err => {
+            reject(err)
+        })
+    })
+}
+
+function deleteSheets(sheets) {
     var deleteSheetTag = function(sheet) {
         return new Promise((resolve, reject) => {
             if (sheet.theme_id) {
-                db.query(`DELETE FROM tag WHERE id = ${sheet.theme_id}`, (err, result) => {
+                db.query(`DELETE FROM theme WHERE id = ${sheet.theme_id}`, (err, result) => {
                     if (err) {
-                        print.print('error deleting sheet tag', err)
+                        print.print('error deleting sheet theme', err)
                         reject(err)
                     } else {
                         resolve()
@@ -310,167 +522,13 @@ router.put('/:clusterId', (req, res , next) => {
         })
     }
 
-    var deleteSheets = function(sheets) {
-        return new Promise((resolve, reject) => {
-            Promise.all(sheets.map(sheet => deleteSheetWithTag(sheet))).then(resolve()).catch(reject())
-        })
-    }
-
-    var getSheetsToDelete = function() {
-        print.print('in delete sheets')
-        return new Promise((resolve, reject) => {
-            db.query(`SELECT * FROM sheet WHERE cluster_id = ${cluster.id}`, (err, result) => {
-                if (err) {
-                    print.print('error deleting sheet', err)
-                    reject(err)
-                } else {
-                    print.print("sheets to delete", result)
-                    resolve(result)
-                }
-            })
-        })
-    }
-    
-    updateCluster(cluster)
-    .then(getSheetsToDelete)
-    .then(deleteSheets)
-    .then(function() {
-        return saveAllSheets(sheets)
-    })
-    .then(function() {
-        return getCluster(cluster.id)
-    })
-    .then(cluster => {
-        console.log(cluster)
-        print.print('cluster to return', cluster)
-        res.status(201).json(cluster)
-    }).catch(function(err){
-        res.status(500).json(err)
-    })
-
-
-    
-
-});
-
-function getCluster(clusterId) {
-
-    let getCluster = function(clusterId) {
-        return new Promise((resolve, reject) => {
-            let sql = `SELECT * FROM cluster WHERE id=${clusterId}`
-            db.query(sql, (err, result) => {
-                if (err) {
-                    reject(err)
-                } else {
-                    resolve(result[0])
-                }
-            })
-        })
-    }
-
-    let getSheets = function(cluster) {
-        let newCluster = cluster
-        return new Promise((resolve, reject) => {
-            let sql = `SELECT * FROM sheet WHERE cluster_id=${clusterId}`
-            db.query(sql, (err, result) => {
-                if (err) {
-                    reject(err)
-                } else {
-                    newCluster.sheets = result
-                    resolve(newCluster)
-                }
-            })
-        })
-    }
-
-    let getSheetThemes = function(sheet) {
-        return new Promise((resolve, reject) => {
-            if (!sheet.theme_id) {
-                resolve(sheet)
-            }
-            let themeId = sheet.theme_id
-            let sql = `SELECT * FROM theme WHERE id=${themeId}`
-            db.query(sql, (err, result) => {
-                if (err) {
-                    reject(err)
-                } else if (result.length == 0) {
-                    resolve(sheet)
-                } else {
-                    var newSheet = sheet
-                    newSheet.tag = result
-                    resolve(newSheet)
-                }
-            })
-        })
-    }
-
     return new Promise((resolve, reject) => {
-        getCluster(clusterId)
-        .then(function(cluster) {
-            let newCluster = cluster
-            let themeId = newCluster.theme_id
-            return new Promise((resolve, reject) => {
-                Themes.getTheme(themeId).then(function(theme){
-                    newCluster.tag = theme.id
-                    resolve(newCluster)
-                }).catch(reject)
-            })
-        })
-        .then(getSheets)
-        .then(function(cluster) {
-            let newCluster = cluster
-            let sheets = newCluster.sheets
-            if (newCluster.sheets) {
-                delete newCluster.sheets
-            }
-            return new Promise ((resolve, reject) => {
-                Promise.all(sheets.map(sheet => getSheetThemes(sheet))).then(function(sheetAndThemes) {
-                    newCluster.sheets = sheetAndThemes
-                    resolve(newCluster)
-                }).catch(reject)
-            })
-        }).then(function(result) {
-            resolve(result)
-        }).catch(reject)
+        Promise.all(sheets.map(sheet => deleteSheetWithTag(sheet)))
+        .then(resolve())
+        .catch(reject())
     })
+}
 
-};
 
-router.delete('/:clusterId', (req, res , next) => {
-    console.log('in delete cluster')
-    let clusterId = req.params.clusterId
-
-    // todo: delete sheets but update cluster.deletedAt
-
-    let date = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
-    
-    console.log(`UPDATE cluster SET deletedAt = "${date}" WHERE id = ${clusterId}`)
-
-    db.query(`UPDATE cluster SET deletedAt = "${date}" WHERE id = ${clusterId}`, (err, result) => {
-        if (err) {
-            res.status(500).json({
-                error: result
-            })
-        } else {
-            getCluster(clusterId)
-            .then(function(result) {
-                res.status(201).json(result)
-            }).catch(function(err) {
-                res.status(500).json(err)
-            })
-        }
-    });
-});
-
-function queryDb(query, ids) {
-    return ids.map( id => new Promise(function(resolve, reject) {
-        db.query(query, id, (err, result) => {
-            if(err) {
-                reject(err)
-            }
-            resolve(result)
-        })
-    }))
-};
 
 module.exports = router;

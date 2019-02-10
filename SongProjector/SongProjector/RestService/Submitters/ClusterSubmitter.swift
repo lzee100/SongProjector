@@ -19,15 +19,7 @@ class CstrSubmitter: Requester<Cluster, SubmittedID> {
 	}
 	
 	override var path: String {
-		switch requestMethod {
-		case .get, .post:
-			return "clusters/"
-		case .put, .delete:
-			if let id = body?.id {
-				return "clusters/\(id)"
-			}
-			return ""
-		}
+		return "clusters/"
 	}
 	
 	override var coreDataManager: CoreDataManager<Cluster> {

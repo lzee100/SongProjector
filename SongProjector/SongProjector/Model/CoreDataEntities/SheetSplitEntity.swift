@@ -10,11 +10,11 @@ import Foundation
 import CoreData
 
 @objc(SheetSplitEntity)
-public class SheetSplitEntity: Sheet {
+public class SheetSplitEntity: Sheet, SheetMetaType {
+	
 	static var type: SheetType {
 		return .SheetSplit
 	}
-	
 	
 	@nonobjc public class func fetchRequest() -> NSFetchRequest<SheetSplitEntity> {
 		return NSFetchRequest<SheetSplitEntity>(entityName: "SheetSplitEntity")
@@ -26,8 +26,8 @@ public class SheetSplitEntity: Sheet {
 	
 	enum CodingKeysSheetSplit:String,CodingKey
 	{
-		case textLeft
-		case textRight
+		case textLeft = "contentLeft"
+		case textRight = "contentRight"
 	}
 	
 	

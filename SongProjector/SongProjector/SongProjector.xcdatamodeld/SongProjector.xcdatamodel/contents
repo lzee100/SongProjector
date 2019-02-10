@@ -22,6 +22,7 @@
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="deleteDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="id" attributeType="Integer 64" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="isTemp" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
     </entity>
@@ -120,7 +121,7 @@
         <element name="Book" positionX="-36" positionY="135" width="128" height="75"/>
         <element name="Chapter" positionX="-27" positionY="144" width="128" height="90"/>
         <element name="Cluster" positionX="-54" positionY="-9" width="128" height="150"/>
-        <element name="Entity" positionX="-63" positionY="-18" width="128" height="120"/>
+        <element name="Entity" positionX="-63" positionY="-18" width="128" height="135"/>
         <element name="GoogleActivity" positionX="-36" positionY="135" width="128" height="105"/>
         <element name="Instrument" positionX="-36" positionY="135" width="128" height="120"/>
         <element name="Sheet" positionX="-18" positionY="27" width="128" height="120"/>

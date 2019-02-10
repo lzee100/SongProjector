@@ -65,7 +65,9 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
 	}
 	
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-		
+		if let vc = segue.destination.unwrap() as? CustomSheetsController {
+			vc.delegate = self
+		}
 	}
 	
 	
@@ -91,7 +93,7 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
 	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
 		if editingStyle == .delete {
 			if let index = clusters.index(of: filteredClusters[indexPath.row]) {
-				ClusterSubmitter.submit(clusters[index], requestMethod: .delete)
+				ClusterSubmitter.submit([clusters[index]], requestMethod: .delete)
 			}
 		}
 	}
@@ -223,8 +225,9 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
 	private func update() {
 		let newClusters = Array(Set(CoreCluster.getEntities()).subtracting(selectedClusters))
 		clusters = newClusters
+		clusters.sort(by: { ($0.title ?? "") < ($1.title ?? "") })
+		CoreTag.setSortDescriptor(attributeName: "position", ascending: true)
 		CoreTag.predicates.append("isHidden", equals: 0)
-		CoreTag.setSortDescriptor(attributeName: "position", ascending: false)
 		tags = CoreTag.getEntities()
 		filterOnTags()
 		filteredClusters = clusters

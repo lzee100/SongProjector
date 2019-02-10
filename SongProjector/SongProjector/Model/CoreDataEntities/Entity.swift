@@ -21,8 +21,7 @@ public class Entity: NSManagedObject, Codable, NSCopying {
 	@NSManaged public var createdAt: NSDate?
 	@NSManaged public var updatedAt: NSDate?
 	@NSManaged public var deleteDate: NSDate?
-	
-	public var isTemp: Bool = false
+	@NSManaged public var isTemp: Bool
 
 	
 	enum CodingKeys: String, CodingKey
@@ -73,6 +72,7 @@ public class Entity: NSManagedObject, Codable, NSCopying {
 		createdAt = try decodeDate(container: container, forKey: .createdAt) ?? NSDate()
 		updatedAt = try decodeDate(container: container, forKey: .updatedAt) ?? NSDate()
 		deleteDate = try decodeDate(container: container, forKey: .deleteDate)
+		isTemp = false
 	}
 	
 	
@@ -105,6 +105,7 @@ public class Entity: NSManagedObject, Codable, NSCopying {
 			entity.setValue(value, forKey: key)
 		}
 		deleteDate = Date() as NSDate
+		isTemp = true
 		return entity
 	}
 }

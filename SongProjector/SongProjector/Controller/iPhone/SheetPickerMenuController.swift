@@ -17,6 +17,7 @@ class SheetPickerMenuController: UITableViewController, NewOrEditIphoneControlle
 	var bibleStudyGeneratorIphoneDelegate: BibleStudyGeneratorIphoneDelegate?
 	var bibleStudyGeneratorDelegate: BibleStudyGeneratorDelegate?
 	var selectedTag: Tag?
+	var delegate: NewOrEditIphoneControllerDelegate?
 	
 	private enum SheetGroup: String {
 		case customSheets
@@ -149,7 +150,7 @@ class SheetPickerMenuController: UITableViewController, NewOrEditIphoneControlle
 			}
 		case .default:
 			let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
-			controller.delegate = self
+			controller.delegate = delegate
 			controller.modificationMode = .newCustomSheet
 			controller.dismissMenu = dismissMenu
 			switch SheetType.for(indexPath){

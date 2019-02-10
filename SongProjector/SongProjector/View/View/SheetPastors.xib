@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
-        <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SheetPastors" customModule="SongProjector" customModuleProvider="target">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SheetPastors" customModule="ChurchBeam" customModuleProvider="target">
             <connections>
                 <outlet property="descriptionBackground" destination="yjn-UQ-9qL" id="wg5-2m-wJ1"/>
                 <outlet property="descriptionBackgroundBottomMarginConstraint" destination="0OP-sc-bOD" id="wUV-um-aKy"/>
@@ -39,6 +37,7 @@
                 <outlet property="outerBorderLeftConstraintTrans" destination="Tyi-X7-dCS" id="4BW-Ga-RqS"/>
                 <outlet property="outerBorderPicture" destination="DY0-hv-MW9" id="NWt-LJ-vVv"/>
                 <outlet property="sheetBackgroundImageView" destination="Ez5-OA-ndd" id="67V-9r-eB5"/>
+                <outlet property="sheetBackgroundView" destination="fEz-n2-6Qx" id="Q8e-KD-wno"/>
                 <outlet property="sheetPastorsView" destination="iN0-l3-epB" id="8v5-yf-w7Z"/>
                 <outlet property="titleBackground" destination="0Rg-ZL-uac" id="BZe-yU-7Nv"/>
                 <outlet property="titleBackgroundBottomConstraint" destination="erx-DI-8uv" id="8GU-XL-TDN"/>
@@ -61,6 +60,10 @@
             <rect key="frame" x="0.0" y="0.0" width="375" height="281"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fEz-n2-6Qx">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="281"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                </view>
                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.59999999999999998" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Liedjes - wallpaper 16-9.png" translatesAutoresizingMaskIntoConstraints="NO" id="Ez5-OA-ndd">
                     <rect key="frame" x="0.0" y="0.0" width="375" height="281"/>
                 </imageView>
@@ -68,7 +71,7 @@
                     <rect key="frame" x="0.0" y="0.0" width="375" height="281"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="DY0-hv-MW9">
-                            <rect key="frame" x="20" y="55" width="170" height="170"/>
+                            <rect key="frame" x="20" y="55.5" width="170" height="170"/>
                             <color key="backgroundColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>
                                 <constraint firstAttribute="width" secondItem="DY0-hv-MW9" secondAttribute="height" multiplier="1:1" id="Lgz-Ih-aXj"/>
@@ -76,7 +79,7 @@
                             </constraints>
                         </view>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2Rf-Rd-klP">
-                            <rect key="frame" x="190" y="55" width="185" height="170"/>
+                            <rect key="frame" x="190" y="55.5" width="185" height="170"/>
                             <subviews>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0Rg-ZL-uac">
                                     <rect key="frame" x="78.5" y="58.5" width="28" height="25.5"/>
@@ -181,7 +184,7 @@
                     </constraints>
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Zbi-7U-ufD">
-                    <rect key="frame" x="20" y="55" width="170" height="170"/>
+                    <rect key="frame" x="20" y="55.5" width="170" height="170"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="55D-WX-JZA">
                             <rect key="frame" x="15" y="15" width="140" height="140"/>
@@ -211,7 +214,7 @@
                     </constraints>
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aoc-LZ-W3m">
-                    <rect key="frame" x="190" y="55" width="185" height="170"/>
+                    <rect key="frame" x="190" y="55.5" width="185" height="170"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="wordWrap" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mmV-fZ-o7S">
                             <rect key="frame" x="78.5" y="63.5" width="28" height="15.5"/>
@@ -252,6 +255,7 @@
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
+                <constraint firstAttribute="bottom" secondItem="fEz-n2-6Qx" secondAttribute="bottom" id="2cb-wG-8kv"/>
                 <constraint firstItem="aoc-LZ-W3m" firstAttribute="leading" secondItem="Zbi-7U-ufD" secondAttribute="trailing" id="4IN-QC-i0z"/>
                 <constraint firstItem="aoc-LZ-W3m" firstAttribute="bottom" secondItem="Zbi-7U-ufD" secondAttribute="bottom" id="FMv-Fa-fX9"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="aoc-LZ-W3m" secondAttribute="trailing" id="HVi-KF-3uM"/>
@@ -260,8 +264,11 @@
                 <constraint firstItem="n0E-CR-h1W" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="N2p-Fh-ygO"/>
                 <constraint firstItem="Zbi-7U-ufD" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="20" id="NVC-kS-F6j"/>
                 <constraint firstItem="n0E-CR-h1W" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="OmS-Q3-h6N"/>
+                <constraint firstItem="fEz-n2-6Qx" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="Pul-Zi-BXc"/>
                 <constraint firstAttribute="trailing" secondItem="Ez5-OA-ndd" secondAttribute="trailing" id="SeQ-fg-3Bx"/>
+                <constraint firstAttribute="trailing" secondItem="fEz-n2-6Qx" secondAttribute="trailing" id="XuH-1f-YDM"/>
                 <constraint firstItem="n0E-CR-h1W" firstAttribute="bottom" secondItem="vUN-kp-3ea" secondAttribute="bottom" id="hi7-jL-3Z8"/>
+                <constraint firstItem="fEz-n2-6Qx" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="kui-Pk-Vog"/>
                 <constraint firstItem="Ez5-OA-ndd" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="l8c-3n-WCp"/>
                 <constraint firstAttribute="bottom" secondItem="Ez5-OA-ndd" secondAttribute="bottom" id="pwZ-or-U7e"/>
                 <constraint firstItem="aoc-LZ-W3m" firstAttribute="top" secondItem="Zbi-7U-ufD" secondAttribute="top" id="qxC-4Q-TGm"/>

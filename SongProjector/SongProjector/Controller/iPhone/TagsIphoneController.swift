@@ -31,8 +31,16 @@ class TagsIphoneController: ChurchBeamTableViewController, UISearchBarDelegate, 
 	
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
-		update()
+		TagFetcher.addObserver(self)
+		TagSubmitter.addObserver(self)
 		TagFetcher.request(force: false)
+		searchBar.text = nil
+	}
+	
+	override func viewWillDisappear(_ animated: Bool) {
+		super.viewWillDisappear(animated)
+		TagFetcher.removeObserver(self)
+		TagSubmitter.removeObserver(self)
 	}
 	
 	override func numberOfSections(in tableView: UITableView) -> Int {
@@ -66,9 +74,7 @@ class TagsIphoneController: ChurchBeamTableViewController, UISearchBarDelegate, 
 	
 	override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
 		if editingStyle == .delete {
-			
-			TagSubmitter.submit(tags[indexPath.row], requestMethod: .delete)
-			
+			TagSubmitter.submit([tags[indexPath.row]], requestMethod: .delete)
 		}
 	}
 	
@@ -81,6 +87,8 @@ class TagsIphoneController: ChurchBeamTableViewController, UISearchBarDelegate, 
 		filteredTags.remove(at: sourceIndexPath.row)
 		filteredTags.insert(itemToMove, at: destinationIndexPath.row)
 		updatePostitions()
+		print("filtered tags to post \(filteredTags.count)")
+		TagSubmitter.submit(filteredTags, requestMethod: .put)
 	}
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -129,16 +137,17 @@ class TagsIphoneController: ChurchBeamTableViewController, UISearchBarDelegate, 
 		presentedViewController?.dismiss(animated: true, completion: nil)
 	}
 	
-	
 	override func handleRequestFinish(result: AnyObject?) {
-		let submittedTag = result as? Tag
-		if let index = self.tags.firstIndex(where: { $0.id == submittedTag?.id }) {
-			tableView.deleteRow(at: IndexPath(row: index, section: 0), with: .left)
-		} else {
+//		let submittedTag = (result as? [Tag])?.first
+//		if let position = filteredTags.firstIndex(where: { $0.id == submittedTag?.id }) {
+//			tags.remove(at: Int(position))
+//			filteredTags.remove(at: Int(position))
+//			tableView.deleteRow(at: IndexPath(row: Int(position), section: 0), with: .left)
+//		} else {
 			Queues.main.async {
 				self.update()
 			}
-		}
+//		}
 	}
 	
 	private func setup() {
@@ -147,8 +156,6 @@ class TagsIphoneController: ChurchBeamTableViewController, UISearchBarDelegate, 
 		navigationController?.title = Text.Songs.title
 		title = Text.Tags.title
 		
-		TagFetcher.addObserver(self)
-		TagSubmitter.addObserver(self)
 		TagSubmitter.requestMethod = .delete
 		
 		searchBar.showsCancelButton = true
@@ -170,17 +177,17 @@ class TagsIphoneController: ChurchBeamTableViewController, UISearchBarDelegate, 
 	
 	private func update() {
 		CoreTag.predicates.append("isHidden", notEquals: true)
-		CoreTag.setSortDescriptor(attributeName: "position", ascending: false)
+		CoreTag.setSortDescriptor(attributeName: "position", ascending: true)
 		tags = CoreTag.getEntities()
+		print("tags get: \(tags.count)")
 		filteredTags = tags
 		tableView.reloadData()
 	}
 	
 	private func updatePostitions() {
-		for (index, tag) in tags.enumerated() {
+		for (index, tag) in filteredTags.enumerated() {
 			tag.position = Int16(index)
 		}
-		CoreTag.saveContext()
 	}
 	
 	@objc private func editTableView(_ gestureRecognizer: UIGestureRecognizer) {
@@ -207,6 +214,7 @@ class TagsIphoneController: ChurchBeamTableViewController, UISearchBarDelegate, 
 	@IBAction func addTagPressed(_ sender: UIBarButtonItem) {
 		let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
 		controller.modificationMode = .newTag
+		controller.delegate = self
 		let nav = UINavigationController(rootViewController: controller)
 		present(nav, animated: true)
 	}

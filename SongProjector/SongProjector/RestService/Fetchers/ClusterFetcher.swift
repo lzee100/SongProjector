@@ -34,9 +34,9 @@ class CstrFetcher: Requester<Cluster, SubmittedID> {
 	
 	override var params: [String : Any] {
 		CoreCluster.setSortDescriptor(attributeName: "updatedAt", ascending: false)
-		let tag = CoreCluster.getEntities().first
+		let cluster = CoreCluster.getEntities().first
 		var params = super.params
-		if let date = tag?.updatedAt {
+		if let date = cluster?.updatedAt {
 			params["updatedsince"] = GlobalDateFormatter.localToUTC(date: date as Date)
 		}
 		return params

@@ -10,7 +10,8 @@ import Foundation
 import CoreData
 
 @objc(SheetPastorsEntity)
-public class SheetPastorsEntity: Sheet {
+public class SheetPastorsEntity: Sheet, SheetMetaType {
+	
 	static var type: SheetType {
 		return .SheetPastors
 	}
@@ -25,14 +26,12 @@ public class SheetPastorsEntity: Sheet {
 	@NSManaged public var imagePathAWS: String?
 	@NSManaged public var thumbnailPathAWS: String?
 
-	
+	// not saving image path local 
 	enum CodingKeysPastors:String,CodingKey
 	{
-		case imagePath
-		case thumbnailPath
+		case content
 		case imagePathAWS
 		case thumbnailPathAWS
-		
 	}
 	
 	@objc
@@ -50,8 +49,7 @@ public class SheetPastorsEntity: Sheet {
 
 	override public func encode(to encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeysPastors.self)
-		try container.encode(imagePath, forKey: .imagePath)
-		try container.encode(thumbnailPath, forKey: .thumbnailPath)
+		try container.encode(content, forKey: .content)
 		try container.encode(imagePathAWS, forKey: .imagePathAWS)
 		try container.encode(thumbnailPathAWS, forKey: .thumbnailPathAWS)
 		try super.encode(to: encoder)
@@ -73,8 +71,7 @@ public class SheetPastorsEntity: Sheet {
 		
 		let container = try decoder.container(keyedBy: CodingKeysPastors.self)
 
-		imagePath = try container.decodeIfPresent(String.self, forKey: .imagePath)
-		thumbnailPath = try container.decodeIfPresent(String.self, forKey: .thumbnailPath)
+		content = try container.decodeIfPresent(String.self, forKey: .content)
 		imagePathAWS = try container.decodeIfPresent(String.self, forKey: .imagePathAWS)
 		thumbnailPathAWS = try container.decodeIfPresent(String.self, forKey: .thumbnailPathAWS)
 		

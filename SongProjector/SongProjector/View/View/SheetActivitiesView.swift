@@ -218,8 +218,14 @@ class SheetActivitiesView: SheetView {
 	}
 	
 	override func updateOpacity() {
-		if let _ = isForExternalDispay ? sheetTag?.backgroundImage : sheetTag?.thumbnail, let alpha = sheetTag?.backgroundTransparancy {
-			backgroundImageView.alpha = CGFloat(alpha)
+		if let alpha = sheetTag?.backgroundTransparancy, alpha != 1 {
+			if sheetTag?.backgroundImage != nil {
+				backgroundImageView.alpha = CGFloat(alpha)
+				backgroundView.alpha = 1
+			} else {
+				backgroundImageView.alpha = 0
+				backgroundView.alpha = CGFloat(alpha)
+			}
 		}
 	}
 	

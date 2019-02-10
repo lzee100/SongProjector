@@ -33,16 +33,14 @@ public class SheetTitleImageEntity: Sheet, SheetMetaType {
 	
 	enum CodingKeysTitleImage:String,CodingKey
 	{
+		case content
 		case hasTitle
 		case imageBorderColor
 		case imageBorderSize
 		case imageContentMode
 		case imageHasBorder
-		case imagePath
-		case thumbnailPath
 		case thumbnailPathAWS
 		case imagePathAWS
-
 	}
 	
 	
@@ -64,12 +62,11 @@ public class SheetTitleImageEntity: Sheet, SheetMetaType {
 	override public func encode(to encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeysTitleImage.self)
 		try container.encode(Int(truncating: NSNumber(value: hasTitle)), forKey: .hasTitle)
+		try container.encode(content, forKey: .content)
 		try container.encode(imageBorderColor, forKey: .imageBorderColor)
 		try container.encode(imageBorderSize, forKey: .imageBorderSize)
 		try container.encode(imageContentMode, forKey: .imageContentMode)
 		try container.encode(Int(truncating: NSNumber(value: imageHasBorder)), forKey: .imageHasBorder)
-		try container.encode(imagePath, forKey: .imagePath)
-		try container.encode(thumbnailPath, forKey: .thumbnailPath)
 		try container.encode(thumbnailPathAWS, forKey: .thumbnailPathAWS)
 		try container.encode(imagePathAWS, forKey: .imagePathAWS)
 		
@@ -93,11 +90,10 @@ public class SheetTitleImageEntity: Sheet, SheetMetaType {
 		let container = try decoder.container(keyedBy: CodingKeysTitleImage.self)
 		hasTitle = try Bool(truncating: (container.decodeIfPresent(Int16.self, forKey: .hasTitle) ?? 0) as NSNumber)
 		imageBorderColor = try container.decodeIfPresent(String.self, forKey: .imageBorderColor)
+		content = try container.decodeIfPresent(String.self, forKey: .content)
 		imageBorderSize = try container.decodeIfPresent(Int16.self, forKey: .imageBorderSize) ?? 0
 		imageContentMode = try container.decodeIfPresent(Int16.self, forKey: .imageContentMode) ?? 0
 		imageHasBorder = try Bool(truncating: (container.decodeIfPresent(Int16.self, forKey: .imageHasBorder) ?? 0) as NSNumber)
-		imagePath = try container.decodeIfPresent(String.self, forKey: .imagePath)
-		thumbnailPath = try container.decodeIfPresent(String.self, forKey: .thumbnailPath)
 		thumbnailPathAWS = try container.decodeIfPresent(String.self, forKey: .thumbnailPathAWS)
 		imagePathAWS = try container.decodeIfPresent(String.self, forKey: .imagePathAWS)
 		

@@ -100,10 +100,26 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 		update()
 	}
 	
+	override func viewDidAppear(_ animated: Bool) {
+		DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
+			print(self.clusterTemp?.id ?? -2)
+			CoreEntity.predicates.append("id", equals: self.clusterTemp?.id)
+			let entities = CoreEntity.getEntities()
+			let temps = entities.map({ $0.isTemp })
+			print(temps)
+			CoreEntity.managedObjectContext = mocBackground
+			CoreEntity.predicates.append("id", equals: self.clusterTemp?.id)
+			let entitiesb = CoreEntity.getEntities()
+			let tempsb = entitiesb.map({ $0.isTemp })
+			print(tempsb)
+		}
+	}
+	
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 		if let controller = segue.destination.unwrap() as? SheetPickerMenuController {
 			controller.didCreateSheet = didCreate(sheet:)
 			controller.selectedTag = selectedTag
+			controller.delegate = self
 		}
 		
 		if let controller = segue.destination.unwrap() as? LyricsViewController {
@@ -222,6 +238,8 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	
 	override func handleRequestFinish(result: AnyObject?) {
 		Queues.main.async {
+			self.sheetsTemp.forEach({ $0.delete(false) })
+			self.clusterTemp?.delete(true)
 			self.delegate?.didCloseCustomSheet()
 		}
 	}
@@ -288,7 +306,7 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 		
 		if let cluster = cluster {
 			let method: RequestMethod = cluster.isTemp ? .post : .put
-			ClusterSubmitter.submit(cluster, requestMethod: method)
+			ClusterSubmitter.submit([cluster], requestMethod: method)
 		} else {
 			Queues.main.async {
 				self.dismiss(animated: true)
@@ -506,14 +524,44 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 		collectionViewTags.layer.cornerRadius = 0
 	}
 	
+//	private func handleSelectedOption() {
+//		let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
+//		controller.delegate = self
+//		controller.modificationMode = .newCustomSheet
+//		switch SheetType.for(indexPath){
+//		case .SheetTitleContent:
+//			let sheet = CoreSheetTitleContent.createEntityNOTsave()
+//			controller.sheet = sheet
+//		case .SheetTitleImage:
+//			let sheet = CoreSheetTitleImage.createEntityNOTsave()
+//			controller.sheet = sheet
+//		case .SheetPastors:
+//			let sheet = CoreSheetPastors.createEntityNOTsave()
+//			controller.sheet = sheet
+//		case .SheetSplit:
+//			let sheet = CoreSheetSplit.createEntityNOTsave()
+//			controller.sheet = sheet
+//		case .SheetEmpty:
+//			let sheet = CoreSheetEmptySheet.createEntityNOTsave()
+//			controller.sheet = sheet
+//		case .SheetActivities:
+//			let sheet = CoreSheetActivities.createEntityNOTsave()
+//			controller.sheet = sheet
+//		}
+//		let nav = UINavigationController(rootViewController: controller)
+//		Queues.main.async {
+//			self.present(nav, animated: true)
+//		}
+//	}
+	
 	// MARK: - IBAction functions
 	
 	@IBAction func cancel(_ sender: UIBarButtonItem) {
 		// remove all
 		if cluster?.isTemp ?? false {
-			cluster?.delete()
+			cluster?.delete(true)
 		}
-		clusterTemp?.delete()
+		clusterTemp?.delete(true)
 		for sheet in sheetsTemp {
 			sheet.delete(false)
 		}

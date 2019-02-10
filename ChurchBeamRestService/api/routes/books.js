@@ -1,20 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const mysql = require('mysql')
+var db = require('../util/db');
 
-const db = mysql.createConnection({
-    host    : 'localhost',
-    user    : 'root',
-    password: 'Leovanderzee1986',
-    database: 'localhostchurchbeam'
-})
-
-db.connect((err) => {
-    if (err) {
-        throw err
-    }
-    console.log('MySql connected...')
-})
 
 // GET — retrieve a particular resource’s object or list all objects
 // POST — create a new resource’s object

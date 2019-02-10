@@ -118,8 +118,14 @@ class SheetSplit: SheetView {
 	}
 	
 	override func updateOpacity() {
-		if let alpha = sheetTag?.backgroundTransparancy {
-			sheetBackgroundView.alpha = CGFloat(alpha)
+		if let alpha = sheetTag?.backgroundTransparancy, alpha != 1 {
+			if sheetTag?.backgroundImage != nil {
+				sheetBackgroundImageView.alpha = CGFloat(alpha)
+				sheetBackgroundView.alpha = 1
+			} else {
+				sheetBackgroundImageView.alpha = 0
+				sheetBackgroundView.alpha = CGFloat(alpha)
+			}
 		}
 	}
 	

@@ -38,7 +38,7 @@ public class Cluster: Entity {
 		case isLoop
 		case position
 		case time
-		case tagId = "tag"
+		case tagId = "theme_id"
 		case hasSheets = "sheets"
 		case hasInstruments = "instruments"
 	}

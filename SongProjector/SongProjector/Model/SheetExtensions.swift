@@ -108,15 +108,28 @@ extension Sheet {
 	}
 	
 	override public func delete(_ save: Bool = false) {
-		if let tag = hasTag, tag.isHidden == true {
-			tag.backgroundImage = nil
-		}
+		hasTag?.delete(false)
 		moc.delete(self)
 		if save {
 			do {
 				try moc.save()
 			} catch {
 				print(error)
+			}
+		}
+	}
+	
+	public override func deleteBackground(_ save: Bool) {
+		hasTag?.deleteBackground(false)
+		mocBackground.delete(self)
+		if save {
+			mocBackground.performAndWait {
+				do {
+					try mocBackground.save()
+					try moc.save()
+				} catch {
+					print(error)
+				}
 			}
 		}
 	}

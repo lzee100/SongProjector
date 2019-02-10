@@ -245,6 +245,7 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 		static let tagTitleContent = [fontFamily, fontSize, alignment, borderSize, textColor, borderColor, bold, italic, underlined]
 		static let sheetTitleContent = [fontFamily, fontSize, alignment, borderSize, textColor, borderColor, bold, italic, underlined]
 		static let titleImage = [fontFamily, fontSize, alignment, borderSize, textColor, borderColor, bold, italic, underlined]
+		static let sheetPastor = [fontFamily, fontSize, borderSize, textColor, borderColor, bold, italic, underlined]
 		static let sheetSplit = [fontFamily, fontSize, alignment, borderSize, textColor, borderColor, bold, italic, underlined]
 		static let sheetEmpty: [CellLyrics] = []
 		static let sheetActivities = [fontFamily, borderSize, textColor, borderColor, bold, italic, underlined]
@@ -253,8 +254,10 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 			switch  type{
 			case .SheetTitleContent:
 				return (modificationMode == .newCustomSheet || modificationMode == .editCustomSheet) ? sheetTitleContent[indexPath.row] : tagTitleContent[indexPath.row]
-			case .SheetTitleImage, .SheetPastors:
+			case .SheetTitleImage:
 				return titleImage[indexPath.row]
+			case .SheetPastors:
+				return sheetPastor[indexPath.row]
 			case .SheetSplit:
 				return sheetSplit[indexPath.row]
 			case .SheetActivities:
@@ -349,7 +352,7 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 	var modificationMode: ModificationMode = .newTag
 	var tag: Tag! {
 		didSet {
-			tagTemp = (tag.copy() as! Tag)
+			tagTemp = tag.getTemp()
 			if sheetTemp != nil {
 				sheetTemp.hasTag = tagTemp
 			}
@@ -434,7 +437,8 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 			let isSheet = (modificationMode == .newCustomSheet || modificationMode == .editCustomSheet)
 			switch sheetTemp.type {
 			case .SheetTitleContent: return isSheet ? CellLyrics.sheetTitleContent.count : CellLyrics.tagTitleContent.count
-			case .SheetTitleImage, .SheetPastors: return CellLyrics.titleImage.count
+			case .SheetTitleImage: return CellLyrics.titleImage.count
+			case .SheetPastors: return CellLyrics.sheetPastor.count
 			case .SheetSplit: return CellLyrics.sheetSplit.count
 			case .SheetEmpty: return CellLyrics.sheetEmpty.count
 			case .SheetActivities: return CellLyrics.sheetActivities.count
@@ -643,9 +647,8 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 	// MARK:  Submit Delegate Functions
 	
 	override func handleRequestFinish(result: AnyObject?) {
-		tagTemp.delete()
+		tagTemp.delete(false)
 		sheetTemp.delete()
-		CoreEntity.saveContext()
 		shutDownExternalDisplay()
 		delegate?.didCloseNewOrEditIphoneController()
 	}
@@ -661,6 +664,9 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 		switch modificationMode {
 			
 		case .newTag:
+			CoreTag.setSortDescriptor(attributeName: "position", ascending: false)
+			let position = (CoreTag.getEntities().first?.position ?? 0) + 1
+			
 			let sheet = CoreSheetTitleContent.createEntityNOTsave()
 			sheet.deleteDate = NSDate() // remove at restart app if user quit app
 			sheet.title = Text.NewTag.sampleTitle
@@ -679,6 +685,7 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 			tag.backgroundTransparancy = 100
 			tag.titleAlignmentNumber = 0
 			tag.contentAlignmentNumber = 0
+			tag.position = position
 			tag.backgroundColor = UIColor.white.hexCode
 			self.tag = tag
 			
@@ -703,6 +710,8 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 			tag.hasEmptySheet = false
 			tag.titleAlignmentNumber = 0
 			tag.contentAlignmentNumber = 0
+			tag.titleFontName = "Avenir"
+			tag.contentFontName = "Avenir"
 			tag.backgroundColor = UIColor.white.hexCode
 			sheetTemp.title = Text.NewTag.sampleTitle
 			if let sheet = sheetTemp as? SheetTitleContentEntity {
@@ -905,8 +914,22 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 	}
 	
 	@IBAction func cancelPressed(_ sender: UIBarButtonItem) {
-		moc.reset()
 		self.shutDownExternalDisplay()
+		switch modificationMode {
+		case .newTag:
+			tag.delete(false)
+			tagTemp.delete(false)
+			sheet.delete(false)
+			sheetTemp.delete(true)
+		case .editTag:
+			tagTemp.delete(false)
+			sheet.delete(false)
+			sheetTemp.delete(true)
+		case .newCustomSheet:
+			sheet.delete(false)
+			sheetTemp.delete(true)
+		default: break // delete at cancel creating cluster in customsheetscontroller
+		}
 		self.dismiss(animated: true)
 	}
 	
@@ -933,7 +956,7 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 				
 				tagTemp.mergeSelfInto(tag: tag, sheetType: sheetTemp.type)
 				let requestMethod: RequestMethod = modificationMode == .newTag ? .post : .put
-				TagSubmitter.submit(tag, requestMethod: requestMethod)
+				TagSubmitter.submit([tag], requestMethod: requestMethod)
 				
 			case .newCustomSheet, .editCustomSheet:
 				tagTemp.mergeSelfInto(tag: tag, isTemp: NSDate(), sheetType: sheetTemp.type)

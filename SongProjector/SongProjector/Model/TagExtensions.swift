@@ -349,8 +349,8 @@ extension Tag {
 //	}
 	
 	func getTemp() -> Tag {
-		let tempTag = CoreTag.createEntity(fireNotification: false)
-		tempTag.deleteDate = NSDate()
+		let tempTag = CoreTag.createEntityNOTsave()
+		tempTag.isTemp = true
 		tempTag.title = title
 		tempTag.allHaveTitle = allHaveTitle
 		tempTag.hasEmptySheet = hasEmptySheet
@@ -435,6 +435,31 @@ extension Tag {
 		
 		print("merged tag")
 
+	}
+	
+	public override func delete(_ save: Bool) {
+		imagePath = nil
+		moc.delete(self)
+		if save {
+			do {
+				try moc.save()
+			} catch {
+				print(error)
+			}
+		}
+	}
+	
+	public override func deleteBackground(_ save: Bool) {
+		imagePath = nil
+		mocBackground.delete(self)
+		mocBackground.performAndWait {
+			do {
+				try mocBackground.save()
+				try moc.save()
+			} catch {
+				print(error)
+			}
+		}
 	}
 
 }

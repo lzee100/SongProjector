@@ -30,10 +30,9 @@ extension Cluster {
 	
 	public var tempVersion: Cluster {
 		let tempCluster = CoreCluster.createEntityNOTsave()
-		tempCluster.deleteDate = NSDate()
+		tempCluster.isTemp = true
 		tempCluster.title = title
 		tempCluster.time = time
-		tempCluster.title = title
 		return tempCluster
 	}
 	
@@ -60,6 +59,33 @@ extension Cluster {
 	
 	public var hasMusic: Bool {
 		return (hasInstruments?.count ?? 0) > 0
+	}
+	
+	public override func delete(_ save: Bool) {
+		hasSheetsArray.forEach({ $0.delete(false) })
+		moc.delete(self)
+		if save {
+			do {
+				try moc.save()
+			} catch {
+				print(error)
+			}
+		}
+	}
+	
+	public override func deleteBackground(_ save: Bool) {
+		hasSheetsArray.forEach({ $0.deleteBackground(false) })
+		mocBackground.delete(self)
+		if save {
+			mocBackground.performAndWait {
+				do {
+					try mocBackground.save()
+					try moc.save()
+				} catch {
+					print(error)
+				}
+			}
+		}
 	}
 
 }

@@ -12,10 +12,10 @@ import Foundation
 extension Entity {
 	
 	@objc open func delete(_ save: Bool = true) {
-		managedObjectContext?.delete(self)
+		moc.delete(self)
 		if save {
 			do {
-				try managedObjectContext?.save()
+				try moc.save()
 			} catch {
 				print(error)
 			}
@@ -25,10 +25,13 @@ extension Entity {
 	@objc open func deleteBackground(_ save: Bool = true) {
 		mocBackground.delete(self)
 		if save {
-			do {
-				try mocBackground.save()
-			} catch {
-				print(error)
+			mocBackground.performAndWait {
+				do {
+					try mocBackground.save()
+					try moc.save()
+				} catch {
+					print(error)
+				}
 			}
 		}
 	}

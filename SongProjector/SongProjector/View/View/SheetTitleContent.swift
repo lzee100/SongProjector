@@ -125,6 +125,15 @@ class SheetTitleContent: SheetView {
 		if let alpha = sheetTag?.backgroundTransparancy, alpha != 1 {
 			backgroundImageView.alpha = CGFloat(alpha)
 		}
+		if let alpha = sheetTag?.backgroundTransparancy, alpha != 1 {
+			if sheetTag?.backgroundImage != nil {
+				backgroundImageView.alpha = CGFloat(alpha)
+				sheetBackground.alpha = 1
+			} else {
+				backgroundImageView.alpha = 0
+				sheetBackground.alpha = CGFloat(alpha)
+			}
+		}
 	}
 	
 	override func updateBackgroundImage() {

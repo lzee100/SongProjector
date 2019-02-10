@@ -110,7 +110,6 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 			entity.id = Int64.random(in: 1...Int64.max)
 			entity.isTemp = true
 		}
-		
 		return entity
 	}
 	
@@ -128,13 +127,17 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 			entity.id = getNewId()
 		}
 		let _ = saveContext(fireNotification: fireNotification) // raise ID
+		clearSettings()
 		return entity
 	}
 	
 	@discardableResult
 	func saveContext(fireNotification: Bool = true) -> Bool {
 		do {
-			try moc.save()
+			try managedObjectContext.save()
+			if managedObjectContext == mocBackground {
+				try moc.save()
+			}
 			if fireNotification {
 				Queues.main.async {
 					NotificationCenter.default.post(name: NotificationNames.dataBaseDidChange, object:nil)
@@ -161,20 +164,24 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 			print("Failed")
 		}
 		print(entity != nil ? entity!.id + 1 : Int64(0))
+		clearSettings()
 		return entity != nil ? entity!.id + 1 : Int64(0)
 	}
 	
 	
-	func getEntities(onlyDeleted: Bool = false) -> [T] {
+	func getEntities(onlyDeleted: Bool = false, skipFilter: Bool = false) -> [T] {
 		var entities: [T] = []
 		let request = NSFetchRequest<T>(entityName: entityName)
 
-		if getTemp || onlyDeleted {
-			predicates.append(NSPredicate(format: "deleteDate != nil"))
-		} else {
-			predicates.append(NSPredicate(format: "deleteDate == nil"))
+		if !skipFilter {
+			if getTemp || onlyDeleted {
+				predicates.append("isTemp", equals: true)
+			} else {
+				predicates.append("isTemp", equals: false)
+				predicates.append(NSPredicate(format: "deleteDate == nil"))
+			}
 		}
-
+		
 		let andPredicate = NSCompoundPredicate(type: NSCompoundPredicate.LogicalType.and, subpredicates: predicates)
 		request.predicate = andPredicate
 		
@@ -198,12 +205,16 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 	
 	func getEntitieWith(id: Int64) -> T? {
 		predicates.append("id", equals: id)
-		return getEntities().first
+		let entities = getEntities().first
+		clearSettings()
+		return entities
 	}
 	
 	func getEntitiesWhere(attribute: String, has value: String) -> [T] {
 		predicates.append(attribute, equals: value)
-		return getEntities()
+		let entities = getEntities()
+		clearSettings()
+		return entities
 	}
 	
 	func setSortDescriptor(attributeName: String, ascending: Bool) {
@@ -211,6 +222,7 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 	}
 	
 	private func clearSettings() {
+		sortDiscriptor = nil
 		predicates = []
 		getTemp = false
 		managedObjectContext = moc

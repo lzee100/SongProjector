@@ -205,7 +205,7 @@ public class Tag: Entity {
 				entity.setValue(value, forKey: key)
 			}
 		}
-		deleteDate = Date() as NSDate
+		isTemp = true
 		return entity
 	}
 	

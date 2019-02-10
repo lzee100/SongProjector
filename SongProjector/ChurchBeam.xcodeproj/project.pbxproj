@@ -136,6 +136,7 @@
 		E3896A3E21E3F56D008CB5A5 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3896A3D21E3F56D008CB5A5 /* CloudKit.framework */; };
 		E3896A4021E5D8A3008CB5A5 /* Requester.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3896A3F21E5D8A3008CB5A5 /* Requester.swift */; };
 		E3896A4B21E7A3FD008CB5A5 /* TagSubmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3896A4A21E7A3FD008CB5A5 /* TagSubmitter.swift */; };
+		E390864D22105EA300320421 /* DataExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E390864C22105EA300320421 /* DataExtensions.swift */; };
 		E393B7652008D20B0073D0A9 /* SheetEmpty.xib in Resources */ = {isa = PBXBuildFile; fileRef = E393B7642008D20B0073D0A9 /* SheetEmpty.xib */; };
 		E393B7672008D25F0073D0A9 /* SheetEmpty.swift in Sources */ = {isa = PBXBuildFile; fileRef = E393B7662008D25F0073D0A9 /* SheetEmpty.swift */; };
 		E393B7692008D3FC0073D0A9 /* SheetTitleImage.xib in Resources */ = {isa = PBXBuildFile; fileRef = E393B7682008D3FC0073D0A9 /* SheetTitleImage.xib */; };
@@ -340,6 +341,7 @@
 		E3896A3D21E3F56D008CB5A5 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		E3896A3F21E5D8A3008CB5A5 /* Requester.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Requester.swift; sourceTree = "<group>"; };
 		E3896A4A21E7A3FD008CB5A5 /* TagSubmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagSubmitter.swift; sourceTree = "<group>"; };
+		E390864C22105EA300320421 /* DataExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataExtensions.swift; sourceTree = "<group>"; };
 		E393B7642008D20B0073D0A9 /* SheetEmpty.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SheetEmpty.xib; sourceTree = "<group>"; };
 		E393B7662008D25F0073D0A9 /* SheetEmpty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetEmpty.swift; sourceTree = "<group>"; };
 		E393B7682008D3FC0073D0A9 /* SheetTitleImage.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SheetTitleImage.xib; sourceTree = "<group>"; };
@@ -562,6 +564,7 @@
 				E3F201DF201E1AEC002FF06E /* DateExtensions.swift */,
 				E37938EE212723630091698D /* TableViewCellExtensions.swift */,
 				E36E76D921EF5338002E20EF /* IntExtensions.swift */,
+				E390864C22105EA300320421 /* DataExtensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1031,6 +1034,7 @@
 				E3F421A41FFE457500C332B0 /* LabelDoubleSwitchCell.swift in Sources */,
 				E3CAE6A120C5137000D3B36F /* ChurchBeamCell.swift in Sources */,
 				E3812DE7201C972B00F10B2C /* SettingsController.swift in Sources */,
+				E390864D22105EA300320421 /* DataExtensions.swift in Sources */,
 				E334B10D21ED045C0088CD48 /* GoogleActivity.swift in Sources */,
 				E3D9C29020D6F4E8006EDFE3 /* SongServiceContainerViewController.swift in Sources */,
 				E36E76DA21EF5338002E20EF /* IntExtensions.swift in Sources */,

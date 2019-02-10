@@ -30,25 +30,11 @@ class TgSubmitter: Requester<Tag, SubmittedID> {
 	}
 	
 	override var path: String {
-		switch requestMethod {
-		case .get, .post:
-			return "themes/"
-		case .put, .delete:
-			if let id = body?.id {
-				return "themes/\(id)"
-			}
-			return ""
-		}
+		return "themes/"
 	}
 	
 	override var coreDataManager: CoreDataManager<Tag> {
 		return CoreTag
 	}
-	
-	override func saveLocal(entities: [Tag]?) {
-		
-		super.saveLocal(entities: entities)
-	}
-	
 	
 }

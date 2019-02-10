@@ -10,6 +10,7 @@ import UIKit
 
 class SheetPastors: SheetView {
 
+	@IBOutlet var sheetBackgroundView: UIView!
 	@IBOutlet var sheetBackgroundImageView: UIImageView!
 	@IBOutlet var titleLabel: UILabel!
 	@IBOutlet var titleLabelTrans: UILabel!
@@ -152,8 +153,8 @@ class SheetPastors: SheetView {
 		let sheet = self.sheet as! SheetPastorsEntity
 		if let content = sheet.content {
 			if let tag = sheetTag {
-				descriptionLabel.attributedText = NSAttributedString(string: content, attributes: tag.getTitleAttributes(scaleFactor ?? 0))
-				descriptionLabelTrans.attributedText = NSAttributedString(string: content, attributes: tag.getTitleAttributes(scaleFactor ?? 0))
+				descriptionLabel.attributedText = NSAttributedString(string: content, attributes: tag.getLyricsAttributes(scaleFactor ?? 0))
+				descriptionLabelTrans.attributedText = NSAttributedString(string: content, attributes: tag.getLyricsAttributes(scaleFactor ?? 0))
 			} else {
 				descriptionLabel.text = content
 				descriptionLabelTrans.text = content
@@ -168,10 +169,10 @@ class SheetPastors: SheetView {
 	}
 	
 	override func updateBackgroundColor() {
-		if let color = sheetTag?.backgroundColor {
-			backgroundColor = UIColor(hex: color)
+		if let backgroundColor = sheetTag?.sheetBackgroundColor {
+			self.sheetBackgroundView.backgroundColor = backgroundColor
 		} else {
-			backgroundColor = .white
+			self.sheetBackgroundView.backgroundColor = .white
 		}
 	}
 	
@@ -191,9 +192,14 @@ class SheetPastors: SheetView {
 	}
 	
 	override func updateOpacity() {
-		if let alpha = sheetTag?.backgroundTransparancy {
-			backgroundColor = .black
-			sheetBackgroundImageView.alpha = CGFloat(alpha)
+		if let alpha = sheetTag?.backgroundTransparancy, alpha != 1 {
+			if sheetTag?.backgroundImage != nil {
+				sheetBackgroundImageView.alpha = CGFloat(alpha)
+				sheetBackgroundView.alpha = 1
+			} else {
+				sheetBackgroundImageView.alpha = 0
+				sheetBackgroundView.alpha = CGFloat(alpha)
+			}
 		}
 	}
 	
