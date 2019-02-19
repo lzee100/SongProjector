@@ -590,7 +590,8 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 			switch tagAttribute {
 			case .backgroundTransparancy: updateTransparency()
 		case .title, .titleBorderSize, .titleFontName, .titleTextSize, .titleAlignment, .titleTextColorHex, .titleBorderColorHex, .isTitleBold, .isTitleItalic, .isTitleUnderlined: updateSheetTitle()
-			case .contentFontName, .contentTextSize, .contentTextColorHex, .contentAlignment, .contentBorderColor, .contentBorderSize, .isContentBold, .isContentItalic, .isContentUnderlined: updateSheetContent()
+		case .contentFontName, .contentTextSize, .contentTextColorHex, .contentAlignment, .contentBorderColor, .contentBorderSize, .isContentBold, .isContentItalic, .isContentUnderlined: updateSheetContent()
+			case .displayTime: updateTime()
 			case .backgroundImage:
 				updateBackgroundImage()
 				needsReload = true

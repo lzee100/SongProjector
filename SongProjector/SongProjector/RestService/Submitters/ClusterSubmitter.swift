@@ -26,10 +26,5 @@ class CstrSubmitter: Requester<Cluster, SubmittedID> {
 		return CoreCluster
 	}
 	
-	override func saveLocal(entities: [Cluster]?) {
-		
-		super.saveLocal(entities: entities)
-	}
-	
 	
 }

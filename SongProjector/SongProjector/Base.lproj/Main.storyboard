@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Nkp-Wd-T9G">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="loR-UG-Lte">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -10,37 +10,20 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Sheet Test-->
+        <!--Splash Screen-->
         <scene sceneID="jrZ-yR-sLu">
             <objects>
-                <viewController id="loR-UG-Lte" customClass="SheetTest" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="loR-UG-Lte" customClass="SplashScreen" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="JCk-cp-ZZU">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7eR-cy-0bK">
-                                <rect key="frame" x="0.0" y="20" width="375" height="211"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="7eR-cy-0bK" secondAttribute="height" multiplier="16:9" id="6Ey-bn-cSB"/>
-                                </constraints>
-                            </view>
-                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <constraints>
-                            <constraint firstItem="7eR-cy-0bK" firstAttribute="leading" secondItem="ZGR-dM-9Kt" secondAttribute="leading" id="K6Y-U9-ikk"/>
-                            <constraint firstItem="7eR-cy-0bK" firstAttribute="top" secondItem="ZGR-dM-9Kt" secondAttribute="top" id="RB2-1h-b95"/>
-                            <constraint firstItem="ZGR-dM-9Kt" firstAttribute="trailing" secondItem="7eR-cy-0bK" secondAttribute="trailing" id="jGL-OM-DjX"/>
-                        </constraints>
                         <viewLayoutGuide key="safeArea" id="ZGR-dM-9Kt"/>
                     </view>
-                    <connections>
-                        <outlet property="previewView" destination="7eR-cy-0bK" id="f2y-kO-6JM"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cb0-fz-TI4" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2589" y="-597"/>
+            <point key="canvasLocation" x="-2710" y="-519"/>
         </scene>
         <!--Menu Controller-->
         <scene sceneID="2BO-WN-jlh">
@@ -575,35 +558,6 @@
             </objects>
             <point key="canvasLocation" x="3401" y="-2647"/>
         </scene>
-        <!--Table View Controller-->
-        <scene sceneID="3TL-vr-LCf">
-            <objects>
-                <tableViewController id="NPB-tp-TiO" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="1YE-wS-xAY">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="W4F-1t-z2j">
-                                <rect key="frame" x="0.0" y="28" width="375" height="44"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="W4F-1t-z2j" id="zlT-OX-iM2">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </tableViewCellContentView>
-                            </tableViewCell>
-                        </prototypes>
-                        <connections>
-                            <outlet property="dataSource" destination="NPB-tp-TiO" id="YTi-6V-818"/>
-                            <outlet property="delegate" destination="NPB-tp-TiO" id="9dt-t8-pmo"/>
-                        </connections>
-                    </tableView>
-                    <navigationItem key="navigationItem" id="AXI-0f-e2Q"/>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Pd0-Am-jqT" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="2161" y="-3485"/>
-        </scene>
         <!--Navigation Controller-->
         <scene sceneID="wkW-yg-iy2">
             <objects>
@@ -900,7 +854,7 @@
                             </connections>
                         </barButtonItem>
                         <rightBarButtonItems>
-                            <barButtonItem systemItem="edit" id="Kgl-9J-dJp">
+                            <barButtonItem systemItem="add" id="Kgl-9J-dJp">
                                 <connections>
                                     <action selector="editPressed:" destination="ptK-pt-qc3" id="aVl-F3-Xd2"/>
                                 </connections>
@@ -989,7 +943,7 @@
         <!--Sheet Picker Menu Controller-->
         <scene sceneID="yHg-gW-qiw">
             <objects>
-                <tableViewController id="u9p-Rw-9Rj" customClass="SheetPickerMenuController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="SheetPickerMenuController" id="u9p-Rw-9Rj" customClass="SheetPickerMenuController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="ijY-hG-kkk">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1022,29 +976,12 @@
                     </navigationItem>
                     <connections>
                         <outlet property="cancelButton" destination="ahd-yY-Leg" id="VgB-D7-LG1"/>
+                        <segue destination="OIL-Em-Pnj" kind="presentation" identifier="ChangeLyricsSegue" id="mag-8b-F4D"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VaL-Y5-Vn1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-578" y="2556"/>
-        </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="hVx-rB-I8M">
-            <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="cnW-JO-SuT" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="DU6-r3-GlM">
-                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="NPB-tp-TiO" kind="relationship" relationship="rootViewController" id="70N-xJ-tsw"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="7zF-Uh-63D" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="2162" y="-4283"/>
         </scene>
         <!--New Or Edit Iphone Controller-->
         <scene sceneID="Fnu-Xd-D3p">
@@ -1437,7 +1374,7 @@
         <!--Sheet Picker Menu Controller-->
         <scene sceneID="VAC-I1-HJY">
             <objects>
-                <tableViewController storyboardIdentifier="SheetPickerMenuController" id="lrb-f2-QmF" customClass="SheetPickerMenuController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="lrb-f2-QmF" customClass="SheetPickerMenuController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="rRz-Vx-Nba">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1841,4 +1778,7 @@
     <resources>
         <image name="More" width="29" height="29"/>
     </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="FrD-s5-qoj"/>
+    </inferredMetricsTieBreakers>
 </document>

@@ -307,8 +307,8 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		tableView.reloadData()
 		tableView.setNeedsDisplay()
 		if scroll {
-			if let section = songService.selectedSection, let row = songService.selectedSheet?.position {
-			tableView.scrollToRow(at: IndexPath(row: Int(row), section: section), at: .middle, animated: true)
+			if let section = songService.selectedSection, let row = songService.selectedSheet?.position, songService.selectedSong?.sheets.count ?? 0 > 1 {
+				self.tableView.scrollToRow(at: IndexPath(row: Int(row), section: section), at: .middle, animated: true)
 			}
 		}
 	}

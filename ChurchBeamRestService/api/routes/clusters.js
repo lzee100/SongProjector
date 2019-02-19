@@ -93,7 +93,7 @@ function postCluster(cluster) {
     return new Promise((resolve, reject) => {
         sheets.forEach(function(part, index) {
             if (sheets[index].id) {
-                delete sheets[index].id
+                delete sheets[index].id 
             }
             if (sheets[index].tag) {
                 if (sheets[index].tag.id) {

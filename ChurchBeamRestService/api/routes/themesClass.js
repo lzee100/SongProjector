@@ -1,5 +1,5 @@
 const print = require('../util/print')
-var db = require('../util/db');
+var db = require('../util/db')
 
 class Themes {
 

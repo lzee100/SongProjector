@@ -8,6 +8,10 @@
 
 import UIKit
 
+protocol LyricsControllerDelegate {
+	func didPressDone(text: String)
+}
+
 class LyricsViewController: UIViewController {
 
 	@IBOutlet var cancelButton: UIBarButtonItem!
@@ -16,7 +20,7 @@ class LyricsViewController: UIViewController {
 	@IBOutlet var lyricsTextView: UITextView!
 	
 	var text = ""
-	var didPressDone: ((String) -> Void)?
+	var delegate: LyricsControllerDelegate?
 	
 	override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,7 +63,7 @@ class LyricsViewController: UIViewController {
 	
 	@IBAction func donePressed(_ sender: UIBarButtonItem) {
 		if let text = lyricsTextView.text {
-			didPressDone?(text)
+			delegate?.didPressDone(text: text)
 		}
 		self.dismiss(animated: true)
 	}

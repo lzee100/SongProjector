@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="g9h-W5-KnB">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="g9h-W5-KnB">
     <device id="ipad9_7" orientation="landscape">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -15,17 +13,14 @@
         <!--NewSongServiceController-->
         <scene sceneID="VUB-WC-c2m">
             <objects>
-                <viewController storyboardIdentifier="NewSongServiceController" title="NewSongServiceController" id="mT3-Rt-paS" customClass="NewSongServiceController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NewSongServiceController" title="NewSongServiceController" id="mT3-Rt-paS" customClass="NewSongServiceController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="DGo-e4-p7D">
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="x6R-gV-but">
-                                <rect key="frame" x="0.0" y="114" width="1024" height="300"/>
+                                <rect key="frame" x="0.0" y="70" width="1024" height="698"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="300" id="tBi-89-Gfu"/>
-                                </constraints>
                                 <view key="tableFooterView" contentMode="scaleToFill" id="EdH-di-T6z">
                                     <rect key="frame" x="0.0" y="72" width="1024" height="44"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -45,111 +40,13 @@
                                     <outlet property="delegate" destination="mT3-Rt-paS" id="RO0-5I-cst"/>
                                 </connections>
                             </tableView>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="KYS-Am-2gO">
-                                <rect key="frame" x="0.0" y="524" width="1024" height="244"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <searchBar key="tableHeaderView" contentMode="redraw" id="sGz-PQ-D0Z">
-                                    <rect key="frame" x="0.0" y="0.0" width="1024" height="44"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                                    <textInputTraits key="textInputTraits"/>
-                                    <connections>
-                                        <outlet property="delegate" destination="mT3-Rt-paS" id="SGH-jt-BPR"/>
-                                    </connections>
-                                </searchBar>
-                                <view key="tableFooterView" contentMode="scaleToFill" id="Mu8-pz-6qL">
-                                    <rect key="frame" x="0.0" y="160" width="1024" height="128"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                </view>
-                                <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="zEx-ki-eNY">
-                                        <rect key="frame" x="0.0" y="72" width="1024" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="zEx-ki-eNY" id="wLE-ll-Gad">
-                                            <rect key="frame" x="0.0" y="0.0" width="1024" height="43.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                </prototypes>
-                                <connections>
-                                    <outlet property="dataSource" destination="mT3-Rt-paS" id="Fbh-wk-nrL"/>
-                                    <outlet property="delegate" destination="mT3-Rt-paS" id="pew-7Y-cpP"/>
-                                </connections>
-                            </tableView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="30V-Ho-OWu">
-                                <rect key="frame" x="20" y="64" width="984" height="50"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="50" id="NFq-g2-pph"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aZh-Yj-N2g">
-                                <rect key="frame" x="20" y="414" width="904" height="50"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="50" id="jDu-lE-tsS"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="2rs-ix-Jh7">
-                                <rect key="frame" x="0.0" y="464" width="1024" height="60"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="60" id="Yru-hM-yGK"/>
-                                </constraints>
-                                <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="10" minimumInteritemSpacing="10" id="WEd-DJ-HC9">
-                                    <size key="itemSize" width="50" height="50"/>
-                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
-                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                </collectionViewFlowLayout>
-                                <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="Zsh-Sb-UcK">
-                                        <rect key="frame" x="0.0" y="5" width="50" height="50"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
-                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </view>
-                                    </collectionViewCell>
-                                </cells>
-                                <connections>
-                                    <outlet property="dataSource" destination="mT3-Rt-paS" id="vua-qh-2ta"/>
-                                    <outlet property="delegate" destination="mT3-Rt-paS" id="yU0-tL-Wl7"/>
-                                </connections>
-                            </collectionView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2bW-nf-MDZ">
-                                <rect key="frame" x="924" y="414" width="100" height="50"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
-                                <state key="normal" title="+"/>
-                                <connections>
-                                    <segue destination="Dji-zJ-amo" kind="presentation" id="RKr-Ke-4ED"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="JtP-5K-GV9" firstAttribute="trailing" secondItem="aZh-Yj-N2g" secondAttribute="trailing" constant="100" id="41t-Hd-2Vk"/>
-                            <constraint firstItem="30V-Ho-OWu" firstAttribute="leading" secondItem="JtP-5K-GV9" secondAttribute="leading" constant="20" id="5nh-Y0-Mo6"/>
+                            <constraint firstItem="x6R-gV-but" firstAttribute="top" secondItem="JtP-5K-GV9" secondAttribute="top" id="4OW-7W-ZZM"/>
                             <constraint firstItem="JtP-5K-GV9" firstAttribute="trailing" secondItem="x6R-gV-but" secondAttribute="trailing" id="7MX-3d-vrW"/>
-                            <constraint firstItem="JtP-5K-GV9" firstAttribute="trailing" secondItem="30V-Ho-OWu" secondAttribute="trailing" constant="20" id="9lO-qK-c8m"/>
-                            <constraint firstItem="2bW-nf-MDZ" firstAttribute="leading" secondItem="aZh-Yj-N2g" secondAttribute="trailing" id="CIL-aW-Rmj"/>
-                            <constraint firstItem="30V-Ho-OWu" firstAttribute="top" secondItem="JtP-5K-GV9" secondAttribute="top" id="Cag-lO-OJM"/>
-                            <constraint firstItem="aZh-Yj-N2g" firstAttribute="leading" secondItem="JtP-5K-GV9" secondAttribute="leading" constant="20" id="Qkd-CT-lPe"/>
-                            <constraint firstItem="KYS-Am-2gO" firstAttribute="leading" secondItem="JtP-5K-GV9" secondAttribute="leading" id="Qut-os-Nug"/>
-                            <constraint firstItem="2rs-ix-Jh7" firstAttribute="top" secondItem="2bW-nf-MDZ" secondAttribute="bottom" id="Rzy-DQ-KHc"/>
-                            <constraint firstItem="x6R-gV-but" firstAttribute="top" secondItem="30V-Ho-OWu" secondAttribute="bottom" id="SKQ-GA-XkT"/>
-                            <constraint firstItem="JtP-5K-GV9" firstAttribute="bottom" secondItem="KYS-Am-2gO" secondAttribute="bottom" id="Vff-rd-g2P"/>
-                            <constraint firstItem="2rs-ix-Jh7" firstAttribute="leading" secondItem="JtP-5K-GV9" secondAttribute="leading" id="XQQ-v9-kG7"/>
-                            <constraint firstItem="JtP-5K-GV9" firstAttribute="trailing" secondItem="2rs-ix-Jh7" secondAttribute="trailing" id="ZR2-Tv-xRC"/>
                             <constraint firstItem="x6R-gV-but" firstAttribute="leading" secondItem="JtP-5K-GV9" secondAttribute="leading" id="cXY-1a-MWs"/>
-                            <constraint firstItem="KYS-Am-2gO" firstAttribute="top" secondItem="2rs-ix-Jh7" secondAttribute="bottom" id="dgu-Pd-iYT"/>
-                            <constraint firstItem="2bW-nf-MDZ" firstAttribute="top" secondItem="x6R-gV-but" secondAttribute="bottom" id="hws-4T-YmI"/>
-                            <constraint firstItem="JtP-5K-GV9" firstAttribute="trailing" secondItem="KYS-Am-2gO" secondAttribute="trailing" id="jM9-Hz-STf"/>
-                            <constraint firstItem="aZh-Yj-N2g" firstAttribute="top" secondItem="x6R-gV-but" secondAttribute="bottom" id="kfQ-I7-4LE"/>
-                            <constraint firstItem="JtP-5K-GV9" firstAttribute="trailing" secondItem="2bW-nf-MDZ" secondAttribute="trailing" id="u9o-JV-QXS"/>
-                            <constraint firstItem="2rs-ix-Jh7" firstAttribute="top" secondItem="aZh-Yj-N2g" secondAttribute="bottom" id="zeV-rr-A64"/>
+                            <constraint firstItem="JtP-5K-GV9" firstAttribute="bottom" secondItem="x6R-gV-but" secondAttribute="bottom" id="g0X-OL-MHB"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="JtP-5K-GV9"/>
                     </view>
@@ -159,22 +56,19 @@
                                 <action selector="cancelButtonPressed:" destination="mT3-Rt-paS" id="rB8-yx-MKZ"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" title="Item" id="0wr-Ry-qtm">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="0wr-Ry-qtm">
                             <connections>
                                 <action selector="doneButtonPressed:" destination="mT3-Rt-paS" id="26l-SE-Rrx"/>
+                                <segue destination="R3v-Cv-rq9" kind="popoverPresentation" popoverAnchorBarButtonItem="0wr-Ry-qtm" id="ZoY-MX-7kX">
+                                    <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                                </segue>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="add" destination="2bW-nf-MDZ" id="6Qa-Ur-25q"/>
-                        <outlet property="cancelButton" destination="3rQ-Yf-WF0" id="tDU-zP-XaI"/>
-                        <outlet property="collectionView" destination="2rs-ix-Jh7" id="1IX-by-W6l"/>
-                        <outlet property="descriptionSelectedSongs" destination="30V-Ho-OWu" id="RmX-XW-heU"/>
-                        <outlet property="descriptionSongs" destination="aZh-Yj-N2g" id="BDc-VQ-Gsr"/>
-                        <outlet property="doneButton" destination="0wr-Ry-qtm" id="Pns-xq-h7a"/>
-                        <outlet property="searchBar" destination="sGz-PQ-D0Z" id="bCp-fI-L8z"/>
-                        <outlet property="tableViewSelectedSongs" destination="x6R-gV-but" id="BXQ-pk-rfZ"/>
-                        <outlet property="tableViewSongs" destination="KYS-Am-2gO" id="xnf-pS-iDa"/>
+                        <outlet property="addButton" destination="0wr-Ry-qtm" id="Vg4-vr-fNg"/>
+                        <outlet property="donelButton" destination="3rQ-Yf-WF0" id="mnu-xX-V9k"/>
+                        <outlet property="tableView" destination="x6R-gV-but" id="u9h-3x-5wS"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="mOD-OX-fvw" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -184,13 +78,13 @@
         <!--Songs Controller-->
         <scene sceneID="ddU-70-cvX">
             <objects>
-                <viewController storyboardIdentifier="SongsController" id="R3v-Cv-rq9" customClass="SongsController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SongsController" id="R3v-Cv-rq9" customClass="SongsController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="imu-EK-eSg">
-                        <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="6FM-95-pMC">
-                                <rect key="frame" x="0.0" y="64" width="1024" height="60"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="60"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="60" id="HEg-rB-xSN"/>
@@ -217,7 +111,7 @@
                                 </connections>
                             </collectionView>
                             <searchBar contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="GV2-HN-vga">
-                                <rect key="frame" x="0.0" y="124" width="1024" height="44"/>
+                                <rect key="frame" x="0.0" y="60" width="375" height="44"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="44" id="toY-cR-ZdQ"/>
                                 </constraints>
@@ -227,18 +121,18 @@
                                 </connections>
                             </searchBar>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="E9W-eu-zQu">
-                                <rect key="frame" x="0.0" y="168" width="1024" height="600"/>
+                                <rect key="frame" x="0.0" y="104" width="375" height="563"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <view key="tableFooterView" contentMode="scaleToFill" id="pwx-od-zrZ">
-                                    <rect key="frame" x="0.0" y="72" width="1024" height="128"/>
+                                    <rect key="frame" x="0.0" y="72" width="375" height="128"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 </view>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="zQ7-wI-nqo">
-                                        <rect key="frame" x="0.0" y="28" width="1024" height="44"/>
+                                        <rect key="frame" x="0.0" y="28" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="zQ7-wI-nqo" id="aTt-Ua-GT7">
-                                            <rect key="frame" x="0.0" y="0.0" width="1024" height="43.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -288,13 +182,13 @@
         <!--Custom Sheets Controller-->
         <scene sceneID="bql-bt-a0Q">
             <objects>
-                <viewController storyboardIdentifier="CustomSheetsController" id="9Bh-0U-YCl" customClass="CustomSheetsController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CustomSheetsController" id="9Bh-0U-YCl" customClass="CustomSheetsController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="mYg-eK-VkD">
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="R40-1T-XT2">
-                                <rect key="frame" x="0.0" y="134" width="1024" height="260"/>
+                                <rect key="frame" x="0.0" y="140" width="1024" height="260"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="260" id="zCx-Fe-xQ6"/>
                                 </constraints>
@@ -311,7 +205,7 @@
                                 </connections>
                             </collectionView>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="bNl-ey-XR4">
-                                <rect key="frame" x="0.0" y="64" width="1024" height="60"/>
+                                <rect key="frame" x="0.0" y="70" width="1024" height="60"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="60" id="6y2-BI-le7"/>
@@ -338,7 +232,7 @@
                                 </connections>
                             </collectionView>
                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="i7d-qQ-57S">
-                                <rect key="frame" x="252" y="444" width="520" height="80"/>
+                                <rect key="frame" x="252" y="450" width="520" height="80"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Kjl-Kl-wwD">
                                         <rect key="frame" x="0.0" y="0.0" width="250" height="80"/>
@@ -411,7 +305,7 @@
         <!--Sheet Picker Menu Controller-->
         <scene sceneID="XUL-15-d0x">
             <objects>
-                <tableViewController id="yCQ-X0-BKy" customClass="SheetPickerMenuController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="yCQ-X0-BKy" customClass="SheetPickerMenuController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="0eI-5W-0q6">
                         <rect key="frame" x="0.0" y="0.0" width="500" height="360"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -452,16 +346,16 @@
         <!--New Or Edit Iphone Controller-->
         <scene sceneID="Lvd-Jv-dgM">
             <objects>
-                <viewController storyboardIdentifier="NewOrEditIphoneController" id="ZyE-hx-N9I" customClass="NewOrEditIphoneController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NewOrEditIphoneController" id="ZyE-hx-N9I" customClass="NewOrEditIphoneController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Gt1-r4-WvF">
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="IVQ-U5-y0S">
-                                <rect key="frame" x="0.0" y="64" width="1024" height="250"/>
+                                <rect key="frame" x="0.0" y="70" width="1024" height="250"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hn7-xL-JLF">
-                                        <rect key="frame" x="289.5" y="0.0" width="445" height="250"/>
+                                        <rect key="frame" x="290" y="0.0" width="444" height="250"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="hn7-xL-JLF" secondAttribute="height" multiplier="16:9" id="VjB-hz-5Ud"/>
@@ -477,7 +371,7 @@
                                 </constraints>
                             </view>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="OLc-3H-zhh">
-                                <rect key="frame" x="0.0" y="314" width="1024" height="454"/>
+                                <rect key="frame" x="0.0" y="320" width="1024" height="448"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <connections>
                                     <outlet property="dataSource" destination="ZyE-hx-N9I" id="lah-ea-QYc"/>
@@ -526,7 +420,7 @@
         <!--Bible Study Controller-->
         <scene sceneID="m9h-Qn-zWo">
             <objects>
-                <viewController storyboardIdentifier="BibleStudyController" id="4N5-Ws-VLo" customClass="BibleStudyController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="BibleStudyController" id="4N5-Ws-VLo" customClass="BibleStudyController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="u1P-lc-kqv">
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -550,7 +444,7 @@
         <!--Sheet Picker Menu Controller-->
         <scene sceneID="JI8-k1-BBg">
             <objects>
-                <tableViewController id="8a9-Ss-gnr" customClass="SheetPickerMenuController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="8a9-Ss-gnr" customClass="SheetPickerMenuController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="mrY-v5-EkF">
                         <rect key="frame" x="0.0" y="0.0" width="500" height="360"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -583,13 +477,13 @@
         <!--Bible Study Generator Controller-->
         <scene sceneID="W6X-Hb-zml">
             <objects>
-                <viewController storyboardIdentifier="BibleStudyGeneratorController" id="ro7-nF-Xzu" customClass="BibleStudyGeneratorController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="BibleStudyGeneratorController" id="ro7-nF-Xzu" customClass="BibleStudyGeneratorController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="ImX-FL-mMg">
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="9F5-6s-l4T">
-                                <rect key="frame" x="0.0" y="64" width="1024" height="60"/>
+                                <rect key="frame" x="0.0" y="70" width="1024" height="60"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="60" id="aEN-Pa-4n1"/>
@@ -616,7 +510,7 @@
                                 </connections>
                             </collectionView>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="dKI-92-qmx">
-                                <rect key="frame" x="624" y="124" width="400" height="644"/>
+                                <rect key="frame" x="624" y="130" width="400" height="638"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="400" id="Dbg-lQ-mkw"/>
@@ -685,16 +579,16 @@
         <!--Lyrics View Controller-->
         <scene sceneID="MSI-Cs-NpA">
             <objects>
-                <viewController id="GIH-BH-ymd" customClass="LyricsViewController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="GIH-BH-ymd" customClass="LyricsViewController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="GDz-bz-AU2">
                         <rect key="frame" x="0.0" y="0.0" width="500" height="700"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="B6Z-zc-JKG">
-                                <rect key="frame" x="5" y="69" width="490" height="626"/>
+                                <rect key="frame" x="5" y="75" width="490" height="620"/>
                                 <subviews>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" keyboardDismissMode="interactive" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="iaS-lu-T8j">
-                                        <rect key="frame" x="10" y="10" width="470" height="606"/>
+                                        <rect key="frame" x="10" y="10" width="470" height="600"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -763,7 +657,7 @@
         <!--Sheet Controller-->
         <scene sceneID="JTR-HQ-3pJ">
             <objects>
-                <viewController storyboardIdentifier="SheetController" id="L4v-Cx-R7y" customClass="SheetController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SheetController" id="L4v-Cx-R7y" customClass="SheetController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="v7y-XB-LTs">
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -812,23 +706,23 @@
         <!--Song Service Controller-->
         <scene sceneID="LES-co-ZqY">
             <objects>
-                <viewController storyboardIdentifier="SongServiceController" id="HPN-Fx-3Ca" customClass="SongServiceController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SongServiceController" id="HPN-Fx-3Ca" customClass="SongServiceController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Ztb-4X-y8k">
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="e03-Yz-5IM">
-                                <rect key="frame" x="312" y="344" width="400" height="250"/>
+                                <rect key="frame" x="312" y="350" width="400" height="250"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="250" id="lRP-Cs-c4c"/>
                                     <constraint firstAttribute="width" constant="400" id="p7q-Jc-cSR"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cE6-1b-sFA">
-                                <rect key="frame" x="0.0" y="64" width="1024" height="250"/>
+                                <rect key="frame" x="0.0" y="70" width="1024" height="250"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Fyh-AJ-WMP">
-                                        <rect key="frame" x="290" y="0.0" width="444.5" height="250"/>
+                                        <rect key="frame" x="290" y="0.0" width="444" height="250"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="Fyh-AJ-WMP" secondAttribute="height" multiplier="16:9" id="xrq-vv-Wyy"/>
@@ -843,7 +737,7 @@
                                         </constraints>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="20a-3h-Jr2">
-                                        <rect key="frame" x="744.5" y="50" width="266.5" height="150"/>
+                                        <rect key="frame" x="744" y="50" width="267" height="150"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="20a-3h-Jr2" secondAttribute="height" multiplier="16:9" id="72d-y7-85h"/>
@@ -864,7 +758,7 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6uu-fa-Few">
-                                <rect key="frame" x="0.0" y="314" width="1024" height="30"/>
+                                <rect key="frame" x="0.0" y="320" width="1024" height="30"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Yyd-Zw-zH5">
                                         <rect key="frame" x="277" y="14.5" width="200" height="1"/>
@@ -910,10 +804,10 @@
                                 </constraints>
                             </view>
                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="ivg-V7-fj1">
-                                <rect key="frame" x="0.0" y="344" width="1024" height="424"/>
+                                <rect key="frame" x="0.0" y="350" width="1024" height="418"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fCP-OT-54H">
-                                        <rect key="frame" x="0.0" y="0.0" width="507" height="424"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="507" height="418"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3JC-BX-Ygg">
                                                 <rect key="frame" x="0.0" y="0.0" width="507" height="1"/>
@@ -939,7 +833,7 @@
                                                 </constraints>
                                             </view>
                                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="3bH-bG-IHm">
-                                                <rect key="frame" x="0.0" y="42" width="507" height="382"/>
+                                                <rect key="frame" x="0.0" y="42" width="507" height="376"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <view key="tableFooterView" contentMode="scaleToFill" id="qqa-wQ-LDx">
                                                     <rect key="frame" x="0.0" y="72" width="507" height="44"/>
@@ -979,7 +873,7 @@
                                         </constraints>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="O3a-TK-3xk">
-                                        <rect key="frame" x="517" y="0.0" width="507" height="424"/>
+                                        <rect key="frame" x="517" y="0.0" width="507" height="418"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OOp-H0-E1d">
                                                 <rect key="frame" x="0.0" y="0.0" width="507" height="1"/>
@@ -1005,7 +899,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="MWu-Js-kuq">
-                                                <rect key="frame" x="0.0" y="42" width="507" height="382"/>
+                                                <rect key="frame" x="0.0" y="42" width="507" height="376"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <view key="tableFooterView" contentMode="scaleToFill" id="MBT-S5-jzF">
                                                     <rect key="frame" x="0.0" y="72" width="507" height="44"/>
@@ -1109,7 +1003,7 @@
         <!--Splash Screen-->
         <scene sceneID="Xgq-5I-vUD">
             <objects>
-                <viewController storyboardIdentifier="SplashScreen" id="6qA-EV-kEM" customClass="SplashScreen" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SplashScreen" id="6qA-EV-kEM" customClass="SplashScreen" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8Am-41-u03">
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1143,7 +1037,7 @@
         <!--Test View-->
         <scene sceneID="bAs-ub-kM8">
             <objects>
-                <viewController storyboardIdentifier="TestView" id="Aea-G8-7zl" customClass="TestView" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="TestView" id="Aea-G8-7zl" customClass="TestView" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="bw9-mF-VKb">
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1177,7 +1071,7 @@
         <!--Menu Controller-->
         <scene sceneID="QNa-Vg-fCm">
             <objects>
-                <tabBarController storyboardIdentifier="MenuController" id="g9h-W5-KnB" customClass="MenuController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <tabBarController storyboardIdentifier="MenuController" id="g9h-W5-KnB" customClass="MenuController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="QuW-kf-GXG">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -1216,7 +1110,7 @@
         <!--Root View Controller-->
         <scene sceneID="DNe-Ae-WO9">
             <objects>
-                <tableViewController storyboardIdentifier="Master" clearsSelectionOnViewWillAppear="NO" id="dGb-Xe-J9d" customClass="MoreController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="Master" clearsSelectionOnViewWillAppear="NO" id="dGb-Xe-J9d" customClass="MoreController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="wQn-vA-Oss">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1254,7 +1148,7 @@
             <objects>
                 <navigationController id="7jT-Sq-siY" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="B8W-XX-BaJ">
-                        <rect key="frame" x="0.0" y="20" width="320" height="44"/>
+                        <rect key="frame" x="0.0" y="20" width="320" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -1284,7 +1178,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="TTr-pN-DjF" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="NsS-lz-8ZY">
-                        <rect key="frame" x="0.0" y="20" width="1024" height="44"/>
+                        <rect key="frame" x="0.0" y="20" width="1024" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -1302,7 +1196,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="OLa-Au-10x" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="oYh-xV-UDp">
-                        <rect key="frame" x="0.0" y="20" width="1024" height="44"/>
+                        <rect key="frame" x="0.0" y="20" width="1024" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -1320,7 +1214,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Bb5-Sq-qkk" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Cth-xs-6yr">
-                        <rect key="frame" x="0.0" y="20" width="1024" height="44"/>
+                        <rect key="frame" x="0.0" y="20" width="1024" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -1338,7 +1232,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="HTz-fD-P3Q" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="3MA-Kh-p1a">
-                        <rect key="frame" x="0.0" y="20" width="703.5" height="44"/>
+                        <rect key="frame" x="0.0" y="20" width="703.5" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -1353,7 +1247,7 @@
         <!--Tags Iphone Controller-->
         <scene sceneID="XDT-2H-Gi7">
             <objects>
-                <tableViewController storyboardIdentifier="TagsController" id="e5N-Em-6J9" customClass="TagsIphoneController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="TagsController" id="e5N-Em-6J9" customClass="TagsIphoneController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="TSq-bu-Evf">
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1364,7 +1258,7 @@
                             <textInputTraits key="textInputTraits"/>
                         </searchBar>
                         <view key="tableFooterView" contentMode="scaleToFill" id="5P8-J0-DOJ">
-                            <rect key="frame" x="0.0" y="704" width="1024" height="44"/>
+                            <rect key="frame" x="0.0" y="698" width="1024" height="44"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         </view>
                         <prototypes>
@@ -1405,7 +1299,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="nHw-UV-cFp" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="BUr-0K-ahV">
-                        <rect key="frame" x="0.0" y="20" width="1024" height="44"/>
+                        <rect key="frame" x="0.0" y="20" width="1024" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -1423,7 +1317,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="I4w-Y3-JW8" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="cJj-dF-H7A">
-                        <rect key="frame" x="0.0" y="20" width="1024" height="44"/>
+                        <rect key="frame" x="0.0" y="20" width="1024" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -1441,7 +1335,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="WKh-xF-TF8" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Ckr-yg-KnM">
-                        <rect key="frame" x="0.0" y="20" width="1024" height="44"/>
+                        <rect key="frame" x="0.0" y="20" width="1024" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -1459,7 +1353,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="aha-q8-dPh" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="oAi-aN-xqv">
-                        <rect key="frame" x="0.0" y="20" width="1024" height="44"/>
+                        <rect key="frame" x="0.0" y="20" width="1024" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -1477,7 +1371,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Dji-zJ-amo" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="AKm-oh-8OR">
-                        <rect key="frame" x="0.0" y="20" width="1024" height="44"/>
+                        <rect key="frame" x="0.0" y="20" width="1024" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -1495,7 +1389,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="iWB-Cw-WDc" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="9F6-d7-A8j">
-                        <rect key="frame" x="0.0" y="20" width="1024" height="44"/>
+                        <rect key="frame" x="0.0" y="20" width="1024" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -1513,7 +1407,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="bt8-dt-knc" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="vSO-wT-hbP">
-                        <rect key="frame" x="0.0" y="20" width="1024" height="44"/>
+                        <rect key="frame" x="0.0" y="20" width="1024" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -1528,16 +1422,16 @@
         <!--Import Bible Controller-->
         <scene sceneID="TS2-4l-eM2">
             <objects>
-                <viewController storyboardIdentifier="ImportBibleController" id="LA7-pC-gX5" customClass="ImportBibleController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ImportBibleController" id="LA7-pC-gX5" customClass="ImportBibleController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="WIU-c4-cQI">
-                        <rect key="frame" x="0.0" y="0.0" width="1024" height="704"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1024" height="698"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="N9X-J4-3DH">
-                                <rect key="frame" x="20" y="72" width="984" height="622"/>
+                                <rect key="frame" x="20" y="72" width="984" height="616"/>
                                 <subviews>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" keyboardDismissMode="interactive" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="L7b-UG-gw8">
-                                        <rect key="frame" x="10" y="10" width="964" height="602"/>
+                                        <rect key="frame" x="10" y="10" width="964" height="596"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                     </textView>
@@ -1570,7 +1464,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="603"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mBU-EZ-ZeD">
-                                        <rect key="frame" x="67" y="232" width="240" height="138"/>
+                                        <rect key="frame" x="67.5" y="232.5" width="240" height="138"/>
                                         <subviews>
                                             <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="601-bi-ujb">
                                                 <rect key="frame" x="20" y="65" width="200" height="3"/>
@@ -1761,7 +1655,7 @@
         <!--Song Service Container View Controller-->
         <scene sceneID="q4g-5b-Xp4">
             <objects>
-                <viewController id="MCy-zP-B1N" customClass="SongServiceContainerViewController" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="MCy-zP-B1N" customClass="SongServiceContainerViewController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="gYW-iV-4dP">
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="250"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1816,7 +1710,7 @@
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="500" height="360"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="mN3-d9-fSG">
-                        <rect key="frame" x="0.0" y="20" width="500" height="44"/>
+                        <rect key="frame" x="0.0" y="20" width="500" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -1836,7 +1730,7 @@
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="500" height="700"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="zUe-TU-ecY">
-                        <rect key="frame" x="0.0" y="20" width="500" height="44"/>
+                        <rect key="frame" x="0.0" y="20" width="500" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -1851,7 +1745,7 @@
         <!--Save New Song Title TimeVC-->
         <scene sceneID="NN6-LO-16M">
             <objects>
-                <tableViewController id="ccq-nd-uMs" customClass="SaveNewSongTitleTimeVC" customModule="SongProjector" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="ccq-nd-uMs" customClass="SaveNewSongTitleTimeVC" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="swz-sq-ZU0">
                         <rect key="frame" x="0.0" y="0.0" width="500" height="360"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1908,7 +1802,7 @@
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="500" height="360"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="jDy-D8-f52">
-                        <rect key="frame" x="0.0" y="20" width="500" height="44"/>
+                        <rect key="frame" x="0.0" y="20" width="500" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -1922,6 +1816,6 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="DVh-Kv-vT0"/>
+        <segue reference="ZoY-MX-7kX"/>
     </inferredMetricsTieBreakers>
 </document>

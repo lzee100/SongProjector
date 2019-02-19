@@ -161,6 +161,7 @@ class TagsIphoneController: ChurchBeamTableViewController, UISearchBarDelegate, 
 		searchBar.showsCancelButton = true
 		searchBar.placeholder = Text.Tags.searchBarPlaceholderText
 		searchBar.tintColor = themeHighlighted
+		searchBar.delegate = self
 		add.title = Text.Actions.add
 		
 		emptyView.backgroundColor = themeWhiteBlackBackground

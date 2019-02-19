@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SheetSplit" customModule="SongProjector" customModuleProvider="target">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SheetSplit" customModule="ChurchBeam" customModuleProvider="target">
             <connections>
                 <outlet property="containerBottomConstraint" destination="56U-89-HVA" id="Wtq-A0-xC6"/>
                 <outlet property="containerLeftConstraint" destination="f3k-Ll-0Mf" id="LnA-cf-HOM"/>
@@ -26,7 +26,6 @@
                 <outlet property="timeLabel" destination="X43-Mh-KUv" id="vvN-MQ-cce"/>
                 <outlet property="timeLabelRightConstraint" destination="YDU-K1-PK7" id="cpm-72-aHP"/>
                 <outlet property="titleBackgroundView" destination="UKN-LQ-qag" id="XqA-VY-xGp"/>
-                <outlet property="titleBottomConstraint" destination="4C5-2g-Irg" id="Blc-7b-vir"/>
                 <outlet property="titleHeightConstraint" destination="1Y0-h9-Wu6" id="fyq-cn-Dg9"/>
                 <outlet property="titleLeftConstraint" destination="7zo-el-edQ" id="Ws5-eP-hmz"/>
                 <outlet property="titleTopConstraint" destination="ylZ-cx-hM9" id="0QN-Kv-cdh"/>

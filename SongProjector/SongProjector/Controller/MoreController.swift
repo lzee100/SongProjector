@@ -28,12 +28,10 @@ class MoreController: UITableViewController, UISplitViewControllerDelegate {
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		splitViewController?.preferredDisplayMode = .allVisible
 		features.forEach({ (arg) in
 			let (_, controller) = arg
 			splitViewController?.viewControllers.append(controller)
 		})
-		
 		splitViewController?.delegate = self
 
 		setup()
@@ -44,10 +42,7 @@ class MoreController: UITableViewController, UISplitViewControllerDelegate {
 		setup()
 	}
 	
-	override func didReceiveMemoryWarning() {
-		super.didReceiveMemoryWarning()
-		// Dispose of any resources that can be recreated.
-	}
+	
 	
 	// MARK: - Table View
 	
@@ -83,15 +78,11 @@ class MoreController: UITableViewController, UISplitViewControllerDelegate {
 		let navController = UINavigationController.init(rootViewController: controller)
 		showDetailViewController(navController, sender: self)
 		
-		UIView.animate(withDuration: 0.2) {
-			self.splitViewController?.preferredDisplayMode = .primaryHidden
-		}
-		
 	}
 
 	
 	func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController: UIViewController, onto primaryViewController: UIViewController) -> Bool {
-		return true
+		return false
 	}
 	
 	private func setup() {

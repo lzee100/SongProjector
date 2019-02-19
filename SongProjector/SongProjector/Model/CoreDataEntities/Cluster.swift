@@ -20,7 +20,19 @@ public class Cluster: Entity {
 	@NSManaged public var isLoop: Bool
 	@NSManaged public var position: Int16
 	@NSManaged public var time: Double
-	@NSManaged public var hasTag: Tag?
+	
+	var hasTag: Tag? {
+		get {
+			CoreTag.managedObjectContext = self.managedObjectContext ?? moc
+			CoreTag.predicates.append("id", equals: tagId)
+			return CoreTag.getEntities().first
+		}
+		set {
+			if let tag = newValue {
+				tagId = tag.id
+			}
+		}
+	}
 	
 	@NSManaged public var hasInstruments: NSSet?
 	@NSManaged public var hasSheets: NSSet?

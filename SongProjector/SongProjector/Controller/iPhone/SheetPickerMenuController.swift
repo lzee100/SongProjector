@@ -18,50 +18,103 @@ class SheetPickerMenuController: UITableViewController, NewOrEditIphoneControlle
 	var bibleStudyGeneratorDelegate: BibleStudyGeneratorDelegate?
 	var selectedTag: Tag?
 	var delegate: NewOrEditIphoneControllerDelegate?
+	var lyricsControllerDelegate: LyricsControllerDelegate?
+	var text: String?
+	var mode: Mode = .none
 	
-	private enum SheetGroup: String {
-		case customSheets
+	enum Mode {
+		case song
+		case custom
 		case bibleStudy
+		case none
 	}
 	
-	private enum Sections: String {
-		case additional
-		case `default`
+	private enum Section: String {
+		case songs
+		case custom
+		case bible
 		
-		static let all = [additional, `default`]
-		static let bibleStudy = all
-		static let customSheets = [`default`]
+		static let all: [Section] = [songs, custom, bible]
+		static let bibleStudySections: [Section] = [custom, bible]
 		
-		static func `for`(_ section: Int, forType: SheetGroup) -> Sections {
-			switch forType {
-			case .bibleStudy:
-				return bibleStudy[section]
-			case .customSheets:
-				return customSheets[section]
+		static func `for`(_ section: Int, mode: Mode) -> Section {
+			switch mode {
+			case .song: return .songs
+			case .custom: return custom
+			case .bibleStudy: return bibleStudySections[section]
+			case .none: return all[section]
+			}
+		}
+		
+		var title: String {
+			switch self {
+			case .songs: return "Liedjes"
+			case .custom: return "Andere dia's"
+			case .bible: return "Bijbelstudie"
 			}
 		}
 	}
 	
-	private enum AdditionalFeatures: String {
-		case bibleStudyGenerator
+	private enum Row: String {
+		case song
+		case SheetTitleContent
+		case SheetTitleImage
+		case SheetPastors
+		case SheetSplit
+		case SheetEmpty
+		case SheetActivities
+		case bible
 		
-		static let all = [bibleStudyGenerator]
-		
-		static func `for`(_ indexPath: IndexPath) -> AdditionalFeatures {
-			return all[indexPath.row]
+		static let custom = [SheetTitleContent, SheetTitleImage, SheetPastors, SheetSplit, SheetEmpty, SheetActivities]
+
+		static func iconFor(type: Row) -> UIImage {
+			switch type {
+			case .SheetTitleContent: return Cells.bulletOpen
+			case .SheetTitleImage: return Cells.bulletOpen
+			case .SheetPastors: return Cells.bulletOpen
+			case .SheetSplit: return Cells.bulletOpen
+			case .SheetEmpty: return Cells.bulletOpen
+			case .SheetActivities: return Cells.bulletOpen
+			case .song: return Cells.bulletOpen
+			case .bible: return Cells.bulletOpen
+			}
 		}
 		
-		static func iconFor(_ feature: AdditionalFeatures) -> UIImage {
-			switch feature {
-			case .bibleStudyGenerator:
-				return Cells.bulletOpen
+		static func `for`(_ indexPath: IndexPath, mode: Mode) -> Row {
+			switch Section.for(indexPath.section, mode: mode) {
+			case .songs: return .song
+			case .custom: return custom[indexPath.row]
+			case .bible: return .bible
+			}
+		}
+		
+		var title: String {
+			switch self {
+			case .song: return "Liedje kjk"
+			case .SheetTitleContent: return Text.SheetsMenu.sheetTitleText
+			case .SheetTitleImage: return Text.SheetsMenu.sheetTitleImage
+			case .SheetPastors: return Text.SheetsMenu.sheetPastors
+			case .SheetEmpty: return Text.SheetsMenu.sheetSplit
+			case .SheetSplit: return Text.SheetsMenu.sheetEmpty
+			case .SheetActivities: return Text.SheetsMenu.sheetActivity
+			case .bible: return "Bible study generator sdfksldfj"
+			}
+		}
+		
+		var icon: UIImage {
+			switch self {
+			case .song: return SheetType.iconFor(type: .SheetTitleContent)
+			case .SheetTitleContent: return SheetType.iconFor(type: .SheetTitleContent)
+			case .SheetTitleImage: return SheetType.iconFor(type: .SheetTitleImage)
+			case .SheetPastors: return SheetType.iconFor(type: .SheetPastors)
+			case .SheetEmpty: return SheetType.iconFor(type: .SheetEmpty)
+			case .SheetSplit: return SheetType.iconFor(type: .SheetSplit)
+			case .SheetActivities: return SheetType.iconFor(type: .SheetActivities)
+			case .bible: return SheetType.iconFor(type: .SheetTitleContent)
 			}
 		}
 	}
 	
-	private var sheetGroup: SheetGroup {
-		return bibleStudyGeneratorIphoneDelegate != nil || bibleStudyGeneratorDelegate != nil ? .bibleStudy : .customSheets
-	}
 	
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -80,104 +133,82 @@ class SheetPickerMenuController: UITableViewController, NewOrEditIphoneControlle
 			controller.delegate = bibleStudyGeneratorDelegate
 			controller.selectedTag = selectedTag
 		}
+		
+		if let vc = segue.destination.unwrap() as? LyricsViewController {
+			vc.delegate = lyricsControllerDelegate
+			vc.text = text ?? ""
+		}
 	}
 
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-		switch sheetGroup {
-		case .bibleStudy:
-			return Sections.bibleStudy.count
-		case .customSheets:
-			return Sections.customSheets.count
+		switch mode {
+		case .song, .custom: return 1
+		case .bibleStudy: return 2
+		case .none: return 3
 		}
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		switch Sections.for(section, forType: sheetGroup) {
-		case .additional:
-			return AdditionalFeatures.all.count
-		case .default:
-			return SheetType.all.count
+		switch Section.for(section, mode: mode) {
+		case .custom: return Row.custom.count
+		default: return 1
 		}
 	}
 
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath) as! BasicCell
-		
-		switch Sections.for(indexPath.section, forType: sheetGroup) {
-		case .additional:
-			switch AdditionalFeatures.for(indexPath) {
-			case .bibleStudyGenerator:
-				cell.setup(title: Text.SheetsMenu.bibleStudyGen, icon: AdditionalFeatures.iconFor(.bibleStudyGenerator))
-				return cell
-			}
-		case .default:
-			switch SheetType.for(indexPath){
-			case .SheetTitleContent:
-				cell.setup(title: Text.SheetsMenu.sheetTitleText, icon: SheetType.iconFor(type: .SheetTitleContent))
-				return cell
-			case .SheetTitleImage:
-				cell.setup(title: Text.SheetsMenu.sheetTitleImage, icon: SheetType.iconFor(type: .SheetTitleImage))
-				return cell
-			case .SheetPastors:
-				cell.setup(title: Text.SheetsMenu.sheetPastors, icon: SheetType.iconFor(type: .SheetPastors))
-				return cell
-			case .SheetSplit:
-				cell.setup(title: Text.SheetsMenu.sheetSplit, icon: SheetType.iconFor(type: .SheetSplit))
-				return cell
-			case .SheetEmpty:
-				cell.setup(title: Text.SheetsMenu.sheetEmpty, icon: SheetType.iconFor(type: .SheetEmpty))
-				return cell
-			case .SheetActivities:
-				cell.setup(title: Text.SheetsMenu.sheetActivity, icon: SheetType.iconFor(type: .SheetActivities))
-				return cell
-			}
-		}
+		cell.setup(title: Row.for(indexPath, mode: mode).title, icon: Row.for(indexPath, mode: mode).icon)
+		return cell
     }
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		switch Sections.for(indexPath.section, forType: sheetGroup) {
-		case .additional:
-			switch AdditionalFeatures.for(indexPath) {
-			case .bibleStudyGenerator:
-				if let device = UserDefaults.standard.value(forKey: "device") as? String, device == "ipad" {
-					performSegue(withIdentifier: "BibleStudyGeneratorSegue", sender: self)
-				} else {
-					performSegue(withIdentifier: "BibleStudyIphoneGeneratorSegue", sender: self)
-				}
-			}
-		case .default:
+		let sheet: Sheet?
+		var isBible = false
+		switch Row.for(indexPath, mode: mode) {
+		case .song: sheet = nil
+		case .SheetTitleContent: sheet = CoreSheetTitleContent.createEntityNOTsave()
+		case .SheetTitleImage: sheet = CoreSheetTitleImage.createEntityNOTsave()
+		case .SheetPastors: sheet = CoreSheetPastors.createEntityNOTsave()
+		case .SheetSplit: sheet = CoreSheetSplit.createEntityNOTsave()
+		case .SheetEmpty: sheet = CoreSheetEmptySheet.createEntityNOTsave()
+		case .SheetActivities: sheet = CoreSheetActivities.createEntityNOTsave()
+		case .bible: sheet = nil
+			isBible = true
+		}
+		
+		// open edit sheet controller
+		if let sheet = sheet {
 			let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
 			controller.delegate = delegate
 			controller.modificationMode = .newCustomSheet
 			controller.dismissMenu = dismissMenu
-			switch SheetType.for(indexPath){
-			case .SheetTitleContent:
-				let sheet = CoreSheetTitleContent.createEntityNOTsave()
-				controller.sheet = sheet
-			case .SheetTitleImage:
-				let sheet = CoreSheetTitleImage.createEntityNOTsave()
-				controller.sheet = sheet
-			case .SheetPastors:
-				let sheet = CoreSheetPastors.createEntityNOTsave()
-				controller.sheet = sheet
-			case .SheetSplit:
-				let sheet = CoreSheetSplit.createEntityNOTsave()
-				controller.sheet = sheet
-			case .SheetEmpty:
-				let sheet = CoreSheetEmptySheet.createEntityNOTsave()
-				controller.sheet = sheet
-			case .SheetActivities:
-				let sheet = CoreSheetActivities.createEntityNOTsave()
-				controller.sheet = sheet
-			}
+			controller.sheet = sheet
 			let nav = UINavigationController(rootViewController: controller)
 			Queues.main.async {
 				self.present(nav, animated: true)
 			}
+		} else if isBible { // open bible study
+			if let device = UserDefaults.standard.value(forKey: "device") as? String, device == "ipad" {
+				Queues.main.async {
+					self.performSegue(withIdentifier: "BibleStudyGeneratorSegue", sender: self)
+				}
+			} else {
+				Queues.main.async {
+					self.performSegue(withIdentifier: "BibleStudyIphoneGeneratorSegue", sender: self)
+				}
+			}
+		} else { // open song
+			Queues.main.async {
+				self.performSegue(withIdentifier: "ChangeLyricsSegue", sender: self)
+			}
 		}
+	}
+	
+	override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+		return Section.for(section, mode: mode).title
 	}
 	
 	override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -197,8 +228,6 @@ class SheetPickerMenuController: UITableViewController, NewOrEditIphoneControlle
 
 	private func setup() {
 		tableView.register(cell: Cells.basicCellid)
-		tableView.isScrollEnabled = false
-		cancelButton?.title = Text.Actions.cancel
 	}
 	
 	func dismissMenu() {

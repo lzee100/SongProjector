@@ -11,6 +11,10 @@ import UIKit
 
 extension String {
 	
+	var isBlanc: Bool {
+		return self.trimmingCharacters(in: .whitespacesAndNewlines) == ""
+	}
+	
 	var isLetter: Bool {
 		let characterIndex = "abcdefghijklmnopqrstuvwxyz"
 		if let character = self.first {

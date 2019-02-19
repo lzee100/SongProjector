@@ -12,197 +12,124 @@ protocol NewSongServiceDelegate {
 	func didFinishSongServiceSelection(clusters: [Cluster], completion: () -> Void)
 }
 
-class NewSongServiceController: UIViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UIGestureRecognizerDelegate, UISearchBarDelegate {
-
+class NewSongServiceController: ChurchBeamViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, SongsControllerDelegate {
+	
+	
+	@IBOutlet var addButton: UIBarButtonItem!
+	@IBOutlet var donelButton: UIBarButtonItem!
+	@IBOutlet var tableView: UITableView!
+	
+	
+	
+	// MARK: - Types
+	
 	struct Constants {
 		static let songsControllerid = "SongsController"
 	}
 	
-	@IBOutlet var doneButton: UIBarButtonItem!
-	@IBOutlet var cancelButton: UIBarButtonItem!
 	
-	@IBOutlet var descriptionSelectedSongs: UILabel!
-	@IBOutlet var descriptionSongs: UILabel!
 	
-	@IBOutlet var tableViewSelectedSongs: UITableView!
-	@IBOutlet var tableViewSongs: UITableView!
-	@IBOutlet var searchBar: UISearchBar!
-	@IBOutlet var add: UIButton!
-	
-	@IBOutlet var collectionView: UICollectionView!
+	// MARK: - Properties
 	
 	var delegate: NewSongServiceDelegate?
-	var filteredSongs: [Cluster] = []
-	var songs: [Cluster] = []
-	var selectedSongs: [Cluster] = []
-	var tags: [Tag] = []
-	var selectedTag: Tag?
-
+	var selectedClusters: [Cluster] = []
+	
+	
+	
+	// MARK: - UIView Functions
 	
 	override func viewDidLoad() {
         super.viewDidLoad()
 		setup()
     }
 	
-	func numberOfSections(in tableView: UITableView) -> Int {
-		return 1
+	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+		if let vc = segue.destination.unwrap() as? SongsController {
+			vc.selectedSongserviceClusters = selectedClusters
+			vc.delegate = self
+		}
 	}
 	
+	
+	
+	// MARK: - UITableview Functions
+	
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return tableView == tableViewSelectedSongs ? selectedSongs.count == 0 ? 1 : selectedSongs.count : songs.count
+		return selectedClusters.count == 0 ? 1 : selectedClusters.count
 	}
 	
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		
-		if tableView == tableViewSelectedSongs {
-			let cell = tableViewSelectedSongs.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath)
-			if let cell = cell as? BasicCell {
-				if selectedSongs.count == 0 {
-					cell.setup(title: Text.NewSongService.noSelectedSongs)
-					return cell
-				}
-				cell.setup(title: selectedSongs[indexPath.row].title, icon: Cells.songIcon)
+		let cell = tableView.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath)
+		if let cell = cell as? BasicCell {
+			if selectedClusters.count == 0 {
+				cell.setup(title: Text.NewSongService.noSelectedSongs)
+				return cell
 			}
-			return cell
-		} else {
-			let cell = tableViewSongs.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath)
-			if let cell = cell as? BasicCell {
-				cell.setup(title: filteredSongs[indexPath.row].title, icon: Cells.songIcon)
-			}
-			return cell
+			cell.setup(title: selectedClusters[indexPath.row].title, icon: Cells.songIcon)
 		}
+		return cell
 	}
 	
 	func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 		return 60
 	}
 	
-	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		if tableView == tableViewSongs, selectedSongs.contains(filteredSongs[indexPath.row]) {
-			if let index = selectedSongs.index(of: filteredSongs[indexPath.row]) {
-				selectedSongs.remove(at: index)
-			}
-		} else {
-			selectedSongs.append(filteredSongs[indexPath.row])
-		}
-		update()
-	}
-	
 	func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
-		return tableView == tableViewSelectedSongs ? UITableViewCellEditingStyle.delete : UITableViewCellEditingStyle.none
+		return .delete
 	}
 	
 	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-		if tableView == tableViewSelectedSongs, editingStyle == .delete {
-			selectedSongs.remove(at: indexPath.row)
+		if editingStyle == .delete {
+			selectedClusters.remove(at: indexPath.row)
 			update()
 		}
 	}
 	
 	func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-		return tableView == tableViewSelectedSongs ? true : false
+		return true
 	}
 	
 	func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-		let itemToMove = selectedSongs[sourceIndexPath.row]
-		selectedSongs.remove(at: sourceIndexPath.row)
-		selectedSongs.insert(itemToMove, at: destinationIndexPath.row)
-		for (index, song) in selectedSongs.enumerated() {
+		let itemToMove = selectedClusters[sourceIndexPath.row]
+		selectedClusters.remove(at: sourceIndexPath.row)
+		selectedClusters.insert(itemToMove, at: destinationIndexPath.row)
+		for (index, song) in selectedClusters.enumerated() {
 			song.position = Int16(index)
 		}
 	}
 	
 	
 	
-	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-		return tags.count
-	}
+	// MARK: - Private Functions
 	
-	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-		let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.tagCellCollection, for: indexPath)
-		
-		if let collectionCell = collectionCell as? TagCellCollection {
-			collectionCell.setup(tagName: tags[indexPath.row].title ?? "")
-			collectionCell.isSelectedCell = selectedTag?.id == tags[indexPath.row].id
-		}
-		return collectionCell
-	}
-	
-	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-		if selectedTag?.id == tags[indexPath.row].id {
-			selectedTag = tags[indexPath.row]
-		} else {
-			selectedTag = nil
-		}
+	func didSelectClusters(_ clusters: [Cluster]) {
+		selectedClusters = clusters
 		update()
 	}
 	
-	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-		return CGSize(width: 200, height: 50)
-	}
 	
-	public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-		if searchText == "" {
-			filteredSongs = songs
-		} else {
-			let searchString = searchText.lowercased()
-			filteredSongs = songs.filter {
-				if let title = $0.title {
-					return title.lowercased().contains(searchString)
-				} else {
-					return false
-				}
-			}
-		}
-		self.tableViewSongs.reloadData()
-	}
 	
-	func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-		searchBar.resignFirstResponder()
-		filteredSongs = songs
-		tableViewSongs.reloadData()
-	}
-
+	// MARK: - Private Functions
 	
 	private func setup() {
-		tableViewSongs.register(cell: Cells.basicCellid)
-		tableViewSelectedSongs.register(cell: Cells.basicCellid)
-		collectionView.register(UINib(nibName: Cells.tagCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.tagCellCollection)
-		
+		tableView.register(cell: Cells.basicCellid)
 		navigationController?.title = Text.NewSongService.title
-		descriptionSelectedSongs.text = Text.NewSongService.selectedSongsDescription
-		descriptionSongs.text = Text.NewSongService.songsDescription
-		descriptionSongs.textColor = themeWhiteBlackTextColor
-		descriptionSelectedSongs.textColor = themeWhiteBlackTextColor
-		add.tintColor = themeHighlighted
 		
-		searchBar.showsCancelButton = true
-		searchBar.placeholder = Text.Songs.SearchSongPlaceholder
-
 		let longPressGesture:UILongPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(self.editTableView(_:)))
 		longPressGesture.minimumPressDuration = 0.7
 		longPressGesture.delegate = self
-		self.tableViewSelectedSongs.addGestureRecognizer(longPressGesture)
+		tableView.addGestureRecognizer(longPressGesture)
 		
 		let doubleTab = UITapGestureRecognizer(target: self, action: #selector(self.editTableView(_:)))
 		doubleTab.numberOfTapsRequired = 2
 		view.addGestureRecognizer(doubleTab)
 		
-		cancelButton.title = Text.Actions.cancel
-		doneButton.title = Text.Actions.done
+		donelButton.title = Text.Actions.done
 		update()
 	}
 	
 	private func update() {
-		let newClusters = Array(Set(CoreCluster.getEntities()).subtracting(selectedSongs))
-		songs = newClusters
-		CoreTag.predicates.append("isHidden", equals: 0)
-		tags = CoreTag.getEntities()
-		filterOnTags()
-		filteredSongs = songs
-		
-		tableViewSelectedSongs.reloadData()
-		tableViewSongs.reloadData()
+		tableView.reloadData()
 	}
 	
 	@objc private func editTableView(_ gestureRecognizer: UIGestureRecognizer) {
@@ -211,40 +138,27 @@ class NewSongServiceController: UIViewController, UITableViewDelegate, UITableVi
 				changeEditingState()
 			}
 		} // for double tab
-		else if let _ = gestureRecognizer as? UITapGestureRecognizer, tableViewSelectedSongs.isEditing {
+		else if let _ = gestureRecognizer as? UITapGestureRecognizer, tableView.isEditing {
 			changeEditingState()
 		}
 	}
 	
-	private func changeEditingState(_ onlyIfEditing: Bool? = nil) {
-		if let _ = onlyIfEditing {
-			if tableViewSelectedSongs.isEditing {
-				tableViewSelectedSongs.setEditing(false, animated: false)
-			}
-		} else {
-			tableViewSelectedSongs.setEditing(tableViewSelectedSongs.isEditing ? false : true, animated: false)
-		}
+	private func changeEditingState() {
+		tableView.setEditing(tableView.isEditing ? false : true, animated: false)
 	}
 	
-	private func filterOnTags() {
-		if let selectedTag = selectedTag {
-			songs = songs.filter { (song) -> Bool in
-				song.hasTag?.id == selectedTag.id
-			}
-		}
-	}
+	
+	
+	// MARK: - IBAction Functions
 	
 	@IBAction func cancelButtonPressed(_ sender: UIBarButtonItem) {
-		dismiss(animated: true)
-	}
-	
-	@IBAction func doneButtonPressed(_ sender: UIBarButtonItem) {
-		
-		for (index, cluster) in selectedSongs.enumerated() {
+		for (index, cluster) in selectedClusters.enumerated() {
 			cluster.position = Int16(index)
 		}
-		delegate?.didFinishSongServiceSelection(clusters: selectedSongs, completion: {
+		delegate?.didFinishSongServiceSelection(clusters: selectedClusters, completion: {
 			dismiss(animated: true)
 		})
 	}
+	
+	
 }

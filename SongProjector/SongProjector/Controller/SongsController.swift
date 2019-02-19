@@ -9,7 +9,7 @@
 import UIKit
 
 protocol SongsControllerDelegate {
-	func didSelectCluster(cluster: Cluster)
+	func didSelectClusters(_ clusters: [Cluster])
 }
 
 class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UISearchBarDelegate, CustomSheetsControllerDelegate {
@@ -46,6 +46,12 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
 	override var requesterId: String {
 		return "SongsController"
 	}
+	var selectedSongserviceClusters: [Cluster] = [] {
+		didSet {
+			delegate?.didSelectClusters(selectedSongserviceClusters)
+		}
+	}
+	
 	
 	
 	// MARK: - UIViewController Functions
@@ -71,6 +77,7 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
 	}
 	
 	
+	
 	// MARK: UITableview Functions
 	
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -82,6 +89,8 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
 		
 		if let cell = cell as? BasicCell {
 			cell.setup(title: filteredClusters[indexPath.row].title, icon: Cells.songIcon)
+			cell.setup(title: filteredClusters[indexPath.row].title, icon: Cells.songIcon, iconSelected: Cells.sheetIcon)
+			cell.selectedCell = selectedSongserviceClusters.contains(filteredClusters[indexPath.row])
 		}
 		return cell
 	}
@@ -101,10 +110,12 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
 	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		selectedCluster = filteredClusters[indexPath.row]
 		if delegate != nil {
-			DispatchQueue.main.async {
-				self.delegate?.didSelectCluster(cluster: self.selectedCluster!)
+			if selectedSongserviceClusters.contains(filteredClusters[indexPath.row]) {
+				selectedSongserviceClusters.delete(entity: filteredClusters[indexPath.row])
+			} else {
+				selectedSongserviceClusters.append(filteredClusters[indexPath.row])
 			}
-			dismiss(animated: true)
+			tableView.reloadRows(at: [indexPath], with: .automatic)
 		} else {
 			if let name = UserDefaults.standard.value(forKey: "device") as? String, name == "ipad" {
 				
@@ -206,7 +217,7 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
 		
 		navigationController?.title = Text.Songs.title
 		title = Text.Songs.title
-		cancel.title = Text.Actions.cancel
+		cancel.title = Text.Actions.done
 		cancel.tintColor = delegate == nil ? .clear : themeHighlighted
 		emptyView.backgroundColor = themeWhiteBlackBackground
 		
@@ -223,7 +234,7 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
 	}
 	
 	private func update() {
-		let newClusters = Array(Set(CoreCluster.getEntities()).subtracting(selectedClusters))
+		let newClusters = Array(Set(CoreCluster.getEntities()))
 		clusters = newClusters
 		clusters.sort(by: { ($0.title ?? "") < ($1.title ?? "") })
 		CoreTag.setSortDescriptor(attributeName: "position", ascending: true)

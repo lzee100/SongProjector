@@ -35,9 +35,15 @@ I did some testing on over 50 difficult images containing alphanumeric codes. Th
 
 ## How does it work?
 
-First, SwiftOCR binarizes the input image. Afterwards it extracts the characters of the image using a technique called [Connected-component labeling](https://en.wikipedia.org/wiki/Connected-component_labeling). Finally the seperated characters get converted into numbers which then get feed into the neural network.
+1) Input image is thresholded (binarized).
+2) Characters are extracted from the image, using a technique called [Connected-component labeling](https://en.wikipedia.org/wiki/Connected-component_labeling).
+3) Separated characters are converted into numbers, which are then fed into the neural network.
 
 ## How to use it?
+
+SwiftOCR is available through CocoaPods. To install it, simply add the following line to your Podfile:
+
+`pod 'SwiftOCR'`
 
 If you ever used Tesseract you know how exhausting it can be to implement OCR into your project. 
 SwiftOCR is the exact opposite of Tesseract. It can be implemented using **just 6 lines of code**. 

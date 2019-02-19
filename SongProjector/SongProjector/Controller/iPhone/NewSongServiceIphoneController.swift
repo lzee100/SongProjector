@@ -9,6 +9,7 @@
 import UIKit
 
 class NewSongServiceIphoneController: UITableViewController, SongsControllerDelegate, UIGestureRecognizerDelegate {
+	
 
 	@IBOutlet var done: UIBarButtonItem!
 	@IBOutlet var add: UIBarButtonItem!
@@ -30,6 +31,7 @@ class NewSongServiceIphoneController: UITableViewController, SongsControllerDele
 		if let songsController = navigationController.childViewControllers.first as? SongsController {
 			songsController.delegate = self
 			songsController.selectedClusters = selectedSongs
+			songsController.selectedSongserviceClusters = selectedSongs
 		}
 	}
 
@@ -90,9 +92,9 @@ class NewSongServiceIphoneController: UITableViewController, SongsControllerDele
         return true
     }
 	
-	func didSelectCluster(cluster: Cluster) {
+	func didSelectClusters(_ clusters: [Cluster]) {
 		hasNoSongs = false
-		selectedSongs.append(cluster)
+		selectedSongs = clusters
 		updatePositions()
 		update()
 	}

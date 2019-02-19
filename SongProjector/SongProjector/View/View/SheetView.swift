@@ -79,13 +79,14 @@ class SheetView: UIView {
 		view.update()
 		
 		if toExternalDisplay, let externalDisplay = externalDisplayWindow {
-			view.sendToExternalDisplay(frame: externalDisplay.frame, sheet: sheet, tag: tag, scaleFactor: externalDisplay.frame.width / view.frame.width * (scaleFactor ?? 1))
+			view.sendToExternalDisplay(frame: externalDisplay.frame, cluster: cluster, sheet: sheet, tag: tag, scaleFactor: externalDisplay.frame.width / view.frame.width * (scaleFactor ?? 1))
 		}
 		return view
 	}
 	
-	private func sendToExternalDisplay(frame: CGRect, sheet: Sheet, tag: Tag?, scaleFactor: CGFloat? = 1, isPreview: Bool = false) {
+	private func sendToExternalDisplay(frame: CGRect, cluster: Cluster? = nil, sheet: Sheet, tag: Tag?, scaleFactor: CGFloat? = 1, isPreview: Bool = false) {
 		let view = getViewFor(sheet: sheet, frame: frame)
+		view.cluster = cluster
 		view.sheet = sheet
 		view.sheetTag = tag
 		view.isPreview = isPreview

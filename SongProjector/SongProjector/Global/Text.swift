@@ -23,11 +23,47 @@ class Text: NSObject {
 		static let done = "Klaar"
 		static let new = "Nieuw"
 		static let add = "Voeg toe"
+		static let next = "Volgende"
 		static let save = "Sla op"
 		static let ok = "Ok"
 		static let edit = "Wijzig"
 		static let selectImage = "Selecteer afbeelding"
 		static let `import` = "Importeer"
+	}
+	
+	struct Intro {
+		
+		static let IntroHalloTitle = "Hallo"
+		static let IntroHalloContent = "Welkom bij Churchbeam. Deze app ondersteund de gehele voordienst in jouw kerk. "
+		static let IntroNewTitle = "Nieuw"
+		static let IntroNewContent = "Er zijn drie verschillende versies die je kan afnemen. Bij de betaalde versies krijg je 2 maanden gratis om te proberen. Daarna zal je gevraagd worden of je verder wilt gaan."
+		
+		static let FreeTitle = "Gratis"
+		static let FreeFeatures = """
+		• Maximaal 10 eigen nummers opslaan\n
+		• Onbeperkt aantal eigen thema's opslaan\n
+		• Onbeperkt bijbelteksten dia's genereren en opslaan\n
+		• Maximaal 1 apparaat
+		"""
+		static let FreeButton = "Gratis"
+		
+		static let BeamTitle = "Beam"
+		static let BeamFeatures = """
+		• Onbeperkt aantal eigen nummers opslaan\n
+		• Onbeperkt aantal eigen thema's opslaan\n
+		• Meerdere gebruikers mogelijk: 3 euro per gebruiker
+		"""
+		static let BeamButton = "€6,- per maand"
+
+		static let SongTitle = "Song"
+		static let SongFeatures = """
+		• Onbeperkt aantal eigen nummers opslaan\n
+		• Onbeperkt bijbelteksten dia's genereren en opslaan\n
+		• Maximaal 1 apparaat\n
+		• 60 nummers met tekst en muziek
+		"""
+		static let SongButton = "€10 per maand"
+
 	}
 	
 	struct SongService {

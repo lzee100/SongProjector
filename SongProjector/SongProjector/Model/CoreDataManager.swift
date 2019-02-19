@@ -11,6 +11,9 @@ import UIKit
 import CoreData
 
 let CoreEntity = CrEntity()
+let CoreOrganization = CrOrganization()
+let CoreUser = CrUser()
+let CoreRole = CrRole()
 let CoreSheetActivities = CrSheetActivities()
 let CoreGoogleActivities = CrGoogleAct()
 let CoreTag = CrTag()
@@ -75,6 +78,9 @@ var mocBackground: NSManagedObjectContext = {
 
 
 class CrEntity: CoreDataManager<Entity> { }
+class CrOrganization: CoreDataManager<Organization> { }
+class CrRole: CoreDataManager<Role> { }
+class CrUser: CoreDataManager<User> { }
 class CrSheetActivities: CoreDataManager<SheetActivitiesEntity> { }
 class CrGoogleAct: CoreDataManager<GoogleActivity> { }
 class CrTag: CoreDataManager<Tag> { }

@@ -12,7 +12,7 @@ protocol CustomSheetsControllerDelegate {
 	func didCloseCustomSheet()
 }
 
-class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIGestureRecognizerDelegate, NewOrEditIphoneControllerDelegate {
+class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIGestureRecognizerDelegate, NewOrEditIphoneControllerDelegate, LyricsControllerDelegate {
 	
 	
 	
@@ -116,16 +116,6 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	}
 	
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-		if let controller = segue.destination.unwrap() as? SheetPickerMenuController {
-			controller.didCreateSheet = didCreate(sheet:)
-			controller.selectedTag = selectedTag
-			controller.delegate = self
-		}
-		
-		if let controller = segue.destination.unwrap() as? LyricsViewController {
-			controller.text = getTextFromSheets()
-			controller.didPressDone = buildSheets(fromText:)
-		}
 		
 		if let controller = segue.destination.unwrap() as? SaveNewSongTitleTimeVC {
 			controller.didSave = didSaveSongWith
@@ -229,7 +219,13 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	}
 	
 	func didCloseNewOrEditIphoneController() {
+		presentedViewController?.dismiss(animated: true, completion: nil)
 		delegate?.didCloseCustomSheet()
+	}
+	
+	func didPressDone(text: String) {
+		buildSheets(fromText: text)
+		checkAddButton()
 	}
 	
 	
@@ -281,7 +277,7 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
 			self.collectionView.reloadData()
 		}
-		
+		checkAddButton()
 	}
 	
 	func didSaveSongWith() {
@@ -333,7 +329,6 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 		}
 		save.title = Text.Actions.save
 		cancel.title = Text.Actions.cancel
-		edit?.title = Text.Actions.edit
 		addSheetButton?.backgroundColor = themeHighlighted
 		addSheetButton?.setTitleColor(themeWhiteBlackTextColor, for: .normal)
 		addSheetButton?.layer.cornerRadius = 5
@@ -375,13 +370,19 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	}
 	
 	private func checkAddButton() {
-		if !isNew || isEdited {
-			if cluster?.isTypeSong ?? clusterTemp?.isTypeSong ?? false {
-				addSheetButton?.removeFromSuperview()
-			} else {
-				addLyricsButton?.removeFromSuperview()
-			}
-		}
+		let isSong = (clusterTemp?.isTypeSong ?? false) && getTextFromSheets().length > 0
+		let isCustom = sheetsTemp.contains(where: { $0.hasTag?.isHidden == true })
+		
+		edit?.isEnabled = !isSong
+		edit?.tintColor = isSong ? .clear : themeHighlighted
+
+//		if !isNew || isEdited {
+//			if cluster?.isTypeSong ?? clusterTemp?.isTypeSong ?? false {
+//				addSheetButton?.removeFromSuperview()
+//			} else {
+//				addLyricsButton?.removeFromSuperview()
+//			}
+//		}
 	}
 	
 	private func hasTagSelected(_ hasTag: Bool) {
@@ -523,36 +524,7 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 		collectionViewTags.layer.borderWidth = 0
 		collectionViewTags.layer.cornerRadius = 0
 	}
-	
-//	private func handleSelectedOption() {
-//		let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
-//		controller.delegate = self
-//		controller.modificationMode = .newCustomSheet
-//		switch SheetType.for(indexPath){
-//		case .SheetTitleContent:
-//			let sheet = CoreSheetTitleContent.createEntityNOTsave()
-//			controller.sheet = sheet
-//		case .SheetTitleImage:
-//			let sheet = CoreSheetTitleImage.createEntityNOTsave()
-//			controller.sheet = sheet
-//		case .SheetPastors:
-//			let sheet = CoreSheetPastors.createEntityNOTsave()
-//			controller.sheet = sheet
-//		case .SheetSplit:
-//			let sheet = CoreSheetSplit.createEntityNOTsave()
-//			controller.sheet = sheet
-//		case .SheetEmpty:
-//			let sheet = CoreSheetEmptySheet.createEntityNOTsave()
-//			controller.sheet = sheet
-//		case .SheetActivities:
-//			let sheet = CoreSheetActivities.createEntityNOTsave()
-//			controller.sheet = sheet
-//		}
-//		let nav = UINavigationController(rootViewController: controller)
-//		Queues.main.async {
-//			self.present(nav, animated: true)
-//		}
-//	}
+
 	
 	// MARK: - IBAction functions
 	
@@ -581,41 +553,72 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	}
 	
 	@IBAction func editPressed(_ sender: UIBarButtonItem) {
-		
-		if (clusterTemp?.isTypeSong ?? false) && getTextFromSheets().length > 0 {
-			self.performSegue(withIdentifier: "ChangeLyricsSegue", sender: self)
+		guard let controller = storyboard?.instantiateViewController(withIdentifier: "SheetPickerMenuController") as? SheetPickerMenuController else {
 			return
 		}
 		
-		let hasLyrics = getTextFromSheets() != ""
+		let isSong = (clusterTemp?.isTypeSong ?? false) && getTextFromSheets().length > 0
+		let isCustom = sheetsTemp.contains(where: { $0.hasTag?.isHidden == true })
+
+		controller.didCreateSheet = didCreate(sheet:)
+		controller.selectedTag = selectedTag
+		controller.delegate = self
+		controller.mode = isSong ? .song : isCustom ? .custom : .none
+		controller.lyricsControllerDelegate = self
+		controller.text = getTextFromSheets()
 		
-		let optionsMenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+		let rect = view.bounds.insetBy(dx: view.bounds.width / 10, dy: view.bounds.height / 10)
+		controller.preferredContentSize = rect.size
 		
-		let changeGeneralSettings = UIAlertAction(title: Text.NewSong.changeTitleTime, style: .default) { _ in
-			self.performSegue(withIdentifier: "changeTitleTimeSegue", sender: self)
-		}
-		let addSheet = UIAlertAction(title: Text.NewSong.addSheet, style: .default) { _ in
-			self.performSegue(withIdentifier: "SheetPickerMenuControllerSegue", sender: self)
-		}
-		let changeLyrics = UIAlertAction(title: hasLyrics ? Text.NewSong.changeLyrics : Text.NewSong.newLyrics, style: .default) { _ in
-			self.performSegue(withIdentifier: "ChangeLyricsSegue", sender: self)
-		}
-		let cancel = UIAlertAction(title: Text.Actions.cancel, style: .cancel)
+		controller.modalPresentationStyle = .popover
+		controller.popoverPresentationController?.delegate = self
+		controller.popoverPresentationController?.barButtonItem = edit
 		
-		if sheetsTemp.count == 0 {
-			optionsMenu.addAction(addSheet)
-			optionsMenu.addAction(changeLyrics)
-		} else {
-			if sheetsTemp.contains(where: { $0.hasTag?.isHidden == true }) {
-				optionsMenu.addAction(addSheet)
-				optionsMenu.addAction(changeGeneralSettings)
-			} else {
-				optionsMenu.addAction(changeLyrics)
-			}
-		}
-		optionsMenu.addAction(cancel)
-		
-		present(optionsMenu, animated: true)
+		present(controller, animated: true, completion: nil)
+		return
+//
+//		if (clusterTemp?.isTypeSong ?? false) && getTextFromSheets().length > 0 {
+//			self.performSegue(withIdentifier: "ChangeLyricsSegue", sender: self)
+//			return
+//		}
+//
+//		let hasLyrics = getTextFromSheets() != ""
+//
+//		let optionsMenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+//
+//		let changeGeneralSettings = UIAlertAction(title: Text.NewSong.changeTitleTime, style: .default) { _ in
+//			self.performSegue(withIdentifier: "changeTitleTimeSegue", sender: self)
+//		}
+//		let addSheet = UIAlertAction(title: Text.NewSong.addSheet, style: .default) { _ in
+//			self.performSegue(withIdentifier: "SheetPickerMenuControllerSegue", sender: self)
+//		}
+//		let changeLyrics = UIAlertAction(title: hasLyrics ? Text.NewSong.changeLyrics : Text.NewSong.newLyrics, style: .default) { _ in
+//			self.performSegue(withIdentifier: "ChangeLyricsSegue", sender: self)
+//		}
+//		let cancel = UIAlertAction(title: Text.Actions.cancel, style: .cancel)
+//
+//		if sheetsTemp.count == 0 {
+//			optionsMenu.addAction(addSheet)
+//			optionsMenu.addAction(changeLyrics)
+//		} else {
+//			if sheetsTemp.contains(where: { $0.hasTag?.isHidden == true }) {
+//				optionsMenu.addAction(addSheet)
+//				optionsMenu.addAction(changeGeneralSettings)
+//			} else {
+//				optionsMenu.addAction(changeLyrics)
+//			}
+//		}
+//		optionsMenu.addAction(cancel)
+//
+//		present(optionsMenu, animated: true)
+	}
+	
+}
+
+extension CustomSheetsController: UIPopoverPresentationControllerDelegate {
+	
+	func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
+		return UIModalPresentationStyle.none
 	}
 	
 }

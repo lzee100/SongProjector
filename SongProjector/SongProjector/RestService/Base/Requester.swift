@@ -116,7 +116,6 @@ class Requester<T, S: Decodable>: BaseRS, RequesterType, RequestObserver where T
 		if requestMethod == .get {
 			requestGet(url:  url, parameters: params, success: { (response, result) in
 				
-				self.saveLocal(entities: result)
 				self.requestFinished(response: .OK(.updated), result: nil)
 				
 			}, failure: { (error, response, result) in
@@ -128,7 +127,6 @@ class Requester<T, S: Decodable>: BaseRS, RequesterType, RequestObserver where T
 				if let result = result {
 					saveResult = result
 				}
-				self.saveLocal(entities: saveResult)
 				self.requestFinished(response: .OK(.updated), result: saveResult)
 			}, failure: { (error, response, object) in
 				var responseResult: [T]? = nil
@@ -165,34 +163,6 @@ class Requester<T, S: Decodable>: BaseRS, RequesterType, RequestObserver where T
 		}
 	}
 	
-	func mapRelations(json: [[String: Any]], objects: [T]) -> [T] {
-		return objects
-	}
-	
-	func merge(entity: T, into: T) {
-		
-	}
-	
-	func processDeletion(entities: [T]) {
-		
-	}
-	
-	func encodeRelations(_ encodedObject: Data) -> Data {
-		return encodedObject
-	}
-	
-	func saveLocal(entities: [T]?) {
-		mocBackground.performAndWait {
-			do {
-				try mocBackground.save()
-				try moc.save()
-			} catch {
-				print(error)
-			}
-		}
-		
-	}
-	
 	func mapDataToJSON(_ data : Data) throws -> [[String: Any]]? {
 		let json = try JSONSerialization.jsonObject(with: data, options: []) as? [[String: Any]]
 		return json
@@ -210,24 +180,33 @@ class Requester<T, S: Decodable>: BaseRS, RequesterType, RequestObserver where T
 			let entities: [T]? = super.decode(data: data)
 			
 			if let old = entities, old.count > 0 {
-				if let oldEntity = old as? [Entity] {
-					oldEntity.forEach({
-						CoreEntity.predicates.append("id", equals: $0.id)
-						CoreEntity.getEntities().forEach({ $0.delete(false) })
-					})
-				}
-				
-				mocBackground.performAndWait {
-					do {
-						try mocBackground.save()
-						try moc.save()
-					} catch {
-						print(error)
+				mocBackground.perform({
+
+					if let oldEntity = old as? [Entity] {
+						print("old items to delete: \(oldEntity.count)")
+						oldEntity.forEach({
+							CoreEntity.managedObjectContext = mocBackground
+							CoreEntity.predicates.append("id", equals: $0.id)
+							let ent = CoreEntity.getEntities().filter({ $0.updatedAt != nil })
+							if ent.count > 1 {
+								let oldEntities = ent.sorted(by: { (($0.updatedAt ?? NSDate()) as Date) < (($1.updatedAt ?? NSDate()) as Date) })
+								oldEntities.first?.deleteBackground(false)
+							}
+						})
+					}
+					mocBackground.performAndWait {
+						do {
+							try mocBackground.save()
+							try moc.save()
+						} catch {
+							print(error)
+						}
+						
+						success(response, old)
+						
 					}
 					
-					success(response, entities)
-
-				}
+				})
 			} else {
 				success(response, entities)
 			}

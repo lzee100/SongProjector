@@ -100,25 +100,6 @@ public class Sheet: Entity {
 		
 	}
 	
-	required public convenience init(from decoder: Decoder, isFromCluster: Bool) throws {
-		
-		let managedObjectContext = mocBackground
-		guard let entity = NSEntityDescription.entity(forEntityName: "Sheet", in: managedObjectContext) else {
-			fatalError("failed at Sheet")
-		}
-		
-		self.init(entity: entity, insertInto: managedObjectContext)
-		
-		let container = try decoder.container(keyedBy: CodingKeysTag.self)
-		isEmptySheet = try Bool(truncating: (container.decodeIfPresent(Int16.self, forKey: .isEmptySheet) ?? 0) as NSNumber)
-		position = try container.decodeIfPresent(Int16.self, forKey: .position) ?? 0
-		time = try container.decodeIfPresent(Double.self, forKey: .time) ?? 0
-		hasTag = try container.decodeIfPresent(Tag.self, forKey: .hasTag)
-		
-		try super.initialization(decoder: decoder)
-		
-	}
-	
 	
 	
 	// MARK: - NSCopying

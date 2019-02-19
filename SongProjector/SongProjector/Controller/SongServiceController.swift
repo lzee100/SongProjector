@@ -35,6 +35,7 @@ enum AnimationDirection {
 class SongServiceController: UIViewController, UITableViewDataSource, UITableViewDelegate, NewSongServiceDelegate, SongsControllerDelegate {
 	
 	
+	
 	// MARK: - Properties
 	
 	@IBOutlet var sheetDisplaySwipeView: UIView!
@@ -107,7 +108,7 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 		if let controller = segue.destination as? UINavigationController, let newSongServiceController = controller.viewControllers.first as? NewSongServiceController {
 			newSongServiceController.delegate = self
-			newSongServiceController.selectedSongs = songService.songs.compactMap ({ $0.cluster })
+			newSongServiceController.selectedClusters = songService.songs.compactMap ({ $0.cluster })
 		}
 		if let controller = segue.destination as? UINavigationController, let songsController = controller.viewControllers.first as? SongsController {
 			songsController.delegate = self
@@ -209,10 +210,10 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 	
 	// MARK: SongsControllerDelegate Functions
 	
-	func didSelectCluster(cluster: Cluster){
-		songService.songs.append(SongObject(cluster: cluster))
+	func didSelectClusters(_ clusters: [Cluster]) {
+		songService.songs = clusters.map({ SongObject(cluster: $0) })
 	}
-	
+
 	
 	
 	// MARK: - Private Functions

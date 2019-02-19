@@ -10,7 +10,7 @@ import UIKit
 
 @IBDesignable open class VerticalSlider: UIControl {
     
-    open let slider = UISlider()
+    public let slider = UISlider()
     
     // required for IBDesignable class to properly render
     required public init?(coder aDecoder: NSCoder) {
@@ -133,11 +133,11 @@ import UIKit
         }
     }
     
-    open override func addTarget(_ target: Any?, action: Selector, for controlEvents: UIControlEvents) {
+    open override func addTarget(_ target: Any?, action: Selector, for controlEvents: UIControl.Event) {
         slider.addTarget(target, action: action, for: controlEvents)
     }
     
-    open override func removeTarget(_ target: Any?, action: Selector?, for controlEvents: UIControlEvents) {
+    open override func removeTarget(_ target: Any?, action: Selector?, for controlEvents: UIControl.Event) {
         slider.removeTarget(target, action: action, for: controlEvents)
     }
     

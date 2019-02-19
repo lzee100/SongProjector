@@ -33,7 +33,6 @@ class SheetSplit: SheetView {
 	@IBOutlet var textViewRight: UITextView!
 	
 	@IBOutlet var titleHeightConstraint: NSLayoutConstraint!
-	@IBOutlet var titleBottomConstraint: NSLayoutConstraint!
 	
 	private var zeroHeightConstraint: NSLayoutConstraint?
 	private var newTitleBottomConstraint: NSLayoutConstraint?
@@ -56,14 +55,13 @@ class SheetSplit: SheetView {
 			containerBottomConstraint.constant = containerBottomConstraint.constant * scaleFactor
 			containerLeftConstraint.constant = containerLeftConstraint.constant * scaleFactor
 			titleHeightConstraint.constant = titleHeightConstraint.constant * scaleFactor
-			titleBottomConstraint.constant = titleBottomConstraint.constant * scaleFactor
 			
 			updateTitle()
 			updateContent()
 			updateBackgroundImage()
 			updateOpacity()
 			updateBackgroundColor()
-			
+			self.layoutIfNeeded()
 		}
 	}
 	
@@ -80,9 +78,7 @@ class SheetSplit: SheetView {
 				
 				// reset height constraint
 				titleHeightConstraint.isActive = true
-				titleBottomConstraint.isActive = true
 				
-				//					}
 				descriptionTitle.attributedText = NSAttributedString(string: songTitle, attributes: tag.getTitleAttributes(scaleFactor ?? 1))
 			} else {
 				descriptionTitle.text = songTitle

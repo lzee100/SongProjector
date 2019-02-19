@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0700"
+   LastUpgradeVersion = "0930"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -13,11 +13,11 @@
             buildForProfiling = "YES"
             buildForArchiving = "YES">
             <BuildableReference
-               BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '7D62BDBE1F065664BFB41C5B5CDE9010'
-               BlueprintName = 'VerticalSlider'
-               ReferencedContainer = 'container:Pods.xcodeproj'
-               BuildableName = 'VerticalSlider.framework'>
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "1998907D34F639BF63B17D8688580163"
+               BlueprintName = "VerticalSlider"
+               ReferencedContainer = "container:Pods.xcodeproj"
+               BuildableName = "VerticalSlider.framework">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

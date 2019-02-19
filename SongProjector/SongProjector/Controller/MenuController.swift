@@ -131,8 +131,9 @@ class MenuController: UITabBarController {
 		// get meer menu items
 		if !moreFeatures.isEmpty {
 			moreFeatures.removeFirst(maxFeatures)
-			let index = moreFeatures.index(of: .more) as! Int
-			moreFeatures.remove(at: index)
+			if let index = moreFeatures.index(of: .more) {
+				moreFeatures.remove(at: index)
+			}
 		}
 		
 		
