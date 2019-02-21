@@ -40,90 +40,23 @@ class BaseRS: NSObject {
 	
 	func createHeaderParameters() -> [String: String] {
 		var header: [String: String] = [:]
-		header["organizationID"] = "1"
+		if let orgId = CoreOrganization.getEntities().first?.id {
+			header["organizationID"] = "\(orgId)"
+		}
 		return header
 	}
 	
 	func addAuthorisation(_ request: RequestOperation) {
+		if let installToken = CoreUser.getEntities().first?.appInstallToken {
+			
+			request.authorization = AccountStore.icloudID
+
+		}
 		request.authorization = AccountStore.icloudID
 	}
-//	
-//	func requestGet<O: Decodable, E: Decodable>(_ method: RequestMethod, url: String, parameters: [String: Any]?, range: CountableRange<Int>? = nil, success: @escaping (_ response: HTTPURLResponse?, _ result: [O]?) -> Void, failure: @escaping (_ error: NSError?, _ response: HTTPURLResponse?, _ object: E?) -> Void, queue: DispatchQueue) {
-//		
-//		self.dispatchRequest(method, url: url, inputBody: nil, parameters: parameters, range: range, success: {  (response, data) -> Void in
-//			
-////			var result: [O]? = nil
-////			let jsonResponse = try JSONSerialization.jsonObject(with:
-////				data, options: [])
-//			
-////			guard let jsonArray = jsonResponse as? [[String: Any]] else {
-////				success(response, result)
-////			}
-////
-////			for dic in jsonArray {
-////				result += self.decode(data: dic)
-////			}
-////
-//			do {
-//				let json = try JSONSerialization.jsonObject(with: data!, options: []) as? [[String : Any]]
-//				let value = ""
-//			} catch {
-//				
-//			}
-//
-//			let result : [O]? = self.decode(data: data)
-//			
-//			success(response, result)
-//			
-//		}, failure: {  (error, response, data) -> Void in
-//			
-//			let object : E? = self.decode(data: data)?.first
-//			
-//			failure(error, response, object)
-//			
-//		}, queue: queue)
-//	}
-//	
-//	func requestSend<I: Encodable, O: Decodable, E: Decodable>(_ method: RequestMethod, url: String, object: I?, parameters: [String: Any]?, range: CountableRange<Int>? = nil, success: @escaping (_ response: HTTPURLResponse?, _ result: O?) -> Void, failure: @escaping (_ error: NSError?, _ response: HTTPURLResponse?, _ object: E?) -> Void, queue: DispatchQueue) {
-//		
-//		var inputBody: Data? = nil
-//		if let object = object {
-//			do {
-//				inputBody = try JSONEncoder().encode(object)
-//			} catch {
-//				failure(NSError(domain: "object is not encodable", code: 0, userInfo: nil), nil, nil)
-//			}
-//		}
-//		
-//		self.dispatchRequest(method, url: url, inputBody: inputBody, parameters: parameters, range: range, success: {  (response, data) -> Void in
-//			
-//			var result : O? = nil
-//			if let data = data {
-//				do {
-//					result = try JSONDecoder().decode(O.self, from: data)
-//				} catch (let error){
-//					print("Error \(error)")
-//				}
-//			}
-//			success(response, result)
-//			
-//			
-//		}, failure: {   (error, response, data) -> Void in
-//			
-//			var object : E? = nil
-//			if let data = data {
-//				do {
-//					object = try JSONDecoder().decode(E.self, from: data)
-//				} catch (let error){
-//					print("Error \(error)")
-//				}
-//			}
-//			
-//			failure(error, response, object)
-//			
-//		}, queue: queue)
-//	}
-//	
+	
+	
+	
 	// MARK: - methods
 	func dispatchRequest(_ method: RequestMethod, url: String, inputBody: Data?, parameters: [String: Any]?, range: CountableRange<Int>?, success: @escaping (_ response: HTTPURLResponse?, _ data: Data?) -> Void, failure: @escaping (_ error: NSError?, _ response: HTTPURLResponse?, _ data: Data?) -> Void, queue: DispatchQueue) {
 		
@@ -131,12 +64,6 @@ class BaseRS: NSObject {
 			self.requestDispatched(method, url: url, inputBody: inputBody, parameters: parameters, range: range, success: success, failure: failure, queue: queue)
 		}
 	}
-	
-//	private func prettyPrint(with json: [String:Any]) -> String{
-//		let data = try! JSONSerialization.data(withJSONObject: json, options: .prettyPrinted)
-//		let string = NSString(data: data, encoding: String.Encoding.utf8.rawValue)
-//		return string! as String
-//	}
 	
 	fileprivate func requestDispatched(_ method: RequestMethod, url: String, inputBody: Data?, parameters: [String: Any]?, range: CountableRange<Int>?, success: @escaping (_ response: HTTPURLResponse?, _ data: Data?) -> Void, failure: @escaping (_ error: NSError?, _ response: HTTPURLResponse?, _ data: Data?) -> Void, queue: DispatchQueue) {
 		
@@ -172,8 +99,19 @@ class BaseRS: NSObject {
 				}
 			}
 			
+			let finishOperationIcloudId = BlockOperation {
+				self.isOperationFinished = !fetchIcloudIdOperation.isSuccess
+				if fetchIcloudIdOperation.isSuccess {
+					let operations : [Foundation.Operation] = [operation, finishOperation]
+					Operation.dependenciesInOrder(operations)
+					Operation.Queue.addOperations(operations, waitUntilFinished: false)
+				} else {
+					failure(NSError(domain: "No icloud account is configured", code: -1, userInfo: nil), nil, nil)
+				}
+			}
+			
 			self.isOperationFinished = false
-			let operations : [Foundation.Operation] = [fetchIcloudIdOperation, operation, finishOperation]
+			let operations : [Foundation.Operation] = [fetchIcloudIdOperation, finishOperationIcloudId]
 			Operation.dependenciesInOrder(operations)
 			Operation.Queue.addOperations(operations, waitUntilFinished: false)
 			
@@ -216,6 +154,20 @@ class BaseRS: NSObject {
 					let myResult = try JSONDecoder().decode(O.self, from: data)
 					result?.append(myResult)
 				})
+			} catch (let error){
+				print("Error \(error)")
+				return nil
+			}
+		}
+		return result
+	}
+	
+	func decodeSingle<O: Decodable>(data: Data?) -> O? {
+		
+		var result: O? = nil
+		if let data = data {
+			do {
+				result = try JSONDecoder().decode(O.self, from: data)
 			} catch (let error){
 				print("Error \(error)")
 				return nil

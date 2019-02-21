@@ -10,7 +10,7 @@ import Foundation
 
 let ClusterFetcher = CstrFetcher()
 
-class CstrFetcher: Requester<Cluster, SubmittedID> {
+class CstrFetcher: Requester<Cluster> {
 	
 	override var requestReloadTime: RequesterReloadTime {
 		return .seconds

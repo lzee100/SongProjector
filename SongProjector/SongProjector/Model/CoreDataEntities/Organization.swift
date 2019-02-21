@@ -15,13 +15,10 @@ class Organization: Entity {
 		return NSFetchRequest<Organization>(entityName: "Organization")
 	}
 	
-	@NSManaged public var name: String?
 	@NSManaged public var hasRoles: NSSet?
-	
 	
 	enum CodingKeysOrganization:String,CodingKey
 	{
-		case name
 		case hasRoles = "role"
 	}
 	
@@ -37,7 +34,6 @@ class Organization: Entity {
 	
 	public override func initialization(decoder: Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeysOrganization.self)
-		name = try container.decodeIfPresent(String.self, forKey: .name)
 		let roles = try container.decodeIfPresent([Role].self, forKey: .hasRoles)
 		if let roles = roles {
 			self.hasRoles = NSSet(array: roles)
@@ -53,7 +49,6 @@ class Organization: Entity {
 	
 	override public func encode(to encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeysOrganization.self)
-		try container.encode(name, forKey: .name)
 		if let roles = hasRoles?.allObjects as? [Role] {
 			try container.encode(roles, forKey: .hasRoles)
 		}
@@ -76,7 +71,6 @@ class Organization: Entity {
 		//		try self.init(from: decoder)
 		
 		let container = try decoder.container(keyedBy: CodingKeysOrganization.self)
-		name = try container.decodeIfPresent(String.self, forKey: .name)
 		let roles = try container.decodeIfPresent([Role].self, forKey: .hasRoles)
 		if let roles = roles {
 			self.hasRoles = NSSet(array: roles)

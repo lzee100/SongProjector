@@ -11,7 +11,7 @@ import Foundation
 let TagFetcher = TgFetcher()
 
 
-class TgFetcher: Requester<Tag, SubmittedID> {
+class TgFetcher: Requester<Tag> {
 	
 	override var requestReloadTime: RequesterReloadTime {
 		return .seconds
@@ -46,3 +46,5 @@ class TgFetcher: Requester<Tag, SubmittedID> {
 
 	
 }
+
+

@@ -19,14 +19,15 @@ class SgnInContractSelection: NSObject {
 }
 
 
-class IntroGoogleSigninController: ChurchBeamViewController, UITableViewDelegate, UITableViewDataSource {
+class IntroGoogleSigninController: ChurchBeamViewController, UITableViewDelegate, UITableViewDataSource, GoogleCellDelegate {
+	
 	
 	
 	@IBOutlet var titleLabel: UILabel!
 	@IBOutlet var descriptionLabel: UILabel!
 	@IBOutlet var tableView: UITableView!
 	
-	let googleCell = GoogleCell.create(id: "GoogleCell", description: Text.Settings.descriptionGoogle)
+	let googleCell = GoogleCell.create(id: "GoogleCell", description: nil)
 	
 	static let identifier = "IntroGoogleSigninController"
 	
@@ -54,6 +55,7 @@ class IntroGoogleSigninController: ChurchBeamViewController, UITableViewDelegate
 		descriptionLabel.text = "Bij deze app kan je inloggen met je google account. Heb je al een account aangemaakt bij Churchbeam?"
 		tableView.register(cell: GoogleCell.identifier)
 		googleCell.sender = self
+		googleCell.delegate = self
 	}
 	
 	
@@ -83,6 +85,14 @@ class IntroGoogleSigninController: ChurchBeamViewController, UITableViewDelegate
 		case .SignInButton: return googleCell.preferredHeight
 		default: return UITableViewAutomaticDimension
 		}
+	}
+	
+	func showInstructions(cell: GoogleCell) {
+		print("instructions google cell")
+	}
+	
+	func didSuccesfullyLogin(googleIdToken: String, userName: String) {
+		self.performSegue(withIdentifier: "presentSignUpOrganisationController", sender: self)
 	}
 	
 	

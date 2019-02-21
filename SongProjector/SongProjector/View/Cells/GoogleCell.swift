@@ -12,9 +12,11 @@ import GoogleSignIn
 
 protocol GoogleCellDelegate {
 	func showInstructions(cell: GoogleCell)
+	func didSuccesfullyLogin(googleIdToken: String, userName: String)
 }
 
-class GoogleCell: UITableViewCell, GoogleFetcherLoginDelegate, RequestObserver {
+class GoogleCell: UITableViewCell, GoogleFetcherLoginDelegate, RequestObserver, GIDSignInDelegate, GIDSignInUIDelegate {
+	
 	
 	
 	@IBOutlet var descriptionTitle: UILabel!
@@ -38,7 +40,7 @@ class GoogleCell: UITableViewCell, GoogleFetcherLoginDelegate, RequestObserver {
 	
 	static let identifier = "GoogleCell"
 	
-	static func create(id: String, description: String) -> GoogleCell {
+	static func create(id: String, description: String?) -> GoogleCell {
 		let view : GoogleCell! = UIView.create(nib: "GoogleCell")
 //		GoogleActivityFetcher.addObserver(view)
 		let userDefaults = UserDefaults.standard
@@ -49,6 +51,8 @@ class GoogleCell: UITableViewCell, GoogleFetcherLoginDelegate, RequestObserver {
 			view.addSignOutButton()
 		} else {
 			view.googleSignInOutContainer.addSubview(view.signInButton)
+			GIDSignIn.sharedInstance()?.delegate = view
+			GIDSignIn.sharedInstance().uiDelegate = view
 		}
 
 		view.id = id
@@ -119,6 +123,22 @@ class GoogleCell: UITableViewCell, GoogleFetcherLoginDelegate, RequestObserver {
 		sender.dismiss(animated: true)
 	}
 	
+	func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
+		if error == nil {
+			let userDefaults = UserDefaults.standard
+			userDefaults.set(user.authentication.idToken, forKey: "googleIdToken")
+			userDefaults.set(user.profile.email, forKey: "googleEmail")
+			delegate?.didSuccesfullyLogin(googleIdToken: user.authentication.idToken, userName: user.profile.email)
+		}
+	}
+	
+	func sign(_ signIn: GIDSignIn!, present viewController: UIViewController!) {
+		viewController.present(viewController, animated: true)
+	}
+	
+	func sign(_ signIn: GIDSignIn!, dismiss viewController: UIViewController!) {
+		viewController.dismiss(animated: true)
+	}
 
 	
 	

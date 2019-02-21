@@ -18,9 +18,11 @@ class User: Entity {
 	
 	@NSManaged public var firstName: String?
 	@NSManaged public var lastName: String?
-	@NSManaged public var appId: String?
+	@NSManaged public var appInstallToken: String?
 	@NSManaged public var bankAccountNumber: String?
 	@NSManaged public var bankAccountName: String?
+	@NSManaged public var identifiedEmail: String?
+	@NSManaged public var userToken: String?
 	
 	@NSManaged public var hasRole: Role?
 	
@@ -30,7 +32,9 @@ class User: Entity {
 		case lastName
 		case bankAccountName
 		case bankAccountNumber
-		case appId
+		case identifiedEmail
+		case userToken
+		case appInstallToken
 		case hasRole = "role"
 	}
 	
@@ -50,7 +54,9 @@ class User: Entity {
 		lastName = try container.decodeIfPresent(String.self, forKey: .lastName)
 		bankAccountName = try container.decodeIfPresent(String.self, forKey: .bankAccountName)
 		bankAccountNumber = try container.decodeIfPresent(String.self, forKey: .bankAccountNumber)
-		appId = try container.decodeIfPresent(String.self, forKey: .appId)
+		identifiedEmail = try container.decodeIfPresent(String.self, forKey: .identifiedEmail)
+		userToken = try container.decodeIfPresent(String.self, forKey: .userToken)
+		appInstallToken = try container.decodeIfPresent(String.self, forKey: .appInstallToken)
 		let roles = try container.decodeIfPresent([Role].self, forKey: .hasRole)
 		if let role = roles?.first {
 			self.hasRole = role
@@ -70,7 +76,9 @@ class User: Entity {
 		try container.encode(lastName, forKey: .lastName)
 		try container.encode(bankAccountName, forKey: .bankAccountName)
 		try container.encode(bankAccountNumber, forKey: .bankAccountNumber)
-		try container.encode(appId, forKey: .appId)
+		try container.encode(identifiedEmail, forKey: .identifiedEmail)
+		try container.encode(userToken, forKey: .userToken)
+		try container.encode(appInstallToken, forKey: .appInstallToken)
 		if let role = hasRole {
 			try container.encode([role], forKey: .hasRole)
 		}
@@ -90,13 +98,15 @@ class User: Entity {
 		}
 		
 		self.init(entity: entity, insertInto: managedObjectContext)
-		//		try self.init(from: decoder)
 		
 		let container = try decoder.container(keyedBy: CodingKeysUser.self)
 		firstName = try container.decodeIfPresent(String.self, forKey: .firstName)
 		lastName = try container.decodeIfPresent(String.self, forKey: .lastName)
 		bankAccountName = try container.decodeIfPresent(String.self, forKey: .bankAccountName)
 		bankAccountNumber = try container.decodeIfPresent(String.self, forKey: .bankAccountNumber)
+		identifiedEmail = try container.decodeIfPresent(String.self, forKey: .identifiedEmail)
+		userToken = try container.decodeIfPresent(String.self, forKey: .userToken)
+		appInstallToken = try container.decodeIfPresent(String.self, forKey: .appInstallToken)
 		let roles = try container.decodeIfPresent([Role].self, forKey: .hasRole)
 		if let role = roles?.first {
 			self.hasRole = role
@@ -111,7 +121,9 @@ class User: Entity {
 		user.lastName = self.lastName
 		user.bankAccountName = self.bankAccountName
 		user.bankAccountNumber = self.bankAccountNumber
-		user.appId = self.appId
+		user.appInstallToken = self.appInstallToken
+		user.userToken = self.userToken
+		user.identifiedEmail = self.identifiedEmail
 		user.hasRole = self.hasRole
 	}
 	

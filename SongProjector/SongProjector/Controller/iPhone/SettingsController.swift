@@ -10,6 +10,7 @@ import UIKit
 
 class SettingsController: UITableViewController, GoogleCellDelegate {
 	
+	
 	let googleCell = GoogleCell.create(id: "GoogleCell", description: Text.Settings.descriptionGoogle)
 	
 	enum Section: String {
@@ -56,13 +57,17 @@ class SettingsController: UITableViewController, GoogleCellDelegate {
 		case .googleAgenda:
 			return googleCell.preferredHeight
 		}
-	}
+	} 
 	
 	
 	// MARK: - Delegate Functions
 	
 	func showInstructions(cell: GoogleCell) {
 		print("show instructions")
+	}
+	
+	func didSuccesfullyLogin(googleIdToken: String, userName: String) {
+		
 	}
 
 	private func setup() {

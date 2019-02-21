@@ -15,15 +15,15 @@ class Role: Entity {
 		return NSFetchRequest<Role>(entityName: "Role")
 	}
 	
-	@NSManaged public var name: String?
+	@NSManaged public var organizationId: Int64
 	@NSManaged public var hasOrganization: Organization?
 	@NSManaged public var hasUsers: NSSet?
 	
 	enum CodingKeysRole:String,CodingKey
 	{
-		case name
 		case hasOrganization = "organization"
 		case hasUsers = "user"
+		case organizationId = "organization_id"
 	}
 	
 	
@@ -38,8 +38,7 @@ class Role: Entity {
 	
 	public override func initialization(decoder: Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeysRole.self)
-		name = try container.decodeIfPresent(String.self, forKey: .name)
-		hasOrganization = try container.decodeIfPresent(Organization.self, forKey: .hasOrganization)
+
 		let hasUsers = try container.decodeIfPresent([User].self, forKey: .hasUsers)
 		if let users = hasUsers {
 			self.hasUsers = NSSet(array: users)
@@ -55,9 +54,13 @@ class Role: Entity {
 	
 	override public func encode(to encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeysRole.self)
-		try container.encode(name, forKey: .name)
 		if let organization = hasOrganization {
 			try container.encode(organization, forKey: .hasOrganization)
+		} else {
+			CoreOrganization.managedObjectContext = mocBackground
+			if let org = CoreOrganization.getEntitieWith(id: id) {
+				try container.encode(org, forKey: .hasOrganization)
+			}
 		}
 		if let users = hasUsers?.allObjects as? [User] {
 			try container.encode(users, forKey: .hasUsers)
@@ -73,16 +76,14 @@ class Role: Entity {
 	required public convenience init(from decoder: Decoder) throws {
 		
 		let managedObjectContext = mocBackground
-		guard let entity = NSEntityDescription.entity(forEntityName: "User", in: managedObjectContext) else {
-			fatalError("failed at User")
+		guard let entity = NSEntityDescription.entity(forEntityName: "Role", in: managedObjectContext) else {
+			fatalError("failed at Role")
 		}
 		
 		self.init(entity: entity, insertInto: managedObjectContext)
-		//		try self.init(from: decoder)
 		
 		let container = try decoder.container(keyedBy: CodingKeysRole.self)
-		name = try container.decodeIfPresent(String.self, forKey: .name)
-		hasOrganization = try container.decodeIfPresent(Organization.self, forKey: .hasOrganization)
+		organizationId = try container.decodeIfPresent(Int64.self, forKey: .organizationId) ?? 0
 		let users = try container.decodeIfPresent([User].self, forKey: .hasUsers)
 		if let users = users {
 			hasUsers = NSSet(array: users)

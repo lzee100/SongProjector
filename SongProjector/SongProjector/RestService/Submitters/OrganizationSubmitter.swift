@@ -13,7 +13,7 @@ let OrganizationSubmitter: OnizationSubmitter = {
 	return OnizationSubmitter()
 }()
 
-class OnizationSubmitter: Requester<Organization, SubmittedID> {
+class OnizationSubmitter: Requester<Organization> {
 	
 	override var requesterId: String {
 		return "OrganizationSubmitter"

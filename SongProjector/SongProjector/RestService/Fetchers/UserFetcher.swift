@@ -12,7 +12,7 @@ import CoreData
 let UserFetcher = UerFetcher()
 
 
-class UerFetcher: Requester<User, SubmittedID> {
+class UerFetcher: Requester<User> {
 	
 	override var requestReloadTime: RequesterReloadTime {
 		return .seconds

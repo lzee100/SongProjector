@@ -120,7 +120,7 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="IBL-Fl-wRr">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="IBL-Fl-wRr">
                                 <rect key="frame" x="30" y="317" width="315" height="350"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
@@ -128,7 +128,7 @@
                                         <rect key="frame" x="0.0" y="28" width="315" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Dfa-1D-b7k" id="Y4P-ap-TNG">
-                                            <rect key="frame" x="0.0" y="0.0" width="315" height="43.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="315" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nOf-ub-Yga">
@@ -180,7 +180,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="02T-cS-TRN" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-3919" y="-1291"/>
+            <point key="canvasLocation" x="-3231" y="-1272"/>
         </scene>
         <!--Intro Page Controller2-->
         <scene sceneID="RfK-bm-ezX">
@@ -312,12 +312,12 @@
                         <outlet property="contentLeftConstraint" destination="0jo-e3-H2W" id="LIx-4P-WBl"/>
                         <outlet property="titleLabel" destination="BKl-QS-1Ah" id="xng-kx-aSk"/>
                         <outlet property="titleRightConstraint" destination="n2O-eX-V9t" id="NHZ-yl-nZe"/>
-                        <segue destination="Ag7-z4-wuP" kind="presentation" identifier="presentContract" id="7qc-Hz-yce"/>
+                        <segue destination="9Fb-2i-mOa" kind="presentation" identifier="showSignUpController" id="diP-vr-vk3"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TId-KA-pDa" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-3919" y="-2884"/>
+            <point key="canvasLocation" x="-5506" y="-2064"/>
         </scene>
         <!--Sign Up Organisation Controller-->
         <scene sceneID="VcO-Ag-8eg">
@@ -328,19 +328,19 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Wat is de naam van de kerk?" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EsW-gK-cG5">
-                                <rect key="frame" x="40" y="302" width="295" height="21"/>
+                                <rect key="frame" x="40" y="346" width="295" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Kerknaam" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="yN1-CA-Mjc">
-                                <rect key="frame" x="40" y="343" width="295" height="30"/>
+                                <rect key="frame" x="40" y="387" width="295" height="30"/>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Gratis" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ynq-he-lJN">
-                                <rect key="frame" x="177" y="60" width="158" height="80"/>
+                                <rect key="frame" x="177" y="104" width="158" height="80"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="80" id="N1e-3r-i59"/>
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="80" id="eNT-dl-Dhb"/>
@@ -350,7 +350,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uYx-ti-v8M">
-                                <rect key="frame" x="40" y="160" width="295" height="122"/>
+                                <rect key="frame" x="40" y="204" width="295" height="122"/>
                                 <string key="text">Wat leuk dat je aan de slag gegaat met de gratis versie van ChurchBeam.   Om goed van start te kunnen gaan hebben we wat informatie nodig van je. </string>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
@@ -396,7 +396,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3k7-hN-yyx" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-3070" y="-2040"/>
+            <point key="canvasLocation" x="-3852" y="-2064"/>
         </scene>
         <!--Sign Up Personal Info Controller-->
         <scene sceneID="PeV-lD-Udn">
@@ -407,7 +407,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Welkom" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sbQ-UY-ced">
-                                <rect key="frame" x="40" y="60" width="219" height="80"/>
+                                <rect key="frame" x="40" y="104" width="219" height="80"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="80" id="gyS-Xk-kGc"/>
                                 </constraints>
@@ -416,7 +416,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="oeQ-1s-GY4">
-                                <rect key="frame" x="30" y="160" width="315" height="507"/>
+                                <rect key="frame" x="30" y="204" width="315" height="463"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SignUpLabelCell" rowHeight="49" id="X6t-kX-wdN" customClass="SignUpLabelCell" customModule="ChurchBeam" customModuleProvider="target">
@@ -500,7 +500,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qVE-fh-7wU" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-3070" y="-1291"/>
+            <point key="canvasLocation" x="-3039" y="-2064"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="Cgi-Dp-uxx">
@@ -518,7 +518,25 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ayq-fc-2Zs" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-3919" y="-2039"/>
+            <point key="canvasLocation" x="-4086" y="-1272"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="UFO-wh-ri6">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="9Fb-2i-mOa" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="mvQ-nf-YzS">
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="5Lm-AI-d36" kind="relationship" relationship="rootViewController" id="PJ7-jT-QdC"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="d53-Hi-IIe" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-4663" y="-2064"/>
         </scene>
     </scenes>
 </document>

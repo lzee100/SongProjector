@@ -14,7 +14,7 @@ let OrganizationFetcher: OganizationFetcher = {
 }()
 
 
-class OganizationFetcher: Requester<Organization, SubmittedID> {
+class OganizationFetcher: Requester<Organization> {
 	
 	override var requestReloadTime: RequesterReloadTime {
 		return .seconds

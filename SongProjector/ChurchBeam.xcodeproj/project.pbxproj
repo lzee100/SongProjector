@@ -172,6 +172,7 @@
 		E3A4703021E0CC80000CB3D3 /* ChurchBeamConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A4702F21E0CC80000CB3D3 /* ChurchBeamConfiguration.swift */; };
 		E3A4703221E10B57000CB3D3 /* RequestOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A4703121E10B57000CB3D3 /* RequestOperation.swift */; };
 		E3A4703421E10D35000CB3D3 /* AsynchronousOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A4703321E10D35000CB3D3 /* AsynchronousOperation.swift */; };
+		E3AB276C221EB31600B9145C /* InitFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AB276B221EB31600B9145C /* InitFetcher.swift */; };
 		E3BC6BB71FFEBE350039E0CA /* HeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3BC6BB61FFEBE350039E0CA /* HeaderView.xib */; };
 		E3BC6BBA1FFEBECA0039E0CA /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3BC6BB91FFEBECA0039E0CA /* HeaderView.swift */; };
 		E3C2AD102025A5D500ACFFE7 /* MixerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3C2AD0F2025A5D500ACFFE7 /* MixerView.xib */; };
@@ -391,6 +392,7 @@
 		E3A4702F21E0CC80000CB3D3 /* ChurchBeamConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChurchBeamConfiguration.swift; sourceTree = "<group>"; };
 		E3A4703121E10B57000CB3D3 /* RequestOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestOperation.swift; sourceTree = "<group>"; };
 		E3A4703321E10D35000CB3D3 /* AsynchronousOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsynchronousOperation.swift; sourceTree = "<group>"; };
+		E3AB276B221EB31600B9145C /* InitFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitFetcher.swift; sourceTree = "<group>"; };
 		E3BC6BB61FFEBE350039E0CA /* HeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HeaderView.xib; sourceTree = "<group>"; };
 		E3BC6BB91FFEBECA0039E0CA /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
 		E3C2AD0F2025A5D500ACFFE7 /* MixerView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MixerView.xib; sourceTree = "<group>"; };
@@ -719,6 +721,7 @@
 		E3896A4521E7A383008CB5A5 /* Fetchers */ = {
 			isa = PBXGroup;
 			children = (
+				E3AB276B221EB31600B9145C /* InitFetcher.swift */,
 				E3896A3A21E3F3D2008CB5A5 /* TagFetcher.swift */,
 				E334B11021ED21F80088CD48 /* ClusterFetcher.swift */,
 				E37A492B2218CDD3003BD945 /* UserFetcher.swift */,
@@ -1098,6 +1101,7 @@
 				E31F0B7520F5D1E800C22FD1 /* SheetPastorsExtensions.swift in Sources */,
 				E399EA89202F73D700E8CE0E /* CustomSheetsController.swift in Sources */,
 				E3896A3921E3F17C008CB5A5 /* HTTPError.swift in Sources */,
+				E3AB276C221EB31600B9145C /* InitFetcher.swift in Sources */,
 				E3F8C9D4201690FC00C94292 /* BibleStudyIphoneController.swift in Sources */,
 				E311A44820725B72007BB6CB /* ImportBibleController.swift in Sources */,
 				E31171791FE5A1A0008D9D51 /* AddButtonCell.swift in Sources */,

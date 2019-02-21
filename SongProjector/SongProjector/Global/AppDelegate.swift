@@ -98,9 +98,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //		setupAndCheckDatabase()
 		setupAirPlay()
 		
-		let entities = CoreEntity.getEntities()
-		entities.forEach({ $0.delete(false) })
-		CoreEntity.saveContext(fireNotification: true)
+//		let entities = CoreEntity.getEntities()
+//		entities.forEach({ $0.delete(false) })
+//		CoreEntity.saveContext(fireNotification: true)
 		
 		application.statusBarStyle = .lightContent
 		Theme.setup()
@@ -114,7 +114,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			})
 		}
 		
-		AWSGoogleSignInProvider.sharedInstance().setScopes(["profile", "openid"])
+//		AWSGoogleSignInProvider.sharedInstance().setScopes(["profile", "openid"])
 		GIDSignIn.sharedInstance()?.clientID = "1005753122128-dc0k48rg97hdetif0g3ncaf0dq0ue6mc.apps.googleusercontent.com"
 //		AWSSignInManager.sharedInstance().register(signInProvider: AWSGoogleSignInProvider.sharedInstance())
 //		let didFinishLaunching = AWSSignInManager.sharedInstance().interceptApplication(application, didFinishLaunchingWithOptions: launchOptions)
@@ -193,6 +193,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //													annotation: options[UIApplicationOpenURLOptionsKey.annotation])
 		return true
 	}
+	
+	
 
 //	private func setupAndCheckDatabase() {
 //

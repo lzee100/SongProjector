@@ -69,7 +69,7 @@ class GoogleActivityFetch: NSObject, GIDSignInDelegate, GIDSignInUIDelegate {
 		} else {
 			self.service.authorizer = user.authentication.fetcherAuthorizer()
 			let userDefaults = UserDefaults.standard
-			userDefaults.set(user.profile.name, forKey: "GoogleUserName")
+			userDefaults.set(user.profile.email, forKey: "googleEmail")
 //			fetchFinished(result: .OK(.updated))
 		}
 	}

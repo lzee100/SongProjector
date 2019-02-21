@@ -2,6 +2,7 @@
 
 const express = require('express');
 const mysql = require('mysql');
+const print = require('./api/util/print');
 
 const app = express();
 const morgan = require('morgan');
@@ -13,6 +14,11 @@ const appointmentsRoutes = require('./api/routes/appointments');
 const bookRoutes = require('./api/routes/books');
 const themeRoutes = require('./api/routes/themes');
 const clusterRoutes = require('./api/routes/clusters');
+const organizationRoutes = require('./api/routes/organizations');
+const userInitRoutes = require('./api/routes/userinit');
+const userRoutes = require('./api/routes/users');
+const roleRoutes = require('./api/routes/roles');
+
 
 
 const db = mysql.createConnection({
@@ -54,18 +60,26 @@ app.use('/appointments', appointmentsRoutes);
 app.use('/books', bookRoutes);
 app.use('/themes', themeRoutes);
 app.use('/clusters', clusterRoutes);
+app.use('/organizations', organizationRoutes);
+app.use('/userinit', userInitRoutes);
+app.use('/users', userRoutes);
+app.use('/roles', roleRoutes);
+
 
 
 app.use((req, res, next) => {
-    const error = new Error('Not found');
+    print.print('req params', req.query.userToken)
+    print.print('req params', req.query.appRegistrationId)
+    const error = new Error('Not found general');
     error.status = 404;
     next(error);
 });
 
 app.use((error, req, res, next) => {
+    print.print('in error', error.message)
     res.status(error.status || 500);
     res.json({
-        message: error.message
+        error: error.message
     });
 });
 

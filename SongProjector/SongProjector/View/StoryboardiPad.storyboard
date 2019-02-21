@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="g9h-W5-KnB">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="jvS-s5-jIs">
     <device id="ipad9_7" orientation="landscape">
         <adaptation id="fullscreen"/>
     </device>
@@ -1068,6 +1068,24 @@
             </objects>
             <point key="canvasLocation" x="-529" y="-284"/>
         </scene>
+        <!--Splash Screen-->
+        <scene sceneID="TP0-Oi-Yfx">
+            <objects>
+                <viewController id="jvS-s5-jIs" customClass="SplashScreen" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="54D-DN-ZYm">
+                        <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="VtF-aK-Tap"/>
+                    </view>
+                    <connections>
+                        <segue destination="g9h-W5-KnB" kind="presentation" identifier="showApp" id="XP0-NO-AAV"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="0oQ-Sh-k94" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-2634" y="555"/>
+        </scene>
         <!--Menu Controller-->
         <scene sceneID="QNa-Vg-fCm">
             <objects>
@@ -1816,6 +1834,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
+        <segue reference="XP0-NO-AAV"/>
         <segue reference="ZoY-MX-7kX"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -18,5 +18,6 @@ struct NotificationNames {
 	static let externalDisplayDidChange = Notification.Name("externalDisplayDidChange")
 	static let dataBaseDidChange = Notification.Name("databaseDidChange")
 	static let environmentChanged = Notification.Name("environmentChanged")
+	static let didSignUpSuccessfully = Notification.Name("didSignUpSuccessfully")
 
 }

@@ -14,7 +14,7 @@ let RoleFetcher: RleFetcher = {
 }()
 
 
-class RleFetcher: Requester<Role, SubmittedID> {
+class RleFetcher: Requester<Role> {
 	
 	override var requestReloadTime: RequesterReloadTime {
 		return .seconds

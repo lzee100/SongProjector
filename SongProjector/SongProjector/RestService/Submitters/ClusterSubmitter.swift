@@ -11,7 +11,7 @@ import CoreData
 
 let ClusterSubmitter = CstrSubmitter()
 
-class CstrSubmitter: Requester<Cluster, SubmittedID> {
+class CstrSubmitter: Requester<Cluster> {
 	
 	
 	override var requesterId: String {

@@ -22,7 +22,7 @@ struct SubmittedID: Codable {
 
 let TagSubmitter = TgSubmitter()
 
-class TgSubmitter: Requester<Tag, SubmittedID> {
+class TgSubmitter: Requester<Tag> {
 	
 	
 	override var requesterId: String {

@@ -25,17 +25,25 @@ class SignUpPersonalInfoController: ChurchBeamViewController, UITableViewDelegat
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
+		let userDefaults = UserDefaults.standard
 		UserSubmitter.addObserver(self)
 		OrganizationSubmitter.addObserver(self)
 		tableView.rowHeight = UITableViewAutomaticDimension
 		view.backgroundColor = themeWhiteBlackBackground
 		titleLabel.textColor = themeWhiteBlackTextColor
 		organization = CoreOrganization.createEntityNOTsave()
-		organization.name = organizationName
+		organization.title = "kerk"
+		
 		user = CoreUser.createEntityNOTsave()
-		user.appId = UIDevice.current.identifierForVendor!.uuidString
+		
+		user.firstName = "Leo"
+		user.lastName = "van der Zee"
+		user.bankAccountName = "L. van der Zee"
+		user.bankAccountNumber = "NL34INGB12345678"
+		user.appInstallToken = UIDevice.current.identifierForVendor!.uuidString
+		user.userToken = AccountStore.icloudID
 		navigationItem.rightBarButtonItem = UIBarButtonItem(title: Text.Actions.done, style: .plain, target: self, action: #selector(didSelectDone))
-		navigationItem.rightBarButtonItem?.isEnabled = false
+//		navigationItem.rightBarButtonItem?.isEnabled = false
 	}
 	
 	func numberOfSections(in tableView: UITableView) -> Int {
@@ -69,12 +77,26 @@ class SignUpPersonalInfoController: ChurchBeamViewController, UITableViewDelegat
 	}
 	
 	@objc func didSelectDone() {
+		guard AccountStore.icloudID != "" else {
+			let alert = UIAlertController(title: "", message: "", preferredStyle: UIAlertControllerStyle.alert)
+			alert.addAction(UIAlertAction(title: Text.Actions.ok, style: .default, handler: nil))
+			present(alert, animated: true, completion: nil)
+			return
+		}
 		OrganizationSubmitter.submit([organization], requestMethod: .post)
 	}
 	
 	override func handleRequestFinish(result: AnyObject?) {
-		if let result = result as? Organization {
+		if ((result as? [Organization])?.first) != nil {
 			UserSubmitter.submit([user], requestMethod: .post)
+		} else if ((result as? [User]) != nil) {
+			Queues.main.async {
+				self.dismiss(animated: true, completion: {
+					NotificationCenter.default.post(name: NotificationNames.didSignUpSuccessfully, object: nil)
+				})
+			}
+		} else {
+			show(message: "Something went wrong, try again")
 		}
 	}
 	
@@ -123,6 +145,13 @@ class SignUpTextFieldCell: UITableViewCell {
 	static let identifier = "SignUpTextFieldCell"
 	
 	func update() {
+		switch row {
+		case .firstName: textField.text = "Leo"
+		case .lastName: textField.text = "van der Zee"
+		case .banknumber: textField.text = "NL34INGB12345678"
+		case .bankUsername: textField.text = "L. van der Zee"
+		default: break
+		}
 		textField.placeholder = row.textValue
 	}
 	

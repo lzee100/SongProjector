@@ -11,9 +11,9 @@ var db = require('../util/db');
 // PUT — completely overwrite a particular resource’s object
 // DELETE — remove a particular resource’s object
 
-router.get('/userId', (req, res , next) => {
+router.get('/', (req, res , next) => {
 
-    let userId = req.params.userId
+    let userId = req.query.userId
  
     if (!userId) {
         res.status(400).json({
@@ -31,9 +31,10 @@ router.get('/userId', (req, res , next) => {
 })
 
 router.post('/', (req, res , next) => {
-    var newUsers = req.body
 
-    print.print('post user ---------------------------------------', newUser)
+    var newUsers = req.body
+    print.print('post user ---------------------------------------', newUsers)
+
     let organizationID = req.get("organizationID")
 
     newUsers.map(user => delete user.id)
@@ -91,13 +92,26 @@ function getUser(userId, appId) {
 }
 
 function postUser(user) {
+    var newUser = user
+    delete newUser.title
+    
     return new Promise((resolve, reject) => {
-        let sql = `INSERT INTO user ?`
-        db.query(sql, [user], (err, result) => {
+        let sql = `INSERT INTO user SET ?`
+        db.query(sql, user, (err, result) => {
             if (err) {
                 reject(err)
             } else {
-                resolve(result)
+                getUser(result.insertId)
+                .then(user => {
+                    if (user.length > 0) {
+                        resolve(user[0])
+                    } else {
+                        reject()
+                    }
+                })
+                .catch(err => {
+                    reject(err)
+                })
             }
         })
     })
@@ -105,6 +119,8 @@ function postUser(user) {
 
 
 function putUser(user) {
+    var newUser = user
+    delete newUser.title
 
     return new Promise((resolve, reject) => {
         let sql = `UPDATE user SET ? WHERE id =${user.id}`

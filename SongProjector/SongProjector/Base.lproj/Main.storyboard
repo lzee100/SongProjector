@@ -20,6 +20,9 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="ZGR-dM-9Kt"/>
                     </view>
+                    <connections>
+                        <segue destination="Nkp-Wd-T9G" kind="presentation" identifier="showApp" id="8JS-ru-XEv"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cb0-fz-TI4" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

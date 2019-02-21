@@ -81,13 +81,8 @@ class IntroPageController2: PageController, UICollectionViewDataSource, UICollec
 		let contract = contracts[indexPath.row]
 		print(contract)
 		signInContractSelection.contract = contract
-		performSegue(withIdentifier: "presentContract", sender: contract)
+		performSegue(withIdentifier: "showSignUpController", sender: contract)
 	}
-	
-//	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//		return CGSize(width: view.bounds.width  * 0.5, height: collectionView.bounds.height)
-//	}
-	
 
 }
 

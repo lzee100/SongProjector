@@ -13,10 +13,14 @@ var AccountStore = AcStore()
 
 class AcStore: NSObject {
 	
-	var icloudID = ""
-	
-	
-	
+	var icloudID: String {
+		set {
+			UserDefaults.standard.set(newValue, forKey: "icloudID")
+		}
+		get {
+			return UserDefaults.standard.value(forKey: "icloudID") as? String ?? ""
+		}
+	}
 	
 }
 
@@ -33,6 +37,10 @@ class FetchIdOperation: AsynchronousOperation {
 	}
 	
 	func requestId() {
+		if AccountStore.icloudID != "" {
+			self.didFinish()
+			return
+		}
 		let container = CKContainer.default()
 		container.fetchUserRecordID() {
 			recordID, error in

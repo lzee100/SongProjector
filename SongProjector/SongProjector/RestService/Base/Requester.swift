@@ -10,8 +10,23 @@ import Foundation
 import CoreData
 import UIKit
 
+struct RestError: Decodable {
+	let errorMessage: String
+	
+	enum CodingKeys: String, CodingKey
+	{
+		case error
+	}
+	
+	init(from decoder: Decoder) throws {
+		let container = try decoder.container(keyedBy: CodingKeys.self)
+		errorMessage = try container.decodeIfPresent(String.self, forKey: .error) ?? "no error message default"
+	}
+	
+}
 
-class Requester<T, S: Decodable>: BaseRS, RequesterType, RequestObserver where T:Codable, T:NSManagedObject {
+
+class Requester<T>: BaseRS, RequesterType, RequestObserver where T:Codable, T:NSManagedObject {
 	
 	
 	
@@ -116,10 +131,11 @@ class Requester<T, S: Decodable>: BaseRS, RequesterType, RequestObserver where T
 		if requestMethod == .get {
 			requestGet(url:  url, parameters: params, success: { (response, result) in
 				
-				self.requestFinished(response: .OK(.updated), result: nil)
+				self.requestFinished(response: .OK(.updated), result: result)
 				
 			}, failure: { (error, response, result) in
-				self.requestFinished(response: .error(response, error), result: nil)
+				let restError = error ?? (result != nil ? NSError(domain: result!.errorMessage, code: 0, userInfo: nil) : nil)
+				self.requestFinished(response: .error(response, restError), result: nil)
 			}, queue: Queues.background)
 		} else {
 			requestSend(url: url, object: body, parameters: params, range: range, success: { (resonpse, result) in
@@ -128,12 +144,9 @@ class Requester<T, S: Decodable>: BaseRS, RequesterType, RequestObserver where T
 					saveResult = result
 				}
 				self.requestFinished(response: .OK(.updated), result: saveResult)
-			}, failure: { (error, response, object) in
-				var responseResult: [T]? = nil
-				if let result = object {
-					responseResult = [result]
-				}
-				self.requestFinished(response: .error(response, error), result: responseResult)
+			}, failure: { (error, response, result) in
+				let restError = error ?? (result != nil ? NSError(domain: result!.errorMessage, code: 0, userInfo: nil) : nil)
+				self.requestFinished(response: .error(response, restError), result: nil)
 			}, queue: Queues.background)
 		}
 		
@@ -171,13 +184,17 @@ class Requester<T, S: Decodable>: BaseRS, RequesterType, RequestObserver where T
 	
 	
 	
-	func requestGet(_ method: RequestMethod = .get, url: String, parameters: [String: Any]?, range: CountableRange<Int>? = nil, success: @escaping (_ response: HTTPURLResponse?, _ result: [T]?) -> Void, failure: @escaping (_ error: NSError?, _ response: HTTPURLResponse?, _ object: T?) -> Void, queue: DispatchQueue) {
+	func requestGet(_ method: RequestMethod = .get, url: String, parameters: [String: Any]?, range: CountableRange<Int>? = nil, success: @escaping (_ response: HTTPURLResponse?, _ result: [T]?) -> Void, failure: @escaping (_ error: NSError?, _ response: HTTPURLResponse?, _ object: RestError?) -> Void, queue: DispatchQueue) {
 		
 		super.dispatchRequest(method, url: url, inputBody: nil, parameters: parameters, range: range, success: {  (response, data) -> Void in
 			
 			// delete all the old that we have based on new with their id's
 			
 			let entities: [T]? = super.decode(data: data)
+			
+			if self.body?.first is User? {
+				
+			}
 			
 			if let old = entities, old.count > 0 {
 				mocBackground.perform({
@@ -190,7 +207,11 @@ class Requester<T, S: Decodable>: BaseRS, RequesterType, RequestObserver where T
 							let ent = CoreEntity.getEntities().filter({ $0.updatedAt != nil })
 							if ent.count > 1 {
 								let oldEntities = ent.sorted(by: { (($0.updatedAt ?? NSDate()) as Date) < (($1.updatedAt ?? NSDate()) as Date) })
-								oldEntities.first?.deleteBackground(false)
+								if let objectId = oldEntities.first?.objectID, (entities?.contains(where: { $0.objectID == objectId }) ?? false) {
+									oldEntities.last?.deleteBackground(false)
+								} else {
+									oldEntities.first?.deleteBackground(false)
+								}
 							}
 						})
 					}
@@ -202,7 +223,7 @@ class Requester<T, S: Decodable>: BaseRS, RequesterType, RequestObserver where T
 							print(error)
 						}
 						
-						success(response, old)
+						success(response, entities)
 						
 					}
 					
@@ -212,16 +233,14 @@ class Requester<T, S: Decodable>: BaseRS, RequesterType, RequestObserver where T
 			}
 			
 		}, failure: {  (error, response, data) -> Void in
-			
-			let object : T? = super.decode(data: data)?.first
-			
-			failure(error, response, object)
+			let restError: RestError? = super.decodeSingle(data: data)
+			failure(error, response, restError)
 			
 		}, queue: queue)
 	}
 	
-	/// supports only 1 object
-	func requestSend<O: Encodable>(url: String, object: [O]?, parameters: [String: Any]?, range: CountableRange<Int>? = nil, success: @escaping (_ response: HTTPURLResponse?, _ result: [T]?) -> Void, failure: @escaping (_ error: NSError?, _ response: HTTPURLResponse?, _ object: T?) -> Void, queue: DispatchQueue) {
+
+	func requestSend<O: Encodable>(url: String, object: [O]?, parameters: [String: Any]?, range: CountableRange<Int>? = nil, success: @escaping (_ response: HTTPURLResponse?, _ result: [T]?) -> Void, failure: @escaping (_ error: NSError?, _ response: HTTPURLResponse?, _ object: RestError?) -> Void, queue: DispatchQueue) {
 		
 		var inputBody: Data? = nil
 		if let object = object {
@@ -231,21 +250,12 @@ class Requester<T, S: Decodable>: BaseRS, RequesterType, RequestObserver where T
 				failure(NSError(domain: "object is not encodable", code: 0, userInfo: nil), nil, nil)
 			}
 		}
-		
 
-//		if let data = inputBody {
-//			do {
-//				let json = try JSONSerialization.jsonObject(with: data, options: []) as Any
-//				print("posting: ==========")
-//				print(String(data: try! JSONSerialization.data(withJSONObject: json, options: .prettyPrinted), encoding: .utf8 )!)
-//			} catch {
-//				print("could not demap cluster with relation // see requester")
-//			}
-//		}
+		inputBody?.printToJson()
 		
 		super.dispatchRequest(self.requestMethod, url: url, inputBody: inputBody, parameters: parameters, range: range, success: {  (response, data) -> Void in
 			
-//			data?.printToJson()
+			data?.printToJson()
 			
 			// delete all the old that we have based on new with their id's
 			
@@ -304,16 +314,9 @@ class Requester<T, S: Decodable>: BaseRS, RequesterType, RequestObserver where T
 			
 		}, failure: {   (error, response, data) -> Void in
 			
-			var object : T? = nil
-			if let data = data {
-				do {
-					object = try JSONDecoder().decode(T.self, from: data)
-				} catch (let error){
-					print("Error \(error)")
-				}
-			}
+			let restError: RestError? = super.decodeSingle(data: data)
 			
-			failure(error, response, object)
+			failure(error, response, restError)
 			
 		}, queue: queue)
 	}

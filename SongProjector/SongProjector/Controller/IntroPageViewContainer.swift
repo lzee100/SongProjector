@@ -28,6 +28,13 @@ class IntroPageViewContainer: ChurchBeamViewController, UIPageViewControllerDele
 		return self.childViewControllers[0] as! UIPageViewController
 	}
 	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		NotificationCenter.default.addObserver(forName: NotificationNames.didSignUpSuccessfully, object: nil, queue: OperationQueue.main) { _ in
+			self.presentingViewController?.dismiss(animated: true, completion: nil)
+		}
+	}
+	
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		self.pageViewController.delegate = self

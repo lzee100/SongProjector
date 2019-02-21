@@ -13,7 +13,7 @@ let UserSubmitter: UerSubmitter = {
 	return UerSubmitter()
 }()
 
-class UerSubmitter: Requester<User, SubmittedID> {
+class UerSubmitter: Requester<User> {
 	
 	override var requesterId: String {
 		return "UserSubmitter"
