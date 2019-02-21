@@ -10,7 +10,7 @@ var db = require('../util/db');
 // PUT — completely overwrite a particular resource’s object
 // DELETE — remove a particular resource’s object
 
-// DELETE FROM localhostchurchbeam.user WHERE userToken = '_49e25bc7d3a83e090878827eb1671f01'
+// DELETE FROM localhostchurchbeam.user WHERE userToken = ''
 
 router.get('/', (req, res , next) => {
     print.print('in user init')
