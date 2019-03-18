@@ -20,12 +20,14 @@ class IntroPageController2: PageController, UICollectionViewDataSource, UICollec
 	
 	static let identifier = "IntroPageController2"
 	
-	fileprivate var contracts: [Contract] = {
-		[.free, .beam, .song]
-	}()
+	fileprivate var contracts: [Contract] {
+		CoreContract.setSortDescriptor(attributeName: "id", ascending: true)
+		return CoreContract.getEntities(onlyDeleted: false, skipFilter: true)
+	}
 	
 	override func viewDidLoad() {
         super.viewDidLoad()
+		ContractFetcher.addObserver(self)
 		titleRightConstraint.constant = view.bounds.width
 		contentLeftConstraint.constant = -view.bounds.width
 		titleLabel.alpha = 0
@@ -42,6 +44,13 @@ class IntroPageController2: PageController, UICollectionViewDataSource, UICollec
 		view.backgroundColor = .black
 		collectionView.backgroundColor = .black
     }
+	
+	override func viewWillAppear(_ animated: Bool) {
+		super.viewWillAppear(animated)
+		print(Locale.current.languageCode ?? "")
+		ContractFetcher.fetch(locale: "NL")
+		navigationController?.setNavigationBarHidden(false, animated: false)
+	}
 	
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
@@ -65,6 +74,7 @@ class IntroPageController2: PageController, UICollectionViewDataSource, UICollec
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+		print(contracts.count)
 		return contracts.count
 	}
 	
@@ -83,7 +93,12 @@ class IntroPageController2: PageController, UICollectionViewDataSource, UICollec
 		signInContractSelection.contract = contract
 		performSegue(withIdentifier: "showSignUpController", sender: contract)
 	}
-
+	
+	override func handleRequestFinish(result: AnyObject?) {
+		Queues.main.async {
+			self.collectionView.reloadData()
+		}
+	}
 }
 
 class AboOptionCell: UICollectionViewCell {
@@ -115,14 +130,16 @@ class AboOptionCell: UICollectionViewCell {
 	
 	fileprivate func apply(contract: Contract) {
 		self.contract = contract
-		titleLabel.text = contract.title
-		features.text = contract.features
-		buttonLabel.text = contract.buttonText
+		titleLabel.text = contract.name
+//		if let cfeatures = contract.hasRcontractFeaturesOrdered {
+//			features.text = cfeatures.compactMap{ $0.content }.joined(separator: "\n")
+//		}
+		buttonLabel.text = contract.buttonContent
 	}
 	
 }
 
-enum Contract: String {
+enum ContractType: String {
 	case free
 	case beam
 	case song

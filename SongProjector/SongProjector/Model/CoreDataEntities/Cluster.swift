@@ -9,7 +9,6 @@
 import Foundation
 import CoreData
 
-@objc(Cluster)
 public class Cluster: Entity {
 	
 	@nonobjc public class func fetchRequest() -> NSFetchRequest<Cluster> {
@@ -59,7 +58,6 @@ public class Cluster: Entity {
 	
 	// MARK: - Init
 	
-	@objc
 	override init(entity: NSEntityDescription, insertInto context: NSManagedObjectContext?) {
 		super.init(entity: entity, insertInto: context)
 	}

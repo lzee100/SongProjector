@@ -9,7 +9,6 @@
 import Foundation
 import CoreData
 
-@objc(SheetSplitEntity)
 public class SheetSplitEntity: Sheet, SheetMetaType {
 	
 	static var type: SheetType {

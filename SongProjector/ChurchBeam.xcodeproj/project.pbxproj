@@ -70,6 +70,13 @@
 		E32A02B521164A8800C78410 /* Bass.m4a in Resources */ = {isa = PBXBuildFile; fileRef = E32A02B421164A8800C78410 /* Bass.m4a */; };
 		E32A02B7211715B300C78410 /* SongService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32A02B6211715B300C78410 /* SongService.swift */; };
 		E32D4D6520017E0100ED81A7 /* EditSongIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32D4D6420017E0100ED81A7 /* EditSongIphoneController.swift */; };
+		E32DB8DA2221E23400277C45 /* ContractFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32DB8D92221E23400277C45 /* ContractFetcher.swift */; };
+		E32DB8DC2221E29600277C45 /* Contract.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32DB8DB2221E29600277C45 /* Contract.swift */; };
+		E32DB8E02230283A00277C45 /* ContractLedger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32DB8DF2230283A00277C45 /* ContractLedger.swift */; };
+		E32DB8E2223460D800277C45 /* IntroStartingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32DB8E1223460D800277C45 /* IntroStartingController.swift */; };
+		E32DB8E4223468D500277C45 /* InviteCodeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32DB8E3223468D500277C45 /* InviteCodeController.swift */; };
+		E32DB8E622347AF000277C45 /* UsersController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32DB8E522347AF000277C45 /* UsersController.swift */; };
+		E32DB8E82235B90E00277C45 /* AddNewUserController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32DB8E72235B90E00277C45 /* AddNewUserController.swift */; };
 		E3314B6620077DD100F470C0 /* SheetExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3314B6520077DD100F470C0 /* SheetExtensions.swift */; };
 		E3314B682007836D00F470C0 /* SheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3314B672007836D00F470C0 /* SheetView.swift */; };
 		E33268BC2022241E002CDA7C /* SongsMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33268BB2022241E002CDA7C /* SongsMenuController.swift */; };
@@ -172,7 +179,7 @@
 		E3A4703021E0CC80000CB3D3 /* ChurchBeamConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A4702F21E0CC80000CB3D3 /* ChurchBeamConfiguration.swift */; };
 		E3A4703221E10B57000CB3D3 /* RequestOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A4703121E10B57000CB3D3 /* RequestOperation.swift */; };
 		E3A4703421E10D35000CB3D3 /* AsynchronousOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A4703321E10D35000CB3D3 /* AsynchronousOperation.swift */; };
-		E3AB276C221EB31600B9145C /* InitFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AB276B221EB31600B9145C /* InitFetcher.swift */; };
+		E3AB276C221EB31600B9145C /* InitSubmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AB276B221EB31600B9145C /* InitSubmitter.swift */; };
 		E3BC6BB71FFEBE350039E0CA /* HeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3BC6BB61FFEBE350039E0CA /* HeaderView.xib */; };
 		E3BC6BBA1FFEBECA0039E0CA /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3BC6BB91FFEBECA0039E0CA /* HeaderView.swift */; };
 		E3C2AD102025A5D500ACFFE7 /* MixerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3C2AD0F2025A5D500ACFFE7 /* MixerView.xib */; };
@@ -288,6 +295,13 @@
 		E32A02B421164A8800C78410 /* Bass.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Bass.m4a; sourceTree = "<group>"; };
 		E32A02B6211715B300C78410 /* SongService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongService.swift; sourceTree = "<group>"; };
 		E32D4D6420017E0100ED81A7 /* EditSongIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSongIphoneController.swift; sourceTree = "<group>"; };
+		E32DB8D92221E23400277C45 /* ContractFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContractFetcher.swift; sourceTree = "<group>"; };
+		E32DB8DB2221E29600277C45 /* Contract.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contract.swift; sourceTree = "<group>"; };
+		E32DB8DF2230283A00277C45 /* ContractLedger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContractLedger.swift; sourceTree = "<group>"; };
+		E32DB8E1223460D800277C45 /* IntroStartingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroStartingController.swift; sourceTree = "<group>"; };
+		E32DB8E3223468D500277C45 /* InviteCodeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteCodeController.swift; sourceTree = "<group>"; };
+		E32DB8E522347AF000277C45 /* UsersController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersController.swift; sourceTree = "<group>"; };
+		E32DB8E72235B90E00277C45 /* AddNewUserController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewUserController.swift; sourceTree = "<group>"; };
 		E3314B6520077DD100F470C0 /* SheetExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetExtensions.swift; sourceTree = "<group>"; };
 		E3314B672007836D00F470C0 /* SheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetView.swift; sourceTree = "<group>"; };
 		E33268BB2022241E002CDA7C /* SongsMenuController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongsMenuController.swift; sourceTree = "<group>"; };
@@ -392,7 +406,7 @@
 		E3A4702F21E0CC80000CB3D3 /* ChurchBeamConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChurchBeamConfiguration.swift; sourceTree = "<group>"; };
 		E3A4703121E10B57000CB3D3 /* RequestOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestOperation.swift; sourceTree = "<group>"; };
 		E3A4703321E10D35000CB3D3 /* AsynchronousOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsynchronousOperation.swift; sourceTree = "<group>"; };
-		E3AB276B221EB31600B9145C /* InitFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitFetcher.swift; sourceTree = "<group>"; };
+		E3AB276B221EB31600B9145C /* InitSubmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitSubmitter.swift; sourceTree = "<group>"; };
 		E3BC6BB61FFEBE350039E0CA /* HeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HeaderView.xib; sourceTree = "<group>"; };
 		E3BC6BB91FFEBECA0039E0CA /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
 		E3C2AD0F2025A5D500ACFFE7 /* MixerView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MixerView.xib; sourceTree = "<group>"; };
@@ -583,6 +597,10 @@
 				E37A49332219F4F3003BD945 /* SignUpOrganisationController.swift */,
 				E37A49312219F4A9003BD945 /* SignUpPersonalInfoController.swift */,
 				E35B63C2221A8F22006C50AB /* IntroGoogleSigninController.swift */,
+				E32DB8E1223460D800277C45 /* IntroStartingController.swift */,
+				E32DB8E3223468D500277C45 /* InviteCodeController.swift */,
+				E32DB8E522347AF000277C45 /* UsersController.swift */,
+				E32DB8E72235B90E00277C45 /* AddNewUserController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -714,6 +732,8 @@
 				E37A49212218C3B0003BD945 /* Role.swift */,
 				E37A49232218C406003BD945 /* User.swift */,
 				E37A49252218C42E003BD945 /* Organization.swift */,
+				E32DB8DB2221E29600277C45 /* Contract.swift */,
+				E32DB8DF2230283A00277C45 /* ContractLedger.swift */,
 			);
 			path = CoreDataEntities;
 			sourceTree = "<group>";
@@ -721,12 +741,12 @@
 		E3896A4521E7A383008CB5A5 /* Fetchers */ = {
 			isa = PBXGroup;
 			children = (
-				E3AB276B221EB31600B9145C /* InitFetcher.swift */,
 				E3896A3A21E3F3D2008CB5A5 /* TagFetcher.swift */,
 				E334B11021ED21F80088CD48 /* ClusterFetcher.swift */,
 				E37A492B2218CDD3003BD945 /* UserFetcher.swift */,
 				E37A492D2218D1C4003BD945 /* OrganizationFetcher.swift */,
 				E37A492F2218D27D003BD945 /* RoleFetcher.swift */,
+				E32DB8D92221E23400277C45 /* ContractFetcher.swift */,
 			);
 			path = Fetchers;
 			sourceTree = "<group>";
@@ -752,6 +772,7 @@
 		E3896A4921E7A3E5008CB5A5 /* Submitters */ = {
 			isa = PBXGroup;
 			children = (
+				E3AB276B221EB31600B9145C /* InitSubmitter.swift */,
 				E3896A4A21E7A3FD008CB5A5 /* TagSubmitter.swift */,
 				E334B11221ED22910088CD48 /* ClusterSubmitter.swift */,
 				E37A49272218CB3A003BD945 /* OrganizationSubmitter.swift */,
@@ -1078,6 +1099,7 @@
 				E334B11121ED21F80088CD48 /* ClusterFetcher.swift in Sources */,
 				E3F421A41FFE457500C332B0 /* LabelDoubleSwitchCell.swift in Sources */,
 				E3CAE6A120C5137000D3B36F /* ChurchBeamCell.swift in Sources */,
+				E32DB8E4223468D500277C45 /* InviteCodeController.swift in Sources */,
 				E3812DE7201C972B00F10B2C /* SettingsController.swift in Sources */,
 				E390864D22105EA300320421 /* DataExtensions.swift in Sources */,
 				E334B10D21ED045C0088CD48 /* GoogleActivity.swift in Sources */,
@@ -1085,6 +1107,7 @@
 				E3D9C29020D6F4E8006EDFE3 /* SongServiceContainerViewController.swift in Sources */,
 				E36E76DA21EF5338002E20EF /* IntExtensions.swift in Sources */,
 				E399EA87202F574600E8CE0E /* NewSongMenuController.swift in Sources */,
+				E32DB8E82235B90E00277C45 /* AddNewUserController.swift in Sources */,
 				E309DCFA1FF4954100C3D135 /* TagExtensions.swift in Sources */,
 				E334B10F21ED201B0088CD48 /* Instrument.swift in Sources */,
 				E3896A3121E3F04B008CB5A5 /* Entity.swift in Sources */,
@@ -1101,7 +1124,7 @@
 				E31F0B7520F5D1E800C22FD1 /* SheetPastorsExtensions.swift in Sources */,
 				E399EA89202F73D700E8CE0E /* CustomSheetsController.swift in Sources */,
 				E3896A3921E3F17C008CB5A5 /* HTTPError.swift in Sources */,
-				E3AB276C221EB31600B9145C /* InitFetcher.swift in Sources */,
+				E3AB276C221EB31600B9145C /* InitSubmitter.swift in Sources */,
 				E3F8C9D4201690FC00C94292 /* BibleStudyIphoneController.swift in Sources */,
 				E311A44820725B72007BB6CB /* ImportBibleController.swift in Sources */,
 				E31171791FE5A1A0008D9D51 /* AddButtonCell.swift in Sources */,
@@ -1110,6 +1133,7 @@
 				E31F87BD1FE7035D00D5D4BA /* Text.swift in Sources */,
 				E311715A1FE5A0A3008D9D51 /* Notifications.swift in Sources */,
 				E36F41681FEE965200E989E5 /* NewSongIphoneController.swift in Sources */,
+				E32DB8DC2221E29600277C45 /* Contract.swift in Sources */,
 				E334B10321ED02BA0088CD48 /* SheetTitleImageEntity.swift in Sources */,
 				E38347631FF8434D008AE69D /* ImageExtensions.swift in Sources */,
 				E31171531FE5A071008D9D51 /* ArrayExtensions.swift in Sources */,
@@ -1137,6 +1161,7 @@
 				E31171771FE5A1A0008D9D51 /* NewSongSheetCell.swift in Sources */,
 				E334B0FB21ECD1780088CD48 /* Cluster.swift in Sources */,
 				E35099F120DD4FA7005CA984 /* SaveNewSongTitleTimeVC.swift in Sources */,
+				E32DB8DA2221E23400277C45 /* ContractFetcher.swift in Sources */,
 				E37938EC21271EC90091698D /* PickerCell.swift in Sources */,
 				E3812DED201CE1D300F10B2C /* GoogleActivityFetcher.swift in Sources */,
 				E3635A0B217CAF98002758D5 /* MixerAnimationView.swift in Sources */,
@@ -1180,6 +1205,7 @@
 				E334B11321ED22910088CD48 /* ClusterSubmitter.swift in Sources */,
 				E3355D6F1FEDA645004C03AE /* TextViewExtensions.swift in Sources */,
 				E3FA3DF8200DE8570038C97B /* LabelTextViewCell.swift in Sources */,
+				E32DB8E2223460D800277C45 /* IntroStartingController.swift in Sources */,
 				E31171661FE5A0E7008D9D51 /* SongServiceController.swift in Sources */,
 				E3CB6852200634EC00F007B2 /* TimeIntervalExtensions.swift in Sources */,
 				E39864DA2098D24100DF5199 /* OrganizationsCRUD.swift in Sources */,
@@ -1207,8 +1233,10 @@
 				E34ED29D2008D63700534C72 /* SheetSplit.swift in Sources */,
 				E334B10921ED03840088CD48 /* SheetSplitEntity.swift in Sources */,
 				E334B0FF21ED02190088CD48 /* Sheet.swift in Sources */,
+				E32DB8E02230283A00277C45 /* ContractLedger.swift in Sources */,
 				E38347691FFA512D008AE69D /* SheetTitleContent.swift in Sources */,
 				E3BC6BBA1FFEBECA0039E0CA /* HeaderView.swift in Sources */,
+				E32DB8E622347AF000277C45 /* UsersController.swift in Sources */,
 				E3896A3221E3F04B008CB5A5 /* GlobalDateFormatter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

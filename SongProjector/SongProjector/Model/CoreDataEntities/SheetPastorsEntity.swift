@@ -9,7 +9,6 @@
 import Foundation
 import CoreData
 
-@objc(SheetPastorsEntity)
 public class SheetPastorsEntity: Sheet, SheetMetaType {
 	
 	static var type: SheetType {

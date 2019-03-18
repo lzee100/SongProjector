@@ -46,6 +46,7 @@ class FetchIdOperation: AsynchronousOperation {
 			recordID, error in
 			AccountStore.icloudID = recordID?.recordName ?? ""
 			if error != nil {
+				self.error = error
 				print(error!.localizedDescription)
 				self.didFail()
 			} else {

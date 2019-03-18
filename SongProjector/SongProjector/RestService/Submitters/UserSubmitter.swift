@@ -20,12 +20,11 @@ class UerSubmitter: Requester<User> {
 	}
 	
 	override var path: String {
-		return "users/"
+		return "users"
 	}
 	
 	override var coreDataManager: CoreDataManager<User> {
 		return CoreUser
 	}
-	
 	
 }

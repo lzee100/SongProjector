@@ -8,6 +8,12 @@
 
 import Foundation
 
+extension NSDate {
+	var date: Date {
+		return self as Date
+	}
+}
+
 extension Date {
 	
 	// MARK: - Properties
@@ -493,6 +499,34 @@ extension Date {
 	public func setting(seconds: Int) -> Date?{
 		let time = self.timeClass
 		return self.dateBySettingTime(Time(h: time.hour, m: time.minute, s: seconds))
+	}
+	
+	func yearsFrom(_ date: Date) -> Int {
+		return (Calendar.current as NSCalendar).components(.year, from: date, to: self, options: []).year!
+	}
+	
+	func monthsFrom(_ date: Date) -> Int {
+		return (Calendar.current as NSCalendar).components(.month, from: date, to: self, options: []).month!
+	}
+	
+	func weeksFrom(_ date: Date) -> Int {
+		return (Calendar.current as NSCalendar).components(.weekOfYear, from: date, to: self, options: []).weekOfYear!
+	}
+	
+	func daysFrom(_ date: Date) -> Int {
+		return (Calendar.current as NSCalendar).components(.day, from: date.dateMidnight, to: self.dateMidnight, options: []).day!
+	}
+	
+	func hoursFrom(_ date: Date) -> Int {
+		return (Calendar.current as NSCalendar).components(.hour, from: date, to: self, options: []).hour!
+	}
+	
+	func minutesFrom(_ date: Date) -> Int {
+		return (Calendar.current as NSCalendar).components(.minute, from: date, to: self, options: []).minute!
+	}
+	
+	func secondsFrom(_ date: Date) -> Int {
+		return (Calendar.current as NSCalendar).components(.second, from: date, to: self, options: []).second!
 	}
 	
 	

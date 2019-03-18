@@ -20,7 +20,7 @@ class OnizationSubmitter: Requester<Organization> {
 	}
 	
 	override var path: String {
-		return "organizations/"
+		return "organizations"
 	}
 	
 	override var coreDataManager: CoreDataManager<Organization> {

@@ -10,6 +10,22 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
+        <!--Navigation Controller-->
+        <scene sceneID="6m4-8z-3Oc">
+            <objects>
+                <navigationController storyboardIdentifier="IntroPageViewContainerNav" id="5PZ-q5-3kV" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="UuN-46-HQR">
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="hXZ-Tv-qDd" kind="relationship" relationship="rootViewController" id="VUH-Do-KrV"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="50z-1R-YvJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-6204" y="-4634"/>
+        </scene>
         <!--Intro Page View Container-->
         <scene sceneID="BPE-Yb-7Pa">
             <objects>
@@ -19,7 +35,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="j7e-8D-Qav">
-                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
+                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
                                 <connections>
                                     <segue destination="Dlx-jL-UV6" kind="embed" id="x8H-Zu-neK"/>
                                 </connections>
@@ -34,10 +50,11 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="ccc-RS-0e3"/>
                     </view>
+                    <navigationItem key="navigationItem" id="ckE-Yq-v2K"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FYa-6G-Fmx" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-5506" y="-3631"/>
+            <point key="canvasLocation" x="-6204" y="-3861"/>
         </scene>
         <!--Page View Controller-->
         <scene sceneID="55e-Qb-d5y">
@@ -45,7 +62,7 @@
                 <pageViewController autoresizesArchivedViewToFullSize="NO" transitionStyle="scroll" navigationOrientation="horizontal" spineLocation="none" id="Dlx-jL-UV6" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nwJ-ai-WAF" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-5506" y="-2893"/>
+            <point key="canvasLocation" x="-6204" y="-3176"/>
         </scene>
         <!--Intro Page Controller1-->
         <scene sceneID="zCP-SG-ERp">
@@ -92,7 +109,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5v-hm-ZMi" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-4721" y="-2884"/>
+            <point key="canvasLocation" x="-6681" y="-2499"/>
         </scene>
         <!--Intro Google Signin Controller-->
         <scene sceneID="Wxh-4w-s5N">
@@ -132,7 +149,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nOf-ub-Yga">
-                                                    <rect key="frame" x="10" y="10" width="295" height="23.5"/>
+                                                    <rect key="frame" x="10" y="10" width="295" height="24"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -180,7 +197,83 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="02T-cS-TRN" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-3231" y="-1272"/>
+            <point key="canvasLocation" x="-716" y="-1710.4947526236883"/>
+        </scene>
+        <!--Intro Starting Controller-->
+        <scene sceneID="80I-A1-3ue">
+            <objects>
+                <viewController storyboardIdentifier="IntroStartingController" id="d0s-lN-qNW" customClass="IntroStartingController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="41C-Ir-ilx">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Van start" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="owU-hI-TDq">
+                                <rect key="frame" x="95" y="70" width="230" height="80"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="80" id="VSG-Ut-nkp"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Avenir-LightOblique" family="Avenir" pointSize="60"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8AW-d6-0x6">
+                                <rect key="frame" x="40" y="170" width="250" height="116.5"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="250" id="G3q-Za-ppz"/>
+                                </constraints>
+                                <string key="text">Bij churchbeam kan je starten als nieuwe gebruiker of je kan deel worden van een bestaande organisatie door middel van een koppelcode.</string>
+                                <fontDescription key="fontDescription" name="Avenir-Black" family="Avenir" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ROS-z0-Ao2">
+                                <rect key="frame" x="40" y="306.5" width="295" height="60"/>
+                                <color key="backgroundColor" red="0.93725490570000003" green="0.93725490570000003" blue="0.95686274770000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="60" id="1Na-Ih-VA2"/>
+                                </constraints>
+                                <state key="normal" title="Ik ben een nieuwe gebruiker"/>
+                                <connections>
+                                    <segue destination="nff-pe-WEc" kind="show" id="DN6-uz-xTf"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="h5O-Aa-ecG">
+                                <rect key="frame" x="40" y="386.5" width="295" height="60"/>
+                                <color key="backgroundColor" red="0.93725490570000003" green="0.93725490570000003" blue="0.95686274770000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="60" id="5LI-eX-OWa"/>
+                                </constraints>
+                                <state key="normal" title="Ik heb een koppelcode"/>
+                                <connections>
+                                    <segue destination="NM5-Jg-Ym3" kind="show" id="0fc-4v-W1L"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="owU-hI-TDq" firstAttribute="top" secondItem="8vc-cB-qF8" secondAttribute="top" constant="50" id="GAK-pb-2Gj"/>
+                            <constraint firstItem="ROS-z0-Ao2" firstAttribute="leading" secondItem="8vc-cB-qF8" secondAttribute="leading" constant="40" id="K6T-BM-ArP"/>
+                            <constraint firstItem="8vc-cB-qF8" firstAttribute="trailing" secondItem="owU-hI-TDq" secondAttribute="trailing" constant="50" id="ZT3-fb-pQU"/>
+                            <constraint firstItem="h5O-Aa-ecG" firstAttribute="leading" secondItem="8vc-cB-qF8" secondAttribute="leading" constant="40" id="aQh-4a-pgu"/>
+                            <constraint firstItem="8vc-cB-qF8" firstAttribute="trailing" secondItem="ROS-z0-Ao2" secondAttribute="trailing" constant="40" id="c6M-i1-eJ1"/>
+                            <constraint firstItem="8vc-cB-qF8" firstAttribute="trailing" secondItem="h5O-Aa-ecG" secondAttribute="trailing" constant="40" id="hIt-UZ-Jjf"/>
+                            <constraint firstItem="ROS-z0-Ao2" firstAttribute="top" secondItem="8AW-d6-0x6" secondAttribute="bottom" constant="20" id="ifh-dM-uWO"/>
+                            <constraint firstItem="8AW-d6-0x6" firstAttribute="top" secondItem="owU-hI-TDq" secondAttribute="bottom" constant="20" id="sDu-Kl-uhc"/>
+                            <constraint firstItem="h5O-Aa-ecG" firstAttribute="top" secondItem="ROS-z0-Ao2" secondAttribute="bottom" constant="20" id="uRm-pa-h40"/>
+                            <constraint firstItem="8AW-d6-0x6" firstAttribute="leading" secondItem="8vc-cB-qF8" secondAttribute="leading" constant="40" id="xc8-gl-jN5"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="8vc-cB-qF8"/>
+                    </view>
+                    <connections>
+                        <outlet property="contentLabel" destination="8AW-d6-0x6" id="jzd-Ua-CxH"/>
+                        <outlet property="inviteCodeButton" destination="h5O-Aa-ecG" id="220-DP-7cy"/>
+                        <outlet property="newUserButton" destination="ROS-z0-Ao2" id="jWy-xa-2CJ"/>
+                        <outlet property="titleLabel" destination="owU-hI-TDq" id="7XH-Vj-Uzn"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="uOG-xx-Sp9" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-5740" y="-2499"/>
         </scene>
         <!--Intro Page Controller2-->
         <scene sceneID="RfK-bm-ezX">
@@ -306,6 +399,7 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="cIB-pg-bLg"/>
                     </view>
+                    <navigationItem key="navigationItem" id="YUd-sR-Hc5"/>
                     <connections>
                         <outlet property="collectionView" destination="Dcb-0L-zQX" id="zOI-O0-MNf"/>
                         <outlet property="contentLabel" destination="QUJ-41-d7B" id="wlX-nD-GeO"/>
@@ -317,7 +411,81 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TId-KA-pDa" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-5506" y="-2064"/>
+            <point key="canvasLocation" x="-4870" y="-2499"/>
+        </scene>
+        <!--Invite Code Controller-->
+        <scene sceneID="y1E-Vr-3Wd">
+            <objects>
+                <viewController storyboardIdentifier="InviteCodeController" id="FZb-Yc-TBe" customClass="InviteCodeController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="0tN-Pv-vbn">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Om toe te treden tot een bestaande organisatie heb je een koppelcode nodig. Voer hieronder de koppelcode in." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="id8-lg-060">
+                                <rect key="frame" x="40" y="214" width="250" height="93"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="250" id="C4E-i8-2ok"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Avenir-Black" family="Avenir" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Koppelcode" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="M4Q-28-3fa">
+                                <rect key="frame" x="40" y="327" width="295" height="30"/>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <action selector="inviteCodeTextFieldDidChange:" destination="FZb-Yc-TBe" eventType="editingChanged" id="mSv-xs-gx2"/>
+                                </connections>
+                            </textField>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Code" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Kg8-hp-TGs">
+                                <rect key="frame" x="177" y="114" width="148" height="80"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="80" id="QBA-UM-LsI"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Avenir-LightOblique" family="Avenir" pointSize="60"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="F3s-aD-cuF" firstAttribute="trailing" secondItem="M4Q-28-3fa" secondAttribute="trailing" constant="40" id="OkE-sA-wls"/>
+                            <constraint firstItem="id8-lg-060" firstAttribute="top" secondItem="Kg8-hp-TGs" secondAttribute="bottom" constant="20" id="Se4-Xg-tF3"/>
+                            <constraint firstItem="M4Q-28-3fa" firstAttribute="top" secondItem="id8-lg-060" secondAttribute="bottom" constant="20" id="Yla-E8-fhY"/>
+                            <constraint firstItem="M4Q-28-3fa" firstAttribute="leading" secondItem="F3s-aD-cuF" secondAttribute="leading" constant="40" id="hyK-5m-nRP"/>
+                            <constraint firstItem="F3s-aD-cuF" firstAttribute="trailing" secondItem="Kg8-hp-TGs" secondAttribute="trailing" constant="50" id="koa-gg-MO5"/>
+                            <constraint firstItem="Kg8-hp-TGs" firstAttribute="top" secondItem="F3s-aD-cuF" secondAttribute="top" constant="50" id="uND-7F-sGj"/>
+                            <constraint firstItem="id8-lg-060" firstAttribute="leading" secondItem="F3s-aD-cuF" secondAttribute="leading" constant="40" id="yqW-Yj-7cP"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="F3s-aD-cuF"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="Akg-Ks-oTa">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="BSz-Be-OGV">
+                            <connections>
+                                <action selector="didPressCancel:" destination="FZb-Yc-TBe" id="3FI-Ms-lWi"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="eQI-M4-l3O">
+                            <connections>
+                                <action selector="didPressDone:" destination="FZb-Yc-TBe" id="aSa-qc-D6H"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="cancelButton" destination="BSz-Be-OGV" id="j10-ey-dfo"/>
+                        <outlet property="contentLabel" destination="id8-lg-060" id="q1b-vY-DHs"/>
+                        <outlet property="contentLabelLeftConstraint" destination="yqW-Yj-7cP" id="m93-yy-pAh"/>
+                        <outlet property="doneButton" destination="eQI-M4-l3O" id="xPh-Iu-96I"/>
+                        <outlet property="inviteCodeTextField" destination="M4Q-28-3fa" id="diw-dM-jx9"/>
+                        <outlet property="titleLabel" destination="Kg8-hp-TGs" id="Rlo-th-Jch"/>
+                        <outlet property="titleLabelRightConstraint" destination="koa-gg-MO5" id="5is-di-mM5"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Dms-oK-mwD" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-4026" y="-1728"/>
         </scene>
         <!--Sign Up Organisation Controller-->
         <scene sceneID="VcO-Ag-8eg">
@@ -396,7 +564,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3k7-hN-yyx" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-3852" y="-2064"/>
+            <point key="canvasLocation" x="-3214" y="-2499"/>
         </scene>
         <!--Sign Up Personal Info Controller-->
         <scene sceneID="PeV-lD-Udn">
@@ -500,7 +668,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qVE-fh-7wU" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-3039" y="-2064"/>
+            <point key="canvasLocation" x="-2402" y="-2499"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="Cgi-Dp-uxx">
@@ -518,7 +686,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ayq-fc-2Zs" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-4086" y="-1272"/>
+            <point key="canvasLocation" x="-1572" y="-1710.4947526236883"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="UFO-wh-ri6">
@@ -536,7 +704,25 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="d53-Hi-IIe" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-4663" y="-2064"/>
+            <point key="canvasLocation" x="-4026" y="-2499"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="Z7S-cl-Lkd">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="NM5-Jg-Ym3" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Z6p-XA-BDb">
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="FZb-Yc-TBe" kind="relationship" relationship="rootViewController" id="D8v-gz-gof"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="oXm-G7-EpO" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-4871.1999999999998" y="-1727.5862068965519"/>
         </scene>
     </scenes>
 </document>

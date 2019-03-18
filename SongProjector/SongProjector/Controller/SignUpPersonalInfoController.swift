@@ -10,36 +10,38 @@
 import Foundation
 import UIKit
 
+
 class SignUpPersonalInfoController: ChurchBeamViewController, UITableViewDelegate, UITableViewDataSource, SignUpTextFieldDelegate {
 	
 	@IBOutlet var titleLabel: UILabel!
 	@IBOutlet var tableView: UITableView!
 	
 	
-	var contract: Contract {
+	var contract: Contract? {
 		return signInContractSelection.contract
 	}
 	var organizationName: String = ""
 	var organization: Organization!
 	var user: User!
+	var contractLedger: ContractLedger!
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		let userDefaults = UserDefaults.standard
-		UserSubmitter.addObserver(self)
-		OrganizationSubmitter.addObserver(self)
+//		UserSubmitter.addObserver(self)
+//		OrganizationSubmitter.addObserver(self)
+		UserFetcher.addObserver(self)
 		tableView.rowHeight = UITableViewAutomaticDimension
 		view.backgroundColor = themeWhiteBlackBackground
 		titleLabel.textColor = themeWhiteBlackTextColor
+		
 		organization = CoreOrganization.createEntityNOTsave()
-		organization.title = "kerk"
-		
+		contractLedger = CoreContractLedger.createEntityNOTsave()
 		user = CoreUser.createEntityNOTsave()
-		
-		user.firstName = "Leo"
-		user.lastName = "van der Zee"
-		user.bankAccountName = "L. van der Zee"
-		user.bankAccountNumber = "NL34INGB12345678"
+
+		organization.title = "kerk"
+		contractLedger.phoneNumber = "0628917553"
+		contractLedger.userName = "Leo van der Zee"
+
 		user.appInstallToken = UIDevice.current.identifierForVendor!.uuidString
 		user.userToken = AccountStore.icloudID
 		navigationItem.rightBarButtonItem = UIBarButtonItem(title: Text.Actions.done, style: .plain, target: self, action: #selector(didSelectDone))
@@ -47,11 +49,14 @@ class SignUpPersonalInfoController: ChurchBeamViewController, UITableViewDelegat
 	}
 	
 	func numberOfSections(in tableView: UITableView) -> Int {
-		return contract == .free ? 1 : 2
+		return contract?.id == 0 ? 1 : 2
 	}
 	
 	
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+		guard let contract = contract else {
+			return 0
+		}
 		switch Section.for(section, contract: contract) {
 		case .general: return Row.general.count
 		case .beam: return Row.beam.count
@@ -60,13 +65,15 @@ class SignUpPersonalInfoController: ChurchBeamViewController, UITableViewDelegat
 	}
 	
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		guard let contract = contract else { return UITableViewCell() }
+		
 		let row = Row.for(indexPath, contract: contract)
 		let cell = tableView.dequeueReusableCell(withIdentifier: row.identifier)!
 		if let cell = cell as? SignUpLabelCell {
 			cell.row = row
 		} else if let cell = cell as? SignUpTextFieldCell {
 			cell.row = row
-			cell.user = user
+			cell.contractLedger = contractLedger
 			cell.delegate = self
 		}
 		return cell
@@ -83,12 +90,38 @@ class SignUpPersonalInfoController: ChurchBeamViewController, UITableViewDelegat
 			present(alert, animated: true, completion: nil)
 			return
 		}
-		OrganizationSubmitter.submit([organization], requestMethod: .post)
+		
+		guard let contract = contract else {
+			let alert = UIAlertController(title: nil, message: "Please select a contract", preferredStyle: UIAlertControllerStyle.alert)
+			alert.addAction(UIAlertAction(title: Text.Actions.ok, style: .default, handler: nil))
+			present(alert, animated: true, completion: nil)
+			return
+		}
+		
+		contractLedger.contractId = contract.id
+		// not yet known
+		// contractLedger.organizationId = organization.id
+		let userInitInfo = UserInitInfo(organizationTitle: organization.title!, phoneNumber: contractLedger.phoneNumber, userName: contractLedger.userName, appInstallToken: user.appInstallToken!, userToken: user.userToken!, contractId: contract.id, hasApplePay: false)
+//		organization.addToHasContractLedgers(contractLedger)
+//		OrganizationSubmitter.submit([organization], requestMethod: .post)
+		InitSubmitter.submitUserInit(userInitInfo, success: { (response, result) in
+			Queues.main.async {
+				UserFetcher.fetchMe(force: true)
+			}
+		}) { (error, response, result) in
+			Queues.main.async {
+				let restError = error ?? (result != nil ? NSError(domain: result!.errorMessage, code: 0, userInfo: nil) : nil)
+				self.show(error: .error(response, restError), time: 4)
+			}
+		}
 	}
 	
 	override func handleRequestFinish(result: AnyObject?) {
-		if ((result as? [Organization])?.first) != nil {
-			UserSubmitter.submit([user], requestMethod: .post)
+		if let organization = (result as? [Organization])?.first, let role = organization.hasRoles?.allObjects.first as? Role {
+			Queues.main.async {
+				self.user.roleId = role.id
+				UserSubmitter.submit([self.user], requestMethod: .post)
+			}
 		} else if ((result as? [User]) != nil) {
 			Queues.main.async {
 				self.dismiss(animated: true, completion: {
@@ -101,15 +134,12 @@ class SignUpPersonalInfoController: ChurchBeamViewController, UITableViewDelegat
 	}
 	
 	func textfieldDidChange() {
-		let firstName = user.firstName != nil && user.firstName != ""
-		let lastName = user.lastName != nil && user.lastName != ""
-		let bankAccountName = user.bankAccountName != nil && user.bankAccountName != ""
-		let bankAccountNumber = user.bankAccountNumber != nil && user.bankAccountNumber != ""
-		let all = [firstName, lastName, bankAccountNumber, bankAccountName]
+		let userName = contractLedger.userName != ""
+		let phoneNumber = contractLedger.phoneNumber != ""
+		let all = [userName, phoneNumber]
 
 		navigationItem.rightBarButtonItem?.isEnabled = all.filter({ !$0 }).count == 0
 	}
-	
 	
 	
 }
@@ -139,17 +169,15 @@ class SignUpTextFieldCell: UITableViewCell {
 	@IBOutlet var textField: UITextField!
 	
 	var row: Row = .generalInfo { didSet { update() } }
-	var user: User? = nil
+	var contractLedger: ContractLedger? = nil
 	var delegate: SignUpTextFieldDelegate?
 	
 	static let identifier = "SignUpTextFieldCell"
 	
 	func update() {
 		switch row {
-		case .firstName: textField.text = "Leo"
-		case .lastName: textField.text = "van der Zee"
-		case .banknumber: textField.text = "NL34INGB12345678"
-		case .bankUsername: textField.text = "L. van der Zee"
+		case .userName: textField.text = "Leo van der Zee"
+		case .phoneNumber: textField.text = "0628917553"
 		default: break
 		}
 		textField.placeholder = row.textValue
@@ -157,10 +185,14 @@ class SignUpTextFieldCell: UITableViewCell {
 	
 	@IBAction func textFieldDidChange(_ sender: UITextField) {
 		switch row {
-		case .firstName: user?.firstName = textField.text
-		case .lastName: user?.lastName = textField.text
-		case .bankUsername: user?.bankAccountName = textField.text
-		case .banknumber: user?.bankAccountNumber = textField.text
+		case .userName:
+			if let value = textField.text {
+				contractLedger?.userName = value
+			}
+		case .phoneNumber:
+			if let value = textField.text {
+				contractLedger?.phoneNumber = value
+			}
 		default: return
 		}
 		delegate?.textfieldDidChange()
@@ -177,10 +209,11 @@ enum Section {
 	static let songSections = [general, song]
 	
 	static func `for`(_ section: Int, contract: Contract) -> Section {
-		switch contract {
-		case .free: return general
-		case .beam: return beamSections[section]
-		case .song: return songSections[section]
+		switch contract.id {
+		case 0: return general
+		case 1: return beamSections[section]
+		case 2: return songSections[section]
+		default: return general
 		}
 	}
 }
@@ -189,17 +222,14 @@ enum Section {
 enum Row {
 	case generalInfo
 	case nameInfo
-	case firstName
-	case lastName
-	case bankInfo
-	case banknumber
-	case bankUsername
+	case userName
+	case phoneNumber
 	case agreementBeam
 	case agreementSong
 	
-	static let general: [Row] = [generalInfo, nameInfo, firstName, lastName]
-	static let beam: [Row] = [bankInfo, banknumber, bankUsername, agreementBeam]
-	static let song: [Row] = [bankInfo, banknumber, bankUsername, agreementSong]
+	static let general: [Row] = [generalInfo, nameInfo, userName, phoneNumber]
+	static let beam: [Row] = [agreementBeam]
+	static let song: [Row] = [agreementSong]
 	
 	static func `for`(_ indexPath: IndexPath, contract: Contract) -> Row {
 		switch Section.for(indexPath.section, contract: contract) {
@@ -212,12 +242,9 @@ enum Row {
 	var textValue: String {
 		switch self {
 		case .generalInfo: return "Om je account te kunnen opzetten hebben we wat informatie van je nodig."
-		case .nameInfo: return "Allereerst hebben we een voor en achternaam van je nodig. "
-		case .firstName: return "Voornaam"
-		case .lastName: return "Achternaam"
-		case .bankInfo: return "Om je een tikkie te kunnen sturen hebben we je naam nodig die je gebruikt voor je rekening en je rekeningnummer."
-		case .bankUsername: return "Naam bij bankrekening"
-		case .banknumber: return "Bankrekeningnummer"
+		case .nameInfo: return "Allereerst hebben we een voor en achternaam en telefoonnummer van je nodig. Het telefoonnummer wordt gebruikt voor de betaling door middel van Tikkie"
+		case .userName: return "Gebruikersnaam"
+		case .phoneNumber: return "Telefoonnummer"
 		case .agreementBeam: return "Ik ga akkoord met de voorwaarden van Beam en betaal 6 euro per maand"
 		case .agreementSong: return "Ik ga akkoord met de voorwaarden van Song en betaal 10 euro per maand"
 		}
@@ -227,14 +254,10 @@ enum Row {
 		switch self {
 		case .generalInfo: return SignUpLabelCell.identifier
 		case .nameInfo: return SignUpLabelCell.identifier
-		case .firstName: return SignUpTextFieldCell.identifier
-		case .lastName: return SignUpTextFieldCell.identifier
-		case .bankInfo: return SignUpLabelCell.identifier
-		case .bankUsername: return SignUpTextFieldCell.identifier
-		case .banknumber: return SignUpTextFieldCell.identifier
+		case .userName: return SignUpTextFieldCell.identifier
+		case .phoneNumber: return SignUpTextFieldCell.identifier
 		case .agreementBeam: return SignUpTextFieldCell.identifier
 		case .agreementSong: return SignUpTextFieldCell.identifier
-			
 		}
 	}
 }

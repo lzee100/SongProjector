@@ -37,6 +37,12 @@ class OganizationFetcher: Requester<Organization> {
 		var params = super.params
 		if let orgId = orgId {
 			params["organizationId"] = "\(orgId)"
+		} else {
+			let user = CoreUser.getEntities().first
+			if let userId = user?.id, let appId = user?.appInstallToken {
+				params["userId"] = "\(userId)"
+				params["appId"] = "\(appId)"
+			}
 		}
 		return params
 	}

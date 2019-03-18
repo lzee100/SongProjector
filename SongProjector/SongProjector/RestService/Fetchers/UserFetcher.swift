@@ -14,6 +14,8 @@ let UserFetcher = UerFetcher()
 
 class UerFetcher: Requester<User> {
 	
+	private var fetchMe = false
+	
 	override var requestReloadTime: RequesterReloadTime {
 		return .seconds
 	}
@@ -30,17 +32,25 @@ class UerFetcher: Requester<User> {
 		return "users"
 	}
 	
+	override var suffix: String {
+		guard let userId = CoreUser.getEntities().filter({ $0.isMe }).first?.id else {
+			return ""
+		}
+		if fetchMe {
+			fetchMe = false
+			return "/\(userId)"
+		}
+		return ""
+	}
+	
 	override var coreDataManager: CoreDataManager<User> {
 		return CoreUser
 	}
 	
-	override var params: [String : Any] {
-		let userId = CoreUser.getEntities().first?.id
-		var params = super.params
-		if let userId = userId {
-			params["userId"] = "\(userId)"
-		}
-		return params
+	func fetchMe(force: Bool) {
+		fetchMe = true
+		requestMethod = .get
+		request(force: force)
 	}
 	
 	func fetch(force: Bool) {

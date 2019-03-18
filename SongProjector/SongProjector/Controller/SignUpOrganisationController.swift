@@ -21,7 +21,7 @@ class SignUpOrganisationController: ChurchBeamViewController {
 	@IBOutlet var nameTextField: UITextField!
 	
 	
-	var contract: Contract {
+	var contract: Contract? {
 		return signInContractSelection.contract
 	}
 	var organizationName = ""
@@ -35,18 +35,13 @@ class SignUpOrganisationController: ChurchBeamViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		view.backgroundColor = themeWhiteBlackBackground
-		titleLabel.text = contract.title
+		titleLabel.text = contract?.name
 		titleLabel.textColor = themeWhiteBlackTextColor
 		contentLabel.textColor = themeWhiteBlackTextColor
 		nameExplanation.textColor = themeWhiteBlackTextColor
 		nameTextField.text = "kerk"
-		var content = ""
-		switch contract {
-		case .free: content = "Wat leuk dat je aan de slag gegaat met de Gratis versie van ChurchBeam.\nOm goed van start te kunnen gaan hebben we wat informatie nodig van je."
-		case .beam: content =  "Wat leuk dat je aan de slag gegaat met de Beam versie van ChurchBeam.\nOm goed van start te kunnen gaan hebben we wat informatie nodig van je."
-		case .song: content =  "Wat leuk dat je aan de slag gegaat met de Song versie van ChurchBeam.\nOm goed van start te kunnen gaan hebben we wat informatie nodig van je."
-		}
-		contentLabel.text = content
+		let content = "Wat leuk dat je aan de slag gegaat met de %@ versie van ChurchBeam.\nOm goed van start te kunnen gaan hebben we wat informatie nodig van je."
+		contentLabel.text = content.replacingOccurrences(of: "%@", with: contract?.name ?? "")
 		
 		nameTextField.addTarget(self, action: #selector(textfieldDidChange), for: .editingChanged)
 		

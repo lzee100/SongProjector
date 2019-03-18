@@ -37,7 +37,7 @@ class RleFetcher: Requester<Role> {
 	}
 	
 	override var params: [String : Any] {
-		let roleId = CoreRole.getEntities().first?.id
+		let roleId = CoreUser.getEntities().first?.roleId
 		var params = super.params
 		if let roleId = roleId {
 			params["roleId"] = "\(roleId)"

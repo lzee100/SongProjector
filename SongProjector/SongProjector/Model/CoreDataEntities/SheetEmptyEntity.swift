@@ -10,7 +10,6 @@
 import Foundation
 import CoreData
 
-@objc(SheetEmptyEntity)
 public class SheetEmptyEntity: Sheet, SheetMetaType {
 	static var type: SheetType = .SheetEmpty
 	

@@ -33,6 +33,11 @@ class MoreController: UITableViewController, UISplitViewControllerDelegate {
 			splitViewController?.viewControllers.append(controller)
 		})
 		splitViewController?.delegate = self
+		splitViewController?.preferredDisplayMode = .allVisible
+		navigationItem.leftBarButtonItem =
+			splitViewController?.displayModeButtonItem
+		navigationItem.leftItemsSupplementBackButton = true
+
 
 		setup()
 	}
@@ -82,7 +87,7 @@ class MoreController: UITableViewController, UISplitViewControllerDelegate {
 
 	
 	func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController: UIViewController, onto primaryViewController: UIViewController) -> Bool {
-		return false
+		return true
 	}
 	
 	private func setup() {

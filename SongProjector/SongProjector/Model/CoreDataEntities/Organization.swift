@@ -16,11 +16,15 @@ class Organization: Entity {
 	}
 	
 	@NSManaged public var hasRoles: NSSet?
+	@NSManaged public var hasContractLedgers: NSSet?
+	
 	
 	enum CodingKeysOrganization:String,CodingKey
 	{
-		case hasRoles = "role"
+		case hasRoles = "roles"
+		case hasContractLedgers = "contractLedgers"
 	}
+	
 	
 	
 	// MARK: - Init
@@ -39,6 +43,11 @@ class Organization: Entity {
 			self.hasRoles = NSSet(array: roles)
 		}
 		
+		let contractLedgers = try container.decodeIfPresent([ContractLedger].self, forKey: .hasContractLedgers)
+		if let contractLedgers = contractLedgers {
+			self.hasContractLedgers = NSSet(array: contractLedgers)
+		}
+		
 		try super.initialization(decoder: decoder)
 		
 	}
@@ -51,6 +60,9 @@ class Organization: Entity {
 		var container = encoder.container(keyedBy: CodingKeysOrganization.self)
 		if let roles = hasRoles?.allObjects as? [Role] {
 			try container.encode(roles, forKey: .hasRoles)
+		}
+		if let contractLedgers = hasContractLedgers?.allObjects as? [ContractLedger] {
+			try container.encode(contractLedgers, forKey: .hasContractLedgers)
 		}
 		
 		try super.encode(to: encoder)
@@ -76,6 +88,11 @@ class Organization: Entity {
 			self.hasRoles = NSSet(array: roles)
 		}
 		
+		let contractLedgers = try container.decodeIfPresent([ContractLedger].self, forKey: .hasContractLedgers)
+		if let contractLedgers = contractLedgers {
+			self.hasContractLedgers = NSSet(array: contractLedgers)
+		}
+		
 		try super.initialization(decoder: decoder)
 		
 	}
@@ -98,5 +115,22 @@ extension Organization {
 	
 	@objc(removeHasRoles:)
 	@NSManaged public func removeFromHasRoles(_ values: NSSet)
+	
+}
+
+// MARK: Generated accessors for hasContractLedgers
+extension Organization {
+	
+	@objc(addHasContractLedgersObject:)
+	@NSManaged public func addToHasContractLedgers(_ value: ContractLedger)
+	
+	@objc(removeHasContractLedgersObject:)
+	@NSManaged public func removeFromHasContractLedgers(_ value: ContractLedger)
+	
+	@objc(addHasContractLedgers:)
+	@NSManaged public func addToHasContractLedgers(_ values: NSSet)
+	
+	@objc(removeHasContractLedgers:)
+	@NSManaged public func removeFromHasContractLedgers(_ values: NSSet)
 	
 }

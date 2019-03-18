@@ -17,6 +17,11 @@ class Text: NSObject {
 		static let production = "Productie"
 	}
 	
+	struct Generic {
+		static let from = "van"
+		static let to = "tot"
+	}
+	
 	struct Actions {
 		static let cancel = "Annuleer"
 		static let close = "Sluit"
@@ -27,6 +32,7 @@ class Text: NSObject {
 		static let save = "Sla op"
 		static let ok = "Ok"
 		static let edit = "Wijzig"
+		static let send = "Verstuur"
 		static let selectImage = "Selecteer afbeelding"
 		static let `import` = "Importeer"
 	}
@@ -129,6 +135,39 @@ class Text: NSObject {
 		static let tableViewHeaderSheets = "Dia's"
 		
 		static let titleMenu = "Dia's toevoegen"
+	}
+	
+	struct Users {
+		static let title = "Gebruikersbeheer"
+		static let ActiveUsers = "Actieve gebruikers"
+		static let InactiveUsers = "Inactieve gebruikers"
+		static let sendCode = "Verstuur code"
+		static let months = "maanden"
+		static let month = "maand"
+		static let noEmail = "Je hebt geen email account ingesteld op je iPhone."
+		static let noInviteToken = "Deze gebruiker heeft geen uitnodigingscode. Creeër een nieuwe gebruiker"
+		
+		static let inviteConformationTitle = "E-mail gebruiker"
+		static let inviteEmailSubject = "ChurchBeam uitnodigingscode"
+		static func inviteTextBodyEmail(code: String) -> String {
+			return """
+				Hallo,
+
+				Je bent uitgenodigd om gebruik te gaan maken van de ChurchBeam app. De app is te downloaden in de AppStore. In de app kan je een koppelcode invoeren om deel te worden van een kerk. Gebruik hiervoor onderstaande koppelcode:
+			
+
+			""" + code +
+			"""
+			\n
+			Met vriendelijke groet,
+			
+			ChurchBeam
+			"""
+		}
+		static func inviteTextBody(code: String) -> String {
+			return "Om de gebruiker uit te nodigen hebben we een email adres nodig. De gebruiker ontvangt een email de koppelcode: " + code
+		}
+
 	}
 	
 	struct Settings {

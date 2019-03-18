@@ -89,7 +89,7 @@ class MenuController: UITabBarController {
 				UserDefaults.standard.setValue("ipad", forKey: "device")
 			}
 			Feature.all.forEach{
-				controllers[$0] = storyboard.instantiateViewController(withIdentifier: $0.identifier)
+				controllers[$0] = $0.storyBoard.instantiateViewController(withIdentifier: $0.identifier)
 			}
 			// remove more UIViewController, more will become split viewController
 			controllers.removeValue(forKey: .more)
@@ -108,7 +108,7 @@ class MenuController: UITabBarController {
 	
 	private func update() {
 		
-		self.menuFeatures = Feature.all
+		self.menuFeatures = Feature.all.filter({ $0.isActief })
 		
 		var menuFeatures = self.menuFeatures
 		var moreFeatures = menuFeatures

@@ -16,6 +16,7 @@ enum Feature : String {
 	case bibleStudy = "BibleStudy"
 	case more = "More"
 	case tags = "Tags"
+	case users = "Users"
 	case settings = "Settings"
 	case `import` = "ImportBible"
 	
@@ -23,7 +24,7 @@ enum Feature : String {
 	
 	// MARK: - Properties
 	
-	static let all = [songService, songs, bibleStudy, tags, settings, `import`, more]
+	static let all = [songService, songs, bibleStudy, tags, users, settings, `import`, more]
 	
 	var titel : String {
 		return rawValue
@@ -39,12 +40,35 @@ enum Feature : String {
 			return Text.BibleStudy.title
 		case .tags:
 			return Text.Tags.title
+		case .users:
+			return Text.Users.title
 		case .settings:
 			return Text.Settings.title
 		case .more:
 			return Text.More.title
 		case .import:
 			return Text.Import.title
+		}
+	}
+	
+	var storyBoard: UIStoryboard {
+		switch self {
+		case .songService:
+			return UIDevice.current.userInterfaceIdiom == .pad ? Storyboard.Ipad : Storyboard.MainStoryboard
+		case .songs:
+			return UIDevice.current.userInterfaceIdiom == .pad ? Storyboard.Ipad : Storyboard.MainStoryboard
+		case .bibleStudy:
+			return UIDevice.current.userInterfaceIdiom == .pad ? Storyboard.Ipad : Storyboard.MainStoryboard
+		case .tags:
+			return Storyboard.MainStoryboard
+		case .users:
+			return Storyboard.MainStoryboard
+		case .settings:
+			return UIDevice.current.userInterfaceIdiom == .pad ? Storyboard.Ipad : Storyboard.MainStoryboard
+		case .more:
+			return UIDevice.current.userInterfaceIdiom == .pad ? Storyboard.Ipad : Storyboard.MainStoryboard
+		case .import:
+			return UIDevice.current.userInterfaceIdiom == .pad ? Storyboard.Ipad : Storyboard.MainStoryboard
 		}
 	}
 	
@@ -59,6 +83,8 @@ enum Feature : String {
 		switch self {
 		case .songService, .songs, .bibleStudy, .more, .tags, .settings, .import:
 			return true
+		case .users:
+			return false
 		}
 	}
 	
@@ -66,14 +92,10 @@ enum Feature : String {
 	/// Actieve features worden getoond aan de gebruiker.
 	var isActief : Bool {
 		
-		var isActief = isStandaard
-		
-		if
-			!isActief {
-				isActief = false
+		switch self {
+		case .users: return CoreUser.getEntities().filter({ $0.isMe }).first?.inviteToken == nil
+		default: return true
 		}
-		
-		return isActief
 		
 	}
 	
@@ -91,6 +113,8 @@ enum Feature : String {
 			return (#imageLiteral(resourceName: "More"), #imageLiteral(resourceName: "More"), #imageLiteral(resourceName: "More"))
 		case .tags:
 			return (#imageLiteral(resourceName: "Tags"), #imageLiteral(resourceName: "Tags"), #imageLiteral(resourceName: "Tags"))
+		case .users:
+			return (#imageLiteral(resourceName: "More"), #imageLiteral(resourceName: "More"), #imageLiteral(resourceName: "More"))
 		case .settings:
 			return (#imageLiteral(resourceName: "Bullet"), #imageLiteral(resourceName: "BulletSelected"), #imageLiteral(resourceName: "Bullet"))
 		case .import:

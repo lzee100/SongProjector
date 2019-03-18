@@ -30,7 +30,7 @@ class TgSubmitter: Requester<Tag> {
 	}
 	
 	override var path: String {
-		return "themes/"
+		return "themes"
 	}
 	
 	override var coreDataManager: CoreDataManager<Tag> {

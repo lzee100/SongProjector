@@ -10,7 +10,6 @@
 import Foundation
 import CoreData
 
-@objc(GoogleActivity)
 public class GoogleActivity: Entity {	
 	
 	@nonobjc public class func fetchRequest() -> NSFetchRequest<GoogleActivity> {

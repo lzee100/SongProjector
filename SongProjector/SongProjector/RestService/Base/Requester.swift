@@ -54,6 +54,10 @@ class Requester<T>: BaseRS, RequesterType, RequestObserver where T:Codable, T:NS
 		return ""
 	}
 	
+	var suffix: String {
+		return ""
+	}
+	
 	var coreDataManager: CoreDataManager<T> {
 		return CoreDataManager<T>()
 	}
@@ -75,7 +79,7 @@ class Requester<T>: BaseRS, RequesterType, RequestObserver where T:Codable, T:NS
 	}
 	
 	private var isSubmitter: Bool {
-		return body != nil
+		return requestMethod != .get
 	}
 	
 	private var forced: Bool = false
@@ -126,7 +130,7 @@ class Requester<T>: BaseRS, RequesterType, RequestObserver where T:Codable, T:NS
 			return
 		}
 		
-		let url = ChurchBeamConfiguration.environment.endpoint + path
+		let url = ChurchBeamConfiguration.environment.endpoint + path + suffix
 		
 		if requestMethod == .get {
 			requestGet(url:  url, parameters: params, success: { (response, result) in
@@ -163,7 +167,8 @@ class Requester<T>: BaseRS, RequesterType, RequestObserver where T:Codable, T:NS
 			if action == .updated {
 				minRefreshDate = requestReloadTime.date
 			}
-		default: break
+		case .error(let _, let error): print(requesterId + ": error - \(error)")
+
 		}
 		Queues.main.async {
 			self.observers.forEach({ $0.requestDidFinish(requesterID: self.requesterId, response: response, result: result as AnyObject) })
@@ -174,11 +179,6 @@ class Requester<T>: BaseRS, RequesterType, RequestObserver where T:Codable, T:NS
 		if requesterDependencies.map({ $0.isFinished }).count == requesterDependencies.count {
 			executeRequest()
 		}
-	}
-	
-	func mapDataToJSON(_ data : Data) throws -> [[String: Any]]? {
-		let json = try JSONSerialization.jsonObject(with: data, options: []) as? [[String: Any]]
-		return json
 	}
 	
 	
@@ -192,10 +192,6 @@ class Requester<T>: BaseRS, RequesterType, RequestObserver where T:Codable, T:NS
 			
 			let entities: [T]? = super.decode(data: data)
 			
-			if self.body?.first is User? {
-				
-			}
-			
 			if let old = entities, old.count > 0 {
 				mocBackground.perform({
 
@@ -204,7 +200,7 @@ class Requester<T>: BaseRS, RequesterType, RequestObserver where T:Codable, T:NS
 						oldEntity.forEach({
 							CoreEntity.managedObjectContext = mocBackground
 							CoreEntity.predicates.append("id", equals: $0.id)
-							let ent = CoreEntity.getEntities().filter({ $0.updatedAt != nil })
+							let ent = CoreEntity.getEntities(onlyTemp: false, onlyDeleted: false, skipFilter: true).filter({ $0.updatedAt != nil })
 							if ent.count > 1 {
 								let oldEntities = ent.sorted(by: { (($0.updatedAt ?? NSDate()) as Date) < (($1.updatedAt ?? NSDate()) as Date) })
 								if let objectId = oldEntities.first?.objectID, (entities?.contains(where: { $0.objectID == objectId }) ?? false) {
@@ -251,10 +247,12 @@ class Requester<T>: BaseRS, RequesterType, RequestObserver where T:Codable, T:NS
 			}
 		}
 
+		print("--------------printing posting \(String(describing: object?.first.debugDescription))")
 		inputBody?.printToJson()
 		
 		super.dispatchRequest(self.requestMethod, url: url, inputBody: inputBody, parameters: parameters, range: range, success: {  (response, data) -> Void in
 			
+			print("---------------data returned from posting \(String(describing: object?.first.debugDescription))")
 			data?.printToJson()
 			
 			// delete all the old that we have based on new with their id's

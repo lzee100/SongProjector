@@ -19,7 +19,7 @@ class CstrSubmitter: Requester<Cluster> {
 	}
 	
 	override var path: String {
-		return "clusters/"
+		return "clusters"
 	}
 	
 	override var coreDataManager: CoreDataManager<Cluster> {

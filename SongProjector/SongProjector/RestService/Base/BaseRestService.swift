@@ -41,7 +41,7 @@ class BaseRS: NSObject {
 	func createHeaderParameters() -> [String: String] {
 		var header: [String: String] = [:]
 		if let orgId = CoreOrganization.getEntities().first?.id {
-			header["organizationID"] = "\(orgId)"
+			header["organizationId"] = "\(orgId)"
 		}
 		return header
 	}

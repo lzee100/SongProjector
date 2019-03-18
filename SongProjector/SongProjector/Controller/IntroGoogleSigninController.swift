@@ -8,14 +8,15 @@
 
 import Foundation
 import UIKit
+import CoreData
 
 var signInContractSelection: SgnInContractSelection = {
 	return SgnInContractSelection()
 }()
 
 
-class SgnInContractSelection: NSObject {
-	var contract: Contract = .free
+class SgnInContractSelection: NSManagedObject {
+	var contract: Contract?
 }
 
 

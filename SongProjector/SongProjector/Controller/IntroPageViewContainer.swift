@@ -33,17 +33,19 @@ class IntroPageViewContainer: ChurchBeamViewController, UIPageViewControllerDele
 		NotificationCenter.default.addObserver(forName: NotificationNames.didSignUpSuccessfully, object: nil, queue: OperationQueue.main) { _ in
 			self.presentingViewController?.dismiss(animated: true, completion: nil)
 		}
-	}
-	
-	override func viewWillAppear(_ animated: Bool) {
-		super.viewWillAppear(animated)
-		self.pageViewController.delegate = self
-		self.pageViewController.dataSource = self
-
 		guard let pageController = pageControllers.first else {
 			return
 		}
 		pageViewController.setViewControllers([pageController], direction: .forward, animated: true, completion: nil)
+
+	}
+	
+	override func viewWillAppear(_ animated: Bool) {
+		super.viewWillAppear(animated)
+		navigationController?.setNavigationBarHidden(true, animated: false)
+		self.pageViewController.delegate = self
+		self.pageViewController.dataSource = self
+
 	}
 	
 	
@@ -87,7 +89,7 @@ class IntroPageViewContainer: ChurchBeamViewController, UIPageViewControllerDele
 	
 	class func introControllers() -> [PageController] {
 		let page1 = Storyboard.Intro.instantiateViewController(withIdentifier: IntroPageController1.identifier) as! IntroPageController1
-		let page2 = Storyboard.Intro.instantiateViewController(withIdentifier: IntroPageController2.identifier) as! IntroPageController2
+		let page2 = Storyboard.Intro.instantiateViewController(withIdentifier: IntroStartingController.identifier) as! IntroStartingController
 		return [page1, page2]
 	}
 	

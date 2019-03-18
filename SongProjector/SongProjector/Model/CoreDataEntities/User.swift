@@ -8,7 +8,7 @@
 
 import Foundation
 import CoreData
-
+import UIKit
 
 class User: Entity {
 	
@@ -16,28 +16,28 @@ class User: Entity {
 		return NSFetchRequest<User>(entityName: "User")
 	}
 	
-	@NSManaged public var firstName: String?
-	@NSManaged public var lastName: String?
 	@NSManaged public var appInstallToken: String?
-	@NSManaged public var bankAccountNumber: String?
-	@NSManaged public var bankAccountName: String?
-	@NSManaged public var identifiedEmail: String?
 	@NSManaged public var userToken: String?
+	@NSManaged public var inviteToken: String?
+	@NSManaged public var roleId: Int64
 	
-	@NSManaged public var hasRole: Role?
+	
+	var hasRole: Role? {
+		return CoreRole.getEntitieWith(id: roleId)
+	}
 	
 	enum CodingKeysUser: String, CodingKey
 	{
-		case firstName
-		case lastName
-		case bankAccountName
-		case bankAccountNumber
 		case identifiedEmail
 		case userToken
 		case appInstallToken
-		case hasRole = "role"
+		case inviteToken
+		case roleId
 	}
 	
+	var isMe: Bool {
+		return userToken == AccountStore.icloudID
+	}
 	
 	// MARK: - Init
 	
@@ -50,18 +50,11 @@ class User: Entity {
 	
 	public override func initialization(decoder: Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeysUser.self)
-		firstName = try container.decodeIfPresent(String.self, forKey: .firstName)
-		lastName = try container.decodeIfPresent(String.self, forKey: .lastName)
-		bankAccountName = try container.decodeIfPresent(String.self, forKey: .bankAccountName)
-		bankAccountNumber = try container.decodeIfPresent(String.self, forKey: .bankAccountNumber)
-		identifiedEmail = try container.decodeIfPresent(String.self, forKey: .identifiedEmail)
 		userToken = try container.decodeIfPresent(String.self, forKey: .userToken)
 		appInstallToken = try container.decodeIfPresent(String.self, forKey: .appInstallToken)
-		let roles = try container.decodeIfPresent([Role].self, forKey: .hasRole)
-		if let role = roles?.first {
-			self.hasRole = role
-		}
-		
+		inviteToken = try container.decodeIfPresent(String.self, forKey: .inviteToken)
+		roleId = try container.decode(Int64.self, forKey: .roleId)
+
 		try super.initialization(decoder: decoder)
 		
 	}
@@ -72,16 +65,10 @@ class User: Entity {
 	
 	override public func encode(to encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeysUser.self)
-		try container.encode(firstName, forKey: .firstName)
-		try container.encode(lastName, forKey: .lastName)
-		try container.encode(bankAccountName, forKey: .bankAccountName)
-		try container.encode(bankAccountNumber, forKey: .bankAccountNumber)
-		try container.encode(identifiedEmail, forKey: .identifiedEmail)
 		try container.encode(userToken, forKey: .userToken)
 		try container.encode(appInstallToken, forKey: .appInstallToken)
-		if let role = hasRole {
-			try container.encode([role], forKey: .hasRole)
-		}
+		try container.encode(inviteToken, forKey: .inviteToken)
+		try container.encode(roleId, forKey: .roleId)
 		
 		try super.encode(to: encoder)
 	}
@@ -100,31 +87,19 @@ class User: Entity {
 		self.init(entity: entity, insertInto: managedObjectContext)
 		
 		let container = try decoder.container(keyedBy: CodingKeysUser.self)
-		firstName = try container.decodeIfPresent(String.self, forKey: .firstName)
-		lastName = try container.decodeIfPresent(String.self, forKey: .lastName)
-		bankAccountName = try container.decodeIfPresent(String.self, forKey: .bankAccountName)
-		bankAccountNumber = try container.decodeIfPresent(String.self, forKey: .bankAccountNumber)
-		identifiedEmail = try container.decodeIfPresent(String.self, forKey: .identifiedEmail)
 		userToken = try container.decodeIfPresent(String.self, forKey: .userToken)
 		appInstallToken = try container.decodeIfPresent(String.self, forKey: .appInstallToken)
-		let roles = try container.decodeIfPresent([Role].self, forKey: .hasRole)
-		if let role = roles?.first {
-			self.hasRole = role
-		}
+		inviteToken = try container.decodeIfPresent(String.self, forKey: .inviteToken)
+		roleId = try container.decode(Int64.self, forKey: .roleId)
 		
 		try super.initialization(decoder: decoder)
 		
 	}
 	
 	func mergeSelfInto(user: inout User) {
-		user.firstName = self.firstName
-		user.lastName = self.lastName
-		user.bankAccountName = self.bankAccountName
-		user.bankAccountNumber = self.bankAccountNumber
 		user.appInstallToken = self.appInstallToken
 		user.userToken = self.userToken
-		user.identifiedEmail = self.identifiedEmail
-		user.hasRole = self.hasRole
+		user.roleId = self.roleId
 	}
 	
 }

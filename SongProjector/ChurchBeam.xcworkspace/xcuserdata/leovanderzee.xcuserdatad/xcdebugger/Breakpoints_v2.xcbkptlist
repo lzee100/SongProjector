@@ -42,7 +42,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SongProjector/Global/AppDelegate.swift"
-            timestampString = "572468259.237475"
+            timestampString = "574550554.093007"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "194"
@@ -73,13 +73,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SongProjector/RestService/Base/Requester.swift"
-            timestampString = "572468259.2375669"
+            filePath = "SongProjector/Controller/SignUpPersonalInfoController.swift"
+            timestampString = "574069998.5891809"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "196"
-            endingLineNumber = "196"
-            landmarkName = "requestGet(_:url:parameters:range:success:failure:queue:)"
+            startingLineNumber = "194"
+            endingLineNumber = "194"
+            landmarkName = "textFieldDidChange(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -89,61 +89,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SongProjector/RestService/Base/Requester.swift"
-            timestampString = "572468259.237627"
+            filePath = "SongProjector/Controller/MenuController.swift"
+            timestampString = "574550554.093511"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "256"
-            endingLineNumber = "256"
-            landmarkName = "requestSend(url:object:parameters:range:success:failure:queue:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ChurchBeam.Requester.requestSend&lt;A where A1: Swift.Encodable&gt;(url: Swift.String, object: Swift.Optional&lt;Swift.Array&lt;A1&gt;&gt;, parameters: Swift.Optional&lt;Swift.Dictionary&lt;Swift.String, Any&gt;&gt;, range: Swift.Optional&lt;Swift.Range&lt;Swift.Int&gt;&gt;, success: (Swift.Optional&lt;__C.NSHTTPURLResponse&gt;, Swift.Optional&lt;Swift.Array&lt;A&gt;&gt;) -&gt; (), failure: (Swift.Optional&lt;__C.NSError&gt;, Swift.Optional&lt;__C.NSHTTPURLResponse&gt;, Swift.Optional&lt;ChurchBeam.RestError&gt;) -&gt; (), queue: __C.OS_dispatch_queue) -&gt; ()"
-                  moduleName = "SongProjector"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/leovanderzee/privateDevelopment/SongProjector/SongProjector/SongProjector/RestService/Base/Requester.swift"
-                  timestampString = "572467325.3531179"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "256"
-                  endingLineNumber = "256"
-                  offsetFromSymbolStart = "1060">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Swift.Optional&lt;__C.NSHTTPURLResponse&gt;, Swift.Optional&lt;Foundation.Data&gt;) -&gt; () in ChurchBeam.Requester.requestSend&lt;A where A1: Swift.Encodable&gt;(url: Swift.String, object: Swift.Optional&lt;Swift.Array&lt;A1&gt;&gt;, parameters: Swift.Optional&lt;Swift.Dictionary&lt;Swift.String, Any&gt;&gt;, range: Swift.Optional&lt;Swift.Range&lt;Swift.Int&gt;&gt;, success: (Swift.Optional&lt;__C.NSHTTPURLResponse&gt;, Swift.Optional&lt;Swift.Array&lt;A&gt;&gt;) -&gt; (), failure: (Swift.Optional&lt;__C.NSError&gt;, Swift.Optional&lt;__C.NSHTTPURLResponse&gt;, Swift.Optional&lt;ChurchBeam.RestError&gt;) -&gt; (), queue: __C.OS_dispatch_queue) -&gt; ()"
-                  moduleName = "SongProjector"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/leovanderzee/privateDevelopment/SongProjector/SongProjector/SongProjector/RestService/Base/Requester.swift"
-                  timestampString = "572467325.356624"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "258"
-                  endingLineNumber = "258"
-                  offsetFromSymbolStart = "117">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SongProjector/RestService/Base/Requester.swift"
-            timestampString = "572468259.237677"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "262"
-            endingLineNumber = "262"
-            landmarkName = "requestSend(url:object:parameters:range:success:failure:queue:)"
+            startingLineNumber = "161"
+            endingLineNumber = "161"
+            landmarkName = "update()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -153,13 +105,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SongProjector/Controller/SplashScreen.swift"
-            timestampString = "572468259.23773"
+            filePath = "SongProjector/Model/CoreDataManager.swift"
+            timestampString = "574626691.401494"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "36"
-            endingLineNumber = "36"
-            landmarkName = "viewDidAppear(_:)"
+            startingLineNumber = "116"
+            endingLineNumber = "116"
+            landmarkName = "createEntityNOTsave()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

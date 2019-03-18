@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const print = require('../util/print')
-const Organization = require('../routes/organizations')
+const UserClass = require('../util/userClass')
 
 var db = require('../util/db');
 
@@ -12,30 +12,45 @@ var db = require('../util/db');
 // DELETE — remove a particular resource’s object
 
 router.get('/', (req, res , next) => {
-
-    let userId = req.query.userId
- 
-    if (!userId) {
-        res.status(400).json({
-            error: "No correct app identifier send"
-        })
-    }
-
-    getUser(userId)
-    .then(user => {
-        res.status(200).json(user)
+    print.print('in get users all for org')
+    let organizationId = req.get("organizationId")
+    print.print('orgid', organizationId)
+   
+    UserClass.getUsers(organizationId)
+    .then(users => {
+        print.print(users)
+        res.status(200).json(users)
     })
     .catch(err => {
         res.status(500).json(err)
     })
 })
 
+router.get('/:userId', (req, res , next) => {
+
+    let userId = req.params.userId
+ 
+    if (!userId) {
+        res.status(400).json({
+            error: "No correct user identifier send"
+        })
+    }
+
+    UserClass.get(userId)
+    .then(user => {
+        print.print('user returned: ', user)
+        res.status(200).json([user])
+    })
+    .catch(err => {
+        res.status(500).json(err)
+    })
+   
+})
+
 router.post('/', (req, res , next) => {
 
     var newUsers = req.body
     print.print('post user ---------------------------------------', newUsers)
-
-    let organizationID = req.get("organizationID")
 
     newUsers.map(user => delete user.id)
 
@@ -67,56 +82,75 @@ router.put('/', (req, res , next) => {
     
 })
 
-function getUser(userId, appId) {
-    var sql = ""
-    if (userId) {
-        sql = `SELECT * FROM user WHERE id = ${userId}`
-    } else { 
-        sql = `SELECT * FROM user WHERE appId = ${appId}`
-    }
+router.delete('/', (req, res , next) => {
+    console.log('in delete user')
+    const users = req.body
 
-    return new Promise((resolve, reject) => {
+    if (req.body[0]) {
+        const user = req.body[0]
+        const date = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
+        let sql = `UPDATE user SET deletedAt = '${date}' WHERE id = ${user.id}`
         db.query(sql, (err, result) => {
-            if(err) {
-                reject(err)
+            if (err) {
+                res.status(500).json(err)
             } else {
-                if (result.length == 0) {
-                    resolve()
-                } else {
-                    resolve(result)
-                }
+                UserClass.get(user.id)
+                .then(user => {
+                    res.status(201).json([user])
+                })
             }
         })
-    })
-
-}
+    }
+    
+})
 
 function postUser(user) {
     var newUser = user
-    delete newUser.title
-    
-    return new Promise((resolve, reject) => {
+    let roleId = newUser.roleId
+    delete newUser.roleId
+
+    var insertUser = new Promise((resolve, reject) => {
         let sql = `INSERT INTO user SET ?`
         db.query(sql, user, (err, result) => {
             if (err) {
                 reject(err)
             } else {
-                getUser(result.insertId)
-                .then(user => {
-                    if (user.length > 0) {
-                        resolve(user[0])
-                    } else {
-                        reject()
-                    }
-                })
-                .catch(err => {
-                    reject(err)
-                })
+                resolve(result.insertId)
             }
         })
     })
-}
+    
+    var insertUserHasRole = function(userId) {
+        return new Promise((resolve, reject) => {
+            print.print(`INSERT INTO user_has_role VALUES(${userId}, ${roleId})`)
+            let sql = `INSERT INTO user_has_role VALUES(${userId}, ${roleId})`
+            db.query(sql, (err, result) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(userId)
+                }
+            })
+        })
+    }
 
+    return new Promise((resolve, reject) => {
+        insertUser
+        .then(insertUserHasRole)
+        .then(function(userId) {
+            UserClass.get(userId)
+            .then(user => {
+              resolve(user)
+            })
+            .catch(err => {
+                reject(err)
+            })
+        })
+        .catch(err => {
+            reject(err)
+        })
+    })
+}
 
 function putUser(user) {
     var newUser = user

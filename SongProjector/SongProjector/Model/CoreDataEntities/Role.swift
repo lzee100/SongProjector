@@ -17,12 +17,10 @@ class Role: Entity {
 	
 	@NSManaged public var organizationId: Int64
 	@NSManaged public var hasOrganization: Organization?
-	@NSManaged public var hasUsers: NSSet?
 	
 	enum CodingKeysRole:String,CodingKey
 	{
 		case hasOrganization = "organization"
-		case hasUsers = "user"
 		case organizationId = "organization_id"
 	}
 	
@@ -38,11 +36,13 @@ class Role: Entity {
 	
 	public override func initialization(decoder: Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeysRole.self)
+		
+		organizationId = try container.decodeIfPresent(Int64.self, forKey: .organizationId) ?? 0
 
-		let hasUsers = try container.decodeIfPresent([User].self, forKey: .hasUsers)
-		if let users = hasUsers {
-			self.hasUsers = NSSet(array: users)
-		}
+//		let hasUsers = try container.decodeIfPresent([User].self, forKey: .hasUsers)
+//		if let users = hasUsers {
+//			self.hasUsers = NSSet(array: users)
+//		}
 		
 		try super.initialization(decoder: decoder)
 		
@@ -53,18 +53,19 @@ class Role: Entity {
 	// MARK: - Encodable
 	
 	override public func encode(to encoder: Encoder) throws {
-		var container = encoder.container(keyedBy: CodingKeysRole.self)
-		if let organization = hasOrganization {
-			try container.encode(organization, forKey: .hasOrganization)
-		} else {
-			CoreOrganization.managedObjectContext = mocBackground
-			if let org = CoreOrganization.getEntitieWith(id: id) {
-				try container.encode(org, forKey: .hasOrganization)
-			}
-		}
-		if let users = hasUsers?.allObjects as? [User] {
-			try container.encode(users, forKey: .hasUsers)
-		}
+//		var container = encoder.container(keyedBy: CodingKeysRole.self)
+		// circle effect, user has role, role has user (unending circle of encoding)
+//		if let organization = hasOrganization {
+//			try container.encode(organization, forKey: .hasOrganization)
+//		} else {
+//			CoreOrganization.managedObjectContext = mocBackground
+//			if let org = CoreOrganization.getEntitieWith(id: id) {
+//				try container.encode(org, forKey: .hasOrganization)
+//			}
+//		}
+//		if let users = hasUsers?.allObjects as? [User] {
+//			try container.encode(users, forKey: .hasUsers)
+//		}
 		
 		try super.encode(to: encoder)
 	}
@@ -84,10 +85,10 @@ class Role: Entity {
 		
 		let container = try decoder.container(keyedBy: CodingKeysRole.self)
 		organizationId = try container.decodeIfPresent(Int64.self, forKey: .organizationId) ?? 0
-		let users = try container.decodeIfPresent([User].self, forKey: .hasUsers)
-		if let users = users {
-			hasUsers = NSSet(array: users)
-		}
+//		let users = try container.decodeIfPresent([User].self, forKey: .hasUsers)
+//		if let users = users {
+//			hasUsers = NSSet(array: users)
+//		}
 		
 		try super.initialization(decoder: decoder)
 		

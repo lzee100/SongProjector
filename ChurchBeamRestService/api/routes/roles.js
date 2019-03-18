@@ -30,6 +30,7 @@ router.get('/', (req, res , next) => {
         res.status(200).json(roles)
     })
     .catch(err =>{ 
+        print.print('error in getting roles', err)
         res.status(500).json(err)
     })
 

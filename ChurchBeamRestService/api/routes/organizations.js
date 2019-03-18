@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const print = require('../util/print')
 const OrganizationClass = require('../util/organizationClass')
+const UserClass = require('../util/userClass')
 var db = require('../util/db')
 
 // GET — retrieve a particular resource’s object or list all objects
@@ -48,7 +49,7 @@ router.get('/', (req, res , next) => {
 
 router.post('/', (req, res , next) => {
     console.log('in post organizations')
-    let object = req.body;
+    let object = req.body
 
     object.map(organization => delete organization.id)
     object.map(organization => delete organization.role)
@@ -61,11 +62,11 @@ router.post('/', (req, res , next) => {
     print.print('organizations: ', object)
     Promise.all(object.map(organization => postOrganization(organization)))
     .then(organizations => {
-        print.print('in put organizations 201', organizations)
+        print.print('in post organizations 201', organizations)
         res.status(201).json(organizations)
     })
     .catch(err => {
-        print.print('in put organizations 500', err)
+        print.print('in post organizations 500', err)
         res.status(500).json(err)
     })
     
@@ -94,40 +95,91 @@ router.delete('/organization', (req, res , next) => {
 })
 
 function postOrganization(organization) {
-    return new Promise((resolve, reject) => {
-        let sql = `INSERT INTO organization (name) VALUES("${organization.name}")`
+    let contractLedger = organization.contractLedgers[0]
+    print.print('contract ledger', contractLedger)
+    var orgId
 
-        db.query(sql, [organization], (err, result) => {
+    const insertOrganization = new Promise((resolve, reject) => {
+        let sql = `INSERT INTO organization (name) VALUES("${organization.name}")`
+        db.query(sql, (err, result) => {
             if (err) {
                 print.print('error inserting organization', err)
                 reject(err)
             } else {
+                orgId = result.insertId
+                print.print('inserted orgId', result.insertId)
+                resolve(result.insertId)
+            }
+        })
+    })
+
+    return new Promise((resolve, reject) => {
+        if (!contractLedger) {
+            reject(json({
+                error: "`no contract ledger"
+            }))
+        } else {
+            insertOrganization
+            .then(function(organizationId) {
+                var contrLedger = contractLedger
+                contrLedger.organization_id = organizationId
+                delete contrLedger.id
+                postContractLedger(contrLedger)
+                .then(postRoleIfNeeded(organizationId))
+                .then(function(roles) {
+                Userc
+                OrganizationClass.get(organizationId)
+                .then(function(organization) {
+                    resolve(organization)
+                })
+                .catch(err => {
+                    reject(err)
+                })
+            })
+                .catch(err => {
+                    reject(err)
+                })
+            })
+            .catch(err => {
+                reject(err)
+            })
+        }
+   })
+}
+
+function postContractLedger(contractLedger) {
+
+    return new Promise((resolve, reject) => {
+
+        let sql = `INSERT INTO contractLedger SET ?`
+
+        db.query(sql, [contractLedger], (err, result) => {
+            if (err) {
+                print.print('error inserting contractLedger', err)
+                reject(err)
+            } else {
                 print.print('insert id', result.insertId)
-                OrganizationClass.get(result.insertId)
-                .then(organization => {
-                    postRoleIfNeeded(organization)
-                    .then(role => {
-                        print.print('in then role ', role)
-                        var org = organization
-                        org.role = role
-                        print.print('in then org ', org)
-                        resolve(org)
-                    })
-                    .catch(err => {
-                        print.print('error', err)
+                let sql = `SELECT * FROM contractLedger WHERE id=("${result.insertId}")`
+                db.query(sql, (err, result) => {
+                    if (err) {
+                        print.print('error gettoing contractLedger', err)
                         reject(err)
-                    })
+                    } else {
+                        print.print('newLedger', result[0])
+                        resolve(result[0])
+                    }
                 })
             }
         })
    })
 }
 
-function postRoleIfNeeded(organization) {
+function postRoleIfNeeded(organizationId) {
+    print.print('in post role if needed')
 
     var getRole = new Promise((resolve, reject) => {
-        let sql = `SELECT * FROM role WHERE organization_id = ${organization.id}`
-        db.query(sql, [organization], (err, result) => {
+        let sql = `SELECT * FROM role WHERE organization_id = ${organizationId}`
+        db.query(sql, (err, result) => {
             if (err) {
                 reject(err)
             } else {
@@ -154,14 +206,14 @@ function postRoleIfNeeded(organization) {
     }
 
     var insertRole = new Promise((resolve, reject) => {
-        let sql = `INSERT INTO role (organization_id, title) VALUES(${organization.id}, "default")`
-        db.query(sql, [organization], (err, result) => {
+        let sql = `INSERT INTO role (organization_id, title) VALUES(${organizationId}, "default")`
+        db.query(sql, (err, result) => {
             if (err) {
                 reject(err)
             } else {
                 getNewRole(result.insertId)
-                .then(role => {
-                    resolve(role)
+                .then(roles => {
+                    resolve(roles)
                 })
                 .catch(err => {
                     print.print('in error result')
@@ -178,8 +230,8 @@ function postRoleIfNeeded(organization) {
                 resolve(role)
             } else {
                 insertRole
-                .then(role => {
-                    resolve(role)
+                .then(roles => {
+                    resolve(roles)
                 })
                 .catch(err => {
                     reject(err)
@@ -197,7 +249,7 @@ function putOrganization(organization) {
     return new Promise((resolve, reject) => {
          let sql = `UPDATE organization SET name = ? WHERE id = ${organization.id}`
  
-         db.query(sql, [organization], (err, result) => {
+         db.query(sql, [organization.name], (err, result) => {
              if (err) {
                  reject(err)
              } else {

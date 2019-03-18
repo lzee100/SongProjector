@@ -18,6 +18,7 @@ const organizationRoutes = require('./api/routes/organizations');
 const userInitRoutes = require('./api/routes/userinit');
 const userRoutes = require('./api/routes/users');
 const roleRoutes = require('./api/routes/roles');
+const contractRoutes = require('./api/routes/contracts');
 
 
 
@@ -64,12 +65,11 @@ app.use('/organizations', organizationRoutes);
 app.use('/userinit', userInitRoutes);
 app.use('/users', userRoutes);
 app.use('/roles', roleRoutes);
+app.use('/contracts', contractRoutes);
 
 
 
 app.use((req, res, next) => {
-    print.print('req params', req.query.userToken)
-    print.print('req params', req.query.appRegistrationId)
     const error = new Error('Not found general');
     error.status = 404;
     next(error);

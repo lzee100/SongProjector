@@ -17,7 +17,6 @@ protocol SheetMetaType : Codable {
 	static var type: SheetType { get }
 }
 
-@objc(Sheet)
 public class Sheet: Entity {
 	
 	

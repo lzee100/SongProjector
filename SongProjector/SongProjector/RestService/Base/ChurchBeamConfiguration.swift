@@ -115,7 +115,7 @@ enum Environment: Int {
 		case .localhost:
 			return "http://127.0.0.1:3000/"
 		case .dev:
-			return "https://rest-ontwikkel.parro.com/rest/v1/"
+			return "http://127.0.0.1:12808/134b7159-53b3-4eac-b8fc-cc557769bfa4/"
 		case .production:
 			return "https://rest.parro.com/rest/v1/"
 		}

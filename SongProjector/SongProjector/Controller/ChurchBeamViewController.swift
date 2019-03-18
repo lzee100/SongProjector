@@ -130,6 +130,22 @@ class ChurchBeamViewController: UIViewController, RequestObserver {
 		}
 	}
 	
+	func showAlert(title: String? = nil, message: String? = nil, actionOne: String, handler: ((UIAlertAction) -> Void)? = nil, actionTwo: String? = nil, handlerTwo: ((UIAlertAction) -> Void)? = nil) {
+		
+		let alertMessage = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
+		
+		let action = UIAlertAction(title:actionOne, style: UIAlertActionStyle.default, handler: handler)
+		alertMessage.addAction(action)
+
+		if let actionTwo = actionTwo {
+			let addAction = UIAlertAction(title:actionTwo, style: UIAlertActionStyle.default, handler: handlerTwo)
+			alertMessage.addAction(addAction)
+		}
+		
+		self.present(alertMessage, animated: true, completion: nil)
+		
+	}
+	
 	@objc private func handlePan(recognizer:UIPanGestureRecognizer) {
 		timer?.invalidate()
 		let translation = recognizer.translation(in: self.view)

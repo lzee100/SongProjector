@@ -9,7 +9,6 @@
 import Foundation
 import CoreData
 
-@objc(SheetTitleContentEntity)
 public class SheetTitleContentEntity: Sheet, SheetMetaType {
 	static var type: SheetType {
 		return .SheetTitleContent

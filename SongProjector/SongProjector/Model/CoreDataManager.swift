@@ -12,6 +12,7 @@ import CoreData
 
 let CoreEntity = CrEntity()
 let CoreOrganization = CrOrganization()
+let CoreContractLedger = CrContractLedger()
 let CoreUser = CrUser()
 let CoreRole = CrRole()
 let CoreSheetActivities = CrSheetActivities()
@@ -28,6 +29,7 @@ let CoreInstrument = CrInstrument()
 let CoreBook = CrBook()
 let CoreChapter = CrChapter()
 let CoreVers = CrVers()
+let CoreContract = CrContract()
 
 // MARK: - Core Data stack
 
@@ -79,6 +81,7 @@ var mocBackground: NSManagedObjectContext = {
 
 class CrEntity: CoreDataManager<Entity> { }
 class CrOrganization: CoreDataManager<Organization> { }
+class CrContractLedger: CoreDataManager<ContractLedger> { }
 class CrRole: CoreDataManager<Role> { }
 class CrUser: CoreDataManager<User> { }
 class CrSheetActivities: CoreDataManager<SheetActivitiesEntity> { }
@@ -95,6 +98,7 @@ class CrInstrument: CoreDataManager<Instrument> { }
 class CrBook: CoreDataManager<Book> { }
 class CrChapter: CoreDataManager<Chapter> { }
 class CrVers: CoreDataManager<Vers> { }
+class CrContract: CoreDataManager<Contract> { }
 
 class CoreDataManager<T: NSManagedObject>: NSObject {
 
@@ -175,13 +179,16 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 	}
 	
 	
-	func getEntities(onlyDeleted: Bool = false, skipFilter: Bool = false) -> [T] {
+	func getEntities(onlyTemp: Bool = false, onlyDeleted: Bool = false, skipFilter: Bool = false) -> [T] {
 		var entities: [T] = []
 		let request = NSFetchRequest<T>(entityName: entityName)
 
 		if !skipFilter {
-			if getTemp || onlyDeleted {
+			if getTemp {
 				predicates.append("isTemp", equals: true)
+			} else if onlyDeleted {
+				predicates.append("isTemp", equals: false)
+				predicates.append(NSPredicate(format: "deleteDate != nil"))
 			} else {
 				predicates.append("isTemp", equals: false)
 				predicates.append(NSPredicate(format: "deleteDate == nil"))

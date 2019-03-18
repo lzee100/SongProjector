@@ -13,7 +13,6 @@ import Foundation
 import CoreData
 
 
-@objc(Instrument)
 public class Instrument: Entity {
 
 	@nonobjc public class func fetchRequest() -> NSFetchRequest<Instrument> {
