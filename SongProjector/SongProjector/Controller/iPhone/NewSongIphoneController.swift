@@ -31,7 +31,7 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 	var editExistingCluster = false
 	
 	private var isSetup = true
-	private var tags: [Tag] = []
+	private var themes: [Theme] = []
 	private var delaySheetAimation = 0.0
 	private var isFirstTime = true {
 		willSet { if newValue == true { delaySheetAimation = 0.0 } }
@@ -39,7 +39,7 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 	private var visibleCells: [IndexPath] = []
 	private var multiplier = externalDisplayWindowRatio
 	private var sheetSize = CGSize(width: 375, height: 281)
-	private var selectedTag: Tag? {
+	private var selectedTheme: Theme? {
 		didSet { update() }
 	}
 	private var sheetMode = false
@@ -73,7 +73,7 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 		if collectionView == collectionViewSheets {
 			return 1
 		} else {
-			return tags.count
+			return themes.count
 		}
 	}
 	
@@ -83,7 +83,7 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 			
 			let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.sheetCollectionCell, for: indexPath)
 			if let collectionCell = collectionCell as? SheetCollectionCell {
-				collectionCell.setupWith(cluster: cluster, sheet: sheets[indexPath.section], tag: selectedTag ?? cluster?.hasTag, didDeleteSheet: nil, isDeleteEnabled: false)
+				collectionCell.setupWith(cluster: cluster, sheet: sheets[indexPath.section], theme: selectedTheme ?? cluster?.hasTheme, didDeleteSheet: nil, isDeleteEnabled: false)
 				
 				if visibleCells.contains(indexPath) {
 					let y = collectionCell.bounds.minY
@@ -113,11 +113,11 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 			return collectionCell
 			
 		} else {
-			let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.tagCellCollection, for: indexPath)
+			let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.themeCellCollection, for: indexPath)
 			
-			if let collectionCell = collectionCell as? TagCellCollection {
-				collectionCell.setup(tagName: tags[indexPath.row].title ?? "")
-				collectionCell.isSelectedCell = selectedTag?.id == tags[indexPath.row].id
+			if let collectionCell = collectionCell as? ThemeCellCollection {
+				collectionCell.setup(themeName: themes[indexPath.row].title ?? "")
+				collectionCell.isSelectedCell = selectedTheme?.id == themes[indexPath.row].id
 			}
 			return collectionCell
 		}
@@ -125,8 +125,8 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 	
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		if collectionView != collectionViewSheets {
-			if selectedTag?.id != tags[indexPath.row].id {
-				selectedTag = tags[indexPath.row]
+			if selectedTheme?.id != themes[indexPath.row].id {
+				selectedTheme = themes[indexPath.row]
 				update()
 			}
 		}
@@ -143,14 +143,14 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 	// MARK: - Private Functions
 	
 	private func setup() {
-		CoreTag.predicates.append("isHidden", notEquals: true)
-		tags = CoreTag.getEntities()
+		CoreTheme.predicates.append("isHidden", notEquals: true)
+		themes = CoreTheme.getEntities()
 		
 		if cluster == nil {
 			cluster = CoreCluster.createEntity()
 		}
 
-		collectionView.register(UINib(nibName: Cells.tagCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.tagCellCollection)
+		collectionView.register(UINib(nibName: Cells.themeCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.themeCellCollection)
 		collectionViewSheets.register(UINib(nibName: Cells.sheetCollectionCell, bundle: nil), forCellWithReuseIdentifier: Cells.sheetCollectionCell)
 		NotificationCenter.default.addObserver(forName: Notification.Name.UIScreenDidConnect, object: nil, queue: nil, using: databaseDidChange)
 		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
@@ -195,7 +195,7 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 		if editExistingCluster {
 			textView.text = getTextFromSheets()
 			segmentControl.selectedSegmentIndex = 1
-			selectedTag = cluster?.hasTag
+			selectedTheme = cluster?.hasTheme
 		} else {
 			isCollectionviewSheetsHidden = true
 			segmentControl.selectedSegmentIndex = 0
@@ -210,9 +210,9 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 	}
 	
 	private func databaseDidChange(_ notification: Notification) {
-		selectedTag = nil
-		CoreTag.predicates.append("isHidden", notEquals: true)
-		tags = CoreTag.getEntities()
+		selectedTheme = nil
+		CoreTheme.predicates.append("isHidden", notEquals: true)
+		themes = CoreTheme.getEntities()
 		update()
 	}
 	
@@ -285,11 +285,11 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 		return indexPaths
 	}
 	
-	private func hasTagSelected() -> Bool {
-		if selectedTag != nil {
+	private func hasThemeSelected() -> Bool {
+		if selectedTheme != nil {
 			return true
 		} else {
-			let alert = UIAlertController(title: Text.NewSong.errorTitleNoTag, message: Text.NewSong.erorrMessageNoTag, preferredStyle: .alert)
+			let alert = UIAlertController(title: Text.NewSong.errorTitleNoTheme, message: Text.NewSong.erorrMessageNoTheme, preferredStyle: .alert)
 			alert.addAction(UIAlertAction(title: Text.Actions.ok, style: UIAlertActionStyle.default, handler: nil))
 			self.present(alert, animated: true, completion: nil)
 
@@ -332,7 +332,7 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 	
 	@IBAction func done(_ sender: UIBarButtonItem) {
 		
-		if hasTagSelected() {
+		if hasThemeSelected() {
 			
 			buildSheets(fromText: textView.text)
 
@@ -356,8 +356,8 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 			
 			if CoreSheet.saveContext() { print("sheets saved") } else { print("sheets not saved") }
 			
-			cluster?.hasTag = selectedTag
-			if CoreTag.saveContext() { print("tag saved") } else { print("tag not saved") }
+			cluster?.hasTheme = selectedTheme
+			if CoreTheme.saveContext() { print("theme saved") } else { print("theme not saved") }
 		}
 		dismiss(animated: true)
 	}

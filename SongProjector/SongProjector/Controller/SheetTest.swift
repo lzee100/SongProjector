@@ -18,31 +18,31 @@ class SheetTest: UIViewController {
 		sheet.deleteDate = NSDate()
 
 		
-		let tag = CoreTag.createEntity()
-		tag.title = "tag"
-		tag.isHidden = true
-		tag.deleteDate = NSDate()
-		tag.titleTextSize = 14
-		tag.textColorTitle = .black
-		tag.contentTextSize = 10
-		tag.textColorLyrics = .black
-		tag.backgroundTransparancy = 100
-		tag.allHaveTitle = true
-		tag.hasEmptySheet = false
-		tag.titleAlignmentNumber = 0
-		tag.contentAlignmentNumber = 0
+		let theme = CoreTheme.createEntity()
+		theme.title = "theme"
+		theme.isHidden = true
+		theme.deleteDate = NSDate()
+		theme.titleTextSize = 14
+		theme.textColorTitle = .black
+		theme.contentTextSize = 10
+		theme.textColorLyrics = .black
+		theme.backgroundTransparancy = 100
+		theme.allHaveTitle = true
+		theme.hasEmptySheet = false
+		theme.titleAlignmentNumber = 0
+		theme.contentAlignmentNumber = 0
 
-		tag.textColorTitle = .white
-		tag.textColorLyrics = .white
-		tag.isTitleItalic = true
-		tag.isContentItalic = true
-		tag.titleAlignmentNumber = 1
-		tag.contentAlignmentNumber = 1
+		theme.textColorTitle = .white
+		theme.textColorLyrics = .white
+		theme.isTitleItalic = true
+		theme.isContentItalic = true
+		theme.titleAlignmentNumber = 1
+		theme.contentAlignmentNumber = 1
 		
 		sheet.title = Text.newPastorsSheet.title
 		sheet.content = Text.newPastorsSheet.content
 
-		let view = SheetPastors.createWith(frame: previewView.bounds, cluster: nil, sheet: sheet, tag: tag, isPreview: false, position: 0, toExternalDisplay: true)
+		let view = SheetPastors.createWith(frame: previewView.bounds, cluster: nil, sheet: sheet, theme: theme, isPreview: false, position: 0, toExternalDisplay: true)
 
 		previewView.addSubview(view)
 		self.view.backgroundColor = .gray

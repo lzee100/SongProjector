@@ -17,19 +17,19 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 	@IBOutlet var textViewContainerView: UIView!
 	@IBOutlet var saveButton: UIBarButtonItem!
 	@IBOutlet var segmentControl: UISegmentedControl!
-	@IBOutlet var collectionViewTags: UICollectionView!
+	@IBOutlet var collectionViewThemes: UICollectionView!
 	@IBOutlet var textView: UITextView!
 	@IBOutlet var tableView: UITableView!
 	@IBOutlet var collectionViewSheets: UICollectionView!
 	@IBOutlet var emptyView: UIView!
 	
 
-	var selectedTag: Tag?
+	var selectedTheme: Theme?
 	var delegate: BibleStudyGeneratorIphoneDelegate?
 	
 	// MARK: Private properties
 	private var sheets: [Sheet] = []
-	private var tags: [Tag] = []
+	private var themes: [Theme] = []
 	private var visibleCells: [IndexPath] = []
 	private var sheetsSorted: [Sheet] { return sheets.sorted { $0.position < $1.position } }
 	private var delaySheetAimation = 0.0
@@ -84,24 +84,24 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-		return collectionView == collectionViewSheets ? 1 : tags.count
+		return collectionView == collectionViewSheets ? 1 : themes.count
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-		if collectionView == collectionViewTags {
-			let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.tagCellCollection, for: indexPath) as! TagCellCollection
-			cell.setup(tagName: tags[indexPath.row].title ?? "")
-			cell.isSelectedCell = tags[indexPath.row].id == selectedTag?.id
+		if collectionView == collectionViewThemes {
+			let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.themeCellCollection, for: indexPath) as! ThemeCellCollection
+			cell.setup(themeName: themes[indexPath.row].title ?? "")
+			cell.isSelectedCell = themes[indexPath.row].id == selectedTheme?.id
 			return cell
 		} else {
 			let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.sheetCollectionCell, for: indexPath) as! SheetCollectionCell
-			cell.setupWith(cluster: nil, sheet: sheetsSorted[indexPath.section], tag: selectedTag, didDeleteSheet: nil)
+			cell.setupWith(cluster: nil, sheet: sheetsSorted[indexPath.section], theme: selectedTheme, didDeleteSheet: nil)
 			return cell
 		}
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-		if collectionView == collectionViewTags {
+		if collectionView == collectionViewThemes {
 			return CGSize(width: 200, height: 50)
 		} else {
 			return getSizeWith(height: collectionView.frame.height)
@@ -110,8 +110,8 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 	
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		if collectionView != collectionViewSheets {
-			if selectedTag?.id != tags[indexPath.row].id {
-				selectedTag = tags[indexPath.row]
+			if selectedTheme?.id != themes[indexPath.row].id {
+				selectedTheme = themes[indexPath.row]
 				update()
 			}
 		}
@@ -132,14 +132,14 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 		hideKeyboardWhenTappedAround()
 		textViewContainerView.layer.borderColor = themeHighlighted.cgColor
 		collectionViewSheets.register(UINib(nibName: Cells.sheetCollectionCell, bundle: nil), forCellWithReuseIdentifier: Cells.sheetCollectionCell)
-		collectionViewTags.register(UINib(nibName: Cells.tagCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.tagCellCollection)
+		collectionViewThemes.register(UINib(nibName: Cells.themeCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.themeCellCollection)
 		
 		NotificationCenter.default.addObserver(forName: NotificationNames.externalDisplayDidChange, object: nil, queue: nil, using: externalDisplayDidChange)
 		
 		tableView.register(cell: Cells.basicCellid)
 		tableView.keyboardDismissMode = .interactive
 		
-		tags = CoreTag.getEntities()
+		themes = CoreTheme.getEntities()
 		
 		setSheetSize()
 
@@ -183,9 +183,9 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 	}
 	
 	private func update() {
-		CoreTag.predicates.append("isHidden", equals: 0)
-		tags = CoreTag.getEntities()
-		collectionViewTags.reloadData()
+		CoreTheme.predicates.append("isHidden", equals: 0)
+		themes = CoreTheme.getEntities()
+		collectionViewThemes.reloadData()
 		collectionViewSheets.reloadData()
 		tableView.reloadData()
 		isFirstTime = true
@@ -230,11 +230,11 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 		
 	}
 	
-	private func hasTagSelected() -> Bool {
-		if selectedTag != nil {
+	private func hasThemeSelected() -> Bool {
+		if selectedTheme != nil {
 			return true
 		} else {
-			let alert = UIAlertController(title: Text.NewSong.errorTitleNoTag, message: Text.NewSong.erorrMessageNoTag, preferredStyle: .alert)
+			let alert = UIAlertController(title: Text.NewSong.errorTitleNoTheme, message: Text.NewSong.erorrMessageNoTheme, preferredStyle: .alert)
 			alert.addAction(UIAlertAction(title: Text.Actions.ok, style: UIAlertActionStyle.default, handler: nil))
 			self.present(alert, animated: true, completion: nil)
 			
@@ -281,7 +281,7 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 			let verses = BibleIndex.getVersesFor(searchValue: String(inputText[rangeSheet]) ).0
 			let initialTextLength = BibleIndex.getVersesFor(searchValue:  String(inputText[rangeSheet]) ).1
 			
-			if let fontSize = selectedTag?.contentTextSize, let verses = verses {
+			if let fontSize = selectedTheme?.contentTextSize, let verses = verses {
 				var expodential = 1
 				
 				if Int(fontSize) > 10 {
@@ -391,7 +391,7 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 		var remainderVerses = verses
 		
 		let titleSpace = 40
-		let spaceTitle = (selectedTag?.allHaveTitle ?? false) ? 40 : 0
+		let spaceTitle = (selectedTheme?.allHaveTitle ?? false) ? 40 : 0
 		
 		if initialTextLength < (maxTextLenght - titleSpace) {
 			let sheet = CoreSheetTitleContent.createEntity()

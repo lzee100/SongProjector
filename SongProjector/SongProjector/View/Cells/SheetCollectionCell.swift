@@ -29,14 +29,14 @@ class SheetCollectionCell: UICollectionViewCell {
 	
 	private var customRatioConstraint = NSLayoutConstraint()
 	
-	func setupWith(cluster: Cluster?, sheet: Sheet, tag: Tag?, didDeleteSheet: ((Sheet) -> Void)?, isDeleteEnabled: Bool = true) {
+	func setupWith(cluster: Cluster?, sheet: Sheet, theme: Theme?, didDeleteSheet: ((Sheet) -> Void)?, isDeleteEnabled: Bool = true) {
 		self.sheet = sheet
 		self.didDeleteSheet = didDeleteSheet
 		self.isDeleteEnabled = isDeleteEnabled
 		animateIcon()
 		update()
 		
-		let view = SheetView.createWith(frame: self.bounds, cluster: cluster, sheet: sheet, tag: tag, scaleFactor: 1)
+		let view = SheetView.createWith(frame: self.bounds, cluster: cluster, sheet: sheet, theme: theme, scaleFactor: 1)
 		view.tag = 7
 		self.addSubview(view)
 		sendSubview(toBack: view)

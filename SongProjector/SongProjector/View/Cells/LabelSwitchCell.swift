@@ -8,7 +8,7 @@
 
 import UIKit
 
-class LabelSwitchCell: ChurchBeamCell, TagImplementation, SheetImplementation {
+class LabelSwitchCell: ChurchBeamCell, ThemeImplementation, SheetImplementation {
 	
 	
 	@IBOutlet var descriptionLabel: UILabel!
@@ -16,8 +16,8 @@ class LabelSwitchCell: ChurchBeamCell, TagImplementation, SheetImplementation {
 	
 	
 	var id = ""
-	var sheetTag: Tag?
-	var tagAttribute: TagAttribute?
+	var sheetTheme: Theme?
+	var themeAttribute: ThemeAttribute?
 	var sheet: Sheet?
 	var sheetAttribute: SheetAttribute?
 	var valueDidChange: ((ChurchBeamCell) -> Void)?
@@ -45,10 +45,10 @@ class LabelSwitchCell: ChurchBeamCell, TagImplementation, SheetImplementation {
 		return view
 	}
 	
-	func apply(tag: Tag, tagAttribute: TagAttribute) {
-		sheetTag = tag
-		self.tagAttribute = tagAttribute
-		descriptionLabel.text = tagAttribute.description
+	func apply(theme: Theme, themeAttribute: ThemeAttribute) {
+		sheetTheme = theme
+		self.themeAttribute = themeAttribute
+		descriptionLabel.text = themeAttribute.description
 		applyValueToCell()
 	}
 	
@@ -71,23 +71,23 @@ class LabelSwitchCell: ChurchBeamCell, TagImplementation, SheetImplementation {
 	
 	func setSwitchValueTo(value: Bool) {
 		self.switch.isOn = value
-		applyCellValueToTag()
+		applyCellValueToTheme()
 		valueChanged(self.switch)
 	}
 	
-	func applyCellValueToTag() {
-		if let tagAttribute = tagAttribute {
-			switch tagAttribute {
-			case .allHaveTitle: sheetTag?.allHaveTitle = self.switch.isOn
-			case .displayTime: sheetTag?.displayTime = self.switch.isOn
-			case .hasEmptySheet: sheetTag?.hasEmptySheet = self.switch.isOn
-			case .isEmptySheetFirst: sheetTag?.isEmptySheetFirst = self.switch.isOn
-			case .isContentBold: sheetTag?.isContentBold = self.switch.isOn
-			case .isContentItalic: sheetTag?.isContentItalic = self.switch.isOn
-			case .isContentUnderlined: sheetTag?.isContentUnderlined = self.switch.isOn
-			case .isTitleBold: sheetTag?.isTitleBold = self.switch.isOn
-			case .isTitleItalic: sheetTag?.isTitleItalic = self.switch.isOn
-			case .isTitleUnderlined: sheetTag?.isTitleUnderlined = self.switch.isOn
+	func applyCellValueToTheme() {
+		if let themeAttribute = themeAttribute {
+			switch themeAttribute {
+			case .allHaveTitle: sheetTheme?.allHaveTitle = self.switch.isOn
+			case .displayTime: sheetTheme?.displayTime = self.switch.isOn
+			case .hasEmptySheet: sheetTheme?.hasEmptySheet = self.switch.isOn
+			case .isEmptySheetFirst: sheetTheme?.isEmptySheetFirst = self.switch.isOn
+			case .isContentBold: sheetTheme?.isContentBold = self.switch.isOn
+			case .isContentItalic: sheetTheme?.isContentItalic = self.switch.isOn
+			case .isContentUnderlined: sheetTheme?.isContentUnderlined = self.switch.isOn
+			case .isTitleBold: sheetTheme?.isTitleBold = self.switch.isOn
+			case .isTitleItalic: sheetTheme?.isTitleItalic = self.switch.isOn
+			case .isTitleUnderlined: sheetTheme?.isTitleUnderlined = self.switch.isOn
 			default:
 				return
 			}
@@ -101,18 +101,18 @@ class LabelSwitchCell: ChurchBeamCell, TagImplementation, SheetImplementation {
 	}
 	
 	func applyValueToCell() {
-		if let tagAttribute = tagAttribute {
-			switch tagAttribute {
-			case .allHaveTitle: self.switch.isOn = sheetTag?.allHaveTitle ?? false
-			case .displayTime: self.switch.isOn = sheetTag?.displayTime ?? false
-			case .hasEmptySheet: self.switch.setOn(sheetTag?.hasEmptySheet ?? false, animated: true)
-			case .isEmptySheetFirst: self.switch.isOn = sheetTag?.isEmptySheetFirst ?? false
-			case .isContentBold: self.switch.isOn = sheetTag?.isContentBold ?? false
-			case .isContentItalic: self.switch.isOn = sheetTag?.isContentItalic ?? false
-			case .isContentUnderlined: self.switch.isOn = sheetTag?.isContentUnderlined ?? false
-			case .isTitleBold:  self.switch.isOn = sheetTag?.isTitleBold ?? false
-			case .isTitleItalic: self.switch.isOn = sheetTag?.isTitleItalic ?? false
-			case .isTitleUnderlined: self.switch.isOn = sheetTag?.isTitleUnderlined ?? false
+		if let themeAttribute = themeAttribute {
+			switch themeAttribute {
+			case .allHaveTitle: self.switch.isOn = sheetTheme?.allHaveTitle ?? false
+			case .displayTime: self.switch.isOn = sheetTheme?.displayTime ?? false
+			case .hasEmptySheet: self.switch.setOn(sheetTheme?.hasEmptySheet ?? false, animated: true)
+			case .isEmptySheetFirst: self.switch.isOn = sheetTheme?.isEmptySheetFirst ?? false
+			case .isContentBold: self.switch.isOn = sheetTheme?.isContentBold ?? false
+			case .isContentItalic: self.switch.isOn = sheetTheme?.isContentItalic ?? false
+			case .isContentUnderlined: self.switch.isOn = sheetTheme?.isContentUnderlined ?? false
+			case .isTitleBold:  self.switch.isOn = sheetTheme?.isTitleBold ?? false
+			case .isTitleItalic: self.switch.isOn = sheetTheme?.isTitleItalic ?? false
+			case .isTitleUnderlined: self.switch.isOn = sheetTheme?.isTitleUnderlined ?? false
 			default: return
 			}
 		}
@@ -129,7 +129,7 @@ class LabelSwitchCell: ChurchBeamCell, TagImplementation, SheetImplementation {
 	@IBAction func valueChanged(_ sender: UISwitch) {
 		self.switch.thumbTintColor = switchThumbNailColor
 		self.switch.onTintColor = switchBackgroundColor
-		applyCellValueToTag()
+		applyCellValueToTheme()
 		valueDidChange?(self)
 	}
 	

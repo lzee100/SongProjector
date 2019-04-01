@@ -41,9 +41,9 @@ class SongService {
 			}
 		}
 	}
-	var selectedTag: Tag? { return selectedSheet?.hasTag ?? selectedSong?.cluster.hasTag }
-	var previousTag: Tag? { return getPreviousTag() }
-	var nextTag: Tag? { return getNextTag() }
+	var selectedTheme: Theme? { return selectedSheet?.hasTheme ?? selectedSong?.cluster.hasTheme }
+	var previousTheme: Theme? { return getPreviousTheme() }
+	var nextTheme: Theme? { return getNextTheme() }
 	var isPlaying = false
 	var isAnimating = false
 	let swipeLeft: (() -> Void)
@@ -215,11 +215,11 @@ class SongService {
 		}
 	}
 	
-	private func getPreviousTag() -> Tag? {
+	private func getPreviousTheme() -> Theme? {
 		if let selectedSong = selectedSong {
 			let selectedSheetPosition = Int(selectedSheet!.position)
 			if selectedSheetPosition - 1 >= 0 {
-				return selectedSong.sheets[selectedSheetPosition - 1].hasTag ?? selectedSong.cluster.hasTag
+				return selectedSong.sheets[selectedSheetPosition - 1].hasTheme ?? selectedSong.cluster.hasTheme
 			} else {
 				guard let index = songs.index(where: { $0 == selectedSong }) else {
 					return nil
@@ -229,7 +229,7 @@ class SongService {
 					return nil
 				}
 				
-				return songs[index - 1].sheets.first?.hasTag ?? songs[index - 1].cluster.hasTag
+				return songs[index - 1].sheets.first?.hasTheme ?? songs[index - 1].cluster.hasTheme
 				
 			}
 		} else {
@@ -237,16 +237,16 @@ class SongService {
 		}
 	}
 	
-	private func getNextTag() -> Tag? {
+	private func getNextTheme() -> Theme? {
 //		if isAnimating {
-//			return selectedTag
+//			return selectedTheme
 //		}
 		if let selectedSong = selectedSong {
 			
 			let selectedSheetPosition = Int(selectedSheet!.position)
 			
 			if selectedSheetPosition + 1 < selectedSong.sheets.count {
-				return selectedSong.sheets[selectedSheetPosition + 1].hasTag ?? selectedSong.cluster.hasTag
+				return selectedSong.sheets[selectedSheetPosition + 1].hasTheme ?? selectedSong.cluster.hasTheme
 			} else {
 				guard let index = songs.index(where: { $0 == selectedSong }) else {
 					return nil
@@ -254,20 +254,20 @@ class SongService {
 				
 				if index + 1 >= songs.count {
 					if isAnimating {
-						return songs[index].sheets.first?.hasTag ?? songs[index].cluster.hasTag
+						return songs[index].sheets.first?.hasTheme ?? songs[index].cluster.hasTheme
 					}
 					return nil
 				}
 				
 				if isAnimating {
-					return songs[index].sheets.first?.hasTag ?? songs[index].cluster.hasTag
+					return songs[index].sheets.first?.hasTheme ?? songs[index].cluster.hasTheme
 				}
 				
-				return songs[index + 1].sheets.first?.hasTag ?? songs[index + 1].cluster.hasTag
+				return songs[index + 1].sheets.first?.hasTheme ?? songs[index + 1].cluster.hasTheme
 				
 			}
 		} else {
-			return songs.first?.sheets.first?.hasTag ?? songs.first?.cluster.hasTag
+			return songs.first?.sheets.first?.hasTheme ?? songs.first?.cluster.hasTheme
 		}
 	}
 	
@@ -330,7 +330,7 @@ class SongObject: Comparable {
 	var sheets: [Sheet] = []
 	
 	private func addEmptySheet() {
-		if cluster.hasTag?.hasEmptySheet ?? false {
+		if cluster.hasTheme?.hasEmptySheet ?? false {
 			
 			var emptySheetsAdded: [Sheet] = []
 			
@@ -338,7 +338,7 @@ class SongObject: Comparable {
 			emptySheet.deleteDate = NSDate()
 			emptySheet.isEmptySheet = true
 			
-			if let isEmptySheetFirst = cluster.hasTag?.isEmptySheetFirst {
+			if let isEmptySheetFirst = cluster.hasTheme?.isEmptySheetFirst {
 				if isEmptySheetFirst {
 					emptySheetsAdded.append(emptySheet)
 					emptySheetsAdded.append(contentsOf: cluster.hasSheetsArray)
@@ -361,8 +361,8 @@ class SongObject: Comparable {
 	}
 	
 //	var selectedSheet: Sheet?
-	var clusterTag: Tag? {
-		return cluster.hasTag
+	var clusterTheme: Theme? {
+		return cluster.hasTheme
 	}
 	
 	init(cluster: Cluster) {

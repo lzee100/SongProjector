@@ -212,5 +212,25 @@ extension Array {
 		return false
 	}
 	
+	func contains<T: Entity>(entity: T) -> Bool {
+		if let array = self as? Array<T> {
+			if let _ = array.index(where: { $0.id == entity.id }){
+				return true
+			}
+			return false
+		}
+		return false
+	}
+
+	func firstIndex<T: Entity>(entity: T) -> Int? {
+		if let array = self as? Array<T> {
+			if let index = array.index(where: { $0.id == entity.id }){
+				return index
+			}
+			return nil
+		}
+		return nil
+	}
+
 	
 }

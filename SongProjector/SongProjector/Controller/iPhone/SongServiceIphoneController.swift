@@ -196,7 +196,8 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		let song = songService.songs[section]
 		view.didSelectHeader = didSelectSection(section:)
 		view.didSelectPiano = didSelectPianoInSection(section:)
-		view.setup(title: song.cluster.title, icon: Cells.songIcon, isSelected: section == songService.selectedSection, tag: section, hasPianoSolo: song.cluster.hasPianoSolo)
+		let isSelected = section == songService.selectedSection
+		view.setup(title: song.cluster.title, icon: Cells.songIcon, iconSelected: Cells.songIcon, textColor: isSelected ? themeHighlighted : themeWhiteBlackTextColor, isSelected: isSelected, tag: section, hasPianoSolo: song.cluster.hasPianoSolo)
 		if SoundPlayer.isPianoOnlyPlaying && SoundPlayer.isPlaying {
 			view.togglePianoPlay()
 		}
@@ -611,7 +612,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		sheetDisplayerPrevious.isHidden = true
 		sheetDisplayerNext.isHidden = true
 		
-		sheetDisplayer.addSubview(SheetView.createWith(frame: sheetDisplayer.bounds, cluster: sheet.hasCluster, sheet: sheet, tag: songService.selectedTag, scaleFactor: scaleFactor, toExternalDisplay: true))
+		sheetDisplayer.addSubview(SheetView.createWith(frame: sheetDisplayer.bounds, cluster: sheet.hasCluster, sheet: sheet, theme: songService.selectedTheme, scaleFactor: scaleFactor, toExternalDisplay: true))
 	}
 	
 	private func shutDownDisplayer() {
@@ -639,8 +640,8 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 			// current sheet
 			// current sheet, move to left
 			if let sheet = songService.selectedSheet, let nextSheet = songService.nextSheet(select: false) {
-				let currentSheetView = SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.selectedSong?.cluster, sheet: sheet, tag: songService.selectedTag, scaleFactor: scaleFactor)
-				let nextSheetView = SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.getSongForNextSheet()?.cluster, sheet: nextSheet, tag: songService.nextTag, scaleFactor: scaleFactor)
+				let currentSheetView = SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.selectedSong?.cluster, sheet: sheet, theme: songService.selectedTheme, scaleFactor: scaleFactor)
+				let nextSheetView = SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.getSongForNextSheet()?.cluster, sheet: nextSheet, theme: songService.nextTheme, scaleFactor: scaleFactor)
 				
 				currentSheetView.frame = CGRect(
 					x: sheetDisplayer.bounds.minX,
@@ -697,8 +698,8 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				
 					// current sheet
 					// current sheet, move to left
-				let currentSheetView = SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.selectedSong?.cluster, sheet: sheet, tag: songService.selectedTag, scaleFactor: scaleFactor)
-					let previousSheetView = SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.getSongForPreviousSheet()?.cluster, sheet: previousSheet, tag: songService.previousTag, scaleFactor: scaleFactor)
+				let currentSheetView = SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.selectedSong?.cluster, sheet: sheet, theme: songService.selectedTheme, scaleFactor: scaleFactor)
+					let previousSheetView = SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.getSongForPreviousSheet()?.cluster, sheet: previousSheet, theme: songService.previousTheme, scaleFactor: scaleFactor)
 					
 					currentSheetView.frame = CGRect(
 						x: sheetDisplayer.frame.minX,
@@ -746,7 +747,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	}
 
 	private func updateTime() {
-		if let displayTimeTag = songService.selectedTag?.displayTime, displayTimeTag {
+		if let displayTimeTheme = songService.selectedTheme?.displayTime, displayTimeTheme {
 			let date = Date()
 			let seconds = Calendar.current.component(.second, from: date)
 			let remainder = 60 - seconds

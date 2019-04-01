@@ -1,5 +1,5 @@
 //
-//  NewOrEditTagController.swift
+//  NewOrEditThemeController.swift
 //  SongProjector
 //
 //  Created by Leo van der Zee on 21-12-17.
@@ -8,11 +8,11 @@
 
 import UIKit
 
-protocol NewOrEditTagControllerDelegate {
-	func hasNewTag()
+protocol NewOrEditThemeControllerDelegate {
+	func hasNewTheme()
 }
 
-class NewOrEditTagController: UIViewController, UITextFieldDelegate {
+class NewOrEditThemeController: UIViewController, UITextFieldDelegate {
 
 	@IBOutlet var pageDescription: UILabel!
 	@IBOutlet var inputField: UITextField!
@@ -26,11 +26,11 @@ class NewOrEditTagController: UIViewController, UITextFieldDelegate {
 	
 	
 	
-	var delegate: NewOrEditTagControllerDelegate?
+	var delegate: NewOrEditThemeControllerDelegate?
 	
 	override func viewDidLoad() {
 		inputField.delegate = self
-		pageDescription.text = Text.NewTag.pageDescription
+		pageDescription.text = Text.NewTheme.pageDescription
 		errorDescription.text = ""
 		errorDescription.textColor = .errorColor
 		saveButton.setTitle(Text.Actions.add, for: .normal)
@@ -38,13 +38,13 @@ class NewOrEditTagController: UIViewController, UITextFieldDelegate {
 	
 	@IBAction func saveButtonPressed(_ sender: UIButton) {
 		if inputField.text != "" {
-			let tag = CoreTag.createEntity()
-			tag.title = inputField.text
-			let _ = CoreTag.saveContext()
-			delegate?.hasNewTag()
+			let theme = CoreTheme.createEntity()
+			theme.title = inputField.text
+			let _ = CoreTheme.saveContext()
+			delegate?.hasNewTheme()
 			dismiss(animated: true)
 		} else {
-			errorDescription.text = Text.NewTag.errorMessage
+			errorDescription.text = Text.NewTheme.errorMessage
 		}
 	}
 	

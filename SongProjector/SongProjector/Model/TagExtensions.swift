@@ -1,5 +1,5 @@
 //
-//  TagExtensions.swift
+//  ThemeExtensions.swift
 //  SongProjector
 //
 //  Created by Leo van der Zee on 28-12-17.
@@ -9,8 +9,8 @@
 import Foundation
 import UIKit
 
-enum TagAttribute {
-	case asTag
+enum ThemeAttribute {
+	case asTheme
 	
 	case title
 	
@@ -46,42 +46,42 @@ enum TagAttribute {
 	
 	var description: String {
 		switch self {
-		case .asTag: return Text.NewTag.descriptionAsTag
-		case .title: return Text.NewTag.descriptionTitle
-		case .allHaveTitle: return Text.NewTag.descriptionAllTitle
-		case .displayTime: return Text.NewTag.descriptionDisplayTime
-		case .hasEmptySheet: return Text.NewTag.descriptionHasEmptySheet
-		case .isEmptySheetFirst: return Text.NewTag.descriptionPositionEmptySheet
-		case .isContentBold: return Text.NewTag.bold
-		case .isContentItalic: return Text.NewTag.italic
-		case .isContentUnderlined: return Text.NewTag.underlined
-		case .isTitleBold: return Text.NewTag.bold
-		case .isTitleItalic: return Text.NewTag.italic
-		case .isTitleUnderlined: return Text.NewTag.underlined
+		case .asTheme: return Text.NewTheme.descriptionAsTheme
+		case .title: return Text.NewTheme.descriptionTitle
+		case .allHaveTitle: return Text.NewTheme.descriptionAllTitle
+		case .displayTime: return Text.NewTheme.descriptionDisplayTime
+		case .hasEmptySheet: return Text.NewTheme.descriptionHasEmptySheet
+		case .isEmptySheetFirst: return Text.NewTheme.descriptionPositionEmptySheet
+		case .isContentBold: return Text.NewTheme.bold
+		case .isContentItalic: return Text.NewTheme.italic
+		case .isContentUnderlined: return Text.NewTheme.underlined
+		case .isTitleBold: return Text.NewTheme.bold
+		case .isTitleItalic: return Text.NewTheme.italic
+		case .isTitleUnderlined: return Text.NewTheme.underlined
 			
-		case .backgroundColor: return Text.NewTag.descriptionBackgroundColor
-		case .backgroundImage: return Text.NewTag.backgroundImage
-		case .backgroundTransparancy: return Text.NewTag.descriptionBackgroundTransparency
-		case .contentAlignment: return Text.NewTag.descriptionAlignment
-		case .contentBorderColor: return Text.NewTag.borderColor
-		case .contentBorderSize: return Text.NewTag.borderSizeDescription
-		case .contentFontName: return Text.NewTag.fontFamilyDescription
-		case .contentTextColorHex: return Text.NewTag.textColor
-		case .contentTextSize: return Text.NewTag.fontSizeDescription
+		case .backgroundColor: return Text.NewTheme.descriptionBackgroundColor
+		case .backgroundImage: return Text.NewTheme.backgroundImage
+		case .backgroundTransparancy: return Text.NewTheme.descriptionBackgroundTransparency
+		case .contentAlignment: return Text.NewTheme.descriptionAlignment
+		case .contentBorderColor: return Text.NewTheme.borderColor
+		case .contentBorderSize: return Text.NewTheme.borderSizeDescription
+		case .contentFontName: return Text.NewTheme.fontFamilyDescription
+		case .contentTextColorHex: return Text.NewTheme.textColor
+		case .contentTextSize: return Text.NewTheme.fontSizeDescription
 			
-		case .titleAlignment: return Text.NewTag.descriptionAlignment
-		case .titleBackgroundColor: return Text.NewTag.descriptionBackgroundColor
-		case .titleBorderColorHex: return Text.NewTag.borderColor
-		case .titleTextSize: return Text.NewTag.fontSizeDescription
-		case .titleFontName: return Text.NewTag.fontFamilyDescription
-		case .titleTextColorHex: return Text.NewTag.textColor
-		case .titleBorderSize: return Text.NewTag.borderSizeDescription
+		case .titleAlignment: return Text.NewTheme.descriptionAlignment
+		case .titleBackgroundColor: return Text.NewTheme.descriptionBackgroundColor
+		case .titleBorderColorHex: return Text.NewTheme.borderColor
+		case .titleTextSize: return Text.NewTheme.fontSizeDescription
+		case .titleFontName: return Text.NewTheme.fontFamilyDescription
+		case .titleTextColorHex: return Text.NewTheme.textColor
+		case .titleBorderSize: return Text.NewTheme.borderSizeDescription
 			
 		}
 	}
 }
 
-extension Tag {
+extension Theme {
 	
 	var textColorTitle: UIColor? {
 		get {
@@ -348,92 +348,92 @@ extension Tag {
 //		super.delete()
 //	}
 	
-	func getTemp() -> Tag {
-		let tempTag = CoreTag.createEntityNOTsave()
-		tempTag.isTemp = true
-		tempTag.title = title
-		tempTag.allHaveTitle = allHaveTitle
-		tempTag.hasEmptySheet = hasEmptySheet
-		tempTag.isEmptySheetFirst = isEmptySheetFirst
-		tempTag.backgroundColor = backgroundColor
+	func getTemp() -> Theme {
+		let tempTheme = CoreTheme.createEntityNOTsave()
+		tempTheme.isTemp = true
+		tempTheme.title = title
+		tempTheme.allHaveTitle = allHaveTitle
+		tempTheme.hasEmptySheet = hasEmptySheet
+		tempTheme.isEmptySheetFirst = isEmptySheetFirst
+		tempTheme.backgroundColor = backgroundColor
 		let cgfloatValue = CGFloat(backgroundTransparancy)
-		tempTag.backgroundTransparancy = Float(cgfloatValue) * 100
-		tempTag.displayTime = displayTime
+		tempTheme.backgroundTransparancy = Float(cgfloatValue) * 100
+		tempTheme.displayTime = displayTime
 		
-		tempTag.titleFontName = titleFontName ?? "Avenir"
-		tempTag.titleTextSize = titleTextSize
-		tempTag.titleBackgroundColor = titleBackgroundColor
-		tempTag.titleAlignmentNumber = titleAlignmentNumber
-		tempTag.titleBorderSize = titleBorderSize
-		tempTag.titleBorderColorHex = titleBorderColorHex
-		tempTag.titleTextColorHex = titleTextColorHex
-		tempTag.isTitleBold = isTitleBold
-		tempTag.isTitleItalic = isTitleItalic
-		tempTag.isTitleUnderlined = isTitleUnderlined
+		tempTheme.titleFontName = titleFontName ?? "Avenir"
+		tempTheme.titleTextSize = titleTextSize
+		tempTheme.titleBackgroundColor = titleBackgroundColor
+		tempTheme.titleAlignmentNumber = titleAlignmentNumber
+		tempTheme.titleBorderSize = titleBorderSize
+		tempTheme.titleBorderColorHex = titleBorderColorHex
+		tempTheme.titleTextColorHex = titleTextColorHex
+		tempTheme.isTitleBold = isTitleBold
+		tempTheme.isTitleItalic = isTitleItalic
+		tempTheme.isTitleUnderlined = isTitleUnderlined
 		
-		tempTag.contentFontName = contentFontName ?? "Avenir"
-		tempTag.contentTextSize = contentTextSize
-		tempTag.contentAlignmentNumber = contentAlignmentNumber
-		tempTag.contentBorderSize = contentBorderSize
-		tempTag.contentBorderColorHex = contentBorderColorHex
-		tempTag.contentTextColorHex = contentTextColorHex
-		tempTag.isContentBold = isContentBold
-		tempTag.isContentItalic = isContentItalic
-		tempTag.isContentUnderlined = isContentUnderlined
-		tempTag.isBackgroundImageDeleted = isBackgroundImageDeleted
+		tempTheme.contentFontName = contentFontName ?? "Avenir"
+		tempTheme.contentTextSize = contentTextSize
+		tempTheme.contentAlignmentNumber = contentAlignmentNumber
+		tempTheme.contentBorderSize = contentBorderSize
+		tempTheme.contentBorderColorHex = contentBorderColorHex
+		tempTheme.contentTextColorHex = contentTextColorHex
+		tempTheme.isContentBold = isContentBold
+		tempTheme.isContentItalic = isContentItalic
+		tempTheme.isContentUnderlined = isContentUnderlined
+		tempTheme.isBackgroundImageDeleted = isBackgroundImageDeleted
 		
-		tempTag.imagePath = imagePath
-		tempTag.imagePathThumbnail = imagePathThumbnail
-		tempTag.isHidden = isHidden
-		return tempTag
+		tempTheme.imagePath = imagePath
+		tempTheme.imagePathThumbnail = imagePathThumbnail
+		tempTheme.isHidden = isHidden
+		return tempTheme
 	}
 	
-	func mergeSelfInto(tag: Tag, isTemp: NSDate? = nil, sheetType: SheetType) {
-		tag.deleteDate = isTemp
-		tag.title = title
-		tag.allHaveTitle = allHaveTitle
-		tag.hasEmptySheet = hasEmptySheet
-		tag.isEmptySheetFirst = isEmptySheetFirst
-		tag.backgroundColor = backgroundColor
+	func mergeSelfInto(theme: Theme, isTemp: NSDate? = nil, sheetType: SheetType) {
+		theme.deleteDate = isTemp
+		theme.title = title
+		theme.allHaveTitle = allHaveTitle
+		theme.hasEmptySheet = hasEmptySheet
+		theme.isEmptySheetFirst = isEmptySheetFirst
+		theme.backgroundColor = backgroundColor
 		let cgfloatValue = CGFloat(backgroundTransparancy)
-		tag.backgroundTransparancy = Float(cgfloatValue) * 100
-		tag.displayTime = displayTime
+		theme.backgroundTransparancy = Float(cgfloatValue) * 100
+		theme.displayTime = displayTime
 		
-		tag.titleFontName = titleFontName ?? "Avenir"
-		tag.titleTextSize = titleTextSize
+		theme.titleFontName = titleFontName ?? "Avenir"
+		theme.titleTextSize = titleTextSize
 		if sheetType != .SheetPastors {
-			tag.titleBackgroundColor = titleBackgroundColor
-			tag.titleAlignmentNumber = titleAlignmentNumber
+			theme.titleBackgroundColor = titleBackgroundColor
+			theme.titleAlignmentNumber = titleAlignmentNumber
 		}
-		tag.titleBorderSize = titleBorderSize
-		tag.titleBorderColorHex = titleBorderColorHex
-		tag.titleTextColorHex = titleTextColorHex
-		tag.isTitleBold = isTitleBold
-		tag.isTitleItalic = isTitleItalic
-		tag.isTitleUnderlined = isTitleUnderlined
+		theme.titleBorderSize = titleBorderSize
+		theme.titleBorderColorHex = titleBorderColorHex
+		theme.titleTextColorHex = titleTextColorHex
+		theme.isTitleBold = isTitleBold
+		theme.isTitleItalic = isTitleItalic
+		theme.isTitleUnderlined = isTitleUnderlined
 		
-		tag.contentFontName = contentFontName ?? "Avenir"
-		tag.contentTextSize = contentTextSize
+		theme.contentFontName = contentFontName ?? "Avenir"
+		theme.contentTextSize = contentTextSize
 		if sheetType != .SheetPastors {
-			tag.contentAlignmentNumber = contentAlignmentNumber
+			theme.contentAlignmentNumber = contentAlignmentNumber
 		}
-		tag.contentBorderSize = contentBorderSize
-		tag.contentBorderColorHex = contentBorderColorHex
-		tag.contentTextColorHex = contentTextColorHex
-		tag.isContentBold = isContentBold
-		tag.isContentItalic = isContentItalic
-		tag.isContentUnderlined = isContentUnderlined
-		tag.isBackgroundImageDeleted = isBackgroundImageDeleted
+		theme.contentBorderSize = contentBorderSize
+		theme.contentBorderColorHex = contentBorderColorHex
+		theme.contentTextColorHex = contentTextColorHex
+		theme.isContentBold = isContentBold
+		theme.isContentItalic = isContentItalic
+		theme.isContentUnderlined = isContentUnderlined
+		theme.isBackgroundImageDeleted = isBackgroundImageDeleted
 		
-		tag.imagePath = imagePath
-		tag.imagePathThumbnail = imagePathThumbnail
+		theme.imagePath = imagePath
+		theme.imagePathThumbnail = imagePathThumbnail
 		
 		if isBackgroundImageDeleted {
-			tag.backgroundImage = nil
-			tag.isBackgroundImageDeleted = false
+			theme.backgroundImage = nil
+			theme.isBackgroundImageDeleted = false
 		}
 		
-		print("merged tag")
+		print("merged theme")
 
 	}
 	

@@ -18,7 +18,7 @@ struct Cells {
 	static let basicCellid = "BasicCell"
 	static let addButtonCellid = "AddButtonCell"
 	static let newSongSheetCellid = "NewSongSheetCell"
-	static let tagCellCollection = "TagCellCollection"
+	static let themeCellCollection = "ThemeCellCollection"
 	static let sheetCollectionCell = "SheetCollectionCell"
 	static let labelNumberCell = "LabelNumberCell"
 	static let LabelPickerCell = "LabelPickerCell"

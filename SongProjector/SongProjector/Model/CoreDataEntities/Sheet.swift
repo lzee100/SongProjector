@@ -28,15 +28,15 @@ public class Sheet: Entity {
 	@NSManaged public var position: Int16
 	@NSManaged public var time: Double
 	@NSManaged public var hasCluster: Cluster?
-	@NSManaged public var hasTag: Tag?
+	@NSManaged public var hasTheme: Theme?
 	
-	enum CodingKeysTag:String,CodingKey
+	enum CodingKeysTheme:String,CodingKey
 	{
 		case isEmptySheet
 		case position
 		case time
 		case hasCluster = "cluster"
-		case hasTag = "tag"
+		case hasTheme = "theme"
 	}
 	
 	
@@ -50,11 +50,11 @@ public class Sheet: Entity {
 	}
 	
 	public override func initialization(decoder: Decoder) throws {
-		let container = try decoder.container(keyedBy: CodingKeysTag.self)
+		let container = try decoder.container(keyedBy: CodingKeysTheme.self)
 		isEmptySheet = try Bool(truncating: (container.decodeIfPresent(Int16.self, forKey: .isEmptySheet) ?? 0) as NSNumber)
 		position = try container.decodeIfPresent(Int16.self, forKey: .position) ?? 0
 		time = try container.decodeIfPresent(Double.self, forKey: .time) ?? 0
-		hasTag = try container.decodeIfPresent(Tag.self, forKey: .hasTag)
+		hasTheme = try container.decodeIfPresent(Theme.self, forKey: .hasTheme)
 		
 		try super.initialization(decoder: decoder)
 		
@@ -65,11 +65,11 @@ public class Sheet: Entity {
 	// MARK: - Encodable
 	
 	override public func encode(to encoder: Encoder) throws {
-		var container = encoder.container(keyedBy: CodingKeysTag.self)
+		var container = encoder.container(keyedBy: CodingKeysTheme.self)
 		try container.encode(Int(truncating: NSNumber(value: isEmptySheet)), forKey: .isEmptySheet)
 		try container.encode(position, forKey: .position)
-		if hasTag != nil {
-			try container.encode(hasTag, forKey: .hasTag)
+		if hasTheme != nil {
+			try container.encode(hasTheme, forKey: .hasTheme)
 		}
 
 		try super.encode(to: encoder)
@@ -89,11 +89,16 @@ public class Sheet: Entity {
 		self.init(entity: entity, insertInto: managedObjectContext)
 		//		try self.init(from: decoder)
 		
-		let container = try decoder.container(keyedBy: CodingKeysTag.self)
+		let container = try decoder.container(keyedBy: CodingKeysTheme.self)
+		
+		
+		
+		
+		
 		isEmptySheet = try Bool(truncating: (container.decodeIfPresent(Int16.self, forKey: .isEmptySheet) ?? 0) as NSNumber)
 		position = try container.decodeIfPresent(Int16.self, forKey: .position) ?? 0
 		time = try container.decodeIfPresent(Double.self, forKey: .time) ?? 0
-		hasTag = try container.decodeIfPresent(Tag.self, forKey: .hasTag)
+		hasTheme = try container.decodeIfPresent(Theme.self, forKey: .hasTheme)
 		
 		try super.initialization(decoder: decoder)
 		

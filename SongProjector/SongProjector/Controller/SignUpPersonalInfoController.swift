@@ -116,13 +116,13 @@ class SignUpPersonalInfoController: ChurchBeamViewController, UITableViewDelegat
 		}
 	}
 	
-	override func handleRequestFinish(result: AnyObject?) {
+	override func handleRequestFinish(requesterId: String, result: AnyObject?) {
 		if let organization = (result as? [Organization])?.first, let role = organization.hasRoles?.allObjects.first as? Role {
 			Queues.main.async {
 				self.user.roleId = role.id
 				UserSubmitter.submit([self.user], requestMethod: .post)
 			}
-		} else if ((result as? [User]) != nil) {
+		} else if requesterId == UserFetcher.requesterId {
 			Queues.main.async {
 				self.dismiss(animated: true, completion: {
 					NotificationCenter.default.post(name: NotificationNames.didSignUpSuccessfully, object: nil)

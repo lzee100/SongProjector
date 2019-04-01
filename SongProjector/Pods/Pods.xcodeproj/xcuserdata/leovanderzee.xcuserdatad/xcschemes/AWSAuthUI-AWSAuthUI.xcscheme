@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D31782D5C798513EBE9248279AE50CCC"
+               BlueprintIdentifier = "60A7C0C4C0EFBD7E939F90E1D215165E"
                BuildableName = "AWSAuthUI.bundle"
                BlueprintName = "AWSAuthUI-AWSAuthUI"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -45,7 +45,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D31782D5C798513EBE9248279AE50CCC"
+            BlueprintIdentifier = "60A7C0C4C0EFBD7E939F90E1D215165E"
             BuildableName = "AWSAuthUI.bundle"
             BlueprintName = "AWSAuthUI-AWSAuthUI"
             ReferencedContainer = "container:Pods.xcodeproj">

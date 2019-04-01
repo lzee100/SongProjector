@@ -15,7 +15,7 @@ class ActivityView: UIView {
 	@IBOutlet var bulletView: UIView!
 	@IBOutlet var activityView: UIView!
 	
-	private var selectedTag: Tag?
+	private var selectedTheme: Theme?
 	private var activity: GoogleActivity?
 	private var scaleFactor: CGFloat? = 1
 	
@@ -39,10 +39,10 @@ class ActivityView: UIView {
 		addSubview(activityView)
 	}
 	
-	static func createWith(frame: CGRect, tag: Tag?, activity: GoogleActivity?, scaleFactor: CGFloat? = 1) -> ActivityView {
+	static func createWith(frame: CGRect, theme: Theme?, activity: GoogleActivity?, scaleFactor: CGFloat? = 1) -> ActivityView {
 		
 		let view = ActivityView(frame: frame)
-		view.selectedTag = tag
+		view.selectedTheme = theme
 		view.activity = activity
 		view.bulletView.backgroundColor = .black
 		view.scaleFactor = scaleFactor
@@ -67,14 +67,14 @@ class ActivityView: UIView {
 		let activityDescription = activity?.eventDescription ?? Text.ActivitySheet.descriptionNoActivities
 		
 		var fontName = ""
-		if var attributes = selectedTag?.getLyricsAttributes(scaleFactor ?? 1), let font = attributes[.font] as? UIFont {
+		if var attributes = selectedTheme?.getLyricsAttributes(scaleFactor ?? 1), let font = attributes[.font] as? UIFont {
 			fontName = font.fontName
 			attributes[.font] = UIFont(name: fontName, size: self.descriptionTime.frame.height / 2)
 			descriptionTime.attributedText = NSAttributedString(string: dateTime, attributes: attributes)
 			descriptionActivity.attributedText = NSAttributedString(string: activityDescription, attributes: attributes)
 		} else {
-			descriptionTime.attributedText = NSAttributedString(string: dateTime, attributes: selectedTag?.getLyricsAttributes(scaleFactor ?? 1))
-			descriptionActivity.attributedText = NSAttributedString(string: activityDescription, attributes: selectedTag?.getLyricsAttributes(scaleFactor ?? 1))
+			descriptionTime.attributedText = NSAttributedString(string: dateTime, attributes: selectedTheme?.getLyricsAttributes(scaleFactor ?? 1))
+			descriptionActivity.attributedText = NSAttributedString(string: activityDescription, attributes: selectedTheme?.getLyricsAttributes(scaleFactor ?? 1))
 		
 		}
 	}

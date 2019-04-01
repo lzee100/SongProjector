@@ -15,26 +15,31 @@ public class Cluster: Entity {
 		return NSFetchRequest<Cluster>(entityName: "Cluster")
 	}
 	
-	@NSManaged public var tagId: Int64
 	@NSManaged public var isLoop: Bool
 	@NSManaged public var position: Int16
 	@NSManaged public var time: Double
 	
-	var hasTag: Tag? {
-		get {
-			CoreTag.managedObjectContext = self.managedObjectContext ?? moc
-			CoreTag.predicates.append("id", equals: tagId)
-			return CoreTag.getEntities().first
-		}
-		set {
-			if let tag = newValue {
-				tagId = tag.id
-			}
-		}
-	}
+	@NSManaged public var hasTags: NSSet?
+	@NSManaged public var hasTheme: Theme?
+
+//
+//	var hasTheme: Theme? {
+//		get {
+//			CoreTheme.managedObjectContext = self.managedObjectContext ?? moc
+//			CoreTheme.predicates.append("id", equals: themeId)
+//			return CoreTheme.getEntities().first
+//		}
+//		set {
+//			if let theme = newValue {
+//				themeId = theme.id
+//			}
+//		}
+//	}
 	
 	@NSManaged public var hasInstruments: NSSet?
 	@NSManaged public var hasSheets: NSSet?
+//	@NSManaged public var hasTagIds: NSSet?
+
 	
 	private var clusterSheets: [SheetMetaType] {
 		if let hasSheets = hasSheets?.allObjects as? [SheetMetaType] {
@@ -49,9 +54,10 @@ public class Cluster: Entity {
 		case isLoop
 		case position
 		case time
-		case tagId = "theme_id"
+		case theme = "theme"
 		case hasSheets = "sheets"
 		case hasInstruments = "instruments"
+		case hasTags = "tags"
 	}
 	
 	
@@ -75,9 +81,15 @@ public class Cluster: Entity {
 		try container.encode(Int(truncating: NSNumber(value: isLoop)), forKey: .isLoop)
 		try container.encode(position, forKey: .position)
 		try container.encode(time, forKey: .time)
-		try container.encode(tagId, forKey: .tagId)
+		if let theme = hasTheme {
+			try container.encode(theme, forKey: .theme)
+		}
 		try container.encode(clusterSheets.map(AnySheet.init), forKey: .hasSheets)
 		try container.encode(hasInstrumentsArray, forKey: .hasInstruments)
+		
+		let tags: [Tag] = hasTags?.allObjects as? [Tag] ?? []
+		
+		try container.encode(tags, forKey: .hasTags)
 
 		try super.encode(to: encoder)
 		
@@ -100,16 +112,26 @@ public class Cluster: Entity {
 		isLoop = try Bool(truncating: (container.decodeIfPresent(Int16.self, forKey: .isLoop) ?? 0) as NSNumber)
 		position = try container.decodeIfPresent(Int16.self, forKey: .position) ?? 0
 		time = try container.decodeIfPresent(Double.self, forKey: .time) ?? 0
-		tagId = try container.decode(Int64.self, forKey: .tagId)
+		
+		hasTheme = Entity.getEntity(decodeNew: { () -> Theme? in
+			return try container.decodeIfPresent(Theme.self, forKey: .theme)
+		})
 		
 		hasSheets = try NSSet(array: container.decode([AnySheet].self, forKey: .hasSheets).map { $0.base })
 		let instr = try container.decodeIfPresent([Instrument].self, forKey: .hasInstruments)
 		if let instr = instr {
 			hasInstruments = NSSet(array: instr)
 		}
-
+		
+		let tags = Entity.getEntities { () -> [Tag] in
+			return try container.decodeIfPresent([Tag].self, forKey: .hasTags) ?? []
+		}
+		
+		addToHasTags(NSSet(array: tags))
+		
 		try super.initialization(decoder: decoder)
 		
+		tags.forEach({ $0.addToHasClusters(self) })
 	}
 	
 	public override func copy(with zone: NSZone? = nil) -> Any {
@@ -157,5 +179,39 @@ extension Cluster {
 	
 	@objc(removeHasSheets:)
 	@NSManaged public func removeFromHasSheets(_ values: NSSet)
+	
+}
+
+// MARK: Generated accessors for hasSheets
+extension Cluster {
+	
+	@objc(addHasTagsIdObject:)
+	@NSManaged public func addToHasTagIds(_ value: TagId)
+	
+	@objc(removeHasTagsIdsObject:)
+	@NSManaged public func removeFromHasTagIds(_ value: TagId)
+	
+	@objc(addHasTagsIds:)
+	@NSManaged public func addToHasTagIds(_ values: NSSet)
+	
+	@objc(removeHasTagsIds:)
+	@NSManaged public func removeFromHasTagIds(_ values: NSSet)
+	
+}
+
+// MARK: Generated accessors for hasTags
+extension Cluster {
+	
+	@objc(addHasTagsObject:)
+	@NSManaged public func addToHasTags(_ value: Tag)
+	
+	@objc(removeHasTagsObject:)
+	@NSManaged public func removeFromHasTags(_ value: Tag)
+	
+	@objc(addHasTags:)
+	@NSManaged public func addToHasTags(_ values: NSSet)
+	
+	@objc(removeHasTags:)
+	@NSManaged public func removeFromHasTags(_ values: NSSet)
 	
 }

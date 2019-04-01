@@ -14,13 +14,13 @@ class BibleStudyIphoneController: UIViewController, UITableViewDelegate, UITable
 
 	@IBOutlet var tableView: UITableView!
 	@IBOutlet var collectionViewSheets: UICollectionView!
-	@IBOutlet var collectionViewTags: UICollectionView!
+	@IBOutlet var collectionViewThemes: UICollectionView!
 	@IBOutlet var saveButton: UIBarButtonItem!
 	@IBOutlet var addButton: UIBarButtonItem!
 	
-	private var tags: [Tag] = []
+	private var themes: [Theme] = []
 	private var sheets: [Sheet] = []
-	private var selectedTag: Tag?
+	private var selectedTheme: Theme?
 	private var multiplier = externalDisplayWindowRatio
 	private var delaySheetAimation = 0.0
 	private var isFirstTime = true {
@@ -47,7 +47,7 @@ class BibleStudyIphoneController: UIViewController, UITableViewDelegate, UITable
 			let controller = segue.destination as! SheetPickerMenuController
 			controller.didCreateSheet = didCreate(sheet:)
 			controller.bibleStudyGeneratorIphoneDelegate = self
-			controller.selectedTag = selectedTag
+			controller.selectedTheme = selectedTheme
 		}
     }
 	
@@ -85,19 +85,19 @@ class BibleStudyIphoneController: UIViewController, UITableViewDelegate, UITable
 		if collectionView == collectionViewSheets {
 			return 1
 		} else {
-			return tags.count
+			return themes.count
 		}
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 		
-		if collectionView == collectionViewTags {
+		if collectionView == collectionViewThemes {
 			
-			let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.tagCellCollection, for: indexPath)
+			let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.themeCellCollection, for: indexPath)
 			
-			if let collectionCell = collectionCell as? TagCellCollection {
-				collectionCell.setup(tagName: tags[indexPath.row].title ?? "")
-				collectionCell.isSelectedCell = selectedTag?.id == tags[indexPath.row].id
+			if let collectionCell = collectionCell as? ThemeCellCollection {
+				collectionCell.setup(themeName: themes[indexPath.row].title ?? "")
+				collectionCell.isSelectedCell = selectedTheme?.id == themes[indexPath.row].id
 			}
 			return collectionCell
 		
@@ -115,14 +115,16 @@ class BibleStudyIphoneController: UIViewController, UITableViewDelegate, UITable
 		if collectionView == collectionViewSheets {
 			return sheetSize
 		} else {
-			return CGSize(width: 200, height: 50)
+			let font = UIFont.systemFont(ofSize: 17)
+			let width = (themes[indexPath.row].title ?? "").width(withConstrainedHeight: 22, font: font) + 50
+			return CGSize(width: width, height: 50)
 		}
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		if collectionView != collectionViewSheets {
-			if selectedTag?.id != tags[indexPath.row].id {
-				selectedTag = tags[indexPath.row]
+			if selectedTheme?.id != themes[indexPath.row].id {
+				selectedTheme = themes[indexPath.row]
 				update()
 			}
 		}
@@ -148,7 +150,7 @@ class BibleStudyIphoneController: UIViewController, UITableViewDelegate, UITable
 	// MARK: - Private Functions
 	
 	private func setup() {
-		collectionViewTags.register(UINib(nibName: Cells.tagCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.tagCellCollection)
+		collectionViewThemes.register(UINib(nibName: Cells.themeCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.themeCellCollection)
 		collectionViewSheets.register(UINib(nibName: Cells.sheetCollectionCell, bundle: nil), forCellWithReuseIdentifier: Cells.sheetCollectionCell)
 		
 		let cellHeight = multiplier * (UIScreen.main.bounds.width - 20)
@@ -158,9 +160,9 @@ class BibleStudyIphoneController: UIViewController, UITableViewDelegate, UITable
 	}
 	
 	private func update() {
-		CoreTag.setSortDescriptor(attributeName: "position", ascending: false)
-		tags = CoreTag.getEntities()
-		collectionViewTags.reloadData()
+		CoreTheme.setSortDescriptor(attributeName: "position", ascending: false)
+		themes = CoreTheme.getEntities()
+		collectionViewThemes.reloadData()
 		collectionViewSheets.reloadData()
 		isFirstTime = true
 	}

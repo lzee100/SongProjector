@@ -218,7 +218,6 @@ class Requester<T>: BaseRS, RequesterType, RequestObserver where T:Codable, T:NS
 						} catch {
 							print(error)
 						}
-						
 						success(response, entities)
 						
 					}

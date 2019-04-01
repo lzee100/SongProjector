@@ -12,7 +12,7 @@ protocol LabelTextFieldCellDelegate {
 	func textFieldDidChange(cell: LabelTextFieldCell, text: String?)
 }
 
-class LabelTextFieldCell: ChurchBeamCell, TagImplementation, SheetImplementation {
+class LabelTextFieldCell: ChurchBeamCell, ThemeImplementation, SheetImplementation {
 
 	
 	@IBOutlet var descriptionTitle: UILabel!
@@ -22,8 +22,8 @@ class LabelTextFieldCell: ChurchBeamCell, TagImplementation, SheetImplementation
 	var delegate: LabelTextFieldCellDelegate?
 	
 	var sheet: Sheet?
-	var sheetTag: Tag?
-	var tagAttribute: TagAttribute?
+	var sheetTheme: Theme?
+	var themeAttribute: ThemeAttribute?
 	var sheetAttribute: SheetAttribute?
 	var valueDidChange: ((ChurchBeamCell) -> Void)?
 	var getModificationMode: (() -> ModificationMode)?
@@ -55,11 +55,16 @@ class LabelTextFieldCell: ChurchBeamCell, TagImplementation, SheetImplementation
 								 for: UIControlEvents.editingChanged)
 	}
 	
+	func setup(description: String, placeholder: String, delegate: LabelTextFieldCellDelegate) {
+		descriptionTitle.text = description
+		textField.placeholder = placeholder
+		self.delegate = delegate
+	}
 	
-	func apply(tag: Tag, tagAttribute: TagAttribute) {
-		self.sheetTag = tag
-		self.tagAttribute = tagAttribute
-		descriptionTitle.text = tagAttribute.description
+	func apply(theme: Theme, themeAttribute: ThemeAttribute) {
+		self.sheetTheme = theme
+		self.themeAttribute = themeAttribute
+		descriptionTitle.text = themeAttribute.description
 		applyValueToCell()
 	}
 	
@@ -74,28 +79,28 @@ class LabelTextFieldCell: ChurchBeamCell, TagImplementation, SheetImplementation
 		
 		if let modificationMode = getModificationMode?() {
 			switch modificationMode {
-			case .newTag, .editTag:
-				textField.text = sheetTag?.title ?? Text.NewTag.sampleTitle
+			case .newTheme, .editTheme:
+				textField.text = sheetTheme?.title ?? Text.NewTheme.sampleTitle
 			case .newCustomSheet, .editCustomSheet:
-				textField.text = sheet?.title ?? Text.NewTag.sampleTitle
+				textField.text = sheet?.title ?? Text.NewTheme.sampleTitle
 			}
 		}
 	}
 	
-	func applyCellValueToTag() {
+	func applyCellValueToTheme() {
 		
 		if let modificationMode = getModificationMode?() {
 			switch modificationMode {
-			case .newTag, .editTag:
-				sheetTag?.title = textField.text ?? Text.NewTag.sampleTitle
+			case .newTheme, .editTheme:
+				sheetTheme?.title = textField.text ?? Text.NewTheme.sampleTitle
 			case .newCustomSheet, .editCustomSheet:
 				sheet?.title = textField.text
 			}
 		}
 		
-		if let tagAttribute = tagAttribute, let tag = sheetTag {
-			switch tagAttribute {
-			case .title: tag.title = self.textField.text
+		if let themeAttribute = themeAttribute, let theme = sheetTheme {
+			switch themeAttribute {
+			case .title: theme.title = self.textField.text
 			default:
 				return
 			}
@@ -115,7 +120,7 @@ class LabelTextFieldCell: ChurchBeamCell, TagImplementation, SheetImplementation
 	
 	func setName(name: String) {
 		textField.text = name
-		applyCellValueToTag()
+		applyCellValueToTheme()
 		delegate?.textFieldDidChange(cell: self, text: textField.text)
 	}
 	
@@ -127,7 +132,7 @@ class LabelTextFieldCell: ChurchBeamCell, TagImplementation, SheetImplementation
 	}
 	
 	@objc func textFieldDidChange() {
-		applyCellValueToTag()
+		applyCellValueToTheme()
 		valueDidChange?(self)
 		delegate?.textFieldDidChange(cell: self, text: textField.text)
 	}

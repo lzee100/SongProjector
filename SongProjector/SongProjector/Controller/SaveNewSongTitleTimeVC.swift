@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SaveNewSongTitleTimeVC: UITableViewController {
+class SaveNewSongTitleTimeVC: ChurchBeamTableViewController {
 	
 	
 	@IBOutlet var saveButton: UIBarButtonItem!
@@ -17,19 +17,21 @@ class SaveNewSongTitleTimeVC: UITableViewController {
 	enum Section {
 		case song
 		case custom
-		
-		static let all = [song, custom]
+		case tags
+		static let all = [song, custom, tags]
 	}
 	
 	
 	enum Row {
 		case title
 		case time
+		case tag
 		
 		static func `for`(indexPath: IndexPath) -> Row {
 			switch Section.all[indexPath.section] {
 			case .song: return title
 			case .custom: return time
+			case .tags: return tag
 			}
 		}
 		
@@ -37,13 +39,17 @@ class SaveNewSongTitleTimeVC: UITableViewController {
 			switch self {
 			case .title: return TextFieldCell.identifier
 			case .time: return PickerCell.identifier
+			case .tag: return BasicCell.identifier
 			}
 		}
 		
 	}
 	
+	private var tags: [Tag] = []
+	private var selectedTags: [Tag] = []
+	
 	weak var cluster: Cluster?
-	weak var selectedTag: Tag?
+	weak var selectedTheme: Theme?
 	
 	var timeValues: [Int] {
 		var values: [Int] = []
@@ -71,8 +77,19 @@ class SaveNewSongTitleTimeVC: UITableViewController {
 		tableView.tableFooterView = UIView()
     }
 	
+	override func viewWillAppear(_ animated: Bool) {
+		super.viewWillAppear(animated)
+		TagFetcher.addObserver(self)
+		TagFetcher.fetch(force: false)
+	}
+	
+	override func viewWillDisappear(_ animated: Bool) {
+		super.viewWillDisappear(animated)
+		TagFetcher.removeObserver(self)
+	}
+	
 	override func numberOfSections(in tableView: UITableView) -> Int {
-		return 2
+		return Section.all.count
 	}
 	
 	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -81,6 +98,8 @@ class SaveNewSongTitleTimeVC: UITableViewController {
 			return 1
 		case .custom:
 			return (cluster?.isTypeSong ?? false) ? 0 : 1
+		case .tags:
+			return tags.count
 		}
 	}
 	
@@ -92,8 +111,27 @@ class SaveNewSongTitleTimeVC: UITableViewController {
 			(cell as! TextFieldCell).setup(description: Text.NewSong.title, content: cluster?.title ?? "", textFieldDidChange: textFieldDidChange(text:))
 		case .time:
 			(cell as! PickerCell).setupWith(description: Text.CustomSheets.descriptionTime, values: timeValues, selectedIndex: selectedIndex, didSelectValue: pickerDidChange(value:))
+		case .tag:
+			(cell as! BasicCell).setup(title: tags[indexPath.row].title, icon: Cells.bulletOpen, iconSelected: Cells.bulletFilled, textColor: themeWhiteBlackTextColor, hasPianoOnly: false)
 		}
 		return cell
+	}
+	
+	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+		if Section.all[indexPath.section] == .tags {
+			if selectedTags.contains(entity: tags[indexPath.row]) {
+				selectedTags.delete(entity: tags[indexPath.row])
+			} else {
+				selectedTags.append(tags[indexPath.row])
+			}
+		}
+	}
+	
+	override func handleRequestFinish(requesterId: String, result: AnyObject?) {
+		Queues.main.async {
+			self.tags = CoreTag.getEntities()
+			self.tableView.reloadData()
+		}
 	}
 
 	

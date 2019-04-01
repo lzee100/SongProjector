@@ -16,7 +16,7 @@ class SheetPickerMenuController: UITableViewController, NewOrEditIphoneControlle
 	var didCreateSheet: ((Sheet) -> Void)?
 	var bibleStudyGeneratorIphoneDelegate: BibleStudyGeneratorIphoneDelegate?
 	var bibleStudyGeneratorDelegate: BibleStudyGeneratorDelegate?
-	var selectedTag: Tag?
+	var selectedTheme: Theme?
 	var delegate: NewOrEditIphoneControllerDelegate?
 	var lyricsControllerDelegate: LyricsControllerDelegate?
 	var text: String?
@@ -125,13 +125,13 @@ class SheetPickerMenuController: UITableViewController, NewOrEditIphoneControlle
 		if segue.identifier == "BibleStudyIphoneGeneratorSegue" {
 			let controller = segue.destination as! BibleStudyGeneratorIphoneController
 			controller.delegate = bibleStudyGeneratorIphoneDelegate
-			controller.selectedTag = selectedTag
+			controller.selectedTheme = selectedTheme
 		}
 		if segue.identifier == "BibleStudyGeneratorSegue" {
 			let nav = segue.destination as! UINavigationController
 			let controller = nav.topViewController as! BibleStudyGeneratorController
 			controller.delegate = bibleStudyGeneratorDelegate
-			controller.selectedTag = selectedTag
+			controller.selectedTheme = selectedTheme
 		}
 		
 		if let vc = segue.destination.unwrap() as? LyricsViewController {

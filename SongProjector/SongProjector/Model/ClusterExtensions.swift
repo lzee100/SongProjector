@@ -25,7 +25,7 @@ extension Cluster {
 	}
 	
 	public var isTypeSong: Bool {
-		return !hasSheetsArray.contains(where: { $0.hasTag?.isHidden == true  })
+		return !hasSheetsArray.contains(where: { $0.hasTheme?.isHidden == true  })
 	}
 	
 	public var tempVersion: Cluster {
@@ -33,7 +33,7 @@ extension Cluster {
 		tempCluster.isTemp = true
 		tempCluster.title = title
 		tempCluster.time = time
-		tempCluster.tagId = tagId
+		tempCluster.hasTheme = hasTheme
 		return tempCluster
 	}
 	

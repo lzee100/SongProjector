@@ -95,13 +95,13 @@ class Text: NSObject {
 	struct NewSong {
 		static let title = "Nieuw liedje"
 		static let SongTitle = "Titel"
-		static let headerTag = "Selecteer hier het thema"
+		static let headerTheme = "Selecteer hier het thema"
 		static let headerLyrics = "Voer hier de tekst van het nummer in"
 		static let NoTitleForSheet = "Geen titel gevonden"
 		static let Sheet = "Dia "
-		static let SearchTagPlaceHolder = "Zoek thema"
-		static let errorTitleNoTag = "Fout"
-		static let erorrMessageNoTag = "Selecteer een thema"
+		static let SearchThemePlaceHolder = "Zoek thema"
+		static let errorTitleNoTheme = "Fout"
+		static let erorrMessageNoTheme = "Selecteer een thema"
 		static let segmentTitleText = "Tekst"
 		static let segmentTitleSheets = "Dia's"
 		static let generateSheetsButton = "Genereer dia's"
@@ -113,9 +113,13 @@ class Text: NSObject {
 
 	}
 	
-	struct Tags {
+	struct Themes {
 		static let title = "Thema's"
 		static let searchBarPlaceholderText = "Zoek thema's"
+	}
+	
+	struct Tags {
+		static let title = "Tags"
 	}
 	
 	struct CustomSheets {
@@ -170,6 +174,15 @@ class Text: NSObject {
 
 	}
 	
+	struct SongServiceManagement {
+		static let title = "Beheer zangdienst"
+		static let numberOfSections = "Aantal secties"
+		static let section = "Sectie"
+		static let nameSection = "Naam sectie"
+		static let addTags = "Voeg tags toe"
+		static let name = "Naam"
+	}
+	
 	struct Settings {
 		static let title = "Instellingen"
 		static let descriptionGoogleSub = "Login om activiteiten op te halen"
@@ -199,11 +212,11 @@ class Text: NSObject {
 		static let googleSignOutButton = "Uitloggen"
 	}
 	
-	struct NewTag {
+	struct NewTheme {
 		static let title = "Nieuw thema"
 		static let descriptionTitle = "Naam nieuw thema"
 		static let descriptionTitlePlaceholder = "Naam"
-		static let descriptionAsTag = "Gelijk aan thema"
+		static let descriptionAsTheme = "Gelijk aan thema"
 		static let descriptionTitleBackgroundColor = "Achtergrond kleur"
 		static let pageDescription = "Voer een nieuwe thema's toe"
 		static let descriptionBackgroundColor = "Kleur achtergrond"

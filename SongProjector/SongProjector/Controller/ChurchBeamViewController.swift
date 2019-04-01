@@ -35,7 +35,7 @@ class ChurchBeamViewController: UIViewController, RequestObserver {
 		animator = UIViewPropertyAnimator(duration: 0.4, curve: .easeOut) { [errorView] in
 			errorView?.center.x = -((errorView?.frame.height ?? 0) / 2)
 		}
-
+		view.backgroundColor = themeWhiteBlackBackground
     }
 	
 	
@@ -77,9 +77,11 @@ class ChurchBeamViewController: UIViewController, RequestObserver {
 		}
 	}
 	
-	func handleRequestFinish(result: AnyObject?) {
+	func handleRequestFinish(requesterId: String, result: AnyObject?) {
 		
 	}
+	
+	
 	
 	// MARK: RequestObserver functions
 	
@@ -92,7 +94,7 @@ class ChurchBeamViewController: UIViewController, RequestObserver {
 			self.hideLoader()
 			switch response {
 			case .error(_, _): self.show(error: response)
-			case .OK(_): self.handleRequestFinish(result: result)
+			case .OK(_): self.handleRequestFinish(requesterId: requesterID, result: result)
 			}
 		}
 	}

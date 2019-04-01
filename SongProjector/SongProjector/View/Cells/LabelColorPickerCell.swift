@@ -13,7 +13,7 @@ protocol LabelColorPickerCellDelegate {
 	func colorPickerDidChooseColor(cell: LabelColorPickerCell, colorPicker: ChromaColorPicker, color: UIColor?)
 }
 
-class LabelColorPickerCell: ChurchBeamCell, TagImplementation, DynamicHeightCell, ChromaColorPickerDelegate {	
+class LabelColorPickerCell: ChurchBeamCell, ThemeImplementation, DynamicHeightCell, ChromaColorPickerDelegate {
 	
 	@IBOutlet var descriptionTitle: UILabel!
 	@IBOutlet var colorPickerContainer: UIView!
@@ -28,8 +28,8 @@ class LabelColorPickerCell: ChurchBeamCell, TagImplementation, DynamicHeightCell
 	var id = ""
 	var isActive = false { didSet { toggle() } }
 	var colorPicker = ChromaColorPicker()
-	var sheetTag: Tag?
-	var tagAttribute: TagAttribute?
+	var sheetTheme: Theme?
+	var themeAttribute: ThemeAttribute?
 	var valueDidChange: ((ChurchBeamCell) -> Void)?
 	var selectedColor: UIColor?
 	
@@ -70,39 +70,39 @@ class LabelColorPickerCell: ChurchBeamCell, TagImplementation, DynamicHeightCell
 		}
 	}
 	
-	func apply(tag: Tag, tagAttribute: TagAttribute) {
-		self.sheetTag = tag
-		self.tagAttribute = tagAttribute
-		self.descriptionTitle.text = tagAttribute.description
+	func apply(theme: Theme, themeAttribute: ThemeAttribute) {
+		self.sheetTheme = theme
+		self.themeAttribute = themeAttribute
+		self.descriptionTitle.text = themeAttribute.description
 		applyValueToCell()
 	}
 	
 	func applyValueToCell() {
 		var color: UIColor? = nil
-		if let tagAttribute = tagAttribute {
-			switch tagAttribute {
+		if let themeAttribute = themeAttribute {
+			switch themeAttribute {
 			case .backgroundColor:
-				if let colorHex = sheetTag?.backgroundColor {
+				if let colorHex = sheetTheme?.backgroundColor {
 					color = UIColor(hex: colorHex)
 				}
 			case .titleTextColorHex:
-				if let colorHex = sheetTag?.titleTextColorHex {
+				if let colorHex = sheetTheme?.titleTextColorHex {
 					color = UIColor(hex: colorHex)
 				}
 			case .titleBackgroundColor:
-				if let colorHex = sheetTag?.titleBackgroundColor {
+				if let colorHex = sheetTheme?.titleBackgroundColor {
 					color = UIColor(hex: colorHex)
 				}
 			case .titleBorderColorHex:
-				if let colorHex = sheetTag?.titleBorderColorHex {
+				if let colorHex = sheetTheme?.titleBorderColorHex {
 					color = UIColor(hex: colorHex)
 				}
 			case .contentTextColorHex:
-				if let colorHex = sheetTag?.contentTextColorHex {
+				if let colorHex = sheetTheme?.contentTextColorHex {
 					color = UIColor(hex: colorHex)
 				}
 			case .contentBorderColor:
-				if let colorHex = sheetTag?.contentBorderColorHex {
+				if let colorHex = sheetTheme?.contentBorderColorHex {
 					color = UIColor(hex: colorHex)
 				}
 			default: return
@@ -111,16 +111,16 @@ class LabelColorPickerCell: ChurchBeamCell, TagImplementation, DynamicHeightCell
 		set(value: color)
 	}
 	
-	func applyCellValueToTag() {
-		if let tagAttribute = tagAttribute {
+	func applyCellValueToTheme() {
+		if let themeAttribute = themeAttribute {
 			let color = selectedColor?.hexCode
-			switch tagAttribute {
-			case .backgroundColor: sheetTag?.backgroundColor = color
-			case .titleTextColorHex: sheetTag?.titleTextColorHex = color
-			case .titleBorderColorHex: sheetTag?.titleBorderColorHex = color
-			case .contentTextColorHex: sheetTag?.contentTextColorHex = color
-			case .contentBorderColor: sheetTag?.contentBorderColorHex = color
-			case .titleBackgroundColor: sheetTag?.titleBackgroundColor = color
+			switch themeAttribute {
+			case .backgroundColor: sheetTheme?.backgroundColor = color
+			case .titleTextColorHex: sheetTheme?.titleTextColorHex = color
+			case .titleBorderColorHex: sheetTheme?.titleBorderColorHex = color
+			case .contentTextColorHex: sheetTheme?.contentTextColorHex = color
+			case .contentBorderColor: sheetTheme?.contentBorderColorHex = color
+			case .titleBackgroundColor: sheetTheme?.titleBackgroundColor = color
 			default: return
 			}
 		}
@@ -130,18 +130,18 @@ class LabelColorPickerCell: ChurchBeamCell, TagImplementation, DynamicHeightCell
 		if value == nil {
 			colorPreview.backgroundColor = nil
 			selectedColor = nil
-			applyCellValueToTag()
+			applyCellValueToTheme()
 		}
 		if let value = value as? UIColor {
 			colorPreview.backgroundColor = value
 			selectedColor = value
-			applyCellValueToTag()
+			applyCellValueToTheme()
 		}
 	}
 	
 	func colorPickerDidChooseColor(_ colorPicker: ChromaColorPicker, color: UIColor) {
 		self.selectedColor = color
-		applyCellValueToTag()
+		applyCellValueToTheme()
 		applyValueToCell()
 		colorPreview.backgroundColor = color
 		valueDidChange?(self)

@@ -15,7 +15,9 @@ enum Feature : String {
 	case songs = "Songs"
 	case bibleStudy = "BibleStudy"
 	case more = "More"
+	case themes = "Themes"
 	case tags = "Tags"
+	case songServiceManagement = "SongServiceManagement"
 	case users = "Users"
 	case settings = "Settings"
 	case `import` = "ImportBible"
@@ -24,7 +26,7 @@ enum Feature : String {
 	
 	// MARK: - Properties
 	
-	static let all = [songService, songs, bibleStudy, tags, users, settings, `import`, more]
+	static let all = [songService, songs, bibleStudy, themes, tags, users, settings, songServiceManagement, `import`, more]
 	
 	var titel : String {
 		return rawValue
@@ -38,10 +40,14 @@ enum Feature : String {
 			return Text.Songs.title
 		case .bibleStudy:
 			return Text.BibleStudy.title
+		case .themes:
+			return Text.Themes.title
 		case .tags:
 			return Text.Tags.title
 		case .users:
 			return Text.Users.title
+		case .songServiceManagement:
+			return Text.SongServiceManagement.title
 		case .settings:
 			return Text.Settings.title
 		case .more:
@@ -53,27 +59,18 @@ enum Feature : String {
 	
 	var storyBoard: UIStoryboard {
 		switch self {
-		case .songService:
+		case .songService, .songs, .bibleStudy, .settings, .more, .import:
 			return UIDevice.current.userInterfaceIdiom == .pad ? Storyboard.Ipad : Storyboard.MainStoryboard
-		case .songs:
-			return UIDevice.current.userInterfaceIdiom == .pad ? Storyboard.Ipad : Storyboard.MainStoryboard
-		case .bibleStudy:
-			return UIDevice.current.userInterfaceIdiom == .pad ? Storyboard.Ipad : Storyboard.MainStoryboard
-		case .tags:
+		case .themes, .tags, .users, .songServiceManagement:
 			return Storyboard.MainStoryboard
-		case .users:
-			return Storyboard.MainStoryboard
-		case .settings:
-			return UIDevice.current.userInterfaceIdiom == .pad ? Storyboard.Ipad : Storyboard.MainStoryboard
-		case .more:
-			return UIDevice.current.userInterfaceIdiom == .pad ? Storyboard.Ipad : Storyboard.MainStoryboard
-		case .import:
-			return UIDevice.current.userInterfaceIdiom == .pad ? Storyboard.Ipad : Storyboard.MainStoryboard
 		}
 	}
 	
 	var identifier : String {
-		return titel + "Controller"
+		switch self {
+		case .tags, .users, .songServiceManagement: return titel + "NavController"
+		default: return titel + "Controller"
+		}
 	}
 	
 	/// Een indicator die aangeeft of de feature standaard is.
@@ -81,9 +78,9 @@ enum Feature : String {
 	var isStandaard : Bool {
 		
 		switch self {
-		case .songService, .songs, .bibleStudy, .more, .tags, .settings, .import:
+		case .songService, .songs, .bibleStudy, .more, .themes, .settings, .import:
 			return true
-		case .users:
+		case .tags, .users, .songServiceManagement:
 			return false
 		}
 	}
@@ -93,7 +90,7 @@ enum Feature : String {
 	var isActief : Bool {
 		
 		switch self {
-		case .users: return CoreUser.getEntities().filter({ $0.isMe }).first?.inviteToken == nil
+		case .tags, .users, .songServiceManagement: return CoreUser.getEntities().filter({ $0.isMe }).first?.inviteToken == nil
 		default: return true
 		}
 		
@@ -111,9 +108,13 @@ enum Feature : String {
 			return (#imageLiteral(resourceName: "Bullet"), #imageLiteral(resourceName: "BulletSelected"), #imageLiteral(resourceName: "Bullet"))
 		case .more:
 			return (#imageLiteral(resourceName: "More"), #imageLiteral(resourceName: "More"), #imageLiteral(resourceName: "More"))
+		case .themes:
+			return (#imageLiteral(resourceName: "Tags"), #imageLiteral(resourceName: "Tags"), #imageLiteral(resourceName: "Tags"))
 		case .tags:
 			return (#imageLiteral(resourceName: "Tags"), #imageLiteral(resourceName: "Tags"), #imageLiteral(resourceName: "Tags"))
 		case .users:
+			return (#imageLiteral(resourceName: "More"), #imageLiteral(resourceName: "More"), #imageLiteral(resourceName: "More"))
+		case .songServiceManagement:
 			return (#imageLiteral(resourceName: "More"), #imageLiteral(resourceName: "More"), #imageLiteral(resourceName: "More"))
 		case .settings:
 			return (#imageLiteral(resourceName: "Bullet"), #imageLiteral(resourceName: "BulletSelected"), #imageLiteral(resourceName: "Bullet"))

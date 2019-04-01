@@ -12,7 +12,7 @@ protocol LabelPickerCellDelegate {
 	func didSelect(item: (Int64, String), cell: LabelPickerCell)
 }
 
-class LabelPickerCell: ChurchBeamCell, TagImplementation, DynamicHeightCell, SheetImplementation, UIPickerViewDataSource, UIPickerViewDelegate {
+class LabelPickerCell: ChurchBeamCell, ThemeImplementation, DynamicHeightCell, SheetImplementation, UIPickerViewDataSource, UIPickerViewDelegate {
 	
 	
 	@IBOutlet var descriptionTitel: UILabel!
@@ -43,8 +43,8 @@ class LabelPickerCell: ChurchBeamCell, TagImplementation, DynamicHeightCell, She
 	var picker = UIPickerView()
 	var selectedIndex: Int = 0
 	
-	var sheetTag: Tag?
-	var tagAttribute: TagAttribute?
+	var sheetTheme: Theme?
+	var themeAttribute: ThemeAttribute?
 	var valueDidChange: ((ChurchBeamCell) -> Void)?
 	
 	static let identifier = "LabelPickerCell"
@@ -91,19 +91,19 @@ class LabelPickerCell: ChurchBeamCell, TagImplementation, DynamicHeightCell, She
 		}
 	}
 	
-	func apply(tag: Tag, tagAttribute: TagAttribute) {
+	func apply(theme: Theme, themeAttribute: ThemeAttribute) {
 		
-		switch tagAttribute {
-		case .asTag: setupAsTag()
+		switch themeAttribute {
+		case .asTheme: setupAsTheme()
 		case .titleFontName, .contentFontName: setupFonts()
 		case .titleAlignment, .contentAlignment: setupFontAlignment()
 		default:
 			break
 		}
 		
-		self.sheetTag = tag
-		self.tagAttribute = tagAttribute
-		self.descriptionTitel.text = tagAttribute.description
+		self.sheetTheme = theme
+		self.themeAttribute = themeAttribute
+		self.descriptionTitel.text = themeAttribute.description
 		applyValueToCell()
 	}
 	
@@ -115,13 +115,13 @@ class LabelPickerCell: ChurchBeamCell, TagImplementation, DynamicHeightCell, She
 	}
 	
 	func applyValueToCell() {
-		if let tagAttribute = tagAttribute, let tag = sheetTag {
-			switch tagAttribute {
-			case .contentFontName: fontLabel.text = tag.contentFontName
-			case .titleFontName: fontLabel.text = tag.titleFontName
-			case .titleAlignment: fontLabel.text = pickerValues[Int(tag.titleAlignmentNumber)].1
-			case .contentAlignment: fontLabel.text = pickerValues[Int(tag.contentAlignmentNumber)].1
-			case .asTag: fontLabel.text = ""
+		if let themeAttribute = themeAttribute, let theme = sheetTheme {
+			switch themeAttribute {
+			case .contentFontName: fontLabel.text = theme.contentFontName
+			case .titleFontName: fontLabel.text = theme.titleFontName
+			case .titleAlignment: fontLabel.text = pickerValues[Int(theme.titleAlignmentNumber)].1
+			case .contentAlignment: fontLabel.text = pickerValues[Int(theme.contentAlignmentNumber)].1
+			case .asTheme: fontLabel.text = ""
 			default: return
 			}
 		}
@@ -130,13 +130,13 @@ class LabelPickerCell: ChurchBeamCell, TagImplementation, DynamicHeightCell, She
 		}
 	}
 	
-	func applyCellValueToTag() {
-		if let tagAttribute = tagAttribute, let tag = sheetTag {
-			switch tagAttribute {
-			case .contentFontName: tag.contentFontName = fontLabel.text
-			case .titleFontName: tag.titleFontName = fontLabel.text
-			case .titleAlignment: tag.titleAlignmentNumber = Int16(selectedIndex)
-			case .contentAlignment: tag.contentAlignmentNumber = Int16(selectedIndex)
+	func applyCellValueToTheme() {
+		if let themeAttribute = themeAttribute, let theme = sheetTheme {
+			switch themeAttribute {
+			case .contentFontName: theme.contentFontName = fontLabel.text
+			case .titleFontName: theme.titleFontName = fontLabel.text
+			case .titleAlignment: theme.titleAlignmentNumber = Int16(selectedIndex)
+			case .contentAlignment: theme.contentAlignmentNumber = Int16(selectedIndex)
 			default: return
 			}
 		}
@@ -178,7 +178,7 @@ class LabelPickerCell: ChurchBeamCell, TagImplementation, DynamicHeightCell, She
 		let value = pickerValues[row]
 		fontLabel.text = value.1
 		selectedIndex = row
-		applyCellValueToTag()
+		applyCellValueToTheme()
 		valueDidChange?(self)
 		delegate?.didSelect(item: value, cell: self)
 	}
@@ -186,11 +186,11 @@ class LabelPickerCell: ChurchBeamCell, TagImplementation, DynamicHeightCell, She
 	
 	
 	
-	private func setupAsTag() {
-		CoreTag.setSortDescriptor(attributeName: "title", ascending: true)
-		CoreTag.predicates.append("isHidden", notEquals: true)
-		let tags = CoreTag.getEntities().map{ ($0.id, $0.title ?? "") }
-		pickerValues = tags
+	private func setupAsTheme() {
+		CoreTheme.setSortDescriptor(attributeName: "title", ascending: true)
+		CoreTheme.predicates.append("isHidden", notEquals: true)
+		let themes = CoreTheme.getEntities().map{ ($0.id, $0.title ?? "") }
+		pickerValues = themes
 	}
 	
 	private func setupFonts() {
@@ -208,8 +208,8 @@ class LabelPickerCell: ChurchBeamCell, TagImplementation, DynamicHeightCell, She
 	}
 	
 	private func setupFontAlignment() {
-		pickerValues = [(Int64(0), Text.NewTag.alignLeft), (Int64(1), Text.NewTag.alignCenter), (Int64(2), Text.NewTag.alignRight)]
-		set(value: Text.NewTag.alignLeft)
+		pickerValues = [(Int64(0), Text.NewTheme.alignLeft), (Int64(1), Text.NewTheme.alignCenter), (Int64(2), Text.NewTheme.alignRight)]
+		set(value: Text.NewTheme.alignLeft)
 	}
 	
 	private func dutchContentMode() -> [String] {

@@ -80,7 +80,13 @@ class MoreController: UITableViewController, UISplitViewControllerDelegate {
 		controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
 		controller.navigationItem.leftItemsSupplementBackButton = true
 		
-		let navController = UINavigationController.init(rootViewController: controller)
+		let navController: UINavigationController
+		if let controller = controller as? UINavigationController {
+			navController = controller
+		} else {
+			navController = UINavigationController.init(rootViewController: controller)
+		}
+
 		showDetailViewController(navController, sender: self)
 		
 	}

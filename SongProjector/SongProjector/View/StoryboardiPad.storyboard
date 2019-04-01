@@ -293,7 +293,7 @@
                         <outlet property="addSheetButton" destination="itd-T2-ald" id="7T3-vV-ahB"/>
                         <outlet property="cancel" destination="5cq-Et-FH8" id="ORU-OJ-sDZ"/>
                         <outlet property="collectionView" destination="R40-1T-XT2" id="0Aj-he-9KD"/>
-                        <outlet property="collectionViewTags" destination="bNl-ey-XR4" id="cbv-6h-zjK"/>
+                        <outlet property="collectionViewThemes" destination="bNl-ey-XR4" id="h03-qD-lpa"/>
                         <outlet property="save" destination="BOX-9m-oOS" id="19W-r7-0oH"/>
                         <segue destination="SBA-OK-e1Z" kind="presentation" identifier="saveNewSongSegue" modalPresentationStyle="formSheet" id="5FG-0D-ZLZ"/>
                     </connections>

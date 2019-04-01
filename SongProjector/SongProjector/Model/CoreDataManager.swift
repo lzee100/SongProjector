@@ -17,7 +17,7 @@ let CoreUser = CrUser()
 let CoreRole = CrRole()
 let CoreSheetActivities = CrSheetActivities()
 let CoreGoogleActivities = CrGoogleAct()
-let CoreTag = CrTag()
+let CoreTheme = CrTheme()
 let CoreSheet = CrSheet()
 let CoreSheetSplit = CrSplit()
 let CoreSheetTitleContent = CrTitleContent()
@@ -30,6 +30,10 @@ let CoreBook = CrBook()
 let CoreChapter = CrChapter()
 let CoreVers = CrVers()
 let CoreContract = CrContract()
+let CoreTag = CrTag()
+let CoreTagId = CrTagId()
+let CoreSongServiceSettings = CrSongServiceSettings()
+let CoreSongServiceSection = CrSongServiceSection()
 
 // MARK: - Core Data stack
 
@@ -67,9 +71,14 @@ class STR {
 
 
 
-var moc: NSManagedObjectContext = Store.persistentContainer.viewContext
+var moc: NSManagedObjectContext = {
+	let context = Store.persistentContainer.viewContext
+	context.mergePolicy = NSMergePolicy.overwrite
+	return Store.persistentContainer.viewContext
+}()
 var mocTemp: NSManagedObjectContext = {
 	let context = NSManagedObjectContext(concurrencyType: NSManagedObjectContextConcurrencyType.mainQueueConcurrencyType)
+	context.mergePolicy = NSMergePolicy.overwrite
 	context.parent = moc
 	return context
 }()
@@ -86,7 +95,7 @@ class CrRole: CoreDataManager<Role> { }
 class CrUser: CoreDataManager<User> { }
 class CrSheetActivities: CoreDataManager<SheetActivitiesEntity> { }
 class CrGoogleAct: CoreDataManager<GoogleActivity> { }
-class CrTag: CoreDataManager<Tag> { }
+class CrTheme: CoreDataManager<Theme> { }
 class CrSheet: CoreDataManager<Sheet> { }
 class CrSplit: CoreDataManager<SheetSplitEntity> { }
 class CrTitleContent: CoreDataManager<SheetTitleContentEntity> { }
@@ -99,6 +108,10 @@ class CrBook: CoreDataManager<Book> { }
 class CrChapter: CoreDataManager<Chapter> { }
 class CrVers: CoreDataManager<Vers> { }
 class CrContract: CoreDataManager<Contract> { }
+class CrTag: CoreDataManager<Tag> { }
+class CrTagId: CoreDataManager<TagId> { }
+class CrSongServiceSettings: CoreDataManager<SongServiceSettings> { }
+class CrSongServiceSection: CoreDataManager<SongServiceSection> { }
 
 class CoreDataManager<T: NSManagedObject>: NSObject {
 
@@ -194,6 +207,31 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 				predicates.append(NSPredicate(format: "deleteDate == nil"))
 			}
 		}
+		
+		let andPredicate = NSCompoundPredicate(type: NSCompoundPredicate.LogicalType.and, subpredicates: predicates)
+		request.predicate = andPredicate
+		
+		if let sortDiscriptor = sortDiscriptor {
+			request.sortDescriptors = [sortDiscriptor]
+		} else {
+			sortDiscriptor = NSSortDescriptor(key: "createdAt", ascending: true)
+			request.sortDescriptors = [sortDiscriptor!]
+		}
+		
+		request.returnsObjectsAsFaults = false
+		do {
+			let result = try managedObjectContext.fetch(request)
+			entities = result
+		} catch {
+			print("Failed")
+		}
+		clearSettings()
+		return entities
+	}
+	
+	func getUnfilteredEntities() -> [T] {
+		var entities: [T] = []
+		let request = NSFetchRequest<T>(entityName: entityName)
 		
 		let andPredicate = NSCompoundPredicate(type: NSCompoundPredicate.LogicalType.and, subpredicates: predicates)
 		request.predicate = andPredicate

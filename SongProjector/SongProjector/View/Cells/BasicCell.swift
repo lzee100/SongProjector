@@ -23,6 +23,7 @@ class BasicCell: UITableViewCell {
 	var selectedCell = false { didSet { update() } }
 	var isInnerCell = false { didSet { update() } }
 	var customTextColor: UIColor?
+	var data: Any?
 	
 	static let identifier = "BasicCell"
 	

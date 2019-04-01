@@ -31,8 +31,8 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
 	
 	// MARK: - Private Properties
 	
-	private var tags: [Tag] = []
-	private var selectedTags: [Tag] = []
+	private var themes: [Theme] = []
+	private var selectedThemes: [Theme] = []
 	private var clusters: [Cluster] = []
 	private var selectedCluster: Cluster?
 	private var filteredClusters: [Cluster] = []
@@ -147,30 +147,32 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-		return tags.count
+		return themes.count
 	}
 
 	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-		let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.tagCellCollection, for: indexPath)
+		let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.themeCellCollection, for: indexPath)
 		
-		if let collectionCell = collectionCell as? TagCellCollection {
-			collectionCell.setup(tagName: tags[indexPath.row].title ?? "")
-			collectionCell.isSelectedCell = selectedTags.contains(tags[indexPath.row])
+		if let collectionCell = collectionCell as? ThemeCellCollection {
+			collectionCell.setup(themeName: themes[indexPath.row].title ?? "")
+			collectionCell.isSelectedCell = selectedThemes.contains(themes[indexPath.row])
 		}
 		return collectionCell
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-		if selectedTags.contains(tags[indexPath.row]), let index = selectedTags.index(of: tags[indexPath.row]) {
-			self.selectedTags.remove(at: index)
+		if selectedThemes.contains(themes[indexPath.row]), let index = selectedThemes.index(of: themes[indexPath.row]) {
+			self.selectedThemes.remove(at: index)
 		} else {
-			self.selectedTags.append(tags[indexPath.row])
+			self.selectedThemes.append(themes[indexPath.row])
 		}
 		update()
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-		return CGSize(width: 200, height: 50)
+		let font = UIFont.systemFont(ofSize: 17)
+		let width = (themes[indexPath.row].title ?? "").width(withConstrainedHeight: 22, font: font) + 50
+		return CGSize(width: width, height: 50)
 	}
 	
 	public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -197,8 +199,8 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
 		self.tableView.reloadData()
 	}
 	
-	override func handleRequestFinish(result: AnyObject?) {
-		if let deletedCluster = result as? Cluster, let index = clusters.index(where: { $0.id == deletedCluster.id }) {
+	override func handleRequestFinish(requesterId: String, result: AnyObject?) {
+		if let deletedCluster = (result as? [Cluster])?.first, let index = clusters.index(where: { $0.id == deletedCluster.id }) {
 			clusters.remove(at: index)
 			filteredClusters = clusters
 			self.tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
@@ -210,7 +212,7 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
 	private func setup() {
 		
 		tableView.register(cell: Cells.basicCellid)
-		collectionView.register(UINib(nibName: Cells.tagCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.tagCellCollection)
+		collectionView.register(UINib(nibName: Cells.themeCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.themeCellCollection)
 		
 		hideKeyboardWhenTappedAround()
 		view.backgroundColor = themeWhiteBlackBackground
@@ -237,21 +239,24 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
 		let newClusters = Array(Set(CoreCluster.getEntities()))
 		clusters = newClusters
 		clusters.sort(by: { ($0.title ?? "") < ($1.title ?? "") })
-		CoreTag.setSortDescriptor(attributeName: "position", ascending: true)
-		CoreTag.predicates.append("isHidden", equals: 0)
-		tags = CoreTag.getEntities()
-		filterOnTags()
+		CoreTheme.setSortDescriptor(attributeName: "position", ascending: true)
+		CoreTheme.predicates.append("isHidden", equals: 0)
+		themes = CoreTheme.getEntities()
+		filterOnThemes()
 		filteredClusters = clusters
 		tableView.reloadData()
 		collectionView.reloadData()
 	}
 	
-	private func filterOnTags() {
-		if selectedTags.count == 0 {
+	private func filterOnThemes() {
+		if selectedThemes.count == 0 {
 			return
 		}
 		clusters = clusters.filter { (cluster) -> Bool in
-			return selectedTags.contains(where: { $0.id == cluster.tagId })
+			if let theme = cluster.hasTheme {
+				return selectedThemes.contains(theme)
+			}
+			return false
 		}
 	}
 

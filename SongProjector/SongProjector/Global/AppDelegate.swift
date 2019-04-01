@@ -103,7 +103,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //		CoreEntity.saveContext(fireNotification: true)
 		
 		application.statusBarStyle = .lightContent
-		Theme.setup()
+		AppTheme.setup()
 		if PHPhotoLibrary.authorizationStatus() == .notDetermined {
 			PHPhotoLibrary.requestAuthorization({ (status) in
 				if status == PHAuthorizationStatus.authorized {

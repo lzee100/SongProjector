@@ -12,7 +12,7 @@ protocol LabelNumerCellDelegate {
 	func numberChangedForCell(cell: LabelNumberCell)
 }
 
-class LabelNumberCell: ChurchBeamCell, TagImplementation {
+class LabelNumberCell: ChurchBeamCell, ThemeImplementation {
 	
 	@IBOutlet var minus: UIButton!
 	@IBOutlet var plus: UIButton!
@@ -27,8 +27,8 @@ class LabelNumberCell: ChurchBeamCell, TagImplementation {
 	var minLimit = 0
 	var maxLimit = 0
 	
-	var sheetTag: Tag?
-	var tagAttribute: TagAttribute?
+	var sheetTheme: Theme?
+	var themeAttribute: ThemeAttribute?
 	var valueDidChange: ((ChurchBeamCell) -> Void)?
 	
 	static let identifier = "LabelNumberCell"
@@ -68,12 +68,12 @@ class LabelNumberCell: ChurchBeamCell, TagImplementation {
 		delegate?.numberChangedForCell(cell: self)
 	}
 	
-	func apply(tag: Tag, tagAttribute: TagAttribute) {
-		self.sheetTag = tag
-		self.tagAttribute = tagAttribute
-		self.descriptionTitle.text = tagAttribute.description
+	func apply(theme: Theme, themeAttribute: ThemeAttribute) {
+		self.sheetTheme = theme
+		self.themeAttribute = themeAttribute
+		self.descriptionTitle.text = themeAttribute.description
 		
-		switch tagAttribute {
+		switch themeAttribute {
 		case .titleTextSize, .contentTextSize:
 			setup(minLimit: 5, maxLimit: 60, positive: true)
 		case .titleBorderSize, .contentBorderSize:
@@ -85,27 +85,27 @@ class LabelNumberCell: ChurchBeamCell, TagImplementation {
 	}
 	
 	func applyValueToCell() {
-		if let tagAttribute = tagAttribute, let tag = sheetTag {
-			switch tagAttribute {
-			case .titleTextSize: value = Int(tag.titleTextSize)
-			case .titleBorderSize: value = Int(tag.titleBorderSize)
-			case .contentTextSize: value = Int(tag.contentTextSize)
-			case .contentBorderSize: value = Int(tag.contentBorderSize)
-			case .backgroundTransparancy: value = Int(tag.backgroundTransparancy)
+		if let themeAttribute = themeAttribute, let theme = sheetTheme {
+			switch themeAttribute {
+			case .titleTextSize: value = Int(theme.titleTextSize)
+			case .titleBorderSize: value = Int(theme.titleBorderSize)
+			case .contentTextSize: value = Int(theme.contentTextSize)
+			case .contentBorderSize: value = Int(theme.contentBorderSize)
+			case .backgroundTransparancy: value = Int(theme.backgroundTransparancy)
 			default: break
 			}
 			valueLabel.text = String(abs(value))
 		}
 	}
 	
-	func applyCellValueToTag() {
-		if let tagAttribute = tagAttribute, let tag = sheetTag {
-			switch tagAttribute {
-			case .titleTextSize: tag.titleTextSize = Float(value)
-			case .titleBorderSize: tag.titleBorderSize = Float(value)
-			case .contentTextSize: tag.contentTextSize = Float(value)
-			case .contentBorderSize: tag.contentBorderSize = Float(value)
-			case .backgroundTransparancy: tag.backgroundTransparancy = Float(value)
+	func applyCellValueToTheme() {
+		if let themeAttribute = themeAttribute, let theme = sheetTheme {
+			switch themeAttribute {
+			case .titleTextSize: theme.titleTextSize = Float(value)
+			case .titleBorderSize: theme.titleBorderSize = Float(value)
+			case .contentTextSize: theme.contentTextSize = Float(value)
+			case .contentBorderSize: theme.contentBorderSize = Float(value)
+			case .backgroundTransparancy: theme.backgroundTransparancy = Float(value)
 			default: return
 			}
 		}
@@ -126,7 +126,7 @@ class LabelNumberCell: ChurchBeamCell, TagImplementation {
 				if value > minLimit {
 					value -= 1
 					self.valueLabel.text = String(value)
-					self.applyCellValueToTag()
+					self.applyCellValueToTheme()
 					valueDidChange?(self)
 					delegate?.numberChangedForCell(cell: self)
 				}
@@ -134,7 +134,7 @@ class LabelNumberCell: ChurchBeamCell, TagImplementation {
 				if value < 0 {
 					value += 1
 					self.valueLabel.text = String(abs(value))
-					self.applyCellValueToTag()
+					self.applyCellValueToTheme()
 					valueDidChange?(self)
 					delegate?.numberChangedForCell(cell: self)
 				}
@@ -153,8 +153,9 @@ class LabelNumberCell: ChurchBeamCell, TagImplementation {
 				self.valueLabel.text = String(abs(value))
 			}
 		}
-		self.applyCellValueToTag()
+		self.applyCellValueToTheme()
 		valueDidChange?(self)
+		delegate?.numberChangedForCell(cell: self)
 	}
 	
 }

@@ -94,7 +94,7 @@ class IntroPageController2: PageController, UICollectionViewDataSource, UICollec
 		performSegue(withIdentifier: "showSignUpController", sender: contract)
 	}
 	
-	override func handleRequestFinish(result: AnyObject?) {
+	override func handleRequestFinish(requesterId: String, result: AnyObject?) {
 		Queues.main.async {
 			self.collectionView.reloadData()
 		}

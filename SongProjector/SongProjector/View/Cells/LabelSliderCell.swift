@@ -12,7 +12,7 @@ protocol LabelSliderDelegate {
 	func sliderValueChanged(cell: LabelSliderCell, value: Float)
 }
 
-class LabelSliderCell: ChurchBeamCell, TagImplementation, DynamicHeightCell {
+class LabelSliderCell: ChurchBeamCell, ThemeImplementation, DynamicHeightCell {
 	
 
 	@IBOutlet var descriptionTitle: UILabel!
@@ -28,8 +28,8 @@ class LabelSliderCell: ChurchBeamCell, TagImplementation, DynamicHeightCell {
 	
 	var id = ""
 	
-	var sheetTag: Tag?
-	var tagAttribute: TagAttribute?
+	var sheetTheme: Theme?
+	var themeAttribute: ThemeAttribute?
 	var valueDidChange: ((ChurchBeamCell) -> Void)?
 	
 	var isActive = false { didSet { setupTextView() } }
@@ -78,26 +78,26 @@ class LabelSliderCell: ChurchBeamCell, TagImplementation, DynamicHeightCell {
 		}
 	}
 	
-	func apply(tag: Tag, tagAttribute: TagAttribute) {
-		self.sheetTag = tag
-		self.tagAttribute = tagAttribute
-		self.descriptionTitle.text = tagAttribute.description
+	func apply(theme: Theme, themeAttribute: ThemeAttribute) {
+		self.sheetTheme = theme
+		self.themeAttribute = themeAttribute
+		self.descriptionTitle.text = themeAttribute.description
 		applyValueToCell()
 	}
 	
 	func applyValueToCell() {
-		if let tag = sheetTag, let tagAttribute = tagAttribute {
-			switch tagAttribute {
-			case .backgroundTransparancy: set(sliderValue: tag.backgroundTransparancy * 100)
+		if let theme = sheetTheme, let themeAttribute = themeAttribute {
+			switch themeAttribute {
+			case .backgroundTransparancy: set(sliderValue: theme.backgroundTransparancy * 100)
 			default: return
 			}
 		}
 	}
 	
-	func applyCellValueToTag() {
-		if let tag = sheetTag, let tagAttribute = tagAttribute {
-			switch tagAttribute {
-			case .backgroundTransparancy: tag.backgroundTransparancy = slider.value
+	func applyCellValueToTheme() {
+		if let theme = sheetTheme, let themeAttribute = themeAttribute {
+			switch themeAttribute {
+			case .backgroundTransparancy: theme.backgroundTransparancy = slider.value
 			default: return
 			}
 		}
@@ -124,7 +124,7 @@ class LabelSliderCell: ChurchBeamCell, TagImplementation, DynamicHeightCell {
 	
 	@objc private func sliderValueChanged() {
 		set(sliderValue: slider.value)
-		applyCellValueToTag()
+		applyCellValueToTheme()
 		valueDidChange?(self)
 	}
 	

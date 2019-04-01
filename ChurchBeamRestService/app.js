@@ -19,8 +19,8 @@ const userInitRoutes = require('./api/routes/userinit');
 const userRoutes = require('./api/routes/users');
 const roleRoutes = require('./api/routes/roles');
 const contractRoutes = require('./api/routes/contracts');
-
-
+const tagsRoutes = require('./api/routes/tags')
+const songServiceSettingsRoutes = require('./api/routes/songservicesettings')
 
 const db = mysql.createConnection({
     host    : 'localhost',
@@ -66,6 +66,9 @@ app.use('/userinit', userInitRoutes);
 app.use('/users', userRoutes);
 app.use('/roles', roleRoutes);
 app.use('/contracts', contractRoutes);
+app.use('/tags', tagsRoutes);
+app.use('/songservicesettings', songServiceSettingsRoutes)
+
 
 
 

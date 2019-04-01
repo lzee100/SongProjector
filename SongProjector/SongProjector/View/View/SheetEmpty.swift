@@ -41,8 +41,8 @@ class SheetEmpty: SheetView {
 	}
 	
 	override func updateOpacity() {
-		if let alpha = sheetTag?.backgroundTransparancy, alpha != 1 {
-			if sheetTag?.backgroundImage != nil {
+		if let alpha = sheetTheme?.backgroundTransparancy, alpha != 1 {
+			if sheetTheme?.backgroundImage != nil {
 				backgroundImageView.alpha = CGFloat(alpha)
 				backgroundView.alpha = 1
 			} else {
@@ -53,12 +53,12 @@ class SheetEmpty: SheetView {
 	}
 	
 	override func updateBackgroundImage() {
-		let image = isForExternalDispay ? sheetTag?.backgroundImage : sheetTag?.thumbnail
-		if let backgroundImage = image, !(sheetTag?.isBackgroundImageDeleted ?? true) {
+		let image = isForExternalDispay ? sheetTheme?.backgroundImage : sheetTheme?.thumbnail
+		if let backgroundImage = image, !(sheetTheme?.isBackgroundImageDeleted ?? true) {
 			backgroundImageView.isHidden = false
 			backgroundImageView.contentMode = .scaleAspectFill
 			backgroundImageView.image = backgroundImage
-			if let backgroundTransparency = sheetTag?.backgroundTransparancy {
+			if let backgroundTransparency = sheetTheme?.backgroundTransparancy {
 				backgroundImageView.alpha = CGFloat(backgroundTransparency)
 			}
 		} else {
@@ -67,7 +67,7 @@ class SheetEmpty: SheetView {
 	}
 	
 	override func updateBackgroundColor() {
-		if let backgroundColor = sheetTag?.sheetBackgroundColor {
+		if let backgroundColor = sheetTheme?.sheetBackgroundColor {
 			self.backgroundView.backgroundColor = backgroundColor
 		} else {
 			self.backgroundView.backgroundColor = .white
@@ -82,9 +82,9 @@ class SheetEmpty: SheetView {
 			return
 		}
 		
-		if let tag = sheetTag, let scaleFactor = scaleFactor { // is custom sheet
+		if let theme = sheetTheme, let scaleFactor = scaleFactor { // is custom sheet
 			
-			timeLabel.attributedText = NSAttributedString(string: test, attributes: tag.getTitleAttributes(scaleFactor))
+			timeLabel.attributedText = NSAttributedString(string: test, attributes: theme.getTitleAttributes(scaleFactor))
 			
 		} else {
 			timeLabel.text = test

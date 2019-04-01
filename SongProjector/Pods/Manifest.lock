@@ -54,7 +54,6 @@ PODS:
     - GoogleToolboxForMac/Defines (= 2.2.0)
     - "GoogleToolboxForMac/NSString+URLArguments (= 2.2.0)"
   - "GoogleToolboxForMac/NSString+URLArguments (2.2.0)"
-  - GPUImage (0.1.7)
   - GTMOAuth2 (1.1.6):
     - GTMSessionFetcher (~> 1.1)
   - GTMSessionFetcher (1.2.1):
@@ -62,8 +61,7 @@ PODS:
   - GTMSessionFetcher/Core (1.2.1)
   - GTMSessionFetcher/Full (1.2.1):
     - GTMSessionFetcher/Core (= 1.2.1)
-  - SwiftOCR (1.1):
-    - GPUImage
+  - SwiftKeychainWrapper (3.2.0)
   - VerticalSlider (2.0.0)
 
 DEPENDENCIES:
@@ -78,7 +76,7 @@ DEPENDENCIES:
   - GoogleAPIClientForREST/Calendar (~> 1.2.1)
   - GoogleSignIn (~> 4.0)
   - GTMOAuth2 (~> 1.1.0)
-  - SwiftOCR (from `https://github.com/garnele007/SwiftOCR.git`)
+  - SwiftKeychainWrapper
   - VerticalSlider
 
 SPEC REPOS:
@@ -100,19 +98,10 @@ SPEC REPOS:
     - GoogleAPIClientForREST
     - GoogleSignIn
     - GoogleToolboxForMac
-    - GPUImage
     - GTMOAuth2
     - GTMSessionFetcher
+    - SwiftKeychainWrapper
     - VerticalSlider
-
-EXTERNAL SOURCES:
-  SwiftOCR:
-    :git: https://github.com/garnele007/SwiftOCR.git
-
-CHECKOUT OPTIONS:
-  SwiftOCR:
-    :commit: 0ef2a968212f3bf89e2087087a16e10822620c0c
-    :git: https://github.com/garnele007/SwiftOCR.git
 
 SPEC CHECKSUMS:
   AWSAuthCore: 386e045a341acebf2409425467e907ae1a45ed63
@@ -132,12 +121,11 @@ SPEC CHECKSUMS:
   GoogleAPIClientForREST: a8b95a252014ce2e618df6b75dc72eca2c00b4af
   GoogleSignIn: 7ff245e1a7b26d379099d3243a562f5747e23d39
   GoogleToolboxForMac: ff31605b7d66400dcec09bed5861689aebadda4d
-  GPUImage: 733a5f0fab92df9de1c37ba9df520a833ccb406d
   GTMOAuth2: e8b6512c896235149df975c41d9a36c868ab7fba
   GTMSessionFetcher: 32aeca0aa144acea523e1c8e053089dec2cb98ca
-  SwiftOCR: 99f0b08c90b39e8e58761fa3a92eb521efcfe5aa
+  SwiftKeychainWrapper: 82c4c02cdc36f9a24f7edfcaab3e336401caa1a1
   VerticalSlider: 655f2bc3ed062bac13e21c174f5ff93b8308571d
 
-PODFILE CHECKSUM: 4762e2e4d6f5844d67d7c527e2e3e4b2ac6e93ae
+PODFILE CHECKSUM: c4517cc61a1e72f744b64a34097febe20bffc229
 
-COCOAPODS: 1.5.3
+COCOAPODS: 1.6.0

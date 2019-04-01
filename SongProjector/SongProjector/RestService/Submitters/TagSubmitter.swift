@@ -2,25 +2,15 @@
 //  TagSubmitter.swift
 //  SongProjector
 //
-//  Created by Leo van der Zee on 10/01/2019.
+//  Created by Leo van der Zee on 25/03/2019.
 //  Copyright © 2019 iozee. All rights reserved.
 //
 
-struct SubmittedID: Codable {
-	let id: Int64
-	
-	private enum CodingKeys: String, CodingKey {
-		case id
-	}
-	
-	init(from decoder: Decoder) throws {
-		let container = try decoder.container(keyedBy: CodingKeys.self)
-		id = try container.decode(Int64.self, forKey: .id)
-	}
-	
-}
+import Foundation
 
-let TagSubmitter = TgSubmitter()
+let TagSubmitter: TgSubmitter = {
+	return TgSubmitter()
+}()
 
 class TgSubmitter: Requester<Tag> {
 	
@@ -30,7 +20,7 @@ class TgSubmitter: Requester<Tag> {
 	}
 	
 	override var path: String {
-		return "themes"
+		return "tags"
 	}
 	
 	override var coreDataManager: CoreDataManager<Tag> {

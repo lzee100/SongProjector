@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const print = require('../util/print')
 const UserClass = require('../util/userClass')
+const DataBaseDateClass = require('../util/dataBaseDateClass')
 
 var db = require('../util/db');
 
@@ -88,7 +89,7 @@ router.delete('/', (req, res , next) => {
 
     if (req.body[0]) {
         const user = req.body[0]
-        const date = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
+        const date = DataBaseDateClass.getDateForDataBase(new Date())
         let sql = `UPDATE user SET deletedAt = '${date}' WHERE id = ${user.id}`
         db.query(sql, (err, result) => {
             if (err) {

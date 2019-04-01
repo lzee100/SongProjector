@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "F3DB2B33708E938ED417DBDC77D13BAB"
+               BlueprintIdentifier = "B9103A748B97C154D0DC4E26A26F7BDF"
                BuildableName = "AWSUserPoolsSignIn.bundle"
                BlueprintName = "AWSUserPoolsSignIn-AWSUserPoolsSignIn"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -45,7 +45,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "F3DB2B33708E938ED417DBDC77D13BAB"
+            BlueprintIdentifier = "B9103A748B97C154D0DC4E26A26F7BDF"
             BuildableName = "AWSUserPoolsSignIn.bundle"
             BlueprintName = "AWSUserPoolsSignIn-AWSUserPoolsSignIn"
             ReferencedContainer = "container:Pods.xcodeproj">

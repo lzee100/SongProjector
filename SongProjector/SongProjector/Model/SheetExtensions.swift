@@ -108,7 +108,7 @@ extension Sheet {
 	}
 	
 	override public func delete(_ save: Bool = false) {
-		hasTag?.delete(false)
+		hasTheme?.delete(false)
 		moc.delete(self)
 		if save {
 			do {
@@ -120,7 +120,7 @@ extension Sheet {
 	}
 	
 	public override func deleteBackground(_ save: Bool) {
-		hasTag?.deleteBackground(false)
+		hasTheme?.deleteBackground(false)
 		mocBackground.delete(self)
 		if save {
 			mocBackground.performAndWait {
@@ -174,8 +174,8 @@ extension Sheet {
 				sheet.hasGoogleActivity = current.hasGoogleActivity
 			}
 		}
-		if self.hasTag?.isHidden == true {
-			sheet.hasTag = hasTag?.getTemp()
+		if self.hasTheme?.isHidden == true {
+			sheet.hasTheme = hasTheme?.getTemp()
 		}
 		sheet.title = title
 		sheet.deleteDate = NSDate()

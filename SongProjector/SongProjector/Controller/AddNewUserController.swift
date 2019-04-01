@@ -40,8 +40,8 @@ class AddNewUserController: ChurchBeamViewController {
 		UserSubmitter.addObserver(self)
     }
 	
-	override func handleRequestFinish(result: AnyObject?) {
-		if (result as? [User]) != nil {
+	override func handleRequestFinish(requesterId: String, result: AnyObject?) {
+		if UserSubmitter.requesterId == requesterId {
 			Queues.main.async {
 				self.dismiss(animated: true)
 			}

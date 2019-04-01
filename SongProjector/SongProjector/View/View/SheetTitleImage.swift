@@ -100,8 +100,8 @@ class SheetTitleImage: SheetView {
 	override func updateTitle() {
 		let sheet = self.sheet as! SheetTitleImageEntity
 		if let songTitle = sheet.title {
-			if let tag = sheetTag {
-				if !tag.allHaveTitle && (sheet.position > 0) {
+			if let theme = sheetTheme {
+				if !theme.allHaveTitle && (sheet.position > 0) {
 					
 					// set height constraint to zero
 					titleHightConstraint.isActive = false
@@ -125,7 +125,7 @@ class SheetTitleImage: SheetView {
 					// activate original contraint
 					titleBottomConstraint.isActive = true
 				}
-				descriptionTitle.attributedText = NSAttributedString(string: songTitle, attributes: tag.getTitleAttributes(scaleFactor ?? 0))
+				descriptionTitle.attributedText = NSAttributedString(string: songTitle, attributes: theme.getTitleAttributes(scaleFactor ?? 0))
 			} else {
 				descriptionTitle.text = songTitle
 			}
@@ -141,7 +141,7 @@ class SheetTitleImage: SheetView {
 	
 	override func updateContent() {
 		let sheet = self.sheet as! SheetTitleImageEntity
-		if let tag = sheetTag, let string = sheet.content {
+		if let theme = sheetTheme, let string = sheet.content {
 //			if string == "" {
 //				titleContentConstraint?.isActive = false
 //				titleContentConstraint = NSLayoutConstraint(item: descriptionTitle, attribute: .bottom, relatedBy: .equal, toItem: descriptionContent, attribute: .bottom, multiplier: 1, constant: 0)
@@ -154,15 +154,15 @@ class SheetTitleImage: SheetView {
 //				// activate original contraint
 //				titleBottomConstraint.isActive = true
 //			}
-			descriptionContent.attributedText = NSAttributedString(string: string, attributes: tag.getLyricsAttributes(scaleFactor ?? 1))
+			descriptionContent.attributedText = NSAttributedString(string: string, attributes: theme.getLyricsAttributes(scaleFactor ?? 1))
 		} else {
 			descriptionContent.text = sheet.content
 		}
 	}
 	
 	override func updateOpacity() {
-		if let alpha = sheetTag?.backgroundTransparancy, alpha != 1 {
-			if sheetTag?.backgroundImage != nil {
+		if let alpha = sheetTheme?.backgroundTransparancy, alpha != 1 {
+			if sheetTheme?.backgroundImage != nil {
 				backgroundImage.alpha = CGFloat(alpha)
 				sheetBackgroundView.alpha = 1
 			} else {
@@ -173,13 +173,13 @@ class SheetTitleImage: SheetView {
 	}
 	
 	override func updateBackgroundImage() {
-		let image = isForExternalDispay ? sheetTag?.backgroundImage : sheetTag?.thumbnail
+		let image = isForExternalDispay ? sheetTheme?.backgroundImage : sheetTheme?.thumbnail
 
-		if let image = image, !(sheetTag?.isBackgroundImageDeleted ?? true) {
+		if let image = image, !(sheetTheme?.isBackgroundImageDeleted ?? true) {
 			backgroundImage.isHidden = false
 			backgroundImage.contentMode = .scaleAspectFill
 			backgroundImage.image = image
-			if let backgroundTransparency = sheetTag?.backgroundTransparancy {
+			if let backgroundTransparency = sheetTheme?.backgroundTransparancy {
 				backgroundImage.alpha = CGFloat(backgroundTransparency)
 			}
 		} else {
@@ -188,11 +188,11 @@ class SheetTitleImage: SheetView {
 	}
 	
 	override func updateBackgroundColor() {
-		if let titleBackgroundColor = sheetTag?.backgroundColorTitle, let title = sheetTag?.title, title != "" {
-			if let allHaveTitle = sheetTag?.allHaveTitle, allHaveTitle == false && position < 1 {
+		if let titleBackgroundColor = sheetTheme?.backgroundColorTitle, let title = sheetTheme?.title, title != "" {
+			if let allHaveTitle = sheetTheme?.allHaveTitle, allHaveTitle == false && position < 1 {
 				titleBackground.isHidden = false
 				titleBackground.backgroundColor = titleBackgroundColor
-			} else if  let allHaveTitle = sheetTag?.allHaveTitle, allHaveTitle == true {
+			} else if  let allHaveTitle = sheetTheme?.allHaveTitle, allHaveTitle == true {
 				titleBackground.isHidden = false
 				titleBackground.backgroundColor = titleBackgroundColor
 			} else {
@@ -202,7 +202,7 @@ class SheetTitleImage: SheetView {
 			titleBackground.isHidden = true
 		}
 		
-		if let backgroundColor = sheetTag?.sheetBackgroundColor {
+		if let backgroundColor = sheetTheme?.sheetBackgroundColor {
 			self.sheetBackgroundView.backgroundColor = backgroundColor
 		} else {
 			self.sheetBackgroundView.backgroundColor = .white
@@ -217,9 +217,9 @@ class SheetTitleImage: SheetView {
 			return
 		}
 		
-		if let tag = sheetTag, let scaleFactor = scaleFactor { // is custom sheet
+		if let theme = sheetTheme, let scaleFactor = scaleFactor { // is custom sheet
 			
-			timeLabel.attributedText = NSAttributedString(string: test, attributes: tag.getTitleAttributes(scaleFactor))
+			timeLabel.attributedText = NSAttributedString(string: test, attributes: theme.getTitleAttributes(scaleFactor))
 			
 		} else {
 			timeLabel.text = test

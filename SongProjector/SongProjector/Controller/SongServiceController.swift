@@ -286,18 +286,18 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 		
 		let nextPreviousScaleFactor: CGFloat = sheetDisplayerNext.bounds.height / sheetDisplayer.bounds.height
 		
-		sheetDisplayer.addSubview(SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.selectedSong?.cluster, sheet: sheet, tag: songService.selectedTag, scaleFactor: scaleFactor, toExternalDisplay: true))
+		sheetDisplayer.addSubview(SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.selectedSong?.cluster, sheet: sheet, theme: songService.selectedTheme, scaleFactor: scaleFactor, toExternalDisplay: true))
 		sheetDisplayer.isHidden = false
 		
 		if let sheetNext = songService.nextSheet(select: false) {
 			sheetDisplayerNext.isHidden = false
-			sheetDisplayerNext.addSubview(SheetView.createWith(frame: sheetDisplayerNext.bounds, cluster: songService.getSongForNextSheet()?.cluster, sheet: sheetNext, tag: songService.nextTag, scaleFactor: nextPreviousScaleFactor))
+			sheetDisplayerNext.addSubview(SheetView.createWith(frame: sheetDisplayerNext.bounds, cluster: songService.getSongForNextSheet()?.cluster, sheet: sheetNext, theme: songService.nextTheme, scaleFactor: nextPreviousScaleFactor))
 		} else {
 			sheetDisplayerNext.isHidden = true
 		}
 		if let sheetPrevious = songService.previousSheet(select: false) {
 			sheetDisplayerPrevious.isHidden = false
-			sheetDisplayerPrevious.addSubview(SheetView.createWith(frame: sheetDisplayerPrevious.bounds, cluster: songService.getSongForPreviousSheet()?.cluster, sheet: sheetPrevious, tag: songService.previousTag, scaleFactor: nextPreviousScaleFactor))
+			sheetDisplayerPrevious.addSubview(SheetView.createWith(frame: sheetDisplayerPrevious.bounds, cluster: songService.getSongForPreviousSheet()?.cluster, sheet: sheetPrevious, theme: songService.previousTheme, scaleFactor: nextPreviousScaleFactor))
 		} else {
 			sheetDisplayerPrevious.isHidden = true
 		}
@@ -436,9 +436,9 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 		case .left:
 
 			if let sheet = songService.selectedSheet, let nextSheet = songService.nextSheet(select: false) {
-				let currentSheetView = SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.selectedSong?.cluster, sheet: sheet, tag: songService.selectedTag, scaleFactor: scaleFactor, toExternalDisplay: true)
+				let currentSheetView = SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.selectedSong?.cluster, sheet: sheet, theme: songService.selectedTheme, scaleFactor: scaleFactor, toExternalDisplay: true)
 				
-				let nextSheetView = SheetView.createWith(frame: sheetDisplayerNext.bounds, cluster: songService.getSongForNextSheet()?.cluster, sheet: nextSheet, tag: songService.nextTag, scaleFactor: sheetDisplayerNext.bounds.height / sheetDisplayer.bounds.height)
+				let nextSheetView = SheetView.createWith(frame: sheetDisplayerNext.bounds, cluster: songService.getSongForNextSheet()?.cluster, sheet: nextSheet, theme: songService.nextTheme, scaleFactor: sheetDisplayerNext.bounds.height / sheetDisplayer.bounds.height)
 				
 				let imageCurrentSheet = currentSheetView.asImage()
 				let currentImageView = UIImageView(frame: sheetDisplayer.frame)
@@ -476,9 +476,9 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 //				sheetDisplayerNext.isHidden = position == numberOfSheets ? true : false
 //				sheetDisplayerPrevious.isHidden = position == 0 ? true : false
 
-				let currentSheetView = SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.selectedSong?.cluster, sheet: sheet, tag: songService.selectedTag, scaleFactor: scaleFactor,  toExternalDisplay: true)
+				let currentSheetView = SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.selectedSong?.cluster, sheet: sheet, theme: songService.selectedTheme, scaleFactor: scaleFactor,  toExternalDisplay: true)
 				
-				let previousSheetView = SheetView.createWith(frame: sheetDisplayerPrevious.bounds, cluster: songService.getSongForPreviousSheet()?.cluster, sheet: previousSheet, tag: songService.previousTag, scaleFactor: sheetDisplayerNext.bounds.height / sheetDisplayer.bounds.height)
+				let previousSheetView = SheetView.createWith(frame: sheetDisplayerPrevious.bounds, cluster: songService.getSongForPreviousSheet()?.cluster, sheet: previousSheet, theme: songService.previousTheme, scaleFactor: sheetDisplayerNext.bounds.height / sheetDisplayer.bounds.height)
 				
 				let imageCurrentSheet = currentSheetView.asImage()
 				let currentImageView = UIImageView(frame: sheetDisplayer.frame)

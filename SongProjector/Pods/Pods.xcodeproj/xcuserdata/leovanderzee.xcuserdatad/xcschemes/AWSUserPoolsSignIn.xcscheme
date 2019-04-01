@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "61F6476AE75384C5DD19AA6D4A8CBEC8"
+               BlueprintIdentifier = "6754F7C40C8DA0D54674471A36DFA6AA"
                BlueprintName = "AWSUserPoolsSignIn"
                ReferencedContainer = "container:Pods.xcodeproj"
                BuildableName = "AWSUserPoolsSignIn.framework">

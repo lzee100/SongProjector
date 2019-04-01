@@ -9,7 +9,7 @@
 import UIKit
 import Photos
 
-class LabelPhotoPickerCell: ChurchBeamCell, TagImplementation, SheetImplementation, DynamicHeightCell, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class LabelPhotoPickerCell: ChurchBeamCell, ThemeImplementation, SheetImplementation, DynamicHeightCell, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 	
 
 	@IBOutlet var descriptionTitle: UILabel!
@@ -26,8 +26,8 @@ class LabelPhotoPickerCell: ChurchBeamCell, TagImplementation, SheetImplementati
 	
 	var id = ""
 	
-	var sheetTag: Tag?
-	var tagAttribute: TagAttribute?
+	var sheetTheme: Theme?
+	var themeAttribute: ThemeAttribute?
 	var valueDidChange: ((ChurchBeamCell) -> Void)?
 
 	var sheet: Sheet?
@@ -43,11 +43,11 @@ class LabelPhotoPickerCell: ChurchBeamCell, TagImplementation, SheetImplementati
 	
 	override func prepareForReuse() {
 		sheetAttribute = nil
-		tagAttribute = nil
+		themeAttribute = nil
 		valueDidChange = nil
 		sheet = nil
 		let beamerResolution = "\(Int(externalDisplayWindowWidth)) x \(Int(externalDisplayWindowHeight))"
-		descriptionLastBeamerResolution.text = Text.NewTag.descriptionLastBeamerResolution + beamerResolution
+		descriptionLastBeamerResolution.text = Text.NewTheme.descriptionLastBeamerResolution + beamerResolution
 	}
 	
 	static let identifier = "LabelPhotoPickerCell"
@@ -60,7 +60,7 @@ class LabelPhotoPickerCell: ChurchBeamCell, TagImplementation, SheetImplementati
 		imageThumbnail.clipsToBounds = true
 		imageThumbnail.layer.cornerRadius = CGFloat(5)
 		let beamerResolution = "\(Int(externalDisplayWindowWidth)) x \(Int(externalDisplayWindowHeight))"
-		descriptionLastBeamerResolution.text = Text.NewTag.descriptionLastBeamerResolution + beamerResolution
+		descriptionLastBeamerResolution.text = Text.NewTheme.descriptionLastBeamerResolution + beamerResolution
 		descriptionLastBeamerResolution.textColor = isThemeLight ? UIColor(red: 0, green: 0, blue: 0, alpha: 0.5) : UIColor(red: 255, green: 255, blue: 255, alpha: 0.4)
 		button.isEnabled = false
 		buttonContainer.backgroundColor = themeWhiteBlackBackground
@@ -77,7 +77,7 @@ class LabelPhotoPickerCell: ChurchBeamCell, TagImplementation, SheetImplementati
 		view.buttonContainer.isHidden = true
 		view.imageThumbnail.layer.cornerRadius = CGFloat(5)
 		let beamerResolution = "\(Int(externalDisplayWindowWidth)) x \(Int(externalDisplayWindowHeight))"
-		view.descriptionLastBeamerResolution.text = Text.NewTag.descriptionLastBeamerResolution + beamerResolution
+		view.descriptionLastBeamerResolution.text = Text.NewTheme.descriptionLastBeamerResolution + beamerResolution
 		view.descriptionLastBeamerResolution.textColor = isThemeLight ? UIColor(red: 0, green: 0, blue: 0, alpha: 0.5) : UIColor(red: 255, green: 255, blue: 255, alpha: 0.4)
 		view.button.isEnabled = false
 		view.buttonContainer.backgroundColor = themeWhiteBlackBackground
@@ -89,13 +89,13 @@ class LabelPhotoPickerCell: ChurchBeamCell, TagImplementation, SheetImplementati
 	}
 	
 	func setImage(image: UIImage?) {
-		button.setTitle(image == nil ? Text.NewTag.buttonBackgroundImagePick : Text.NewTag.buttonBackgroundImageChange, for: .normal)
+		button.setTitle(image == nil ? Text.NewTheme.buttonBackgroundImagePick : Text.NewTheme.buttonBackgroundImageChange, for: .normal)
 		imageThumbnail.image = image
 		pickedImage = image
 	}
 	
 	func showImage() {
-		button.setTitle(pickedImage == nil ? Text.NewTag.buttonBackgroundImagePick : Text.NewTag.buttonBackgroundImageChange, for: .normal)
+		button.setTitle(pickedImage == nil ? Text.NewTheme.buttonBackgroundImagePick : Text.NewTheme.buttonBackgroundImageChange, for: .normal)
 		if isActive {
 			buttonContainer.isHidden = false
 			button.isEnabled = true
@@ -112,10 +112,10 @@ class LabelPhotoPickerCell: ChurchBeamCell, TagImplementation, SheetImplementati
 		
 	}
 	
-	func apply(tag: Tag, tagAttribute: TagAttribute) {
-		self.sheetTag = tag
-		self.tagAttribute = tagAttribute
-		self.descriptionTitle.text = tagAttribute.description
+	func apply(theme: Theme, themeAttribute: ThemeAttribute) {
+		self.sheetTheme = theme
+		self.themeAttribute = themeAttribute
+		self.descriptionTitle.text = themeAttribute.description
 		applyValueToCell()
 	}
 	
@@ -130,13 +130,13 @@ class LabelPhotoPickerCell: ChurchBeamCell, TagImplementation, SheetImplementati
 	}
 	
 	func applyValueToCell() {
-		if let tag = sheetTag, let tagAttribute = tagAttribute {
-			switch tagAttribute {
+		if let theme = sheetTheme, let themeAttribute = themeAttribute {
+			switch themeAttribute {
 			case .backgroundImage:
-				if tag.isBackgroundImageDeleted {
+				if theme.isBackgroundImageDeleted {
 					setImage(image: nil)
 				} else {
-					setImage(image: tag.backgroundImage)
+					setImage(image: theme.backgroundImage)
 				}
 			default: return
 			}
@@ -149,15 +149,15 @@ class LabelPhotoPickerCell: ChurchBeamCell, TagImplementation, SheetImplementati
 		}
 	}
 	
-	func applyCellValueToTag() {
-		if let tag = sheetTag, let tagAttribute = tagAttribute {
-			switch tagAttribute {
+	func applyCellValueToTheme() {
+		if let theme = sheetTheme, let themeAttribute = themeAttribute {
+			switch themeAttribute {
 			case .backgroundImage:
 				if pickedImage != nil {
-					tag.backgroundImage = pickedImage
-					tag.isBackgroundImageDeleted = false
+					theme.backgroundImage = pickedImage
+					theme.isBackgroundImageDeleted = false
 				} else {
-					tag.isBackgroundImageDeleted = true
+					theme.isBackgroundImageDeleted = true
 				}
 			default: return
 			}
@@ -175,7 +175,7 @@ class LabelPhotoPickerCell: ChurchBeamCell, TagImplementation, SheetImplementati
 		} else if let value = value as? UIImage {
 			setImage(image: value)
 		}
-		applyCellValueToTag()
+		applyCellValueToTheme()
 		self.valueDidChange?(self)
 	}
 	
@@ -189,7 +189,7 @@ class LabelPhotoPickerCell: ChurchBeamCell, TagImplementation, SheetImplementati
 				self.setNeedsDisplay()
 				
 				self.pickedImage = pickedImage
-				self.applyCellValueToTag()
+				self.applyCellValueToTheme()
 				self.valueDidChange?(self)
 				if let sender = self.sender {
 					sender.dismiss(animated: true)

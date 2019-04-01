@@ -22,17 +22,17 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	@IBOutlet var save: UIBarButtonItem!
 	@IBOutlet weak var edit: UIBarButtonItem?
 	
-	@IBOutlet var collectionViewTags: UICollectionView!
+	@IBOutlet var collectionViewThemes: UICollectionView!
 	@IBOutlet var collectionView: UICollectionView!
 	
 	@IBOutlet weak var addLyricsButton: UIButton?
 	@IBOutlet weak var addSheetButton: UIButton?
 	
 	var isNew = true
-	var tags: [Tag] = []
-	var selectedTag: Tag? {
+	var themes: [Theme] = []
+	var selectedTheme: Theme? {
 		didSet {
-			clusterTemp?.hasTag = selectedTag
+			clusterTemp?.hasTheme = selectedTheme
 			if clusterTemp?.isTypeSong ?? false {
 				updateWithAnimation()
 			}
@@ -120,7 +120,7 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 		if let controller = segue.destination.unwrap() as? SaveNewSongTitleTimeVC {
 			controller.didSave = didSaveSongWith
 			controller.cluster = clusterTemp
-			controller.selectedTag = selectedTag
+			controller.selectedTheme = selectedTheme
 		}
 	}
 	
@@ -133,16 +133,16 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-		return collectionView == collectionViewTags ? tags.count : sheetsTemp.count
+		return collectionView == collectionViewThemes ? themes.count : sheetsTemp.count
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 		
-		if collectionView == collectionViewTags {
-			let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.tagCellCollection, for: indexPath) as! TagCellCollection
+		if collectionView == collectionViewThemes {
+			let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.themeCellCollection, for: indexPath) as! ThemeCellCollection
 			
-			cell.setup(tagName: tags[indexPath.row].title ?? "")
-			cell.isSelectedCell = tags[indexPath.row] == selectedTag
+			cell.setup(themeName: themes[indexPath.row].title ?? "")
+			cell.isSelectedCell = themes[indexPath.row] == selectedTheme
 			return cell
 			
 		} else {
@@ -150,7 +150,7 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 			cell.setupWith(
 				cluster: clusterTemp,
 				sheet: sheetsTemp[indexPath.row],
-				tag: sheetsTemp[indexPath.row].hasTag ?? clusterTemp?.hasTag,
+				theme: sheetsTemp[indexPath.row].hasTheme ?? clusterTemp?.hasTheme,
 				didDeleteSheet: didDeleteSheet(sheet:))
 			return cell
 		}
@@ -158,20 +158,18 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-		if collectionView == collectionViewTags {
-			if let cell = collectionView.cellForItem(at: indexPath) as? TagCellCollection {
-				return CGSize(width: cell.preferredWidth, height: 50)
-			} else {
-				return CGSize(width: 200, height: 50)
-			}
+		if collectionView == collectionViewThemes {
+			let font = UIFont.systemFont(ofSize: 17)
+			let width = (themes[indexPath.row].title ?? "").width(withConstrainedHeight: 22, font: font) + 50
+			return CGSize(width: width, height: 50)
 		} else {
 			return UIDevice.current.userInterfaceIdiom == .pad ? getSizeWith(height: collectionView.frame.height) : getSizeWith(height: nil, width: collectionView.frame.width)
 		}
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-		if collectionView == collectionViewTags {
-			selectedTag = selectedTag == tags[indexPath.row] ? nil : tags[indexPath.row]
+		if collectionView == collectionViewThemes {
+			selectedTheme = selectedTheme == themes[indexPath.row] ? nil : themes[indexPath.row]
 			update()
 		} else {
 			if clusterTemp?.isTypeSong ?? false {
@@ -232,7 +230,7 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	
 	// MARK: - Submit Observer Functions
 	
-	override func handleRequestFinish(result: AnyObject?) {
+	override func handleRequestFinish(requesterId: String, result: AnyObject?) {
 		Queues.main.async {
 			self.sheetsTemp.forEach({ $0.delete(false) })
 			self.clusterTemp?.delete(true)
@@ -281,7 +279,7 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	}
 	
 	func didSaveSongWith() {
-		clusterTemp?.hasTag = selectedTag
+		clusterTemp?.hasTheme = selectedTheme
 		
 		if let cluster = cluster {
 			clusterTemp?.mergeSelfInto(cluster: cluster)
@@ -290,15 +288,14 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 		for sheet in sheetsTemp {
 			if let sheetId = sheetHasSheet.first(where: { $0.sheetTempId == sheet.id })?.sheetId, let sheetOriginal = sheets.first(where: { $0.id == sheetId }) {
 				sheet.mergeSelfInto(sheet: sheetOriginal)
-				if let tag = sheet.hasTag, let originalTag = sheetOriginal.hasTag {
-					tag.mergeSelfInto(tag: originalTag, sheetType: sheet.type)
+				if let theme = sheet.hasTheme, let originalTheme = sheetOriginal.hasTheme {
+					theme.mergeSelfInto(theme: originalTheme, sheetType: sheet.type)
 				}
 			}
 		}
 		
 		cluster?.hasSheets = NSSet(array: sheets)
-		cluster?.hasTag = selectedTag
-		cluster?.tagId = selectedTag?.id ?? 0
+		cluster?.hasTheme = selectedTheme
 		
 		if let cluster = cluster {
 			let method: RequestMethod = cluster.isTemp ? .post : .put
@@ -318,10 +315,8 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 		
 		ClusterSubmitter.addObserver(self)
 		
-		if let tagId = cluster?.tagId {
-			cluster?.hasTag = CoreTag.getEntitieWith(id: tagId)
-			selectedTag = cluster?.hasTag
-		}
+		selectedTheme = cluster?.hasTheme
+
 		if clusterTemp == nil {
 			cluster = CoreCluster.createEntityNOTsave()
 			clusterTemp = CoreCluster.createEntityNOTsave()
@@ -346,10 +341,10 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 		longPressGesture.minimumPressDuration = 1
 		collectionView.addGestureRecognizer(longPressGesture)
 		
-		collectionViewTags.register(UINib(nibName: Cells.tagCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.tagCellCollection)
+		collectionViewThemes.register(UINib(nibName: Cells.themeCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.themeCellCollection)
 		
-		CoreTag.predicates.append("isHidden", notEquals: true)
-		tags = CoreTag.getEntities()
+		CoreTheme.predicates.append("isHidden", notEquals: true)
+		themes = CoreTheme.getEntities()
 		
 		let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
 		layout.scrollDirection = (UIDevice.current.userInterfaceIdiom == .pad) ? .horizontal : .vertical
@@ -365,13 +360,13 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	private func update() {
 		removeRedBorder()
 		checkAddButton()
-		collectionViewTags.reloadData()
+		collectionViewThemes.reloadData()
 		collectionView.reloadData()
 	}
 	
 	private func checkAddButton() {
 		let isSong = (clusterTemp?.isTypeSong ?? false) && getTextFromSheets().length > 0
-		let isCustom = sheetsTemp.contains(where: { $0.hasTag?.isHidden == true })
+		let isCustom = sheetsTemp.contains(where: { $0.hasTheme?.isHidden == true })
 		
 		edit?.isEnabled = !isSong
 		edit?.tintColor = isSong ? .clear : themeHighlighted
@@ -385,15 +380,15 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 //		}
 	}
 	
-	private func hasTagSelected(_ hasTag: Bool) {
-		if hasTag {
-			collectionViewTags.layer.borderColor = nil
-			collectionViewTags.layer.borderWidth = 0
-			collectionViewTags.layer.cornerRadius = 0
+	private func hasThemeSelected(_ hasTheme: Bool) {
+		if hasTheme {
+			collectionViewThemes.layer.borderColor = nil
+			collectionViewThemes.layer.borderWidth = 0
+			collectionViewThemes.layer.cornerRadius = 0
 		} else {
-			collectionViewTags.layer.borderColor = UIColor.red.cgColor
-			collectionViewTags.layer.borderWidth = 2
-			collectionViewTags.layer.cornerRadius = 5
+			collectionViewThemes.layer.borderColor = UIColor.red.cgColor
+			collectionViewThemes.layer.borderWidth = 2
+			collectionViewThemes.layer.cornerRadius = 5
 		}
 	}
 	
@@ -406,7 +401,7 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 		}
 		
 		newCluster?.deleteDate = nil
-		newCluster?.hasTag = selectedTag
+		newCluster?.hasTheme = selectedTheme
 		
 		var contentToDevide = fromText + "\n\n"
 		
@@ -506,23 +501,23 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 		}
 	}
 	
-	private func hasTagSelected() -> Bool {
-		if selectedTag != nil {
+	private func hasThemeSelected() -> Bool {
+		if selectedTheme != nil {
 			removeRedBorder()
 			return true
 		} else {
-			collectionViewTags.layer.borderColor = UIColor.red.cgColor
-			collectionViewTags.layer.borderWidth = 2
-			collectionViewTags.layer.cornerRadius = 5
-			collectionViewTags.shake()
+			collectionViewThemes.layer.borderColor = UIColor.red.cgColor
+			collectionViewThemes.layer.borderWidth = 2
+			collectionViewThemes.layer.cornerRadius = 5
+			collectionViewThemes.shake()
 			return false
 		}
 	}
 	
 	private func removeRedBorder() {
-		collectionViewTags.layer.borderColor = nil
-		collectionViewTags.layer.borderWidth = 0
-		collectionViewTags.layer.cornerRadius = 0
+		collectionViewThemes.layer.borderColor = nil
+		collectionViewThemes.layer.borderWidth = 0
+		collectionViewThemes.layer.cornerRadius = 0
 	}
 
 	
@@ -541,13 +536,13 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	}
 	
 	@IBAction func savedPressed(_ sender: UIBarButtonItem) {
-		if hasTagSelected() {
+		if hasThemeSelected() {
 			performSegue(withIdentifier: "saveNewSongSegue", sender: self)
 		}
 	}
 	
 	@IBAction func saveIphonePressed(_ sender: UIBarButtonItem) {
-		if hasTagSelected() {
+		if hasThemeSelected() {
 			performSegue(withIdentifier: "saveNewSongSegue", sender: self)
 		}
 	}
@@ -558,10 +553,10 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 		}
 		
 		let isSong = (clusterTemp?.isTypeSong ?? false) && getTextFromSheets().length > 0
-		let isCustom = sheetsTemp.contains(where: { $0.hasTag?.isHidden == true })
+		let isCustom = sheetsTemp.contains(where: { $0.hasTheme?.isHidden == true })
 
 		controller.didCreateSheet = didCreate(sheet:)
-		controller.selectedTag = selectedTag
+		controller.selectedTheme = selectedTheme
 		controller.delegate = self
 		controller.mode = isSong ? .song : isCustom ? .custom : .none
 		controller.lyricsControllerDelegate = self
@@ -601,7 +596,7 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 //			optionsMenu.addAction(addSheet)
 //			optionsMenu.addAction(changeLyrics)
 //		} else {
-//			if sheetsTemp.contains(where: { $0.hasTag?.isHidden == true }) {
+//			if sheetsTemp.contains(where: { $0.hasTheme?.isHidden == true }) {
 //				optionsMenu.addAction(addSheet)
 //				optionsMenu.addAction(changeGeneralSettings)
 //			} else {

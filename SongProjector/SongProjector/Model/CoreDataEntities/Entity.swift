@@ -108,6 +108,7 @@ public class Entity: NSManagedObject, Codable, NSCopying {
 		isTemp = true
 		return entity
 	}
+	
 }
 
 public extension CodingUserInfoKey {
@@ -123,5 +124,58 @@ internal extension Entity {
 		} else {
 			return nil
 		}
+	}
+}
+
+
+extension Entity {
+	
+	static func getEntities<T>(decodeNew: (() throws -> [T])) -> [T] where T: Entity {
+		let manager = CoreDataManager<T>()
+		manager.managedObjectContext = mocBackground
+		var old: [T] = manager.getEntities()
+		var toKeep: [T] = []
+		var new: [T]?
+		do {
+			new = try decodeNew()
+		}
+		catch {
+			print("error \(error)")
+		}
+		new?.forEach({
+			if let index = old.firstIndex(entity: $0) {
+				toKeep.append(old[index])
+				$0.deleteBackground(false)
+			} else {
+				toKeep.append($0)
+			}
+		})
+		return toKeep
+
+	}
+	
+	static func getEntity<T>(decodeNew: (() throws -> T?)) -> T? where T: Entity {
+		let manager = CoreDataManager<T>()
+		manager.managedObjectContext = mocBackground
+		var old: [T] = manager.getEntities()
+		var toKeep: T?
+		var new: T?
+		do {
+			new = try decodeNew()
+		}
+		catch {
+			print("error \(error)")
+		}
+		if let new = new {
+			if let index = old.firstIndex(entity: new) {
+				toKeep = old[index]
+				new.deleteBackground(false)
+			} else {
+				toKeep = new
+			}
+		}
+		
+		return toKeep
+		
 	}
 }

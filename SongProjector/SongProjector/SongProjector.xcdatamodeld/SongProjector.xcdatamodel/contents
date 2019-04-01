@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14460.32" systemVersion="18D109" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14490.98" systemVersion="18D109" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Book" representedClassName=".Book" parentEntity="Entity" syncable="YES" codeGenerationType="class">
         <attribute name="name" attributeType="String" syncable="YES"/>
         <relationship name="hasChapters" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Chapter" inverseName="hasBook" inverseEntity="Chapter" syncable="YES"/>
@@ -12,11 +12,14 @@
     <entity name="Cluster" representedClassName=".Cluster" parentEntity="Entity" syncable="YES">
         <attribute name="isLoop" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="position" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="tagId" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="themeId" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="time" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <relationship name="hasInstruments" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Instrument" inverseName="hasCluster" inverseEntity="Instrument" syncable="YES"/>
+        <relationship name="hasSheet" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Theme" inverseName="hasClusters" inverseEntity="Theme" syncable="YES"/>
         <relationship name="hasSheets" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Sheet" inverseName="hasCluster" inverseEntity="Sheet" syncable="YES"/>
-        <relationship name="hasTag" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Tag" inverseName="hasCluster" inverseEntity="Tag" syncable="YES"/>
+        <relationship name="hasTagIds" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TagId" inverseName="hasCluster" inverseEntity="TagId" syncable="YES"/>
+        <relationship name="hasTags" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tag" inverseName="hasClusters" inverseEntity="Tag" syncable="YES"/>
+        <relationship name="hasTheme" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Theme" syncable="YES"/>
     </entity>
     <entity name="Contract" representedClassName=".Contract" syncable="YES">
         <attribute name="buttonContent" attributeType="String" syncable="YES"/>
@@ -29,6 +32,7 @@
         <attribute name="organizationId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="phoneNumber" attributeType="String" syncable="YES"/>
         <attribute name="userName" attributeType="String" syncable="YES"/>
+        <relationship name="hasOrganization" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Organization" inverseName="hasContractLedgers" inverseEntity="Organization" syncable="YES"/>
     </entity>
     <entity name="Entity" representedClassName=".Entity" syncable="YES">
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
@@ -52,7 +56,7 @@
         <relationship name="hasCluster" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Cluster" inverseName="hasInstruments" inverseEntity="Cluster" syncable="YES"/>
     </entity>
     <entity name="Organization" representedClassName=".Organization" parentEntity="Entity" syncable="YES">
-        <relationship name="hasContractLedgers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ContractLedger" syncable="YES"/>
+        <relationship name="hasContractLedgers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ContractLedger" inverseName="hasOrganization" inverseEntity="ContractLedger" syncable="YES"/>
         <relationship name="hasRoles" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Role" inverseName="hasOrganization" inverseEntity="Role" syncable="YES"/>
     </entity>
     <entity name="Role" representedClassName=".Role" parentEntity="Entity" syncable="YES">
@@ -64,7 +68,7 @@
         <attribute name="position" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="time" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <relationship name="hasCluster" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Cluster" inverseName="hasSheets" inverseEntity="Cluster" syncable="YES"/>
-        <relationship name="hasTag" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Tag" inverseName="hasSheets" inverseEntity="Tag" syncable="YES"/>
+        <relationship name="hasTheme" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Theme" inverseName="hasSheets" inverseEntity="Theme" syncable="YES"/>
     </entity>
     <entity name="SheetActivitiesEntity" representedClassName=".SheetActivitiesEntity" parentEntity="Sheet" syncable="YES">
         <relationship name="hasGoogleActivity" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="GoogleActivity" inverseName="hasSheetsActivities" inverseEntity="GoogleActivity" syncable="YES"/>
@@ -96,7 +100,23 @@
         <attribute name="thumbnailPath" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="thumbnailPathAWS" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
+    <entity name="SongServiceSection" representedClassName=".SongServiceSection" parentEntity="Entity" syncable="YES">
+        <attribute name="position" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <relationship name="hasSongServiceSettings" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SongServiceSettings" inverseName="hasSongServiceSections" inverseEntity="SongServiceSettings" syncable="YES"/>
+        <relationship name="hasTags" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tag" inverseName="hasSongServiceSections" inverseEntity="Tag" syncable="YES"/>
+    </entity>
+    <entity name="SongServiceSettings" representedClassName=".SongServiceSettings" parentEntity="Entity" syncable="YES">
+        <relationship name="hasSongServiceSections" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SongServiceSection" inverseName="hasSongServiceSettings" inverseEntity="SongServiceSection" syncable="YES"/>
+    </entity>
     <entity name="Tag" representedClassName=".Tag" parentEntity="Entity" syncable="YES">
+        <relationship name="hasClusters" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Cluster" inverseName="hasTags" inverseEntity="Cluster" syncable="YES"/>
+        <relationship name="hasSongServiceSections" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SongServiceSection" inverseName="hasTags" inverseEntity="SongServiceSection" syncable="YES"/>
+    </entity>
+    <entity name="TagId" representedClassName=".TagId" syncable="YES" codeGenerationType="class">
+        <attribute name="tagId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <relationship name="hasCluster" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Cluster" inverseName="hasTagIds" inverseEntity="Cluster" syncable="YES"/>
+    </entity>
+    <entity name="Theme" representedClassName=".Theme" parentEntity="Entity" syncable="YES">
         <attribute name="allHaveTitle" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="backgroundColor" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="backgroundTransparancyNumber" attributeType="Float" defaultValueString="1" usesScalarValueType="YES" syncable="YES"/>
@@ -129,8 +149,8 @@
         <attribute name="titleFontName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="titleTextColorHex" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="titleTextSize" attributeType="Float" defaultValueString="14" usesScalarValueType="YES" syncable="YES"/>
-        <relationship name="hasCluster" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Cluster" inverseName="hasTag" inverseEntity="Cluster" syncable="YES"/>
-        <relationship name="hasSheets" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Sheet" inverseName="hasTag" inverseEntity="Sheet" syncable="YES"/>
+        <relationship name="hasClusters" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Cluster" inverseName="hasSheet" inverseEntity="Cluster" syncable="YES"/>
+        <relationship name="hasSheets" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Sheet" inverseName="hasTheme" inverseEntity="Sheet" syncable="YES"/>
     </entity>
     <entity name="User" representedClassName=".User" parentEntity="Entity" syncable="YES">
         <attribute name="appInstallToken" optional="YES" attributeType="String" syncable="YES"/>
@@ -148,9 +168,9 @@
     <elements>
         <element name="Book" positionX="-36" positionY="135" width="128" height="75"/>
         <element name="Chapter" positionX="-27" positionY="144" width="128" height="90"/>
-        <element name="Cluster" positionX="-54" positionY="-9" width="128" height="150"/>
+        <element name="Cluster" positionX="-54" positionY="-9" width="128" height="195"/>
         <element name="Contract" positionX="-36" positionY="135" width="128" height="90"/>
-        <element name="ContractLedger" positionX="-18" positionY="153" width="128" height="120"/>
+        <element name="ContractLedger" positionX="-18" positionY="153" width="128" height="135"/>
         <element name="Entity" positionX="-63" positionY="-18" width="128" height="135"/>
         <element name="GoogleActivity" positionX="-36" positionY="135" width="128" height="105"/>
         <element name="Instrument" positionX="-36" positionY="135" width="128" height="120"/>
@@ -163,7 +183,11 @@
         <element name="SheetSplitEntity" positionX="-36" positionY="135" width="128" height="75"/>
         <element name="SheetTitleContentEntity" positionX="-27" positionY="144" width="128" height="60"/>
         <element name="SheetTitleImageEntity" positionX="-36" positionY="135" width="128" height="195"/>
-        <element name="Tag" positionX="-36" positionY="9" width="128" height="555"/>
+        <element name="SongServiceSection" positionX="0" positionY="162" width="128" height="90"/>
+        <element name="SongServiceSettings" positionX="-9" positionY="153" width="128" height="60"/>
+        <element name="Tag" positionX="-27" positionY="135" width="128" height="75"/>
+        <element name="TagId" positionX="-18" positionY="144" width="128" height="75"/>
+        <element name="Theme" positionX="-36" positionY="9" width="128" height="555"/>
         <element name="User" positionX="-36" positionY="135" width="128" height="135"/>
         <element name="Vers" positionX="-18" positionY="153" width="128" height="90"/>
     </elements>

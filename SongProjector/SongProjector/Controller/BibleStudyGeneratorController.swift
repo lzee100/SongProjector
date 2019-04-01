@@ -14,7 +14,7 @@ class BibleStudyGeneratorController: UIViewController {
 	
 	
 	
-	var selectedTag: Tag?
+	var selectedTheme: Theme?
 	var delegate: BibleStudyGeneratorDelegate?
 
     override func viewDidLoad() {

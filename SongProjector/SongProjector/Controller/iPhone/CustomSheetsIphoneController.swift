@@ -18,14 +18,14 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 	@IBOutlet var edit: UIBarButtonItem!
 	@IBOutlet var save: UIBarButtonItem!
 	
-	@IBOutlet var collectionViewTags: UICollectionView!
+	@IBOutlet var collectionViewThemes: UICollectionView!
 	@IBOutlet var collectionView: UICollectionView!
 	
 	var isNew = true
-	var tags: [Tag] = []
-	var selectedTag: Tag? {
+	var themes: [Theme] = []
+	var selectedTheme: Theme? {
 		didSet {
-			clusterTemp?.hasTag = selectedTag
+			clusterTemp?.hasTheme = selectedTheme
 			collectionView.reloadData()
 		}
 	}
@@ -105,7 +105,7 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 		if segue.identifier == "SheetPickerMenuControllerSegue" {
 			let controller = segue.destination as! SheetPickerMenuController
 			controller.didCreateSheet = didCreate(sheet:)
-			controller.selectedTag = selectedTag
+			controller.selectedTheme = selectedTheme
 		}
 	}
 	
@@ -117,15 +117,15 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-		return collectionView == collectionViewTags ? tags.count : sheets.count
+		return collectionView == collectionViewThemes ? themes.count : sheets.count
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 		
-		if collectionView == collectionViewTags {
-			let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.tagCellCollection, for: indexPath) as! TagCellCollection
-			collectionCell.setup(tagName: tags[indexPath.row].title ?? "")
-			collectionCell.isSelectedCell = selectedTag == tags[indexPath.row]
+		if collectionView == collectionViewThemes {
+			let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.themeCellCollection, for: indexPath) as! ThemeCellCollection
+			collectionCell.setup(themeName: themes[indexPath.row].title ?? "")
+			collectionCell.isSelectedCell = selectedTheme == themes[indexPath.row]
 			return collectionCell
 		} else {
 			
@@ -134,7 +134,7 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 			collectionCell.setupWith(
 				cluster: clusterTemp,
 				sheet: sheetsTemp[indexPath.row],
-				tag: sheetsTemp[indexPath.row].hasTag ?? clusterTemp?.hasTag,
+				theme: sheetsTemp[indexPath.row].hasTheme ?? clusterTemp?.hasTheme,
 				didDeleteSheet: didDeleteSheet(sheet:))
 			
 			if visibleCells.contains(indexPath) {
@@ -166,7 +166,7 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-		if collectionView == collectionViewTags {
+		if collectionView == collectionViewThemes {
 			return CGSize(width: 200, height: 50)
 		} else {
 			return sheetSize
@@ -174,8 +174,8 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-		if collectionView == collectionViewTags {
-			selectedTag = selectedTag == tags[indexPath.row] ? nil : tags[indexPath.row]
+		if collectionView == collectionViewThemes {
+			selectedTheme = selectedTheme == themes[indexPath.row] ? nil : themes[indexPath.row]
 		} else {
 			let sheet = sheetsSorted[indexPath.section]
 			let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
@@ -273,10 +273,10 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 //		cellAnimationTime.setValue(Int(cluster.time))
 		
 		collectionView.register(UINib(nibName: Cells.sheetCollectionCell, bundle: nil), forCellWithReuseIdentifier: Cells.sheetCollectionCell)
-		collectionViewTags.register(UINib(nibName: Cells.tagCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.tagCellCollection)
+		collectionViewThemes.register(UINib(nibName: Cells.themeCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.themeCellCollection)
 
-		CoreTag.predicates.append("isHidden", notEquals: true)
-		tags = CoreTag.getEntities()
+		CoreTheme.predicates.append("isHidden", notEquals: true)
+		themes = CoreTheme.getEntities()
 		
 		let cellHeight = multiplier * (UIScreen.main.bounds.width - 20)
 		sheetSize = CGSize(width: UIScreen.main.bounds.width - 20, height: cellHeight)
@@ -290,7 +290,7 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 		
 		if cluster != nil {
 			sheets = cluster?.hasSheetsArray ?? []
-			selectedTag = cluster?.hasTag
+			selectedTheme = cluster?.hasTheme
 		}
 		
 		collectionView.keyboardDismissMode = .interactive
@@ -301,7 +301,7 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 	}
 	
 	private func update() {
-		collectionViewTags.reloadData()
+		collectionViewThemes.reloadData()
 		collectionView.reloadData()
 		isFirstTime = true
 	}
@@ -328,11 +328,11 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 		return indexPaths
 	}
 	
-	private func hasTagSelected() -> Bool {
-		if selectedTag != nil {
+	private func hasThemeSelected() -> Bool {
+		if selectedTheme != nil {
 			return true
 		} else {
-			let alert = UIAlertController(title: Text.NewSong.errorTitleNoTag, message: Text.NewSong.erorrMessageNoTag, preferredStyle: .alert)
+			let alert = UIAlertController(title: Text.NewSong.errorTitleNoTheme, message: Text.NewSong.erorrMessageNoTheme, preferredStyle: .alert)
 			alert.addAction(UIAlertAction(title: Text.Actions.ok, style: UIAlertActionStyle.default, handler: nil))
 			self.present(alert, animated: true, completion: nil)
 			
@@ -375,7 +375,7 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 			optionsMenu.addAction(addSheet)
 			optionsMenu.addAction(changeLyrics)
 		} else {
-			if sheetsTemp.contains(where: { $0.hasTag?.isHidden == true }) {
+			if sheetsTemp.contains(where: { $0.hasTheme?.isHidden == true }) {
 				optionsMenu.addAction(addSheet)
 				optionsMenu.addAction(changeGeneralSettings)
 			} else {
@@ -387,12 +387,12 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 	
 	@IBAction func savedPressed(_ sender: UIBarButtonItem) {
 
-		if hasTagSelected() {
+		if hasThemeSelected() {
 			if hasName() {
 				if cluster == nil {
 					cluster = CoreCluster.createEntity()
 				}
-				cluster?.hasTag = selectedTag
+				cluster?.hasTheme = selectedTheme
 				
 				var index: Int16 = 0
 				for sheet in sheets {

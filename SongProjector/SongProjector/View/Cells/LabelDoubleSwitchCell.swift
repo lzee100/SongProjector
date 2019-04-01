@@ -12,7 +12,7 @@ protocol LabelDoubleSwitchDelegate {
 	func didSelectSwitch(first: Bool?, second: Bool?, cell: LabelDoubleSwitchCell)
 }
 
-class LabelDoubleSwitchCell: ChurchBeamCell, DynamicHeightCell, TagImplementation {
+class LabelDoubleSwitchCell: ChurchBeamCell, DynamicHeightCell, ThemeImplementation {
 	
 	@IBOutlet var descriptionSwitchOne: UILabel!
 	@IBOutlet var switchOne: UISwitch!
@@ -28,8 +28,8 @@ class LabelDoubleSwitchCell: ChurchBeamCell, DynamicHeightCell, TagImplementatio
 	
 	var id = ""
 	
-	var sheetTag: Tag?
-	var tagAttribute: TagAttribute?
+	var sheetTheme: Theme?
+	var themeAttribute: ThemeAttribute?
 	var valueDidChange: ((ChurchBeamCell) -> Void)?
 	
 	var isActive = false { didSet { showSecondSwitch() } }
@@ -117,28 +117,28 @@ class LabelDoubleSwitchCell: ChurchBeamCell, DynamicHeightCell, TagImplementatio
 		
 	}
 	
-	func apply(tag: Tag, tagAttribute: TagAttribute) {
-		self.sheetTag = tag
-		self.tagAttribute = tagAttribute
-		self.descriptionSwitchOne.text = tagAttribute.description
-		self.descriptionSwitchTwo.text = Text.NewTag.descriptionPositionEmptySheet
+	func apply(theme: Theme, themeAttribute: ThemeAttribute) {
+		self.sheetTheme = theme
+		self.themeAttribute = themeAttribute
+		self.descriptionSwitchOne.text = themeAttribute.description
+		self.descriptionSwitchTwo.text = Text.NewTheme.descriptionPositionEmptySheet
 		self.applyValueToCell()
 	}
 	
 	func applyValueToCell() {
-		switchOne.isOn = sheetTag?.hasEmptySheet ?? false
-		switchTwo.isOn = sheetTag?.isEmptySheetFirst ?? false
+		switchOne.isOn = sheetTheme?.hasEmptySheet ?? false
+		switchTwo.isOn = sheetTheme?.isEmptySheetFirst ?? false
 		setSwitchColors()
 	}
 	
-	func applyCellValueToTag() {
-		sheetTag?.hasEmptySheet = switchOne.isOn
-		sheetTag?.isEmptySheetFirst = switchTwo.isOn
+	func applyCellValueToTheme() {
+		sheetTheme?.hasEmptySheet = switchOne.isOn
+		sheetTheme?.isEmptySheetFirst = switchTwo.isOn
 	}
 	
 	func set(value: Any?) {
-		if let tagAttribute = tagAttribute, let value = value as? Bool? {
-			switch tagAttribute {
+		if let themeAttribute = themeAttribute, let value = value as? Bool? {
+			switch themeAttribute {
 			case .hasEmptySheet:
 				switchOne.isOn = value ?? false
 				switchTwo.isOn = value ?? false
@@ -165,13 +165,13 @@ class LabelDoubleSwitchCell: ChurchBeamCell, DynamicHeightCell, TagImplementatio
 		}
 		isActive = switchOne.isOn
 		showSecondSwitch()
-		applyCellValueToTag()
+		applyCellValueToTheme()
 		valueDidChange?(self)
 	}
 	
 	@IBAction func switchTwoChanged(_ sender: UISwitch) {
 		setSwitchColors()
-		applyCellValueToTag()
+		applyCellValueToTheme()
 		valueDidChange?(self)
 	}
 	

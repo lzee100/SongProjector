@@ -33,7 +33,7 @@ class OganizationFetcher: Requester<Organization> {
 	}
 	
 	override var params: [String : Any] {
-		let orgId = CoreOrganization.getEntities().first?.id
+		let orgId = coreDataManager.getEntities().first?.id
 		var params = super.params
 		if let orgId = orgId {
 			params["organizationId"] = "\(orgId)"

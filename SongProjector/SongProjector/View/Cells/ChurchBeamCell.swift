@@ -14,16 +14,16 @@ protocol DynamicHeightCell {
 	var preferredHeight: CGFloat { get }
 }
 
-protocol TagImplementation {
+protocol ThemeImplementation {
 	
-	var sheetTag: Tag? { get set }
-	var tagAttribute: TagAttribute? { get set }
+	var sheetTheme: Theme? { get set }
+	var themeAttribute: ThemeAttribute? { get set }
 	var valueDidChange: ((ChurchBeamCell) -> Void)? { get set }
 	
 	func set(value: Any?)
-	func apply(tag: Tag, tagAttribute: TagAttribute)
+	func apply(theme: Theme, themeAttribute: ThemeAttribute)
 	func applyValueToCell()
-	func applyCellValueToTag()
+	func applyCellValueToTheme()
 	
 }
 

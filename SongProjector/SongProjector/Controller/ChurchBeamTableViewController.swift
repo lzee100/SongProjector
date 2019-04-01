@@ -76,7 +76,7 @@ class ChurchBeamTableViewController: UITableViewController, RequestObserver {
 		}
 	}
 	
-	func handleRequestFinish(result: AnyObject?) {
+	func handleRequestFinish(requesterId: String, result: AnyObject?) {
 		
 	}
 	
@@ -91,7 +91,7 @@ class ChurchBeamTableViewController: UITableViewController, RequestObserver {
 			self.hideLoader()
 			switch response {
 			case .error(_, _): self.show(error: response)
-			case .OK(_): self.handleRequestFinish(result: result)
+			case .OK(_): self.handleRequestFinish(requesterId: requesterID, result: result)
 			}
 		}
 	}
