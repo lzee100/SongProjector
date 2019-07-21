@@ -61,6 +61,7 @@ class TagsController: ChurchBeamViewController, UITableViewDataSource, UITableVi
 	
 	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
 		editingInfo = (.delete, indexPath)
+		
 		TagSubmitter.submit([tags[indexPath.row]], requestMethod: .delete)
 	}
 	

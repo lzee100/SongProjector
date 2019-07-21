@@ -67,7 +67,7 @@ class AppTheme {
 		collectionCell.tintColor = UIColor(hex: "FF8324")
 		
 		let textField = UITextField.appearance()
-		textField.backgroundColor = UIColor(red: 255, green: 255, blue: 255, alpha: 0.15)
+		textField.backgroundColor = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 0.15)
 		textField.textColor = .white
 		
 		let picker = UIPickerView.appearance()

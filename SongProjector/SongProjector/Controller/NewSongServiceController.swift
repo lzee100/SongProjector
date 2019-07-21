@@ -36,12 +36,29 @@ class NewSongServiceController: ChurchBeamViewController, UITableViewDelegate, U
 	
 	
 	
-	// MARK: - UIView Functions
+	// MARK: - Private Properties
+	
+	private var songServiceSettings: SongServiceSettings? = nil
+	
+	
+	
+	// MARK: - ViewController Functions
 	
 	override func viewDidLoad() {
         super.viewDidLoad()
 		setup()
     }
+	
+	override func viewWillAppear(_ animated: Bool) {
+		super.viewWillAppear(animated)
+		SongServiceSettingsFetcher.addObserver(self)
+		SongServiceSettingsFetcher.fetch(force: false)
+	}
+	
+	override func viewWillDisappear(_ animated: Bool) {
+		super.viewWillDisappear(animated)
+		SongServiceSettingsFetcher.removeObserver(self)
+	}
 	
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 		if let vc = segue.destination.unwrap() as? SongsController {
@@ -53,6 +70,10 @@ class NewSongServiceController: ChurchBeamViewController, UITableViewDelegate, U
 	
 	
 	// MARK: - UITableview Functions
+	
+	func numberOfSections(in tableView: UITableView) -> Int {
+		return songServiceSettings?.sections.count ?? 1
+	}
 	
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return selectedClusters.count == 0 ? 1 : selectedClusters.count
@@ -98,13 +119,32 @@ class NewSongServiceController: ChurchBeamViewController, UITableViewDelegate, U
 		}
 	}
 	
+	func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+		if let settings = songServiceSettings {
+			return settings.sections[section].title
+		}
+		return nil
+	}
 	
+	func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+		if songServiceSettings == nil {
+			return CGFloat.leastNonzeroMagnitude
+		}
+		return HeaderView.basicSize.height
+	}
 	
-	// MARK: - Private Functions
 	
 	func didSelectClusters(_ clusters: [Cluster]) {
 		selectedClusters = clusters
 		update()
+	}
+	
+	
+	
+	// MARK: - Requester Functions
+	
+	override func handleRequestFinish(requesterId: String, result: AnyObject?) {
+		tableView.reloadData()
 	}
 	
 	

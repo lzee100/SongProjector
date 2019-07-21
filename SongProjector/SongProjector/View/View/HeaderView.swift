@@ -14,6 +14,7 @@ class HeaderView: UIView {
 	@IBOutlet var headerView: UIView!
 	@IBOutlet var descriptionLabel: UILabel!
 	
+	static let basicSize = CGRect(x: 0, y: 0, width: UIApplication.shared.keyWindow!.bounds.width, height: 50)
 	
 	override init(frame: CGRect) {
 		super.init(frame: frame)

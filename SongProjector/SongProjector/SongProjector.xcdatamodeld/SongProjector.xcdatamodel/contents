@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14490.98" systemVersion="18D109" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14490.99" systemVersion="18E226" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Book" representedClassName=".Book" parentEntity="Entity" syncable="YES" codeGenerationType="class">
         <attribute name="name" attributeType="String" syncable="YES"/>
         <relationship name="hasChapters" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Chapter" inverseName="hasBook" inverseEntity="Chapter" syncable="YES"/>
@@ -18,7 +18,6 @@
         <relationship name="hasSheet" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Theme" inverseName="hasClusters" inverseEntity="Theme" syncable="YES"/>
         <relationship name="hasSheets" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Sheet" inverseName="hasCluster" inverseEntity="Sheet" syncable="YES"/>
         <relationship name="hasTagIds" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TagId" inverseName="hasCluster" inverseEntity="TagId" syncable="YES"/>
-        <relationship name="hasTags" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tag" inverseName="hasClusters" inverseEntity="Tag" syncable="YES"/>
         <relationship name="hasTheme" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Theme" syncable="YES"/>
     </entity>
     <entity name="Contract" representedClassName=".Contract" syncable="YES">
@@ -109,7 +108,6 @@
         <relationship name="hasSongServiceSections" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SongServiceSection" inverseName="hasSongServiceSettings" inverseEntity="SongServiceSection" syncable="YES"/>
     </entity>
     <entity name="Tag" representedClassName=".Tag" parentEntity="Entity" syncable="YES">
-        <relationship name="hasClusters" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Cluster" inverseName="hasTags" inverseEntity="Cluster" syncable="YES"/>
         <relationship name="hasSongServiceSections" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SongServiceSection" inverseName="hasTags" inverseEntity="SongServiceSection" syncable="YES"/>
     </entity>
     <entity name="TagId" representedClassName=".TagId" syncable="YES" codeGenerationType="class">
@@ -168,7 +166,7 @@
     <elements>
         <element name="Book" positionX="-36" positionY="135" width="128" height="75"/>
         <element name="Chapter" positionX="-27" positionY="144" width="128" height="90"/>
-        <element name="Cluster" positionX="-54" positionY="-9" width="128" height="195"/>
+        <element name="Cluster" positionX="-54" positionY="-9" width="128" height="180"/>
         <element name="Contract" positionX="-36" positionY="135" width="128" height="90"/>
         <element name="ContractLedger" positionX="-18" positionY="153" width="128" height="135"/>
         <element name="Entity" positionX="-63" positionY="-18" width="128" height="135"/>
@@ -185,7 +183,7 @@
         <element name="SheetTitleImageEntity" positionX="-36" positionY="135" width="128" height="195"/>
         <element name="SongServiceSection" positionX="0" positionY="162" width="128" height="90"/>
         <element name="SongServiceSettings" positionX="-9" positionY="153" width="128" height="60"/>
-        <element name="Tag" positionX="-27" positionY="135" width="128" height="75"/>
+        <element name="Tag" positionX="-27" positionY="135" width="128" height="60"/>
         <element name="TagId" positionX="-18" positionY="144" width="128" height="75"/>
         <element name="Theme" positionX="-36" positionY="9" width="128" height="555"/>
         <element name="User" positionX="-36" positionY="135" width="128" height="135"/>

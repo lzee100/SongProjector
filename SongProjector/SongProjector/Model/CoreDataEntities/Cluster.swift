@@ -19,27 +19,20 @@ public class Cluster: Entity {
 	@NSManaged public var position: Int16
 	@NSManaged public var time: Double
 	
-	@NSManaged public var hasTags: NSSet?
 	@NSManaged public var hasTheme: Theme?
-
-//
-//	var hasTheme: Theme? {
-//		get {
-//			CoreTheme.managedObjectContext = self.managedObjectContext ?? moc
-//			CoreTheme.predicates.append("id", equals: themeId)
-//			return CoreTheme.getEntities().first
-//		}
-//		set {
-//			if let theme = newValue {
-//				themeId = theme.id
-//			}
-//		}
-//	}
+	@NSManaged public var hasTagIds: NSSet?
 	
 	@NSManaged public var hasInstruments: NSSet?
 	@NSManaged public var hasSheets: NSSet?
-//	@NSManaged public var hasTagIds: NSSet?
 
+	
+	var tags: [Tag] {
+		let tags = CoreTag.getEntities()
+		let tagIds = (hasTagIds?.allObjects as? [TagId])?.map{ $0.tagId } ?? []
+		return tags.filter({ (tag) -> Bool in
+			tagIds.contains(tag.id)
+		})
+	}
 	
 	private var clusterSheets: [SheetMetaType] {
 		if let hasSheets = hasSheets?.allObjects as? [SheetMetaType] {
@@ -87,8 +80,6 @@ public class Cluster: Entity {
 		try container.encode(clusterSheets.map(AnySheet.init), forKey: .hasSheets)
 		try container.encode(hasInstrumentsArray, forKey: .hasInstruments)
 		
-		let tags: [Tag] = hasTags?.allObjects as? [Tag] ?? []
-		
 		try container.encode(tags, forKey: .hasTags)
 
 		try super.encode(to: encoder)
@@ -127,11 +118,10 @@ public class Cluster: Entity {
 			return try container.decodeIfPresent([Tag].self, forKey: .hasTags) ?? []
 		}
 		
-		addToHasTags(NSSet(array: tags))
+		
 		
 		try super.initialization(decoder: decoder)
 		
-		tags.forEach({ $0.addToHasClusters(self) })
 	}
 	
 	public override func copy(with zone: NSZone? = nil) -> Any {
@@ -196,22 +186,5 @@ extension Cluster {
 	
 	@objc(removeHasTagsIds:)
 	@NSManaged public func removeFromHasTagIds(_ values: NSSet)
-	
-}
-
-// MARK: Generated accessors for hasTags
-extension Cluster {
-	
-	@objc(addHasTagsObject:)
-	@NSManaged public func addToHasTags(_ value: Tag)
-	
-	@objc(removeHasTagsObject:)
-	@NSManaged public func removeFromHasTags(_ value: Tag)
-	
-	@objc(addHasTags:)
-	@NSManaged public func addToHasTags(_ values: NSSet)
-	
-	@objc(removeHasTags:)
-	@NSManaged public func removeFromHasTags(_ values: NSSet)
 	
 }

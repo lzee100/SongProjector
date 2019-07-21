@@ -12,8 +12,16 @@ import CoreData
 
 public class Tag: Entity {
 	
+	public var hasClusters: [Cluster] {
+		return CoreCluster.getEntities().filter({ (cluster) -> Bool in
+			if let tagIds = cluster.hasTagIds?.allObjects as? [TagId] {
+				return tagIds.contains(where: { $0.tagId == id })
+			} else {
+				return false
+			}
+		})
+	}
 	
-	@NSManaged public var hasClusters: NSSet?
 	@NSManaged public var hasSongServiceSections: NSSet?
 
 	
@@ -57,23 +65,6 @@ public class Tag: Entity {
 		
 	}
 	
-	
-}
-
-// MARK: Generated accessors for hasClusters
-extension Tag {
-	
-	@objc(addHasClustersObject:)
-	@NSManaged public func addToHasClusters(_ value: Cluster)
-	
-	@objc(removeHasClustersObject:)
-	@NSManaged public func removeFromHasClusters(_ value: Cluster)
-	
-	@objc(addHasClusters:)
-	@NSManaged public func addToHasClusters(_ values: NSSet)
-	
-	@objc(removeHasClusters:)
-	@NSManaged public func removeFromHasClusters(_ values: NSSet)
 	
 }
 

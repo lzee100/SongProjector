@@ -20,7 +20,7 @@ router.get('/', (req, res , next) => {
                 reject(err)
             } else {
                 resolve(result)
-            }
+            } 
         })
        
     })

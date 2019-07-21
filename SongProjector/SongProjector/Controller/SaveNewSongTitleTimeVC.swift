@@ -8,6 +8,10 @@
 
 import UIKit
 
+protocol SaveNewSongTitleTimeVCDelegate {
+	func didSaveClusterWith(title: String, time: Double, tagIds: [Int64])
+}
+
 class SaveNewSongTitleTimeVC: ChurchBeamTableViewController {
 	
 	
@@ -64,14 +68,16 @@ class SaveNewSongTitleTimeVC: ChurchBeamTableViewController {
 		}
 		return 0
 	}
-	
+	var clusterTitle: String = ""
+	var clusterTime: Double = 0
+
 	var didSave: (() -> Void)?
 
     override func viewDidLoad() {
         super.viewDidLoad()
 		cancelButton.title = Text.Actions.cancel
 		saveButton.title = Text.Actions.save
-		tableView.register(cells: [TextFieldCell.identifier, PickerCell.identifier])
+		tableView.register(cells: [TextFieldCell.identifier, PickerCell.identifier, BasicCell.identifier])
 		title = cluster?.title ?? Text.NewSong.title
 		tableView.rowHeight = UITableViewAutomaticDimension
 		tableView.tableFooterView = UIView()
@@ -113,6 +119,7 @@ class SaveNewSongTitleTimeVC: ChurchBeamTableViewController {
 			(cell as! PickerCell).setupWith(description: Text.CustomSheets.descriptionTime, values: timeValues, selectedIndex: selectedIndex, didSelectValue: pickerDidChange(value:))
 		case .tag:
 			(cell as! BasicCell).setup(title: tags[indexPath.row].title, icon: Cells.bulletOpen, iconSelected: Cells.bulletFilled, textColor: themeWhiteBlackTextColor, hasPianoOnly: false)
+			(cell as! BasicCell).selectedCell = selectedTags.contains(entity: tags[indexPath.row])
 		}
 		return cell
 	}
@@ -124,7 +131,33 @@ class SaveNewSongTitleTimeVC: ChurchBeamTableViewController {
 			} else {
 				selectedTags.append(tags[indexPath.row])
 			}
+			if let cell = tableView.cellForRow(at: indexPath) as? BasicCell {
+				cell.selectedCell = selectedTags.contains(entity: tags[indexPath.row])
+			}
 		}
+	}
+	
+	override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+		if Section.all[indexPath.section] == .tags {
+			return 60
+		}
+		return UITableViewAutomaticDimension
+	}
+	
+	override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+		if Section.all[section] == .tags {
+			let view = HeaderView(frame: HeaderView.basicSize)
+			view.descriptionLabel.text = "Tags"
+			return view
+		}
+		return nil
+	}
+	
+	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+		if Section.all[section] == .tags {
+			return HeaderView.basicSize.height
+		}
+		return CGFloat.leastNormalMagnitude
 	}
 	
 	override func handleRequestFinish(requesterId: String, result: AnyObject?) {
@@ -136,12 +169,12 @@ class SaveNewSongTitleTimeVC: ChurchBeamTableViewController {
 
 	
 	func textFieldDidChange(text: String?) {
-		cluster?.title = text ?? ""
+		clusterTitle = text ?? ""
 	}
 	
 	func pickerDidChange(value: Any) {
 		if let value = value as? Int {
-			cluster?.time = Double(value)
+			clusterTime = Double(value)
 		}
 	}
 	
@@ -151,15 +184,36 @@ class SaveNewSongTitleTimeVC: ChurchBeamTableViewController {
 	
 	@IBAction func savePressed(_ sender: UIBarButtonItem) {
 		if hasName() {
+			var tagIds: [TagId] = []
+			
+			if let tagIds = cluster?.hasTagIds?.allObjects as? [TagId] {
+				let deletedTagIds = tagIds.filter({ (tagId) -> Bool in
+					return selectedTags.contains(where: { $0.id != tagId.tagId })
+				})
+				deletedTagIds.forEach({ moc.delete($0) })
+			}
+			
+			selectedTags.forEach({
+				let tagId = CoreTagId.createEntityNOTsave()
+				tagId.tagId = $0.id
+				tagIds.append(tagId)
+			})
+			
+			cluster?.addToHasTagIds(NSSet(array: tagIds))
+			
+			cluster?.title = clusterTitle
+			cluster?.time = clusterTime
+			
 			self.dismiss(animated: true) {
 				self.didSave?()
 			}
 		}
+		
 	}
 	
 	private func hasName() -> Bool {
 		let cellName = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! TextFieldCell
-		if cluster?.title != "" {
+		if clusterTitle != "" {
 			cellName.textField.layer.borderColor = nil
 			cellName.textField.layer.borderWidth = 0
 			cellName.textField.layer.cornerRadius = 0

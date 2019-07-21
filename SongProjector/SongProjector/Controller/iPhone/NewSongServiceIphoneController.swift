@@ -8,24 +8,49 @@
 
 import UIKit
 
-class NewSongServiceIphoneController: UITableViewController, SongsControllerDelegate, UIGestureRecognizerDelegate {
+class NewSongServiceIphoneController: ChurchBeamTableViewController, SongsControllerDelegate, UIGestureRecognizerDelegate {
 	
 
 	@IBOutlet var done: UIBarButtonItem!
 	@IBOutlet var add: UIBarButtonItem!
 	@IBOutlet var emptyView: UIView!
 	
+	
+	
+	// MARK: - Properties
+
 	var selectedSongs: [Cluster] = []
 	var delegate: NewSongServiceDelegate?
 	var hasNoSongs = true
 	
+	
+	
+	// MARK: - Private Properties
+	
+	private var songServiceSettings: SongServiceSettings? = nil
+	
+	
+	
+	// MARK: - ViewController Functions
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         setup()
     }
 	
-	// In a storyboard-based application, you will often want to do a little preparation before navigation
+	override func viewWillAppear(_ animated: Bool) {
+		super.viewWillAppear(animated)
+		songServiceSettings = CoreSongServiceSettings.getEntities().first
+		SongServiceSettingsFetcher.addObserver(self)
+		SongServiceSettingsFetcher.fetch(force: false)
+	}
+	
+	override func viewWillDisappear(_ animated: Bool) {
+		super.viewWillDisappear(animated)
+		SongServiceSettingsFetcher.removeObserver(self)
+	}
+	
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 		let navigationController = segue.destination
 		if let songsController = navigationController.childViewControllers.first as? SongsController {
@@ -35,12 +60,13 @@ class NewSongServiceIphoneController: UITableViewController, SongsControllerDele
 		}
 	}
 
-    // MARK: - Table view data source
-
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 1
-    }
+	
+	
+	// MARK: - TableView Functions
+	
+	override func numberOfSections(in tableView: UITableView) -> Int {
+		return songServiceSettings?.sections.count ?? 1
+	}
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let noSelection = hasNoSongs ? 1 : 0
@@ -79,7 +105,6 @@ class NewSongServiceIphoneController: UITableViewController, SongsControllerDele
 		}
     }
 
-    // Override to support rearranging the table view.
     override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
 		let itemToMove = selectedSongs[fromIndexPath.row]
 		selectedSongs.remove(at: fromIndexPath.row)
@@ -87,11 +112,28 @@ class NewSongServiceIphoneController: UITableViewController, SongsControllerDele
 		updatePositions()
     }
 
-    // Override to support conditional rearranging of the table view.
     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
         return true
     }
 	
+	override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+		if let settings = songServiceSettings {
+			return settings.sections[section].title
+		}
+		return nil
+	}
+	
+	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+		if songServiceSettings == nil {
+			return CGFloat.leastNonzeroMagnitude
+		}
+		return HeaderView.basicSize.height
+	}
+	
+	
+	
+	// MARK: - Custom Functions
+
 	func didSelectClusters(_ clusters: [Cluster]) {
 		hasNoSongs = false
 		selectedSongs = clusters
@@ -99,6 +141,19 @@ class NewSongServiceIphoneController: UITableViewController, SongsControllerDele
 		update()
 	}
 	
+	
+	
+	// MARK: - Requester Functions
+	
+	override func handleRequestFinish(requesterId: String, result: AnyObject?) {
+		songServiceSettings = CoreSongServiceSettings.getEntities().first
+		tableView.reloadData()
+	}
+	
+	
+	
+	// MARK: - Private Functions
+
 	private func setup() {
 		tableView.register(cell: Cells.basicCellid)
 		

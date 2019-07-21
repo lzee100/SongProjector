@@ -101,7 +101,8 @@ class WizzardSectionTagsController: ChurchBeamViewController, UITableViewDataSou
 	}
 	
 	func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
-		if tableView.cellForRow(at: indexPath) is BasicCell {
+		let tagsForSection = songServiceObject.sections[indexPath.section].hasTags?.count ?? 0
+		if tableView.cellForRow(at: indexPath) is BasicCell, tagsForSection > 1 {
 			return .delete
 		}
 		return .none

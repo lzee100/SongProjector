@@ -78,7 +78,7 @@ class LabelPhotoPickerCell: ChurchBeamCell, ThemeImplementation, SheetImplementa
 		view.imageThumbnail.layer.cornerRadius = CGFloat(5)
 		let beamerResolution = "\(Int(externalDisplayWindowWidth)) x \(Int(externalDisplayWindowHeight))"
 		view.descriptionLastBeamerResolution.text = Text.NewTheme.descriptionLastBeamerResolution + beamerResolution
-		view.descriptionLastBeamerResolution.textColor = isThemeLight ? UIColor(red: 0, green: 0, blue: 0, alpha: 0.5) : UIColor(red: 255, green: 255, blue: 255, alpha: 0.4)
+		view.descriptionLastBeamerResolution.textColor = isThemeLight ? UIColor(red: 0, green: 0, blue: 0, alpha: 0.5) : UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 0.4)
 		view.button.isEnabled = false
 		view.buttonContainer.backgroundColor = themeWhiteBlackBackground
 		view.button.backgroundColor = themeHighlighted

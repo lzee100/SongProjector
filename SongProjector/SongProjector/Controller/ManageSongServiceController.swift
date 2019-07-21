@@ -23,6 +23,7 @@ class ManageSongServiceController: ChurchBeamViewController, UITableViewDataSour
     override func viewDidLoad() {
         super.viewDidLoad()
 		tableView.register(cell: BasicCell.identifier)
+		tableView.rowHeight = 68
     }
 	
 	override func viewWillAppear(_ animated: Bool) {
@@ -59,6 +60,10 @@ class ManageSongServiceController: ChurchBeamViewController, UITableViewDataSour
 	
 	func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
 		return songServiceObject?.sections[section].title ?? "No title"
+	}
+	
+	func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+		return HeaderView.basicSize.height
 	}
 	
 	override func handleRequestFinish(requesterId: String, result: AnyObject?) {
