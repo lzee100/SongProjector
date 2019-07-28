@@ -25,7 +25,7 @@ class CstrFetcher: Requester<Cluster> {
 	}
 	
 	override var requesterDependencies: [RequesterType] {
-		return [ThemeFetcher]
+		return [ThemeFetcher, TagFetcher]
 	}
 	
 	override var coreDataManager: CoreDataManager<Cluster> {

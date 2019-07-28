@@ -18,18 +18,18 @@ public class SongServiceSection: Entity {
 	}
 	
 	@NSManaged public var position: Int16
-	@NSManaged public var hasTags: NSSet?
+	@NSManaged public var numberOfSongs: Int16
+	@NSManaged var tagIds: [NSNumber]
 	@NSManaged public var hasSongServiceSettings: SongServiceSettings?
 
-	
-	var tags: [Tag] {
-		let unsortedTags = hasTags?.allObjects as? [Tag] ?? []
-		return unsortedTags.sorted(by: { $0.title ?? "" > $1.title ?? "" })
+	public var hasTags: [Tag] {
+		return CoreTag.getEntities().filter({ tag in tagIds.contains(where: { NSNumber(value: tag.id) == $0 }) })
 	}
 	
 	enum CodingKeysSongServiceSection: String, CodingKey
 	{
 		case position
+		case numberOfSongs
 		case tags
 	}
 
@@ -45,22 +45,17 @@ public class SongServiceSection: Entity {
 	public override func initialization(decoder: Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeysSongServiceSection.self)
 		position = try container.decode(Int16.self, forKey: .position)
-		CoreTag.managedObjectContext = mocBackground
-		var oldTags: [Tag] = CoreTag.getEntities()
-		var toKeep: [Tag] = []
-		let tags = try container.decode([Tag].self, forKey: .tags)
-		tags.forEach({
-			if let index = oldTags.firstIndex(entity: $0) {
-				toKeep.append(oldTags[index])
-				$0.deleteBackground(false)
-			} else {
-				toKeep.append($0)
-			}
+		numberOfSongs = try container.decode(Int16.self, forKey: .numberOfSongs)
+		
+		let tags = Entity.getEntities(decodeNew: { () -> [Tag] in
+			return try container.decodeIfPresent([Tag].self, forKey: .tags) ?? []
 		})
-		hasTags = NSSet(array: toKeep)
+		tagIds = tags.compactMap({ NSNumber(value: $0.id) })
 		
 		try super.initialization(decoder: decoder)
 		
+		tags.forEach({ $0.addToHasSongServiceSections(self) })
+
 	}
 	
 	
@@ -70,9 +65,8 @@ public class SongServiceSection: Entity {
 	override public func encode(to encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeysSongServiceSection.self)
 		try container.encode(position, forKey: .position)
-		if let hasTags = hasTags?.allObjects as? [Tag] {
-			try container.encode(hasTags, forKey: .tags)
-		}
+		try container.encode(numberOfSongs, forKey: .numberOfSongs)
+		try container.encode(hasTags, forKey: .tags)
 		try super.encode(to: encoder)
 	}
 	
@@ -91,16 +85,20 @@ public class SongServiceSection: Entity {
 		
 		let container = try decoder.container(keyedBy: CodingKeysSongServiceSection.self)
 		position = try container.decode(Int16.self, forKey: .position)
+		numberOfSongs = try container.decode(Int16.self, forKey: .numberOfSongs)
 		
 		let tags = Entity.getEntities { () -> [Tag] in
 			return try container.decodeIfPresent([Tag].self, forKey: .tags) ?? []
 		}
-		hasTags = NSSet(array: tags)
+		tagIds = tags.compactMap({ NSNumber(value: $0.id) })
 		
 		try super.initialization(decoder: decoder)
 		
-		tags.forEach({ $0.addToHasSongServiceSections(self) })
-		
+		tags.forEach({
+			if let sections = $0.hasSongServiceSections?.allObjects as? [SongServiceSection], !sections.contains(self) {
+				$0.addToHasSongServiceSections(self)
+			}
+		})
 	}
 	
 	

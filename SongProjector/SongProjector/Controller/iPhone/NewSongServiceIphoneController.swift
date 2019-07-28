@@ -14,7 +14,7 @@ class NewSongServiceIphoneController: ChurchBeamTableViewController, SongsContro
 	@IBOutlet var done: UIBarButtonItem!
 	@IBOutlet var add: UIBarButtonItem!
 	@IBOutlet var emptyView: UIView!
-	
+
 	
 	
 	// MARK: - Properties
@@ -22,8 +22,11 @@ class NewSongServiceIphoneController: ChurchBeamTableViewController, SongsContro
 	var selectedSongs: [Cluster] = []
 	var delegate: NewSongServiceDelegate?
 	var hasNoSongs = true
+	var sectionedClusters = [[Any]]()
 	
-	
+	override var canBecomeFirstResponder: Bool {
+		return true
+	}
 	
 	// MARK: - Private Properties
 	
@@ -35,13 +38,11 @@ class NewSongServiceIphoneController: ChurchBeamTableViewController, SongsContro
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         setup()
     }
 	
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
-		songServiceSettings = CoreSongServiceSettings.getEntities().first
 		SongServiceSettingsFetcher.addObserver(self)
 		SongServiceSettingsFetcher.fetch(force: false)
 	}
@@ -69,16 +70,35 @@ class NewSongServiceIphoneController: ChurchBeamTableViewController, SongsContro
 	}
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+		if songServiceSettings != nil {
+			return sectionedClusters[section].count
+		}
         let noSelection = hasNoSongs ? 1 : 0
 		return selectedSongs.count + noSelection
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath)
+		if songServiceSettings != nil {
+			if (songServiceSettings == nil && selectedSongs.count == 0) || songServiceSettings != nil && sectionedClusters[indexPath.section].count == 0 {
+				let cell = tableView.dequeueReusableCell(withIdentifier: TextCell.identifier) as! TextCell
+				cell.setupWith(text: Text.NewSongService.noSelectedSongs)
+				return cell
+			}
+			if let cluster = sectionedClusters[indexPath.section][indexPath.row] as? Cluster {
+				let cell = tableView.dequeueReusableCell(withIdentifier: BasicCell.identifier) as! BasicCell
+				cell.setup(title: cluster.title, icon: Cells.songIcon)
+				return cell
+			} else {
+				let cell = tableView.dequeueReusableCell(withIdentifier: TextCell.identifier) as! TextCell
+				cell.setupWith(text: Text.NewSongService.notEnoughSongsForTagSection)
+				return cell
+			}
+		}
 		
-		if selectedSongs.count < 1, let cell = cell as? BasicCell {
+		let cell = tableView.dequeueReusableCell(withIdentifier: BasicCell.identifier) as! BasicCell
+		if selectedSongs.count == 0 {
 			cell.setup(title: Text.NewSongService.noSelectedSongs)
-		} else if let cell = cell as? BasicCell {
+		} else {
 			cell.setup(title: selectedSongs[indexPath.row].title, icon: Cells.songIcon)
 		}
 
@@ -86,6 +106,9 @@ class NewSongServiceIphoneController: ChurchBeamTableViewController, SongsContro
     }
 	
 	override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+		if (songServiceSettings == nil && selectedSongs.count == 0) || songServiceSettings != nil && sectionedClusters[indexPath.section].count == 0 {
+			return UITableViewAutomaticDimension
+		}
 		return 60
 	}
 
@@ -130,6 +153,14 @@ class NewSongServiceIphoneController: ChurchBeamTableViewController, SongsContro
 		return HeaderView.basicSize.height
 	}
 	
+	override func motionEnded(_ motion: UIEventSubtype, with event: UIEvent?) {
+		if(event?.subtype == UIEventSubtype.motionShake) {
+			songServiceSettings = CoreSongServiceSettings.getEntities().first
+			updateSectionsWithClusers()
+			tableView.reloadData()
+		}
+	}
+	
 	
 	
 	// MARK: - Custom Functions
@@ -146,8 +177,9 @@ class NewSongServiceIphoneController: ChurchBeamTableViewController, SongsContro
 	// MARK: - Requester Functions
 	
 	override func handleRequestFinish(requesterId: String, result: AnyObject?) {
-		songServiceSettings = CoreSongServiceSettings.getEntities().first
-		tableView.reloadData()
+		DispatchQueue.main.async {
+			self.update()
+		}
 	}
 	
 	
@@ -155,8 +187,9 @@ class NewSongServiceIphoneController: ChurchBeamTableViewController, SongsContro
 	// MARK: - Private Functions
 
 	private func setup() {
+		becomeFirstResponder()
 		tableView.register(cell: Cells.basicCellid)
-		
+		tableView.register(cell: TextCell.identifier)
 		done.title = Text.Actions.done
 		add.title = Text.Actions.add
 		
@@ -180,6 +213,10 @@ class NewSongServiceIphoneController: ChurchBeamTableViewController, SongsContro
 	}
 	
 	private func update() {
+		if songServiceSettings != nil {
+			songServiceSettings = CoreSongServiceSettings.getEntities().first
+			updateSectionsWithClusers()
+		}
 		tableView.reloadData()
 	}
 	
@@ -207,6 +244,33 @@ class NewSongServiceIphoneController: ChurchBeamTableViewController, SongsContro
 			}
 		} else {
 			tableView.setEditing(tableView.isEditing ? false : true, animated: false)
+		}
+	}
+	
+	private func updateSectionsWithClusers() {
+		sectionedClusters = []
+		let allClusters = CoreCluster.getEntities()
+		for (position, section) in (songServiceSettings?.sections ?? []).enumerated() {
+			sectionedClusters.append([])
+			for _ in 1...section.numberOfSongs {
+				let allSelectedClusters = sectionedClusters.flatMap({ $0 }).compactMap({ $0 as? Cluster })
+				let candidateSongs = allClusters.filter({ !allSelectedClusters.contains(entity: $0) }).filter({ cluster in
+					var contains = false
+					for tag in cluster.tags {
+						if section.hasTags.contains(entity: tag) {
+							contains = true
+							break
+						}
+					}
+					return contains
+				})
+				if candidateSongs.count > 0 {
+					let random = Int.random(in: 0...max(candidateSongs.count - 1, 0))
+					sectionedClusters[position].append(candidateSongs[random])
+				} else if sectionedClusters[position].compactMap({ $0 as? Bool }).count == 0 {
+					sectionedClusters[position].append(false)
+				}
+			}
 		}
 	}
 	

@@ -76,7 +76,10 @@ class NewSongServiceController: ChurchBeamViewController, UITableViewDelegate, U
 	}
 	
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return selectedClusters.count == 0 ? 1 : selectedClusters.count
+		if selectedClusters.count == 0 {
+			return 1
+		}
+		return 0
 	}
 	
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -144,7 +147,9 @@ class NewSongServiceController: ChurchBeamViewController, UITableViewDelegate, U
 	// MARK: - Requester Functions
 	
 	override func handleRequestFinish(requesterId: String, result: AnyObject?) {
-		tableView.reloadData()
+		Queues.main.async {
+			self.tableView.reloadData()
+		}
 	}
 	
 	

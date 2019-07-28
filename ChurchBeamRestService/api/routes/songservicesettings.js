@@ -34,6 +34,15 @@ router.get('/', (req, res , next) => {
 router.post('/', (req, res , next) => {
     const organizationId = req.get("organizationId")
     let newSongServiceSettings = req.body[0]
+    if (newSongServiceSettings.id) {
+        delete newSongServiceSettings.id
+    }
+    if (newSongServiceSettings.createdAt) {
+        delete newSongServiceSettings.createdAt
+    }    
+    if (newSongServiceSettings.updatedAt) {
+        delete newSongServiceSettings.updatedAt
+    }
     newSongServiceSettings.organization_id = organizationId
     SongServiceClass.post(newSongServiceSettings, organizationId)
     .then(settings => {

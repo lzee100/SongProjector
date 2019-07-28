@@ -18,20 +18,19 @@ public class Cluster: Entity {
 	@NSManaged public var isLoop: Bool
 	@NSManaged public var position: Int16
 	@NSManaged public var time: Double
+	@NSManaged public var themeId: Int64
 	
-	@NSManaged public var hasTheme: Theme?
-	@NSManaged public var hasTagIds: NSSet?
+	var hasTheme: Theme? {
+		return CoreTheme.getEntitieWith(id: themeId)
+	}
 	
 	@NSManaged public var hasInstruments: NSSet?
 	@NSManaged public var hasSheets: NSSet?
+	@NSManaged var tagIds: [NSNumber]
 
 	
 	var tags: [Tag] {
-		let tags = CoreTag.getEntities()
-		let tagIds = (hasTagIds?.allObjects as? [TagId])?.map{ $0.tagId } ?? []
-		return tags.filter({ (tag) -> Bool in
-			tagIds.contains(tag.id)
-		})
+		return CoreTag.getEntities().filter({ tag in tagIds.contains(where: { NSNumber(value: tag.id) == $0 }) })
 	}
 	
 	private var clusterSheets: [SheetMetaType] {
@@ -48,6 +47,7 @@ public class Cluster: Entity {
 		case position
 		case time
 		case theme = "theme"
+		case themeId = "theme_id"
 		case hasSheets = "sheets"
 		case hasInstruments = "instruments"
 		case hasTags = "tags"
@@ -74,9 +74,7 @@ public class Cluster: Entity {
 		try container.encode(Int(truncating: NSNumber(value: isLoop)), forKey: .isLoop)
 		try container.encode(position, forKey: .position)
 		try container.encode(time, forKey: .time)
-		if let theme = hasTheme {
-			try container.encode(theme, forKey: .theme)
-		}
+		try container.encode(hasTheme, forKey: .theme)
 		try container.encode(clusterSheets.map(AnySheet.init), forKey: .hasSheets)
 		try container.encode(hasInstrumentsArray, forKey: .hasInstruments)
 		
@@ -103,22 +101,19 @@ public class Cluster: Entity {
 		isLoop = try Bool(truncating: (container.decodeIfPresent(Int16.self, forKey: .isLoop) ?? 0) as NSNumber)
 		position = try container.decodeIfPresent(Int16.self, forKey: .position) ?? 0
 		time = try container.decodeIfPresent(Double.self, forKey: .time) ?? 0
-		
-		hasTheme = Entity.getEntity(decodeNew: { () -> Theme? in
-			return try container.decodeIfPresent(Theme.self, forKey: .theme)
-		})
-		
+		themeId = try container.decodeIfPresent(Int64.self, forKey: .themeId) ?? 0
+
 		hasSheets = try NSSet(array: container.decode([AnySheet].self, forKey: .hasSheets).map { $0.base })
 		let instr = try container.decodeIfPresent([Instrument].self, forKey: .hasInstruments)
 		if let instr = instr {
 			hasInstruments = NSSet(array: instr)
 		}
-		
+
 		let tags = Entity.getEntities { () -> [Tag] in
 			return try container.decodeIfPresent([Tag].self, forKey: .hasTags) ?? []
 		}
 		
-		
+		tagIds = tags.compactMap({ NSNumber(value: $0.id) })
 		
 		try super.initialization(decoder: decoder)
 		
@@ -172,19 +167,19 @@ extension Cluster {
 	
 }
 
-// MARK: Generated accessors for hasSheets
+// MARK: Generated accessors for hasTagId
 extension Cluster {
 	
-	@objc(addHasTagsIdObject:)
-	@NSManaged public func addToHasTagIds(_ value: TagId)
+	@objc(addHasTagIdObject:)
+	@NSManaged public func addToHasTagId(_ value: TagId)
 	
-	@objc(removeHasTagsIdsObject:)
-	@NSManaged public func removeFromHasTagIds(_ value: TagId)
+	@objc(removeHasTagIdObject:)
+	@NSManaged public func removeFromHasTagId(_ value: TagId)
 	
-	@objc(addHasTagsIds:)
-	@NSManaged public func addToHasTagIds(_ values: NSSet)
+	@objc(addHasTagId:)
+	@NSManaged public func addToHasTagId(_ values: NSSet)
 	
-	@objc(removeHasTagsIds:)
-	@NSManaged public func removeFromHasTagIds(_ values: NSSet)
+	@objc(removeHasTagId:)
+	@NSManaged public func removeFromHasTagId(_ values: NSSet)
 	
 }

@@ -20,7 +20,7 @@ public class SongServiceSettings: Entity {
 
 	var sections: [SongServiceSection] {
 		let sec = hasSongServiceSections?.allObjects as? [SongServiceSection] ?? []
-		return sec.sorted(by: { $0.position > $1.position })
+		return sec.sorted(by: { $0.position < $1.position })
 	}
 	
 	
@@ -123,7 +123,7 @@ extension SongServiceSettings {
 			return false
 		}
 		for section in sections {
-			if section.title == nil || section.tags.count == 0 {
+			if section.title == nil || section.hasTags.count == 0 {
 				valid = false
 				break
 			}

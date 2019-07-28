@@ -16,7 +16,11 @@ class WizzardSectionsController: ChurchBeamViewController, UITableViewDelegate, 
 	@IBOutlet var tableView: UITableView!
 	
 	
-	private var songServiceObject: SongServiceSettings? = nil
+	var songServiceObject: SongServiceSettings? {
+		didSet {
+			numberOfSections = songServiceObject?.sections.count ?? 1
+		}
+	}
 	private var songServiceObjectTemp: SongServiceSettings? = nil
 	private var numberOfSections = 1
 	
@@ -31,22 +35,34 @@ class WizzardSectionsController: ChurchBeamViewController, UITableViewDelegate, 
 		NotificationCenter.default.addObserver(self, selector: #selector(didSubmitSongServiceSettings), name: NotificationNames.didSubmitSongServiceSettings, object: nil)
     }
 	
-	override func viewWillAppear(_ animated: Bool) {
-		super.viewWillAppear(animated)
-		numberOfSections = tableView.visibleCells.compactMap({ $0 as? LabelNumberCell }).first?.value ?? 1
-	}
-	
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 		if let tagsController = segue.destination.unwrap() as? WizzardSectionTagsController {
-			songServiceObjectTemp = CoreSongServiceSettings.createEntityNOTsave()
-			for position in 0..<numberOfSections {
-				let section = CoreSongServiceSection.createEntityNOTsave()
-				section.position = Int16(position)
-				section.title = "Section \(position + 1)"
-				songServiceObjectTemp!.addToHasSongServiceSections(section)
-				section.hasTags = NSSet(array: CoreTag.getEntities())
+			if let songServiceObject = songServiceObject {
+				tagsController.songServiceObject = songServiceObject
+				if numberOfSections > songServiceObject.sections.count {
+					for position in songServiceObject.sections.count..<numberOfSections {
+						let section = CoreSongServiceSection.createEntityNOTsave()
+						section.position = Int16(position)
+						section.title = nil
+						songServiceObject.addToHasSongServiceSections(section)
+					}
+				} else if numberOfSections < songServiceObject.sections.count {
+					for _ in 1...(songServiceObject.sections.count - numberOfSections) {
+						if let section = songServiceObject.sections.last {
+							songServiceObject.removeFromHasSongServiceSections(section)
+						}
+					}
+				}
+			} else {
+				songServiceObjectTemp = CoreSongServiceSettings.createEntityNOTsave()
+				for position in 0..<numberOfSections {
+					let section = CoreSongServiceSection.createEntityNOTsave()
+					section.position = Int16(position)
+					section.title = nil
+					songServiceObjectTemp!.addToHasSongServiceSections(section)
+				}
+				tagsController.songServiceObject = songServiceObjectTemp
 			}
-			tagsController.songServiceObject = songServiceObjectTemp
 		}
 	}
 	
@@ -87,6 +103,10 @@ class WizzardSectionsController: ChurchBeamViewController, UITableViewDelegate, 
 	// MARK: - IBAction Functions
 
 	@IBAction func didPressCancel(_ sender: UIBarButtonItem) {
+		if songServiceObject != nil {
+			moc.rollback()
+			mocBackground.rollback()
+		}
 		self.dismiss(animated: true)
 	}
 	

@@ -14,12 +14,14 @@ class TagsController: ChurchBeamViewController, UITableViewDataSource, UITableVi
 
 	@IBOutlet var tableView: UITableView!
 	
-	
+	override var requesterId: String {
+		return "TagsController"
+	}
 	
 	// MARK: - Private  Properties
 
 	private var tags: [Tag] = []
-	private var editingInfo: (RequestMethod, IndexPath)?
+	private var editingInfo: (RequestMethod, IndexPath?)?
 
 	
 	
@@ -27,16 +29,33 @@ class TagsController: ChurchBeamViewController, UITableViewDataSource, UITableVi
 
 	override func viewDidLoad() {
         super.viewDidLoad()
-		TagFetcher.addObserver(self)
-		TagSubmitter.addObserver(self)
 		self.title = Text.Tags.title
 		tableView.register(cell: BasicCell.identifier)
 		tableView.rowHeight = 60
+
+		let longPressGesture:UILongPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(self.editTableView(_:)))
+		longPressGesture.minimumPressDuration = 0.7
+		self.tableView.addGestureRecognizer(longPressGesture)
+
+		let doubleTab = UITapGestureRecognizer(target: self, action: #selector(self.editTableView(_:)))
+		doubleTab.numberOfTapsRequired = 2
+		view.addGestureRecognizer(doubleTab)
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
+		TagFetcher.addObserver(self)
+		TagSubmitter.addObserver(self)
+		moc.reset()
+		mocBackground.reset()
+		tableView.setEditing(false, animated: false)
 		TagFetcher.fetch(force: false)
+	}
+	
+	override func viewWillDisappear(_ animated: Bool) {
+		super.viewWillDisappear(animated)
+		TagFetcher.removeObserver(self)
+		TagSubmitter.removeObserver(self)
 	}
 	
 	
@@ -55,13 +74,25 @@ class TagsController: ChurchBeamViewController, UITableViewDataSource, UITableVi
 		return cell
 	}
 	
+	func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+		return true
+	}
+	
+	func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+		let itemToMove = tags[sourceIndexPath.row]
+		tags.remove(at: sourceIndexPath.row)
+		tags.insert(itemToMove, at: destinationIndexPath.row)
+		updatePostitions()
+		editingInfo = (.put, nil)
+		TagSubmitter.submit(tags, requestMethod: .put)
+	}
+	
 	func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
 		return .delete
 	}
 	
 	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
 		editingInfo = (.delete, indexPath)
-		
 		TagSubmitter.submit([tags[indexPath.row]], requestMethod: .delete)
 	}
 	
@@ -76,17 +107,20 @@ class TagsController: ChurchBeamViewController, UITableViewDataSource, UITableVi
 			switch response {
 			case .error(_, _): super.show(error: response)
 			case .OK(_):
+				CoreTag.setSortDescriptor(attributeName: "position", ascending: true)
 				if requesterID == TagSubmitter.requesterId, let editingInfo = self.editingInfo {
-					if editingInfo.0 == .delete {
-						self.tags.remove(at: editingInfo.1.row)
-						self.tableView.deleteRow(at: editingInfo.1, with: UITableViewRowAnimation.left)
+					if editingInfo.0 == .delete, let indexPath = editingInfo.1 {
+						self.tags.remove(at: indexPath.row)
+						self.tableView.deleteRows(at: [indexPath], with: .left)
+					} else if editingInfo.0 == .put, let indexPath = editingInfo.1 {
+						self.tags = CoreTag.getEntities()
+						self.tableView.reloadRows(at: [indexPath], with: .fade)
 					} else {
 						self.tags = CoreTag.getEntities()
-						self.tableView.reloadRows(at: [editingInfo.1], with: .fade)
+						self.tableView.reloadData()
 					}
 				} else {
 					self.tags = CoreTag.getEntities()
-					CoreUser.setSortDescriptor(attributeName: "title", ascending: true)
 					self.tableView.reloadData()
 				}
 			}
@@ -117,6 +151,34 @@ class TagsController: ChurchBeamViewController, UITableViewDataSource, UITableVi
 		}))
 		self.present(controller, animated: true)
 	}
+	
+	private func updatePostitions() {
+		for (index, tag) in tags.enumerated() {
+			tag.position = Int16(index)
+		}
+	}
+	
+	@objc private func editTableView(_ gestureRecognizer: UIGestureRecognizer) {
+		if let gestureRecognizer = gestureRecognizer as? UILongPressGestureRecognizer {
+			if gestureRecognizer.state == UIGestureRecognizerState.began {
+				changeEditingState()
+			}
+		} // for double tab
+		else if let _ = gestureRecognizer as? UITapGestureRecognizer, tableView.isEditing {
+			changeEditingState()
+		}
+	}
+	
+	private func changeEditingState(_ onlyIfEditing: Bool? = nil) {
+		if let _ = onlyIfEditing {
+			if tableView.isEditing {
+				tableView.setEditing(false, animated: false)
+			}
+		} else {
+			tableView.setEditing(tableView.isEditing ? false : true, animated: false)
+		}
+	}
+	
 	
 	
 	// MARK: - IBAction functions

@@ -17,6 +17,11 @@ class TextFieldCell: UITableViewCell {
 	
 	private var textFieldDidChange: ((String?) -> Void)?
 	
+	override func prepareForReuse() {
+		super.prepareForReuse()
+		textField.text = nil
+	}
+	
 	func setup(description: String, content: String?, textFieldDidChange: @escaping ((String?) -> Void)) {
 		descriptionLabel.text = description
 		textField.text = content

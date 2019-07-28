@@ -73,18 +73,14 @@ class STR {
 
 var moc: NSManagedObjectContext = {
 	let context = Store.persistentContainer.viewContext
-	context.mergePolicy = NSMergePolicy.overwrite
+	context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
 	return Store.persistentContainer.viewContext
-}()
-var mocTemp: NSManagedObjectContext = {
-	let context = NSManagedObjectContext(concurrencyType: NSManagedObjectContextConcurrencyType.mainQueueConcurrencyType)
-	context.mergePolicy = NSMergePolicy.overwrite
-	context.parent = moc
-	return context
 }()
 
 var mocBackground: NSManagedObjectContext = {
-	return Store.persistentContainer.newBackgroundContext()
+	let context = Store.persistentContainer.newBackgroundContext()
+	context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+	return context
 }()
 
 

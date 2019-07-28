@@ -356,7 +356,9 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 			
 			if CoreSheet.saveContext() { print("sheets saved") } else { print("sheets not saved") }
 			
-			cluster?.hasTheme = selectedTheme
+			if let themeId = selectedTheme?.id {
+				cluster?.themeId = themeId
+			}
 			if CoreTheme.saveContext() { print("theme saved") } else { print("theme not saved") }
 		}
 		dismiss(animated: true)

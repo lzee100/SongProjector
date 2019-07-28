@@ -35,9 +35,9 @@ class SngServiceSettingsFetcher: Requester<SongServiceSettings> {
 		coreDataManager.setSortDescriptor(attributeName: "updatedAt", ascending: false)
 		let songservicesettings = coreDataManager.getEntities().first
 		var params = super.params
-		if let date = songservicesettings?.updatedAt {
-			params["updatedsince"] = GlobalDateFormatter.localToUTC(date: date as Date)
-		}
+//		if let date = songservicesettings?.updatedAt {
+//			params["updatedsince"] = GlobalDateFormatter.localToUTC(date: date as Date)
+//		}
 		if let id = songservicesettings?.id {
 			params["songServiceId"] = id
 		}

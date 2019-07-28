@@ -338,14 +338,12 @@ class SongObject: Comparable {
 			emptySheet.deleteDate = NSDate()
 			emptySheet.isEmptySheet = true
 			
-			if let isEmptySheetFirst = cluster.hasTheme?.isEmptySheetFirst {
-				if isEmptySheetFirst {
-					emptySheetsAdded.append(emptySheet)
-					emptySheetsAdded.append(contentsOf: cluster.hasSheetsArray)
-				} else {
-					emptySheetsAdded.append(contentsOf: cluster.hasSheetsArray)
-					emptySheetsAdded.append(emptySheet)
-				}
+			if cluster.hasTheme?.isEmptySheetFirst ?? false {
+				emptySheetsAdded.append(emptySheet)
+				emptySheetsAdded.append(contentsOf: cluster.hasSheetsArray)
+			} else {
+				emptySheetsAdded.append(contentsOf: cluster.hasSheetsArray)
+				emptySheetsAdded.append(emptySheet)
 			}
 			
 			var position: Int16 = 0

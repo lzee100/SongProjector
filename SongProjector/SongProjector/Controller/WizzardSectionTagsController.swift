@@ -8,10 +8,39 @@
 
 import UIKit
 
-class WizzardSectionTagsController: ChurchBeamViewController, UITableViewDataSource, UITableViewDelegate, LabelTextFieldCellDelegate, TagSelectionControllerDelegate {
+class WizzardSectionTagsController: ChurchBeamViewController, UITableViewDataSource, UITableViewDelegate, LabelTextFieldCellDelegate, TagSelectionControllerDelegate, LabelNumberPickerCellDelegate {
+	
 	
 	
 	@IBOutlet var tableView: UITableView!
+	
+	enum Row {
+		case nameSection
+		case numberOfSongs
+		case tag
+		case addTag
+		
+		static func `for`(_ indexPath: IndexPath, tags: [Tag]) -> Row {
+			if indexPath.row == 0 {
+				return nameSection
+			} else if indexPath.row == 1 {
+				return numberOfSongs
+			} else if (indexPath.row + 1 - 2) <= tags.count {
+				return tag
+			} else {
+				return addTag
+			}
+		}
+		
+		var identifier: String {
+			switch self {
+			case .nameSection: return LabelTextFieldCell.identifier
+			case .numberOfSongs: return LabelNumberPickerCell.identifier
+			case .tag: return BasicCell.identifier
+			case .addTag: return AddButtonCell.identifier
+			}
+		}
+	}
 	
 	
 	
@@ -30,6 +59,7 @@ class WizzardSectionTagsController: ChurchBeamViewController, UITableViewDataSou
 		tableView.register(cell: BasicCell.identifier)
 		tableView.register(cell: AddButtonCell.identifier)
 		tableView.register(cell: LabelTextFieldCell.identifier)
+		tableView.register(cell: LabelNumberPickerCell.identifier)
     }
 	
 	override func viewWillAppear(_ animated: Bool) {
@@ -45,18 +75,10 @@ class WizzardSectionTagsController: ChurchBeamViewController, UITableViewDataSou
 		SongServiceSettingsSubmitter.removeObserver(self)
 	}
 	
-	override func viewDidDisappear(_ animated: Bool) {
-		super.viewDidDisappear(animated)
-		if self.isMovingFromParentViewController {
-			songServiceObject.sections.forEach({ $0.delete(false) })
-			songServiceObject?.delete(true)
-		}
-	}
-	
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 		if let controller = segue.destination.unwrap() as? TagSelectionController, let selectedSection = selectedSection {
 			controller.section = selectedSection
-			controller.selectedTags = songServiceObject.sections[selectedSection].tags
+			controller.selectedTags = songServiceObject.sections[selectedSection].hasTags
 			controller.delegate = self
 		}
 	}
@@ -70,21 +92,29 @@ class WizzardSectionTagsController: ChurchBeamViewController, UITableViewDataSou
 	}
 
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return songServiceObject.sections[section].tags.count + 2
+		return songServiceObject.sections[section].hasTags.count + 3
 	}
 	
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		
-		let cell: UITableViewCell! = tableView.dequeueReusableCell(withIdentifier: getIdentifier(indexPath))
+		let tags = songServiceObject.sections[indexPath.section].hasTags
+		
+		let cell: UITableViewCell! = tableView.dequeueReusableCell(withIdentifier: Row.for(indexPath, tags: tags).identifier)
 		if let cell = cell as? LabelTextFieldCell {
 			cell.setup(description: Text.SongServiceManagement.nameSection, placeholder: Text.SongServiceManagement.name, delegate: self)
+			cell.textField.text = songServiceObject.sections[indexPath.section].title
  		}
 		if let cell = cell as? BasicCell {
-			cell.setup(title: songServiceObject.sections[indexPath.section].tags[indexPath.row - 1].title, icon: nil, iconSelected: nil, textColor: themeWhiteBlackTextColor, hasPianoOnly: false)
-			cell.data = songServiceObject.sections[indexPath.section].tags[indexPath.row - 1]
+			cell.setup(title: songServiceObject.sections[indexPath.section].hasTags[indexPath.row - 2].title, icon: nil, iconSelected: nil, textColor: themeWhiteBlackTextColor, hasPianoOnly: false)
+			cell.data = songServiceObject.sections[indexPath.section].hasTags[indexPath.row - 2]
 		}
 		if let cell = cell as? AddButtonCell {
 			cell.apply(title: Text.SongServiceManagement.addTags)
+		}
+		if let cell = cell as? LabelNumberPickerCell {
+			cell.create(id: "\(indexPath.row)", description: Text.SongServiceManagement.numberOfSongs, subtitle: nil, initialValue: Int(songServiceObject.sections[indexPath.section].numberOfSongs), values: Array(0...20))
+			cell.id = "\(indexPath.section)"
+			cell.delegate = self
 		}
 		
 		return cell
@@ -101,7 +131,7 @@ class WizzardSectionTagsController: ChurchBeamViewController, UITableViewDataSou
 	}
 	
 	func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
-		let tagsForSection = songServiceObject.sections[indexPath.section].hasTags?.count ?? 0
+		let tagsForSection = songServiceObject.sections[indexPath.section].hasTags.count
 		if tableView.cellForRow(at: indexPath) is BasicCell, tagsForSection > 1 {
 			return .delete
 		}
@@ -129,7 +159,7 @@ class WizzardSectionTagsController: ChurchBeamViewController, UITableViewDataSou
 	}
 	
 	func didSelectTagsFor(section: Int, tags: [Tag]) {
-		songServiceObject.sections[section].hasTags = NSSet(array: tags)
+		songServiceObject.sections[section].tagIds = tags.compactMap({ NSNumber(value: $0.id) })
 		navigationItem.rightBarButtonItem?.isEnabled = songServiceObject.isValid
 	}
 	
@@ -142,6 +172,11 @@ class WizzardSectionTagsController: ChurchBeamViewController, UITableViewDataSou
 		}
 	}
 	
+	func numberPickerValueChanged(cell: LabelNumberPickerCell, value: Int) {
+		if let section = Int(cell.id) {
+			songServiceObject.sections[section].numberOfSongs = Int16(value)
+		}
+	}
 	
 	// MARK: - Private Functions
 	
@@ -157,7 +192,7 @@ class WizzardSectionTagsController: ChurchBeamViewController, UITableViewDataSou
 	
 	private func isLast(_ indexPath: IndexPath) -> Bool {
 		let editTitleAndAddbutton = 2
-		return songServiceObject.sections[indexPath.section].tags.count + editTitleAndAddbutton == indexPath.row + 1
+		return songServiceObject.sections[indexPath.section].hasTags.count + editTitleAndAddbutton == indexPath.row + 1
 	}
 	
 	private func addTagForSection(_ section: Int) {

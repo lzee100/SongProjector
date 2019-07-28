@@ -12,18 +12,20 @@ import CoreData
 
 public class Tag: Entity {
 	
+	@NSManaged public var position: Int16
+
+	
 	public var hasClusters: [Cluster] {
 		return CoreCluster.getEntities().filter({ (cluster) -> Bool in
-			if let tagIds = cluster.hasTagIds?.allObjects as? [TagId] {
-				return tagIds.contains(where: { $0.tagId == id })
-			} else {
-				return false
-			}
+			return cluster.tagIds.contains(where: { $0 == NSNumber(value: cluster.id) })
 		})
 	}
 	
 	@NSManaged public var hasSongServiceSections: NSSet?
 
+	enum CodingKeysTag: String, CodingKey {
+		case position
+	}
 	
 	@nonobjc public class func fetchRequest() -> NSFetchRequest<Tag> {
 		return NSFetchRequest<Tag>(entityName: "Tag")
@@ -45,7 +47,9 @@ public class Tag: Entity {
 	// MARK: - Encodable
 	
 	override public func encode(to encoder: Encoder) throws {
+		var container = encoder.container(keyedBy: CodingKeysTag.self)
 		try super.encode(to: encoder)
+		try container.encode(position, forKey: .position)
 	}
 	
 	
@@ -60,7 +64,9 @@ public class Tag: Entity {
 		}
 		
 		self.init(entity: entity, insertInto: managedObjectContext)
-		
+		let container = try decoder.container(keyedBy: CodingKeysTag.self)
+		position = try container.decodeIfPresent(Int16.self, forKey: .position) ?? 0
+
 		try super.initialization(decoder: decoder)
 		
 	}

@@ -12,10 +12,11 @@ var db = require('../util/db');
 // DELETE — remove a particular resource’s object
 
 router.get('/', (req, res , next) => {
-    print.print('in get users all for org')
+    print.print('in get tags all for org')
     let organizationId = req.get("organizationId")
     print.print('orgid', organizationId)
-   
+    let after = req.query.updatedsince
+
     if (organizationId) {
         TagsClass.getTagsForOrganization(organizationId)
         .then(tags => {

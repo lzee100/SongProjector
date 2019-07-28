@@ -27,6 +27,7 @@ router.get('/', (req, res , next) => {
             res.status(500).json(result)
         } else {
             Promise.all(result.map(cluster => getCluster(cluster.id))).then(function(result){
+                print.print("returning clusters", result)
                 res.status(200).json(result)
             }).catch(function(err){
                 res.status(500).json(err)
@@ -66,9 +67,15 @@ router.post('/', (req, res , next) => {
 
 router.put('/', (req, res , next) => {
     console.log('in update cluster')
-    let object = req.body;
+    let clusters = req.body;
+    let organizationID = req.get("organizationID")
+    print.print('org id', organizationID)
 
-    Promise.all(object.map(cluster => putCluster(cluster)))
+    clusters.forEach(function(cluster, index) {
+        cluster.organization_id = organizationID
+    })
+
+    Promise.all(clusters.map(cluster => putCluster(cluster)))
     .then(clusters => {
         print.print('in put cluster 201', clusters)
         res.status(201).json(clusters)
@@ -125,10 +132,12 @@ function postCluster(cluster) {
         }
     
         var insertSheet = function(clusterId, sheet) {
+            print.print('in insert sheet 1')
             let newSheet = sheet
-            newSheet.cluster_id = clusterId
-            if (newSheet.tag) {
-                delete newSheet.tag
+            if (newSheet.theme) {
+                print.print('in has theme id')
+                newSheet.theme_id = newSheet.theme.id
+                delete newSheet.theme
             }
             print.print('isnerting sheet', newSheet)
             return new Promise((resolve, reject) => {
@@ -138,6 +147,7 @@ function postCluster(cluster) {
                         print.print('error,', err)
                         reject(err)
                     } else {
+                        print.print('resolved sheet 1')
                         resolve()
                     }
                 })
@@ -148,13 +158,15 @@ function postCluster(cluster) {
             var newSheet = sheet
             print.print('insert sheet ---', sheet)
             return new Promise((resolve, reject) => {
-                if (newSheet.tag) {
+                if (newSheet.theme) {
                     print.print('trying sheet theme')
                     Themes.post(newSheet.theme, organizationID)
                     .then(theme => {
                         print.print('sheet theme posted', theme)
                         if (theme) {
+                            delete newSheet.theme
                             newSheet.theme = theme
+                            print.print('new sheet with new theme', newSheet)
                         } else if (newSheet.theme) {
                             delete newSheet.theme
                         }
@@ -178,8 +190,9 @@ function postCluster(cluster) {
             newSheet.cluster_id = clusterId
             return new Promise((resolve, reject) => {
                 insertSheetTheme(newSheet, organizationID)
-                .then(sheet => {
-                    return insertSheet(clusterId, sheet)
+                .then(returnedSheet => {
+                    print.print('inserted old sheet with new theme before inserting sheet', returnedSheet)
+                    return insertSheet(clusterId, returnedSheet)
                 })
                 .then(function(){ 
                     print.print('in resolve')
@@ -211,7 +224,8 @@ function postCluster(cluster) {
         .then(getCluster)
         .then(cluster => {
             var newCluster = cluster
-            Promise.all(tags.map(tag => TagsClass.postTagHasClusterIfNeeded(newCluster, tag)))
+            print.print('before posting tags')
+            TagsClass.postTagsHasClusterIfNeeded(newCluster, tags)
             .then(tags => {
                 print.print('success posting 1 cluster', cluster)
                 newCluster.tags = tags
@@ -228,7 +242,6 @@ function postCluster(cluster) {
 
 function putCluster(clusterToPut) {
     var cluster = clusterToPut
-    cluster.organization_id = 1
     let tags = cluster.tags
     
     let sheets = cluster.sheets
@@ -250,9 +263,13 @@ function putCluster(clusterToPut) {
     sheets.map(sheet => sheet.cluster_id = cluster.id)
 
     var updateCluster = function(cluster) {
-        print.print("cluster to put", cluster)
+        let newCluster = cluster
+        if (newCluster.theme) {
+            delete newCluster.theme
+        }
+        print.print("cluster to put", newCluster)
         return new Promise((resolve, reject) => {
-            db.query(`UPDATE cluster SET ? WHERE id = ${cluster.id}`, [cluster], (err, result) => {
+            db.query(`UPDATE cluster SET ? WHERE id = ${newCluster.id}`, [newCluster], (err, result) => {
                 if (err) {
                     print.print('error in update cluster', err)
                     reject()
@@ -348,18 +365,27 @@ function putCluster(clusterToPut) {
             return saveAllSheets(sheets)
         })
         .then(function() {
+            print.print('before get cluster 1')
             return getCluster(cluster.id)
         })
         .then(cluster => {
+            print.print('before posting tags')
             var updatedCluster = cluster
-            TagsClass.postTagHasClusterIfNeeded(cluster, tags)
+            print.print('in posting tags', tags)
+            print.print('cluster', cluster)
+            TagsClass.postTagsHasClusterIfNeeded(cluster, tags)
             .then(tags => {
+                print.print('inserted tags', tags)
                 updatedCluster.tags = tags
                 resolve(updatedCluster)
             })
-            .catch(err => { reject(err) })
+            .catch(err => { 
+                print.print("err postTagsHasClusterIfNeeded")
+                reject(err) 
+            })
         })
         .catch(err => {
+            print.print('final error 1')
             reject(err)
         })
     })
@@ -410,7 +436,7 @@ function getCluster(clusterId) {
                     resolve(sheet)
                 } else {
                     var newSheet = sheet
-                    newSheet.tag = result[0]
+                    newSheet.theme = result[0]
                     resolve(newSheet)
                 }
             })
@@ -444,9 +470,21 @@ function getCluster(clusterId) {
                 }).catch(reject)
             })
         }).then(function(result) {
-            print.print('return cluster: ', result)
-            resolve(result)
-        }).catch(reject)
+            TagsClass.getTagsForCluster(result.id)
+            .then(tags => {
+                print.print('resolved tags')
+                var newCluster = result
+                newCluster.tags = tags
+                resolve(newCluster)
+            })
+            .catch(err => { 
+                print.print('err getting tags')
+                reject(err) 
+            })
+        }).catch(err => { 
+            print.print('err final')
+            reject(err) 
+        })
     })
 
 };

@@ -138,16 +138,9 @@ class ThemesIphoneController: ChurchBeamTableViewController, UISearchBarDelegate
 	}
 	
 	override func handleRequestFinish(requesterId: String, result: AnyObject?) {
-//		let submittedTheme = (result as? [Theme])?.first
-//		if let position = filteredThemes.firstIndex(where: { $0.id == submittedTheme?.id }) {
-//			themes.remove(at: Int(position))
-//			filteredThemes.remove(at: Int(position))
-//			tableView.deleteRow(at: IndexPath(row: Int(position), section: 0), with: .left)
-//		} else {
-			Queues.main.async {
-				self.update()
-			}
-//		}
+		Queues.main.async {
+			self.update()
+		}
 	}
 	
 	private func setup() {
@@ -168,7 +161,6 @@ class ThemesIphoneController: ChurchBeamTableViewController, UISearchBarDelegate
 		
 		let longPressGesture:UILongPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(self.editTableView(_:)))
 		longPressGesture.minimumPressDuration = 0.7
-		longPressGesture.delegate = self
 		self.tableView.addGestureRecognizer(longPressGesture)
 		
 		let doubleTab = UITapGestureRecognizer(target: self, action: #selector(self.editTableView(_:)))

@@ -33,7 +33,8 @@ extension Cluster {
 		tempCluster.isTemp = true
 		tempCluster.title = title
 		tempCluster.time = time
-		tempCluster.hasTheme = hasTheme
+		tempCluster.themeId = themeId
+		tempCluster.tagIds = tagIds
 		return tempCluster
 	}
 	

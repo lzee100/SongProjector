@@ -25,7 +25,9 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 	var themes: [Theme] = []
 	var selectedTheme: Theme? {
 		didSet {
-			clusterTemp?.hasTheme = selectedTheme
+			if let themeId = selectedTheme?.id {
+				clusterTemp?.themeId = themeId
+			}
 			collectionView.reloadData()
 		}
 	}
@@ -392,7 +394,9 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 				if cluster == nil {
 					cluster = CoreCluster.createEntity()
 				}
-				cluster?.hasTheme = selectedTheme
+				if let themeId = selectedTheme?.id {
+					cluster?.themeId = themeId
+				}
 				
 				var index: Int16 = 0
 				for sheet in sheets {

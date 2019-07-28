@@ -79,6 +79,9 @@ class SaveNewSongTitleTimeVC: ChurchBeamTableViewController {
 		saveButton.title = Text.Actions.save
 		tableView.register(cells: [TextFieldCell.identifier, PickerCell.identifier, BasicCell.identifier])
 		title = cluster?.title ?? Text.NewSong.title
+		clusterTitle = cluster?.title ?? ""
+		let tags = CoreTag.getEntities()
+		selectedTags = tags.filter({ tag in cluster?.tagIds.contains(where: { NSNumber(value: tag.id) == $0 }) ?? false })
 		tableView.rowHeight = UITableViewAutomaticDimension
 		tableView.tableFooterView = UIView()
     }
@@ -184,23 +187,8 @@ class SaveNewSongTitleTimeVC: ChurchBeamTableViewController {
 	
 	@IBAction func savePressed(_ sender: UIBarButtonItem) {
 		if hasName() {
-			var tagIds: [TagId] = []
 			
-			if let tagIds = cluster?.hasTagIds?.allObjects as? [TagId] {
-				let deletedTagIds = tagIds.filter({ (tagId) -> Bool in
-					return selectedTags.contains(where: { $0.id != tagId.tagId })
-				})
-				deletedTagIds.forEach({ moc.delete($0) })
-			}
-			
-			selectedTags.forEach({
-				let tagId = CoreTagId.createEntityNOTsave()
-				tagId.tagId = $0.id
-				tagIds.append(tagId)
-			})
-			
-			cluster?.addToHasTagIds(NSSet(array: tagIds))
-			
+			cluster?.tagIds = selectedTags.compactMap({ NSNumber(value: $0.id) })
 			cluster?.title = clusterTitle
 			cluster?.time = clusterTime
 			

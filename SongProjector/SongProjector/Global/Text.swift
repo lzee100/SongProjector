@@ -83,6 +83,7 @@ class Text: NSObject {
 		static let selectedSongsDescription = "Hieronder staan de geselecteerde liedjes voor de zangdienst"
 		static let songsDescription = "Zoek en selecteer hieronder de liedjes voor de zangdienst"
 		static let noSelectedSongs = "Geen liedjes geselecteerd"
+		static let notEnoughSongsForTagSection = "Niet genoeg liedjes in deze categorie."
 	}
 	
 	struct Songs {
@@ -181,6 +182,7 @@ class Text: NSObject {
 		static let nameSection = "Naam sectie"
 		static let addTags = "Voeg tags toe"
 		static let name = "Naam"
+		static let numberOfSongs = "Aantal liedjes voor deze sectie: "
 	}
 	
 	struct Settings {

@@ -167,10 +167,12 @@ class Requester<T>: BaseRS, RequesterType, RequestObserver where T:Codable, T:NS
 			if action == .updated {
 				minRefreshDate = requestReloadTime.date
 			}
-		case .error(let _, let error): print(requesterId + ": error - \(error)")
+		case .error( _, let error): print(requesterId + ": error - \(String(describing: error))")
 
 		}
 		Queues.main.async {
+			print("observers")
+			print(self.observers.compactMap({ $0.requesterId }).joined(separator: ", "))
 			self.observers.forEach({ $0.requestDidFinish(requesterID: self.requesterId, response: response, result: result as AnyObject) })
 		}
 	}
@@ -188,44 +190,42 @@ class Requester<T>: BaseRS, RequesterType, RequestObserver where T:Codable, T:NS
 		
 		super.dispatchRequest(method, url: url, inputBody: nil, parameters: parameters, range: range, success: {  (response, data) -> Void in
 			
-			// delete all the old that we have based on new with their id's
-			
-			let entities: [T]? = super.decode(data: data)
-			
-			if let old = entities, old.count > 0 {
-				mocBackground.perform({
-
-					if let oldEntity = old as? [Entity] {
-						print("old items to delete: \(oldEntity.count)")
-						oldEntity.forEach({
-							CoreEntity.managedObjectContext = mocBackground
-							CoreEntity.predicates.append("id", equals: $0.id)
-							let ent = CoreEntity.getEntities(onlyTemp: false, onlyDeleted: false, skipFilter: true).filter({ $0.updatedAt != nil })
-							if ent.count > 1 {
-								let oldEntities = ent.sorted(by: { (($0.updatedAt ?? NSDate()) as Date) < (($1.updatedAt ?? NSDate()) as Date) })
-								if let objectId = oldEntities.first?.objectID, (entities?.contains(where: { $0.objectID == objectId }) ?? false) {
-									oldEntities.last?.deleteBackground(false)
-								} else {
-									oldEntities.first?.deleteBackground(false)
-								}
-							}
-						})
-					}
-					mocBackground.performAndWait {
-						do {
-							try mocBackground.save()
-							try moc.save()
-						} catch {
-							print(error)
-						}
-						success(response, entities)
-						
-					}
-					
+			mocBackground.perform({
+				
+				let entities: [T]? = super.decode(data: data)
+				
+				guard let insertedEntities = entities as? [Entity] else {
+					return success(response, entities)
+				}
+				
+				// get local entities based on ids from received ones
+				var localFilteredOnReceived: [Entity] = []
+				insertedEntities.forEach({
+					CoreEntity.managedObjectContext = mocBackground
+					CoreEntity.predicates.append("id", equals: $0.id)
+					localFilteredOnReceived += CoreEntity.getEntities(onlyTemp: false, onlyDeleted: false, skipFilter: true).filter({ $0.updatedAt != nil })
 				})
-			} else {
-				success(response, entities)
-			}
+				
+				let insertedObjects = mocBackground.insertedObjects.filter({ $0 is T })
+				
+				// filter out the received once to keep only the old once to delete and accept te received ones
+				let localWithoutInserted = localFilteredOnReceived.filter({ (entity) -> Bool in
+					return !insertedObjects.contains(entity)
+				})
+				localWithoutInserted.forEach({ $0.deleteBackground(false) })
+				
+				mocBackground.performAndWait {
+					do {
+						try mocBackground.save()
+						try moc.save()
+					} catch {
+						print(error)
+					}
+					success(response, entities)
+					
+				}
+				
+			})
 			
 		}, failure: {  (error, response, data) -> Void in
 			let restError: RestError? = super.decodeSingle(data: data)
@@ -271,7 +271,6 @@ class Requester<T>: BaseRS, RequesterType, RequestObserver where T:Codable, T:NS
 
 				if let old = deleteOld, old.count > 0 {
 					if let oldEntity = old as? [Entity] {
-						print("old items to delete: \(oldEntity.count)")
 						oldEntity.forEach({
 							CoreEntity.managedObjectContext = mocBackground
 							CoreEntity.predicates.append("id", equals: $0.id)

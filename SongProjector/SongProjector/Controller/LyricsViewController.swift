@@ -38,21 +38,47 @@ class LyricsViewController: UIViewController {
 		
 		if lyricsTextView.text == "" {
 			lyricsTextView.text = """
-			Cuppy Cake Song
+			Heer, hoe talrijk zijn mijn vijanden
 			
-			You're my honeybunch, sugar plum
-			Pumpy-umpy-umpkin
-			You're my sweetie pie
-			You're my cuppycake, gumdrop
-			Snoogums, boogums, you're
-			The apple of my eye
+			Heer, hoe talrijk zijn mijn vijanden
+			en velen die opstaan tegen mij.
+			Zij, die spotten en zeggen van mij
+			hij vindt geen hulp bij zijn God.
 			
-			And I love you so
-			And I want you to know
-			That I'm always be right here
-			And I want to sing
-			Sweet songs to you
-			Because you are so dear...
+			Maar U, o Heer bent een schild voor mij
+			mijn Redder en Bevrijder elke dag.
+			Want U, o Heer bent een schild voor mij
+			mijn Redder en Bevrijder elke dag.
+			
+			Ik ben niet bang voor tienduizenden mensen
+			die zich stellen rondom mij.
+			Als ik luide roep tot God
+			dan antwoord Hij mij van Zijn heil’ge berg.
+			
+			Maar U, o Heer bent een schild voor mij
+			mijn Redder en Bevrijder elke dag.
+			Want U, o Heer bent een schild voor mij
+			mijn Redder en Bevrijder elke dag.
+			
+			Heer, hoe talrijk zijn mijn vijanden
+			en velen die opstaan tegen mij.
+			Zij, die spotten en zeggen van mij
+			hij vindt geen hulp bij zijn God.
+			
+			Maar U, o Heer bent een schild voor mij
+			mijn Redder en Bevrijder elke dag.
+			Want U, o Heer bent een schild voor mij
+			mijn Redder en Bevrijder elke dag.
+			
+			Ik ben niet bang voor tienduizenden mensen
+			die zich stellen rondom mij.
+			Als ik luide roep tot God
+			dan antwoord Hij mij van Zijn heil’ge berg.
+			
+			Maar U, o Heer bent een schild voor mij
+			mijn Redder en Bevrijder elke dag.
+			Want U, o Heer bent een schild voor mij
+			mijn Redder en Bevrijder elke dag.
 			"""
 		}
     }

@@ -1,5 +1,6 @@
 var db = require('./db')
 var DataBaseDateClass = require('./dataBaseDateClass')
+const print = require('./print')
 
 class Tag {
 
@@ -85,7 +86,7 @@ function getTagsForCluster(clusterId) {
     // get 1 tag, not an array
 function getTag(tagId) {
     return new Promise((resolve, reject) => {
-        var sql = `SELECT T.id, T.title, T.createdAt, T.updatedAt, T.deletedAt FROM tag as T WHERE T.id =${tagId}`
+        var sql = `SELECT T.id, T.title, T.position, T.createdAt, T.updatedAt, T.deletedAt FROM tag as T WHERE T.id =${tagId}`
         db.query(sql, (err, result) => {
             if(err) {
                 reject(err)
@@ -99,7 +100,7 @@ function getTag(tagId) {
 function getTagsForOrganization(organizationId) {
     return new Promise((resolve, reject) => {
         var sql = `
-        SELECT T.id, T.title, T.createdAt, T.updatedAt, T.deletedAt
+        SELECT T.id, T.title, T.position, T.createdAt, T.updatedAt, T.deletedAt
         FROM tag as T 
         WHERE T.organization_id = ${organizationId}`
 

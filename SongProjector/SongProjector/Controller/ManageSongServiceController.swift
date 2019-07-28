@@ -24,12 +24,13 @@ class ManageSongServiceController: ChurchBeamViewController, UITableViewDataSour
         super.viewDidLoad()
 		tableView.register(cell: BasicCell.identifier)
 		tableView.rowHeight = 68
+		tableView.register(cell: TextCell.identifier)
     }
 	
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		SongServiceSettingsFetcher.addObserver(self)
-		SongServiceSettingsFetcher.fetch(force: false)
+		SongServiceSettingsFetcher.fetch(force: true)
 		addOrEditButton.tintColor = .clear
 		addOrEditButton.isEnabled = false
 	}
@@ -39,7 +40,11 @@ class ManageSongServiceController: ChurchBeamViewController, UITableViewDataSour
 		SongServiceSettingsFetcher.removeObserver(self)
 	}
 	
-	
+	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+		if let vc = segue.destination.unwrap() as? WizzardSectionsController {
+			vc.songServiceObject = songServiceObject
+		}
+	}
 	
 	// MARK: - UITableView Functions
 	
@@ -48,14 +53,26 @@ class ManageSongServiceController: ChurchBeamViewController, UITableViewDataSour
 	}
 	
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return songServiceObject?.sections[section].tags.count ?? 0
+		return (songServiceObject?.sections[section].hasTags.count ?? 0) + 1
 	}
 	
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		if indexPath.row == 0 {
+			let cell = tableView.dequeueReusableCell(withIdentifier: TextCell.identifier) as! TextCell
+			cell.setupWith(text: Text.SongServiceManagement.numberOfSongs + "\(songServiceObject?.sections[indexPath.section].numberOfSongs ?? 0)")
+			return cell
+		}
 		
 		let cell = tableView.dequeueReusableCell(withIdentifier: BasicCell.identifier) as! BasicCell
-		cell.setup(title: songServiceObject?.sections[indexPath.section].tags[indexPath.row].title, icon: Cells.bulletFilled, iconSelected: nil, textColor: themeWhiteBlackTextColor, hasPianoOnly: false)
+		cell.setup(title: songServiceObject?.sections[indexPath.section].hasTags[indexPath.row - 1].title, icon: Cells.bulletFilled, iconSelected: nil, textColor: themeWhiteBlackTextColor, hasPianoOnly: false)
 		return cell
+	}
+	
+	func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+		if indexPath.row == 0 {
+			return UITableViewAutomaticDimension
+		}
+		return 68
 	}
 	
 	func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {

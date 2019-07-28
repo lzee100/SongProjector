@@ -1,5 +1,6 @@
 var db = require('./db')
 var DataBaseDateClass = require('./dataBaseDateClass')
+const print = require('./print')
 
 class Tag {
 
@@ -30,7 +31,10 @@ class Tag {
 
     static postTagsHasClusterIfNeeded(cluster, tags) {
         return new Promise((resolve, reject) => {
-            postTagsHasClusterIfNeeded(cluster, tags)
+            if (!tags) {
+                resolve()
+            }
+            submitTagsHasClusterIfNeeded(cluster, tags)
             .then(tags => {resolve(tags)})
             .catch(err => {reject(err)})
         })
@@ -47,7 +51,11 @@ class Tag {
     static putTag(tag) {
         return new Promise((resolve, reject) => {
             putTag(tag)
-            .then(tag => {resolve(tag)})
+            .then(function() {
+                getTag(tag.id)
+                .then(tag => {resolve(tag)})
+                .catch(err => {reject(err)})
+            })
             .catch(err => {reject(err)})
         })
     }
@@ -70,7 +78,7 @@ function getTagsForCluster(clusterId) {
             if(err) {
                 reject(err)
             } else {
-                Promise.all(result.map( tagId => getTag(tagId) ))
+                Promise.all(result.map( tagId => getTag(tagId.tag_id) ))
                 .then(tags => {
                     resolve(tags)
                 })
@@ -85,7 +93,7 @@ function getTagsForCluster(clusterId) {
     // get 1 tag, not an array
 function getTag(tagId) {
     return new Promise((resolve, reject) => {
-        var sql = `SELECT T.id, T.title, T.createdAt, T.updatedAt, T.deletedAt FROM tag as T WHERE T.id =${tagId}`
+        var sql = `SELECT T.id, T.title, T.position, T.createdAt, T.updatedAt, T.deletedAt FROM tag as T WHERE T.id =${tagId}`
         db.query(sql, (err, result) => {
             if(err) {
                 reject(err)
@@ -99,7 +107,7 @@ function getTag(tagId) {
 function getTagsForOrganization(organizationId) {
     return new Promise((resolve, reject) => {
         var sql = `
-        SELECT T.id, T.title, T.createdAt, T.updatedAt, T.deletedAt
+        SELECT T.id, T.title, T.position, T.createdAt, T.updatedAt, T.deletedAt
         FROM tag as T 
         WHERE T.organization_id = ${organizationId}`
 
@@ -208,8 +216,14 @@ function submitTagsHasClusterIfNeeded(cluster, tags) {
         deleteTagHasCluster(cluster.id)
         .then(result => {
             insertMultiTagHasCluster(cluster, tags)
-            .then(resolve())
-            .catch(err => {reject(err) })
+            .then(function() {
+                Promise.all(tags.map(tag => getTag(tag.id)))
+                .then(tags => { resolve(tags) })
+                .catch(err => { reject(err) })
+            })
+            .catch(err => {
+                reject(err) 
+            })
         })
         .catch(err => {reject(err) })
 

@@ -55,7 +55,7 @@ class LabelTextFieldCell: ChurchBeamCell, ThemeImplementation, SheetImplementati
 								 for: UIControlEvents.editingChanged)
 	}
 	
-	func setup(description: String, placeholder: String, delegate: LabelTextFieldCellDelegate) {
+	func setup(description: String?, placeholder: String, delegate: LabelTextFieldCellDelegate) {
 		descriptionTitle.text = description
 		textField.placeholder = placeholder
 		self.delegate = delegate

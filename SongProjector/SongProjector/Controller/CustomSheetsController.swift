@@ -32,7 +32,9 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	var themes: [Theme] = []
 	var selectedTheme: Theme? {
 		didSet {
-			clusterTemp?.hasTheme = selectedTheme
+			if let themeId = selectedTheme?.id {
+				clusterTemp?.themeId = themeId
+			}
 			if clusterTemp?.isTypeSong ?? false {
 				updateWithAnimation()
 			}
@@ -55,6 +57,16 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	var clusterTemp: Cluster?
 	var sheets: [Sheet] = [] {
 		didSet {
+			if sheetsTemp.count > 0 {
+				moc.performAndWait {
+				sheetsTemp.forEach({ $0.delete(false) })
+					do {
+						try moc.save()
+					} catch {
+						print(error)
+					}
+				}
+			}
 			sheetsTemp = []
 			sheetHasSheet = []
 			save.isEnabled = sheets.count > 0
@@ -98,21 +110,6 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		update()
-	}
-	
-	override func viewDidAppear(_ animated: Bool) {
-		DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
-			print(self.clusterTemp?.id ?? -2)
-			CoreEntity.predicates.append("id", equals: self.clusterTemp?.id)
-			let entities = CoreEntity.getEntities()
-			let temps = entities.map({ $0.isTemp })
-			print(temps)
-			CoreEntity.managedObjectContext = mocBackground
-			CoreEntity.predicates.append("id", equals: self.clusterTemp?.id)
-			let entitiesb = CoreEntity.getEntities()
-			let tempsb = entitiesb.map({ $0.isTemp })
-			print(tempsb)
-		}
 	}
 	
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -279,8 +276,9 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	}
 	
 	func didSaveSongWith() {
-		clusterTemp?.hasTheme = selectedTheme
-		
+		if let themeId = selectedTheme?.id {
+			clusterTemp?.themeId = themeId
+		}
 		if let cluster = cluster {
 			clusterTemp?.mergeSelfInto(cluster: cluster)
 		}
@@ -295,7 +293,10 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 		}
 		
 		cluster?.hasSheets = NSSet(array: sheets)
-		cluster?.hasTheme = selectedTheme
+		if let themeId = selectedTheme?.id {
+			cluster?.themeId = themeId
+		}
+		cluster?.tagIds = clusterTemp?.tagIds ?? []
 		
 		if let cluster = cluster {
 			let method: RequestMethod = cluster.isTemp ? .post : .put
@@ -401,8 +402,9 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 		}
 		
 		newCluster?.deleteDate = nil
-		newCluster?.hasTheme = selectedTheme
-		
+		if let themeId = selectedTheme?.id {
+			newCluster?.themeId = themeId
+		}
 		var contentToDevide = fromText + "\n\n"
 		
 		// get title
@@ -524,14 +526,8 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	// MARK: - IBAction functions
 	
 	@IBAction func cancel(_ sender: UIBarButtonItem) {
-		// remove all
-		if cluster?.isTemp ?? false {
-			cluster?.delete(true)
-		}
-		clusterTemp?.delete(true)
-		for sheet in sheetsTemp {
-			sheet.delete(false)
-		}
+		moc.reset()
+		mocBackground.reset()
 		dismiss(animated: true)
 	}
 	

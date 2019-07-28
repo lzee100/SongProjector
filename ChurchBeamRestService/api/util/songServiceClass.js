@@ -295,7 +295,7 @@ function getSongServiceSettings(id, organizationId) {
                     reject(err)
                 } else {
                     if (result.length > 0) {
-                        resolve(result[0])
+                        resolve(result[result.length - 1])
                     } else {
                         resolve()
                     }
@@ -319,7 +319,7 @@ function getSongServiceSettings(id, organizationId) {
 
     var getTagForSection = function(section) {
         return new Promise((resolve, reject) => {
-            let sql = `SELECT T.id, T.title, T.createdAt, T.updatedAt, T.deletedAt FROM tag as T  LEFT JOIN songServiceSection_has_tag as ST ON T.id = ST.tag_id WHERE ST.songServiceSection_id = ${section.id}`
+            let sql = `SELECT T.id, T.title, T.createdAt, T.updatedAt, T.deletedAt FROM tag as T LEFT JOIN songServiceSection_has_tag as ST ON T.id = ST.tag_id WHERE ST.songServiceSection_id = ${section.id}`
             db.query(sql, (err, result) => {
                 if (err) {
                     reject(err)
@@ -342,6 +342,7 @@ function getSongServiceSettings(id, organizationId) {
                     .then(sectionWithTags => {
                         let newSettings = settings
                         newSettings.sections = sectionWithTags
+                        print.print("settings", newSettings)
                         resolve([newSettings])
                     })
                     .catch(err => { reject(err) })
