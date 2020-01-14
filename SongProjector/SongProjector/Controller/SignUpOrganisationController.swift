@@ -21,7 +21,7 @@ class SignUpOrganisationController: ChurchBeamViewController {
 	@IBOutlet var nameTextField: UITextField!
 	
 	
-	var contract: Contract? {
+	var contract: VContract? {
 		return signInContractSelection.contract
 	}
 	var organizationName = ""

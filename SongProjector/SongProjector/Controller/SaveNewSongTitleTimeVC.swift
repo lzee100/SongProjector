@@ -49,11 +49,15 @@ class SaveNewSongTitleTimeVC: ChurchBeamTableViewController {
 		
 	}
 	
-	private var tags: [Tag] = []
-	private var selectedTags: [Tag] = []
+	private var tags: [VTag] = []
+	private var selectedTags: [VTag] = []
 	
-	weak var cluster: Cluster?
-	weak var selectedTheme: Theme?
+	weak var cluster: VCluster?
+	weak var selectedTheme: VTheme?
+	
+	override var requesters: [RequesterType] {
+		return [TagFetcher]
+	}
 	
 	var timeValues: [Int] {
 		var values: [Int] = []
@@ -75,26 +79,12 @@ class SaveNewSongTitleTimeVC: ChurchBeamTableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-		cancelButton.title = Text.Actions.cancel
-		saveButton.title = Text.Actions.save
-		tableView.register(cells: [TextFieldCell.identifier, PickerCell.identifier, BasicCell.identifier])
-		title = cluster?.title ?? Text.NewSong.title
-		clusterTitle = cluster?.title ?? ""
-		let tags = CoreTag.getEntities()
-		selectedTags = tags.filter({ tag in cluster?.tagIds.contains(where: { NSNumber(value: tag.id) == $0 }) ?? false })
-		tableView.rowHeight = UITableViewAutomaticDimension
-		tableView.tableFooterView = UIView()
-    }
+		setup()
+	}
 	
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
-		TagFetcher.addObserver(self)
-		TagFetcher.fetch(force: false)
-	}
-	
-	override func viewWillDisappear(_ animated: Bool) {
-		super.viewWillDisappear(animated)
-		TagFetcher.removeObserver(self)
+		TagFetcher.fetch()
 	}
 	
 	override func numberOfSections(in tableView: UITableView) -> Int {
@@ -163,9 +153,22 @@ class SaveNewSongTitleTimeVC: ChurchBeamTableViewController {
 		return CGFloat.leastNormalMagnitude
 	}
 	
+	func setup() {
+		cancelButton.title = Text.Actions.cancel
+		saveButton.title = Text.Actions.save
+		tableView.register(cells: [TextFieldCell.identifier, PickerCell.identifier, BasicCell.identifier])
+		title = cluster?.title ?? Text.NewSong.title
+		clusterTitle = cluster?.title ?? ""
+		let tags = VTag.list(sortOn: "position", ascending: true)
+		selectedTags = tags.filter({ tag in cluster?.tagIds.contains(where: { NSNumber(value: tag.id) == $0 }) ?? false })
+		tableView.rowHeight = UITableViewAutomaticDimension
+		tableView.tableFooterView = UIView()
+
+	}
+	
 	override func handleRequestFinish(requesterId: String, result: AnyObject?) {
 		Queues.main.async {
-			self.tags = CoreTag.getEntities()
+			self.tags = VTag.list()
 			self.tableView.reloadData()
 		}
 	}

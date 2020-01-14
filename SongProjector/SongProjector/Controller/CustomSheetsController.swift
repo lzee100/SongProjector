@@ -29,13 +29,11 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	@IBOutlet weak var addSheetButton: UIButton?
 	
 	var isNew = true
-	var themes: [Theme] = []
-	var selectedTheme: Theme? {
+	var themes: [VTheme] = []
+	var selectedTheme: VTheme? {
 		didSet {
-			if let themeId = selectedTheme?.id {
-				clusterTemp?.themeId = themeId
-			}
-			if clusterTemp?.isTypeSong ?? false {
+			cluster?.themeId = selectedTheme?.id ?? 0
+			if cluster?.isTypeSong ?? false {
 				updateWithAnimation()
 			}
 		}
@@ -43,55 +41,31 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	var isEdited = false
 	var delegate: CustomSheetsControllerDelegate?
 	
-	var cluster: Cluster? {
+	var cluster: VCluster? {
 		didSet {
 			if let cluster = cluster {
-				clusterTemp = cluster.tempVersion
-				sheets = cluster.hasSheetsArray
+				sheets = cluster.hasSheets
 			}
 		}
 	}
 	override var requesterId: String {
 		return "CustomSheetsController"
 	}
-	var clusterTemp: Cluster?
-	var sheets: [Sheet] = [] {
+	override var requesters: [RequesterType] {
+		return [ClusterSubmitter]
+	}
+	var sheets: [VSheet] = [] {
 		didSet {
-			if sheetsTemp.count > 0 {
-				moc.performAndWait {
-				sheetsTemp.forEach({ $0.delete(false) })
-					do {
-						try moc.save()
-					} catch {
-						print(error)
-					}
-				}
-			}
-			sheetsTemp = []
-			sheetHasSheet = []
 			save.isEnabled = sheets.count > 0
 			for (index, sheet) in sheets.enumerated() {
-				sheet.position = Int16(index)
-				let tempSheet = sheet.getTemp
-				sheetHasSheet.append(SheetHasSheet(sheetId: sheet.id, sheetTempId: tempSheet.id))
-				sheetsTemp.append(tempSheet)
+				sheet.position = index
 			}
 		}
 	}
-	var sheetsTemp: [Sheet] = [] {
-		didSet {
-			var index: Int16 = 0
-			sheetsTemp.forEach({
-				$0.hasCluster = clusterTemp
-				$0.position = index
-				index += 1
-			})
-			sheetsTemp.sort(by: { $0.position < $1.position })
-			save.isEnabled = sheetsTemp.count > 0
-		}
+	var newSheetId: Int64 {
+		let sheets = self.sheets.sorted(by: { $0.id < $1.id })
+		return (sheets.last?.id ?? 0) + 1
 	}
-	var sheetHasSheet: [SheetHasSheet] = []
-	
 	
 	
 	// MARK: Private properties
@@ -116,8 +90,13 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 		
 		if let controller = segue.destination.unwrap() as? SaveNewSongTitleTimeVC {
 			controller.didSave = didSaveSongWith
-			controller.cluster = clusterTemp
+			controller.cluster = cluster
 			controller.selectedTheme = selectedTheme
+		}
+		
+		if let controller = segue.destination.unwrap() as? SheetPickerMenuController {
+			controller.delegate = self
+			controller.text = getTextFromSheets()
 		}
 	}
 	
@@ -130,7 +109,7 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-		return collectionView == collectionViewThemes ? themes.count : sheetsTemp.count
+		return collectionView == collectionViewThemes ? themes.count : sheets.count
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -145,9 +124,9 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 		} else {
 			let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.sheetCollectionCell, for: indexPath) as! SheetCollectionCell
 			cell.setupWith(
-				cluster: clusterTemp,
-				sheet: sheetsTemp[indexPath.row],
-				theme: sheetsTemp[indexPath.row].hasTheme ?? clusterTemp?.hasTheme,
+				cluster: cluster,
+				sheet: sheets[indexPath.row],
+				theme: sheets[indexPath.row].hasTheme ?? cluster?.hasTheme,
 				didDeleteSheet: didDeleteSheet(sheet:))
 			return cell
 		}
@@ -169,14 +148,15 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 			selectedTheme = selectedTheme == themes[indexPath.row] ? nil : themes[indexPath.row]
 			update()
 		} else {
-			if clusterTemp?.isTypeSong ?? false {
+			if cluster?.isTypeSong ?? false {
 				performSegue(withIdentifier: "ChangeLyricsSegue", sender: self)
 				return
 			}
-			let sheet = sheetsTemp[indexPath.row]
+			let sheet = sheets[indexPath.row]
 			let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
 			controller.modificationMode = .editCustomSheet
 			controller.sheet = sheet
+			controller.theme = sheet.hasTheme
 			controller.delegate = self
 			let nav = UINavigationController(rootViewController: controller)
 			present(nav, animated: true)
@@ -188,9 +168,9 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, moveItemAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-		let sourceItem = sheetsTemp[sourceIndexPath.row]
-		sheetsTemp.remove(at: sourceIndexPath.row)
-		sheetsTemp.insert(sourceItem, at: destinationIndexPath.row)
+		let sourceItem = sheets[sourceIndexPath.row]
+		sheets.remove(at: sourceIndexPath.row)
+		sheets.insert(sourceItem, at: destinationIndexPath.row)
 		collectionView.visibleCells.forEach { $0.layer.removeAllAnimations() }
 	}
 	
@@ -198,16 +178,19 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	
 	// MARK: - Delegate Functions
 	
-	func didCreate(sheet: Sheet) {
-		if sheetsTemp.first(where: {  $0.id == sheet.id }) == nil {
+	func didCreate(sheet: VSheet) {
+		if sheet.id == 0 {
+			sheet.id = newSheetId
+		}
+		if sheets.first(where: {  $0.id == sheet.id }) == nil {
 			sheets.append(sheet)
+			cluster?.hasSheets = sheets.sorted(by: { $0.position < $1.position })
 		}
 		
 		isEdited = true
 		checkAddButton()
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-			let sheetTempId = self.sheetHasSheet.first(where: { $0.sheetId == sheet.id })?.sheetTempId
-			if let id = sheetTempId, let index = self.sheetsTemp.index(where: { $0.id == id }) {
+			if let index = self.sheets.firstIndex(of: sheet) {
 				self.collectionView.insertItems(at: [IndexPath(row: index, section: 0)])
 			}
 		}
@@ -229,8 +212,6 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	
 	override func handleRequestFinish(requesterId: String, result: AnyObject?) {
 		Queues.main.async {
-			self.sheetsTemp.forEach({ $0.delete(false) })
-			self.clusterTemp?.delete(true)
 			self.delegate?.didCloseCustomSheet()
 		}
 	}
@@ -260,13 +241,11 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 		}
 	}
 	
-	func didDeleteSheet(sheet: Sheet) {
+	func didDeleteSheet(sheet: VSheet) {
 		
-		if let sheetId = sheetHasSheet.first(where: { $0.sheetTempId == sheet.id })?.sheetId, let sheet = sheets.first(where: { $0.id == sheetId }) {
-			if let index = sheets.index(where: { $0 == sheet }) {
-				sheets.delete(entity: sheet)
-				collectionView.deleteItems(at: [IndexPath(row: index, section: 0)])
-			}
+		if let index = sheets.firstIndex(of: sheet) {
+			sheets.remove(at: index)
+			collectionView.deleteItems(at: [IndexPath(row: index, section: 0)])
 		}
 		
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
@@ -277,29 +256,10 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	
 	func didSaveSongWith() {
 		if let themeId = selectedTheme?.id {
-			clusterTemp?.themeId = themeId
-		}
-		if let cluster = cluster {
-			clusterTemp?.mergeSelfInto(cluster: cluster)
-		}
-
-		for sheet in sheetsTemp {
-			if let sheetId = sheetHasSheet.first(where: { $0.sheetTempId == sheet.id })?.sheetId, let sheetOriginal = sheets.first(where: { $0.id == sheetId }) {
-				sheet.mergeSelfInto(sheet: sheetOriginal)
-				if let theme = sheet.hasTheme, let originalTheme = sheetOriginal.hasTheme {
-					theme.mergeSelfInto(theme: originalTheme, sheetType: sheet.type)
-				}
-			}
-		}
-		
-		cluster?.hasSheets = NSSet(array: sheets)
-		if let themeId = selectedTheme?.id {
 			cluster?.themeId = themeId
 		}
-		cluster?.tagIds = clusterTemp?.tagIds ?? []
-		
 		if let cluster = cluster {
-			let method: RequestMethod = cluster.isTemp ? .post : .put
+			let method: RequestMethod = cluster.id == 0 ? .post : .put
 			ClusterSubmitter.submit([cluster], requestMethod: method)
 		} else {
 			Queues.main.async {
@@ -314,15 +274,11 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	
 	private func setup() {
 		
-		ClusterSubmitter.addObserver(self)
-		
 		selectedTheme = cluster?.hasTheme
-
-		if clusterTemp == nil {
-			cluster = CoreCluster.createEntityNOTsave()
-			clusterTemp = CoreCluster.createEntityNOTsave()
-			clusterTemp?.deleteDate = NSDate()
+		if cluster == nil {
+			cluster = VCluster()
 		}
+
 		save.title = Text.Actions.save
 		cancel.title = Text.Actions.cancel
 		addSheetButton?.backgroundColor = themeHighlighted
@@ -345,7 +301,7 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 		collectionViewThemes.register(UINib(nibName: Cells.themeCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.themeCellCollection)
 		
 		CoreTheme.predicates.append("isHidden", notEquals: true)
-		themes = CoreTheme.getEntities()
+		themes = VTheme.list()
 		
 		let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
 		layout.scrollDirection = (UIDevice.current.userInterfaceIdiom == .pad) ? .horizontal : .vertical
@@ -366,19 +322,18 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	}
 	
 	private func checkAddButton() {
-		let isSong = (clusterTemp?.isTypeSong ?? false) && getTextFromSheets().length > 0
-		let isCustom = sheetsTemp.contains(where: { $0.hasTheme?.isHidden == true })
+		let isSong = (cluster?.isTypeSong ?? false) && getTextFromSheets().length > 0
 		
 		edit?.isEnabled = !isSong
 		edit?.tintColor = isSong ? .clear : themeHighlighted
 
-//		if !isNew || isEdited {
-//			if cluster?.isTypeSong ?? clusterTemp?.isTypeSong ?? false {
-//				addSheetButton?.removeFromSuperview()
-//			} else {
-//				addLyricsButton?.removeFromSuperview()
-//			}
-//		}
+		if !isNew || isEdited {
+			if sheets.contains(where: { $0.hasTheme?.isHidden == true }) {
+				addLyricsButton?.removeFromSuperview()
+			} else {
+				addSheetButton?.removeFromSuperview()
+			}
+		}
 	}
 	
 	private func hasThemeSelected(_ hasTheme: Bool) {
@@ -394,16 +349,13 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	}
 	
 	private func buildSheets(fromText: String) {
-		let newCluster: Cluster?
 		if cluster == nil {
-			newCluster = CoreCluster.createEntityNOTsave()
-		} else {
-			newCluster = cluster?.tempVersion
+			cluster = VCluster()
 		}
 		
-		newCluster?.deleteDate = nil
+		cluster?.deleteDate = nil
 		if let themeId = selectedTheme?.id {
-			newCluster?.themeId = themeId
+			cluster?.themeId = themeId
 		}
 		var contentToDevide = fromText + "\n\n"
 		
@@ -412,12 +364,12 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 			let start = contentToDevide.index(contentToDevide.startIndex, offsetBy: 0)
 			let rangeSheet = start..<range.lowerBound
 			let rangeRemove = start..<range.upperBound
-			newCluster?.title = String(contentToDevide[rangeSheet])
+			cluster?.title = String(contentToDevide[rangeSheet])
 			contentToDevide.removeSubrange(rangeRemove)
 		}
 		
-		var position: Int16 = 0
-		var newSheets: [Sheet] = []
+		var position = 0
+		var newSheets: [VSheet] = []
 		// get sheets
 		while let range = contentToDevide.range(of: "\n\n") {
 			
@@ -436,7 +388,8 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 				sheetTitle = String(contentToDevide[rangeSheetTitle])
 			}
 			
-			let newSheet = CoreSheetTitleContent.createEntityNOTsave()
+			let newSheet = VSheetTitleContent()
+			newSheet.id = Int64(exactly: NSNumber(value: position + 1)) ?? 0
 			newSheet.title = sheetTitle
 			newSheet.content = sheetLyrics
 			newSheet.position = position
@@ -449,25 +402,24 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 		
 		newSheets.sort{ $0.position < $1.position }
 		
-		if let sheets = newSheets as? [SheetTitleContentEntity] {
+		if let sheets = newSheets as? [VSheetTitleContent] {
 			for tempSheet in sheets {
-				let sheet = CoreSheetTitleContent.createEntityNOTsave()
+				let sheet = VSheetTitleContent()
 				sheet.title = tempSheet.title
 				sheet.content = tempSheet.content
 				sheet.position = tempSheet.position
-				newCluster?.addToHasSheets(sheet)
+				cluster?.hasSheets.append(sheet)
 			}
 		}
 		sheets = newSheets
-		clusterTemp = newCluster
 		isEdited = true
 		updateWithAnimation()
 	}
 	
 	private func getTextFromSheets() -> String {
-		if let sheets = sheetsTemp as? [SheetTitleContentEntity], sheetsTemp.count != 0 {
+		if let sheets = sheets as? [VSheetTitleContent], sheets.count != 0 {
 			var totalString = (cluster?.title ?? "") + "\n\n"
-			let tempSheets:[SheetTitleContentEntity] = sheets.count > 0 ? sheets : cluster?.hasSheetsArray as? [SheetTitleContentEntity] ?? []
+			let tempSheets:[VSheetTitleContent] = sheets.count > 0 ? sheets : cluster?.hasSheets as? [VSheetTitleContent] ?? []
 			for (index, sheet) in tempSheets.enumerated() {
 				totalString += sheet.content ?? ""
 				if index < tempSheets.count - 1 { // add only \n\n to second last, not the last one, or it will add empty sheet
@@ -548,8 +500,8 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 			return
 		}
 		
-		let isSong = (clusterTemp?.isTypeSong ?? false) && getTextFromSheets().length > 0
-		let isCustom = sheetsTemp.contains(where: { $0.hasTheme?.isHidden == true })
+		let isSong = (cluster?.isTypeSong ?? false) && getTextFromSheets().length > 0
+		let isCustom = sheets.contains(where: { $0.hasTheme?.isHidden == true })
 
 		controller.didCreateSheet = didCreate(sheet:)
 		controller.selectedTheme = selectedTheme

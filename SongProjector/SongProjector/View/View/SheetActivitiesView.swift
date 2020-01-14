@@ -28,7 +28,7 @@ class SheetActivitiesView: SheetView {
 	@IBOutlet var containerTopConstraint: NSLayoutConstraint!
 	@IBOutlet var containerRightConstraint: NSLayoutConstraint!
 	
-	private var activities: [GoogleActivity] = []
+	private var activities: [VGoogleActivity] = []
 	
 	override func customInit() {
 		Bundle.main.loadNibNamed("SheetActivitiesView", owner: self, options: [:])
@@ -44,7 +44,7 @@ class SheetActivitiesView: SheetView {
 			addPreviewActivities()
 		} else {
 			CoreGoogleActivities.setSortDescriptor(attributeName: "startDate", ascending: true)
-			activities = CoreGoogleActivities.getEntities()
+			activities = VGoogleActivity.list()
 		}
 		
 		if let scaleFactor = scaleFactor {
@@ -83,7 +83,7 @@ class SheetActivitiesView: SheetView {
 		activities = []
 		var index: Double = 0
 		while index < 8 {
-			let activity = CoreGoogleActivities.createEntityNOTsave()
+			let activity = VGoogleActivity()
 			activity.deleteDate = NSDate()
 			activity.startDate = Date().addingTimeInterval(.days(index * 3)) as NSDate
 			activity.eventDescription = Text.ActivitySheet.previewDescription

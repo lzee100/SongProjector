@@ -20,4 +20,6 @@ struct NotificationNames {
 	static let environmentChanged = Notification.Name("environmentChanged")
 	static let didSignUpSuccessfully = Notification.Name("didSignUpSuccessfully")
 	static let didSubmitSongServiceSettings = Notification.Name("didSubmitSongServiceSettings")
+	static let applicationDidBecomeActive = Notification.Name("applicationDidBecomeActive")
+
 }

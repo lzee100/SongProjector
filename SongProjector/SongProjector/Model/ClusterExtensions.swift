@@ -63,31 +63,20 @@ extension Cluster {
 		return (hasInstruments?.count ?? 0) > 0
 	}
 	
-	public override func delete(_ save: Bool) {
-		hasSheetsArray.forEach({ $0.delete(false) })
-		moc.delete(self)
-		if save {
-			do {
-				try moc.save()
-			} catch {
-				print(error)
+	override public func delete(_ save: Bool = true, isBackground: Bool, completion: ((Error?) -> Void)) {
+		Entity.delete(entities: hasSheetsArray, save: save, isBackground: isBackground, completion: { error in
+			if let error = error {
+				completion(error)
+			} else {
+				Entity.delete(entities: hasInstrumentsArray, save: save, isBackground: isBackground, completion: { error in
+					if let error = error {
+						completion(error)
+					} else {
+						super.delete(save, isBackground: isBackground, completion: completion)
+					}
+				})
 			}
-		}
+		})
 	}
 	
-	public override func deleteBackground(_ save: Bool) {
-		hasSheetsArray.forEach({ $0.deleteBackground(false) })
-		mocBackground.delete(self)
-		if save {
-			mocBackground.performAndWait {
-				do {
-					try mocBackground.save()
-					try moc.save()
-				} catch {
-					print(error)
-				}
-			}
-		}
-	}
-
 }

@@ -14,26 +14,17 @@ let RoleFetcher: RleFetcher = {
 }()
 
 
-class RleFetcher: Requester<Role> {
+class RleFetcher: Requester<VRole> {
 	
-	override var requestReloadTime: RequesterReloadTime {
-		return .seconds
-	}
-	
-	override var requesterDependencies: [RequesterType] {
+	override var dependencies: [RequesterDependency] {
 		return [OrganizationFetcher]
 	}
-	
 	override var requesterId: String {
 		return "RoleFetcher"
 	}
 	
 	override var path: String {
 		return "roles"
-	}
-	
-	override var coreDataManager: CoreDataManager<Role> {
-		return CoreRole
 	}
 	
 	override var params: [String : Any] {
@@ -45,9 +36,10 @@ class RleFetcher: Requester<Role> {
 		return params
 	}
 	
-	func fetch(force: Bool) {
+	func fetch() {
+		guard isSuperRequesterTotalFinished else { return }
 		requestMethod = .get
-		request(force: force)
+		request(isSuperRequester: false)
 	}
 	
 	

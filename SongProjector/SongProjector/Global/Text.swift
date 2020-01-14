@@ -311,7 +311,7 @@ class Text: NSObject {
 	struct newPastorsSheet {
 		static let title = "Pastor John and Jessie Doe"
 		static let content = "Mexico city"
-		static let photoDescription = "Vierkante foto waarbij de gezichten in het midden zijn"
+		static let photoDescription = "Kies een vierkante foto waarbij de gezichten in het midden zijn."
 		
 	}
 	

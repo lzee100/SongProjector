@@ -10,11 +10,7 @@ import Foundation
 
 let ClusterFetcher = CstrFetcher()
 
-class CstrFetcher: Requester<Cluster> {
-	
-	override var requestReloadTime: RequesterReloadTime {
-		return .seconds
-	}
+class CstrFetcher: Requester<VCluster> {
 	
 	override var requesterId: String {
 		return "ClusterFetcher"
@@ -24,27 +20,26 @@ class CstrFetcher: Requester<Cluster> {
 		return "clusters"
 	}
 	
-	override var requesterDependencies: [RequesterType] {
+	override var dependencies: [RequesterDependency] {
 		return [ThemeFetcher, TagFetcher]
 	}
 	
-	override var coreDataManager: CoreDataManager<Cluster> {
-		return CoreCluster
-	}
-	
 	override var params: [String : Any] {
-		CoreCluster.setSortDescriptor(attributeName: "updatedAt", ascending: false)
-		let cluster = CoreCluster.getEntities().first
 		var params = super.params
-		if let date = cluster?.updatedAt {
-			params["updatedsince"] = GlobalDateFormatter.localToUTC(date: date as Date)
-		}
+//		if let date = VCluster.list(sortOn: "updatedAt", ascending: false).first?.updatedAt {
+//			params["updatedsince"] = GlobalDateFormatter.localToUTC(date: date as Date)
+//		}
 		return params
 	}
 	
-	func fetch(force: Bool) {
+	func fetch() {
+		guard isSuperRequesterTotalFinished else {
+			print("cluster blocked")
+			return
+			
+		}
 		requestMethod = .get
-		request(force: force)
+		request(isSuperRequester: false)
 	}
 	
 }

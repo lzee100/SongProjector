@@ -28,7 +28,7 @@ class LabelSliderCell: ChurchBeamCell, ThemeImplementation, DynamicHeightCell {
 	
 	var id = ""
 	
-	var sheetTheme: Theme?
+	var sheetTheme: VTheme?
 	var themeAttribute: ThemeAttribute?
 	var valueDidChange: ((ChurchBeamCell) -> Void)?
 	
@@ -78,7 +78,7 @@ class LabelSliderCell: ChurchBeamCell, ThemeImplementation, DynamicHeightCell {
 		}
 	}
 	
-	func apply(theme: Theme, themeAttribute: ThemeAttribute) {
+	func apply(theme: VTheme, themeAttribute: ThemeAttribute) {
 		self.sheetTheme = theme
 		self.themeAttribute = themeAttribute
 		self.descriptionTitle.text = themeAttribute.description
@@ -88,7 +88,7 @@ class LabelSliderCell: ChurchBeamCell, ThemeImplementation, DynamicHeightCell {
 	func applyValueToCell() {
 		if let theme = sheetTheme, let themeAttribute = themeAttribute {
 			switch themeAttribute {
-			case .backgroundTransparancy: set(sliderValue: theme.backgroundTransparancy * 100)
+			case .backgroundTransparancy: set(sliderValue: Float(exactly: theme.backgroundTransparancy * 100))
 			default: return
 			}
 		}
@@ -97,7 +97,7 @@ class LabelSliderCell: ChurchBeamCell, ThemeImplementation, DynamicHeightCell {
 	func applyCellValueToTheme() {
 		if let theme = sheetTheme, let themeAttribute = themeAttribute {
 			switch themeAttribute {
-			case .backgroundTransparancy: theme.backgroundTransparancy = slider.value
+			case .backgroundTransparancy: theme.backgroundTransparancy = Double(exactly: slider.value) ?? 0.0
 			default: return
 			}
 		}

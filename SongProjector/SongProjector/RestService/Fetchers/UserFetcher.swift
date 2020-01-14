@@ -12,15 +12,11 @@ import CoreData
 let UserFetcher = UerFetcher()
 
 
-class UerFetcher: Requester<User> {
+class UerFetcher: Requester<VUser> {
 	
 	private var fetchMe = false
-	
-	override var requestReloadTime: RequesterReloadTime {
-		return .seconds
-	}
-	
-	override var requesterDependencies: [RequesterType] {
+
+	override var dependencies: [RequesterDependency] {
 		return [RoleFetcher]
 	}
 	
@@ -33,7 +29,7 @@ class UerFetcher: Requester<User> {
 	}
 	
 	override var suffix: String {
-		guard let userId = CoreUser.getEntities().filter({ $0.isMe }).first?.id else {
+		guard let userId = VUser.list().first(where: { $0.isMe })?.id else {
 			return ""
 		}
 		if fetchMe {
@@ -43,19 +39,17 @@ class UerFetcher: Requester<User> {
 		return ""
 	}
 	
-	override var coreDataManager: CoreDataManager<User> {
-		return CoreUser
-	}
-	
 	func fetchMe(force: Bool) {
+		guard isSuperRequesterTotalFinished else { return }
 		fetchMe = true
 		requestMethod = .get
-		request(force: force)
+		request(isSuperRequester: false)
 	}
 	
-	func fetch(force: Bool) {
+	func fetch() {
+		guard isSuperRequesterTotalFinished else { return }
 		requestMethod = .get
-		request(force: force)
+		request(isSuperRequester: false)
 	}
 	
 	

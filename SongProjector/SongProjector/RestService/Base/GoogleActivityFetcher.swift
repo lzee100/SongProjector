@@ -108,10 +108,10 @@ class GoogleActivityFetch: NSObject, GIDSignInDelegate, GIDSignInUIDelegate {
 			return
 		}
 
-		let activities = CoreGoogleActivities.getEntities()
-		for act in activities {
-			act.delete()
-		}
+//		let activities = CoreGoogleActivities.getEntities()
+//		for act in activities {
+//			act.delete()
+//		}
 
 		if let events = response.items, !events.isEmpty {
 			for event in events {

@@ -12,7 +12,7 @@ let TagSubmitter: TgSubmitter = {
 	return TgSubmitter()
 }()
 
-class TgSubmitter: Requester<Tag> {
+class TgSubmitter: Requester<VTag> {
 	
 	
 	override var requesterId: String {
@@ -21,10 +21,6 @@ class TgSubmitter: Requester<Tag> {
 	
 	override var path: String {
 		return "tags"
-	}
-	
-	override var coreDataManager: CoreDataManager<Tag> {
-		return CoreTag
 	}
 	
 }

@@ -1,4 +1,5 @@
 var db = require('../util/db')
+const print = require('../util/print')
 
 class Organization {
     static get (orgId) {
@@ -8,7 +9,7 @@ class Organization {
             .then(getRoles)
             .then(getContractLedgers)
             .then(organization => {
-                resolve(organization)
+                resolve([organization])
             })
             .catch(err => {
                 reject(err)

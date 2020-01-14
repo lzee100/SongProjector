@@ -1,175 +1,174 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14492.1" systemVersion="18F132" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="15702" systemVersion="19B88" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Book" representedClassName=".Book" parentEntity="Entity" syncable="YES" codeGenerationType="class">
-        <attribute name="name" attributeType="String" syncable="YES"/>
-        <relationship name="hasChapters" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Chapter" inverseName="hasBook" inverseEntity="Chapter" syncable="YES"/>
+        <attribute name="name" attributeType="String"/>
+        <relationship name="hasChapters" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Chapter" inverseName="hasBook" inverseEntity="Chapter"/>
     </entity>
     <entity name="Chapter" representedClassName=".Chapter" parentEntity="Entity" syncable="YES" codeGenerationType="class">
-        <attribute name="number" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <relationship name="hasBook" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Book" inverseName="hasChapters" inverseEntity="Book" syncable="YES"/>
-        <relationship name="hasVerses" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Vers" inverseName="hasChapter" inverseEntity="Vers" syncable="YES"/>
+        <attribute name="number" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="hasBook" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Book" inverseName="hasChapters" inverseEntity="Book"/>
+        <relationship name="hasVerses" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Vers" inverseName="hasChapter" inverseEntity="Vers"/>
     </entity>
     <entity name="Cluster" representedClassName=".Cluster" parentEntity="Entity" syncable="YES">
-        <attribute name="isLoop" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="position" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="tagIds" optional="YES" attributeType="Transformable" syncable="YES"/>
-        <attribute name="themeId" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="time" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <relationship name="hasInstruments" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Instrument" inverseName="hasCluster" inverseEntity="Instrument" syncable="YES"/>
-        <relationship name="hasSheets" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Sheet" inverseName="hasCluster" inverseEntity="Sheet" syncable="YES"/>
-        <relationship name="hasTheme" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Theme" inverseName="hasClusters" inverseEntity="Theme" syncable="YES"/>
+        <attribute name="isLoop" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="position" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="tagIds" optional="YES" attributeType="Transformable"/>
+        <attribute name="themeId" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="time" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="hasInstruments" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Instrument" inverseName="hasCluster" inverseEntity="Instrument"/>
+        <relationship name="hasSheets" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Sheet" inverseName="hasCluster" inverseEntity="Sheet"/>
+        <relationship name="hasTheme" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Theme" inverseName="hasClusters" inverseEntity="Theme"/>
     </entity>
-    <entity name="Contract" representedClassName=".Contract" syncable="YES">
-        <attribute name="buttonContent" attributeType="String" syncable="YES"/>
-        <attribute name="id" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="name" attributeType="String" syncable="YES"/>
+    <entity name="Contract" representedClassName=".Contract" parentEntity="Entity" syncable="YES">
+        <attribute name="buttonContent" attributeType="String"/>
+        <attribute name="name" attributeType="String"/>
     </entity>
     <entity name="ContractLedger" representedClassName=".ContractLedger" parentEntity="Entity" syncable="YES">
-        <attribute name="contractId" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="hasApplePay" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="organizationId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="phoneNumber" attributeType="String" syncable="YES"/>
-        <attribute name="userName" attributeType="String" syncable="YES"/>
-        <relationship name="hasOrganization" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Organization" inverseName="hasContractLedgers" inverseEntity="Organization" syncable="YES"/>
+        <attribute name="contractId" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="hasApplePay" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="organizationId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="phoneNumber" attributeType="String"/>
+        <attribute name="userName" attributeType="String"/>
+        <relationship name="hasOrganization" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Organization" inverseName="hasContractLedgers" inverseEntity="Organization"/>
     </entity>
     <entity name="Entity" representedClassName=".Entity" syncable="YES">
-        <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="deleteDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="id" attributeType="Integer 64" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="isTemp" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="deleteDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" attributeType="Integer 64" usesScalarValueType="YES"/>
+        <attribute name="isTemp" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
+        <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
     </entity>
     <entity name="GoogleActivity" representedClassName=".GoogleActivity" parentEntity="Entity" syncable="YES">
-        <attribute name="endDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="eventDescription" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="startDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
-        <relationship name="hasSheetsActivities" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SheetActivitiesEntity" inverseName="hasGoogleActivity" inverseEntity="SheetActivitiesEntity" syncable="YES"/>
+        <attribute name="endDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="eventDescription" optional="YES" attributeType="String"/>
+        <attribute name="startDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="hasSheetsActivities" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SheetActivitiesEntity" inverseName="hasGoogleActivity" inverseEntity="SheetActivitiesEntity"/>
     </entity>
     <entity name="Instrument" representedClassName=".Instrument" parentEntity="Entity" syncable="YES">
-        <attribute name="isLoop" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="resourcePath" attributeType="String" syncable="YES"/>
-        <attribute name="resourcePathAWS" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="typeString" attributeType="String" defaultValueString="Piano" syncable="YES"/>
-        <relationship name="hasCluster" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Cluster" inverseName="hasInstruments" inverseEntity="Cluster" syncable="YES"/>
+        <attribute name="isLoop" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="resourcePath" attributeType="String"/>
+        <attribute name="resourcePathAWS" optional="YES" attributeType="String"/>
+        <attribute name="typeString" attributeType="String" defaultValueString="Piano"/>
+        <relationship name="hasCluster" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Cluster" inverseName="hasInstruments" inverseEntity="Cluster"/>
     </entity>
     <entity name="Organization" representedClassName=".Organization" parentEntity="Entity" syncable="YES">
-        <relationship name="hasContractLedgers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ContractLedger" inverseName="hasOrganization" inverseEntity="ContractLedger" syncable="YES"/>
-        <relationship name="hasRoles" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Role" inverseName="hasOrganization" inverseEntity="Role" syncable="YES"/>
+        <relationship name="hasContractLedgers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ContractLedger" inverseName="hasOrganization" inverseEntity="ContractLedger"/>
+        <relationship name="hasRoles" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Role" inverseName="hasOrganization" inverseEntity="Role"/>
     </entity>
     <entity name="Role" representedClassName=".Role" parentEntity="Entity" syncable="YES">
-        <attribute name="organizationId" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <relationship name="hasOrganization" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Organization" inverseName="hasRoles" inverseEntity="Organization" syncable="YES"/>
+        <attribute name="organizationId" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="hasOrganization" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Organization" inverseName="hasRoles" inverseEntity="Organization"/>
     </entity>
     <entity name="Sheet" representedClassName=".Sheet" parentEntity="Entity" syncable="YES">
-        <attribute name="isEmptySheet" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="position" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="time" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <relationship name="hasCluster" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Cluster" inverseName="hasSheets" inverseEntity="Cluster" syncable="YES"/>
-        <relationship name="hasTheme" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Theme" inverseName="hasSheets" inverseEntity="Theme" syncable="YES"/>
+        <attribute name="isEmptySheet" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="position" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="time" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="hasCluster" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Cluster" inverseName="hasSheets" inverseEntity="Cluster"/>
+        <relationship name="hasTheme" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Theme" inverseName="hasSheets" inverseEntity="Theme"/>
     </entity>
     <entity name="SheetActivitiesEntity" representedClassName=".SheetActivitiesEntity" parentEntity="Sheet" syncable="YES">
-        <relationship name="hasGoogleActivity" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="GoogleActivity" inverseName="hasSheetsActivities" inverseEntity="GoogleActivity" syncable="YES"/>
+        <relationship name="hasGoogleActivity" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="GoogleActivity" inverseName="hasSheetsActivities" inverseEntity="GoogleActivity"/>
     </entity>
     <entity name="SheetEmptyEntity" representedClassName=".SheetEmptyEntity" parentEntity="Sheet" syncable="YES"/>
     <entity name="SheetPastorsEntity" representedClassName=".SheetPastorsEntity" parentEntity="Sheet" syncable="YES">
-        <attribute name="content" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="imagePath" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="imagePathAWS" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="thumbnailPath" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="thumbnailPathAWS" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="content" optional="YES" attributeType="String"/>
+        <attribute name="imagePath" optional="YES" attributeType="String"/>
+        <attribute name="imagePathAWS" optional="YES" attributeType="String"/>
+        <attribute name="thumbnailPath" optional="YES" attributeType="String"/>
+        <attribute name="thumbnailPathAWS" optional="YES" attributeType="String"/>
     </entity>
     <entity name="SheetSplitEntity" representedClassName=".SheetSplitEntity" parentEntity="Sheet" syncable="YES">
-        <attribute name="textLeft" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="textRight" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="textLeft" optional="YES" attributeType="String"/>
+        <attribute name="textRight" optional="YES" attributeType="String"/>
     </entity>
     <entity name="SheetTitleContentEntity" representedClassName=".SheetTitleContentEntity" parentEntity="Sheet" syncable="YES">
-        <attribute name="content" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="content" optional="YES" attributeType="String"/>
     </entity>
     <entity name="SheetTitleImageEntity" representedClassName=".SheetTitleImageEntity" parentEntity="Sheet" syncable="YES">
-        <attribute name="content" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="hasTitle" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="imageBorderColor" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="imageBorderSize" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="imageContentMode" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="imageHasBorder" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="imagePath" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="imagePathAWS" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="thumbnailPath" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="thumbnailPathAWS" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="content" optional="YES" attributeType="String"/>
+        <attribute name="hasTitle" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="imageBorderColor" optional="YES" attributeType="String"/>
+        <attribute name="imageBorderSize" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="imageContentMode" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="imageHasBorder" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="imagePath" optional="YES" attributeType="String"/>
+        <attribute name="imagePathAWS" optional="YES" attributeType="String"/>
+        <attribute name="thumbnailPath" optional="YES" attributeType="String"/>
+        <attribute name="thumbnailPathAWS" optional="YES" attributeType="String"/>
     </entity>
     <entity name="SongServiceSection" representedClassName=".SongServiceSection" parentEntity="Entity" syncable="YES">
-        <attribute name="numberOfSongs" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="position" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="tagIds" optional="YES" attributeType="Transformable" syncable="YES"/>
-        <relationship name="hasSongServiceSettings" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SongServiceSettings" inverseName="hasSongServiceSections" inverseEntity="SongServiceSettings" syncable="YES"/>
-        <relationship name="hasTags" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tag" inverseName="hasSongServiceSections" inverseEntity="Tag" syncable="YES"/>
+        <attribute name="numberOfSongs" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="position" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="tagIds" optional="YES" attributeType="Transformable"/>
+        <relationship name="hasSongServiceSettings" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SongServiceSettings" inverseName="hasSongServiceSections" inverseEntity="SongServiceSettings"/>
+        <relationship name="hasTags" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tag" inverseName="hasSongServiceSections" inverseEntity="Tag"/>
     </entity>
     <entity name="SongServiceSettings" representedClassName=".SongServiceSettings" parentEntity="Entity" syncable="YES">
-        <relationship name="hasSongServiceSections" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SongServiceSection" inverseName="hasSongServiceSettings" inverseEntity="SongServiceSection" syncable="YES"/>
+        <relationship name="hasSongServiceSections" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SongServiceSection" inverseName="hasSongServiceSettings" inverseEntity="SongServiceSection"/>
     </entity>
     <entity name="Tag" representedClassName=".Tag" parentEntity="Entity" syncable="YES">
-        <attribute name="position" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <relationship name="hasSongServiceSections" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SongServiceSection" inverseName="hasTags" inverseEntity="SongServiceSection" syncable="YES"/>
+        <attribute name="position" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="hasSongServiceSections" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SongServiceSection" inverseName="hasTags" inverseEntity="SongServiceSection"/>
     </entity>
     <entity name="TagId" representedClassName=".TagId" syncable="YES" codeGenerationType="class">
-        <attribute name="tagId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <relationship name="hasCluster" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Cluster" syncable="YES"/>
+        <attribute name="tagId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="hasCluster" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Cluster"/>
     </entity>
     <entity name="Theme" representedClassName=".Theme" parentEntity="Entity" syncable="YES">
-        <attribute name="allHaveTitle" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="backgroundColor" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="backgroundTransparancyNumber" attributeType="Float" defaultValueString="1" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="contentAlignmentNumber" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="contentBorderColorHex" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="contentBorderSize" optional="YES" attributeType="Float" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="contentFontName" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="contentTextColorHex" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="contentTextSize" attributeType="Float" defaultValueString="10" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="displayTime" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="hasEmptySheet" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="imagePath" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="imagePathAWS" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="imagePathThumbnail" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="imagePathThumbnailAWS" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="isBackgroundImageDeleted" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="isContentBold" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="isContentItalic" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="isContentUnderlined" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="isEmptySheetFirst" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="isHidden" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="isTitleBold" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="isTitleItalic" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="isTitleUnderlined" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="position" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="titleAlignmentNumber" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="titleBackgroundColor" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="titleBorderColorHex" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="titleBorderSize" attributeType="Float" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="titleFontName" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="titleTextColorHex" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="titleTextSize" attributeType="Float" defaultValueString="14" usesScalarValueType="YES" syncable="YES"/>
-        <relationship name="hasClusters" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Cluster" inverseName="hasTheme" inverseEntity="Cluster" syncable="YES"/>
-        <relationship name="hasSheets" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Sheet" inverseName="hasTheme" inverseEntity="Sheet" syncable="YES"/>
+        <attribute name="allHaveTitle" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="backgroundColor" optional="YES" attributeType="String"/>
+        <attribute name="backgroundTransparancyNumber" attributeType="Double" defaultValueString="1" usesScalarValueType="YES"/>
+        <attribute name="contentAlignmentNumber" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="contentBorderColorHex" optional="YES" attributeType="String"/>
+        <attribute name="contentBorderSize" optional="YES" attributeType="Float" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="contentFontName" optional="YES" attributeType="String"/>
+        <attribute name="contentTextColorHex" optional="YES" attributeType="String"/>
+        <attribute name="contentTextSize" attributeType="Float" defaultValueString="10" usesScalarValueType="YES"/>
+        <attribute name="displayTime" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="hasEmptySheet" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="imagePath" optional="YES" attributeType="String"/>
+        <attribute name="imagePathAWS" optional="YES" attributeType="String"/>
+        <attribute name="imagePathThumbnail" optional="YES" attributeType="String"/>
+        <attribute name="imagePathThumbnailAWS" optional="YES" attributeType="String"/>
+        <attribute name="isBackgroundImageDeleted" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="isContentBold" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="isContentItalic" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="isContentUnderlined" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="isEmptySheetFirst" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isHidden" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="isTitleBold" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="isTitleItalic" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="isTitleUnderlined" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="position" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="titleAlignmentNumber" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="titleBackgroundColor" optional="YES" attributeType="String"/>
+        <attribute name="titleBorderColorHex" optional="YES" attributeType="String"/>
+        <attribute name="titleBorderSize" attributeType="Float" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="titleFontName" optional="YES" attributeType="String"/>
+        <attribute name="titleTextColorHex" optional="YES" attributeType="String"/>
+        <attribute name="titleTextSize" attributeType="Float" defaultValueString="14" usesScalarValueType="YES"/>
+        <relationship name="hasClusters" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Cluster" inverseName="hasTheme" inverseEntity="Cluster"/>
+        <relationship name="hasSheets" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Sheet" inverseName="hasTheme" inverseEntity="Sheet"/>
     </entity>
     <entity name="User" representedClassName=".User" parentEntity="Entity" syncable="YES">
-        <attribute name="appInstallToken" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="firstName" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="inviteToken" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="lastName" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="roleId" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="userToken" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="appInstallToken" optional="YES" attributeType="String"/>
+        <attribute name="firstName" optional="YES" attributeType="String"/>
+        <attribute name="inviteToken" optional="YES" attributeType="String"/>
+        <attribute name="lastName" optional="YES" attributeType="String"/>
+        <attribute name="roleId" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="userToken" optional="YES" attributeType="String"/>
     </entity>
     <entity name="Vers" representedClassName=".Vers" parentEntity="Entity" syncable="YES" codeGenerationType="class">
-        <attribute name="number" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="text" attributeType="String" syncable="YES"/>
-        <relationship name="hasChapter" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Chapter" inverseName="hasVerses" inverseEntity="Chapter" syncable="YES"/>
+        <attribute name="number" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="text" attributeType="String"/>
+        <relationship name="hasChapter" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Chapter" inverseName="hasVerses" inverseEntity="Chapter"/>
     </entity>
     <elements>
         <element name="Book" positionX="-36" positionY="135" width="128" height="75"/>
         <element name="Chapter" positionX="-27" positionY="144" width="128" height="90"/>
         <element name="Cluster" positionX="-54" positionY="-9" width="128" height="165"/>
-        <element name="Contract" positionX="-36" positionY="135" width="128" height="90"/>
+        <element name="Contract" positionX="-36" positionY="135" width="128" height="73"/>
         <element name="ContractLedger" positionX="-18" positionY="153" width="128" height="135"/>
         <element name="Entity" positionX="-63" positionY="-18" width="128" height="135"/>
         <element name="GoogleActivity" positionX="-36" positionY="135" width="128" height="105"/>
@@ -187,7 +186,7 @@
         <element name="SongServiceSettings" positionX="-9" positionY="153" width="128" height="60"/>
         <element name="Tag" positionX="-27" positionY="135" width="128" height="75"/>
         <element name="TagId" positionX="-18" positionY="144" width="128" height="75"/>
-        <element name="Theme" positionX="-36" positionY="9" width="128" height="555"/>
+        <element name="Theme" positionX="-36" positionY="9" width="128" height="553"/>
         <element name="User" positionX="-36" positionY="135" width="128" height="135"/>
         <element name="Vers" positionX="-18" positionY="153" width="128" height="90"/>
     </elements>

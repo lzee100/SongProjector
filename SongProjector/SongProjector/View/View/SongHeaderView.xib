@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -13,11 +13,13 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SongHeaderView" customModule="ChurchBeam" customModuleProvider="target">
             <connections>
                 <outlet property="headerButton" destination="k0r-Lc-vb0" id="Rlp-FA-7QM"/>
+                <outlet property="iconCenterConstraint" destination="PwM-x1-hGx" id="T4j-vZ-HHr"/>
                 <outlet property="iconImageView" destination="zMC-TK-0B8" id="pOv-NK-CAf"/>
                 <outlet property="mixerAnimationView" destination="0bB-fX-akj" id="hj7-MF-3gW"/>
                 <outlet property="pianoButton" destination="6mo-wN-G23" id="sRm-Qa-NbW"/>
                 <outlet property="pianoCircleView" destination="edy-rN-WaN" id="Hc0-T5-7ka"/>
                 <outlet property="pianoIconView" destination="VdZ-Kk-F0b" id="dFS-vE-nFJ"/>
+                <outlet property="sectionLabel" destination="9s8-Mp-NHv" id="yYb-Ta-83U"/>
                 <outlet property="songHeaderView" destination="iN0-l3-epB" id="Udt-c1-hSY"/>
                 <outlet property="titleLabel" destination="WjX-bo-l1b" id="LOD-HX-U5N"/>
             </connections>
@@ -28,7 +30,7 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WjX-bo-l1b">
-                    <rect key="frame" x="55" y="0.0" width="237" height="60"/>
+                    <rect key="frame" x="55" y="20" width="237" height="20.5"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
@@ -71,7 +73,6 @@
                         <constraint firstAttribute="width" secondItem="edy-rN-WaN" secondAttribute="height" id="BhW-XU-Ba2"/>
                         <constraint firstItem="0bB-fX-akj" firstAttribute="centerX" secondItem="edy-rN-WaN" secondAttribute="centerX" id="P9L-hS-qmT"/>
                         <constraint firstItem="0bB-fX-akj" firstAttribute="centerY" secondItem="edy-rN-WaN" secondAttribute="centerY" id="aRD-Y3-ARd"/>
-                        <constraint firstItem="VdZ-Kk-F0b" firstAttribute="centerY" secondItem="edy-rN-WaN" secondAttribute="centerY" id="zrx-oN-3pw"/>
                     </constraints>
                 </view>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6mo-wN-G23">
@@ -80,30 +81,40 @@
                         <action selector="pianoPressed:" destination="-1" eventType="touchUpInside" id="u8x-Wg-chO"/>
                     </connections>
                 </button>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9s8-Mp-NHv">
+                    <rect key="frame" x="20" y="8" width="335" height="1.5"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
+                <constraint firstItem="zMC-TK-0B8" firstAttribute="top" secondItem="9s8-Mp-NHv" secondAttribute="bottom" constant="8" id="3bL-m3-kMU"/>
                 <constraint firstItem="edy-rN-WaN" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="5" id="7Xf-ao-6N4"/>
+                <constraint firstItem="9s8-Mp-NHv" firstAttribute="trailing" secondItem="edy-rN-WaN" secondAttribute="trailing" id="Fhe-5e-J6z"/>
                 <constraint firstAttribute="trailing" secondItem="edy-rN-WaN" secondAttribute="trailing" constant="20" id="GTf-6V-gXE"/>
                 <constraint firstItem="k0r-Lc-vb0" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="MIN-fG-eUU"/>
+                <constraint firstItem="9s8-Mp-NHv" firstAttribute="leading" secondItem="zMC-TK-0B8" secondAttribute="leading" id="MRG-Cm-pm0"/>
                 <constraint firstItem="k0r-Lc-vb0" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="OFG-B2-q9S"/>
                 <constraint firstItem="6mo-wN-G23" firstAttribute="leading" secondItem="edy-rN-WaN" secondAttribute="leading" constant="-5" id="PtX-XG-loQ"/>
                 <constraint firstItem="zMC-TK-0B8" firstAttribute="centerY" secondItem="vUN-kp-3ea" secondAttribute="centerY" id="PwM-x1-hGx"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="6mo-wN-G23" secondAttribute="trailing" id="SeT-ZB-1pO"/>
+                <constraint firstItem="WjX-bo-l1b" firstAttribute="centerY" secondItem="zMC-TK-0B8" secondAttribute="centerY" id="WKn-Ba-y0v"/>
                 <constraint firstItem="6mo-wN-G23" firstAttribute="leading" secondItem="WjX-bo-l1b" secondAttribute="trailing" constant="8" id="YGF-C1-fZe"/>
                 <constraint firstItem="WjX-bo-l1b" firstAttribute="leading" secondItem="zMC-TK-0B8" secondAttribute="trailing" constant="10" id="Zvi-tb-kv5"/>
                 <constraint firstItem="6mo-wN-G23" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="gQz-3z-PxJ"/>
-                <constraint firstItem="WjX-bo-l1b" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="jJu-1k-ODT"/>
                 <constraint firstItem="k0r-Lc-vb0" firstAttribute="bottom" secondItem="vUN-kp-3ea" secondAttribute="bottom" id="jv8-3b-YIe"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="k0r-Lc-vb0" secondAttribute="trailing" id="lY2-2G-qez"/>
-                <constraint firstAttribute="bottom" secondItem="WjX-bo-l1b" secondAttribute="bottom" id="mFG-9G-NQc"/>
+                <constraint firstItem="VdZ-Kk-F0b" firstAttribute="centerY" secondItem="zMC-TK-0B8" secondAttribute="centerY" id="sVc-P2-990"/>
                 <constraint firstAttribute="bottom" secondItem="edy-rN-WaN" secondAttribute="bottom" constant="5" id="sh8-Dk-uQF"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="6mo-wN-G23" secondAttribute="bottom" id="t76-YO-caa"/>
                 <constraint firstItem="zMC-TK-0B8" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="20" id="xOg-gH-WrV"/>
+                <constraint firstItem="9s8-Mp-NHv" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="8" id="zi9-jH-ABL"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
-            <point key="canvasLocation" x="92.5" y="54"/>
+            <point key="canvasLocation" x="92" y="53.973013493253376"/>
         </view>
     </objects>
     <resources>

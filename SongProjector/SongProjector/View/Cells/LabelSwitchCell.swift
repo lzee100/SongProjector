@@ -16,9 +16,9 @@ class LabelSwitchCell: ChurchBeamCell, ThemeImplementation, SheetImplementation 
 	
 	
 	var id = ""
-	var sheetTheme: Theme?
+	var sheetTheme: VTheme?
 	var themeAttribute: ThemeAttribute?
-	var sheet: Sheet?
+	var sheet: VSheet?
 	var sheetAttribute: SheetAttribute?
 	var valueDidChange: ((ChurchBeamCell) -> Void)?
 	
@@ -45,14 +45,14 @@ class LabelSwitchCell: ChurchBeamCell, ThemeImplementation, SheetImplementation 
 		return view
 	}
 	
-	func apply(theme: Theme, themeAttribute: ThemeAttribute) {
+	func apply(theme: VTheme, themeAttribute: ThemeAttribute) {
 		sheetTheme = theme
 		self.themeAttribute = themeAttribute
 		descriptionLabel.text = themeAttribute.description
 		applyValueToCell()
 	}
 	
-	func apply(sheet: Sheet, sheetAttribute: SheetAttribute) {
+	func apply(sheet: VSheet, sheetAttribute: SheetAttribute) {
 		self.sheet = sheet
 		self.sheetAttribute = sheetAttribute
 		descriptionLabel.text = sheetAttribute.description

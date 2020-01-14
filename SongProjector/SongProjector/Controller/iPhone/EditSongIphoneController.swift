@@ -8,8 +8,9 @@
 
 
 import UIKit
+import CoreData
 
-class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+class EditSongIphoneController: ChurchBeamViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
 	
 	// MARK: - Types
 	struct Constants {
@@ -29,12 +30,12 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 	
 	// MARK: - Properties
 	
-	var cluster: Cluster?
-	var sheets: [SheetTitleContentEntity] = []
+	var cluster: VCluster?
+	var sheets: [VSheetTitleContent] = []
 
 	private var isSetup = true
 	private var clusterTitle: String?
-	private var themes: [Theme] = []
+	private var themes: [VTheme] = []
 	private var visibleCells: [IndexPath] = []
 	private var delaySheetAimation = 0.0
 	private var isFirstTime = true {
@@ -43,7 +44,7 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 	private var multiplier: CGFloat = 4/3
 	private var sheetSize = CGSize(width: 375, height: 281)
 	private var sheetPreviewView = SheetView()
-	private var selectedTheme: Theme? {
+	private var selectedTheme: VTheme? {
 		didSet { update() }
 	}
 	
@@ -69,7 +70,7 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 	
 	func numberOfSections(in collectionView: UICollectionView) -> Int {
 		if collectionView == collectionViewSheets {
-			return sheets.count > 0 ? sheets.count : cluster?.hasSheets?.count ?? 0
+			return sheets.count > 0 ? sheets.count : cluster?.hasSheets.count ?? 0
 		} else {
 			return 1
 		}
@@ -90,7 +91,7 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 			
 			let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.sheetCollectionCell, for: indexPath)
 			if let collectionCell = collectionCell as? SheetCollectionCell {
-				if let sheet = sheets.count > 0 ? sheets[indexPath.section] : cluster?.hasSheetsArray[indexPath.section] as? SheetTitleContentEntity {
+				if let sheet = sheets.count > 0 ? sheets[indexPath.section] : cluster?.hasSheets[indexPath.section] as? VSheetTitleContent {
 					collectionCell.setupWith(cluster: cluster, sheet: sheet, theme: selectedTheme ?? cluster?.hasTheme, didDeleteSheet: nil, isDeleteEnabled: true)
 				}
 				
@@ -154,7 +155,7 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 	// MARK: - Private Functions
 	
 	private func setup() {
-		themes = CoreTheme.getEntities()
+		themes = VTheme.list(sortOn: "position", ascending: true)
 		
 		view.backgroundColor = themeWhiteBlackBackground
 		textView.backgroundColor = themeWhiteBlackBackground
@@ -234,7 +235,7 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 			contentToDevide.removeSubrange(rangeRemove)
 		}
 		
-		var position: Int16 = 0
+		var position = 0
 		// get sheets
 		while let range = contentToDevide.range(of: "\n\n") {
 			
@@ -253,7 +254,7 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 				sheetTitle = String(contentToDevide[rangeSheetTitle])
 			}
 			
-			let newSheet = CoreSheetTitleContent.createEntityNOTsave()
+			let newSheet = VSheetTitleContent()
 			newSheet.title = sheetTitle
 			newSheet.content = sheetLyrics
 			newSheet.position = position
@@ -305,13 +306,14 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 	
 	private func databaseDidChange(_ notification: Notification) {
 		selectedTheme = nil
-		themes = CoreTheme.getEntities()
+		themes = VTheme.list(sortOn: "position", ascending: true)
 		update()
 	}
 	
 	private func getTextFromSheets() -> String {
 		var totalString = (cluster?.title ?? "") + "\n\n"
-		let tempSheets:[SheetTitleContentEntity] = sheets.count > 0 ? sheets : cluster?.hasSheetsArray as? [SheetTitleContentEntity] ?? []
+		let currentSheets = cluster?.hasSheets as? [VSheetTitleContent] ?? []
+		let tempSheets:[VSheetTitleContent] = sheets.count > 0 ? sheets : currentSheets
 		for (index, sheet) in tempSheets.enumerated() {
 			totalString += sheet.content ?? ""
 			if index < tempSheets.count - 1 { // add only \n\n to second last, not the last one, or it will add empty sheet
@@ -331,33 +333,19 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 	@IBAction func save(_ sender: UIBarButtonItem) {
 		if let cluster = cluster {
 			cluster.title = clusterTitle ?? cluster.title
-			if CoreCluster.saveContext() { print("song saved") } else { print("song not saved") }
 			
-			if sheets.count > 0 { // if made changes to text // else made changes to theme
-				
-				if let sheets = cluster.hasSheets as? Set<Sheet> {
-					sheets.forEach({ $0.delete(false) })
-				}
-				
-				for tempSheet in sheets {
-					let sheet = CoreSheetTitleContent.createEntity()
-					sheet.title = tempSheet.title
-					sheet.content = tempSheet.content
-					sheet.position = tempSheet.position
-					sheet.hasCluster = cluster
-					cluster.addToHasSheets(sheet)
-				}
-				
-				if CoreSheet.saveContext() { print("sheets saved") } else { print("sheets not saved") }
-				
-			}
 			if let themeId = selectedTheme?.id {
 				cluster.themeId = themeId
 			}
-			if CoreTheme.saveContext() { print("theme saved") } else { print("theme not saved") }
-			
-			//dismiss
-			dismiss(animated: true)
+			NSManagedObjectContext.saveForeground(vEntity: cluster, success: {
+				Queues.main.async {
+					self.dismiss(animated: true)
+				}
+			}) { (error) in
+				Queues.main.async {
+					self.show(message: error.localizedDescription)
+				}
+			}
 		}
 	}
 	
@@ -381,7 +369,7 @@ class EditSongIphoneController: UIViewController, UICollectionViewDataSource, UI
 	
 	@objc func keyboardWillShow(notification:NSNotification){
 		
-		var userInfo = notification.userInfo!
+		let userInfo = notification.userInfo!
 		var keyboardFrame:CGRect = (userInfo[UIKeyboardFrameBeginUserInfoKey] as! NSValue).cgRectValue
 		keyboardFrame = self.view.convert(keyboardFrame, from: nil)
 		

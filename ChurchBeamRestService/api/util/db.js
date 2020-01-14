@@ -1,14 +1,19 @@
-var db = module.exports = require('mysql').createConnection({
+const mysql = require('mysql');
+
+const db = mysql.createConnection({
     host    : 'localhost',
     user    : 'root',
-    password: 'Leovanderzee1986',
+    password: 'leovanderzee1986',
     database: 'localhostchurchbeam',
     timezone: 'UTC'
 })
 
 db.connect((err) => {
     if (err) {
+        console.error(err);
         throw err
     }
-    console.log('MySql connected...')
+    console.log('MySql connected...' )
 })
+
+module.exports = db; 

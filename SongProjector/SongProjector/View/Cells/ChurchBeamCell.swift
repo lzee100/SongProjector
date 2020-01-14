@@ -16,23 +16,23 @@ protocol DynamicHeightCell {
 
 protocol ThemeImplementation {
 	
-	var sheetTheme: Theme? { get set }
+	var sheetTheme: VTheme? { get set }
 	var themeAttribute: ThemeAttribute? { get set }
 	var valueDidChange: ((ChurchBeamCell) -> Void)? { get set }
 	
 	func set(value: Any?)
-	func apply(theme: Theme, themeAttribute: ThemeAttribute)
+	func apply(theme: VTheme, themeAttribute: ThemeAttribute)
 	func applyValueToCell()
-	func applyCellValueToTheme()
+	func applyCellValueToTheme() throws
 	
 }
 
 protocol SheetImplementation {
-	var sheet: Sheet? { get set }
+	var sheet: VSheet? { get set }
 	var sheetAttribute: SheetAttribute? { get set }
 	var valueDidChange: ((ChurchBeamCell) -> Void)? { get set }
 	
-	func apply(sheet: Sheet, sheetAttribute: SheetAttribute)
+	func apply(sheet: VSheet, sheetAttribute: SheetAttribute)
 }
 
 class ChurchBeamCell: UITableViewCell {

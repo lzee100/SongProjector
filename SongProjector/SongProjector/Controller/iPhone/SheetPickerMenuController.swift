@@ -13,10 +13,10 @@ class SheetPickerMenuController: UITableViewController, NewOrEditIphoneControlle
 		
 	@IBOutlet weak var cancelButton: UIBarButtonItem?
 	
-	var didCreateSheet: ((Sheet) -> Void)?
+	var didCreateSheet: ((VSheet) -> Void)?
 	var bibleStudyGeneratorIphoneDelegate: BibleStudyGeneratorIphoneDelegate?
 	var bibleStudyGeneratorDelegate: BibleStudyGeneratorDelegate?
-	var selectedTheme: Theme?
+	var selectedTheme: VTheme?
 	var delegate: NewOrEditIphoneControllerDelegate?
 	var lyricsControllerDelegate: LyricsControllerDelegate?
 	var text: String?
@@ -94,8 +94,8 @@ class SheetPickerMenuController: UITableViewController, NewOrEditIphoneControlle
 			case .SheetTitleContent: return Text.SheetsMenu.sheetTitleText
 			case .SheetTitleImage: return Text.SheetsMenu.sheetTitleImage
 			case .SheetPastors: return Text.SheetsMenu.sheetPastors
-			case .SheetEmpty: return Text.SheetsMenu.sheetSplit
-			case .SheetSplit: return Text.SheetsMenu.sheetEmpty
+			case .SheetEmpty: return Text.SheetsMenu.sheetEmpty
+			case .SheetSplit: return Text.SheetsMenu.sheetSplit
 			case .SheetActivities: return Text.SheetsMenu.sheetActivity
 			case .bible: return "Bible study generator sdfksldfj"
 			}
@@ -165,16 +165,16 @@ class SheetPickerMenuController: UITableViewController, NewOrEditIphoneControlle
     }
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		let sheet: Sheet?
+		let sheet: VSheet?
 		var isBible = false
 		switch Row.for(indexPath, mode: mode) {
 		case .song: sheet = nil
-		case .SheetTitleContent: sheet = CoreSheetTitleContent.createEntityNOTsave()
-		case .SheetTitleImage: sheet = CoreSheetTitleImage.createEntityNOTsave()
-		case .SheetPastors: sheet = CoreSheetPastors.createEntityNOTsave()
-		case .SheetSplit: sheet = CoreSheetSplit.createEntityNOTsave()
-		case .SheetEmpty: sheet = CoreSheetEmptySheet.createEntityNOTsave()
-		case .SheetActivities: sheet = CoreSheetActivities.createEntityNOTsave()
+		case .SheetTitleContent: sheet = VSheetTitleContent()
+		case .SheetTitleImage: sheet = VSheetTitleImage()
+		case .SheetPastors: sheet = VSheetPastors()
+		case .SheetSplit: sheet = VSheetSplit()
+		case .SheetEmpty: sheet = VSheetEmpty()
+		case .SheetActivities: sheet = VSheetActivities()
 		case .bible: sheet = nil
 			isBible = true
 		}
@@ -218,7 +218,7 @@ class SheetPickerMenuController: UITableViewController, NewOrEditIphoneControlle
 	
 	// MARK: - NewOrEditIphoneControllerDelegate Functions
 	
-	func didCreate(sheet: Sheet) {
+	func didCreate(sheet: VSheet) {
 		
 	}
 	

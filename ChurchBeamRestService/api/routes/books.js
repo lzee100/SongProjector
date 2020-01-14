@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 var db = require('../util/db');
-
+var print = require('../util/print');
 
 // GET — retrieve a particular resource’s object or list all objects
 // POST — create a new resource’s object

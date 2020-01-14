@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import UserNotifications
 
 // authentication proces
 
@@ -18,8 +19,16 @@ import UIKit
 
 class SplashScreen: ChurchBeamViewController {
 	
+	override var requesterId: String {
+		return "SplashScreen"
+	}
+	
+	override var requesters: [RequesterType] {
+		return [InitSubmitter, UserFetcher]
+	}
+	
 	private var isRegistered: Bool {
-		return CoreUser.getEntities().first != nil
+		return VUser.list().first != nil
 	}
 	
 	private var token: UserTokenAndAppInstallToken {
@@ -28,31 +37,9 @@ class SplashScreen: ChurchBeamViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+		
+		NotificationCenter.default.addObserver(self, selector: #selector(checkAccountStatus), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
     }
-	
-	override func viewWillAppear(_ animated: Bool) {
-		super.viewWillAppear(animated)
-		InitSubmitter.addObserver(self)
-		UserFetcher.addObserver(self)
-		OrganizationFetcher.addObserver(self)
-	}
-	
-	override func viewDidAppear(_ animated: Bool) {
-		super.viewDidAppear(animated)
-		if isRegistered {
-			UserFetcher.fetchMe(force: true)
-		} else {
-			fetchIcloudId()
-		}
-	}
-	
-	override func viewWillDisappear(_ animated: Bool) {
-		super.viewWillDisappear(animated)
-		InitSubmitter.removeObserver(self)
-		UserFetcher.removeObserver(self)
-		OrganizationFetcher.removeObserver(self)
-
-	}
 	
 	private func fetchIcloudId() {
 		let fetchIcloudIdOperation = FetchIdOperation()
@@ -76,10 +63,23 @@ class SplashScreen: ChurchBeamViewController {
 		Operation.Queue.addOperations(operations, waitUntilFinished: true)
 	}
 	
+	@objc func checkAccountStatus(){
+		let center = UNUserNotificationCenter.current()
+		center.requestAuthorization(options: [.alert, .sound])
+		{ (granted, error) in
+			if self.isRegistered {
+				UserFetcher.fetchMe(force: true)
+			} else {
+				self.fetchIcloudId()
+			}
+		}
+	}
+	
 	func showIntro() {
 		let introNav = Storyboard.Intro.instantiateViewController(withIdentifier: "IntroPageViewContainerNav")
 		let controller = introNav.unwrap() as? IntroPageViewContainer
 		controller?.setup(controllers: IntroPageViewContainer.introControllers())
+		introNav.modalPresentationStyle = .fullScreen
 		self.present(introNav, animated: true, completion: nil)
 	}
 	
@@ -88,10 +88,10 @@ class SplashScreen: ChurchBeamViewController {
 			self.hideLoader()
 			switch response {
 			case .error(_, _):
-				self.show(error: response, time: 4)
+				self.show(error: response)
 			case .OK(_):
 				Queues.main.async {
-					if let users = result as? [User], requesterID == UserFetcher.requesterId {
+					if let users = result as? [VUser], requesterID == UserFetcher.requesterId {
 						if users.first?.appInstallToken == self.token.appInstallToken {
 							self.performSegue(withIdentifier: "showApp", sender: self)
 						} else {
@@ -106,7 +106,7 @@ class SplashScreen: ChurchBeamViewController {
 		}
 	}
 	
-	override func show(error: ResponseType, time: TimeInterval) {
+	override func show(error: ResponseType) {
 		switch error {
 		case .error(let response, _):
 			switch response?.statusCode {
@@ -119,7 +119,11 @@ class SplashScreen: ChurchBeamViewController {
 					self.showReInstallationPopUp()
 					self.deleteAllData()
 				}
-			default: super.show(error: error, time: time)
+			default:
+				if isRegistered, VUser.list().first?.appInstallToken == self.token.appInstallToken {
+					self.performSegue(withIdentifier: "showApp", sender: self)
+				}
+				super.show(error: error)
 			}
 		default:
 			return
@@ -127,15 +131,16 @@ class SplashScreen: ChurchBeamViewController {
 	}
 	
 	private func deleteAllData() {
-		let entities = CoreEntity.getEntities()
-		entities.forEach({ $0.delete(false) })
-		moc.performAndWait {
-			do {
-				try moc.save()
-			} catch {
-				print(error)
+		let entities =  CoreEntity.getEntities()
+		Entity.delete(entities: entities, save: false, isBackground: false, completion: { error in
+			moc.performAndWait {
+				do {
+					try moc.save()
+				} catch {
+					print(error)
+				}
 			}
-		}
+		})
 	}
 	
 	private func showReInstallationPopUp() {

@@ -113,7 +113,7 @@ enum Environment: Int {
 	var endpoint: String {
 		switch self {
 		case .localhost:
-			return "http://127.0.0.1:3000/"
+			return "http://127.0.0.1:8080/"
 		case .dev:
 			return "http://127.0.0.1:12808/134b7159-53b3-4eac-b8fc-cc557769bfa4/"
 		case .production:

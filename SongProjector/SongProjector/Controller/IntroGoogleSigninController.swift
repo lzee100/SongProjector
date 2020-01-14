@@ -16,7 +16,7 @@ var signInContractSelection: SgnInContractSelection = {
 
 
 class SgnInContractSelection: NSManagedObject {
-	var contract: Contract?
+	var contract: VContract?
 }
 
 

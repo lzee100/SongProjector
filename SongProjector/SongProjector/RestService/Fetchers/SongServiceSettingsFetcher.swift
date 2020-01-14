@@ -13,11 +13,7 @@ let SongServiceSettingsFetcher: SngServiceSettingsFetcher = {
 }()
 
 
-class SngServiceSettingsFetcher: Requester<SongServiceSettings> {
-	
-	override var requestReloadTime: RequesterReloadTime {
-		return .seconds
-	}
+class SngServiceSettingsFetcher: Requester<VSongServiceSettings> {
 	
 	override var requesterId: String {
 		return "SongServiceSettingsFetcher"
@@ -27,26 +23,18 @@ class SngServiceSettingsFetcher: Requester<SongServiceSettings> {
 		return "songservicesettings"
 	}
 	
-	override var coreDataManager: CoreDataManager<SongServiceSettings> {
-		return CoreSongServiceSettings
-	}
-	
 	override var params: [String : Any] {
-		coreDataManager.setSortDescriptor(attributeName: "updatedAt", ascending: false)
-		let songservicesettings = coreDataManager.getEntities().first
 		var params = super.params
-//		if let date = songservicesettings?.updatedAt {
-//			params["updatedsince"] = GlobalDateFormatter.localToUTC(date: date as Date)
-//		}
-		if let id = songservicesettings?.id {
+		if let id = VSongServiceSettings.list(sortOn: "updatedAt", ascending: false).first?.id {
 			params["songServiceId"] = id
 		}
 		return params
 	}
 	
-	func fetch(force: Bool) {
+	func fetch() {
+		guard isSuperRequesterTotalFinished else { return }
 		requestMethod = .get
-		request(force: force)
+		request(isSuperRequester: false)
 	}
 	
 	

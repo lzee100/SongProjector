@@ -17,10 +17,13 @@ class TagsController: ChurchBeamViewController, UITableViewDataSource, UITableVi
 	override var requesterId: String {
 		return "TagsController"
 	}
+	override var requesters: [RequesterType] {
+		return [TagFetcher, TagSubmitter]
+	}
 	
 	// MARK: - Private  Properties
 
-	private var tags: [Tag] = []
+	private var tags: [VTag] = []
 	private var editingInfo: (RequestMethod, IndexPath?)?
 
 	
@@ -44,18 +47,10 @@ class TagsController: ChurchBeamViewController, UITableViewDataSource, UITableVi
 	
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
-		TagFetcher.addObserver(self)
-		TagSubmitter.addObserver(self)
 		moc.reset()
 		mocBackground.reset()
 		tableView.setEditing(false, animated: false)
-		TagFetcher.fetch(force: false)
-	}
-	
-	override func viewWillDisappear(_ animated: Bool) {
-		super.viewWillDisappear(animated)
-		TagFetcher.removeObserver(self)
-		TagSubmitter.removeObserver(self)
+		TagFetcher.fetch()
 	}
 	
 	
@@ -107,20 +102,19 @@ class TagsController: ChurchBeamViewController, UITableViewDataSource, UITableVi
 			switch response {
 			case .error(_, _): super.show(error: response)
 			case .OK(_):
-				CoreTag.setSortDescriptor(attributeName: "position", ascending: true)
 				if requesterID == TagSubmitter.requesterId, let editingInfo = self.editingInfo {
 					if editingInfo.0 == .delete, let indexPath = editingInfo.1 {
 						self.tags.remove(at: indexPath.row)
 						self.tableView.deleteRows(at: [indexPath], with: .left)
 					} else if editingInfo.0 == .put, let indexPath = editingInfo.1 {
-						self.tags = CoreTag.getEntities()
+						self.tags = VTag.list(sortOn: "position", ascending: true)
 						self.tableView.reloadRows(at: [indexPath], with: .fade)
 					} else {
-						self.tags = CoreTag.getEntities()
+						self.tags = VTag.list(sortOn: "position", ascending: true)
 						self.tableView.reloadData()
 					}
 				} else {
-					self.tags = CoreTag.getEntities()
+					self.tags = VTag.list(sortOn: "position", ascending: true)
 					self.tableView.reloadData()
 				}
 			}
@@ -132,7 +126,7 @@ class TagsController: ChurchBeamViewController, UITableViewDataSource, UITableVi
 	// MARK: - Private functions
 	
 	
-	private func showEditTag(tag: Tag, indexPath: IndexPath) {
+	private func showEditTag(tag: VTag, indexPath: IndexPath) {
 		let name = tag.title
 		let controller = UIAlertController(title: "Nieuwe tag", message: nil, preferredStyle: .alert)
 		controller.addTextField { (textField) in
@@ -190,7 +184,7 @@ class TagsController: ChurchBeamViewController, UITableViewDataSource, UITableVi
 		}
 		controller.addAction(UIAlertAction(title: Text.Actions.save, style: .default, handler: { (_) in
 			if let name = controller.textFields?.first?.text {
-				let tag = CoreTag.createEntityNOTsave()
+				let tag = VTag()
 				tag.title = name
 				TagSubmitter.submit([tag], requestMethod: .post)
 			}

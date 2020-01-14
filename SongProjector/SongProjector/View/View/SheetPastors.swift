@@ -136,7 +136,7 @@ class SheetPastors: SheetView {
 	}
 	
 	override func updateTitle() {
-		let sheet = self.sheet as! SheetPastorsEntity
+		let sheet = self.sheet as! VSheetPastors
 		if let title = sheet.title {
 			if let theme = sheetTheme {
 				titleLabel.attributedText = NSAttributedString(string: title, attributes: theme.getTitleAttributes(scaleFactor ?? 0))
@@ -150,7 +150,7 @@ class SheetPastors: SheetView {
 	}
 	
 	override func updateContent() {
-		let sheet = self.sheet as! SheetPastorsEntity
+		let sheet = self.sheet as! VSheetPastors
 		if let content = sheet.content {
 			if let theme = sheetTheme {
 				descriptionLabel.attributedText = NSAttributedString(string: content, attributes: theme.getLyricsAttributes(scaleFactor ?? 0))
@@ -204,7 +204,7 @@ class SheetPastors: SheetView {
 	}
 	
 	override func updateSheetImage() {
-		if let sheet = sheet as? SheetPastorsEntity {
+		if let sheet = sheet as? VSheetPastors {
 			imageViewPicture.image = isForExternalDispay ? sheet.image : sheet.thumbnail
 		}
 	}

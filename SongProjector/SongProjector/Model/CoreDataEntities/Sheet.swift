@@ -140,8 +140,15 @@ struct AnySheet : Codable {
 	init(from decoder: Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
 		
-		let type = try container.decode(SheetType.self, forKey: .type)
-		self.base = try type.metatype.init(from: decoder) as! SheetMetaType
+		let type = try container.decode(VSheetType.self, forKey: .type)
+		switch type {
+		case .SheetTitleContent: try self.base = VSheetTitleContent.init(from: decoder) as SheetMetaType
+		case .SheetTitleImage: try self.base = VSheetTitleImage.init(from: decoder) as SheetMetaType
+		case .SheetPastors: try self.base = VSheetPastors.init(from: decoder) as SheetMetaType
+		case .SheetSplit: try self.base = VSheetSplit.init(from: decoder) as SheetMetaType
+		case .SheetEmpty: try self.base = VSheetEmpty.init(from: decoder) as SheetMetaType
+		case .SheetActivities: try self.base = VSheetActivities.init(from: decoder) as SheetMetaType
+		}
 	}
 	
 	func encode(to encoder: Encoder) throws {

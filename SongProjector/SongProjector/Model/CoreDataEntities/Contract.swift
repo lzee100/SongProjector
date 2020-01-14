@@ -9,13 +9,12 @@
 import Foundation
 import CoreData
 
-class Contract: NSManagedObject, Codable {
+class Contract: Entity {
 	
 	@nonobjc public class func fetchRequest() -> NSFetchRequest<Contract> {
 		return NSFetchRequest<Contract>(entityName: "Contract")
 	}
 	
-	@NSManaged public var id: Int64
 	@NSManaged public var name: String
 	@NSManaged public var buttonContent: String
 	
@@ -42,11 +41,12 @@ class Contract: NSManagedObject, Codable {
 	
 	// MARK: - Encodable
 	
-	public func encode(to encoder: Encoder) throws {
+	public override func encode(to encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeysContract.self)
 		try container.encode(id, forKey: .id)
 		try container.encode(name, forKey: .name)
 		try container.encode(buttonContent, forKey: .button)
+		try super.encode(to: encoder)
 	}
 	
 	
@@ -66,6 +66,7 @@ class Contract: NSManagedObject, Codable {
 		id = try container.decode(Int64.self, forKey: .id)
 		name = try container.decode(String.self, forKey: .name)
 		buttonContent = try container.decode(String.self, forKey: .button)
+		try super.initialization(decoder: decoder)
 	}
 
 }

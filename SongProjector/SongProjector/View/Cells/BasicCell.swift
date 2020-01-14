@@ -15,8 +15,11 @@ class BasicCell: UITableViewCell {
 	@IBOutlet var seperator: UIView!
 	@IBOutlet var pianoCircleView: UIView!
 	@IBOutlet var pianoIcon: UIImageView!
+	@IBOutlet var sectionLabel: UILabel!
+	
 	@IBOutlet var iconWidthContraint: NSLayoutConstraint!
 	@IBOutlet var iconLeftConstraint: NSLayoutConstraint!
+	@IBOutlet var iconCenterConstraint: NSLayoutConstraint!
 	
 	var iconImage: UIImage?
 	var iconSelected: UIImage?
@@ -27,13 +30,22 @@ class BasicCell: UITableViewCell {
 	
 	static let identifier = "BasicCell"
 	
+	override func prepareForReuse() {
+		super.prepareForReuse()
+		sectionLabel.isHidden = true
+		sectionLabel.textColor = themeWhiteBlackTextColor
+	}
 	
 	override func awakeFromNib() {
 		super.awakeFromNib()
+		contentView.backgroundColor = .clear
+		backgroundColor = .clear
 		pianoCircleView.layer.borderWidth = 2
 		pianoCircleView.layer.borderColor = themeWhiteBlackTextColor.cgColor
 		pianoCircleView.layer.cornerRadius = pianoCircleView.bounds.width / 2
 		pianoIcon.tintColor = themeWhiteBlackTextColor
+		sectionLabel.isHidden = true
+		sectionLabel.textColor = themeWhiteBlackTextColor
 	}
 	
 	func setup(title: String?, icon: UIImage? = nil, iconSelected: UIImage? = nil, textColor: UIColor? = nil, hasPianoOnly: Bool = false) {
@@ -45,6 +57,12 @@ class BasicCell: UITableViewCell {
 		pianoIcon.isHidden = !hasPianoOnly
 		pianoCircleView.isHidden = !hasPianoOnly
 		update()
+	}
+	
+	func set(sectionHeader: String) {
+		sectionLabel.isHidden = false
+		sectionLabel.text = sectionHeader
+		iconCenterConstraint.constant += 14.5
 	}
 	
 	private func update() {
@@ -70,6 +88,16 @@ class BasicCell: UITableViewCell {
 	
 	override func setHighlighted(_ highlighted: Bool, animated: Bool) {
 		
+	}
+	
+	func flash() {
+		UIView.animate(withDuration: 0.2, animations: { [weak self] in
+			self?.contentView.backgroundColor = themeWhiteBlackTextColor
+		}) { (_) in
+			UIView.animate(withDuration: 0.2, animations: { [weak self] in
+				self?.contentView.backgroundColor = themeWhiteBlackBackground
+			})
+		}
 	}
 	
 }

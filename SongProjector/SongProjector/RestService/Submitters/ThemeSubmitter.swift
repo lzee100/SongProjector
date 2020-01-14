@@ -24,7 +24,7 @@ let ThemeSubmitter: TmSubmitter = {
 	return TmSubmitter()
 }()
 
-class TmSubmitter: Requester<Theme> {
+class TmSubmitter: Requester<VTheme> {
 	
 	
 	override var requesterId: String {
@@ -33,10 +33,6 @@ class TmSubmitter: Requester<Theme> {
 	
 	override var path: String {
 		return "themes"
-	}
-	
-	override var coreDataManager: CoreDataManager<Theme> {
-		return CoreTheme
 	}
 	
 }

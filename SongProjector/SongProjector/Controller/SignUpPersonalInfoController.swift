@@ -17,26 +17,29 @@ class SignUpPersonalInfoController: ChurchBeamViewController, UITableViewDelegat
 	@IBOutlet var tableView: UITableView!
 	
 	
-	var contract: Contract? {
+	var contract: VContract? {
 		return signInContractSelection.contract
 	}
 	var organizationName: String = ""
-	var organization: Organization!
-	var user: User!
-	var contractLedger: ContractLedger!
+	var organization: VOrganization!
+	var user: VUser!
+	var contractLedger: VContractLedger!
+	override var requesterId: String {
+		return "SignUpPersonalInfoController"
+	}
+	override var requesters: [RequesterType] {
+		return [UserFetcher]
+	}
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-//		UserSubmitter.addObserver(self)
-//		OrganizationSubmitter.addObserver(self)
-		UserFetcher.addObserver(self)
 		tableView.rowHeight = UITableViewAutomaticDimension
 		view.backgroundColor = themeWhiteBlackBackground
 		titleLabel.textColor = themeWhiteBlackTextColor
 		
-		organization = CoreOrganization.createEntityNOTsave()
-		contractLedger = CoreContractLedger.createEntityNOTsave()
-		user = CoreUser.createEntityNOTsave()
+		organization = VOrganization()
+		contractLedger = VContractLedger()
+		user = VUser()
 
 		organization.title = "kerk"
 		contractLedger.phoneNumber = "0628917553"
@@ -45,7 +48,6 @@ class SignUpPersonalInfoController: ChurchBeamViewController, UITableViewDelegat
 		user.appInstallToken = UIDevice.current.identifierForVendor!.uuidString
 		user.userToken = AccountStore.icloudID
 		navigationItem.rightBarButtonItem = UIBarButtonItem(title: Text.Actions.done, style: .plain, target: self, action: #selector(didSelectDone))
-//		navigationItem.rightBarButtonItem?.isEnabled = false
 	}
 	
 	func numberOfSections(in tableView: UITableView) -> Int {
@@ -111,7 +113,7 @@ class SignUpPersonalInfoController: ChurchBeamViewController, UITableViewDelegat
 		}) { (error, response, result) in
 			Queues.main.async {
 				let restError = error ?? (result != nil ? NSError(domain: result!.errorMessage, code: 0, userInfo: nil) : nil)
-				self.show(error: .error(response, restError), time: 4)
+				self.show(error: .error(response, restError))
 			}
 		}
 	}
@@ -169,7 +171,7 @@ class SignUpTextFieldCell: UITableViewCell {
 	@IBOutlet var textField: UITextField!
 	
 	var row: Row = .generalInfo { didSet { update() } }
-	var contractLedger: ContractLedger? = nil
+	var contractLedger: VContractLedger? = nil
 	var delegate: SignUpTextFieldDelegate?
 	
 	static let identifier = "SignUpTextFieldCell"
@@ -208,7 +210,7 @@ enum Section {
 	static let beamSections = [general, beam]
 	static let songSections = [general, song]
 	
-	static func `for`(_ section: Int, contract: Contract) -> Section {
+	static func `for`(_ section: Int, contract: VContract) -> Section {
 		switch contract.id {
 		case 0: return general
 		case 1: return beamSections[section]
@@ -231,7 +233,7 @@ enum Row {
 	static let beam: [Row] = [agreementBeam]
 	static let song: [Row] = [agreementSong]
 	
-	static func `for`(_ indexPath: IndexPath, contract: Contract) -> Row {
+	static func `for`(_ indexPath: IndexPath, contract: VContract) -> Row {
 		switch Section.for(indexPath.section, contract: contract) {
 		case .general: return Row.general[indexPath.row]
 		case .beam: return Row.beam[indexPath.row]

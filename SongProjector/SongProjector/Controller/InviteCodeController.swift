@@ -21,25 +21,20 @@ class InviteCodeController: ChurchBeamViewController {
 	@IBOutlet var contentLabelLeftConstraint: NSLayoutConstraint!
 	
 	var code = ""
-	var user: User = {
-		return CoreUser.createEntityNOTsave()
+	var user: VUser = {
+		return VUser()
 	}()
-
-	override func viewDidLoad() {
-        super.viewDidLoad()
-		OrganizationFetcher.addObserver(self)
-        InitSubmitter.addObserver(self)
-    }
+	override var requesterId: String {
+		return "InviteCodeController"
+	}
+	override var requesters: [RequesterType] {
+		return [OrganizationFetcher, InitSubmitter]
+	}
 	
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		navigationController?.setNavigationBarHidden(false, animated: false)
 			doneButton.isEnabled = code != ""
-	}
-	
-	override func viewDidDisappear(_ animated: Bool) {
-		super.viewDidDisappear(animated)
-		user.delete(true)
 	}
 	
 	@IBAction func inviteCodeTextFieldDidChange(_ sender: UITextField) {

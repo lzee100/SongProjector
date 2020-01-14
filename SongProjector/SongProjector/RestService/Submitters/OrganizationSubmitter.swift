@@ -13,7 +13,7 @@ let OrganizationSubmitter: OnizationSubmitter = {
 	return OnizationSubmitter()
 }()
 
-class OnizationSubmitter: Requester<Organization> {
+class OnizationSubmitter: Requester<VOrganization> {
 	
 	override var requesterId: String {
 		return "OrganizationSubmitter"
@@ -21,10 +21,6 @@ class OnizationSubmitter: Requester<Organization> {
 	
 	override var path: String {
 		return "organizations"
-	}
-	
-	override var coreDataManager: CoreDataManager<Organization> {
-		return CoreOrganization
 	}
 	
 }

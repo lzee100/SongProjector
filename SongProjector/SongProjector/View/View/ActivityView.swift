@@ -15,8 +15,8 @@ class ActivityView: UIView {
 	@IBOutlet var bulletView: UIView!
 	@IBOutlet var activityView: UIView!
 	
-	private var selectedTheme: Theme?
-	private var activity: GoogleActivity?
+	private var selectedTheme: VTheme?
+	private var activity: VGoogleActivity?
 	private var scaleFactor: CGFloat? = 1
 	
 	@IBOutlet var bulletHeightConstraint: NSLayoutConstraint!
@@ -39,7 +39,7 @@ class ActivityView: UIView {
 		addSubview(activityView)
 	}
 	
-	static func createWith(frame: CGRect, theme: Theme?, activity: GoogleActivity?, scaleFactor: CGFloat? = 1) -> ActivityView {
+	static func createWith(frame: CGRect, theme: VTheme?, activity: VGoogleActivity?, scaleFactor: CGFloat? = 1) -> ActivityView {
 		
 		let view = ActivityView(frame: frame)
 		view.selectedTheme = theme

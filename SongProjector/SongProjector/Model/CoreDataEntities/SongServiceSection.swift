@@ -47,9 +47,7 @@ public class SongServiceSection: Entity {
 		position = try container.decode(Int16.self, forKey: .position)
 		numberOfSongs = try container.decode(Int16.self, forKey: .numberOfSongs)
 		
-		let tags = Entity.getEntities(decodeNew: { () -> [Tag] in
-			return try container.decodeIfPresent([Tag].self, forKey: .tags) ?? []
-		})
+		let tags = try container.decode([Tag].self, forKey: .tags)
 		tagIds = tags.compactMap({ NSNumber(value: $0.id) })
 		
 		try super.initialization(decoder: decoder)
@@ -87,18 +85,18 @@ public class SongServiceSection: Entity {
 		position = try container.decode(Int16.self, forKey: .position)
 		numberOfSongs = try container.decode(Int16.self, forKey: .numberOfSongs)
 		
-		let tags = Entity.getEntities { () -> [Tag] in
-			return try container.decodeIfPresent([Tag].self, forKey: .tags) ?? []
-		}
-		tagIds = tags.compactMap({ NSNumber(value: $0.id) })
+//		let tags = Entity.getEntities { () -> [Tag] in
+//			return try container.decodeIfPresent([Tag].self, forKey: .tags) ?? []
+//		}
+//		tagIds = tags.compactMap({ NSNumber(value: $0.id) })
 		
 		try super.initialization(decoder: decoder)
 		
-		tags.forEach({
-			if let sections = $0.hasSongServiceSections?.allObjects as? [SongServiceSection], !sections.contains(self) {
-				$0.addToHasSongServiceSections(self)
-			}
-		})
+//		tags.forEach({
+//			if let sections = $0.hasSongServiceSections?.allObjects as? [SongServiceSection], !sections.contains(self) {
+//				$0.addToHasSongServiceSections(self)
+//			}
+//		})
 	}
 	
 	

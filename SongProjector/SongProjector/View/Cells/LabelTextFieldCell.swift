@@ -21,8 +21,8 @@ class LabelTextFieldCell: ChurchBeamCell, ThemeImplementation, SheetImplementati
 	var id = ""
 	var delegate: LabelTextFieldCellDelegate?
 	
-	var sheet: Sheet?
-	var sheetTheme: Theme?
+	var sheet: VSheet?
+	var sheetTheme: VTheme?
 	var themeAttribute: ThemeAttribute?
 	var sheetAttribute: SheetAttribute?
 	var valueDidChange: ((ChurchBeamCell) -> Void)?
@@ -61,14 +61,14 @@ class LabelTextFieldCell: ChurchBeamCell, ThemeImplementation, SheetImplementati
 		self.delegate = delegate
 	}
 	
-	func apply(theme: Theme, themeAttribute: ThemeAttribute) {
+	func apply(theme: VTheme, themeAttribute: ThemeAttribute) {
 		self.sheetTheme = theme
 		self.themeAttribute = themeAttribute
 		descriptionTitle.text = themeAttribute.description
 		applyValueToCell()
 	}
 	
-	func apply(sheet: Sheet, sheetAttribute: SheetAttribute) {
+	func apply(sheet: VSheet, sheetAttribute: SheetAttribute) {
 		self.sheet = sheet
 		self.sheetAttribute = sheetAttribute
 		descriptionTitle.text = sheetAttribute.description

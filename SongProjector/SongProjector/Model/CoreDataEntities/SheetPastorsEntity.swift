@@ -82,7 +82,7 @@ public class SheetPastorsEntity: Sheet, SheetMetaType {
 	// MARK: - NSCopying
 	
 	public override func copy(with zone: NSZone? = nil) -> Any {
-		let entity = CoreSheetPastors.createEntityNOTsave()
+		let entity = VSheetPastors()
 		for key in self.entity.propertiesByName.keys {
 			if key != "id" {
 				let value: Any? = self.value(forKey: key)

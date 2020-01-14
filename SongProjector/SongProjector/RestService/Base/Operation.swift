@@ -9,6 +9,13 @@ import Foundation
 
 open class Operation : Foundation.Operation {
 	
+	public static let GlobalQueue: OperationQueue = {
+		let queue = OperationQueue()
+		queue.name = "GlobalQueue"
+		queue.maxConcurrentOperationCount = 1
+		return queue
+	}()
+	
 	public static let Queue : OperationQueue = {
 		
 		let queue = OperationQueue()

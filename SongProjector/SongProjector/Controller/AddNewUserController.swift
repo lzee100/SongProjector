@@ -69,8 +69,8 @@ class AddNewUserController: ChurchBeamViewController {
 	}
 	
 	@IBAction func didPressSend(_ sender: UIBarButtonItem) {
-		let user = CoreUser.createEntityNOTsave()
-		let roleId = CoreRole.getEntities().first?.id
+		let user = VUser()
+		let roleId = VRole.list().first?.id
 		user.title = userNameTextField.text
 		user.inviteToken = inviteCode
 		user.roleId = roleId ?? 0

@@ -12,7 +12,7 @@ let SongServiceSettingsSubmitter: SngServiceSettingsSubmitter = {
 	return SngServiceSettingsSubmitter()
 }()
 
-class SngServiceSettingsSubmitter: Requester<SongServiceSettings> {
+class SngServiceSettingsSubmitter: Requester<VSongServiceSettings> {
 	
 	
 	override var requesterId: String {
@@ -21,10 +21,6 @@ class SngServiceSettingsSubmitter: Requester<SongServiceSettings> {
 	
 	override var path: String {
 		return "songservicesettings"
-	}
-	
-	override var coreDataManager: CoreDataManager<SongServiceSettings> {
-		return CoreSongServiceSettings
 	}
 	
 }

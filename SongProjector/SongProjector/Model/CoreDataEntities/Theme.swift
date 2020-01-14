@@ -22,7 +22,7 @@ public class Theme: Entity {
 	
 	@NSManaged public var allHaveTitle: Bool
 	@NSManaged public var backgroundColor: String?
-	@NSManaged public var backgroundTransparancyNumber: Float
+	@NSManaged public var backgroundTransparancyNumber: Double
 	@NSManaged public var displayTime: Bool
 	@NSManaged public var hasEmptySheet: Bool
 	@NSManaged public var imagePath: String?
@@ -55,7 +55,6 @@ public class Theme: Entity {
 
 	@NSManaged public var hasClusters: NSSet?
 	@NSManaged public var hasSheets: NSSet?
-	@NSManaged public var hasInstruments: NSSet?
 	
 	enum CodingKeysTheme:String,CodingKey
 	{
@@ -163,7 +162,7 @@ public class Theme: Entity {
 		isBackgroundImageDeleted = false
 		allHaveTitle = try Bool(truncating: (container.decodeIfPresent(Int.self, forKey: .allHaveTitle) ?? 0) as NSNumber)
 		backgroundColor = try container.decodeIfPresent(String.self, forKey: .backgroundColor)
-		backgroundTransparancyNumber = try container.decodeIfPresent(Float.self, forKey: .backgroundTransparancyNumber) ?? 0
+		backgroundTransparancyNumber = try container.decodeIfPresent(Double.self, forKey: .backgroundTransparancyNumber) ?? 0.0
 		displayTime = try Bool(truncating: (container.decodeIfPresent(Int.self, forKey: .displayTime) ?? 0) as NSNumber)
 		hasEmptySheet = try Bool(truncating: (container.decodeIfPresent(Int.self, forKey: .hasEmptySheet) ?? 0) as NSNumber)
 		imagePath = try container.decodeIfPresent(String.self, forKey: .imagePath)

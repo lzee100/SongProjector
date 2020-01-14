@@ -14,7 +14,7 @@ class ActivityHeader: UIView {
 	@IBOutlet var descriptionTitle: UILabel!
 	
 	
-	private var selectedTheme: Theme?
+	private var selectedTheme: VTheme?
 	private var scaleFactor: CGFloat = 1
 	private var titleDescription = ""
 	
@@ -34,7 +34,7 @@ class ActivityHeader: UIView {
 		addSubview(activityHeaderView)
 	}
 	
-	static func createWith(frame: CGRect, theme: Theme?, title: String, scaleFactor: CGFloat? = 1) -> ActivityHeader {
+	static func createWith(frame: CGRect, theme: VTheme?, title: String, scaleFactor: CGFloat? = 1) -> ActivityHeader {
 		
 		let view = ActivityHeader(frame: frame)
 		view.selectedTheme = theme

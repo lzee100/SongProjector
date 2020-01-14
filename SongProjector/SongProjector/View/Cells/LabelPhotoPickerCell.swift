@@ -26,11 +26,11 @@ class LabelPhotoPickerCell: ChurchBeamCell, ThemeImplementation, SheetImplementa
 	
 	var id = ""
 	
-	var sheetTheme: Theme?
+	var sheetTheme: VTheme?
 	var themeAttribute: ThemeAttribute?
 	var valueDidChange: ((ChurchBeamCell) -> Void)?
-
-	var sheet: Sheet?
+	var imageError: ((Error?) -> Void)?
+	var sheet: VSheet?
 	var sheetAttribute: SheetAttribute?
 	
 	var isActive = false { didSet { showImage() } }
@@ -112,14 +112,14 @@ class LabelPhotoPickerCell: ChurchBeamCell, ThemeImplementation, SheetImplementa
 		
 	}
 	
-	func apply(theme: Theme, themeAttribute: ThemeAttribute) {
+	func apply(theme: VTheme, themeAttribute: ThemeAttribute) {
 		self.sheetTheme = theme
 		self.themeAttribute = themeAttribute
 		self.descriptionTitle.text = themeAttribute.description
 		applyValueToCell()
 	}
 	
-	func apply(sheet: Sheet, sheetAttribute: SheetAttribute) {
+	func apply(sheet: VSheet, sheetAttribute: SheetAttribute) {
 		self.sheet = sheet
 		self.sheetAttribute = sheetAttribute
 		self.descriptionTitle.text = sheetAttribute.description
@@ -141,20 +141,20 @@ class LabelPhotoPickerCell: ChurchBeamCell, ThemeImplementation, SheetImplementa
 			default: return
 			}
 		}
-		if let sheet = sheet as? SheetTitleImageEntity {
+		if let sheet = sheet as? VSheetTitleImage {
 			setImage(image: sheet.thumbnail)
 		}
-		if let sheet = sheet as? SheetPastorsEntity {
+		if let sheet = sheet as? VSheetPastors {
 			setImage(image: sheet.thumbnail)
 		}
 	}
 	
-	func applyCellValueToTheme() {
+	func applyCellValueToTheme() throws {
 		if let theme = sheetTheme, let themeAttribute = themeAttribute {
 			switch themeAttribute {
 			case .backgroundImage:
 				if pickedImage != nil {
-					theme.backgroundImage = pickedImage
+					try theme.setBackgroundImage(image: pickedImage)
 					theme.isBackgroundImageDeleted = false
 				} else {
 					theme.isBackgroundImageDeleted = true
@@ -162,10 +162,10 @@ class LabelPhotoPickerCell: ChurchBeamCell, ThemeImplementation, SheetImplementa
 			default: return
 			}
 		}
-		if let sheet = sheet as? SheetTitleImageEntity {
-			sheet.image = pickedImage
-		} else if let sheet = sheet as? SheetPastorsEntity {
-			sheet.image = pickedImage
+		if let sheet = sheet as? VSheetTitleImage {
+			try sheet.set(image: pickedImage)
+		} else if let sheet = sheet as? VSheetPastors {
+			try sheet.set(image: pickedImage)
 		}
 	}
 	
@@ -175,7 +175,11 @@ class LabelPhotoPickerCell: ChurchBeamCell, ThemeImplementation, SheetImplementa
 		} else if let value = value as? UIImage {
 			setImage(image: value)
 		}
-		applyCellValueToTheme()
+		do {
+			try applyCellValueToTheme()
+		} catch {
+			imageError?(error)
+		}
 		self.valueDidChange?(self)
 	}
 	
@@ -189,7 +193,11 @@ class LabelPhotoPickerCell: ChurchBeamCell, ThemeImplementation, SheetImplementa
 				self.setNeedsDisplay()
 				
 				self.pickedImage = pickedImage
-				self.applyCellValueToTheme()
+				do {
+					try self.applyCellValueToTheme()
+				} catch {
+					self.imageError?(error)
+				}
 				self.valueDidChange?(self)
 				if let sender = self.sender {
 					sender.dismiss(animated: true)

@@ -16,10 +16,12 @@ class UserClass {
             } else {
                 sql = `SELECT * FROM user WHERE userToken = '${userToken}'`
             }
-    
+            print.print('before query')
             return new Promise((resolve, reject) => {
                 db.query(sql, (err, result) => {
+                    print.print('after query')
                     if(err) {
+                        print.print('error', err)
                         reject(err)
                     } else {
                         if (result.length == 0) {

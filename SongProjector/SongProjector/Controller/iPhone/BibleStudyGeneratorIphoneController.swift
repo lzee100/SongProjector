@@ -9,7 +9,7 @@
 import UIKit
 
 protocol BibleStudyGeneratorIphoneDelegate {
-	func didFinishGeneratorWith(_ sheets: [Sheet])
+	func didFinishGeneratorWith(_ sheets: [VSheet])
 }
 
 class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate {
@@ -24,14 +24,14 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 	@IBOutlet var emptyView: UIView!
 	
 
-	var selectedTheme: Theme?
+	var selectedTheme: VTheme?
 	var delegate: BibleStudyGeneratorIphoneDelegate?
 	
 	// MARK: Private properties
-	private var sheets: [Sheet] = []
-	private var themes: [Theme] = []
+	private var sheets: [VSheet] = []
+	private var themes: [VTheme] = []
 	private var visibleCells: [IndexPath] = []
-	private var sheetsSorted: [Sheet] { return sheets.sorted { $0.position < $1.position } }
+	private var sheetsSorted: [VSheet] { return sheets.sorted { $0.position < $1.position } }
 	private var delaySheetAimation = 0.0
 	private var multiplier: CGFloat = externalDisplayWindowRatio
 	private var sheetSize = CGSize(width: 375, height: 281)
@@ -39,7 +39,7 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 	private var needsReload = false
 	private var scaleFactor: CGFloat { get { return externalDisplayWindowWidth / sheetSize.width } }
 	private var addEmptySheet = true
-	var position: Int16 = 0
+	var position: Int = 0
 	
 	private var testImage: UIImage?
 	
@@ -68,7 +68,7 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath) as! BasicCell
 		let fullName = BibleIndexx(searchText: sheets[indexPath.row].title).getFullName()
-		cell.setup(title: fullName ?? sheets[indexPath.row].title ?? "", textColor: (fullName != nil && (sheets[indexPath.row] as! SheetTitleContentEntity).content != "") ? UIColor.green : UIColor.red)
+		cell.setup(title: fullName ?? sheets[indexPath.row].title ?? "", textColor: (fullName != nil && (sheets[indexPath.row] as! VSheetTitleContent).content != "") ? UIColor.green : UIColor.red)
 		return cell
 	}
 	
@@ -139,7 +139,7 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 		tableView.register(cell: Cells.basicCellid)
 		tableView.keyboardDismissMode = .interactive
 		
-		themes = CoreTheme.getEntities()
+		themes = VTheme.list(sortOn: "position", ascending: true)
 		
 		setSheetSize()
 
@@ -184,7 +184,7 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 	
 	private func update() {
 		CoreTheme.predicates.append("isHidden", equals: 0)
-		themes = CoreTheme.getEntities()
+		themes = VTheme.list(sortOn: "position", ascending: true)
 		collectionViewThemes.reloadData()
 		collectionViewSheets.reloadData()
 		tableView.reloadData()
@@ -267,9 +267,6 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 		
 		var inputText = textView.text + "\n"
 		
-		for sheet in sheets {
-			sheet.delete(false)
-		}
 		sheets = []
 
 		// get titles
@@ -394,7 +391,7 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 		let spaceTitle = (selectedTheme?.allHaveTitle ?? false) ? 40 : 0
 		
 		if initialTextLength < (maxTextLenght - titleSpace) {
-			let sheet = CoreSheetTitleContent.createEntity()
+			let sheet = VSheetTitleContent()
 			sheet.deleteDate = NSDate()
 			sheet.title = title
 			sheet.content = getTextFor(verses: verses)
@@ -407,7 +404,7 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 		
 		while getTextLengthFor(verses: remainderVerses) > (maxTextLenght - spaceTitle) {
 			
-			let sheet = CoreSheetTitleContent.createEntity()
+			let sheet = VSheetTitleContent()
 			sheet.deleteDate = NSDate()
 			sheet.title = title
 			
@@ -427,7 +424,7 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 		}
 		
 		if remainderVerses.count > 0 {
-			let sheet = CoreSheetTitleContent.createEntity()
+			let sheet = VSheetTitleContent()
 			sheet.deleteDate = NSDate()
 			sheet.title = title
 			sheet.content = getTextFor(verses: remainderVerses)
@@ -438,7 +435,7 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 		}
 		
 		if addEmptySheet {
-			let sheet = CoreSheetTitleContent.createEntity()
+			let sheet = VSheetTitleContent()
 			sheet.deleteDate = NSDate()
 			sheet.position = position
 			position += 1

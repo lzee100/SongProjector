@@ -14,7 +14,7 @@ class BibleStudyGeneratorController: UIViewController {
 	
 	
 	
-	var selectedTheme: Theme?
+	var selectedTheme: VTheme?
 	var delegate: BibleStudyGeneratorDelegate?
 
     override func viewDidLoad() {

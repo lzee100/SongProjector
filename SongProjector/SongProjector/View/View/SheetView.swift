@@ -16,9 +16,9 @@ class SheetView: UIView {
 	}
 	open var scaleFactor: CGFloat?
 	open var isForExternalDispay: Bool = false
-	open var cluster: Cluster?
-	open var sheet: Sheet!
-	open var sheetTheme: Theme?
+	open var cluster: VCluster?
+	open var sheet: VSheet!
+	open var sheetTheme: VTheme?
 	open var isPreview: Bool = false
 	
 	
@@ -32,7 +32,7 @@ class SheetView: UIView {
 		customInit()
 	}
 	
-	func set(frame: CGRect, cluster: Cluster? = nil, sheet: Sheet, theme: Theme?, scaleFactor: CGFloat? = 1, isPreview: Bool = false, position: Int = 0, toExternalDisplay: Bool = false) {
+	func set(frame: CGRect, cluster: VCluster? = nil, sheet: VSheet, theme: VTheme?, scaleFactor: CGFloat? = 1, isPreview: Bool = false, position: Int = 0, toExternalDisplay: Bool = false) {
 		
 		for view in subviews {
 			view.removeFromSuperview()
@@ -51,7 +51,7 @@ class SheetView: UIView {
 		addSubview(view)
 	}
 	
-	static func createWith(frame: CGRect, cluster: Cluster? = nil, sheet: Sheet, theme: Theme?, scaleFactor: CGFloat? = 1, isPreview: Bool = false, position: Int = 0, toExternalDisplay: Bool = false) -> SheetView {
+	static func createWith(frame: CGRect, cluster: VCluster? = nil, sheet: VSheet, theme: VTheme?, scaleFactor: CGFloat? = 1, isPreview: Bool = false, position: Int = 0, toExternalDisplay: Bool = false) -> SheetView {
 		
 		let view: SheetView
 		
@@ -84,7 +84,7 @@ class SheetView: UIView {
 		return view
 	}
 	
-	private func sendToExternalDisplay(frame: CGRect, cluster: Cluster? = nil, sheet: Sheet, theme: Theme?, scaleFactor: CGFloat? = 1, isPreview: Bool = false) {
+	private func sendToExternalDisplay(frame: CGRect, cluster: VCluster? = nil, sheet: VSheet, theme: VTheme?, scaleFactor: CGFloat? = 1, isPreview: Bool = false) {
 		let view = getViewFor(sheet: sheet, frame: frame)
 		view.cluster = cluster
 		view.sheet = sheet
@@ -103,7 +103,7 @@ class SheetView: UIView {
 		view.update()
 	}
 	
-	private func getViewFor(sheet: Sheet, frame: CGRect) -> SheetView {
+	private func getViewFor(sheet: VSheet, frame: CGRect) -> SheetView {
 		let view: SheetView
 		
 		switch sheet.type {

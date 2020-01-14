@@ -81,7 +81,7 @@ enum ThemeAttribute {
 	}
 }
 
-extension Theme {
+extension VTheme {
 	
 	var textColorTitle: UIColor? {
 		get {
@@ -154,87 +154,24 @@ extension Theme {
 			}
 		}
 	}
-	var backgroundImage: UIImage? {
+	
+	func setBackgroundImage(image: UIImage?) throws {
+		let savedImage = try UIImage.set(image: image, imagePath: self.imagePath, thumbnailPath: self.imagePathThumbnail)
+		self.imagePath = savedImage.imagePath
+		self.imagePathThumbnail = savedImage.thumbPath
+	}
+	
+	private(set) var backgroundImage: UIImage? {
 		get {
-			if let imagePath = imagePath {
-				let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-				let filePath = documentsDirectory.appendingPathComponent(imagePath).path
-				return UIImage(contentsOfFile: filePath)
-			} else {
-				return nil
-			}
+			UIImage.get(imagePath: self.imagePath)
 		}
 		set {
-			if let newValue = newValue, let data = UIImageJPEGRepresentation(newValue, 1.0), let resizedImage = newValue.resized(toWidth: 500), let dataResized = UIImageJPEGRepresentation(resizedImage, 0.5) {
-				if let path = self.imagePath {
-					let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-					let url = documentsDirectory.appendingPathComponent(path)
-					do {
-						try FileManager.default.removeItem(at: url)
-						self.imagePath = nil
-					} catch let error as NSError {
-						print("Error: \(error.domain)")
-					}
-				}
-				
-				if let path = self.imagePathThumbnail {
-					let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-					let url = documentsDirectory.appendingPathComponent(path)
-					do {
-						try FileManager.default.removeItem(at: url)
-					} catch let error as NSError {
-						print("Error: \(error.domain)")
-					}
-				}
-				
-				
-				
-				
-				let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-				let imagePath = UUID().uuidString + ".jpg"
-				let imagePathThumbnail = UUID().uuidString + "thumb.jpg"
-
-				let filename = documentsDirectory.appendingPathComponent(imagePath)
-				let filenameThumb = documentsDirectory.appendingPathComponent(imagePathThumbnail)
-
-				try? data.write(to: filename)
-				try? dataResized.write(to: filenameThumb)
-				self.imagePath = imagePath
-				self.imagePathThumbnail = imagePathThumbnail
-
-			}
-			else if newValue == nil {
-				if let path = self.imagePath {
-					let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-					let url = documentsDirectory.appendingPathComponent(path)
-					do {
-						try FileManager.default.removeItem(at: url)
-					} catch let error as NSError {
-						print("Error: \(error.domain)")
-					}
-				}
-				if let path = self.imagePathThumbnail {
-					let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-					let url = documentsDirectory.appendingPathComponent(path)
-					do {
-						try FileManager.default.removeItem(at: url)
-					} catch let error as NSError {
-						print("Error: \(error.domain)")
-					}
-				}
-			}
 		}
 	}
 	
 	private(set) var thumbnail: UIImage? {
 		get {
-			if let imagePath = imagePathThumbnail {
-				let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-				let filePath = documentsDirectory.appendingPathComponent(imagePath).path
-				return UIImage(contentsOfFile: filePath)
-			} else {
-				return nil
-			}
+			UIImage.get(imagePath: self.imagePathThumbnail)
 		}
 		set {
 		}
@@ -270,7 +207,6 @@ extension Theme {
 		}
 		
 		attributes[.strokeWidth] = Int(self.titleBorderSize)
-		
 		if let textColor = self.textColorTitle {
 			attributes[.foregroundColor] = textColor
 		} else {
@@ -338,128 +274,47 @@ extension Theme {
 		return attributes
 	}
 	
-	var backgroundTransparancy: Float {
-		get { return Float(backgroundTransparancyNumber) }
+	var backgroundTransparancy: Double {
+		get { return backgroundTransparancyNumber }
 		set { backgroundTransparancyNumber = newValue / 100 }
 	}
 	
-//	@objc override public func delete() {
-//		backgroundImage = nil
-//		super.delete()
-//	}
-	
-	func getTemp() -> Theme {
-		let tempTheme = CoreTheme.createEntityNOTsave()
-		tempTheme.isTemp = true
-		tempTheme.title = title
-		tempTheme.allHaveTitle = allHaveTitle
-		tempTheme.hasEmptySheet = hasEmptySheet
-		tempTheme.isEmptySheetFirst = isEmptySheetFirst
-		tempTheme.backgroundColor = backgroundColor
-		let cgfloatValue = CGFloat(backgroundTransparancy)
-		tempTheme.backgroundTransparancy = Float(cgfloatValue) * 100
-		tempTheme.displayTime = displayTime
-		
-		tempTheme.titleFontName = titleFontName ?? "Avenir"
-		tempTheme.titleTextSize = titleTextSize
-		tempTheme.titleBackgroundColor = titleBackgroundColor
-		tempTheme.titleAlignmentNumber = titleAlignmentNumber
-		tempTheme.titleBorderSize = titleBorderSize
-		tempTheme.titleBorderColorHex = titleBorderColorHex
-		tempTheme.titleTextColorHex = titleTextColorHex
-		tempTheme.isTitleBold = isTitleBold
-		tempTheme.isTitleItalic = isTitleItalic
-		tempTheme.isTitleUnderlined = isTitleUnderlined
-		
-		tempTheme.contentFontName = contentFontName ?? "Avenir"
-		tempTheme.contentTextSize = contentTextSize
-		tempTheme.contentAlignmentNumber = contentAlignmentNumber
-		tempTheme.contentBorderSize = contentBorderSize
-		tempTheme.contentBorderColorHex = contentBorderColorHex
-		tempTheme.contentTextColorHex = contentTextColorHex
-		tempTheme.isContentBold = isContentBold
-		tempTheme.isContentItalic = isContentItalic
-		tempTheme.isContentUnderlined = isContentUnderlined
-		tempTheme.isBackgroundImageDeleted = isBackgroundImageDeleted
-		
-		tempTheme.imagePath = imagePath
-		tempTheme.imagePathThumbnail = imagePathThumbnail
-		tempTheme.isHidden = isHidden
-		return tempTheme
-	}
-	
-	func mergeSelfInto(theme: Theme, isTemp: NSDate? = nil, sheetType: SheetType) {
-		theme.deleteDate = isTemp
-		theme.title = title
-		theme.allHaveTitle = allHaveTitle
-		theme.hasEmptySheet = hasEmptySheet
-		theme.isEmptySheetFirst = isEmptySheetFirst
-		theme.backgroundColor = backgroundColor
-		let cgfloatValue = CGFloat(backgroundTransparancy)
-		theme.backgroundTransparancy = Float(cgfloatValue) * 100
-		theme.displayTime = displayTime
-		
-		theme.titleFontName = titleFontName ?? "Avenir"
-		theme.titleTextSize = titleTextSize
-		if sheetType != .SheetPastors {
-			theme.titleBackgroundColor = titleBackgroundColor
-			theme.titleAlignmentNumber = titleAlignmentNumber
-		}
-		theme.titleBorderSize = titleBorderSize
-		theme.titleBorderColorHex = titleBorderColorHex
-		theme.titleTextColorHex = titleTextColorHex
-		theme.isTitleBold = isTitleBold
-		theme.isTitleItalic = isTitleItalic
-		theme.isTitleUnderlined = isTitleUnderlined
-		
-		theme.contentFontName = contentFontName ?? "Avenir"
-		theme.contentTextSize = contentTextSize
-		if sheetType != .SheetPastors {
-			theme.contentAlignmentNumber = contentAlignmentNumber
-		}
-		theme.contentBorderSize = contentBorderSize
-		theme.contentBorderColorHex = contentBorderColorHex
-		theme.contentTextColorHex = contentTextColorHex
-		theme.isContentBold = isContentBold
-		theme.isContentItalic = isContentItalic
-		theme.isContentUnderlined = isContentUnderlined
-		theme.isBackgroundImageDeleted = isBackgroundImageDeleted
-		
-		theme.imagePath = imagePath
-		theme.imagePathThumbnail = imagePathThumbnail
-		
-		if isBackgroundImageDeleted {
-			theme.backgroundImage = nil
-			theme.isBackgroundImageDeleted = false
-		}
-		
-		print("merged theme")
+}
 
+extension Theme {
+	
+	func setBackgroundImage(image: UIImage?) throws {
+		let savedImage = try UIImage.set(image: image, imagePath: self.imagePath, thumbnailPath: self.imagePathThumbnail)
+		self.imagePath = savedImage.imagePath
+		self.imagePathThumbnail = savedImage.thumbPath
 	}
 	
-	public override func delete(_ save: Bool) {
-		imagePath = nil
-		moc.delete(self)
-		if save {
-			do {
-				try moc.save()
-			} catch {
-				print(error)
-			}
+	private(set) var backgroundImage: UIImage? {
+		get {
+			UIImage.get(imagePath: self.imagePath)
+		}
+		set {
 		}
 	}
 	
-	public override func deleteBackground(_ save: Bool) {
-		imagePath = nil
-		mocBackground.delete(self)
-		mocBackground.performAndWait {
-			do {
-				try mocBackground.save()
-				try moc.save()
-			} catch {
-				print(error)
-			}
+	private(set) var thumbnail: UIImage? {
+		get {
+			UIImage.get(imagePath: self.imagePathThumbnail)
+		}
+		set {
 		}
 	}
+
+	
+	override public func delete(_ save: Bool = true, isBackground: Bool, completion: ((Error?) -> Void)) {
+		do {
+			_ = try setBackgroundImage(image: nil)
+			completion(nil)
+		} catch let error {
+			completion(error)
+		}
+		super.delete(save, isBackground: isBackground, completion: completion)
+	}
+	
 
 }

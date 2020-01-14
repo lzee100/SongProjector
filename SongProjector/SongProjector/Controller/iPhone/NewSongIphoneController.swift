@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import CoreData
 
-class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+class NewSongIphoneController: ChurchBeamViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
 	
 	// MARK: - Types
 	struct Constants {
@@ -26,12 +27,12 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 	
 	// MARK: - Properties
 	
-	var cluster: Cluster?
-	var sheets: [SheetTitleContentEntity] = []
+	var cluster: VCluster?
+	var sheets: [VSheetTitleContent] = []
 	var editExistingCluster = false
 	
 	private var isSetup = true
-	private var themes: [Theme] = []
+	private var themes: [VTheme] = []
 	private var delaySheetAimation = 0.0
 	private var isFirstTime = true {
 		willSet { if newValue == true { delaySheetAimation = 0.0 } }
@@ -39,7 +40,7 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 	private var visibleCells: [IndexPath] = []
 	private var multiplier = externalDisplayWindowRatio
 	private var sheetSize = CGSize(width: 375, height: 281)
-	private var selectedTheme: Theme? {
+	private var selectedTheme: VTheme? {
 		didSet { update() }
 	}
 	private var sheetMode = false
@@ -144,10 +145,10 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 	
 	private func setup() {
 		CoreTheme.predicates.append("isHidden", notEquals: true)
-		themes = CoreTheme.getEntities()
+		themes = VTheme.list(sortOn: "position", ascending: true)
 		
 		if cluster == nil {
-			cluster = CoreCluster.createEntity()
+			cluster = VCluster()
 		}
 
 		collectionView.register(UINib(nibName: Cells.themeCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.themeCellCollection)
@@ -212,7 +213,7 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 	private func databaseDidChange(_ notification: Notification) {
 		selectedTheme = nil
 		CoreTheme.predicates.append("isHidden", notEquals: true)
-		themes = CoreTheme.getEntities()
+		themes = VTheme.list(sortOn: "position", ascending: true)
 		update()
 	}
 	
@@ -229,7 +230,7 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 			contentToDevide.removeSubrange(rangeRemove)
 		}
 		
-		var position: Int16 = 0
+		var position = 0
 		// get sheets
 		while let range = contentToDevide.range(of: "\n\n") {
 			
@@ -248,7 +249,7 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 				sheetTitle = String(contentToDevide[rangeSheetTitle])
 			}
 			
-			let newSheet = CoreSheetTitleContent.createEntityNOTsave()
+			let newSheet = VSheetTitleContent()
 			newSheet.title = sheetTitle
 			newSheet.content = sheetcontent
 			newSheet.position = position
@@ -310,7 +311,7 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 	
 	private func getTextFromSheets() -> String {
 		var totalString = (cluster?.title ?? "") + "\n\n"
-		let tempSheets:[SheetTitleContentEntity] = sheets.count > 0 ? sheets : cluster?.hasSheetsArray as? [SheetTitleContentEntity] ?? []
+		let tempSheets:[VSheetTitleContent] = sheets.count > 0 ? sheets : cluster?.hasSheets as? [VSheetTitleContent] ?? []
 		for (index, sheet) in tempSheets.enumerated() {
 			totalString += sheet.content ?? ""
 			if index < tempSheets.count - 1 { // add only \n\n to second last, not the last one, or it will add empty sheet
@@ -324,9 +325,6 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 	// MARK: - IBAction Functions
 	
 	@IBAction func cancel(_ sender: UIBarButtonItem) {
-		if !editExistingCluster, let cluster = cluster {
-			cluster.delete(true)
-		}
 		dismiss(animated: true)
 	}
 	
@@ -335,33 +333,27 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 		if hasThemeSelected() {
 			
 			buildSheets(fromText: textView.text)
-
-			// if existing cluster, remove current sheets
-			CoreCluster.predicates.append("id", equals: cluster?.id)
-			let results = CoreCluster.getEntities()
-			if results.count != 0, let cluster = cluster {
-				for sheet in cluster.hasSheetsArray {
-					sheet.delete()
-				}
-			}
-			
-			for tempSheet in sheets {
-				let sheet = CoreSheetTitleContent.createEntity()
-				sheet.title = tempSheet.title
-				sheet.content = tempSheet.content
-				sheet.position = tempSheet.position
-				sheet.hasCluster = cluster
-				sheets.append(sheet)
-			}
-			
-			if CoreSheet.saveContext() { print("sheets saved") } else { print("sheets not saved") }
 			
 			if let themeId = selectedTheme?.id {
 				cluster?.themeId = themeId
 			}
-			if CoreTheme.saveContext() { print("theme saved") } else { print("theme not saved") }
+			
+			if let cluster = cluster {
+				NSManagedObjectContext.saveForeground(vEntity: cluster, success: {
+					Queues.main.async {
+						self.dismiss(animated: true)
+					}
+				}) { (error) in
+					Queues.main.async {
+						self.show(message: error.localizedDescription)
+					}
+				}
+			} else {
+				Queues.main.async {
+					self.dismiss(animated: true)
+				}
+			}
 		}
-		dismiss(animated: true)
 	}
 	
 	@IBAction func segmentControlValueChanged(_ sender: UISegmentedControl) {
@@ -390,7 +382,7 @@ class NewSongIphoneController: UIViewController, UICollectionViewDataSource, UIC
 	
 	@objc func keyboardWillShow(notification:NSNotification){
 		
-		var userInfo = notification.userInfo!
+		let userInfo = notification.userInfo!
 		var keyboardFrame:CGRect = (userInfo[UIKeyboardFrameBeginUserInfoKey] as! NSValue).cgRectValue
 		keyboardFrame = self.view.convert(keyboardFrame, from: nil)
 		

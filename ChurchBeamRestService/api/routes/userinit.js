@@ -15,7 +15,7 @@ var db = require('../util/db');
 
 router.get('/', (req, res , next) => {
     print.print('in user init')
-
+    print.print(req.query)
     let userToken = req.query.userToken
     let appInstallToken = req.query.appInstallToken
 
@@ -23,8 +23,10 @@ router.get('/', (req, res , next) => {
     print.print('appInstallToken', appInstallToken)
 
     if (userToken, appInstallToken) {
+        print.print('bla')
         getUser(userToken)
         .then(user => {
+            print.print('after get user')
             if (!user) {
                 print.print('user not found')
                 res.status(400).json({
@@ -37,6 +39,10 @@ router.get('/', (req, res , next) => {
                     error: "has install on other device"
                 })
             }
+        })
+        .catch(err => {
+            print.print('err', err)
+            res.status(500).json(({err}))
         })
     } else {m
         print.print('no usertoken and devicetoken')
@@ -210,10 +216,15 @@ function getUser(token) {
     var getUser = new Promise((resolve, reject) => {
         let sql = `SELECT * FROM user WHERE userToken = '${token}' AND deletedAt IS NULL`
         print.print(sql)
+        print.print('after statement')
+        
         db.query(sql, (err, result) => {
+            print.print('result:')
             if (err) {
+                print.print('err', err)
                 reject(err)
             } else {
+                print.print('result', result)
                 if (result.length == 0) {
                     resolve()
                 } else {

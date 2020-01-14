@@ -129,11 +129,11 @@ internal extension Entity {
 
 
 extension Entity {
-	
-	static func getEntities<T>(decodeNew: (() throws -> [T])) -> [T] where T: Entity {
+
+	static func getEntities<T>(decodeNew: (() throws -> [T]), completion: @escaping (([T], Error?) -> Void)) where T: Entity {
 		let manager = CoreDataManager<T>()
 		manager.managedObjectContext = mocBackground
-		var old: [T] = manager.getEntities()
+		let old: [T] = manager.getEntities()
 		let insertedObjects = mocBackground.insertedObjects.compactMap({ $0 as? T })
 		var toKeep: [T] = []
 		var new: [T]?
@@ -143,51 +143,27 @@ extension Entity {
 		catch {
 			print("error \(error)")
 		}
+		var deletableEntities: [Entity] = []
+		
 		new?.forEach({
 			if let index = insertedObjects.firstIndex(entity: $0) {
 				toKeep.append(insertedObjects[index])
-				$0.deleteBackground(false)
+				deletableEntities.append($0)
 			} else if let index = old.firstIndex(entity: $0) {
 				toKeep.append($0)
-				old[index].deleteBackground(false)
+				deletableEntities.append(old[index])
 			} else {
 				toKeep.append($0)
 			}
 		})
-		return toKeep
-
-	}
-	
-	static func getEntity<T>(decodeNew: (() throws -> T?)) -> T? where T: Entity {
-		let manager = CoreDataManager<T>()
-		manager.managedObjectContext = mocBackground
-		var old: [T] = manager.getEntities()
-		let insertedObjects = manager.managedObjectContext.insertedObjects.compactMap({ $0 as? T })
-		var toKeep: T?
-		var new: T?
-		do {
-			new = try decodeNew()
-		}
-		catch {
-			print("error \(error)")
-		}
-		if let new = new {
-			if let index = insertedObjects.firstIndex(entity: new) {
-				print("!!!!!!!!!!!! keep old inserted")
-				toKeep = insertedObjects[index]
-				new.deleteBackground(false)
-			} else if let index = old.firstIndex(entity: new) {
-				print("!!!!!!!!!!!! keep new inserted")
-				toKeep = new
-				print(old[index])
-				old[index].deleteBackground(false)
-			} else {
-				print("!!!!!!!!!!!! keep new")
-				toKeep = new
-			}
-		}
 		
-		return toKeep
+		Entity.delete(entities: deletableEntities, save: false, isBackground: true, completion: ({ error in
+			if let error = error {
+				completion([], error)
+			} else {
+				completion(toKeep, nil)
+			}
+		}))
 		
 	}
 }

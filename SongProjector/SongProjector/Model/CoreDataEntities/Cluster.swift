@@ -109,11 +109,11 @@ public class Cluster: Entity {
 			hasInstruments = NSSet(array: instr)
 		}
 
-		let tags = Entity.getEntities { () -> [Tag] in
-			return try container.decodeIfPresent([Tag].self, forKey: .hasTags) ?? []
-		}
-		
-		tagIds = tags.compactMap({ NSNumber(value: $0.id) })
+//		let tags = Entity.getEntities { () -> [Tag] in
+//			return try container.decodeIfPresent([Tag].self, forKey: .hasTags) ?? []
+//		}
+//
+//		tagIds = tags.compactMap({ NSNumber(value: $0.id) })
 		
 		try super.initialization(decoder: decoder)
 		

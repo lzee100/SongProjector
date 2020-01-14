@@ -23,7 +23,13 @@ class ChurchBeamTableViewController: UITableViewController, RequestObserver {
 	var requesterId: String {
 		return "ChurchBeamViewController"
 	}
-	
+	var requesters: [RequesterType] {
+		return []
+	}
+	var shouldRemoveObserversOnDissappear: Bool {
+		return true
+	}
+
 	
 	
 	// MARK: UIViewController functions
@@ -35,6 +41,20 @@ class ChurchBeamTableViewController: UITableViewController, RequestObserver {
 			errorView?.center.x = -((errorView?.frame.height ?? 0) / 2)
 		}
 		
+	}
+	
+	override func viewWillAppear(_ animated: Bool) {
+		super.viewWillAppear(animated)
+		requesters.forEach({ $0.addObserver(self) })
+		print("################")
+		print(self)
+	}
+	
+	override func viewWillDisappear(_ animated: Bool) {
+		super.viewWillDisappear(animated)
+		if shouldRemoveObserversOnDissappear {
+			requesters.forEach({ $0.removeObserver(self) })
+		}
 	}
 	
 	

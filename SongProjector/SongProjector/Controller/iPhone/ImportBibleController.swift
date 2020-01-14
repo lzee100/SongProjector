@@ -109,9 +109,9 @@ class ImportBibleController: UIViewController {
 		
 		var text = self.textView.text ?? ""
 
-		CoreEntity.getTemp = true
-		CoreEntity.getEntities().forEach({ $0.delete(false) })
-		CoreEntity.saveContext(fireNotification: false)
+//		CoreEntity.getTemp = true
+////		CoreEntity.getEntities().forEach({ $0.delete(false) })
+//		CoreEntity.saveContext(fireNotification: false)
 		
 		mocBackground.perform {
 			
@@ -129,9 +129,9 @@ class ImportBibleController: UIViewController {
 				return "\(nextVersNumber)"
 			}
 			
-			CoreBook.managedObjectContext = mocBackground
-			CoreChapter.managedObjectContext = mocBackground
-			CoreVers.managedObjectContext = mocBackground
+//			CoreBook.managedObjectContext = mocBackground
+//			CoreChapter.managedObjectContext = mocBackground
+//			CoreVers.managedObjectContext = mocBackground
 			
 			
 			
@@ -198,22 +198,22 @@ class ImportBibleController: UIViewController {
 						}
 					}
 					
-					let vers = CoreVers.createEntity()
-					vers.deleteDate = nil
-					vers.number = versNumber
-					vers.title = String(versNumber)
-					vers.text = chapterText.trimmingCharacters(in: .whitespacesAndNewlines)
-					vers.hasChapter = chapter
-					chapterText.removeAll()
-					
-					chapter.hasBook = book
-					print(chapterNumber)
-					chapterNumber += 1
-					
-					self.totalChapters += 1
-					
-					versNumber = 0
-					versString = "\(versNumber)"
+//					let vers = CoreVers.createEntity()
+//					vers.deleteDate = nil
+//					vers.number = versNumber
+//					vers.title = String(versNumber)
+//					vers.text = chapterText.trimmingCharacters(in: .whitespacesAndNewlines)
+//					vers.hasChapter = chapter
+//					chapterText.removeAll()
+//
+//					chapter.hasBook = book
+//					print(chapterNumber)
+//					chapterNumber += 1
+//
+//					self.totalChapters += 1
+//
+//					versNumber = 0
+//					versString = "\(versNumber)"
 					
 				}
 				
@@ -223,38 +223,38 @@ class ImportBibleController: UIViewController {
 			}
 			
 			if self.isCancelled {
-				CoreEntity.getTemp = true
-				CoreEntity.getEntities().forEach({ $0.delete(false) })
-				CoreEntity.saveContext(fireNotification: false)
-				DispatchQueue.main.async {
-					self.coverViewLeftConstraint.constant = UIScreen.main.bounds.width
-				}
+//				CoreEntity.getTemp = true
+//				CoreEntity.getEntities().forEach({ $0.delete(false) })
+//				CoreEntity.saveContext(fireNotification: false)
+//				DispatchQueue.main.async {
+//					self.coverViewLeftConstraint.constant = UIScreen.main.bounds.width
+//				}
 			} else {
-				_ = CoreChapter.saveContext()
-				DispatchQueue.main.async {
-					self.coverViewLeftConstraint.constant = UIScreen.main.bounds.width
-				}
-			}
-			mocBackground.performAndWait {
-				do {
-					try mocBackground.save()
-					try moc.save()
-				} catch {
-					fatalError("Failure to save context: \(error)")
-				}
-				CoreBook.managedObjectContext = moc
-				CoreChapter.managedObjectContext = moc
-				CoreVers.managedObjectContext = moc
+//				_ = CoreChapter.saveContext()
+//				DispatchQueue.main.async {
+//					self.coverViewLeftConstraint.constant = UIScreen.main.bounds.width
+//				}
+//			}
+//			mocBackground.performAndWait {
+//				do {
+//					try mocBackground.save()
+//					try moc.save()
+//				} catch {
+//					fatalError("Failure to save context: \(error)")
+//				}
+//				CoreBook.managedObjectContext = moc
+//				CoreChapter.managedObjectContext = moc
+//				CoreVers.managedObjectContext = moc
 
 			}
 		
 		}
 		
 		
-		CoreChapter.predicates.append("hasBook.name", equals: "Genesis")
-		print(CoreChapter.getEntities().count)
-		CoreChapter.predicates.append("hasBook.name", equals: "Exodus")
-		print(CoreChapter.getEntities().count)
+//		CoreChapter.predicates.append("hasBook.name", equals: "Genesis")
+//		print(CoreChapter.getEntities().count)
+//		CoreChapter.predicates.append("hasBook.name", equals: "Exodus")
+//		print(CoreChapter.getEntities().count)
 		
 	}
 	

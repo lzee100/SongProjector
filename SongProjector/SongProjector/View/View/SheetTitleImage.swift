@@ -70,7 +70,7 @@ class SheetTitleImage: SheetView {
 		imageWidthConstraint.constant = (frame.height * 0.4)
 		timeLabel.text = ""
 		
-		if let sheet = sheet as? SheetTitleImageEntity {
+		if let sheet = sheet as? VSheetTitleImage {
 			if sheet.content == nil || sheet.content == "" {
 				
 				contentHeightConstraint.isActive = false
@@ -98,7 +98,7 @@ class SheetTitleImage: SheetView {
 	}
 	
 	override func updateTitle() {
-		let sheet = self.sheet as! SheetTitleImageEntity
+		let sheet = self.sheet as! VSheetTitleImage
 		if let songTitle = sheet.title {
 			if let theme = sheetTheme {
 				if !theme.allHaveTitle && (sheet.position > 0) {
@@ -140,20 +140,8 @@ class SheetTitleImage: SheetView {
 	}
 	
 	override func updateContent() {
-		let sheet = self.sheet as! SheetTitleImageEntity
+		let sheet = self.sheet as! VSheetTitleImage
 		if let theme = sheetTheme, let string = sheet.content {
-//			if string == "" {
-//				titleContentConstraint?.isActive = false
-//				titleContentConstraint = NSLayoutConstraint(item: descriptionTitle, attribute: .bottom, relatedBy: .equal, toItem: descriptionContent, attribute: .bottom, multiplier: 1, constant: 0)
-//			} else {
-//				// remove previous title - content constraint
-//				if let titleContentConstraint = titleContentConstraint {
-//					descriptionTitle.removeConstraint(titleContentConstraint)
-//				}
-//
-//				// activate original contraint
-//				titleBottomConstraint.isActive = true
-//			}
 			descriptionContent.attributedText = NSAttributedString(string: string, attributes: theme.getLyricsAttributes(scaleFactor ?? 1))
 		} else {
 			descriptionContent.text = sheet.content
@@ -228,7 +216,7 @@ class SheetTitleImage: SheetView {
 	}
 	
 	override func updateSheetImage() {
-		let sheet = self.sheet as! SheetTitleImageEntity
+		let sheet = self.sheet as! VSheetTitleImage
 		let image = isForExternalDispay ? sheet.image : sheet.thumbnail
 		
 		if sheet.imageHasBorder {

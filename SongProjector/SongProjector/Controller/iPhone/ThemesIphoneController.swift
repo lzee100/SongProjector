@@ -20,9 +20,9 @@ class ThemesIphoneController: ChurchBeamTableViewController, UISearchBarDelegate
 		return "ThemesIphoneController"
 	}
 	
-	private var themes: [Theme] = []
-	private var filteredThemes: [Theme] = []
-	private var selectedTheme: Theme?
+	private var themes: [VTheme] = []
+	private var filteredThemes: [VTheme] = []
+	private var selectedTheme: VTheme?
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -33,7 +33,7 @@ class ThemesIphoneController: ChurchBeamTableViewController, UISearchBarDelegate
 		super.viewWillAppear(animated)
 		ThemeFetcher.addObserver(self)
 		ThemeSubmitter.addObserver(self)
-		ThemeFetcher.request(force: false)
+		ThemeFetcher.fetch()
 		searchBar.text = nil
 	}
 	
@@ -88,7 +88,7 @@ class ThemesIphoneController: ChurchBeamTableViewController, UISearchBarDelegate
 		filteredThemes.insert(itemToMove, at: destinationIndexPath.row)
 		updatePostitions()
 		print("filtered themes to post \(filteredThemes.count)")
-		ThemeSubmitter.submit(filteredThemes, requestMethod: .put)
+		ThemeSubmitter.submit(filteredThemes.compactMap({ $0 }), requestMethod: .put)
 	}
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -130,7 +130,7 @@ class ThemesIphoneController: ChurchBeamTableViewController, UISearchBarDelegate
 		update()
 	}
 	
-	func didCreate(sheet: Sheet) {
+	func didCreate(sheet: VSheet) {
 	}
 	
 	func didCloseNewOrEditIphoneController() {
@@ -170,8 +170,7 @@ class ThemesIphoneController: ChurchBeamTableViewController, UISearchBarDelegate
 	
 	private func update() {
 		CoreTheme.predicates.append("isHidden", notEquals: true)
-		CoreTheme.setSortDescriptor(attributeName: "position", ascending: true)
-		themes = CoreTheme.getEntities()
+		themes = VTheme.list(sortOn: "position", ascending: true)
 		print("themes get: \(themes.count)")
 		filteredThemes = themes
 		tableView.reloadData()

@@ -11,6 +11,11 @@ import UIKit
 
 extension UIImage {
 	
+	struct SavedImage {
+		let imagePath: String?
+		let thumbPath: String?
+	}
+	
 	static func scaleImageToSize(image: UIImage, size: CGSize) -> UIImage? {
 		let hasAlpha = false
 		let scale: CGFloat = 0.0 // Automatically use scale factor of main screen
@@ -161,5 +166,57 @@ extension UIImage {
 		draw(in: CGRect(origin: .zero, size: canvasSize))
 		return UIGraphicsGetImageFromCurrentImageContext()
 	}
+	
+	static func set(image: UIImage?, imagePath: String?, thumbnailPath: String?) throws -> SavedImage {
+		if let image = image, let data = UIImageJPEGRepresentation(image, 1.0), let resizedImage = image.resized(toWidth: 500), let dataResized = UIImageJPEGRepresentation(resizedImage, 0.5) {
+			if let path = imagePath {
+				let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+				let url = documentsDirectory.appendingPathComponent(path)
+				try FileManager.default.removeItem(at: url)
+			}
+			
+			if let path = thumbnailPath {
+				let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+				let url = documentsDirectory.appendingPathComponent(path)
+				try FileManager.default.removeItem(at: url)
+			}
+			
+			let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+			let newImagePath = UUID().uuidString + ".jpg"
+			let newImagePathThumbnail = UUID().uuidString + "thumb.jpg"
+			
+			let filename = documentsDirectory.appendingPathComponent(newImagePath)
+			let filenameThumb = documentsDirectory.appendingPathComponent(newImagePathThumbnail)
+			
+			try? data.write(to: filename)
+			try? dataResized.write(to: filenameThumb)
+			
+			return SavedImage(imagePath: newImagePath, thumbPath: newImagePathThumbnail)
+			
+		} else {
+			if let path = imagePath {
+				let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+				let url = documentsDirectory.appendingPathComponent(path)
+				try FileManager.default.removeItem(at: url)
+			}
+			if let path = thumbnailPath {
+				let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+				let url = documentsDirectory.appendingPathComponent(path)
+				try FileManager.default.removeItem(at: url)
+			}
+			return SavedImage(imagePath: nil, thumbPath: nil)
+		}
+	}
+	
+	static func get(imagePath: String?) -> UIImage? {
+		if let imagePath = imagePath {
+			let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+			let filePath = documentsDirectory.appendingPathComponent(imagePath).path
+			return UIImage(contentsOfFile: filePath)
+		} else {
+			return nil
+		}
+	}
+
 	
 }

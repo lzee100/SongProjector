@@ -28,7 +28,7 @@ class LabelDoubleSwitchCell: ChurchBeamCell, DynamicHeightCell, ThemeImplementat
 	
 	var id = ""
 	
-	var sheetTheme: Theme?
+	var sheetTheme: VTheme?
 	var themeAttribute: ThemeAttribute?
 	var valueDidChange: ((ChurchBeamCell) -> Void)?
 	
@@ -117,7 +117,7 @@ class LabelDoubleSwitchCell: ChurchBeamCell, DynamicHeightCell, ThemeImplementat
 		
 	}
 	
-	func apply(theme: Theme, themeAttribute: ThemeAttribute) {
+	func apply(theme: VTheme, themeAttribute: ThemeAttribute) {
 		self.sheetTheme = theme
 		self.themeAttribute = themeAttribute
 		self.descriptionSwitchOne.text = themeAttribute.description

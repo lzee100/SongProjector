@@ -14,11 +14,7 @@ let OrganizationFetcher: OganizationFetcher = {
 }()
 
 
-class OganizationFetcher: Requester<Organization> {
-	
-	override var requestReloadTime: RequesterReloadTime {
-		return .seconds
-	}
+class OganizationFetcher: Requester<VOrganization> {
 	
 	override var requesterId: String {
 		return "OrganizationFetcher"
@@ -28,17 +24,13 @@ class OganizationFetcher: Requester<Organization> {
 		return "organizations"
 	}
 	
-	override var coreDataManager: CoreDataManager<Organization> {
-		return CoreOrganization
-	}
-	
 	override var params: [String : Any] {
-		let orgId = coreDataManager.getEntities().first?.id
+		let orgId = VOrganization.list().first?.id
 		var params = super.params
 		if let orgId = orgId {
 			params["organizationId"] = "\(orgId)"
 		} else {
-			let user = CoreUser.getEntities().first
+			let user = VUser.list().first
 			if let userId = user?.id, let appId = user?.appInstallToken {
 				params["userId"] = "\(userId)"
 				params["appId"] = "\(appId)"
@@ -47,9 +39,10 @@ class OganizationFetcher: Requester<Organization> {
 		return params
 	}
 	
-	func fetch(force: Bool) {
+	func fetch() {
+		guard isSuperRequesterTotalFinished else { return }
 		requestMethod = .get
-		request(force: force)
+		request(isSuperRequester: false)
 	}
 	
 	

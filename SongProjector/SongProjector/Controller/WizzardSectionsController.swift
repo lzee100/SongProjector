@@ -16,12 +16,11 @@ class WizzardSectionsController: ChurchBeamViewController, UITableViewDelegate, 
 	@IBOutlet var tableView: UITableView!
 	
 	
-	var songServiceObject: SongServiceSettings? {
+	var songServiceObject: VSongServiceSettings? {
 		didSet {
 			numberOfSections = songServiceObject?.sections.count ?? 1
 		}
 	}
-	private var songServiceObjectTemp: SongServiceSettings? = nil
 	private var numberOfSections = 1
 	
 	
@@ -41,27 +40,29 @@ class WizzardSectionsController: ChurchBeamViewController, UITableViewDelegate, 
 				tagsController.songServiceObject = songServiceObject
 				if numberOfSections > songServiceObject.sections.count {
 					for position in songServiceObject.sections.count..<numberOfSections {
-						let section = CoreSongServiceSection.createEntityNOTsave()
+						let section = VSongServiceSection()
 						section.position = Int16(position)
 						section.title = nil
-						songServiceObject.addToHasSongServiceSections(section)
+						songServiceObject.sections.append(section)
 					}
 				} else if numberOfSections < songServiceObject.sections.count {
 					for _ in 1...(songServiceObject.sections.count - numberOfSections) {
 						if let section = songServiceObject.sections.last {
-							songServiceObject.removeFromHasSongServiceSections(section)
+							songServiceObject.sections.delete(entity: section)
 						}
 					}
 				}
 			} else {
-				songServiceObjectTemp = CoreSongServiceSettings.createEntityNOTsave()
+				var sections: [VSongServiceSection] = []
 				for position in 0..<numberOfSections {
-					let section = CoreSongServiceSection.createEntityNOTsave()
+					let section = VSongServiceSection()
 					section.position = Int16(position)
 					section.title = nil
-					songServiceObjectTemp!.addToHasSongServiceSections(section)
+					sections.append(section)
 				}
-				tagsController.songServiceObject = songServiceObjectTemp
+				songServiceObject = VSongServiceSettings()
+				songServiceObject!.sections.append(contentsOf: sections)
+				tagsController.songServiceObject = songServiceObject
 			}
 		}
 	}
@@ -76,7 +77,7 @@ class WizzardSectionsController: ChurchBeamViewController, UITableViewDelegate, 
 	
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCell(withIdentifier: LabelNumberCell.identifier) as! LabelNumberCell
-		let value = songServiceObject?.hasSongServiceSections?.count ?? 1
+		let value = songServiceObject?.sections.count ?? 1
 		cell.setup(initialValue: value, minLimit: 1, maxLimit: 15, positive: true)
 		cell.descriptionTitle.text = Text.SongServiceManagement.numberOfSections
 		cell.delegate = self

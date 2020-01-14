@@ -13,7 +13,7 @@ let UserSubmitter: UerSubmitter = {
 	return UerSubmitter()
 }()
 
-class UerSubmitter: Requester<User> {
+class UerSubmitter: Requester<VUser> {
 	
 	override var requesterId: String {
 		return "UserSubmitter"
@@ -21,10 +21,6 @@ class UerSubmitter: Requester<User> {
 	
 	override var path: String {
 		return "users"
-	}
-	
-	override var coreDataManager: CoreDataManager<User> {
-		return CoreUser
 	}
 	
 }

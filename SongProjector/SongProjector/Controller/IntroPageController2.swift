@@ -20,9 +20,8 @@ class IntroPageController2: PageController, UICollectionViewDataSource, UICollec
 	
 	static let identifier = "IntroPageController2"
 	
-	fileprivate var contracts: [Contract] {
-		CoreContract.setSortDescriptor(attributeName: "id", ascending: true)
-		return CoreContract.getEntities(onlyDeleted: false, skipFilter: true)
+	fileprivate var contracts: [VContract] {
+		return VContract.list(sortOn: "id", ascending: true)
 	}
 	
 	override func viewDidLoad() {
@@ -112,7 +111,7 @@ class AboOptionCell: UICollectionViewCell {
 	
 	static let identifier = "AboOptionCell"
 	
-	private var contract: Contract?
+	private var contract: VContract?
 	
 	override func awakeFromNib() {
 		super.awakeFromNib()
@@ -128,7 +127,7 @@ class AboOptionCell: UICollectionViewCell {
 		buttonLabel.clipsToBounds = true
 	}
 	
-	fileprivate func apply(contract: Contract) {
+	fileprivate func apply(contract: VContract) {
 		self.contract = contract
 		titleLabel.text = contract.name
 //		if let cfeatures = contract.hasRcontractFeaturesOrdered {

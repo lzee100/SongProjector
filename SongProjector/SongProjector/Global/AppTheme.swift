@@ -14,7 +14,7 @@ var isThemeLight: Bool {
 	if let isThemeLight = defaults.object(forKey: "theme") as? Bool {
 		return isThemeLight
 	} else {
-		return false
+		return true
 	}
 }
 

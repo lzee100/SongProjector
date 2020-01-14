@@ -36,12 +36,21 @@ class UsersController: ChurchBeamViewController, UITableViewDelegate, UITableVie
 		}
 	}
 	
+	override var requesterId: String {
+		return "UsersController"
+	}
+	override var requesters: [RequesterType] {
+		return [UserFetcher, UserSubmitter]
+	}
+	
+	
 	
 	// MARK: - Private properties
 
-	private var activeUsers: [User] = []
-	private var inactiveUsers: [User] = []
+	private var activeUsers: [VUser] = []
+	private var inactiveUsers: [VUser] = []
 	private var indexPathDelete: IndexPath?
+	
 	
 	
 	// MARK: - UIViewController Functions
@@ -54,9 +63,7 @@ class UsersController: ChurchBeamViewController, UITableViewDelegate, UITableVie
 	
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
-		UserFetcher.addObserver(self)
-		UserSubmitter.addObserver(self)
-		UserFetcher.fetch(force: true)
+		UserFetcher.fetch()
 	}
 	
 	
@@ -113,9 +120,10 @@ class UsersController: ChurchBeamViewController, UITableViewDelegate, UITableVie
 					self.activeUsers.remove(at: indexPath.row)
 					self.tableView.deleteRow(at: indexPath, with: UITableViewRowAnimation.left)
 				} else {
-					self.activeUsers = CoreUser.getEntities().filter({ !$0.isMe })
-					CoreUser.setSortDescriptor(attributeName: "deleteDate", ascending: false)
-					self.inactiveUsers = CoreUser.getEntities(onlyDeleted: true)
+					self.activeUsers = VUser.list().filter({ !$0.isMe })
+					CoreUser.predicates.append("isTemp", equals: false)
+					CoreUser.predicates.append(NSPredicate(format: "deleteDate != nil"))
+					self.inactiveUsers = VUser.list(sortOn: "deleteDate", ascending: false)
 					self.tableView.reloadData()
 				}
 			}
@@ -127,10 +135,10 @@ class UsersController: ChurchBeamViewController, UITableViewDelegate, UITableVie
 	
 	// MARK: - UserCellDelegate Functions
 	
-	func didPressSendInvite(user: User) {
+	func didPressSendInvite(user: VUser) {
 		
 		guard let inviteToken = user.inviteToken else {
-			showAlert(title: nil, message: Text.Users.noInviteToken, actionOne: Text.Actions.ok)
+			showAlertWith(title: nil, message: Text.Users.noInviteToken, actions: [UIAlertAction(title: Text.Actions.ok, style: .default, handler: nil)])
 			return
 		}
 		if MFMailComposeViewController.canSendMail() {
@@ -152,7 +160,7 @@ class UsersController: ChurchBeamViewController, UITableViewDelegate, UITableVie
 			self.present(composePicker, animated: true, completion: nil)
 			
 		} else {
-			showAlert(title: nil, message: Text.Users.noEmail, actionOne: Text.Actions.ok)
+			showAlertWith(title: nil, message: Text.Users.noEmail, actions: [UIAlertAction(title: Text.Actions.ok, style: .default, handler: nil)])
 		}
 	}
 	
@@ -166,7 +174,7 @@ class UsersController: ChurchBeamViewController, UITableViewDelegate, UITableVie
 
 
 protocol UserCellDelegate {
-	func didPressSendInvite(user: User)
+	func didPressSendInvite(user: VUser)
 }
 
 class UserCell: UITableViewCell {
@@ -179,7 +187,7 @@ class UserCell: UITableViewCell {
 	
 	static let identifier = "UserCell"
 	
-	var user: User? = nil
+	var user: VUser? = nil
 	var delegate: UserCellDelegate?
 	
 	override func prepareForReuse() {
@@ -193,7 +201,7 @@ class UserCell: UITableViewCell {
 		nameLabel.text = nil
 	}
 	
-	func apply(user: User, delegate: UserCellDelegate) {
+	func apply(user: VUser, delegate: UserCellDelegate) {
 		self.user = user
 		self.delegate = delegate
 		nameLabel.text = user.title

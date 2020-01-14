@@ -13,11 +13,7 @@ let TagFetcher: TgFetcher = {
 }()
 
 
-class TgFetcher: Requester<Tag> {
-	
-	override var requestReloadTime: RequesterReloadTime {
-		return .seconds
-	}
+class TgFetcher: Requester<VTag> {
 	
 	override var requesterId: String {
 		return "TagFetcher"
@@ -27,13 +23,8 @@ class TgFetcher: Requester<Tag> {
 		return "tags"
 	}
 	
-	override var coreDataManager: CoreDataManager<Tag> {
-		return CoreTag
-	}
-	
 	override var params: [String : Any] {
-		coreDataManager.setSortDescriptor(attributeName: "updatedAt", ascending: false)
-		let tag = coreDataManager.getEntities().first
+		let tag = VTag.list(sortOn: "updatedAt", ascending: false).first
 		var params = super.params
 		if let date = tag?.updatedAt {
 			params["updatedsince"] = GlobalDateFormatter.localToUTC(date: date as Date)
@@ -41,9 +32,10 @@ class TgFetcher: Requester<Tag> {
 		return params
 	}
 	
-	func fetch(force: Bool) {
+	func fetch() {
+		guard isSuperRequesterTotalFinished else { return }
 		requestMethod = .get
-		request(force: force)
+		request(isSuperRequester: false)
 	}
 	
 	

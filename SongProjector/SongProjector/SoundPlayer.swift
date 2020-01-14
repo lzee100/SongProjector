@@ -19,7 +19,7 @@ class SoundPlay: NSObject, AVAssetDownloadDelegate, AVAudioPlayerDelegate {
 	var isPianoOnlyPlaying = false
 	var isLooping = false
 	
-	private var song: Cluster?
+	private var song: VCluster?
 	private var timer: Timer?
 	private var loopTime: TimeInterval = 0
 	private var queuePlayer = AVQueuePlayer()
@@ -27,7 +27,7 @@ class SoundPlay: NSObject, AVAssetDownloadDelegate, AVAudioPlayerDelegate {
 	
 	private var players: [InstrumentPlayer] = []
 	
-	func play(song: Cluster, pianoSolo: Bool = false) {
+	func play(song: VCluster, pianoSolo: Bool = false) {
 		stop()
 		isPianoOnlyPlaying = pianoSolo
 		players = []
@@ -78,14 +78,14 @@ class SoundPlay: NSObject, AVAssetDownloadDelegate, AVAudioPlayerDelegate {
 		
 		if let song = song {
 			
-			isLooping = song.hasInstrumentsArray.filter({ $0.isLoop == true }).count > 0 || song.hasInstrumentsArray.contains(where: { $0.type == .pianoSolo })
+			isLooping = song.hasInstruments.filter({ $0.isLoop == true }).count > 0 || song.hasInstruments.contains(where: { $0.type == .pianoSolo })
 			
-			if pianoSolo, let instrument = song.hasInstrumentsArray.first(where: { $0.type == .pianoSolo }) {
+			if pianoSolo, let instrument = song.hasInstruments.first(where: { $0.type == .pianoSolo }) {
 				loadSongAudioFor(instrument: instrument)
 				return
 			}
 			
-			for instrument in song.hasInstrumentsArray.filter({ $0.type != .pianoSolo }) {
+			for instrument in song.hasInstruments.filter({ $0.type != .pianoSolo }) {
 				loadSongAudioFor(instrument: instrument)
 			}
 			
@@ -93,7 +93,7 @@ class SoundPlay: NSObject, AVAssetDownloadDelegate, AVAudioPlayerDelegate {
 		
 	}
 	
-	private func loadSongAudioFor(instrument: Instrument) {
+	private func loadSongAudioFor(instrument: VInstrument) {
 		
 		var player = InstrumentPlayer()
 		

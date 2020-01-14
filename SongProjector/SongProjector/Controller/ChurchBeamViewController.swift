@@ -6,9 +6,13 @@
 //  Copyright © 2019 iozee. All rights reserved.
 //
 
+import UserNotifications
 import UIKit
+import CoreData
+
 
 class ChurchBeamViewController: UIViewController, RequestObserver {
+	
 	
 	
 	// MARK: - Private properties
@@ -24,32 +28,56 @@ class ChurchBeamViewController: UIViewController, RequestObserver {
 	var requesterId: String {
 		return "ChurchBeamViewController"
 	}
-	
-	
+	var requesters: [RequesterType] {
+		return []
+	}
+	var shouldRemoveObserversOnDissappear: Bool {
+		return true
+	}
 	
 	// MARK: UIViewController functions
 
     override func viewDidLoad() {
         super.viewDidLoad()
-		
+		let iv = AnimatingBackgroundView(frame: view.bounds)
+		iv.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+		self.view.addSubview(iv)
+		self.view.sendSubview(toBack: iv)
+//		self.view.bringSubview(toFront: iv)
+
 		animator = UIViewPropertyAnimator(duration: 0.4, curve: .easeOut) { [errorView] in
 			errorView?.center.x = -((errorView?.frame.height ?? 0) / 2)
 		}
 		view.backgroundColor = themeWhiteBlackBackground
     }
 	
+	override func viewWillAppear(_ animated: Bool) {
+		super.viewWillAppear(animated)
+		requesters.forEach({ $0.addObserver(self) })
+		print("################")
+		print(self)
+	}
+	
+	override func viewWillDisappear(_ animated: Bool) {
+		super.viewWillDisappear(animated)
+		if shouldRemoveObserversOnDissappear {
+			requesters.forEach({ $0.removeObserver(self) })
+		}
+	}
 	
 	// MARK: Public functions
 	
 	func showLoader() {
-		let loadingView = LoadingView(frame: view.bounds)
-		loadingView.alpha = 0
-		loadingView.animator.startAnimating()
-		view.addSubview(loadingView)
-		view.bringSubview(toFront: loadingView)
-		UIView.animate(withDuration: 0.1, animations: {
-			loadingView.alpha = 0.3
-		})
+		Queues.main.async {
+			let loadingView = LoadingView(frame: self.view.bounds)
+			loadingView.alpha = 0
+			loadingView.animator.startAnimating()
+			self.view.addSubview(loadingView)
+			self.view.bringSubview(toFront: loadingView)
+			UIView.animate(withDuration: 0.1, animations: {
+				loadingView.alpha = 0.3
+			})
+		}
 	}
 	
 	func hideLoader() {
@@ -60,18 +88,18 @@ class ChurchBeamViewController: UIViewController, RequestObserver {
 		}
 	}
 	
-	func show(message: String, time: TimeInterval = 4.0) {
-		createView(message: message, time: time)
+	func show(message: String) {
+		createView(message: message)
 	}
     
 
-	func show(error: ResponseType, time: TimeInterval = 4.0) {
+	func show(error: ResponseType) {
 		switch error {
 		case .error(let response, let error):
 			let status = response?.statusCode.stringValue() ?? "no status code"
 			let errMessage = error?.localizedDescription ?? "no message"
 			let message = "status: \(status):/n\(errMessage)"
-			createView(message: message, time: time)
+			createView(message: message)
 		default:
 			return
 		}
@@ -99,71 +127,20 @@ class ChurchBeamViewController: UIViewController, RequestObserver {
 		}
 	}
 	
-	
+	func showAlertWith(title: String?, message: String, actions: [UIAlertAction]) {
+		let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+		actions.forEach({ alert.addAction($0) })
+		self.present(alert, animated: true)
+	}
 	
 	// MARK: Private functions
 	
-	private func createView(message: String, time: TimeInterval) {
-		let height = message.height(withConstrainedWidth: (self.view.bounds.width * 0.90) - 16, font: UIFont.systemFont(ofSize: 14)) + 16
-		let frame = CGRect(x: (self.view.bounds.width * 0.1) / 2, y: -height, width: (self.view.bounds.width * 0.90), height: height)
-		
-		errorView = ErrorView(frame: frame, message: message, height: height)
-		
-		let swipe = UIPanGestureRecognizer(target: self, action: #selector(handlePan(recognizer:)))
-		errorView?.addGestureRecognizer(swipe)
-		
-		UIApplication.shared.keyWindow?.addSubview(errorView!)
-		let err = errorView!.frame
-		UIView.animate(withDuration: 0.4) {
-			self.errorView!.frame = CGRect(x: err.minX, y: 20, width: err.width, height: err.height)
-		}
-		timer = Timer.scheduledTimer(withTimeInterval: time, repeats: false, block: { _ in
-			self.hideView()
-		})
+	private func createView(message: String) {
+		let content = UNMutableNotificationContent()
+		content.body = message
+		content.sound = .default()
+		let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
+		UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)
 	}
 	
-	private func hideView() {
-		UIView.animate(withDuration: 0.4, animations: {
-			if let err = self.errorView?.frame {
-				self.errorView!.frame = CGRect(x: err.minX, y: -err.height, width: err.width, height: err.height)
-			}
-		}) { _ in
-			self.errorView?.removeFromSuperview()
-		}
-	}
-	
-	func showAlert(title: String? = nil, message: String? = nil, actionOne: String, handler: ((UIAlertAction) -> Void)? = nil, actionTwo: String? = nil, handlerTwo: ((UIAlertAction) -> Void)? = nil) {
-		
-		let alertMessage = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
-		
-		let action = UIAlertAction(title:actionOne, style: UIAlertActionStyle.default, handler: handler)
-		alertMessage.addAction(action)
-
-		if let actionTwo = actionTwo {
-			let addAction = UIAlertAction(title:actionTwo, style: UIAlertActionStyle.default, handler: handlerTwo)
-			alertMessage.addAction(addAction)
-		}
-		
-		self.present(alertMessage, animated: true, completion: nil)
-		
-	}
-	
-	@objc private func handlePan(recognizer:UIPanGestureRecognizer) {
-		timer?.invalidate()
-		let translation = recognizer.translation(in: self.view)
-		
-		if let view = recognizer.view as? ErrorView, view.frame.minY <= 20 {
-			view.center = CGPoint(x:view.center.x,
-								  y:view.center.y + translation.y)
-			view.layoutIfNeeded()
-			view.titleLabel.center = CGPoint(x:view.bounds.width / 2,
-								  y:view.bounds.height / 2)
-			recognizer.setTranslation(CGPoint.zero, in: self.view)
-		}
-		
-		if recognizer.state == .ended {
-			self.hideView()
-		}
-	}	
-
 }

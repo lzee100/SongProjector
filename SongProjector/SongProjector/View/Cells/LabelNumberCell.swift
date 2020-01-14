@@ -27,7 +27,7 @@ class LabelNumberCell: ChurchBeamCell, ThemeImplementation {
 	var minLimit = 0
 	var maxLimit = 0
 	
-	var sheetTheme: Theme?
+	var sheetTheme: VTheme?
 	var themeAttribute: ThemeAttribute?
 	var valueDidChange: ((ChurchBeamCell) -> Void)?
 	
@@ -68,7 +68,7 @@ class LabelNumberCell: ChurchBeamCell, ThemeImplementation {
 		delegate?.numberChangedForCell(cell: self)
 	}
 	
-	func apply(theme: Theme, themeAttribute: ThemeAttribute) {
+	func apply(theme: VTheme, themeAttribute: ThemeAttribute) {
 		self.sheetTheme = theme
 		self.themeAttribute = themeAttribute
 		self.descriptionTitle.text = themeAttribute.description
@@ -91,7 +91,6 @@ class LabelNumberCell: ChurchBeamCell, ThemeImplementation {
 			case .titleBorderSize: value = Int(theme.titleBorderSize)
 			case .contentTextSize: value = Int(theme.contentTextSize)
 			case .contentBorderSize: value = Int(theme.contentBorderSize)
-			case .backgroundTransparancy: value = Int(theme.backgroundTransparancy)
 			default: break
 			}
 			valueLabel.text = String(abs(value))
@@ -105,7 +104,6 @@ class LabelNumberCell: ChurchBeamCell, ThemeImplementation {
 			case .titleBorderSize: theme.titleBorderSize = Float(value)
 			case .contentTextSize: theme.contentTextSize = Float(value)
 			case .contentBorderSize: theme.contentBorderSize = Float(value)
-			case .backgroundTransparancy: theme.backgroundTransparancy = Float(value)
 			default: return
 			}
 		}

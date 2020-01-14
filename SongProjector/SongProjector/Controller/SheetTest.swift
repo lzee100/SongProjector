@@ -14,11 +14,9 @@ class SheetTest: UIViewController {
 	
 	override func viewDidLoad() {
 		
-		let sheet = CoreSheetPastors.createEntity()
-		sheet.deleteDate = NSDate()
-
+		let sheet = VSheetPastors()
 		
-		let theme = CoreTheme.createEntity()
+		let theme = VTheme()
 		theme.title = "theme"
 		theme.isHidden = true
 		theme.deleteDate = NSDate()

@@ -94,7 +94,7 @@
 //				for subview in collectionCell.previewView.subviews {
 //					subview.removeFromSuperview()
 //				}
-//				if let sheet = sheets.count > 0 ? sheets[indexPath.section] : cluster?.hasSheetsArray[indexPath.section] as? SheetTitleContentEntity {
+//				if let sheet = sheets.count > 0 ? sheets[indexPath.section] : cluster?.hasSheetsArray[indexPath.section] as? VSheetTitleContent {
 //					let view = SheetView.createWith(frame: collectionCell.bounds, cluster: cluster, sheet: sheet, tag: selectedTag ?? cluster?.hasTag)
 //				collectionCell.previewView.addSubview(view)
 //				}
@@ -163,7 +163,7 @@
 //		tags = CoreTag.getEntities()
 //
 //		if cluster == nil {
-//			cluster = CoreCluster.createEntity()
+//			cluster = VCluster()
 //			cluster?.isTemp = true
 //		} else {
 //			inputTextView.text = getTextFromSheets()

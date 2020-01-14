@@ -52,6 +52,16 @@ public enum SheetType: String, Codable {
 	}
 }
 
+public enum VSheetType: String, Codable {
+	case SheetTitleContent
+	case SheetTitleImage
+	case SheetPastors
+	case SheetSplit
+	case SheetEmpty
+	case SheetActivities
+}
+
+
 enum SheetAttribute {
 	case SheetTitle
 	case SheetContent
@@ -107,151 +117,114 @@ extension Sheet {
 		
 	}
 	
-	override public func delete(_ save: Bool = false) {
-		hasTheme?.delete(false)
-		moc.delete(self)
-		if save {
-			do {
-				try moc.save()
-			} catch {
-				print(error)
-			}
-		}
+	override public func delete(_ save: Bool = true, isBackground: Bool, completion: ((Error?) -> Void)) {
+		hasTheme?.delete(save, isBackground: isBackground, completion: { error in
+			super.delete(save, isBackground: isBackground, completion: completion)
+		})
 	}
+
 	
-	public override func deleteBackground(_ save: Bool) {
-		hasTheme?.deleteBackground(false)
-		mocBackground.delete(self)
-		if save {
-			mocBackground.performAndWait {
-				do {
-					try mocBackground.save()
-					try moc.save()
-				} catch {
-					print(error)
-				}
-			}
-		}
-	}
-	
-	var getTemp: Sheet {
-		let sheet: Sheet
-		switch self.type {
-		case .SheetTitleContent:
-			sheet = CoreSheetTitleContent.createEntityNOTsave()
-			if let sheet = sheet as? SheetTitleContentEntity, let current = self as? SheetTitleContentEntity {
-				sheet.content = current.content
-			}
-		case .SheetTitleImage:
-			sheet = CoreSheetTitleImage.createEntityNOTsave()
-			if let sheet = sheet as? SheetTitleImageEntity, let current = self as? SheetTitleImageEntity {
-				sheet.hasTitle = current.hasTitle
-				sheet.imageHasBorder = current.imageHasBorder
-				sheet.content = current.content
-				sheet.imageBorderColor = current.imageBorderColor
-				sheet.imageBorderSize = current.imageBorderSize
-				sheet.imagePath = current.imagePath
-				sheet.imageContentMode = current.imageContentMode
-			}
-		case .SheetPastors:
-			sheet = CoreSheetPastors.createEntityNOTsave()
-			if let sheet = sheet as? SheetPastorsEntity, let current = self as? SheetPastorsEntity {
-				sheet.content = current.content
-				sheet.imagePath = current.imagePath
-				sheet.thumbnailPath = current.thumbnailPath
-			}
-		case .SheetSplit:
-			sheet = CoreSheetSplit.createEntityNOTsave()
-			if let sheet = sheet as? SheetSplitEntity, let current = self as? SheetSplitEntity {
-				sheet.textLeft = current.textLeft
-				sheet.textRight = current.textRight
-			}
-		case .SheetEmpty:
-			sheet = CoreSheetEmptySheet.createEntityNOTsave()
-		case .SheetActivities:
-			sheet = CoreSheetActivities.createEntityNOTsave()
-			if let sheet = sheet as? SheetActivitiesEntity, let current = self as? SheetActivitiesEntity {
-				sheet.hasGoogleActivity = current.hasGoogleActivity
-			}
-		}
-		if self.hasTheme?.isHidden == true {
-			sheet.hasTheme = hasTheme?.getTemp()
-		}
-		sheet.title = title
-		sheet.deleteDate = NSDate()
-		sheet.time = time
-		sheet.position = position
-		sheet.isEmptySheet = isEmptySheet
-		return sheet
-	}
-	
-	func mergeSelfInto(sheet: Sheet, isTemp: NSDate? = nil) {
-		switch self.type {
-		case .SheetTitleContent:
-			let sheet = sheet as! SheetTitleContentEntity
-			let this = self as! SheetTitleContentEntity
-			sheet.content = this.content
-			
-		case .SheetTitleImage:
-			let sheet = sheet as! SheetTitleImageEntity
-			let this = self as! SheetTitleImageEntity
-			sheet.hasTitle = this.hasTitle
-			sheet.imageHasBorder = this.imageHasBorder
-			sheet.content = this.content
-			sheet.imageBorderColor = this.imageBorderColor
-			sheet.imageBorderSize = this.imageBorderSize
-			sheet.imagePath = this.imagePath
-			sheet.imageContentMode = this.imageContentMode
-			
-		case .SheetPastors:
-			let sheet = sheet as! SheetPastorsEntity
-			let this = self as! SheetPastorsEntity
-			sheet.content = this.content
-			sheet.imagePath = this.imagePath
-			sheet.thumbnailPath = this.thumbnailPath
-			
-		case .SheetSplit:
-			let sheet = sheet as! SheetSplitEntity
-			let this = self as! SheetSplitEntity
-			sheet.textLeft = this.textLeft
-			sheet.textRight = this.textRight
-			
-		case .SheetEmpty:
-			break
-		case .SheetActivities:
-			let sheet = sheet as! SheetActivitiesEntity
-			let this = self as! SheetActivitiesEntity
-			sheet.hasGoogleActivity = this.hasGoogleActivity
-		}
-		sheet.title = title
-		sheet.deleteDate = isTemp
-		sheet.time = time
-		sheet.position = position
-		sheet.isEmptySheet = isEmptySheet
-		print("merged sheet")
-	}
+//	var getTemp: Sheet {
+//		let sheet: VSheet
+//		switch self.type {
+//		case .SheetTitleContent:
+//			sheet = VSheetTitleContent()
+//			if let sheet = sheet as? VSheetTitleContent, let current = self as? VSheetTitleContent {
+//				sheet.content = current.content
+//			}
+//		case .SheetTitleImage:
+//			sheet = VSheetTitleImage()
+//			if let sheet = sheet as? VSheetTitleImage, let current = self as? VSheetTitleImage {
+//				sheet.hasTitle = current.hasTitle
+//				sheet.imageHasBorder = current.imageHasBorder
+//				sheet.content = current.content
+//				sheet.imageBorderColor = current.imageBorderColor
+//				sheet.imageBorderSize = current.imageBorderSize
+//				sheet.imagePath = current.imagePath
+//				sheet.imageContentMode = current.imageContentMode
+//			}
+//		case .SheetPastors:
+//			sheet = VSheetPastors()
+//			if let sheet = sheet as? VSheetPastors, let current = self as? VSheetPastors {
+//				sheet.content = current.content
+//				sheet.imagePath = current.imagePath
+//				sheet.thumbnailPath = current.thumbnailPath
+//			}
+//		case .SheetSplit:
+//			sheet = VSheetSplit()
+//			if let sheet = sheet as? VSheetSplit, let current = self as? VSheetSplit {
+//				sheet.textLeft = current.textLeft
+//				sheet.textRight = current.textRight
+//			}
+//		case .SheetEmpty:
+//			sheet = VSheetEmpty()
+//		case .SheetActivities:
+//			sheet = VSheetActivities()
+//			if let sheet = sheet as? VSheetActivities, let current = self as? VSheetActivities {
+//				sheet.hasGoogleActivity = current.hasGoogleActivity
+//			}
+//		}
+//		if self.hasTheme?.isHidden == true {
+//			sheet.hasTheme = hasTheme?.getTemp()
+//		}
+//		sheet.title = title
+//		sheet.deleteDate = NSDate()
+//		sheet.time = time
+//		sheet.position = position
+//		sheet.isEmptySheet = isEmptySheet
+//		return sheet
+//	}
+//	
+//	func mergeSelfInto(sheet: Sheet, isTemp: NSDate? = nil) {
+//		switch self.type {
+//		case .SheetTitleContent:
+//			let sheet = sheet as! SheetTitleContentEntity
+//			let this = self as! SheetTitleContentEntity
+//			sheet.content = this.content
+//			
+//		case .SheetTitleImage:
+//			let sheet = sheet as! SheetTitleImageEntity
+//			let this = self as! SheetTitleImageEntity
+//			sheet.hasTitle = this.hasTitle
+//			sheet.imageHasBorder = this.imageHasBorder
+//			sheet.content = this.content
+//			sheet.imageBorderColor = this.imageBorderColor
+//			sheet.imageBorderSize = this.imageBorderSize
+//			sheet.imagePath = this.imagePath
+//			sheet.imageContentMode = this.imageContentMode
+//			
+//		case .SheetPastors:
+//			let sheet = sheet as! SheetPastorsEntity
+//			let this = self as! SheetPastorsEntity
+//			sheet.content = this.content
+//			sheet.imagePath = this.imagePath
+//			sheet.thumbnailPath = this.thumbnailPath
+//			
+//		case .SheetSplit:
+//			let sheet = sheet as! SheetSplitEntity
+//			let this = self as! SheetSplitEntity
+//			sheet.textLeft = this.textLeft
+//			sheet.textRight = this.textRight
+//			
+//		case .SheetEmpty:
+//			break
+//		case .SheetActivities:
+//			let sheet = sheet as! SheetActivitiesEntity
+//			let this = self as! SheetActivitiesEntity
+//			sheet.hasGoogleActivity = this.hasGoogleActivity
+//		}
+//		sheet.title = title
+//		sheet.deleteDate = isTemp
+//		sheet.time = time
+//		sheet.position = position
+//		sheet.isEmptySheet = isEmptySheet
+//		print("merged sheet")
+//	}
 	
 	public func isEqualTo(_ object: Any?) -> Bool {
 		if let sheet = object as? Sheet {
 			return self.id == sheet.id
 		}
 		return false
-	}
-}
-
-struct SheetHasSheet {
-	var sheetId: Int64
-	var sheetTempId: Int64
-	
-	init(sheetId: Int64, sheetTempId: Int64) {
-		self.sheetId = sheetId
-		self.sheetTempId = sheetTempId
-	}
-}
-
-extension SheetTitleImageEntity {
-	override public func delete(_ save: Bool) {
-		image = nil
-		super.delete(save)
 	}
 }

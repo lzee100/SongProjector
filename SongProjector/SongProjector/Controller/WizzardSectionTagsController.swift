@@ -20,7 +20,7 @@ class WizzardSectionTagsController: ChurchBeamViewController, UITableViewDataSou
 		case tag
 		case addTag
 		
-		static func `for`(_ indexPath: IndexPath, tags: [Tag]) -> Row {
+		static func `for`(_ indexPath: IndexPath, tags: [VTag]) -> Row {
 			if indexPath.row == 0 {
 				return nameSection
 			} else if indexPath.row == 1 {
@@ -46,7 +46,13 @@ class WizzardSectionTagsController: ChurchBeamViewController, UITableViewDataSou
 	
 	// MARK: - Properties
 	
-	var songServiceObject: SongServiceSettings!
+	var songServiceObject: VSongServiceSettings!
+	override var requesterId: String {
+		return "WizzardSectionTagsController"
+	}
+	override var requesters: [RequesterType] {
+		return [SongServiceSettingsSubmitter]
+	}
 	
 	private var selectedSection: Int?
 	
@@ -60,6 +66,7 @@ class WizzardSectionTagsController: ChurchBeamViewController, UITableViewDataSou
 		tableView.register(cell: AddButtonCell.identifier)
 		tableView.register(cell: LabelTextFieldCell.identifier)
 		tableView.register(cell: LabelNumberPickerCell.identifier)
+		tableView.keyboardDismissMode = .interactive
     }
 	
 	override func viewWillAppear(_ animated: Bool) {
@@ -68,11 +75,17 @@ class WizzardSectionTagsController: ChurchBeamViewController, UITableViewDataSou
 		SongServiceSettingsSubmitter.addObserver(self)
 		navigationItem.rightBarButtonItem = UIBarButtonItem(title: Text.Actions.save, style: .plain, target: self, action: #selector(didPressDone(_:)))
 		navigationItem.rightBarButtonItem?.isEnabled = songServiceObject.isValid
+		
+		let notificationCenter = NotificationCenter.default
+		notificationCenter.addObserver(self, selector: #selector(keyboardWasShown(notification:)), name: Notification.Name.UIKeyboardWillHide, object: nil)
+		notificationCenter.addObserver(self, selector: #selector(keyboardWasShown(notification:)), name: Notification.Name.UIKeyboardWillChangeFrame, object: nil)
+
 	}
 	
 	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
 		SongServiceSettingsSubmitter.removeObserver(self)
+		NotificationCenter.default.removeObserver(self)
 	}
 	
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -139,8 +152,9 @@ class WizzardSectionTagsController: ChurchBeamViewController, UITableViewDataSou
 	}
 	
 	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-		if let cell = tableView.cellForRow(at: indexPath) as? BasicCell, let tag = cell.data as? Tag {
-			songServiceObject.sections[indexPath.section].removeFromHasTags(tag)
+		let section = songServiceObject.sections[indexPath.section]
+		if let cell = tableView.cellForRow(at: indexPath) as? BasicCell, let tag = cell.data as? VTag, let index = section.tagIds.firstIndex(of: NSNumber(value: tag.id)) {
+			section.tagIds.remove(at: index)
 		}
 		tableView.deleteRows(at: [indexPath], with: .left)
 	}
@@ -158,8 +172,11 @@ class WizzardSectionTagsController: ChurchBeamViewController, UITableViewDataSou
 		navigationItem.rightBarButtonItem?.isEnabled = songServiceObject.isValid
 	}
 	
-	func didSelectTagsFor(section: Int, tags: [Tag]) {
+	func didSelectTagsFor(section: Int, tags: [VTag]) {
 		songServiceObject.sections[section].tagIds = tags.compactMap({ NSNumber(value: $0.id) })
+		tableView.reloadData()
+//		tableView.reloadSections(IndexSet([section]), with: .none)
+//		tableView.updateHeights()
 		navigationItem.rightBarButtonItem?.isEnabled = songServiceObject.isValid
 	}
 	
@@ -177,6 +194,49 @@ class WizzardSectionTagsController: ChurchBeamViewController, UITableViewDataSou
 			songServiceObject.sections[section].numberOfSongs = Int16(value)
 		}
 	}
+	
+//	@objc func adjustForKeyboard(notification: Notification) {
+//		guard let keyboardValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue else { return }
+//
+//		let keyboardScreenEndFrame = keyboardValue.cgRectValue
+//		let keyboardViewEndFrame = view.convert(keyboardScreenEndFrame, from: view.window)
+//
+//		if notification.name == NSNotification.Name.UIKeyboardWillHide {
+//			tableView.contentInset = .zero
+//		} else {
+//			tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardViewEndFrame.height - view.safeAreaInsets.bottom, right: 0)
+//		}
+//
+//		tableView.scrollIndicatorInsets = tableView.contentInset
+//
+//		if let lastCell = tableView.visibleCells.last, let indexPath = tableView.indexPath(for: lastCell) {
+//			tableView.scrollToRow(at: indexPath, at: .none, animated: true)
+//		}
+//
+//	}
+	@objc func keyboardWasShown (notification: NSNotification)
+    {
+        var info = notification.userInfo
+		var keyboardSize = (info![UIKeyboardFrameBeginUserInfoKey] as! NSValue).cgRectValue.size
+
+		var contentInsets:UIEdgeInsets
+
+        if UIInterfaceOrientationIsPortrait(UIApplication.shared.statusBarOrientation) {
+
+            contentInsets = UIEdgeInsetsMake(0.0, 0.0, keyboardSize.height, 0.0);
+        }
+        else {
+            contentInsets = UIEdgeInsetsMake(0.0, 0.0, keyboardSize.width, 0.0);
+
+        }
+
+        tableView.contentInset = contentInsets
+//		if let lastCell = tableView.visibleCells.last, let indexPath = tableView.indexPath(for: lastCell) {
+//			tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+//		}
+        tableView.scrollIndicatorInsets = tableView.contentInset
+    }
+
 	
 	// MARK: - Private Functions
 	

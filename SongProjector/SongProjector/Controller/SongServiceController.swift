@@ -32,19 +32,19 @@ enum AnimationDirection {
 
 
 
-class SongServiceController: UIViewController, UITableViewDataSource, UITableViewDelegate, NewSongServiceDelegate, SongsControllerDelegate {
+class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UITableViewDelegate, SongsControllerDelegate {
 	
 	
 	
 	// MARK: - Properties
 	
-	@IBOutlet var sheetDisplaySwipeView: UIView!
+	@IBOutlet var sheetDisplaySwipeView: BlurredViewDark!
 	@IBOutlet var sheetDisplayerPrevious: UIView!
 	@IBOutlet var sheetDisplayer: UIView!
 	@IBOutlet var sheetDisplayerNext: UIView!
 	@IBOutlet var swipeUpDownImageView: UIImageView!
-	@IBOutlet var tableViewClusters: UITableView!
-	@IBOutlet var tableViewSheets: UITableView!
+	@IBOutlet var tableViewClusters: TransParentTableView!
+	@IBOutlet var tableViewSheets: TransParentTableView!
 	@IBOutlet var titleTableCluster: UILabel!
 	@IBOutlet var titleTableSheet: UILabel!
 	@IBOutlet var clear: UIBarButtonItem!
@@ -88,6 +88,7 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 	private var isPlaying = false
 	private var leftSwipe = UISwipeGestureRecognizer()
 	private var isMixerVisible = false
+	private var model: TempClustersModel?
 	
 	private var songService: SongService!
 	
@@ -103,21 +104,17 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 		update()
+		show(message: "error message")
 	}
 	
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-		if let controller = segue.destination as? UINavigationController, let newSongServiceController = controller.viewControllers.first as? NewSongServiceController {
-			newSongServiceController.delegate = self
-			newSongServiceController.selectedClusters = songService.songs.compactMap ({ $0.cluster })
-		}
 		if let controller = segue.destination as? UINavigationController, let songsController = controller.viewControllers.first as? SongsController {
 			songsController.delegate = self
+			songsController.tempClusterModel = model
 		}
-		
 		if let controller = segue.destination as? TestView {
 			controller.songService = songService
 		}
-		
 	}
 	
 	
@@ -130,7 +127,13 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 	
 	
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+		guard songService != nil, model?.sectionedClusterOrComment.count != 0 else {
+			return 0
+		}
 		if tableView == tableViewClusters {
+			if let rows = model?.sectionedClusterOrComment[section].count {
+				return rows
+			}
 			return songService.songs.count
 		} else {
 			if let selectedSection = songService.selectedSection {
@@ -144,18 +147,20 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		
 		if tableView == tableViewClusters {
-			let cell = tableViewClusters.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath)
-			if let cell = cell as? BasicCell {
-				cell.setup(title: songService.songs[indexPath.row].cluster.title, icon: Cells.songIcon)
-				cell.selectedCell = songService.selectedSection == indexPath.row
+			let cell = tableViewClusters.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath) as! BasicCell
+			if let sectionTitle = model?.songServiceSettings?.sections[indexPath.section].title {
+				cell.set(sectionHeader: sectionTitle)
 			}
+			cell.setup(title: songService.songs[indexPath.row].cluster.title, icon: Cells.songIcon, hasPianoOnly: songService.songs[indexPath.row].cluster.hasPianoSolo)
+			cell.selectedCell = songService.selectedSection == indexPath.row
+			
 			return cell
 		} else {
 			
 			let sheet = songService.songs[songService.selectedSection!].sheets[indexPath.row]
 			let cell = tableViewSheets.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath)
 			let title: String?
-			if let currentSheet = sheet as? SheetTitleContentEntity {
+			if let currentSheet = sheet as? VSheetTitleContent {
 				title = currentSheet.isEmptySheet ? Text.Sheet.emptySheetTitle : currentSheet.title
 			} else {
 				title = sheet.title
@@ -199,21 +204,22 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 	
 	
 	
-	// MARK: NewSongServiceDelegate Functions
-	
-	func didFinishSongServiceSelection(clusters: [Cluster], completion: () -> Void) {
-		songService.songs = clusters.compactMap { SongObject(cluster: $0) }
-		completion()
-	}
-
-	
-	
 	// MARK: SongsControllerDelegate Functions
-	
-	func didSelectClusters(_ clusters: [Cluster]) {
-		songService.songs = clusters.map({ SongObject(cluster: $0) })
-	}
 
+	func finishedSelection(_ model: TempClustersModel) {
+		self.model = model
+		let clusters = model.clusters.compactMap({ $0.cluster })
+		if clusters.count != 0 {
+			self.songService.songs = clusters.map({ SongObject(cluster: $0) })
+		} else {
+			 self.songService.songs = model.sectionedClusterOrComment
+				.flatMap({ $0 })
+				.compactMap({ $0.cluster })
+				.map({ SongObject(cluster: $0) })
+		}
+		update()
+	}
+	
 	
 	
 	// MARK: - Private Functions
@@ -221,22 +227,25 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 	private func setup() {
 		
 		songService = SongService(swipeLeft: swipeAutomatically, displaySheet: display(sheet:), shutDownBeamer: shutDownDisplayer)
-		view.backgroundColor = themeWhiteBlackBackground
-		songService.songs = CoreCluster.getEntities().compactMap { SongObject(cluster: $0) }
+		view.backgroundColor = .clear
 		swipeUpDownImageView.image = #imageLiteral(resourceName: "More")
 		swipeUpDownImageView.tintColor = themeHighlighted
 		navigationController?.title = Text.SongService.title
 		titleTableCluster.text = Text.SongService.titleTableClusters
 		titleTableSheet.text = Text.SongService.titleTableSheets
 		
+		sheetDisplayer.layer.cornerRadius = 4
+		sheetDisplayerNext.layer.cornerRadius = 3
+		sheetDisplayerPrevious.layer.cornerRadius = 3
+		
 		clear.title = Text.Actions.new
 		add.title = Text.Actions.add
 		title = Text.SongService.title
-				
+		
 		titleTableCluster.textColor = themeWhiteBlackTextColor
-		titleTableCluster.backgroundColor = themeWhiteBlackBackground
+		titleTableCluster.backgroundColor = .clear
 		titleTableSheet.textColor = themeWhiteBlackTextColor
-		titleTableSheet.backgroundColor = themeWhiteBlackBackground
+		titleTableSheet.backgroundColor = .clear
 		
 		NotificationCenter.default.addObserver(forName: NotificationNames.externalDisplayDidChange, object: nil, queue: nil, using: externalDisplayDidChange)
 		
@@ -273,7 +282,7 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 		}
 	}
 	
-	private func display(sheet: Sheet) {
+	private func display(sheet: VSheet) {
 		for subview in sheetDisplayer.subviews {
 			subview.removeFromSuperview()
 		}
@@ -431,6 +440,16 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 		
 	}
 	
+	@IBAction func addNewSongServicePressed(_ sender: UIBarButtonItem) {
+		if let nav = Storyboard.MainStoryboard.instantiateViewController(withIdentifier: "newSongServiceIphoneNav") as? UINavigationController, let vc = nav.topViewController  as? NewSongServiceIphoneController {
+			vc.delegate = self
+			vc.clusterModel = model ?? TempClustersModel()
+			present(nav, animated: true)
+		}
+	}
+	
+	
+	
 	private func animateSheetsWith(_ direction : AnimationDirection, completion: @escaping () -> Void) {
 		switch direction {
 		case .left:
@@ -519,7 +538,7 @@ class SongServiceController: UIViewController, UITableViewDataSource, UITableVie
 			for cluster in songService.songs.compactMap({ $0.cluster }) {
 				CoreCluster.predicates.append("id", equals: cluster.id)
 			}
-			songService.songs = CoreCluster.getEntities().compactMap { SongObject(cluster: $0) }
+			songService.songs = VCluster.list().compactMap { SongObject(cluster: $0) }
 		}
 	}
 	

@@ -87,7 +87,9 @@ function postSongServiceSettings(songServiceSettings, organizationId) {
                     })
                     .catch(err => { reject(err) })
                 })
-                .catch(err => { reject(err) })
+                .catch(err => { 
+                    reject(err)
+                 })
             }
         })
     }
@@ -100,7 +102,9 @@ function postSongServiceSettings(songServiceSettings, organizationId) {
         return new Promise((resolve, reject) => {
             Promise.all(newSections.map(section => handleSection(section)))
             .then(resolve())
-            .catch(err => { reject(err) })
+            .catch(err => { 
+                reject(err) 
+            })
         })
     }
 
@@ -135,9 +139,13 @@ function postSongServiceSettings(songServiceSettings, organizationId) {
                 })
                 .catch(err => { reject(err) })
             })
-            .catch(err => { reject(err) })
+            .catch(err => { 
+                reject(err)
+             })
         })
-        .catch(err => { reject(err) })
+        .catch(err => { 
+            reject(err) 
+        })
     })
 
 }

@@ -22,20 +22,20 @@ const contractRoutes = require('./api/routes/contracts');
 const tagsRoutes = require('./api/routes/tags')
 const songServiceSettingsRoutes = require('./api/routes/songservicesettings')
 
-const db = mysql.createConnection({
-    host    : 'localhost',
-    user    : 'root',
-    password: 'Leovanderzee1986',
-    database: 'localhostchurchbeam',
-    timezone: 'UTC'
-});
+// const db = mysql.createConnection({
+//     host    : 'localhost',
+//     user    : 'root',
+//     password: 'leovanderzee1986',
+//     database: 'localhostchurchbeam',
+//     timezone: 'UTC'
+// });
 
-db.connect((err) => {
-    if (err) {
-        throw err; 
-    }
-    console.log('MySql connected...')
-});
+// db.connect((err) => {
+//     if (err) {
+//         throw err; 
+//     }
+//     console.log('MySql connected...')
+// });
 
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));

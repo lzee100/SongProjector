@@ -72,6 +72,8 @@ open class RequestOperation : AsynchronousOperation, ShiftOutOperation {
 		
 	}
 	
+	
+	
 	// MARK: - Functions
 	
 	override open func main() {

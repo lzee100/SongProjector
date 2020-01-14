@@ -47,7 +47,7 @@ class BaseRS: NSObject {
 	}
 	
 	func addAuthorisation(_ request: RequestOperation) {
-		if let installToken = CoreUser.getEntities().first?.appInstallToken {
+		if CoreUser.getEntities().first?.appInstallToken != nil {
 			
 			request.authorization = AccountStore.icloudID
 
@@ -100,7 +100,7 @@ class BaseRS: NSObject {
 			}
 			
 			let finishOperationIcloudId = BlockOperation {
-				self.isOperationFinished = !fetchIcloudIdOperation.isSuccess
+				self.isOperationFinished = true
 				if fetchIcloudIdOperation.isSuccess {
 					let operations : [Foundation.Operation] = [operation, finishOperation]
 					Operation.dependenciesInOrder(operations)
@@ -113,7 +113,7 @@ class BaseRS: NSObject {
 			self.isOperationFinished = false
 			let operations : [Foundation.Operation] = [fetchIcloudIdOperation, finishOperationIcloudId]
 			Operation.dependenciesInOrder(operations)
-			Operation.Queue.addOperations(operations, waitUntilFinished: false)
+			Operation.Queue.addOperations(operations, waitUntilFinished: true)
 			
 		} else {
 			print("Failed create base URL for call: \n\( url)")
@@ -141,24 +141,19 @@ class BaseRS: NSObject {
 	//		Metrics.Error.fireError(NSError(domain: "REST Call Error", code: response?.statusCode ?? 0, userInfo: dict))
 	//	}
 	
-	func decode<O: Decodable>(data: Data?) -> [O]? {
+	func decode<O: Decodable>(data: Data?) throws -> [O] {
 		
-
-		var result : [O]? = []
+		var result : [O] = []
 		if let data = data {
-
-			do {
-				let json = try JSONSerialization.jsonObject(with: data, options: []) as? [[String: Any]]
-				try json?.forEach({ json in
-					let data = try JSONSerialization.data(withJSONObject: json, options: [])
-					let myResult = try JSONDecoder().decode(O.self, from: data)
-					result?.append(myResult)
-				})
-			} catch (let error){
-				print("Error \(error)")
-				return nil
-			}
+			
+			let json = try JSONSerialization.jsonObject(with: data, options: []) as? [[String: Any]]
+			try json?.forEach({ json in
+				let data = try JSONSerialization.data(withJSONObject: json, options: [])
+				let myResult = try JSONDecoder().decode(O.self, from: data)
+				result.append(myResult)
+			})
 		}
+		
 		return result
 	}
 	

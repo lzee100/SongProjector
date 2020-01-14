@@ -23,7 +23,7 @@ class LabelPickerCell: ChurchBeamCell, ThemeImplementation, DynamicHeightCell, S
 		return isActive ? 360 : 60
 	}
 	
-	var sheet: Sheet?
+	var sheet: VSheet?
 	var sheetAttribute: SheetAttribute? {
 		didSet {
 			if let sheetAttribute = sheetAttribute {
@@ -43,7 +43,7 @@ class LabelPickerCell: ChurchBeamCell, ThemeImplementation, DynamicHeightCell, S
 	var picker = UIPickerView()
 	var selectedIndex: Int = 0
 	
-	var sheetTheme: Theme?
+	var sheetTheme: VTheme?
 	var themeAttribute: ThemeAttribute?
 	var valueDidChange: ((ChurchBeamCell) -> Void)?
 	
@@ -91,7 +91,7 @@ class LabelPickerCell: ChurchBeamCell, ThemeImplementation, DynamicHeightCell, S
 		}
 	}
 	
-	func apply(theme: Theme, themeAttribute: ThemeAttribute) {
+	func apply(theme: VTheme, themeAttribute: ThemeAttribute) {
 		
 		switch themeAttribute {
 		case .asTheme: setupAsTheme()
@@ -107,7 +107,7 @@ class LabelPickerCell: ChurchBeamCell, ThemeImplementation, DynamicHeightCell, S
 		applyValueToCell()
 	}
 	
-	func apply(sheet: Sheet, sheetAttribute: SheetAttribute) {
+	func apply(sheet: VSheet, sheetAttribute: SheetAttribute) {
 		self.sheet = sheet
 		self.sheetAttribute = sheetAttribute
 		setupImageAspect()
@@ -125,7 +125,7 @@ class LabelPickerCell: ChurchBeamCell, ThemeImplementation, DynamicHeightCell, S
 			default: return
 			}
 		}
-		if let sheet = sheet as? SheetTitleImageEntity {
+		if let sheet = sheet as? VSheetTitleImage {
 			fontLabel.text = dutchContentMode()[Int(sheet.imageContentMode)]
 		}
 	}
@@ -140,7 +140,7 @@ class LabelPickerCell: ChurchBeamCell, ThemeImplementation, DynamicHeightCell, S
 			default: return
 			}
 		}
-		if let sheet = sheet as? SheetTitleImageEntity {
+		if let sheet = sheet as? VSheetTitleImage {
 			sheet.imageContentMode = Int16(selectedIndex)
 		}
 	}

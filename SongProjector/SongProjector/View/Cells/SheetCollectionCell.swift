@@ -16,8 +16,8 @@ class SheetCollectionCell: UICollectionViewCell {
 	static let identitier: String = "SheetCollectionCell"
 	
 	var isDeleteEnabled: Bool = false
-	var didDeleteSheet: ((Sheet) -> Void)?
-	var sheet: Sheet!
+	var didDeleteSheet: ((VSheet) -> Void)?
+	var sheet: VSheet!
 	
 	override func prepareForReuse() {
 		for subView in subviews {
@@ -29,7 +29,7 @@ class SheetCollectionCell: UICollectionViewCell {
 	
 	private var customRatioConstraint = NSLayoutConstraint()
 	
-	func setupWith(cluster: Cluster?, sheet: Sheet, theme: Theme?, didDeleteSheet: ((Sheet) -> Void)?, isDeleteEnabled: Bool = true) {
+	func setupWith(cluster: VCluster?, sheet: VSheet, theme: VTheme?, didDeleteSheet: ((VSheet) -> Void)?, isDeleteEnabled: Bool = true) {
 		self.sheet = sheet
 		self.didDeleteSheet = didDeleteSheet
 		self.isDeleteEnabled = isDeleteEnabled

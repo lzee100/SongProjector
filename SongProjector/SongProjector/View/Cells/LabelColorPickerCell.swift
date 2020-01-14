@@ -28,7 +28,7 @@ class LabelColorPickerCell: ChurchBeamCell, ThemeImplementation, DynamicHeightCe
 	var id = ""
 	var isActive = false { didSet { toggle() } }
 	var colorPicker = ChromaColorPicker()
-	var sheetTheme: Theme?
+	var sheetTheme: VTheme?
 	var themeAttribute: ThemeAttribute?
 	var valueDidChange: ((ChurchBeamCell) -> Void)?
 	var selectedColor: UIColor?
@@ -70,7 +70,7 @@ class LabelColorPickerCell: ChurchBeamCell, ThemeImplementation, DynamicHeightCe
 		}
 	}
 	
-	func apply(theme: Theme, themeAttribute: ThemeAttribute) {
+	func apply(theme: VTheme, themeAttribute: ThemeAttribute) {
 		self.sheetTheme = theme
 		self.themeAttribute = themeAttribute
 		self.descriptionTitle.text = themeAttribute.description

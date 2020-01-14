@@ -29,7 +29,7 @@ class LabelTextViewCell: ChurchBeamCell, DynamicHeightCell, SheetImplementation,
 	var textView = UITextView()
 	var customText = ""
 	var sheetAttribute: SheetAttribute?
-	var sheet: Sheet?
+	var sheet: VSheet?
 	var valueDidChange: ((ChurchBeamCell) -> Void)?
 	
 	static let identifier = "LabelTextViewCell"
@@ -84,24 +84,24 @@ class LabelTextViewCell: ChurchBeamCell, DynamicHeightCell, SheetImplementation,
 		}
 	}
 	
-	func apply(sheet: Sheet, sheetAttribute: SheetAttribute) {
+	func apply(sheet: VSheet, sheetAttribute: SheetAttribute) {
 		self.sheet = sheet
 		self.sheetAttribute = sheetAttribute
 		self.descriptionTitle.text = sheetAttribute.description
 		
 		switch sheetAttribute {
 		case .SheetContent, .SheetContentLeft:
-			if let sheet = sheet as? SheetSplitEntity {
+			if let sheet = sheet as? VSheetSplit {
 				set(text: sheet.textLeft)
-			} else if let sheet = sheet as? SheetTitleContentEntity {
+			} else if let sheet = sheet as? VSheetTitleContent {
 				set(text: sheet.content)
-			} else if let sheet = sheet as? SheetTitleImageEntity {
+			} else if let sheet = sheet as? VSheetTitleImage {
 				set(text: sheet.content)
-			}else if let sheet = sheet as? SheetPastorsEntity {
+			}else if let sheet = sheet as? VSheetPastors {
 				set(text: sheet.content)
 			}
 		case .SheetContentRight:
-			if let sheet = sheet as? SheetSplitEntity {
+			if let sheet = sheet as? VSheetSplit {
 				set(text: sheet.textRight)
 			}
 		default:
@@ -122,17 +122,17 @@ class LabelTextViewCell: ChurchBeamCell, DynamicHeightCell, SheetImplementation,
 		if let sheetAttribute = sheetAttribute {
 			switch sheetAttribute {
 			case .SheetContent, .SheetContentLeft:
-				if let sheet = sheet as? SheetSplitEntity {
+				if let sheet = sheet as? VSheetSplit {
 					sheet.textLeft = textView.text
-				} else if let sheet = sheet as? SheetTitleContentEntity {
+				} else if let sheet = sheet as? VSheetTitleContent {
 					sheet.content = textView.text
-				} else if let sheet = sheet as? SheetTitleImageEntity {
+				} else if let sheet = sheet as? VSheetTitleImage {
 					sheet.content = textView.text
-				}else if let sheet = sheet as? SheetPastorsEntity {
+				}else if let sheet = sheet as? VSheetPastors {
 					sheet.content = textView.text
 				}
 			case .SheetContentRight:
-				if let sheet = sheet as? SheetSplitEntity {
+				if let sheet = sheet as? VSheetSplit {
 					sheet.textRight = textView.text
 				}
 			default:

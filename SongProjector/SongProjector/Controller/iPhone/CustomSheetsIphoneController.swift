@@ -22,11 +22,11 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 	@IBOutlet var collectionView: UICollectionView!
 	
 	var isNew = true
-	var themes: [Theme] = []
-	var selectedTheme: Theme? {
+	var themes: [VTheme] = []
+	var selectedTheme: VTheme? {
 		didSet {
 			if let themeId = selectedTheme?.id {
-				clusterTemp?.themeId = themeId
+				cluster?.themeId = themeId
 			}
 			collectionView.reloadData()
 		}
@@ -34,51 +34,23 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 	
 	var isEdited = false
 	
-	var cluster: Cluster? {
+	var cluster: VCluster? {
 		didSet {
 			if let cluster = cluster {
-				clusterTemp = cluster.tempVersion
-				sheets = cluster.hasSheetsArray
+				sheets = cluster.hasSheets
 			}
 		}
 	}
-	
-	private var clusterTemp: Cluster?
-	
-	var sheets: [Sheet] = [] {
+		
+	var sheets: [VSheet] = [] {
 		didSet {
-			sheetsTemp = []
-			sheetHasSheet = []
 			save.isEnabled = sheets.count > 0
-			for (index, sheet) in sheets.enumerated() {
-				sheet.position = Int16(index)
-				let tempSheet = sheet.getTemp
-				sheetHasSheet.append(SheetHasSheet(sheetId: sheet.id, sheetTempId: tempSheet.id))
-				sheetsTemp.append(tempSheet)
-			}
 		}
 	}
-	
-	private var sheetsTemp: [Sheet] = [] {
-		didSet {
-			sheetsTemp.forEach({ $0.hasCluster = clusterTemp })
-			var index: Int16 = 0
-			sheetsTemp.forEach({
-				$0.hasCluster = clusterTemp
-				$0.position = index
-				index += 1
-			})
-			sheetsTemp.sort(by: { $0.position < $1.position })
-			save.isEnabled = sheetsTemp.count > 0
-		}
-	}
-	
-	var sheetHasSheet: [SheetHasSheet] = []
-	
 	
 	// MARK: Private properties
 	private var visibleCells: [IndexPath] = []
-	private var sheetsSorted: [Sheet] { return sheets.sorted { $0.position < $1.position } }
+	private var sheetsSorted: [VSheet] { return sheets.sorted { $0.position < $1.position } }
 	private var delaySheetAimation = 0.0
 	private var multiplier: CGFloat = 9/16
 	private var sheetSize = CGSize(width: 375, height: 281)
@@ -134,9 +106,9 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 			let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.sheetCollectionCell, for: indexPath) as! SheetCollectionCell
 			
 			collectionCell.setupWith(
-				cluster: clusterTemp,
-				sheet: sheetsTemp[indexPath.row],
-				theme: sheetsTemp[indexPath.row].hasTheme ?? clusterTemp?.hasTheme,
+				cluster: cluster,
+				sheet: sheets[indexPath.row],
+				theme: sheets[indexPath.row].hasTheme ?? cluster?.hasTheme,
 				didDeleteSheet: didDeleteSheet(sheet:))
 			
 			if visibleCells.contains(indexPath) {
@@ -194,9 +166,9 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, moveItemAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-		let sourceItem = sheetsTemp[sourceIndexPath.row]
-		sheetsTemp.remove(at: sourceIndexPath.row)
-		sheetsTemp.insert(sourceItem, at: destinationIndexPath.row)
+		let sourceItem = sheets[sourceIndexPath.row]
+		sheets.remove(at: sourceIndexPath.row)
+		sheets.insert(sourceItem, at: destinationIndexPath.row)
 		collectionView.visibleCells.forEach { $0.layer.removeAllAnimations() }
 	}
 	
@@ -204,10 +176,10 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 	
 	// MARK: - Delegate Functions
 	
-	func didCreate(sheet: Sheet) {
+	func didCreate(sheet: VSheet) {
 		
 		if !sheets.contains(where: { $0.id == sheet.id }) {
-			sheet.position = Int16(sheets.count)
+			sheet.position = sheets.count
 			sheets.append(sheet)
 		}
 		isFirstTime = true
@@ -241,7 +213,7 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 		cluster?.title = text
 	}
 	
-	func didDeleteSheet(sheet: Sheet) {
+	func didDeleteSheet(sheet: VSheet) {
 		
 	}
 	
@@ -251,8 +223,7 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 	private func setup() {
 		
 		if cluster == nil {
-			cluster = CoreCluster.createEntity()
-			cluster?.deleteDate = NSDate()
+			cluster = VCluster()
 		}
 		save.title = Text.Actions.save
 		cancel.title = Text.Actions.cancel
@@ -278,7 +249,7 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 		collectionViewThemes.register(UINib(nibName: Cells.themeCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.themeCellCollection)
 
 		CoreTheme.predicates.append("isHidden", notEquals: true)
-		themes = CoreTheme.getEntities()
+		themes = VTheme.list(sortOn: "position", ascending: true)
 		
 		let cellHeight = multiplier * (UIScreen.main.bounds.width - 20)
 		sheetSize = CGSize(width: UIScreen.main.bounds.width - 20, height: cellHeight)
@@ -291,7 +262,7 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 		collectionView!.collectionViewLayout = layout
 		
 		if cluster != nil {
-			sheets = cluster?.hasSheetsArray ?? []
+			sheets = cluster?.hasSheets ?? []
 			selectedTheme = cluster?.hasTheme
 		}
 		
@@ -373,11 +344,11 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 			self.performSegue(withIdentifier: "ChangeLyricsSegue", sender: self)
 		}
 		
-		if sheetsTemp.count == 0 {
+		if sheets.count == 0 {
 			optionsMenu.addAction(addSheet)
 			optionsMenu.addAction(changeLyrics)
 		} else {
-			if sheetsTemp.contains(where: { $0.hasTheme?.isHidden == true }) {
+			if sheets.contains(where: { $0.hasTheme?.isHidden == true }) {
 				optionsMenu.addAction(addSheet)
 				optionsMenu.addAction(changeGeneralSettings)
 			} else {
@@ -392,35 +363,21 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 		if hasThemeSelected() {
 			if hasName() {
 				if cluster == nil {
-					cluster = CoreCluster.createEntity()
+					cluster = VCluster()
 				}
 				if let themeId = selectedTheme?.id {
 					cluster?.themeId = themeId
 				}
 				
-				var index: Int16 = 0
+				var index = 0
 				for sheet in sheets {
 					sheet.position = index
 					sheet.hasCluster = cluster
 					index += 1
 				}
-				CoreGoogleActivities.predicates.append("deleteDate", isNotNil: true)
-				let activities = CoreGoogleActivities.getEntities()
-				for activity in activities {
-					activity.delete()
-				}
-
-				let _ = CoreCluster.saveContext()
-				CoreSheet.predicates.append("deleteDate", isNotNil: true)
-				let tempSheets = CoreSheet.getEntities()
-				for sheet in tempSheets {
-					sheet.delete()
-				}
 				
 				sheets = []
-				
-				CoreEntity.saveContext()
-				
+								
 				update()
 				
 				DispatchQueue.main.async {

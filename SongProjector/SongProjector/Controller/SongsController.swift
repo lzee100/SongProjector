@@ -9,7 +9,7 @@
 import UIKit
 
 protocol SongsControllerDelegate {
-	func didSelectClusters(_ clusters: [Cluster])
+	func finishedSelection(_ model: TempClustersModel)
 }
 
 class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UISearchBarDelegate, CustomSheetsControllerDelegate {
@@ -22,37 +22,33 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
 	
 	@IBOutlet var new: UIBarButtonItem!
 	@IBOutlet var collectionView: UICollectionView!
-	@IBOutlet var tableView: UITableView!
+	@IBOutlet var tableView: TransParentTableView!
 	@IBOutlet var searchBar: UISearchBar!
 	@IBOutlet var cancel: UIBarButtonItem!
-	@IBOutlet var emptyView: UIView!
-	
 	
 	
 	// MARK: - Private Properties
 	
-	private var tags: [Tag] = []
-	private var selectedTags: [Tag] = []
-	private var clusters: [Cluster] = []
-	private var selectedCluster: Cluster?
-	private var filteredClusters: [Cluster] = []
+	private var tags: [VTag] = []
+	private var selectedTags: [VTag] = []
+	private var clusters: [VCluster] = []
+	private var selectedCluster: VCluster?
+	private var filteredClusters: [VCluster] = []
 	
 	
 	
 	// MARK: Properties
 
 	var delegate: SongsControllerDelegate?
-	var selectedClusters: [Cluster] = []
+	var tempClusterModel: TempClustersModel?
+	
 	override var requesterId: String {
 		return "SongsController"
 	}
-	var selectedSongserviceClusters: [Cluster] = [] {
-		didSet {
-			delegate?.didSelectClusters(selectedSongserviceClusters)
-		}
+	override var requesters: [RequesterType] {
+		return [ClusterFetcher, ClusterSubmitter]
 	}
-	
-	
+	var manditoryTagIds: [Int64]?
 	
 	// MARK: - UIViewController Functions
 
@@ -63,22 +59,11 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
 	
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
-		ClusterFetcher.addObserver(self)
-		ClusterSubmitter.addObserver(self)
-		ClusterFetcher.fetch(force: false)
+		ClusterFetcher.fetch()
 		searchBarCancelButtonClicked(searchBar)
 		selectedTags = []
-		mocBackground.perform {
-			moc.reset()
-			mocBackground.reset()
-		}
+		manditoryTagIds = tempClusterModel?.songServiceSettings == nil ? nil : tempClusterModel?.getManditoryTagsIds()
 		update()
-	}
-	
-	override func viewWillDisappear(_ animated: Bool) {
-		super.viewWillDisappear(animated)
-		ClusterFetcher.removeObserver(self)
-		ClusterSubmitter.removeObserver(self)
 	}
 	
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -99,9 +84,10 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
 		let cell = tableView.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath)
 		
 		if let cell = cell as? BasicCell {
-			cell.setup(title: filteredClusters[indexPath.row].title, icon: Cells.songIcon)
 			cell.setup(title: filteredClusters[indexPath.row].title, icon: Cells.songIcon, iconSelected: Cells.sheetIcon)
-			cell.selectedCell = selectedSongserviceClusters.contains(filteredClusters[indexPath.row])
+			let hasUnsectionedClusters = tempClusterModel?.clusters.count ?? 0 != 0
+			let clusters = hasUnsectionedClusters ? tempClusterModel?.clusters : tempClusterModel?.sectionedClusterOrComment.flatMap({ $0 })
+			cell.selectedCell = clusters?.contains(where: { filteredClusters[indexPath.row].id == $0.id }) ?? false
 		}
 		return cell
 	}
@@ -120,17 +106,33 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
 	
 	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		selectedCluster = filteredClusters[indexPath.row]
-		if delegate != nil {
-			if selectedSongserviceClusters.contains(filteredClusters[indexPath.row]) {
-				selectedSongserviceClusters.delete(entity: filteredClusters[indexPath.row])
+		if let delegate = delegate {
+			let currentCorC = ClusterOrComment(cluster: filteredClusters[indexPath.row])
+			if let model = tempClusterModel, let clusterToChange = model.clusterToChange {
+				if !model.sectionedClusterOrComment.flatMap({ $0 }).contains(where: { $0.id == currentCorC.id }) {
+					model.change(old: clusterToChange, for: currentCorC)
+					delegate.finishedSelection(model)
+					self.dismiss(animated: true)
+				}
+			}
+			else if tempClusterModel?.songServiceSettings == nil {
+				if tempClusterModel?.contains(currentCorC) ?? false {
+					tempClusterModel?.delete(currentCorC)
+				} else {
+					tempClusterModel?.append(currentCorC)
+				}
+			}
+			// if not able to delete, then append
+			else if tempClusterModel?.contains(ClusterOrComment(cluster: filteredClusters[indexPath.row])) ?? false {
+				tempClusterModel?.delete(ClusterOrComment(cluster: filteredClusters[indexPath.row]))
 			} else {
-				selectedSongserviceClusters.append(filteredClusters[indexPath.row])
+				tempClusterModel?.append(ClusterOrComment(cluster: filteredClusters[indexPath.row]))
 			}
 			tableView.reloadRows(at: [indexPath], with: .automatic)
 		} else {
 			if let name = UserDefaults.standard.value(forKey: "device") as? String, name == "ipad" {
 				
-				let customController = storyboard?.instantiateViewController(withIdentifier: "CustomSheetsController") as! CustomSheetsController
+				let customController = Storyboard.Ipad.instantiateViewController(withIdentifier: "CustomSheetsController") as! CustomSheetsController
 				customController.cluster = selectedCluster
 				customController.isNew = false
 				let nav = UINavigationController(rootViewController: customController)
@@ -141,7 +143,6 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
 			} else {
 				let customController = storyboard?.instantiateViewController(withIdentifier: "CustomSheetsIphoneController") as! CustomSheetsController
 				customController.cluster = selectedCluster!
-				customController.sheets = selectedCluster!.hasSheetsArray
 				customController.delegate = self
 				customController.isNew = false
 				let nav = UINavigationController(rootViewController: customController)
@@ -157,6 +158,10 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
 		return 60
 	}
 	
+	
+	
+	// MARK: - CollectionView Functions
+	
 	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
 		return tags.count
 	}
@@ -166,13 +171,21 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
 		
 		if let collectionCell = collectionCell as? ThemeCellCollection {
 			collectionCell.setup(themeName: tags[indexPath.row].title ?? "")
-			collectionCell.isSelectedCell = selectedTags.contains(tags[indexPath.row])
+			if let manditoryTagIds = manditoryTagIds {
+				let manditoryTags = VTag.list().filter({ manditoryTagIds.contains($0.id) })
+				collectionCell.isSelectedCell = manditoryTags.contains(entity: tags[indexPath.row])
+			} else {
+				collectionCell.isSelectedCell = selectedTags.contains(entity: tags[indexPath.row])
+			}
 		}
 		return collectionCell
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-		if selectedTags.contains(tags[indexPath.row]), let index = selectedTags.index(of: tags[indexPath.row]) {
+		if manditoryTagIds != nil {
+			return
+		}
+		if let index = selectedTags.firstIndex(entity: tags[indexPath.row]) {
 			self.selectedTags.remove(at: index)
 		} else {
 			self.selectedTags.append(tags[indexPath.row])
@@ -212,10 +225,12 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
 	
 	override func handleRequestFinish(requesterId: String, result: AnyObject?) {
 		if requesterId == ClusterSubmitter.requesterId, let deletedCluster = (result as? [Cluster])?.first, let index = clusters.index(where: { $0.id == deletedCluster.id }) {
+			tempClusterModel?.delete(ClusterOrComment(cluster: clusters[index]))
 			clusters.remove(at: index)
 			filteredClusters = clusters
 			self.tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
 		} else {
+			tempClusterModel?.refresh()
 			update()
 		}
 	}
@@ -226,13 +241,11 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
 		collectionView.register(UINib(nibName: Cells.themeCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.themeCellCollection)
 		
 		hideKeyboardWhenTappedAround()
-		view.backgroundColor = themeWhiteBlackBackground
 		
 		navigationController?.title = Text.Songs.title
 		title = Text.Songs.title
 		cancel.title = Text.Actions.done
 		cancel.tintColor = delegate == nil ? .clear : themeHighlighted
-		emptyView.backgroundColor = themeWhiteBlackBackground
 		
 		if delegate == nil {
 			self.navigationItem.leftBarButtonItem = nil
@@ -247,12 +260,18 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
 	}
 	
 	private func update() {
-		clusters = CoreCluster.getEntities()
-		clusters.sort(by: { ($0.title ?? "") < ($1.title ?? "") })
-		CoreTag.setSortDescriptor(attributeName: "position", ascending: true)
-		tags = CoreTag.getEntities()
+		clusters = VCluster.list(sortOn: "title", ascending: true)
+		tags = VTag.list(sortOn: "position", ascending: true)
 		filterOnTags()
-		filteredClusters = clusters
+		if let manditoryTagIds = manditoryTagIds?.compactMap({ NSNumber(value: $0) }) {
+			filteredClusters = clusters.filter({ cluster in
+				manditoryTagIds.contains(where: { (manditoryTagId) -> Bool in
+					cluster.tagIds.contains(manditoryTagId)
+				})
+			})
+		} else {
+			filteredClusters = clusters
+		}
 		tableView.reloadData()
 		collectionView.reloadData()
 	}
@@ -272,7 +291,43 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
 	}
 
 	@IBAction func cancelPressed(_ sender: UIBarButtonItem) {
+		if let model = tempClusterModel {
+			delegate?.finishedSelection(model)
+		}
 		dismiss(animated: true)
 	}
 	
+}
+
+class TransParentTableView: UITableView {
+	
+	override func awakeFromNib() {
+		super.awakeFromNib()
+		backgroundColor = .clear
+		let blurEffect = UIBlurEffect(style: .extraLight)
+		let blurEffectView = UIVisualEffectView(effect: blurEffect)
+		blurEffectView.frame = frame
+		backgroundView = blurEffectView
+		separatorEffect = UIVibrancyEffect(blurEffect: blurEffect)
+		let bottomView = UIView()
+		bottomView.backgroundColor = .clear
+		tableFooterView = bottomView
+	}
+}
+
+class BlurredViewDark: UIView {
+	
+	override func awakeFromNib() {
+		super.awakeFromNib()
+		backgroundColor = .clear
+		let blurEffect = UIBlurEffect(style: .prominent)
+		let blurEffectView = UIVisualEffectView(effect: blurEffect)
+		blurEffectView.frame = bounds
+		addSubview(blurEffectView)
+		sendSubview(toBack: blurEffectView)
+		blurEffectView.topAnchor.constraint(equalTo: topAnchor).isActive = true
+		blurEffectView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+		blurEffectView.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
+		blurEffectView.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
+	}
 }

@@ -36,51 +36,51 @@ class LyricsViewController: UIViewController {
 		
 		lyricsTextView.text = text
 		
-		if lyricsTextView.text == "" {
-			lyricsTextView.text = """
-			Heer, hoe talrijk zijn mijn vijanden
-			
-			Heer, hoe talrijk zijn mijn vijanden
-			en velen die opstaan tegen mij.
-			Zij, die spotten en zeggen van mij
-			hij vindt geen hulp bij zijn God.
-			
-			Maar U, o Heer bent een schild voor mij
-			mijn Redder en Bevrijder elke dag.
-			Want U, o Heer bent een schild voor mij
-			mijn Redder en Bevrijder elke dag.
-			
-			Ik ben niet bang voor tienduizenden mensen
-			die zich stellen rondom mij.
-			Als ik luide roep tot God
-			dan antwoord Hij mij van Zijn heil’ge berg.
-			
-			Maar U, o Heer bent een schild voor mij
-			mijn Redder en Bevrijder elke dag.
-			Want U, o Heer bent een schild voor mij
-			mijn Redder en Bevrijder elke dag.
-			
-			Heer, hoe talrijk zijn mijn vijanden
-			en velen die opstaan tegen mij.
-			Zij, die spotten en zeggen van mij
-			hij vindt geen hulp bij zijn God.
-			
-			Maar U, o Heer bent een schild voor mij
-			mijn Redder en Bevrijder elke dag.
-			Want U, o Heer bent een schild voor mij
-			mijn Redder en Bevrijder elke dag.
-			
-			Ik ben niet bang voor tienduizenden mensen
-			die zich stellen rondom mij.
-			Als ik luide roep tot God
-			dan antwoord Hij mij van Zijn heil’ge berg.
-			
-			Maar U, o Heer bent een schild voor mij
-			mijn Redder en Bevrijder elke dag.
-			Want U, o Heer bent een schild voor mij
-			mijn Redder en Bevrijder elke dag.
-			"""
-		}
+//		if lyricsTextView.text == "" {
+//			lyricsTextView.text = """
+//			Heer, hoe talrijk zijn mijn vijanden
+//
+//			Heer, hoe talrijk zijn mijn vijanden
+//			en velen die opstaan tegen mij.
+//			Zij, die spotten en zeggen van mij
+//			hij vindt geen hulp bij zijn God.
+//
+//			Maar U, o Heer bent een schild voor mij
+//			mijn Redder en Bevrijder elke dag.
+//			Want U, o Heer bent een schild voor mij
+//			mijn Redder en Bevrijder elke dag.
+//
+//			Ik ben niet bang voor tienduizenden mensen
+//			die zich stellen rondom mij.
+//			Als ik luide roep tot God
+//			dan antwoord Hij mij van Zijn heil’ge berg.
+//
+//			Maar U, o Heer bent een schild voor mij
+//			mijn Redder en Bevrijder elke dag.
+//			Want U, o Heer bent een schild voor mij
+//			mijn Redder en Bevrijder elke dag.
+//
+//			Heer, hoe talrijk zijn mijn vijanden
+//			en velen die opstaan tegen mij.
+//			Zij, die spotten en zeggen van mij
+//			hij vindt geen hulp bij zijn God.
+//
+//			Maar U, o Heer bent een schild voor mij
+//			mijn Redder en Bevrijder elke dag.
+//			Want U, o Heer bent een schild voor mij
+//			mijn Redder en Bevrijder elke dag.
+//
+//			Ik ben niet bang voor tienduizenden mensen
+//			die zich stellen rondom mij.
+//			Als ik luide roep tot God
+//			dan antwoord Hij mij van Zijn heil’ge berg.
+//
+//			Maar U, o Heer bent een schild voor mij
+//			mijn Redder en Bevrijder elke dag.
+//			Want U, o Heer bent een schild voor mij
+//			mijn Redder en Bevrijder elke dag.
+//			"""
+//		}
     }
 
 	@IBAction func cancelPressed(_ sender: UIBarButtonItem) {

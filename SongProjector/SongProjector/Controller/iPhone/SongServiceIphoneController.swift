@@ -19,9 +19,7 @@ extension NSLayoutConstraint {
 	}
 }
 
-class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, NewSongServiceDelegate, RequestObserver {
-	
-
+class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, RequestObserver, SongsControllerDelegate {
 	
 	@IBOutlet var new: UIBarButtonItem!
 	@IBOutlet var sheetDisplaySwipeView: UIView!
@@ -68,12 +66,16 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		case mixer
 	}
 	
+	
 	// MARK: - Properties
+	
 	var requesterId: String {
 		return "SongServiceIphoneController"
 	}
+	var songServiceSettings: VSongServiceSettings?
+	var songsPerSection: [[VCluster]]?
+	var songsPerSectionWithComents: [[Any]]?
 
-	
 	// MARK: Private Properties
 	
 	private var newSheetDisplayerSwipeViewTopConstraint: NSLayoutConstraint?
@@ -89,7 +91,8 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	private var isPlaying = false
 	private var leftSwipe = UISwipeGestureRecognizer()
 	private var viewToBeamer: SheetView?
-	private var emptySheet: Sheet?
+	private var emptySheet: VSheet?
+	private var model: TempClustersModel?
 	
 	// MARK: - Functions
 	
@@ -128,7 +131,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 		if let controller = segue.destination as? UINavigationController, let newSongServiceIphoneController = controller.viewControllers.first as? NewSongServiceIphoneController {
 			newSongServiceIphoneController.delegate = self
-			newSongServiceIphoneController.selectedSongs = songService.songs.compactMap { $0.cluster }
+			newSongServiceIphoneController.clusterModel = model ?? TempClustersModel()
 		}
 	}
 	
@@ -156,6 +159,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath)
+		
 		let currentSheet = songService.songs[indexPath.section].sheets[indexPath.row]
 		
 		if let cell = cell as? BasicCell {
@@ -165,7 +169,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				return cell
 			}
 			let title: String?
-			if let sheet = currentSheet as? SheetTitleContentEntity {
+			if let sheet = currentSheet as? VSheetTitleContent {
 				title = sheet.isEmptySheet ? Text.Sheet.emptySheetTitle : sheet.title
 			} else {
 				title = currentSheet.title
@@ -192,8 +196,18 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	}
 	
 	func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-		let view = SongHeaderView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 60))
 		let song = songService.songs[section]
+		let firstClusters = model?.sectionedClusterOrComment.compactMap({ $0.first?.cluster })
+		let hasHeader = firstClusters?.contains(entity: songService.songs[section].cluster) ?? false
+		
+		let view = SongHeaderView(frame: SongHeaderView.preferredSize(hasHeader: hasHeader))
+		if let model = model, let songServiceSetting = model.songServiceSettings, hasHeader {
+			if let index = model.sectionedClusterOrComment.firstIndex(where: { sectionClusterOrComment in
+				sectionClusterOrComment.compactMap({ $0.cluster }).contains(entity: song.cluster)
+			}) {
+				view.set(sectionHeader: songServiceSetting.sections[index].title ?? "")
+			}
+		}
 		view.didSelectHeader = didSelectSection(section:)
 		view.didSelectPiano = didSelectPianoInSection(section:)
 		let isSelected = section == songService.selectedSection
@@ -205,25 +219,30 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	}
 	
 	func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-		return 60
+		let firstClusters = model?.sectionedClusterOrComment.compactMap({ $0.first?.cluster })
+		let hasHeader = firstClusters?.contains(entity: songService.songs[section].cluster) ?? false
+		return SongHeaderView.preferredSize(hasHeader: hasHeader).height
 	}
+	
+	
 	
 	// MARK: NewSongServiceDelegate Functions
 	
-	func didFinishSongServiceSelection(clusters: [Cluster]) {
-		self.songService.songs = clusters.map{ SongObject(cluster: $0) }
+	func finishedSelection(_ model: TempClustersModel) {
+		self.model = model
+		let clusters = model.clusters.compactMap({ $0.cluster })
+		if clusters.count != 0 {
+			self.songService.songs = clusters.map({ SongObject(cluster: $0) })
+		} else {
+			self.songService.songs = model
+				.sectionedClusterOrComment
+				.flatMap({ $0 })
+				.compactMap({ $0.cluster })
+				.map({ SongObject(cluster: $0) })
+		}
 		update()
 	}
 	
-	
-	
-	// MARK: SongsControllerDelegate Functions
-	
-	func didFinishSongServiceSelection(clusters: [Cluster], completion: () -> Void) {
-		self.songService.songs = clusters.map{ SongObject(cluster: $0) }
-		completion()
-		update()
-	}
 	
 	
 	// MARK: Fetcher Functions
@@ -558,7 +577,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 			for cluster in songService.songs.compactMap({ $0.cluster }) {
 				CoreCluster.predicates.append("id", equals: cluster.id)
 			}
-			songService.songs = CoreCluster.getEntities().compactMap { SongObject(cluster: $0) }
+			songService.songs = VCluster.list().compactMap({ SongObject(cluster: $0) })
 		}
 	}
 	
@@ -601,7 +620,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	}
 	
 	
-	func display(sheet: Sheet) {
+	func display(sheet: VSheet) {
 		
 		for subview in sheetDisplayer.subviews {
 			subview.removeFromSuperview()
@@ -644,14 +663,14 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				let nextSheetView = SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.getSongForNextSheet()?.cluster, sheet: nextSheet, theme: songService.nextTheme, scaleFactor: scaleFactor)
 				
 				currentSheetView.frame = CGRect(
-					x: sheetDisplayer.bounds.minX,
-					y: sheetDisplayer.bounds.minY,
+					x: sheetDisplayer.frame.minX,
+					y: sheetDisplaySwipeView.frame.minY,
 					width: sheetDisplayer.bounds.width,
 					height: sheetDisplayer.bounds.height)
 				
 				nextSheetView.frame = CGRect(
 					x: UIScreen.main.bounds.width,
-					y: sheetDisplayer.bounds.minY,
+					y: sheetDisplaySwipeView.frame.minY,
 					width: sheetDisplayer.bounds.width,
 					height: sheetDisplayer.bounds.height) // set the view
 				
@@ -667,13 +686,13 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				UIView.animate(withDuration: 0.3, animations: {
 					currentSheetView.frame = CGRect(
 						x: -UIScreen.main.bounds.width,
-						y: self.sheetDisplayer.bounds.minY,
-						width: self.sheetDisplayerPrevious.bounds.width,
+						y: self.sheetDisplaySwipeView.frame.minY,
+						width: self.sheetDisplayerPrevious.frame.width,
 						height: self.sheetDisplayerPrevious.bounds.height)
 					
 					nextSheetView.frame = CGRect(
 						x: self.sheetDisplayer.frame.minX,
-						y: self.sheetDisplayer.bounds.minY,
+						y: self.sheetDisplaySwipeView.frame.minY,
 						width: self.sheetDisplayer.bounds.width,
 						height: self.sheetDisplayer.bounds.height)
 					
@@ -703,13 +722,13 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 					
 					currentSheetView.frame = CGRect(
 						x: sheetDisplayer.frame.minX,
-						y: sheetDisplayer.bounds.minY,
+						y: sheetDisplaySwipeView.frame.minY,
 						width: sheetDisplayer.bounds.width,
 						height: sheetDisplayer.bounds.height)
 					
 					previousSheetView.frame = CGRect(
 						x: -UIScreen.main.bounds.width,
-						y: self.sheetDisplayer.bounds.minY,
+						y: self.sheetDisplaySwipeView.frame.minY,
 						width: sheetDisplayer.bounds.width,
 						height: sheetDisplayerPrevious.bounds.height) // set the view
 					
@@ -725,13 +744,13 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 					UIView.animate(withDuration: 0.3, animations: {
 						previousSheetView.frame = CGRect(
 							x: self.sheetDisplayer.frame.minX,
-							y: self.sheetDisplayer.bounds.minY,
+							y: self.sheetDisplaySwipeView.frame.minY,
 							width: self.sheetDisplayer.bounds.width,
 							height: self.sheetDisplayer.bounds.height)
 						
 						currentSheetView.frame = CGRect(
 							x: UIScreen.main.bounds.width,
-							y: self.sheetDisplayer.frame.minY,
+							y: self.sheetDisplaySwipeView.frame.minY,
 							width: self.sheetDisplayerNext.bounds.width,
 							height: self.sheetDisplayerNext.bounds.height)
 						

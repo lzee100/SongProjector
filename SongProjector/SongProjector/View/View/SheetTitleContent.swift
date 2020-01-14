@@ -36,7 +36,7 @@ class SheetTitleContent: SheetView {
 		}
 	}
 	var content: String? {
-		if let sheet = sheet as? SheetTitleContentEntity {
+		if let sheet = sheet as? VSheetTitleContent {
 			return sheet.content
 		}
 		return nil
@@ -106,7 +106,7 @@ class SheetTitleContent: SheetView {
 	}
 	
 	override func updateContent() {
-		let sheet = self.sheet as! SheetTitleContentEntity
+		let sheet = self.sheet as! VSheetTitleContent
 		if let content = sheet.content {
 			if let theme = sheetTheme {
 				contentTextView.attributedText = NSAttributedString(string: content, attributes: theme.getLyricsAttributes(scaleFactor ?? 1))

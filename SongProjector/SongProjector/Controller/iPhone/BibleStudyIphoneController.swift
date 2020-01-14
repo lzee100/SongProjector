@@ -18,9 +18,9 @@ class BibleStudyIphoneController: UIViewController, UITableViewDelegate, UITable
 	@IBOutlet var saveButton: UIBarButtonItem!
 	@IBOutlet var addButton: UIBarButtonItem!
 	
-	private var themes: [Theme] = []
-	private var sheets: [Sheet] = []
-	private var selectedTheme: Theme?
+	private var themes: [VTheme] = []
+	private var sheets: [VSheet] = []
+	private var selectedTheme: VTheme?
 	private var multiplier = externalDisplayWindowRatio
 	private var delaySheetAimation = 0.0
 	private var isFirstTime = true {
@@ -134,7 +134,7 @@ class BibleStudyIphoneController: UIViewController, UITableViewDelegate, UITable
 	
 	// MARK: - Custom Delegate Functions
 	
-	func didCreate(sheet: Sheet) {
+	func didCreate(sheet: VSheet) {
 		
 	}
 	
@@ -142,7 +142,7 @@ class BibleStudyIphoneController: UIViewController, UITableViewDelegate, UITable
 		
 	}
 	
-	func didFinishGeneratorWith(_ sheets: [Sheet]) {
+	func didFinishGeneratorWith(_ sheets: [VSheet]) {
 		
 	}
 	
@@ -160,8 +160,7 @@ class BibleStudyIphoneController: UIViewController, UITableViewDelegate, UITable
 	}
 	
 	private func update() {
-		CoreTheme.setSortDescriptor(attributeName: "position", ascending: false)
-		themes = CoreTheme.getEntities()
+		themes = VTheme.list(sortOn: "position", ascending: true)
 		collectionViewThemes.reloadData()
 		collectionViewSheets.reloadData()
 		isFirstTime = true

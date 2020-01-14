@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const SongServiceClass = require('../util/songServiceClass')
-
+const print = require('../util/print')
 // GET — retrieve a particular resource’s object or list all objects
 // POST — create a new resource’s object
 // PATCH — make a partial update to a particular resource’s object
@@ -34,6 +34,7 @@ router.get('/', (req, res , next) => {
 router.post('/', (req, res , next) => {
     const organizationId = req.get("organizationId")
     let newSongServiceSettings = req.body[0]
+    print.print('newSongservice', newSongServiceSettings)
     if (newSongServiceSettings.id) {
         delete newSongServiceSettings.id
     }
@@ -48,9 +49,9 @@ router.post('/', (req, res , next) => {
     .then(settings => {
         res.status(200).json(settings)
     })
-    .catch(err => { res.status(500).json({
-        error: err
-    })})
+    .catch(err => { 
+        res.status(500).json({error: errv})
+    })
 })
 
 router.put('/', (req, res , next) => {

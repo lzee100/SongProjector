@@ -11,7 +11,7 @@ import CoreData
 
 let ClusterSubmitter = CstrSubmitter()
 
-class CstrSubmitter: Requester<Cluster> {
+class CstrSubmitter: Requester<VCluster> {
 	
 	
 	override var requesterId: String {
@@ -21,10 +21,5 @@ class CstrSubmitter: Requester<Cluster> {
 	override var path: String {
 		return "clusters"
 	}
-	
-	override var coreDataManager: CoreDataManager<Cluster> {
-		return CoreCluster
-	}
-	
 	
 }

@@ -79,7 +79,7 @@ public class SheetSplitEntity: Sheet, SheetMetaType {
 	// MARK: - NSCopying
 	
 	public override func copy(with zone: NSZone? = nil) -> Any {
-		let entity = CoreSheetSplit.createEntityNOTsave()
+		let entity = VSheetSplit()
 		for key in self.entity.propertiesByName.keys {
 			if key != "id" {
 				let value: Any? = self.value(forKey: key)

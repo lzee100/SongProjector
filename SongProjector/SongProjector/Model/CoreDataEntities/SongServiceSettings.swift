@@ -42,13 +42,13 @@ public class SongServiceSettings: Entity {
 	public override func initialization(decoder: Decoder) throws {
 		
 		
-		let container = try decoder.container(keyedBy: CodingKeysSongServiceSettings.self)
+//		let container = try decoder.container(keyedBy: CodingKeysSongServiceSettings.self)
 		
-		let sections = Entity.getEntities { () -> [SongServiceSection] in
-			return try container.decodeIfPresent([SongServiceSection].self, forKey: .sections) ?? []
-		}
+//		let sections = Entity.getEntities { () -> [SongServiceSection] in
+//			return try container.decodeIfPresent([SongServiceSection].self, forKey: .sections) ?? []
+//		}
 		
-		hasSongServiceSections = NSSet(array: sections)
+//		hasSongServiceSections = NSSet(array: sections)
 
 		try super.initialization(decoder: decoder)
 		
@@ -81,9 +81,9 @@ public class SongServiceSettings: Entity {
 		
 		let container = try decoder.container(keyedBy: CodingKeysSongServiceSettings.self)
 		
-		let sections = Entity.getEntities { () -> [SongServiceSection] in
-			return try container.decodeIfPresent([SongServiceSection].self, forKey: .sections) ?? []
-		}
+//		let sections = Entity.getEntities { () -> [SongServiceSection] in
+//			return try container.decodeIfPresent([SongServiceSection].self, forKey: .sections) ?? []
+//		}
 
 		hasSongServiceSections = NSSet(array: sections)
 		
@@ -115,7 +115,7 @@ extension SongServiceSettings {
 	
 }
 
-extension SongServiceSettings {
+extension VSongServiceSettings {
 	
 	var isValid: Bool {
 		var valid = true

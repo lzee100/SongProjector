@@ -14,12 +14,7 @@ let InitSubmitter: ItSubmitter = {
 }()
 
 
-class ItSubmitter: Requester<User> {
-	
-	
-	override var requestReloadTime: RequesterReloadTime {
-		return .seconds
-	}
+class ItSubmitter: Requester<VUser> {
 	
 	override var requesterId: String {
 		return "InitFetcher"
@@ -27,10 +22,6 @@ class ItSubmitter: Requester<User> {
 	
 	override var path: String {
 		return "userinit"
-	}
-	
-	override var coreDataManager: CoreDataManager<User> {
-		return CoreUser
 	}
 	
 	override var params: [String : Any] {
@@ -42,11 +33,10 @@ class ItSubmitter: Requester<User> {
 	func request(userTokenAndAppToken: UserTokenAndAppInstallToken, method: RequestMethod, isNewInstall: Bool) {
 		userParams = ["userToken": userTokenAndAppToken.userToken, "appInstallToken": userTokenAndAppToken.appInstallToken, "isNewInstall": isNewInstall]
 		requestMethod = method
-		request(force: true)
-		userParams = [:]
+		request(isSuperRequester: false)
 	}
 	
-	func submitUserInit(_ userInitInfo: UserInitInfo, success: @escaping (_ response: HTTPURLResponse?, _ result: [User]?) -> Void, failure: @escaping (_ error: NSError?, _ response: HTTPURLResponse?, _ object: RestError?) -> Void) {
+	func submitUserInit(_ userInitInfo: UserInitInfo, success: @escaping (_ response: HTTPURLResponse?, _ result: [VUser]?) -> Void, failure: @escaping (_ error: NSError?, _ response: HTTPURLResponse?, _ object: RestError?) -> Void) {
 		requestMethod = .post
 		let url = ChurchBeamConfiguration.environment.endpoint + path
 		super.requestSend(url: url, object: [userInitInfo], parameters: nil, success: success, failure: failure, queue: Queues.main)

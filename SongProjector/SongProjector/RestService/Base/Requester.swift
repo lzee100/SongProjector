@@ -25,11 +25,130 @@ struct RestError: Decodable {
 	
 }
 
+class RequestersInOrder: NSObject {
+	
+	func addRequestOperation(operations: [Operation]) {
+		Operation.dependenciesInOrder(operations)
+		Operation.GlobalQueue.addOperations(operations, waitUntilFinished: true)
+	}
+	
+}
 
-class Requester<T>: BaseRS, RequesterType, RequestObserver where T:Codable, T:NSManagedObject {
+struct RequesterOperations: Equatable {
+	
+	let requester: RequesterDependency
+	let operations: [Foundation.Operation]
+	
+	static func == (lhs: RequesterOperations, rhs: RequesterOperations) -> Bool {
+		return lhs.requester.requesterId == rhs.requester.requesterId
+	}
+	
+}
+
+let SuperRequester = SperRequester()
+
+class SperRequester: NSObject {
+	
+	private var unsafeRequesterOperations: [RequesterOperations] = []
+
+	private var safeRequesterOperations: [RequesterOperations] {
+		var safeAllCounters: [RequesterOperations]!
+		concurrentUnreadCountQueue.sync {
+			safeAllCounters = self.unsafeRequesterOperations
+		}
+		return safeAllCounters
+	}
+	
+	private let concurrentUnreadCountQueue =
+		DispatchQueue(
+			label: "oneThreadUnreadCount",
+			attributes: .concurrent)
+
+	func request(requester: RequesterDependency, dependencies: [RequesterDependency]) {
+		let allRequestsOperation = AllRequestsOperation()
+		allRequestsOperation.requesterDependencies = dependencies
+		allRequestsOperation.requester = requester
+
+		let finishOperation = BlockOperation {
+			if let index = self.unsafeRequesterOperations.firstIndex(where: { $0.requester.isSuperRequesterTotalFinished }) {
+				self.saveDeleteRequester(at: index)
+			}
+			requester.observers.forEach({ $0.requestDidFinish(requesterID: requester.requesterId, response: allRequestsOperation.responseType, result: allRequestsOperation.result) })
+		}
+		
+		let operations = [allRequestsOperation, finishOperation]
+		Operation.dependenciesInOrder(operations)
+		
+		unsafeRequesterOperations.append(RequesterOperations(requester: requester, operations: operations))
+		
+		Operation.GlobalQueue.addOperations(operations, waitUntilFinished: false)
+	}
+	
+	private func saveDeleteRequester(at index: Int) {
+		concurrentUnreadCountQueue.async(flags: .barrier) {
+			self.unsafeRequesterOperations.remove(at: index)
+		}
+	}
+
+	
+}
+
+class AllRequestsOperation: AsynchronousOperation, RequestObserver {
+	
+	var requesterId: String = "AllRequestsOperation"
+	var requesterDependencies: [RequesterDependency] = []
+	var requester: RequesterDependency!
+	var responseType: ResponseType!
+	var result: AnyObject? = nil
+	
+	override func main() {
+		print("###################")
+		print("executing \(requester!)")
+		print("dependencies \(requesterDependencies)")
+		requesterDependencies.forEach({ $0.isSuperRequesterFinished = false })
+		requester.isSuperRequesterFinished = false
+		requester.isSuperRequesterTotalFinished = false
+		executeAllRequesters()
+	}
+	
+	private func executeAllRequesters() {
+		if let requester = requesterDependencies.first(where: { !$0.isSuperRequesterFinished }) {
+			requester.addObserver(self)
+			requester.request(isSuperRequester: true)
+		} else {
+			requester.isSuperRequesterTotalFinished = true
+			didFinish()
+		}
+	}
+	
+	func requesterDidStart() {
+		
+	}
+	
+	func requestDidFinish(requesterID: String, response: ResponseType, result: AnyObject?) {
+		self.responseType = response
+		if requesterId == requester.requesterId {
+			self.result = result
+		}
+		let current = requesterDependencies.first(where: { $0.requesterId == requesterID })
+		current?.isSuperRequesterFinished = true
+		current?.removeObserver(self)
+		switch response {
+		case .error(_, _):
+			requesterDependencies.forEach({ $0.isSuperRequesterFinished = true })
+			requester.isSuperRequesterTotalFinished = true
+			didFail()
+		case .OK(_):
+			executeAllRequesters()
+		}
+	}
 	
 	
+}
+
+class Requester<T>: BaseRS, RequesterType, RequesterDependency where T: VEntity {
 	
+		
 	// MARK: - Properties
 	
 	var requesterId: String {
@@ -37,19 +156,10 @@ class Requester<T>: BaseRS, RequesterType, RequestObserver where T:Codable, T:NS
 	}
 	var requestMethod: RequestMethod = .get
 	
-	var requestReloadTime: RequesterReloadTime {
-		return .immidiate
-	}
-	
 	var isFinished: Bool {
 		return super.isOperationFinished
 	}
 	
-	var requesterDependencies: [RequesterType] {
-		return []
-	}
-	
-	// /themes
 	var path: String {
 		return ""
 	}
@@ -58,12 +168,18 @@ class Requester<T>: BaseRS, RequesterType, RequestObserver where T:Codable, T:NS
 		return ""
 	}
 	
-	var coreDataManager: CoreDataManager<T> {
-		return CoreDataManager<T>()
+	var isSuperRequesterIsFinished = false
+
+	var parent: RequesterDependency? = nil
+	var dependencies: [RequesterDependency] {
+		return []
 	}
 	
-	var observers: [RequestObserver] = []
+	var isSuperRequesterTotalFinished = true  // all dependencies and requester are fetched
+	var isSuperRequesterFinished = false // Super requester fetched this one
 	
+	var observers: [RequestObserver] = []
+
 	var params: [String: Any] {
 		return [:]
 	}
@@ -72,53 +188,41 @@ class Requester<T>: BaseRS, RequesterType, RequestObserver where T:Codable, T:NS
 	
 	var body: [T]?
 	
-	private(set) var minRefreshDate: Date = Date()
-	
-	private var needsUpdating : Bool {
-		return minRefreshDate.isBefore(Date())
-	}
-	
 	private var isSubmitter: Bool {
 		return requestMethod != .get
 	}
-	
-	private var forced: Bool = false
-	
 	
 	
 	// MARK: - Functions
 	
 	func addObserver(_ controller: RequestObserver) {
-		if observers.filter({ $0.requesterId == controller.requesterId }).count == 0 {
+		if observers.filter({ $0 === controller }).count == 0 {
 			observers.append(controller)
 		}
 	}
 	
 	func removeObserver(_ controller: RequestObserver) {
-		if let index = observers.firstIndex(where: {  $0.requesterId == controller.requesterId }) {
+		if let index = observers.firstIndex(where: {  $0 === controller }) {
 			observers.remove(at: index)
 		}
 	}
 	
-	func request(force: Bool) {
-		if force || needsUpdating || isSubmitter {
-			observers.forEach({ $0.requesterDidStart() })
-			self.forced = force
-			if requesterDependencies.count == 0 {
-				executeRequest()
-			} else {
-				requesterDependencies.forEach({ $0.addObserver(self) })
-				requesterDependencies.forEach({ $0.request(force: true) })
-			}
+	func setParent(_ parent: RequesterDependency) {
+		self.parent = parent
+	}
+	
+	func request(isSuperRequester: Bool) {
+		if isSuperRequester {
+			executeRequest()
 		} else {
-			requestFinished(response: .OK(.notUpdated), result: nil)
+			setupSuperRequester(dependencies, for: self)
 		}
 	}
 	
 	func submit(_ entity: [T], requestMethod: RequestMethod) {
 		body = entity
 		self.requestMethod = requestMethod
-		self.request(force: true)
+		self.request(isSuperRequester: false)
 	}
 	
 	private func executeRequest() {
@@ -134,9 +238,7 @@ class Requester<T>: BaseRS, RequesterType, RequestObserver where T:Codable, T:NS
 		
 		if requestMethod == .get {
 			requestGet(url:  url, parameters: params, success: { (response, result) in
-				
 				self.requestFinished(response: .OK(.updated), result: result)
-				
 			}, failure: { (error, response, result) in
 				let restError = error ?? (result != nil ? NSError(domain: result!.errorMessage, code: 0, userInfo: nil) : nil)
 				self.requestFinished(response: .error(response, restError), result: nil)
@@ -163,10 +265,8 @@ class Requester<T>: BaseRS, RequesterType, RequestObserver where T:Codable, T:NS
 		body = nil
 		switch response {
 		case .OK(let action):
+			print("----------------------")
 			print(requesterId + ": \(action)")
-			if action == .updated {
-				minRefreshDate = requestReloadTime.date
-			}
 		case .error( _, let error): print(requesterId + ": error - \(String(describing: error))")
 
 		}
@@ -178,55 +278,38 @@ class Requester<T>: BaseRS, RequesterType, RequestObserver where T:Codable, T:NS
 	}
 	
 	func requestDidFinish(requesterID: String, response: ResponseType, result: AnyObject?) {
-		if requesterDependencies.map({ $0.isFinished }).count == requesterDependencies.count {
-			executeRequest()
-		}
+		
 	}
-	
-	
 	
 	
 	func requestGet(_ method: RequestMethod = .get, url: String, parameters: [String: Any]?, range: CountableRange<Int>? = nil, success: @escaping (_ response: HTTPURLResponse?, _ result: [T]?) -> Void, failure: @escaping (_ error: NSError?, _ response: HTTPURLResponse?, _ object: RestError?) -> Void, queue: DispatchQueue) {
 		
 		super.dispatchRequest(method, url: url, inputBody: nil, parameters: parameters, range: range, success: {  (response, data) -> Void in
 			
-			mocBackground.perform({
-				
-				let entities: [T]? = super.decode(data: data)
-				
-				guard let insertedEntities = entities as? [Entity] else {
-					return success(response, entities)
-				}
-				
-				// get local entities based on ids from received ones
-				var localFilteredOnReceived: [Entity] = []
-				insertedEntities.forEach({
-					CoreEntity.managedObjectContext = mocBackground
-					CoreEntity.predicates.append("id", equals: $0.id)
-					localFilteredOnReceived += CoreEntity.getEntities(onlyTemp: false, onlyDeleted: false, skipFilter: true).filter({ $0.updatedAt != nil })
-				})
-				
-				let insertedObjects = mocBackground.insertedObjects.filter({ $0 is T })
-				
-				// filter out the received once to keep only the old once to delete and accept te received ones
-				let localWithoutInserted = localFilteredOnReceived.filter({ (entity) -> Bool in
-					return !insertedObjects.contains(entity)
-				})
-				localWithoutInserted.forEach({ $0.deleteBackground(false) })
-				
-				mocBackground.performAndWait {
-					do {
-						try mocBackground.save()
-						try moc.save()
-					} catch {
-						print(error)
-					}
-					success(response, entities)
-					
-				}
-				
-			})
+			data?.printToJson()
 			
+			var result : [T] = []
+			if let data = data {
+				do {
+					result = try JSONDecoder().decode([T].self, from: data)
+					Store.persistentContainer.performBackgroundTask { (context) in
+						context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+						result.forEach({ $0.getManagedObject(context: context) })
+						do {
+							try context.save()
+							success(response, result)
+						} catch {
+							print("Error \(error)")
+							failure(error as NSError, nil, nil)
+						}
+					}
+				} catch {
+					print("Error \(error)")
+					failure(error as NSError, nil, nil)
+				}
+			} else {
+				success(response, result)
+			}
 		}, failure: {  (error, response, data) -> Void in
 			let restError: RestError? = super.decodeSingle(data: data)
 			failure(error, response, restError)
@@ -251,62 +334,30 @@ class Requester<T>: BaseRS, RequesterType, RequestObserver where T:Codable, T:NS
 		
 		super.dispatchRequest(self.requestMethod, url: url, inputBody: inputBody, parameters: parameters, range: range, success: {  (response, data) -> Void in
 			
-			print("---------------data returned from posting \(String(describing: object?.first.debugDescription))")
-			data?.printToJson()
+//			print("---------------data returned from posting \(String(describing: object?.first.debugDescription))")
+//			data?.printToJson()
 			
-			// delete all the old that we have based on new with their id's
-			
-			if let entities = self.body as?[Entity] {
-				entities.forEach({ $0.delete(false) })
+			var result : [T] = []
+			if let data = data {
 				do {
-					try moc.save()
-				} catch {
-					print(error)
-				}
-			}
-			
-			mocBackground.perform({
-				
-				let deleteOld: [T]? = super.decode(data: data)
-
-				if let old = deleteOld, old.count > 0 {
-					if let oldEntity = old as? [Entity] {
-						oldEntity.forEach({
-							CoreEntity.managedObjectContext = mocBackground
-							CoreEntity.predicates.append("id", equals: $0.id)
-							let ent = CoreEntity.getEntities().filter({ $0.updatedAt != nil })
-							if ent.count > 1 {
-								let oldEntities = ent.sorted(by: { (($0.updatedAt ?? NSDate()) as Date) < (($1.updatedAt ?? NSDate()) as Date) })
-								oldEntities.first?.deleteBackground(false)
-							}
-						})
-					}
-					mocBackground.performAndWait {
+					result = try JSONDecoder().decode([T].self, from: data)
+					Store.persistentContainer.performBackgroundTask { (context) in
+						result.forEach({ $0.getManagedObject(context: context) })
 						do {
-							try mocBackground.save()
-							try moc.save()
+							try context.save()
+							success(response, result)
 						} catch {
-							print(error)
-						}
-						
-						success(response, old)
-						
-					}
-				} else {
-					
-					var result : [T]? = nil
-					if let data = data {
-						do {
-							result = try JSONDecoder().decode([T].self, from: data)
-						} catch (let error){
 							print("Error \(error)")
+							failure(error as NSError, nil, nil)
 						}
 					}
-					
-					success(response, result)
+				} catch (let error){
+					print("Error \(error)")
+					failure(error as NSError, nil, nil)
 				}
-			
-			})
+			} else {
+				success(response, result)
+			}
 			
 		}, failure: {   (error, response, data) -> Void in
 			
@@ -317,21 +368,53 @@ class Requester<T>: BaseRS, RequesterType, RequestObserver where T:Codable, T:NS
 		}, queue: queue)
 	}
 	
+	private func setupSuperRequester(_ dependencies: [RequesterDependency], for parent: RequesterDependency) {
+
+		var allDependencies = [parent]
+		
+		dependencies.forEach { (dependency) in
+			allDependencies.append(dependency)
+			dependency.dependencies.forEach({
+				allDependencies.append($0)
+			})
+		}
+		allDependencies = allDependencies.reversed()
+		
+		SuperRequester.request(requester: parent, dependencies: allDependencies)
+		
+	}
+}
+
+protocol RequesterDependency: NSObject {
+	var requesterId: String { get }
+	var observers: [RequestObserver] { get set }
+	var dependencies: [RequesterDependency] { get }
+	func addObserver(_ controller: RequestObserver)
+	func removeObserver(_ controller: RequestObserver)
+	var isSuperRequesterTotalFinished: Bool { get set }  // all dependencies and requester are fetched
+	var isSuperRequesterFinished: Bool { get set } // Super requester fetched this one
+
+	var isFinished: Bool { get }
 	
+	func request(isSuperRequester: Bool)
+	func requestDidFinish(requesterID: String, response: ResponseType, result: AnyObject?)
+
 }
 
 protocol RequesterType {
 	
-	var isFinished: Bool { get }
 	var requesterId: String { get }
 	var observers: [RequestObserver] { get set }
 	
+	func requesterDidStart()
 	func addObserver(_ controller: RequestObserver)
-	func request(force: Bool)
-	
+	func removeObserver(_ controller: RequestObserver)
+	func request(isSuperRequester: Bool)
+	func requestDidFinish(requesterID: String, response: ResponseType, result: AnyObject?)
+
 }
 
-protocol RequestObserver {
+protocol RequestObserver: NSObject {
 	var requesterId: String { get }
 	func requesterDidStart()
 	func requestDidFinish(requesterID: String, response: ResponseType, result: AnyObject?)
@@ -345,26 +428,4 @@ enum ResultOkType {
 enum ResponseType {
 	case OK(ResultOkType)
 	case error(HTTPURLResponse?, Error?)
-}
-
-enum RequesterReloadTime {
-	case immidiate
-	case seconds
-	case minute
-	case hour
-	case day
-	case week
-	case month
-	
-	var date: Date {
-		switch self {
-		case .immidiate: return Date().dateByAddingSeconds(3)
-		case .seconds: return Date().dateByAddingSeconds(10)
-		case .minute: return Date().dateByAddingMinutes(1)
-		case .hour: return Date().dateByAddingHours(1)
-		case .day: return Date().dateByAddingDays(1)
-		case .week: return Date().dateByAddingWeeks(1)
-		case .month: return Date().dateByAddingWeeks(4)
-		}
-	}
 }

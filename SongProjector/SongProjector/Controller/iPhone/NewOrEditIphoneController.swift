@@ -10,7 +10,7 @@ import UIKit
 import ChromaColorPicker
 
 protocol NewOrEditIphoneControllerDelegate {
-	func didCreate(sheet: Sheet)
+	func didCreate(sheet: VSheet)
 	func didCloseNewOrEditIphoneController()
 }
 
@@ -348,30 +348,30 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 		return "NewOrEditIphoneController"
 	}
 	
+	override var requesters: [RequesterType] {
+		return [ThemeSubmitter]
+	}
+	
 	var delegate: NewOrEditIphoneControllerDelegate?
 	var modificationMode: ModificationMode = .newTheme
-	var theme: Theme! {
+	var theme: VTheme! {
 		didSet {
-			themeTemp = theme.getTemp()
-			if sheetTemp != nil {
-				sheetTemp.hasTheme = themeTemp
+			if let sheet = sheet {
+				sheet.hasTheme = theme
 			}
 		}
 	}
-	var themeTemp: Theme!
-	var sheet: Sheet! {
+	var sheet: VSheet! {
 		didSet {
-			sheetTemp = sheet.getTemp
-			if themeTemp != nil {
-				sheetTemp.hasTheme = themeTemp
+			if let theme = theme {
+				sheet.hasTheme = theme
 			}
 			if sheet.hasTheme?.isHidden == true {
 				theme = sheet.hasTheme
 			}
 		}
 	}
-	var sheetTemp: Sheet!
-	var selectedSheetImage: UIImage?
+	
 	var dismissMenu: (() -> Void)?
 	
 	private var isSetup = true
@@ -395,7 +395,7 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 	// MARK: UITableview functions
 	
 	func numberOfSections(in tableView: UITableView) -> Int {
-		switch sheetTemp.type {
+		switch sheet.type {
 		case .SheetTitleContent:
 			return Section.titleContent.count
 		case .SheetTitleImage, .SheetPastors:
@@ -410,22 +410,22 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 	}
 	
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		switch Section.for(section, type: sheetTemp.type) {
+		switch Section.for(section, type: sheet.type) {
 		case .input:
 			let isTheme = modificationMode == .newTheme || modificationMode == .editTheme
-			switch sheetTemp.type {
+			switch sheet.type {
 			case .SheetTitleContent, .SheetTitleImage, .SheetPastors: return isTheme ? CellInput.theme.count : CellInput.sheetTitleContent.count
 			case .SheetSplit: return CellInput.sheetSplit.count
 			default: return 0
 			}
 		case .general:
 			if modificationMode == .newTheme || modificationMode == .editTheme {
-				return themeTemp.backgroundImage != nil ? CellGeneral.themeTransBackground.count : CellGeneral.theme.count
+				return theme.backgroundImage != nil ? CellGeneral.themeTransBackground.count : CellGeneral.theme.count
 			} else {
-				return themeTemp.backgroundImage != nil ? CellGeneral.sheetCellsTransBackground.count : CellGeneral.sheetCells.count
+				return theme.backgroundImage != nil ? CellGeneral.sheetCellsTransBackground.count : CellGeneral.sheetCells.count
 			}
 		case .title:
-			switch sheetTemp.type {
+			switch sheet.type {
 			case .SheetTitleContent: return CellTitle.sheetTitleContent.count
 			case .SheetTitleImage: return CellTitle.titleImage.count
 			case .SheetPastors: return CellTitle.sheetPastors.count
@@ -435,7 +435,7 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 			}
 		case .content:
 			let isSheet = (modificationMode == .newCustomSheet || modificationMode == .editCustomSheet)
-			switch sheetTemp.type {
+			switch sheet.type {
 			case .SheetTitleContent: return isSheet ? CellLyrics.sheetTitleContent.count : CellLyrics.themeTitleContent.count
 			case .SheetTitleImage: return CellLyrics.titleImage.count
 			case .SheetPastors: return CellLyrics.sheetPastor.count
@@ -444,8 +444,8 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 			case .SheetActivities: return CellLyrics.sheetActivities.count
 			}
 		case .image:
-			switch sheetTemp.type {
-			case .SheetTitleImage: return (sheetTemp as! SheetTitleImageEntity).imageHasBorder ? CellImage.sheetTitleImage.count : CellImage.noBorder.count
+			switch sheet.type {
+			case .SheetTitleImage: return (sheet as! VSheetTitleImage).imageHasBorder ? CellImage.sheetTitleImage.count : CellImage.noBorder.count
 			case .SheetPastors: return CellImage.sheetPastors.count
 			default:
 				return 0
@@ -459,26 +459,26 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 		var sheetAttribute: SheetAttribute? = nil
 		var identifier: String? = nil
 		
-		switch Section.for(indexPath.section, type: sheetTemp.type) {
+		switch Section.for(indexPath.section, type: sheet.type) {
 		
 		case .input:
-			CellInput.for(indexPath: indexPath, sheetType: sheetTemp.type, modificationMode: modificationMode)!.set(themeAttribute: &themeAttribute, sheetAttribute: &sheetAttribute, identifier: &identifier, modificationMode: modificationMode)
+			CellInput.for(indexPath: indexPath, sheetType: sheet.type, modificationMode: modificationMode)!.set(themeAttribute: &themeAttribute, sheetAttribute: &sheetAttribute, identifier: &identifier, modificationMode: modificationMode)
 		case .general:
-			let hasImage = themeTemp.backgroundImage != nil
-			themeAttribute = CellGeneral.for(indexPath, type: sheetTemp.type, modificationMode: modificationMode, hasImage: hasImage).cellIdentifier.0
-			identifier = CellGeneral.for(indexPath, type: sheetTemp.type, modificationMode: modificationMode, hasImage: hasImage).cellIdentifier.1
+			let hasImage = theme.backgroundImage != nil
+			themeAttribute = CellGeneral.for(indexPath, type: sheet.type, modificationMode: modificationMode, hasImage: hasImage).cellIdentifier.0
+			identifier = CellGeneral.for(indexPath, type: sheet.type, modificationMode: modificationMode, hasImage: hasImage).cellIdentifier.1
 		case .title:
-			CellTitle.for(indexPath, type: sheetTemp.type, modificationMode: modificationMode)?.set(themeAttribute: &themeAttribute, sheetAttribute: &sheetAttribute, identifier: &identifier)
+			CellTitle.for(indexPath, type: sheet.type, modificationMode: modificationMode)?.set(themeAttribute: &themeAttribute, sheetAttribute: &sheetAttribute, identifier: &identifier)
 			
 		case .content:
-			CellLyrics.for(indexPath, type: sheetTemp.type, modificationMode: modificationMode)?.set(themeAttribute: &themeAttribute, sheetAttribute: &sheetAttribute, identifier: &identifier)
+			CellLyrics.for(indexPath, type: sheet.type, modificationMode: modificationMode)?.set(themeAttribute: &themeAttribute, sheetAttribute: &sheetAttribute, identifier: &identifier)
 			
 		case .image:
 			var imageHasBorder = false
-			if let sheet = sheetTemp as? SheetTitleImageEntity {
+			if let sheet = sheet as? VSheetTitleImage {
 				imageHasBorder = sheet.imageHasBorder
 			}
-			sheetAttribute = CellImage.for(indexPath, type: sheetTemp.type, hasBorder: imageHasBorder)?.cellIdentifier.0
+			sheetAttribute = CellImage.for(indexPath, type: sheet.type, hasBorder: imageHasBorder)?.cellIdentifier.0
 			identifier = CellImage.for(indexPath).cellIdentifier.1
 		}
 		
@@ -497,12 +497,12 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 				if let cell = cell as? LabelTextFieldCell {
 					cell.getModificationMode = getModificationMode
 				}
-				cell.apply(theme: themeTemp, themeAttribute: themeAttribute)
+				cell.apply(theme: theme, themeAttribute: themeAttribute)
 				cell.valueDidChange = valueDidChange(cell:)
 			}
 			
 			if let sheetAttribute = sheetAttribute, var cell = cell as? SheetImplementation {
-				cell.apply(sheet: sheetTemp, sheetAttribute: sheetAttribute)
+				cell.apply(sheet: sheet, sheetAttribute: sheetAttribute)
 				cell.valueDidChange = valueDidChange(cell:)
 			}
 			
@@ -536,7 +536,7 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 	func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
 		let frame = CGRect(x: 0, y: 0, width: tableView.bounds.size.width, height: 60)
 		let view = HeaderView(frame: frame)
-		switch Section.for(section, type: sheetTemp.type) {
+		switch Section.for(section, type: sheet.type) {
 		case .input:
 			view.descriptionLabel.text = Text.NewTheme.sectionInput.uppercased()
 		case .general:
@@ -599,7 +599,7 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 			case .asTheme:
 				let cell = cell as! LabelPickerCell
 				CoreTheme.predicates.append("id", equals: cell.pickerValues[cell.selectedIndex].0)
-				let theme = CoreTheme.getEntities().first
+				let theme = VTheme.list().first
 				updateAsTheme(theme)
 			default: break
 			}
@@ -614,7 +614,7 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 					needsReload = true
 				case .SheetImage, .SheetPastorImage:
 					let cell = cell as! LabelPhotoPickerCell
-					selectedSheetImage = cell.pickedImage
+					set(image: cell.pickedImage, for: sheet)
 					updateSheetImage()
 					needsReload = true
 				default: break
@@ -648,8 +648,6 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 	// MARK:  Submit Delegate Functions
 	
 	override func handleRequestFinish(requesterId: String, result: AnyObject?) {
-		themeTemp.delete(false)
-		sheetTemp.delete()
 		shutDownExternalDisplay()
 		delegate?.didCloseNewOrEditIphoneController()
 	}
@@ -660,20 +658,17 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 	
 	private func setup() {
 		
-		ThemeSubmitter.addObserver(self)
-		
 		switch modificationMode {
 			
 		case .newTheme:
 			CoreTheme.setSortDescriptor(attributeName: "position", ascending: false)
 			let position = (CoreTheme.getEntities().first?.position ?? 0) + 1
 			
-			let sheet = CoreSheetTitleContent.createEntityNOTsave()
-			sheet.deleteDate = NSDate() // remove at restart app if user quit app
+			let sheet = VSheetTitleContent()
 			sheet.title = Text.NewTheme.sampleTitle
 			sheet.content = Text.NewTheme.sampleLyrics
 			self.sheet = sheet
-			let theme = CoreTheme.createEntityNOTsave()
+			let theme = VTheme()
 			theme.title = Text.NewTheme.sampleTitle
 			theme.isHidden = false
 			theme.deleteDate = NSDate()
@@ -691,14 +686,14 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 			self.theme = theme
 			
 		case .editTheme:
-			let sheet = CoreSheetTitleContent.createEntityNOTsave()
+			let sheet = VSheetTitleContent()
 			sheet.deleteDate = NSDate() // remove at restart app if user quit app
 			sheet.title = Text.NewTheme.sampleTitle
 			sheet.content = Text.NewTheme.sampleLyrics
 			self.sheet = sheet
 			
 		case .newCustomSheet:
-			let theme = CoreTheme.createEntityNOTsave()
+			let theme = VTheme()
 			theme.title = "theme"
 			theme.isHidden = true
 			theme.deleteDate = NSDate()
@@ -714,18 +709,18 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 			theme.titleFontName = "Avenir"
 			theme.contentFontName = "Avenir"
 			theme.backgroundColor = UIColor.white.hexCode
-			sheetTemp.title = Text.NewTheme.sampleTitle
-			if let sheet = sheetTemp as? SheetTitleContentEntity {
+			sheet.title = Text.NewTheme.sampleTitle
+			if let sheet = sheet as? VSheetTitleContent {
 				sheet.content = Text.NewTheme.sampleLyrics
 			}
-			if let sheet = sheetTemp as? SheetTitleImageEntity {
+			if let sheet = sheet as? VSheetTitleImage {
 				sheet.content = Text.NewTheme.sampleLyrics
 			}
-			if let sheet = sheetTemp as? SheetSplitEntity {
+			if let sheet = sheet as? VSheetSplit {
 				sheet.textLeft = Text.NewTheme.sampleLyrics
 				sheet.textRight = Text.NewTheme.sampleLyrics
 			}
-			if let sheet = sheet as? SheetPastorsEntity, let sheetTemp = sheetTemp as? SheetPastorsEntity {
+			if let sheet = sheet as? VSheetPastors {
 				theme.textColorTitle = .black
 				theme.textColorLyrics = .black
 				theme.isTitleItalic = true
@@ -735,8 +730,7 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 				
 				sheet.title = Text.newPastorsSheet.title
 				sheet.content = Text.newPastorsSheet.content
-				sheetTemp.title = sheet.title
-				sheetTemp.content = sheet.content
+				sheet.title = sheet.title
 			}
 			self.theme = theme
 			
@@ -785,7 +779,7 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 				subview.removeFromSuperview()
 			}
 			
-			previewView.addSubview(SheetView.createWith(frame: previewView.bounds, cluster: nil, sheet: sheetTemp, theme: themeTemp, toExternalDisplay: true))
+			previewView.addSubview(SheetView.createWith(frame: previewView.bounds, cluster: nil, sheet: sheet, theme: theme, toExternalDisplay: true))
 			
 		}
 	}
@@ -861,23 +855,40 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 	
 	private func updateTime() {
 		if let view = previewView.subviews.first, let sheet = view as? SheetView {
-			sheet.updateTime(isOn: themeTemp.displayTime)
+			sheet.updateTime(isOn: theme.displayTime)
 		}
 		if let view = externalDisplayWindow?.subviews.first as? SheetView {
-			view.updateTime(isOn: themeTemp.displayTime)
+			view.updateTime(isOn: theme.displayTime)
 		}
 	}
 	
-	private func updateAsTheme(_ theme: Theme?) {
-		let themeTitle = themeTemp.title
-		theme?.mergeSelfInto(theme: themeTemp, isTemp: NSDate(), sheetType: sheetTemp.type)
-		themeTemp.title = themeTitle
+	private func updateAsTheme(_ theme: VTheme?) {
+		if let theme = theme {
+			self.theme.getValues(from: theme)
+		}
 		tableView.reloadData()
 		buildPreview(isSetup: false)
 	}
 
 	@objc func externalDisplayDidChange(_ notification: Notification) {
 		refineSheetRatio()
+	}
+	
+	private func set(image: UIImage?, for sheet: VSheet) {
+		if let sheet = sheet as? VSheetPastors {
+			do {
+				try sheet.set(image: image)
+			} catch {
+				show(message: error.localizedDescription)
+			}
+		}
+		if let sheet = sheet as? VSheetTitleImage {
+			do {
+				try sheet.set(image: image)
+			} catch {
+				show(message: error.localizedDescription)
+			}
+		}
 	}
 	
 	private func refineSheetRatio() {
@@ -915,22 +926,11 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 	}
 	
 	@IBAction func cancelPressed(_ sender: UIBarButtonItem) {
-		self.shutDownExternalDisplay()
-		switch modificationMode {
-		case .newTheme:
-			theme.delete(false)
-			themeTemp.delete(false)
-			sheet.delete(false)
-			sheetTemp.delete(true)
-		case .editTheme:
-			themeTemp.delete(false)
-			sheet.delete(false)
-			sheetTemp.delete(true)
-		case .newCustomSheet:
-			sheet.delete(false)
-			sheetTemp.delete(true)
-		default: break // delete at cancel creating cluster in customsheetscontroller
+		set(image: nil, for: sheet)
+		if let original = CoreTheme.getEntitieWith(id: theme.id) {
+			theme.getPropertiesFrom(entity: original)
 		}
+		self.shutDownExternalDisplay()
 		self.dismiss(animated: true)
 	}
 	
@@ -938,8 +938,8 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 		
 		var showError = false
 		switch modificationMode {
-		case .newTheme, .editTheme: showError = (themeTemp.title == "" || themeTemp.title == nil)
-		case .newCustomSheet, .editCustomSheet: showError = (sheetTemp.title == "" || sheetTemp.title == nil)
+		case .newTheme, .editTheme: showError = (theme.title == "" || theme.title == nil)
+		case .newCustomSheet, .editCustomSheet: showError = (sheet.title == "" || sheet.title == nil)
 		}
 		
 		if showError {
@@ -952,27 +952,18 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 		} else {
 			
 			switch modificationMode {
-			case .newTheme, .editTheme:
-				sheetTemp.delete()
 				
-				themeTemp.mergeSelfInto(theme: theme, sheetType: sheetTemp.type)
+			case .newTheme, .editTheme:
 				let requestMethod: RequestMethod = modificationMode == .newTheme ? .post : .put
 				ThemeSubmitter.submit([theme], requestMethod: requestMethod)
 				
 			case .newCustomSheet, .editCustomSheet:
-				themeTemp.mergeSelfInto(theme: theme, isTemp: NSDate(), sheetType: sheetTemp.type)
-				sheetTemp.mergeSelfInto(sheet: sheet, isTemp: NSDate())
 				sheet.hasTheme = theme
-				let _ = CoreEntity.saveContext()
 				shutDownExternalDisplay()
-				
 				delegate?.didCreate(sheet: sheet)
 				dismissMenu?()
 				dismiss(animated: true)
-			}
-
-			
-			
+			}			
 		}
 		
 	}

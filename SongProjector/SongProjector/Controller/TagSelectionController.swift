@@ -9,7 +9,7 @@
 import UIKit
 
 protocol TagSelectionControllerDelegate {
-	func didSelectTagsFor(section: Int, tags: [Tag])
+	func didSelectTagsFor(section: Int, tags: [VTag])
 }
 
 class TagSelectionController: ChurchBeamViewController, UITableViewDelegate, UITableViewDataSource {
@@ -22,16 +22,21 @@ class TagSelectionController: ChurchBeamViewController, UITableViewDelegate, UIT
 	
 	// MARK: - Private Properties
 
-	private var tags: [Tag] = []
+	private var tags: [VTag] = []
 	
 	
 	
 	// MARK: - Properties
 	
 	var section: Int = 0
-	var selectedTags: [Tag] = []
+	var selectedTags: [VTag] = []
 	var delegate: TagSelectionControllerDelegate?
-	
+	override var requesterId: String {
+		return "TagSelectionController"
+	}
+	override var requesters: [RequesterType] {
+		return [TagFetcher]
+	}
 	
 	
 	// MARK: - UIView Functions
@@ -46,12 +51,7 @@ class TagSelectionController: ChurchBeamViewController, UITableViewDelegate, UIT
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		tableView.register(cell: BasicCell.identifier)
-		TagFetcher.addObserver(self)
-		TagFetcher.fetch(force: false)
-	}
-	override func viewDidDisappear(_ animated: Bool) {
-		super.viewDidDisappear(animated)
-		TagFetcher.removeObserver(self)
+		TagFetcher.fetch()
 	}
 	
 	
@@ -84,7 +84,7 @@ class TagSelectionController: ChurchBeamViewController, UITableViewDelegate, UIT
 
 	override func handleRequestFinish(requesterId: String, result: AnyObject?) {
 		Queues.main.async {
-			self.tags = CoreTag.getEntities()
+			self.tags = VTag.list(sortOn: "position", ascending: true)
 			self.tableView.reloadData()
 		}
 	}

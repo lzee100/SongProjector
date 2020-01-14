@@ -56,10 +56,10 @@ class LoadingBibleController: UIViewController {
 	}
 	
 	private func generateBible() {
-		CoreBook.getEntities().forEach({ $0.delete(false) })
-		CoreChapter.getEntities().forEach({ $0.delete(false) })
-		CoreVers.getEntities().forEach({ $0.delete(false) })
-		CoreEntity.saveContext(fireNotification: false)
+//		CoreBook.getEntities().forEach({ $0.delete(false) })
+//		CoreChapter.getEntities().forEach({ $0.delete(false) })
+//		CoreVers.getEntities().forEach({ $0.delete(false) })
+//		CoreEntity.saveContext(fireNotification: false)
 
 		var hasNextBook = true
 		var hasNextChapter = true
@@ -166,20 +166,20 @@ class LoadingBibleController: UIViewController {
 		}
 		
 		if isCancelled {
-			CoreBook.getEntities().forEach({ $0.delete(false) })
-			CoreChapter.getEntities().forEach({ $0.delete(false) })
-			CoreVers.getEntities().forEach({ $0.delete(false) })
+//			CoreBook.getEntities().forEach({ $0.delete(false) })
+//			CoreChapter.getEntities().forEach({ $0.delete(false) })
+//			CoreVers.getEntities().forEach({ $0.delete(false) })
 			self.remove()
 		} else {
 			self.remove()
 		}
-		CoreEntity.saveContext(fireNotification: false)
-		
-		CoreChapter.predicates.append("hasBook.name", equals: "Genesis")
-		print(CoreChapter.getEntities().count)
-		CoreChapter.predicates.append("hasBook.name", equals: "Exodus")
-		print(CoreChapter.getEntities().count)
-		
+//		CoreEntity.saveContext(fireNotification: false)
+//
+//		CoreChapter.predicates.append("hasBook.name", equals: "Genesis")
+//		print(CoreChapter.getEntities().count)
+//		CoreChapter.predicates.append("hasBook.name", equals: "Exodus")
+//		print(CoreChapter.getEntities().count)
+//
 	}
 	
 }

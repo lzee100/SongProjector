@@ -92,7 +92,7 @@ class SheetSplit: SheetView {
 	}
 	
 	override func updateContent() {
-		let sheet = self.sheet as! SheetSplitEntity
+		let sheet = self.sheet as! VSheetSplit
 		if let content = sheet.textLeft {
 			if let theme = sheetTheme {
 				textViewLeft.attributedText = NSAttributedString(string: content, attributes: theme.getLyricsAttributes(scaleFactor ?? 1))

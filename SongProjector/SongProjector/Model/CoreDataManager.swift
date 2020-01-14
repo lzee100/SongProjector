@@ -77,6 +77,22 @@ var moc: NSManagedObjectContext = {
 	return Store.persistentContainer.viewContext
 }()
 
+extension NSManagedObjectContext {
+	
+	static func saveForeground(vEntity: VEntity, success: @escaping (() -> Void), failure: @escaping  ((Error) -> Void)) {
+		moc.perform {
+			do {
+				_ = vEntity.getManagedObject(context: moc)
+				try moc.save()
+				success()
+			} catch {
+				failure(error)
+			}
+		}
+	}
+	
+}
+
 var mocBackground: NSManagedObjectContext = {
 	let context = Store.persistentContainer.newBackgroundContext()
 	context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
@@ -109,6 +125,24 @@ class CrTagId: CoreDataManager<TagId> { }
 class CrSongServiceSettings: CoreDataManager<SongServiceSettings> { }
 class CrSongServiceSection: CoreDataManager<SongServiceSection> { }
 
+//enum EntityValues {
+//	case entity
+//	case cluster
+//	case theme
+//	case sheet
+//	case sheetTitleContent
+//	case
+//
+//	var entityType: NSManagedObject.Type {
+//		switch self {
+//		case .entity: return Entity.self
+//		case .cluster: return Cluster.self
+//		case .theme: return Theme.self
+//		case .
+//		}
+//	}
+//}
+
 class CoreDataManager<T: NSManagedObject>: NSObject {
 
 	var predicates: [NSPredicate] = []
@@ -124,11 +158,13 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 	func createEntityNOTsave() -> T {
 		let entityDes = NSEntityDescription.entity(forEntityName: entityName, in: managedObjectContext)
 		let entity = NSManagedObject(entity: entityDes!, insertInto: managedObjectContext) as! T
+//		let id = getNewId()
+//
+//		if let entity = entity as? Entity {
+//			entity.id = id
+//			entity.isTemp = true
+//		}
 		
-		if let entity = entity as? Entity {
-			entity.id = Int64.random(in: 1...Int64.max)
-			entity.isTemp = true
-		}
 		return entity
 	}
 	
@@ -137,7 +173,7 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 	}
 	
 	func createEntity(fireNotification: Bool = true) -> T {
-		let entity = T(context: moc)
+		let entity = T(context: managedObjectContext)
 		
 		// get ID
 		sortDiscriptor = NSSortDescriptor(key: "id", ascending: false)
@@ -172,39 +208,33 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 	private func getNewId() -> Int64 {
 		var entity: Entity?
 		let request = NSFetchRequest<NSFetchRequestResult>(entityName: Entity.name)
+		request.includesPendingChanges = true
 		
 		request.sortDescriptors = [NSSortDescriptor(key: "id", ascending: false)]
 		
 		request.returnsObjectsAsFaults = false
 		do {
-			let result = try moc.fetch(request)
+			let result = try managedObjectContext.fetch(request)
 			entity = result.first as? Entity
 		} catch {
 			print("Failed")
 		}
-		print(entity != nil ? entity!.id + 1 : Int64(0))
-		clearSettings()
-		return entity != nil ? entity!.id + 1 : Int64(0)
+		print(entity != nil ? entity!.id + 1 : Int64(1))
+		sortDiscriptor = nil
+		predicates = []
+		getTemp = false
+		return entity != nil ? entity!.id + 1 : Int64(1)
 	}
 	
-	
-	func getEntities(onlyTemp: Bool = false, onlyDeleted: Bool = false, skipFilter: Bool = false) -> [T] {
+	func getEntities(skipDeleted: Bool = true) -> [T] {
 		var entities: [T] = []
 		let request = NSFetchRequest<T>(entityName: entityName)
 
-		if !skipFilter {
-			if getTemp {
-				predicates.append("isTemp", equals: true)
-			} else if onlyDeleted {
-				predicates.append("isTemp", equals: false)
-				predicates.append(NSPredicate(format: "deleteDate != nil"))
-			} else {
-				predicates.append("isTemp", equals: false)
-				predicates.append(NSPredicate(format: "deleteDate == nil"))
-			}
+		if skipDeleted {
+			predicates.append(NSPredicate(format: "deleteDate == nil"))
 		}
 		
-		let andPredicate = NSCompoundPredicate(type: NSCompoundPredicate.LogicalType.and, subpredicates: predicates)
+		let andPredicate = NSCompoundPredicate(type: .and, subpredicates: predicates)
 		request.predicate = andPredicate
 		
 		if let sortDiscriptor = sortDiscriptor {
@@ -229,7 +259,7 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 		var entities: [T] = []
 		let request = NSFetchRequest<T>(entityName: entityName)
 		
-		let andPredicate = NSCompoundPredicate(type: NSCompoundPredicate.LogicalType.and, subpredicates: predicates)
+		let andPredicate = NSCompoundPredicate(type: .and, subpredicates: predicates)
 		request.predicate = andPredicate
 		
 		if let sortDiscriptor = sortDiscriptor {
@@ -251,8 +281,9 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 	}
 	
 	func getEntitieWith(id: Int64) -> T? {
+		clearSettings()
 		predicates.append("id", equals: id)
-		let entities = getEntities().first
+		let entities = getEntities(skipDeleted: false).first
 		clearSettings()
 		return entities
 	}
@@ -272,7 +303,7 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 		sortDiscriptor = nil
 		predicates = []
 		getTemp = false
-		managedObjectContext = moc
+//		managedObjectContext = moc
 	}
 	
 }

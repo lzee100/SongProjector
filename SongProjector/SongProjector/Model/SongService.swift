@@ -26,7 +26,7 @@ class SongService {
 		}
 	}
 	
-	var selectedSheet: Sheet? {
+	var selectedSheet: VSheet? {
 		didSet {
 			if let sheet = selectedSheet {
 				let newSong = songs.first(where: { $0.sheets.contains(sheet) })
@@ -41,23 +41,23 @@ class SongService {
 			}
 		}
 	}
-	var selectedTheme: Theme? { return selectedSheet?.hasTheme ?? selectedSong?.cluster.hasTheme }
-	var previousTheme: Theme? { return getPreviousTheme() }
-	var nextTheme: Theme? { return getNextTheme() }
+	var selectedTheme: VTheme? { return selectedSheet?.hasTheme ?? selectedSong?.cluster.hasTheme }
+	var previousTheme: VTheme? { return getPreviousTheme() }
+	var nextTheme: VTheme? { return getNextTheme() }
 	var isPlaying = false
 	var isAnimating = false
 	let swipeLeft: (() -> Void)
-	let displaySheet: ((Sheet) -> Void)
+	let displaySheet: ((VSheet) -> Void)
 	let shutDownBeamer: (() -> Void)
 	
-	init(swipeLeft: @escaping (() -> Void), displaySheet: @escaping ((Sheet) -> Void), shutDownBeamer: @escaping (() -> Void)) {
+	init(swipeLeft: @escaping (() -> Void), displaySheet: @escaping ((VSheet) -> Void), shutDownBeamer: @escaping (() -> Void)) {
 		self.swipeLeft = swipeLeft
 		self.displaySheet = displaySheet
 		self.shutDownBeamer = shutDownBeamer
 	}
 	
 	@discardableResult
-	func nextSheet(select: Bool = true) -> Sheet? {
+	func nextSheet(select: Bool = true) -> VSheet? {
 		if let selectedSheet = selectedSheet, let selectedSong = selectedSong {
 			let selectedSheetPosition = Int(selectedSheet.position)
 			if selectedSheetPosition + 1 < selectedSong.sheets.count {
@@ -103,7 +103,7 @@ class SongService {
 	}
 	
 	@discardableResult
-	func previousSheet(select: Bool = true) -> Sheet? {
+	func previousSheet(select: Bool = true) -> VSheet? {
 		
 		if let selectedSheet = selectedSheet, let selectedSong = songs.first(where: { $0.sheets.contains(selectedSheet) }) {
 			let selectedSheetPosition = Int(selectedSheet.position)
@@ -215,7 +215,7 @@ class SongService {
 		}
 	}
 	
-	private func getPreviousTheme() -> Theme? {
+	private func getPreviousTheme() -> VTheme? {
 		if let selectedSong = selectedSong {
 			let selectedSheetPosition = Int(selectedSheet!.position)
 			if selectedSheetPosition - 1 >= 0 {
@@ -237,7 +237,7 @@ class SongService {
 		}
 	}
 	
-	private func getNextTheme() -> Theme? {
+	private func getNextTheme() -> VTheme? {
 //		if isAnimating {
 //			return selectedTheme
 //		}
@@ -273,7 +273,7 @@ class SongService {
 	
 	private func startPlay() {
 		
-		if (selectedSheet?.hasCluster?.hasMusic ?? false) && selectedSheet?.position == selectedSong?.sheets.last?.position && selectedSong?.cluster.hasSheetsArray.count != 1 {
+		if (selectedSheet?.hasCluster?.hasMusic ?? false) && selectedSheet?.position == selectedSong?.sheets.last?.position && selectedSong?.cluster.hasSheets.count != 1 {
 			playerTimer.invalidate()
 			if let time = selectedSheet?.time {
 				stopAfterLastSheetTimer = Timer.scheduledTimer(timeInterval: time, target: self, selector: #selector(stopPlay), userInfo: nil, repeats: true)
@@ -326,27 +326,27 @@ class SongService {
 
 class SongObject: Comparable {
 	
-	var cluster: Cluster { didSet { addEmptySheet() }}
-	var sheets: [Sheet] = []
+	var cluster: VCluster { didSet { addEmptySheet() }}
+	var sheets: [VSheet] = []
 	
 	private func addEmptySheet() {
 		if cluster.hasTheme?.hasEmptySheet ?? false {
 			
-			var emptySheetsAdded: [Sheet] = []
+			var emptySheetsAdded: [VSheet] = []
 			
-			let emptySheet = CoreSheetTitleContent.createEntity(fireNotification: false)
+			let emptySheet = VSheetEmpty()
 			emptySheet.deleteDate = NSDate()
 			emptySheet.isEmptySheet = true
 			
 			if cluster.hasTheme?.isEmptySheetFirst ?? false {
 				emptySheetsAdded.append(emptySheet)
-				emptySheetsAdded.append(contentsOf: cluster.hasSheetsArray)
+				emptySheetsAdded.append(contentsOf: cluster.hasSheets)
 			} else {
-				emptySheetsAdded.append(contentsOf: cluster.hasSheetsArray)
+				emptySheetsAdded.append(contentsOf: cluster.hasSheets)
 				emptySheetsAdded.append(emptySheet)
 			}
 			
-			var position: Int16 = 0
+			var position = 0
 			emptySheetsAdded.forEach {
 				$0.position = position
 				position += 1
@@ -354,16 +354,16 @@ class SongObject: Comparable {
 			
 			sheets = emptySheetsAdded
 		} else {
-			sheets = cluster.hasSheetsArray
+			sheets = cluster.hasSheets
 		}
 	}
 	
 //	var selectedSheet: Sheet?
-	var clusterTheme: Theme? {
+	var clusterTheme: VTheme? {
 		return cluster.hasTheme
 	}
 	
-	init(cluster: Cluster) {
+	init(cluster: VCluster) {
 		self.cluster = cluster
 		addEmptySheet()
 	}

@@ -19,6 +19,8 @@ class SongHeaderView: UIView {
 	@IBOutlet var pianoCircleView: UIView!
 	@IBOutlet var pianoIconView: UIImageView!
 	@IBOutlet var mixerAnimationView: MixerAnimationView!
+	@IBOutlet var sectionLabel: UILabel!
+	@IBOutlet var iconCenterConstraint: NSLayoutConstraint!
 	
 	private var customTextColor: UIColor?
 	private var icon: UIImage?
@@ -30,10 +32,14 @@ class SongHeaderView: UIView {
 		return pianoCircleView.layer.borderColor != themeWhiteBlackTextColor.cgColor
 	}
 	
+	static func preferredSize(hasHeader: Bool) -> CGRect {
+		let height: CGFloat = hasHeader ? 89 : 60
+		return CGRect(x: 0, y: 0, width: UIApplication.shared.keyWindow!.bounds.width, height: height)
+	}
+	
 	override init(frame: CGRect) {
 		super.init(frame: frame)
 		customInit()
-		
 	}
 	
 	required init?(coder aDecoder: NSCoder) {
@@ -50,7 +56,8 @@ class SongHeaderView: UIView {
 		pianoCircleView.layer.borderColor = themeWhiteBlackTextColor.cgColor
 		pianoCircleView.layer.cornerRadius = pianoCircleView.bounds.width / 2
 		pianoIconView.tintColor = themeWhiteBlackTextColor
-		
+		sectionLabel.isHidden = true
+		sectionLabel.textColor = themeWhiteBlackTextColor
 	}
 	
 	func setup(title: String?, icon: UIImage? = nil, iconSelected: UIImage? = nil, textColor: UIColor? = nil, isSelected: Bool = false, tag: Int = 0, hasPianoSolo: Bool) {
@@ -91,6 +98,11 @@ class SongHeaderView: UIView {
 		}
 	}
 	
+	func set(sectionHeader: String) {
+		sectionLabel.isHidden = false
+		sectionLabel.text = sectionHeader
+		iconCenterConstraint.constant += 14.5
+	}
 	
 	@IBAction func songHeaderViewPressed(_ sender: UIButton) {
 		didSelectHeader?(sender.tag)

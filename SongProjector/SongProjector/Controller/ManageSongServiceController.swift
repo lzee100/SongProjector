@@ -16,7 +16,15 @@ class ManageSongServiceController: ChurchBeamViewController, UITableViewDataSour
 	
 	@IBOutlet var tableView: UITableView!
 
-	private var songServiceObject: SongServiceSettings? = nil
+	private var songServiceObject: VSongServiceSettings? = nil {
+		didSet { print(songServiceObject?.sections.count ?? 0) }
+	}
+	override var requesterId: String {
+		return ""
+	}
+	override var requesters: [RequesterType] {
+		return [SongServiceSettingsFetcher]
+	}
 	
 	// MARK: - UIView Functions
 
@@ -29,15 +37,9 @@ class ManageSongServiceController: ChurchBeamViewController, UITableViewDataSour
 	
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
-		SongServiceSettingsFetcher.addObserver(self)
-		SongServiceSettingsFetcher.fetch(force: true)
+		SongServiceSettingsFetcher.fetch()
 		addOrEditButton.tintColor = .clear
 		addOrEditButton.isEnabled = false
-	}
-	
-	override func viewWillDisappear(_ animated: Bool) {
-		super.viewWillDisappear(animated)
-		SongServiceSettingsFetcher.removeObserver(self)
 	}
 	
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -85,7 +87,7 @@ class ManageSongServiceController: ChurchBeamViewController, UITableViewDataSour
 	
 	override func handleRequestFinish(requesterId: String, result: AnyObject?) {
 		Queues.main.async {
-			self.songServiceObject = CoreSongServiceSettings.getEntities().first
+			self.songServiceObject = VSongServiceSettings.list().last
 			self.tableView.reloadData()
 		}
 	}
