@@ -47,6 +47,7 @@ class BaseRS: NSObject {
 	}
 	
 	func addAuthorisation(_ request: RequestOperation) {
+		CoreUser.managedObjectContext = mocBackground
 		if CoreUser.getEntities().first?.appInstallToken != nil {
 			
 			request.authorization = AccountStore.icloudID

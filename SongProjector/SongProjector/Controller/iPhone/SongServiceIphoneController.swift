@@ -100,7 +100,6 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-//		GoogleActivityFetcher.addObserver(self)
 		setup()
 //		if !AWSSignInManager.sharedInstance().isLoggedIn {
 //			AWSAuthUIViewController
@@ -122,7 +121,6 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
-//		GoogleActivityFetcher.fetch(false)
 		update()
 		OrganizationsCRUD.insertOrganizationWith(id: "id", name: "leo")
 
@@ -273,7 +271,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		
 		new.title = Text.Actions.add
 		swipeUpDownImageView.tintColor = themeHighlighted
-//		GoogleActivityFetcher.fetch(true)
+		GoogleActivityFetcher.fetch(true)
 		view.backgroundColor = themeWhiteBlackBackground
 		emptyViewTableView.backgroundColor = themeWhiteBlackBackground
 		moveUpDownSection.backgroundColor = themeWhiteBlackBackground

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E305BB9123CF6D8500A753A2 /* SoundPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E305BB8F23CF6D8500A753A2 /* SoundPickerCell.swift */; };
+		E305BB9223CF6D8500A753A2 /* SoundPickerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E305BB9023CF6D8500A753A2 /* SoundPickerCell.xib */; };
 		E306D8F52323BF3900299200 /* AnimatingBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E306D8F42323BF3900299200 /* AnimatingBackgroundView.swift */; };
 		E309DCE61FF26CB700C3D135 /* NewSongServiceIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E309DCE51FF26CB700C3D135 /* NewSongServiceIphoneController.swift */; };
 		E309DCE81FF44E6A00C3D135 /* ThemesIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E309DCE71FF44E6A00C3D135 /* ThemesIphoneController.swift */; };
@@ -106,7 +108,6 @@
 		E334FD6D20CF9E2E00FC1FAE /* SongHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E334FD6C20CF9E2E00FC1FAE /* SongHeaderView.swift */; };
 		E3355D6F1FEDA645004C03AE /* TextViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3355D6E1FEDA645004C03AE /* TextViewExtensions.swift */; };
 		E3355D711FEE6436004C03AE /* ClusterExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3355D701FEE6436004C03AE /* ClusterExtensions.swift */; };
-		E34552D6221BED7600B2D39E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E34552D5221BED7500B2D39E /* GoogleService-Info.plist */; };
 		E34EA3A521CECCA100A65719 /* SongServiceSettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E34EA3A321CECCA100A65719 /* SongServiceSettingsCell.swift */; };
 		E34EA3A621CECCA100A65719 /* SongServiceSettingsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E34EA3A421CECCA100A65719 /* SongServiceSettingsCell.xib */; };
 		E34ED29B2008D62300534C72 /* SheetSplit.xib in Resources */ = {isa = PBXBuildFile; fileRef = E34ED29A2008D62300534C72 /* SheetSplit.xib */; };
@@ -171,6 +172,12 @@
 		E38347651FF9382F008AE69D /* ExternalDisplayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38347641FF9382F008AE69D /* ExternalDisplayController.swift */; };
 		E38347671FFA5099008AE69D /* SheetTitleContent.xib in Resources */ = {isa = PBXBuildFile; fileRef = E38347661FFA5099008AE69D /* SheetTitleContent.xib */; };
 		E38347691FFA512D008AE69D /* SheetTitleContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38347681FFA512D008AE69D /* SheetTitleContent.swift */; };
+		E384E06F23CE7DB80017B73F /* client_1005753122128-dc0k48rg97hdetif0g3ncaf0dq0ue6mc.apps.googleusercontent.com.plist in Resources */ = {isa = PBXBuildFile; fileRef = E384E06E23CE7DB80017B73F /* client_1005753122128-dc0k48rg97hdetif0g3ncaf0dq0ue6mc.apps.googleusercontent.com.plist */; };
+		E384E07423CEF09A0017B73F /* GoogleSignedInCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E384E07223CEF09A0017B73F /* GoogleSignedInCell.swift */; };
+		E384E07523CEF09A0017B73F /* GoogleSignedInCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E384E07323CEF09A0017B73F /* GoogleSignedInCell.xib */; };
+		E384E07723CF159F0017B73F /* UploadUniversalSongController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E384E07623CF159F0017B73F /* UploadUniversalSongController.swift */; };
+		E384E07A23CF18190017B73F /* SongsUploadSheetCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E384E07823CF18190017B73F /* SongsUploadSheetCell.swift */; };
+		E384E07B23CF18190017B73F /* SongsUploadSheetCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E384E07923CF18190017B73F /* SongsUploadSheetCell.xib */; };
 		E3896A2A21E3EFF2008CB5A5 /* URLExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3896A2921E3EFF2008CB5A5 /* URLExtensions.swift */; };
 		E3896A2C21E3F011008CB5A5 /* HTTPURLResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3896A2B21E3F011008CB5A5 /* HTTPURLResponse.swift */; };
 		E3896A3121E3F04B008CB5A5 /* Entity.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3896A2E21E3F04B008CB5A5 /* Entity.swift */; };
@@ -267,6 +274,8 @@
 		346D1C5C5532C9E10C448104 /* Pods-SongProjector.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SongProjector.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SongProjector/Pods-SongProjector.debug.xcconfig"; sourceTree = "<group>"; };
 		8300EFE78A26AC2834037C54 /* Pods-SongProjector.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SongProjector.release.xcconfig"; path = "Pods/Target Support Files/Pods-SongProjector/Pods-SongProjector.release.xcconfig"; sourceTree = "<group>"; };
 		95070415C3C6BD5B7639F73A /* Pods_SongProjector.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SongProjector.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E305BB8F23CF6D8500A753A2 /* SoundPickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundPickerCell.swift; sourceTree = "<group>"; };
+		E305BB9023CF6D8500A753A2 /* SoundPickerCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SoundPickerCell.xib; sourceTree = "<group>"; };
 		E306D8F42323BF3900299200 /* AnimatingBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatingBackgroundView.swift; sourceTree = "<group>"; };
 		E309DCE51FF26CB700C3D135 /* NewSongServiceIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewSongServiceIphoneController.swift; sourceTree = "<group>"; };
 		E309DCE71FF44E6A00C3D135 /* ThemesIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemesIphoneController.swift; sourceTree = "<group>"; };
@@ -369,7 +378,6 @@
 		E334FD6C20CF9E2E00FC1FAE /* SongHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongHeaderView.swift; sourceTree = "<group>"; };
 		E3355D6E1FEDA645004C03AE /* TextViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextViewExtensions.swift; sourceTree = "<group>"; };
 		E3355D701FEE6436004C03AE /* ClusterExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClusterExtensions.swift; sourceTree = "<group>"; };
-		E34552D5221BED7500B2D39E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../Oude google plist/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E34EA3A321CECCA100A65719 /* SongServiceSettingsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongServiceSettingsCell.swift; sourceTree = "<group>"; };
 		E34EA3A421CECCA100A65719 /* SongServiceSettingsCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SongServiceSettingsCell.xib; sourceTree = "<group>"; };
 		E34ED29A2008D62300534C72 /* SheetSplit.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SheetSplit.xib; sourceTree = "<group>"; };
@@ -435,6 +443,12 @@
 		E38347641FF9382F008AE69D /* ExternalDisplayController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalDisplayController.swift; sourceTree = "<group>"; };
 		E38347661FFA5099008AE69D /* SheetTitleContent.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SheetTitleContent.xib; sourceTree = "<group>"; };
 		E38347681FFA512D008AE69D /* SheetTitleContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetTitleContent.swift; sourceTree = "<group>"; };
+		E384E06E23CE7DB80017B73F /* client_1005753122128-dc0k48rg97hdetif0g3ncaf0dq0ue6mc.apps.googleusercontent.com.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "client_1005753122128-dc0k48rg97hdetif0g3ncaf0dq0ue6mc.apps.googleusercontent.com.plist"; sourceTree = "<group>"; };
+		E384E07223CEF09A0017B73F /* GoogleSignedInCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleSignedInCell.swift; sourceTree = "<group>"; };
+		E384E07323CEF09A0017B73F /* GoogleSignedInCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GoogleSignedInCell.xib; sourceTree = "<group>"; };
+		E384E07623CF159F0017B73F /* UploadUniversalSongController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadUniversalSongController.swift; sourceTree = "<group>"; };
+		E384E07823CF18190017B73F /* SongsUploadSheetCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongsUploadSheetCell.swift; sourceTree = "<group>"; };
+		E384E07923CF18190017B73F /* SongsUploadSheetCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SongsUploadSheetCell.xib; sourceTree = "<group>"; };
 		E3896A2921E3EFF2008CB5A5 /* URLExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URLExtensions.swift; sourceTree = "<group>"; };
 		E3896A2B21E3F011008CB5A5 /* HTTPURLResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPURLResponse.swift; sourceTree = "<group>"; };
 		E3896A2E21E3F04B008CB5A5 /* Entity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Entity.swift; sourceTree = "<group>"; };
@@ -602,8 +616,8 @@
 				E311713C1FE59DA3008D9D51 /* LaunchScreen.storyboard */,
 				E39864DF209A0FA700DF5199 /* awsconfiguration.json */,
 				E311713F1FE59DA3008D9D51 /* Info.plist */,
-				E34552D5221BED7500B2D39E /* GoogleService-Info.plist */,
 				E311713A1FE59DA3008D9D51 /* Assets.xcassets */,
+				E384E06E23CE7DB80017B73F /* client_1005753122128-dc0k48rg97hdetif0g3ncaf0dq0ue6mc.apps.googleusercontent.com.plist */,
 				E31171371FE59DA3008D9D51 /* SongProjector.xcdatamodeld */,
 				E39B6A132216BDB2002B53B1 /* Intro.storyboard */,
 			);
@@ -683,6 +697,7 @@
 				E30B8ECF224BD82E00F121D9 /* WizzardSectionTagsController.swift */,
 				E30B8ED5224DFBE900F121D9 /* TagSelectionController.swift */,
 				E3C133DB224FAEB400893C03 /* ManageSongServiceController.swift */,
+				E384E07623CF159F0017B73F /* UploadUniversalSongController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -774,6 +789,12 @@
 				E34EA3A421CECCA100A65719 /* SongServiceSettingsCell.xib */,
 				E3D7705322E4DAAF009AB4E4 /* TextCell.swift */,
 				E3D7705422E4DAAF009AB4E4 /* TextCell.xib */,
+				E384E07223CEF09A0017B73F /* GoogleSignedInCell.swift */,
+				E384E07323CEF09A0017B73F /* GoogleSignedInCell.xib */,
+				E384E07823CF18190017B73F /* SongsUploadSheetCell.swift */,
+				E384E07923CF18190017B73F /* SongsUploadSheetCell.xib */,
+				E305BB8F23CF6D8500A753A2 /* SoundPickerCell.swift */,
+				E305BB9023CF6D8500A753A2 /* SoundPickerCell.xib */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -1055,6 +1076,7 @@
 				E31171781FE5A1A0008D9D51 /* ThemeCellCollection.xib in Resources */,
 				E32A02B3211646DA00C78410 /* Keyboard.m4a in Resources */,
 				E3635A09217CAEC5002758D5 /* MixerAnimationView.xib in Resources */,
+				E384E07B23CF18190017B73F /* SongsUploadSheetCell.xib in Resources */,
 				E3F201E2201E2011002FF06E /* ActivityHeader.xib in Resources */,
 				E38347671FFA5099008AE69D /* SheetTitleContent.xib in Resources */,
 				E32A02B521164A8800C78410 /* Bass.m4a in Resources */,
@@ -1069,11 +1091,11 @@
 				E3D1CEE81FF6930600F9D7D9 /* LabelPickerCell.xib in Resources */,
 				E3F9964B201285CD00634C5E /* AddButtonCollectionCell.xib in Resources */,
 				E3F201DC201E0BD0002FF06E /* ActivityView.xib in Resources */,
+				E384E06F23CE7DB80017B73F /* client_1005753122128-dc0k48rg97hdetif0g3ncaf0dq0ue6mc.apps.googleusercontent.com.plist in Resources */,
 				E3BC6BB71FFEBE350039E0CA /* HeaderView.xib in Resources */,
 				E3F201D8201E0685002FF06E /* SheetActivitiesView.xib in Resources */,
 				E393B7652008D20B0073D0A9 /* SheetEmpty.xib in Resources */,
 				E31171361FE59DA3008D9D51 /* Main.storyboard in Resources */,
-				E34552D6221BED7600B2D39E /* GoogleService-Info.plist in Resources */,
 				E39864E0209A0FA700DF5199 /* awsconfiguration.json in Resources */,
 				E309DCF41FF48F0800C3D135 /* LabelSwitchCell.xib in Resources */,
 				E37498F821BD5DB800974126 /* LordSong.m4a in Resources */,
@@ -1082,8 +1104,10 @@
 				E37938ED21271EC90091698D /* PickerCell.xib in Resources */,
 				E3F421A51FFE457500C332B0 /* LabelDoubleSwitchCell.xib in Resources */,
 				E311717A1FE5A1A0008D9D51 /* AddButtonCell.xib in Resources */,
+				E384E07523CEF09A0017B73F /* GoogleSignedInCell.xib in Resources */,
 				E31F0B7120F5029500C22FD1 /* Pio-Sebastiaan-en-Marilou.jpg in Resources */,
 				E37137BF205EBB8300DF86F1 /* LabelSliderCell.xib in Resources */,
+				E305BB9223CF6D8500A753A2 /* SoundPickerCell.xib in Resources */,
 				E3F99647201209F100634C5E /* LabelNumberPickerCell.xib in Resources */,
 				E3FA3DF9200DE8570038C97B /* LabelTextViewCell.xib in Resources */,
 				E34EA3A621CECCA100A65719 /* SongServiceSettingsCell.xib in Resources */,
@@ -1136,11 +1160,12 @@
 				"${BUILT_PRODUCTS_DIR}/AWSGoogleSignIn/AWSGoogleSignIn.framework",
 				"${BUILT_PRODUCTS_DIR}/AWSMobileClient/AWSMobileClient.framework",
 				"${BUILT_PRODUCTS_DIR}/AWSUserPoolsSignIn/AWSUserPoolsSignIn.framework",
+				"${BUILT_PRODUCTS_DIR}/AppAuth/AppAuth.framework",
 				"${BUILT_PRODUCTS_DIR}/ChromaColorPicker/ChromaColorPicker.framework",
+				"${BUILT_PRODUCTS_DIR}/GTMAppAuth/GTMAppAuth.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMOAuth2/GTMOAuth2.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleAPIClientForREST/GoogleAPIClientForREST.framework",
-				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftKeychainWrapper/SwiftKeychainWrapper.framework",
 				"${BUILT_PRODUCTS_DIR}/VerticalSlider/VerticalSlider.framework",
 			);
@@ -1155,11 +1180,12 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSGoogleSignIn.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSMobileClient.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSUserPoolsSignIn.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AppAuth.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ChromaColorPicker.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMAppAuth.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMOAuth2.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleAPIClientForREST.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftKeychainWrapper.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/VerticalSlider.framework",
 			);
@@ -1286,6 +1312,7 @@
 				E3CB6854200635D600F007B2 /* LoadingViewController.swift in Sources */,
 				E31114862206460C007C7A61 /* ChurchBeamTableViewController.swift in Sources */,
 				E39864DE2098D5BD00DF5199 /* Organizations.swift in Sources */,
+				E384E07423CEF09A0017B73F /* GoogleSignedInCell.swift in Sources */,
 				E34EA3A521CECCA100A65719 /* SongServiceSettingsCell.swift in Sources */,
 				E38347651FF9382F008AE69D /* ExternalDisplayController.swift in Sources */,
 				E3A19736200A76EF0044DB1B /* ViewControllerExtensions.swift in Sources */,
@@ -1301,6 +1328,7 @@
 				E37938EC21271EC90091698D /* PickerCell.swift in Sources */,
 				E3812DED201CE1D300F10B2C /* GoogleActivityFetcher.swift in Sources */,
 				E3635A0B217CAF98002758D5 /* MixerAnimationView.swift in Sources */,
+				E384E07A23CF18190017B73F /* SongsUploadSheetCell.swift in Sources */,
 				E31171331FE59DA3008D9D51 /* ViewController.swift in Sources */,
 				E31171311FE59DA3008D9D51 /* AppDelegate.swift in Sources */,
 				E38347601FF7E8B5008AE69D /* LabelPhotoPickerCell.swift in Sources */,
@@ -1331,6 +1359,7 @@
 				E36E76DE21EF5411002E20EF /* ErrorView.swift in Sources */,
 				E35E7D0023BA4F790071DCC8 /* VTag.swift in Sources */,
 				E30B8ED0224BD82E00F121D9 /* WizzardSectionTagsController.swift in Sources */,
+				E305BB9123CF6D8500A753A2 /* SoundPickerCell.swift in Sources */,
 				E35E7D0223BA50620071DCC8 /* VSongServiceSettings.swift in Sources */,
 				E35E7CE123B76AE70071DCC8 /* VEntity.swift in Sources */,
 				E3F9964A201285CD00634C5E /* AddButtonCollectionCell.swift in Sources */,
@@ -1352,6 +1381,7 @@
 				E3355D6F1FEDA645004C03AE /* TextViewExtensions.swift in Sources */,
 				E3B494C723BEAB2500DB2A7F /* VContract.swift in Sources */,
 				E3FA3DF8200DE8570038C97B /* LabelTextViewCell.swift in Sources */,
+				E384E07723CF159F0017B73F /* UploadUniversalSongController.swift in Sources */,
 				E35E7CE823B7730F0071DCC8 /* VSheet.swift in Sources */,
 				E32DB8E2223460D800277C45 /* IntroStartingController.swift in Sources */,
 				E3C133DA224FAC6500893C03 /* SongServiceSettingsFetcher.swift in Sources */,

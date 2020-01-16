@@ -790,6 +790,9 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 			if let sheet = view as? SheetView {
 				sheet.updateOpacity()
 			}
+			if let view = externalDisplayWindow?.subviews.first as? SheetView {
+				view.updateOpacity()
+			}
 		}
 	}
 	

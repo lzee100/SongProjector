@@ -61,6 +61,7 @@ router.postNewSong('/', (req, res , next) => {
 
     if (secret == "c3GsuJwF6IwgcMy5rHIqj9wSEP4IBp8") {
         let cluster = req.body
+        
         let theme = cluster.theme
         theme.organization_id = 262
 

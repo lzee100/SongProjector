@@ -9,6 +9,11 @@
 import Foundation
 import UIKit
 
+let secretKey = "secretKey"
+var uploadSecret: String? {
+	UserDefaults.standard.string(forKey: secretKey)
+}
+
 enum Feature : String {
 	
 	case songService = "SongService"
@@ -21,12 +26,13 @@ enum Feature : String {
 	case users = "Users"
 	case settings = "Settings"
 	case `import` = "ImportBible"
+	case uploadUniversalSong = "UploadUniversalSong"
 	
 	
 	
 	// MARK: - Properties
 	
-	static let all = [songService, songs, bibleStudy, themes, tags, users, settings, songServiceManagement, `import`, more]
+	static let all = [songService, songs, bibleStudy, themes, tags, users, settings, songServiceManagement, `import`, uploadUniversalSong, more]
 	
 	var titel : String {
 		return rawValue
@@ -54,6 +60,7 @@ enum Feature : String {
 			return Text.More.title
 		case .import:
 			return Text.Import.title
+		case .uploadUniversalSong: return Text.UploadUniversalSong.title
 		}
 	}
 	
@@ -61,7 +68,7 @@ enum Feature : String {
 		switch self {
 		case .songService, .songs, .bibleStudy, .settings, .more, .import:
 			return UIDevice.current.userInterfaceIdiom == .pad ? Storyboard.Ipad : Storyboard.MainStoryboard
-		case .themes, .tags, .users, .songServiceManagement:
+		case .themes, .tags, .users, .songServiceManagement, .uploadUniversalSong:
 			return Storyboard.MainStoryboard
 		}
 	}
@@ -80,7 +87,7 @@ enum Feature : String {
 		switch self {
 		case .songService, .songs, .bibleStudy, .more, .themes, .settings, .import:
 			return true
-		case .tags, .users, .songServiceManagement:
+		case .tags, .users, .songServiceManagement, .uploadUniversalSong:
 			return false
 		}
 	}
@@ -91,6 +98,7 @@ enum Feature : String {
 		
 		switch self {
 		case .tags, .users, .songServiceManagement: return CoreUser.getEntities().filter({ $0.isMe }).first?.inviteToken == nil
+		case .uploadUniversalSong: return uploadSecret != nil
 		default: return true
 		}
 		
@@ -119,6 +127,8 @@ enum Feature : String {
 		case .settings:
 			return (#imageLiteral(resourceName: "Bullet"), #imageLiteral(resourceName: "BulletSelected"), #imageLiteral(resourceName: "Bullet"))
 		case .import:
+			return (#imageLiteral(resourceName: "Bullet"), #imageLiteral(resourceName: "BulletSelected"), #imageLiteral(resourceName: "Bullet"))
+		case .uploadUniversalSong:
 			return (#imageLiteral(resourceName: "Bullet"), #imageLiteral(resourceName: "BulletSelected"), #imageLiteral(resourceName: "Bullet"))
 		}
 		

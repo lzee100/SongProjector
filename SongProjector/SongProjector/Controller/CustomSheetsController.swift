@@ -94,9 +94,12 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 			controller.selectedTheme = selectedTheme
 		}
 		
+		if let controller = segue.destination.unwrap() as? LyricsViewController {
+			controller.text = getTextFromSheets()
+		}
+		
 		if let controller = segue.destination.unwrap() as? SheetPickerMenuController {
 			controller.delegate = self
-			controller.text = getTextFromSheets()
 		}
 	}
 	

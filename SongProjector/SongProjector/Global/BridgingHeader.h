@@ -13,3 +13,12 @@
 #import <Google/SignIn.h>
 
 #endif /* BridgingHeader_h */
+
+
+#ifndef MyApp_Bridging_Header_h
+#define MyApp_Bridging_Header_h
+
+#import <GTMSessionFetcher/GTMSessionFetcher.h>
+#import <GTMSessionFetcher/GTMSessionFetcherService.h>
+
+#endif

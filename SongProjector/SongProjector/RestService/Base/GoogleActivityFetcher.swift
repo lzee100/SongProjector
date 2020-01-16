@@ -6,10 +6,10 @@
 //  Copyright © 2018 iozee. All rights reserved.
 //
 
+
 import Foundation
 import GoogleAPIClientForREST
 import GoogleSignIn
-import GGLSignIn
 
 
 
@@ -20,66 +20,54 @@ protocol GoogleFetcherLoginDelegate {
 	func presentLoginViewController(vc: UIViewController)
 }
 
-class GoogleActivityFetch: NSObject, GIDSignInDelegate, GIDSignInUIDelegate {
+class GoogleActivityFetch: NSObject {
 
-	var loginDelegate: GoogleFetcherLoginDelegate?
+//	var loginDelegate: GoogleFetcherLoginDelegate?
+	
+	fileprivate lazy var calendarService: GTLRCalendarService? = {
+		let service = GTLRCalendarService()
+		// Have the service object set tickets to fetch consecutive pages
+		// of the feed so we do not need to manually fetch them
+		service.shouldFetchNextPages = true
+		// Have the service object set tickets to retry temporary error conditions
+		// automatically
+		service.isRetryEnabled = true
+		service.maxRetryInterval = 15
 
-	var needsUpdating: Bool {
-		return true
-		if let date = UserDefaults.standard.object(forKey: "GoogleFetchDate") as? Date {
-			if date < Date().addingTimeInterval(.days(1)) {
-				return true
-			} else {
-				return false
-			}
-		} else {
-			return true
+		guard let currentUser = GIDSignIn.sharedInstance().currentUser,
+			let authentication = currentUser.authentication else {
+				return nil
 		}
-
-	}
-
-	private let scopes = [kGTLRAuthScopeCalendarReadonly]
-
-	private let service = GTLRCalendarService()
+		service.authorizer = authentication.fetcherAuthorizer()
+		return service
+	}()
 
 	override init() {
 		super.init()
 		
-		// Initialize sign-in
-		var configureError: NSError?
-		GGLContext.sharedInstance().configureWithError(&configureError)
-		assert(configureError == nil, "Error configuring Google services: \(String(describing: configureError))")
 
-		GIDSignIn.sharedInstance().uiDelegate = self
-		GIDSignIn.sharedInstance().delegate = self
-		GIDSignIn.sharedInstance().scopes = scopes
-		GIDSignIn.sharedInstance().signInSilently()
+//		GIDSignIn.sharedInstance().delegate = self
+		GIDSignIn.sharedInstance().scopes = ["https://www.googleapis.com/auth/calendar.readonly"]
 
 		if GIDSignIn.sharedInstance().currentUser != nil {
-			self.service.authorizer = GIDSignIn.sharedInstance().currentUser.authentication.fetcherAuthorizer()
-		} else {
-
+			GIDSignIn.sharedInstance()?.restorePreviousSignIn()
 		}
 	}
 
-	func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
-		if let error = error {
-			self.loginDelegate?.loginDidFailWithError(message: error.localizedDescription)
-			self.service.authorizer = nil
-		} else {
-			self.service.authorizer = user.authentication.fetcherAuthorizer()
-			let userDefaults = UserDefaults.standard
-			userDefaults.set(user.profile.email, forKey: "googleEmail")
-//			fetchFinished(result: .OK(.updated))
-		}
-	}
+//	func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
+//		if let error = error {
+//			self.loginDelegate?.loginDidFailWithError(message: error.localizedDescription)
+//		} else {
+//			let userDefaults = UserDefaults.standard
+//			userDefaults.set(user.profile.email, forKey: "googleEmail")
+////			fetchFinished(result: .OK(.updated))
+//		}
+//	}
 
 
 	func fetch(_ force: Bool) {
 		if GIDSignIn.sharedInstance().currentUser != nil {
-			GIDSignIn.sharedInstance().scopes = scopes
-			GIDSignIn.sharedInstance().signInSilently()
-
+			GIDSignIn.sharedInstance().scopes = ["https://www.googleapis.com/auth/calendar.readonly"]
 			fetchEvents()
 		}
 	}
@@ -91,7 +79,7 @@ class GoogleActivityFetch: NSObject, GIDSignInDelegate, GIDSignInUIDelegate {
 		query.timeMax = GTLRDateTime(date: Date().addingTimeInterval(.days(60)))
 		query.singleEvents = true
 		query.orderBy = kGTLRCalendarOrderByStartTime
-		service.executeQuery(
+		calendarService?.executeQuery(
 			query,
 			delegate: self,
 			didFinish: #selector(mapResultForTicket(ticket:finishedWithObject:error:)))
@@ -108,11 +96,6 @@ class GoogleActivityFetch: NSObject, GIDSignInDelegate, GIDSignInUIDelegate {
 			return
 		}
 
-//		let activities = CoreGoogleActivities.getEntities()
-//		for act in activities {
-//			act.delete()
-//		}
-
 		if let events = response.items, !events.isEmpty {
 			for event in events {
 				let activity = CoreGoogleActivities.createEntity()
@@ -125,17 +108,5 @@ class GoogleActivityFetch: NSObject, GIDSignInDelegate, GIDSignInUIDelegate {
 		_ = CoreGoogleActivities.saveContext()
 //		fetchFinished(result: .OK(.updated))
 	}
-
-
-
-	func sign(_ signIn: GIDSignIn!, present viewController: UIViewController!) {
-		loginDelegate?.presentLoginViewController(vc: viewController)
-	}
-
-	func sign(_ signIn: GIDSignIn!, dismiss viewController: UIViewController!) {
-		viewController.dismiss(animated: true)
-	}
-
-
 
 }

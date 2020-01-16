@@ -5,19 +5,17 @@ use_frameworks!
 
 
 pod 'ChromaColorPicker'
-pod 'Google/SignIn'
+#pod 'Google/SignIn'
+pod 'GoogleSignIn'
 pod 'GoogleAPIClientForREST'
 pod 'GTMOAuth2', '~> 1.1.0'
 pod 'GoogleAPIClientForREST/Calendar', '~> 1.2.1'
 pod 'VerticalSlider'
-# pod 'SwiftOCR', :git => 'https://github.com/garnele007/SwiftOCR.git'
 pod 'SwiftKeychainWrapper'
-# pod 'GPUImage'
 
 pod 'AWSMobileClient', '~> 2.6.13'
 pod 'AWSGoogleSignIn', '~> 2.6.13'
 pod 'AWSAuthUI', '~> 2.6.13'
-pod 'GoogleSignIn', '~> 4.0'
 pod 'AWSDynamoDB', '~> 2.6.13'
 pod 'AWSUserPoolsSignIn', '~> 2.6.13'
 

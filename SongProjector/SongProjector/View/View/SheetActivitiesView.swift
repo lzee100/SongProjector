@@ -261,7 +261,7 @@ class SheetActivitiesView: SheetView {
 	}
 	
 	override func updateTitle() {
-		let sheet = self.sheet as! SheetActivitiesEntity
+		let sheet = self.sheet as! VSheetActivities
 		if let songTitle = sheet.title {
 			if let theme = sheetTheme {
 				descriptionTitle.attributedText = NSAttributedString(string: songTitle, attributes: theme.getTitleAttributes(scaleFactor ?? 0))

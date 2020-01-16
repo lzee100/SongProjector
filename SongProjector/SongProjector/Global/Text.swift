@@ -69,7 +69,12 @@ class Text: NSObject {
 		• 60 nummers met tekst en muziek
 		"""
 		static let SongButton = "€10 per maand"
-
+		
+		static let GoogleSignIn = "Sign-In"
+		static let GoogleSignInDescription = "Bij deze app kan je inloggen met je google account. Heb je al een account aangemaakt bij Churchbeam?"
+		static let ClickOnButtonToLogin = "Klik op onderstaande knop om in te loggen met je Google account."
+		static let NewAccountOnGoogleAccount = "Klik op onderstaande knop om een nieuw account aan te maken op basis van je Google account."
+		
 	}
 	
 	struct SongService {
@@ -212,6 +217,13 @@ class Text: NSObject {
 		static let descriptionGoogle = "Google account"
 		static let errorTitleGoogleAuth = "Fout in authenticatie"
 		static let googleSignOutButton = "Uitloggen"
+		static let sheetTimeOffsetError = "De ingevoerde waarde kan niet gebruikt worden."
+		static let sheetTimeOffset = "Correctie van de tijd waarop de sheets verplaatsen."
+		static let sheetTimeOffsetPlaceholder = "Seconden als 0.34 of 2"
+		static let SectionSongServiceSettings = "Zangdienst instellingen"
+		static let SectionGmailAccount = "Gmail account"
+
+		
 	}
 	
 	struct NewTheme {
@@ -324,9 +336,13 @@ class Text: NSObject {
 		static let dayActivity = "Hele dag"
 	}
 	
-	struct  Import {
+	struct Import {
 		static let title = "Importeer bijbel"
 		static let description = "Voeg hieronder de bijbeltest toe die je wilt importeren."
 	}
 	
+	struct UploadUniversalSong {
+		static let title = "Upload universal liedje"
+	}
+
 }

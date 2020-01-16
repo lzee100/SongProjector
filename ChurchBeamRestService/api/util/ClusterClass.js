@@ -1,3 +1,8 @@
+const Themes = require("../util/themesClass")
+const print = require('../util/print')
+const TagsClass = require('../util/tagsClass')
+
+var db = require('../util/db')
 
 
 class Cluster {
@@ -136,7 +141,7 @@ class Cluster {
         
             insertCluster(theme.id)
             .then(insertAllSheets)
-            .then(getCluster)
+            .then(Cluster.getCluster)
             .then(cluster => {
                 var newCluster = cluster
                 print.print('before posting tags')
@@ -275,32 +280,25 @@ class Cluster {
         return new Promise((resolve, reject) => {
             updateCluster(cluster)
             .then(getSheetsToDelete)
-            .then(deleteSheets)
+            .then(Cluster.deleteSheets)
             .then(function() {
                 return saveAllSheets(sheets)
             })
             .then(function() {
-                print.print('before get cluster 1')
-                return getCluster(cluster.id)
+                return Cluster.getCluster(cluster.id)
             })
             .then(cluster => {
-                print.print('before posting tags')
                 var updatedCluster = cluster
-                print.print('in posting tags', tags)
-                print.print('cluster', cluster)
                 TagsClass.postTagsHasClusterIfNeeded(cluster, tags)
                 .then(tags => {
-                    print.print('inserted tags', tags)
                     updatedCluster.tags = tags
                     resolve(updatedCluster)
                 })
                 .catch(err => { 
-                    print.print("err postTagsHasClusterIfNeeded")
                     reject(err) 
                 })
             })
             .catch(err => {
-                print.print('final error 1')
                 reject(err)
             })
         })
@@ -326,7 +324,7 @@ class Cluster {
             deleteCluster()
             .then(Cluster.deleteSheets)
             .then(function() {
-                getCluster(clusterId)
+                Cluster.getCluster(clusterId)
                 .then(cluster => {
                     resolve(cluster)
                 })
@@ -485,7 +483,7 @@ class Cluster {
     
     };
 
-    static getUniversalClusters() {
+    static getUniversalClusters(organization_id) {
 
         let getUniversalClusterIds = function() {
             return new Promise((resolve, reject) => {
@@ -500,11 +498,14 @@ class Cluster {
             })
         }
 
+        let getTheme 
+
         return new Promise((resolve, reject) => {
             getUniversalClusterIds()
             .then(clusterIds => {
                 Promise.all(clusterIds.map(id => Cluster.getCluster(id)))
                 .then(clusters => {
+
                     resolve(clusters)
                 })
                 .catch(error => {

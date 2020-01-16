@@ -33,6 +33,7 @@ class SignUpPersonalInfoController: ChurchBeamViewController, UITableViewDelegat
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
+		self.becomeFirstResponder()
 		tableView.rowHeight = UITableViewAutomaticDimension
 		view.backgroundColor = themeWhiteBlackBackground
 		titleLabel.textColor = themeWhiteBlackTextColor
@@ -48,6 +49,25 @@ class SignUpPersonalInfoController: ChurchBeamViewController, UITableViewDelegat
 		user.appInstallToken = UIDevice.current.identifierForVendor!.uuidString
 		user.userToken = AccountStore.icloudID
 		navigationItem.rightBarButtonItem = UIBarButtonItem(title: Text.Actions.done, style: .plain, target: self, action: #selector(didSelectDone))
+	}
+
+	override var canBecomeFirstResponder: Bool {
+		return true
+	}
+
+	// Enable detection of shake motion
+	override func motionEnded(_ motion: UIEventSubtype, with event: UIEvent?) {
+		if motion == .motionShake {
+			let alert = UIAlertController(title: "Voer code in:", message: nil, preferredStyle: .alert)
+			alert.addTextField { (textField) in
+				textField.placeholder = "Code"
+			}
+			alert.addAction(UIAlertAction(title: Text.Actions.ok, style: .default, handler: { (_) in
+				if let secret = alert.textFields![0].text, secret != "" {
+					UserDefaults.standard.setValue(secret, forKey: secretKey)
+				}
+			}))
+		}
 	}
 	
 	func numberOfSections(in tableView: UITableView) -> Int {

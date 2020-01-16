@@ -27,9 +27,7 @@ class IntroGoogleSigninController: ChurchBeamViewController, UITableViewDelegate
 	@IBOutlet var titleLabel: UILabel!
 	@IBOutlet var descriptionLabel: UILabel!
 	@IBOutlet var tableView: UITableView!
-	
-	let googleCell = GoogleCell.create(id: "GoogleCell", description: nil)
-	
+		
 	static let identifier = "IntroGoogleSigninController"
 	
 	enum Row {
@@ -52,15 +50,13 @@ class IntroGoogleSigninController: ChurchBeamViewController, UITableViewDelegate
 		view.backgroundColor = themeWhiteBlackBackground
 		titleLabel.textColor = themeWhiteBlackTextColor
 		descriptionLabel.textColor = themeWhiteBlackTextColor
-		titleLabel.text = "Sign-In"
-		descriptionLabel.text = "Bij deze app kan je inloggen met je google account. Heb je al een account aangemaakt bij Churchbeam?"
+		titleLabel.text = Text.Intro.GoogleSignIn
+		descriptionLabel.text = Text.Intro.GoogleSignInDescription
 		tableView.register(cell: GoogleCell.identifier)
-		googleCell.sender = self
-		googleCell.delegate = self
 	}
 	
 	
-	
+
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return Row.all.count
 	}
@@ -68,14 +64,15 @@ class IntroGoogleSigninController: ChurchBeamViewController, UITableViewDelegate
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let row = Row.all[indexPath.row]
 		if row == .SignInButton {
-			return googleCell
+			let cell = tableView.dequeueReusableCell(withIdentifier: row.identifier)! as! GoogleCell
+			cell.setup(delegate: self, sender: self)
 		}
 		let cell = tableView.dequeueReusableCell(withIdentifier: row.identifier)!
 		if let cell = cell as? IntroGoogleSigninCell {
 			if row == .SignInGoogle {
-				cell.descriptionLabel.text = "Klik op onderstaande knop om in te loggen met je Google account."
+				cell.descriptionLabel.text = Text.Intro.ClickOnButtonToLogin
 			} else {
-				cell.descriptionLabel.text = "Klik op onderstaande knop om een nieuw account aan te maken op basis van je Google account."
+				cell.descriptionLabel.text = Text.Intro.NewAccountOnGoogleAccount
 			}
 		}
 		return cell
@@ -83,7 +80,7 @@ class IntroGoogleSigninController: ChurchBeamViewController, UITableViewDelegate
 	
 	func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 		switch Row.all[indexPath.row] {
-		case .SignInButton: return googleCell.preferredHeight
+		case .SignInButton: return GoogleCell.preferredHeight
 		default: return UITableViewAutomaticDimension
 		}
 	}

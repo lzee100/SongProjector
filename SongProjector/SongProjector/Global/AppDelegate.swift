@@ -10,9 +10,7 @@
 import UIKit
 import CoreData
 import Photos
-import GGLSignIn
 import UIKit
-import Google
 import GoogleSignIn
 import AWSMobileClient
 import AWSGoogleSignIn
@@ -119,6 +117,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		
 //		AWSGoogleSignInProvider.sharedInstance().setScopes(["profile", "openid"])
 		GIDSignIn.sharedInstance()?.clientID = "1005753122128-dc0k48rg97hdetif0g3ncaf0dq0ue6mc.apps.googleusercontent.com"
+
 //		AWSSignInManager.sharedInstance().register(signInProvider: AWSGoogleSignInProvider.sharedInstance())
 //		let didFinishLaunching = AWSSignInManager.sharedInstance().interceptApplication(application, didFinishLaunchingWithOptions: launchOptions)
 //
@@ -173,6 +172,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	
 	
 	func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
+		return GIDSignIn.sharedInstance().handle(url)
 		// print("application application: \(application.description), openURL: \(url.absoluteURL), sourceApplication: \(sourceApplication)")
 		
 //		AWSMobileClient.sharedInstance().interceptApplication(
@@ -187,7 +187,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	}
 	
 	func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
-		
+		return GIDSignIn.sharedInstance().handle(url)
+
 //		return AWSMobileClient.sharedInstance().interceptApplication(
 //			app, open: url, sourceApplication: options[UIApplicationOpenURLOptionsKey.sourceApplication] as? String, annotation: options[UIApplicationOpenURLOptionsKey.annotation]!)
 		
