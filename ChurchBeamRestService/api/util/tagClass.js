@@ -21,6 +21,27 @@ class Tag {
         })
     }
 
+    static getFirstTagWhere(columnNameAndValueList, organizationId, hasDeleted) {
+        return getTagOn(columnNameAndValueList, organizationId, hasDeleted)
+    }
+
+    static getNewTagPosition(organizationId) {
+        return new Promise((resolve, reject) => {
+            let sql = `SELECT position from tag WHERE organization_id = ${organizationId} order by position desc`
+        db.query(sql, (err, result) => {
+            if (err) {
+                reject(err)
+            } else {
+                if (result.lenght > 0) {
+                    resolve(result[0].position + 1)
+                } else {
+                    resolve(0)
+                }
+            }
+        })
+        })
+    }
+
     static getTagsForCluster(clusterId) {
         return new Promise((resolve, reject) => {
             getTagsForCluster(clusterId)
@@ -29,9 +50,9 @@ class Tag {
         })
     }
 
-    static postTagsHasClusterIfNeeded(cluster, tags) {
+    static postTagsHasCluster(cluster, tags) {
         return new Promise((resolve, reject) => {
-            postTagsHasClusterIfNeeded(cluster, tags)
+            submitTagsHasCluster(cluster, tags)
             .then(tags => {resolve(tags)})
             .catch(err => {reject(err)})
         })
@@ -92,6 +113,35 @@ function getTag(tagId) {
                 reject(err)
             } else {
                 resolve(result[0])
+            }
+        })
+    })
+}
+
+function getTagOn(columNameAndValueList, organizationId, hasDeleted) {
+    let where = ""
+    columNameAndValueList.forEach(function(element, index) {
+        let columname = element.columname
+        let value = element.value
+        if (index != 0) {
+            where += " AND "
+        }
+        where += "T." + columname + " = '" + value + "'"
+    });
+    if (!hasDeleted) {
+        where += ' AND T.deletedAt IS NULL'
+    }
+    return new Promise((resolve, reject) => {
+        var sql = `SELECT * FROM tag as T WHERE ` + where + ` and T.organization_id = ${organizationId}`
+        db.query(sql, (err, result) => {
+            if(err) {
+                reject(err)
+            } else {
+                if (result.lenght > 0) {
+                    resolve()
+                } else {
+                    resolve(result[0])
+                }
             }
         })
     })
@@ -161,7 +211,7 @@ function deleteTag(tag) {
     })
 }
 
-function submitTagsHasClusterIfNeeded(cluster, tags) {
+function submitTagsHasCluster(cluster, tags) {
 
     var deleteTagHasCluster = function(clusterId) {
         return new Promise((resolve, reject) => {

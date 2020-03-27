@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreData
 
 let ThemeFetcher: TmeFetcher = {
 	return TmeFetcher()
@@ -37,6 +38,22 @@ class TmeFetcher: Requester<VTheme> {
 		requestMethod = .get
 		request(isSuperRequester: false)
 	}
+	
+	override func additionalProcessing(_ context: NSManagedObjectContext, _ entities: [VTheme], completion: @escaping ((Requester<VTheme>.AdditionalProcessResult) -> Void)) {
+		
+		let downloadObjects = entities.flatMap({ $0.downloadImagesObjects })
+		AmazonTransfer.startTransfer(uploads: [], downloads: downloadObjects, completion: { result in
+			switch result {
+			case .failed(error: let error):
+				completion(.failed(error: error))
+			case .success(result: let downloadObjects):
+				entities.forEach({ $0.setDownloadValues(downloadObjects as! [DownloadObject]) })
+				completion(.succes(result: entities))
+			}
+		})
+		
+	}
+
 
 	
 }

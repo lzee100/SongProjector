@@ -77,7 +77,8 @@ class Themes {
             
             if (!themeId) {
                 print.print('no theme id ')
-                return resolve()
+                resolve()
+                return
             }
 
             let sqlTheme = `SELECT * FROM theme WHERE id=${themeId}`
@@ -93,6 +94,85 @@ class Themes {
             })
         })
     }
+
+    static getThemeOn(columName, value, organizationId) {
+
+        return new Promise((resolve, reject) => {
+            let sqlTheme = `SELECT * FROM theme as T WHERE T.${columName} = ${value} AND T.organization_id = ${organizationId}`
+            db.query(sqlTheme, (err, result) => {
+                if (err) {
+                    reject(err)
+                } else if (result.length == 0) {
+                    resolve()
+                } else {
+                    print.print("success with theme")
+                    resolve(result[0])
+                }
+            })
+        })
+    }
+
+    // static createUniversalTheme(organizationId) {
+
+    //    let getUniversalTheme = function() {
+    //         const sql =  `select T.*
+    //         from theme as T
+    //         inner join cluster as C on C.theme_id = T.id
+    //         where C.isUniversal = 1 limit 1`
+
+    //         return new Promise((resolve, reject) => {
+
+    //             db.query(sql, (err, result) => {
+    //                 if (err) {
+    //                     reject(err)
+    //                 } else {
+    //                     print.print("success with theme")
+    //                     resolve(result[0])
+    //                 }
+    //             })
+    //         })
+    //    }
+
+    //    let clearTheme = function(theme) {
+    //        return new Promise((resolve, reject) => {
+    //             let newTheme = theme
+    //             delete newTheme.id
+    //             delete newTheme.createdAt
+    //             delete newTheme.updatedAt
+    //             delete newTheme.organization_id
+    //             delete newTheme.position
+    //             newTheme.organization_id = organizationId
+    //             newTheme.position = 0
+    //             resolve(newTheme)
+    //        })
+    //    }
+
+    //    let insertClearedTheme = function(theme) {
+    //         return new Promise((resolve, reject) => {
+    //             let sql = `INSERT INTO theme SET ?`
+    //             db.query(sql, [theme], (err, result) => {
+    //                 if (err) {
+    //                     reject(err)
+    //                 } else {
+    //                     resolve(result.insertId)
+    //                 }
+    //             })
+    //         })
+    //    }
+
+    //    return new Promise((resolve, reject) => {
+    //        getUniversalTheme()
+    //        .then(clearTheme)
+    //        .then(insertClearedTheme)
+    //        .then(this.getTheme)
+    //        .then(resolve)
+    //        .catch(reject)
+    //    })
+
+
+    // }
+
+
 }
 
 module.exports = Themes

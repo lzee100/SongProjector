@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreData
 
 let ClusterFetcher = CstrFetcher()
 
@@ -42,4 +43,38 @@ class CstrFetcher: Requester<VCluster> {
 		request(isSuperRequester: false)
 	}
 	
+	override func additionalProcessing(_ context: NSManagedObjectContext, _ entities: [VCluster], completion: @escaping ((Requester<VCluster>.AdditionalProcessResult) -> Void)) {
+		
+		let downloadObjects = entities.flatMap({ $0.downloadMusicObjects }).unique
+		
+		AmazonTransfer.startTransfer(uploads: [], downloads: downloadObjects) { (result) in
+			switch result {
+			case .failed(error: let error):
+				completion(.failed(error: error))
+			case .success(result: _):
+				
+				for sheet in entities.flatMap({ $0.hasSheets }) {
+					if let sheetTheme = sheet.hasTheme, let downloadObject = downloadObjects.first(where: { $0.remoteURL.absoluteString == sheetTheme.imagePathAWS }) {
+						sheet.hasTheme?.imagePath = downloadObject.localURL?.absoluteString
+						sheet.hasTheme?.imagePathThumbnail = downloadObject.localThumbURL?.absoluteString
+					}
+					if let sheet = sheet as? VSheetPastors {
+						if let downloadObject = downloadObjects.first(where: { $0.remoteURL.absoluteString == sheet.imagePathAWS }) {
+							sheet.imagePath = downloadObject.localURL?.absoluteString
+							sheet.thumbnailPath = downloadObject.localThumbURL?.absoluteString
+						}
+					} else if let sheet = sheet as? VSheetTitleImage {
+						if let downloadObject = downloadObjects.first(where: { $0.remoteURL.absoluteString == sheet.imagePathAWS }) {
+							sheet.imagePath = downloadObject.localURL?.absoluteString
+							sheet.thumbnailPath = downloadObject.localThumbURL?.absoluteString
+						}
+					}
+				}
+				
+				completion(.succes(result: entities))
+				
+			}
+		}
+		
+	}
 }

@@ -11,7 +11,7 @@ import UIKit
 
 extension UITableView {
 	
-	public func deleteRow(at indexPath: IndexPath, with animation: UITableViewRowAnimation) {
+	public func deleteRow(at indexPath: IndexPath, with animation: UITableView.RowAnimation) {
 		
 		deleteRows(at: [indexPath], with: animation)
 		
@@ -57,7 +57,7 @@ extension UITableView {
 	func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
 		return true
 	}
-	func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+	func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCell.EditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
 	}
 	
 	func setBottomInset(to value: CGFloat) {

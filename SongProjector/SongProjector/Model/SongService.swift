@@ -19,6 +19,12 @@ class SongService {
 		didSet {
 			if selectedSong != nil {
 				selectedSheet = selectedSong?.sheets.first
+				CoreCluster.managedObjectContext = moc
+				let cluster = selectedSong?.cluster.getManagedObject(context: moc) as! Cluster
+				cluster.lastShownAt = NSDate()
+				do {
+					try moc.save()
+				} catch {}
 				self.startPlay()
 			} else {
 				self.stopPlay()

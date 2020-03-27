@@ -30,7 +30,7 @@
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JyH-rb-yaP" customClass="GoogleSignedInCell" customModule="ChurchBeam" customModuleProvider="target">
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JyH-rb-yaP">
                         <rect key="frame" x="40" y="78" width="278" height="52"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                     </view>
@@ -72,7 +72,7 @@
                 <outlet property="emailLabel" destination="dtB-6a-BoU" id="hf6-fY-arS"/>
                 <outlet property="profilePictureImageView" destination="Ukm-fL-0cL" id="Z9u-0a-JAh"/>
                 <outlet property="signOutButton" destination="dSJ-BI-wXY" id="Out-LT-xkD"/>
-                <outlet property="signOutContainerView" destination="JyH-rb-yaP" id="QhT-l5-FOM"/>
+                <outlet property="signOutContainerView" destination="JyH-rb-yaP" id="LpL-hs-30W"/>
                 <outlet property="usernameLabel" destination="HzG-32-cN7" id="cZQ-g5-2fZ"/>
             </connections>
             <point key="canvasLocation" x="165.21739130434784" y="186.16071428571428"/>

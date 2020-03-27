@@ -10,6 +10,8 @@
 		E305BB9123CF6D8500A753A2 /* SoundPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E305BB8F23CF6D8500A753A2 /* SoundPickerCell.swift */; };
 		E305BB9223CF6D8500A753A2 /* SoundPickerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E305BB9023CF6D8500A753A2 /* SoundPickerCell.xib */; };
 		E306D8F52323BF3900299200 /* AnimatingBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E306D8F42323BF3900299200 /* AnimatingBackgroundView.swift */; };
+		E30833F723D2A31100E5DCE6 /* FileManagerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E30833F623D2A31100E5DCE6 /* FileManagerExtensions.swift */; };
+		E30833F923D3621100E5DCE6 /* UploadSecretFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E30833F823D3621100E5DCE6 /* UploadSecretFetcher.swift */; };
 		E309DCE61FF26CB700C3D135 /* NewSongServiceIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E309DCE51FF26CB700C3D135 /* NewSongServiceIphoneController.swift */; };
 		E309DCE81FF44E6A00C3D135 /* ThemesIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E309DCE71FF44E6A00C3D135 /* ThemesIphoneController.swift */; };
 		E309DCEA1FF45A8A00C3D135 /* MoreSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E309DCE91FF45A8A00C3D135 /* MoreSplitViewController.swift */; };
@@ -214,10 +216,14 @@
 		E3A4703221E10B57000CB3D3 /* RequestOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A4703121E10B57000CB3D3 /* RequestOperation.swift */; };
 		E3A4703421E10D35000CB3D3 /* AsynchronousOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A4703321E10D35000CB3D3 /* AsynchronousOperation.swift */; };
 		E3AB276C221EB31600B9145C /* InitSubmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AB276B221EB31600B9145C /* InitSubmitter.swift */; };
+		E3AB9CE923D7887E00F83455 /* NewContentFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AB9CE823D7887E00F83455 /* NewContentFetcher.swift */; };
+		E3AB9CEB23D7921B00F83455 /* NewContentFetchJob.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AB9CEA23D7921B00F83455 /* NewContentFetchJob.swift */; };
+		E3AB9CED23D79DE300F83455 /* UniversalClusterSubmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AB9CEC23D79DE300F83455 /* UniversalClusterSubmitter.swift */; };
 		E3B494C523BEA7C200DB2A7F /* VUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B494C423BEA7C200DB2A7F /* VUser.swift */; };
 		E3B494C723BEAB2500DB2A7F /* VContract.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B494C623BEAB2500DB2A7F /* VContract.swift */; };
 		E3BC6BB71FFEBE350039E0CA /* HeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3BC6BB61FFEBE350039E0CA /* HeaderView.xib */; };
 		E3BC6BBA1FFEBECA0039E0CA /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3BC6BB91FFEBECA0039E0CA /* HeaderView.swift */; };
+		E3C0C5A924030BB0002A381A /* ClusterShownDateSubmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C0C5A824030BB0002A381A /* ClusterShownDateSubmitter.swift */; };
 		E3C133D8224FA80F00893C03 /* SongServiceSettingsSubmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C133D7224FA80F00893C03 /* SongServiceSettingsSubmitter.swift */; };
 		E3C133DA224FAC6500893C03 /* SongServiceSettingsFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C133D9224FAC6500893C03 /* SongServiceSettingsFetcher.swift */; };
 		E3C133DC224FAEB400893C03 /* ManageSongServiceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C133DB224FAEB400893C03 /* ManageSongServiceController.swift */; };
@@ -238,6 +244,8 @@
 		E3D12AB12018EE4800BD060C /* FetcherResultTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D12AB02018EE4800BD060C /* FetcherResultTypes.swift */; };
 		E3D1CEE71FF6930600F9D7D9 /* LabelPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D1CEE51FF6930600F9D7D9 /* LabelPickerCell.swift */; };
 		E3D1CEE81FF6930600F9D7D9 /* LabelPickerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3D1CEE61FF6930600F9D7D9 /* LabelPickerCell.xib */; };
+		E3D583CB23EC2035007584D7 /* BasicBaseCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D583C923EC2035007584D7 /* BasicBaseCell.swift */; };
+		E3D583CC23EC2035007584D7 /* BasicBaseCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3D583CA23EC2035007584D7 /* BasicBaseCell.xib */; };
 		E3D7705522E4DAAF009AB4E4 /* TextCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D7705322E4DAAF009AB4E4 /* TextCell.swift */; };
 		E3D7705622E4DAAF009AB4E4 /* TextCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3D7705422E4DAAF009AB4E4 /* TextCell.xib */; };
 		E3D7705B22E4EAF5009AB4E4 /* Cluster.swift in Sources */ = {isa = PBXBuildFile; fileRef = E334B0FA21ECD1780088CD48 /* Cluster.swift */; };
@@ -256,6 +264,10 @@
 		E3F2020E20205BBF002FF06E /* EntityExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F2020D20205BBF002FF06E /* EntityExtensions.swift */; };
 		E3F421A41FFE457500C332B0 /* LabelDoubleSwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F421A21FFE457500C332B0 /* LabelDoubleSwitchCell.swift */; };
 		E3F421A51FFE457500C332B0 /* LabelDoubleSwitchCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3F421A31FFE457500C332B0 /* LabelDoubleSwitchCell.xib */; };
+		E3F7509223F5B7A300D2AE81 /* AmazonTransfer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F7509123F5B7A300D2AE81 /* AmazonTransfer.swift */; };
+		E3F7509423F5B89E00D2AE81 /* FileUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F7509323F5B89E00D2AE81 /* FileUploader.swift */; };
+		E3F7509723F8044300D2AE81 /* FileDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F7509623F8044300D2AE81 /* FileDownloader.swift */; };
+		E3F7509923F9DBAB00D2AE81 /* AWSS3Manager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F7509823F9DBAB00D2AE81 /* AWSS3Manager.swift */; };
 		E3F8C9D220168F6F00C94292 /* BibleStudyGeneratorIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F8C9D120168F6F00C94292 /* BibleStudyGeneratorIphoneController.swift */; };
 		E3F8C9D4201690FC00C94292 /* BibleStudyIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F8C9D3201690FC00C94292 /* BibleStudyIphoneController.swift */; };
 		E3F8C9D82017153A00C94292 /* SheetPickerMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F8C9D72017153A00C94292 /* SheetPickerMenuController.swift */; };
@@ -277,6 +289,8 @@
 		E305BB8F23CF6D8500A753A2 /* SoundPickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundPickerCell.swift; sourceTree = "<group>"; };
 		E305BB9023CF6D8500A753A2 /* SoundPickerCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SoundPickerCell.xib; sourceTree = "<group>"; };
 		E306D8F42323BF3900299200 /* AnimatingBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatingBackgroundView.swift; sourceTree = "<group>"; };
+		E30833F623D2A31100E5DCE6 /* FileManagerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManagerExtensions.swift; sourceTree = "<group>"; };
+		E30833F823D3621100E5DCE6 /* UploadSecretFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadSecretFetcher.swift; sourceTree = "<group>"; };
 		E309DCE51FF26CB700C3D135 /* NewSongServiceIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewSongServiceIphoneController.swift; sourceTree = "<group>"; };
 		E309DCE71FF44E6A00C3D135 /* ThemesIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemesIphoneController.swift; sourceTree = "<group>"; };
 		E309DCE91FF45A8A00C3D135 /* MoreSplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreSplitViewController.swift; sourceTree = "<group>"; };
@@ -487,10 +501,14 @@
 		E3A4703121E10B57000CB3D3 /* RequestOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestOperation.swift; sourceTree = "<group>"; };
 		E3A4703321E10D35000CB3D3 /* AsynchronousOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsynchronousOperation.swift; sourceTree = "<group>"; };
 		E3AB276B221EB31600B9145C /* InitSubmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitSubmitter.swift; sourceTree = "<group>"; };
+		E3AB9CE823D7887E00F83455 /* NewContentFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewContentFetcher.swift; sourceTree = "<group>"; };
+		E3AB9CEA23D7921B00F83455 /* NewContentFetchJob.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewContentFetchJob.swift; sourceTree = "<group>"; };
+		E3AB9CEC23D79DE300F83455 /* UniversalClusterSubmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalClusterSubmitter.swift; sourceTree = "<group>"; };
 		E3B494C423BEA7C200DB2A7F /* VUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VUser.swift; sourceTree = "<group>"; };
 		E3B494C623BEAB2500DB2A7F /* VContract.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VContract.swift; sourceTree = "<group>"; };
 		E3BC6BB61FFEBE350039E0CA /* HeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HeaderView.xib; sourceTree = "<group>"; };
 		E3BC6BB91FFEBECA0039E0CA /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
+		E3C0C5A824030BB0002A381A /* ClusterShownDateSubmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClusterShownDateSubmitter.swift; sourceTree = "<group>"; };
 		E3C133D7224FA80F00893C03 /* SongServiceSettingsSubmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongServiceSettingsSubmitter.swift; sourceTree = "<group>"; };
 		E3C133D9224FAC6500893C03 /* SongServiceSettingsFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongServiceSettingsFetcher.swift; sourceTree = "<group>"; };
 		E3C133DB224FAEB400893C03 /* ManageSongServiceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageSongServiceController.swift; sourceTree = "<group>"; };
@@ -513,6 +531,8 @@
 		E3D18C6F20238BDC00CBAAF6 /* KDEAudioPlayer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = KDEAudioPlayer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3D1CEE51FF6930600F9D7D9 /* LabelPickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelPickerCell.swift; sourceTree = "<group>"; };
 		E3D1CEE61FF6930600F9D7D9 /* LabelPickerCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelPickerCell.xib; sourceTree = "<group>"; };
+		E3D583C923EC2035007584D7 /* BasicBaseCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicBaseCell.swift; sourceTree = "<group>"; };
+		E3D583CA23EC2035007584D7 /* BasicBaseCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BasicBaseCell.xib; sourceTree = "<group>"; };
 		E3D7705322E4DAAF009AB4E4 /* TextCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextCell.swift; sourceTree = "<group>"; };
 		E3D7705422E4DAAF009AB4E4 /* TextCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TextCell.xib; sourceTree = "<group>"; };
 		E3D927501FEC3036006EDE75 /* NewOrEditTagController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewOrEditTagController.swift; sourceTree = "<group>"; };
@@ -530,6 +550,10 @@
 		E3F2020D20205BBF002FF06E /* EntityExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityExtensions.swift; sourceTree = "<group>"; };
 		E3F421A21FFE457500C332B0 /* LabelDoubleSwitchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelDoubleSwitchCell.swift; sourceTree = "<group>"; };
 		E3F421A31FFE457500C332B0 /* LabelDoubleSwitchCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelDoubleSwitchCell.xib; sourceTree = "<group>"; };
+		E3F7509123F5B7A300D2AE81 /* AmazonTransfer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmazonTransfer.swift; sourceTree = "<group>"; };
+		E3F7509323F5B89E00D2AE81 /* FileUploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileUploader.swift; sourceTree = "<group>"; };
+		E3F7509623F8044300D2AE81 /* FileDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileDownloader.swift; sourceTree = "<group>"; };
+		E3F7509823F9DBAB00D2AE81 /* AWSS3Manager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AWSS3Manager.swift; sourceTree = "<group>"; };
 		E3F8C9D120168F6F00C94292 /* BibleStudyGeneratorIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BibleStudyGeneratorIphoneController.swift; sourceTree = "<group>"; };
 		E3F8C9D3201690FC00C94292 /* BibleStudyIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BibleStudyIphoneController.swift; sourceTree = "<group>"; };
 		E3F8C9D72017153A00C94292 /* SheetPickerMenuController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetPickerMenuController.swift; sourceTree = "<group>"; };
@@ -722,6 +746,7 @@
 				E37938EE212723630091698D /* TableViewCellExtensions.swift */,
 				E36E76D921EF5338002E20EF /* IntExtensions.swift */,
 				E390864C22105EA300320421 /* DataExtensions.swift */,
+				E30833F623D2A31100E5DCE6 /* FileManagerExtensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -795,6 +820,8 @@
 				E384E07923CF18190017B73F /* SongsUploadSheetCell.xib */,
 				E305BB8F23CF6D8500A753A2 /* SoundPickerCell.swift */,
 				E305BB9023CF6D8500A753A2 /* SoundPickerCell.xib */,
+				E3D583C923EC2035007584D7 /* BasicBaseCell.swift */,
+				E3D583CA23EC2035007584D7 /* BasicBaseCell.xib */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -885,6 +912,8 @@
 				E32DB8D92221E23400277C45 /* ContractFetcher.swift */,
 				E30B8EC02248BBA300F121D9 /* TagFetcher.swift */,
 				E3C133D9224FAC6500893C03 /* SongServiceSettingsFetcher.swift */,
+				E30833F823D3621100E5DCE6 /* UploadSecretFetcher.swift */,
+				E3AB9CE823D7887E00F83455 /* NewContentFetcher.swift */,
 			);
 			path = Fetchers;
 			sourceTree = "<group>";
@@ -913,10 +942,16 @@
 				E3AB276B221EB31600B9145C /* InitSubmitter.swift */,
 				E3896A4A21E7A3FD008CB5A5 /* ThemeSubmitter.swift */,
 				E334B11221ED22910088CD48 /* ClusterSubmitter.swift */,
+				E3C0C5A824030BB0002A381A /* ClusterShownDateSubmitter.swift */,
 				E37A49272218CB3A003BD945 /* OrganizationSubmitter.swift */,
 				E37A49292218CC7E003BD945 /* UserSubmitter.swift */,
 				E30B8EC22248BCA400F121D9 /* TagSubmitter.swift */,
 				E3C133D7224FA80F00893C03 /* SongServiceSettingsSubmitter.swift */,
+				E3AB9CEC23D79DE300F83455 /* UniversalClusterSubmitter.swift */,
+				E3F7509123F5B7A300D2AE81 /* AmazonTransfer.swift */,
+				E3F7509323F5B89E00D2AE81 /* FileUploader.swift */,
+				E3F7509623F8044300D2AE81 /* FileDownloader.swift */,
+				E3F7509823F9DBAB00D2AE81 /* AWSS3Manager.swift */,
 			);
 			path = Submitters;
 			sourceTree = "<group>";
@@ -986,6 +1021,7 @@
 		E3D12AA22018E9E500BD060C /* RestService */ = {
 			isa = PBXGroup;
 			children = (
+				E3AB9CEA23D7921B00F83455 /* NewContentFetchJob.swift */,
 				E3896A4621E7A3A5008CB5A5 /* Base */,
 				E3896A4921E7A3E5008CB5A5 /* Submitters */,
 				E3896A4521E7A383008CB5A5 /* Fetchers */,
@@ -1103,6 +1139,7 @@
 				E311148422048DF8007C7A61 /* LoadingView.xib in Resources */,
 				E37938ED21271EC90091698D /* PickerCell.xib in Resources */,
 				E3F421A51FFE457500C332B0 /* LabelDoubleSwitchCell.xib in Resources */,
+				E3D583CC23EC2035007584D7 /* BasicBaseCell.xib in Resources */,
 				E311717A1FE5A1A0008D9D51 /* AddButtonCell.xib in Resources */,
 				E384E07523CEF09A0017B73F /* GoogleSignedInCell.xib in Resources */,
 				E31F0B7120F5029500C22FD1 /* Pio-Sebastiaan-en-Marilou.jpg in Resources */,
@@ -1159,6 +1196,7 @@
 				"${BUILT_PRODUCTS_DIR}/AWSDynamoDB/AWSDynamoDB.framework",
 				"${BUILT_PRODUCTS_DIR}/AWSGoogleSignIn/AWSGoogleSignIn.framework",
 				"${BUILT_PRODUCTS_DIR}/AWSMobileClient/AWSMobileClient.framework",
+				"${BUILT_PRODUCTS_DIR}/AWSS3/AWSS3.framework",
 				"${BUILT_PRODUCTS_DIR}/AWSUserPoolsSignIn/AWSUserPoolsSignIn.framework",
 				"${BUILT_PRODUCTS_DIR}/AppAuth/AppAuth.framework",
 				"${BUILT_PRODUCTS_DIR}/ChromaColorPicker/ChromaColorPicker.framework",
@@ -1179,6 +1217,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSDynamoDB.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSGoogleSignIn.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSMobileClient.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSS3.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSUserPoolsSignIn.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AppAuth.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ChromaColorPicker.framework",
@@ -1227,10 +1266,12 @@
 				E3D12AB12018EE4800BD060C /* FetcherResultTypes.swift in Sources */,
 				E3314B682007836D00F470C0 /* SheetView.swift in Sources */,
 				E3896A2A21E3EFF2008CB5A5 /* URLExtensions.swift in Sources */,
+				E3AB9CE923D7887E00F83455 /* NewContentFetcher.swift in Sources */,
 				E37A49222218C3B0003BD945 /* Role.swift in Sources */,
 				E36F41661FEE8CDA00E989E5 /* SongServiceIphoneController.swift in Sources */,
 				E37A492E2218D1C4003BD945 /* OrganizationFetcher.swift in Sources */,
 				E3C2AD1E202749CD00ACFFE7 /* InstrumentExtensions.swift in Sources */,
+				E3F7509223F5B7A300D2AE81 /* AmazonTransfer.swift in Sources */,
 				E311715B1FE5A0A3008D9D51 /* Features.swift in Sources */,
 				E37A492C2218CDD3003BD945 /* UserFetcher.swift in Sources */,
 				E3A4703421E10D35000CB3D3 /* AsynchronousOperation.swift in Sources */,
@@ -1243,6 +1284,7 @@
 				E309DCF31FF48F0800C3D135 /* LabelSwitchCell.swift in Sources */,
 				E309DD051FF5179B00C3D135 /* Cells.swift in Sources */,
 				E35E7CE423B76F420071DCC8 /* VTheme.swift in Sources */,
+				E3F7509423F5B89E00D2AE81 /* FileUploader.swift in Sources */,
 				E31171521FE5A071008D9D51 /* StringExtensions.swift in Sources */,
 				E3896A3321E3F04B008CB5A5 /* Theme.swift in Sources */,
 				E334B11121ED21F80088CD48 /* ClusterFetcher.swift in Sources */,
@@ -1261,6 +1303,7 @@
 				E3C133D8224FA80F00893C03 /* SongServiceSettingsSubmitter.swift in Sources */,
 				E32DB8E82235B90E00277C45 /* AddNewUserController.swift in Sources */,
 				E309DCFA1FF4954100C3D135 /* ThemeExtensions.swift in Sources */,
+				E3F7509923F9DBAB00D2AE81 /* AWSS3Manager.swift in Sources */,
 				E3CB815122F82AAE00F1C240 /* Device.swift in Sources */,
 				E334B10F21ED201B0088CD48 /* Instrument.swift in Sources */,
 				E3CB814F22F829B400F1C240 /* PopUpViewController.swift in Sources */,
@@ -1316,13 +1359,16 @@
 				E34EA3A521CECCA100A65719 /* SongServiceSettingsCell.swift in Sources */,
 				E38347651FF9382F008AE69D /* ExternalDisplayController.swift in Sources */,
 				E3A19736200A76EF0044DB1B /* ViewControllerExtensions.swift in Sources */,
+				E30833F723D2A31100E5DCE6 /* FileManagerExtensions.swift in Sources */,
 				E3896A3B21E3F3D3008CB5A5 /* ThemeFetcher.swift in Sources */,
 				E3A4703021E0CC80000CB3D3 /* ChurchBeamConfiguration.swift in Sources */,
 				E326E9041FFEC9EC00FEAC9C /* CustomSheetsIphoneController.swift in Sources */,
 				E3D9C28E20D6F11E006EDFE3 /* TestView.swift in Sources */,
+				E3D583CB23EC2035007584D7 /* BasicBaseCell.swift in Sources */,
 				E37A49322219F4A9003BD945 /* SignUpPersonalInfoController.swift in Sources */,
 				E3F8C9D82017153A00C94292 /* SheetPickerMenuController.swift in Sources */,
 				E31171771FE5A1A0008D9D51 /* NewSongSheetCell.swift in Sources */,
+				E3AB9CED23D79DE300F83455 /* UniversalClusterSubmitter.swift in Sources */,
 				E35099F120DD4FA7005CA984 /* SaveNewSongTitleTimeVC.swift in Sources */,
 				E32DB8DA2221E23400277C45 /* ContractFetcher.swift in Sources */,
 				E37938EC21271EC90091698D /* PickerCell.swift in Sources */,
@@ -1331,6 +1377,7 @@
 				E384E07A23CF18190017B73F /* SongsUploadSheetCell.swift in Sources */,
 				E31171331FE59DA3008D9D51 /* ViewController.swift in Sources */,
 				E31171311FE59DA3008D9D51 /* AppDelegate.swift in Sources */,
+				E30833F923D3621100E5DCE6 /* UploadSecretFetcher.swift in Sources */,
 				E38347601FF7E8B5008AE69D /* LabelPhotoPickerCell.swift in Sources */,
 				E3CD8AB5212818B000EB75BB /* TextFieldCell.swift in Sources */,
 				E32A02B7211715B300C78410 /* SongService.swift in Sources */,
@@ -1352,6 +1399,7 @@
 				E35E7CF823BA325B0071DCC8 /* VGoogleActivity.swift in Sources */,
 				E3D7705B22E4EAF5009AB4E4 /* Cluster.swift in Sources */,
 				E309DCE81FF44E6A00C3D135 /* ThemesIphoneController.swift in Sources */,
+				E3F7509723F8044300D2AE81 /* FileDownloader.swift in Sources */,
 				E31171391FE59DA3008D9D51 /* SongProjector.xcdatamodeld in Sources */,
 				E326E9071FFECD0E00FEAC9C /* SheetCollectionCell.swift in Sources */,
 				E31F0B6B20F4F36000C22FD1 /* SheetTest.swift in Sources */,
@@ -1389,6 +1437,7 @@
 				E3CB6852200634EC00F007B2 /* TimeIntervalExtensions.swift in Sources */,
 				E39864DA2098D24100DF5199 /* OrganizationsCRUD.swift in Sources */,
 				E33268BC2022241E002CDA7C /* SongsMenuController.swift in Sources */,
+				E3AB9CEB23D7921B00F83455 /* NewContentFetchJob.swift in Sources */,
 				E30B8ED2224CA78100F121D9 /* SongServiceSettings.swift in Sources */,
 				E3F201E4201E206D002FF06E /* ActivityHeader.swift in Sources */,
 				E3FA3DF5200D45F00038C97B /* NewOrEditIphoneController.swift in Sources */,
@@ -1409,6 +1458,7 @@
 				E30B8ED6224DFBE900F121D9 /* TagSelectionController.swift in Sources */,
 				E3896A4021E5D8A3008CB5A5 /* Requester.swift in Sources */,
 				E3896A3521E3F0E3008CB5A5 /* AccountStore.swift in Sources */,
+				E3C0C5A924030BB0002A381A /* ClusterShownDateSubmitter.swift in Sources */,
 				E309DD021FF5127400C3D135 /* LabelNumberCell.swift in Sources */,
 				E31171681FE5A0E7008D9D51 /* SongsController.swift in Sources */,
 				E31171751FE5A1A0008D9D51 /* BasicCell.swift in Sources */,
@@ -1597,7 +1647,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.iozee.ChurchBeam;
 				PRODUCT_MODULE_NAME = ChurchBeam;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -1641,7 +1691,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.iozee.ChurchBeam;
 				PRODUCT_MODULE_NAME = ChurchBeam;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

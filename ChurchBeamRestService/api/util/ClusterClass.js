@@ -1,7 +1,7 @@
-const Themes = require("../util/themesClass")
+const Themes = require('../util/themesClass')
 const print = require('../util/print')
 const TagsClass = require('../util/tagsClass')
-
+const InstrumentsClass = require('../util/instrumentsClass')
 var db = require('../util/db')
 
 
@@ -15,10 +15,12 @@ class Cluster {
         let sheets = newCluster.sheets
         let theme = newCluster.theme
         let tags = newCluster.tags
+        let instruments = newCluster.instruments
         
         delete newCluster.sheets
         delete newCluster.theme
         delete newCluster.tags
+        delete newCluster.instruments
     
         return new Promise((resolve, reject) => {
             sheets.forEach(function(part, index) {
@@ -30,10 +32,20 @@ class Cluster {
                         delete sheets[index].tag.id
                     }
                 }
-              }, sheets); // use arr as this
-        
-            print.print('sheets', sheets)
-        
+                if (sheets[index].theme) {
+                    if (sheets[index].theme.id) {
+                        delete sheets[index].theme.id
+                    }
+                }
+              }, sheets);
+              if (instruments) {
+                instruments.forEach(function(part, index) {
+                    if (instruments[index].id) {
+                        delete instruments[index].id 
+                    }
+                  }, instruments);
+              }
+            
             var insertCluster = function(themeId) {
                 newCluster.theme_id = themeId
                 print.print('cluster to insert', newCluster)
@@ -145,11 +157,24 @@ class Cluster {
             .then(cluster => {
                 var newCluster = cluster
                 print.print('before posting tags')
-                TagsClass.postTagsHasClusterIfNeeded(newCluster, tags)
+                TagsClass.postTagsHasCluster(newCluster, tags)
                 .then(tags => {
                     print.print('success posting 1 cluster', cluster)
                     newCluster.tags = tags
-                    resolve(cluster)
+                    if (instruments) {
+                        Promise.all(instruments.map(instrument => InstrumentsClass.postInstrument(instrument, newCluster.id)))
+                        .then(instruments => {
+                            return Cluster.getCluster(newCluster.id)
+                        })
+                        .then(cluster => {
+                            resolve(cluster)
+                        })
+                        .catch(err => {reject(err) })
+                    } else {
+                        Cluster.getCluster(newCluster.id)
+                        .then(resolve)
+                        .catch(reject)
+                    }
                 })
                 .catch(err => {reject(err) })
             }).catch(err => {
@@ -160,41 +185,14 @@ class Cluster {
     
     }
 
-    static putCluster(clusterToPut, organization_id) {
-        var cluster = clusterToPut
-        let tags = cluster.tags
-        
-        let sheets = cluster.sheets
-        let instruments = cluster.instruments
-    
-        if (sheets) {
-            delete cluster.sheets
-        }
-        if (instruments){
-            delete cluster.instruments
-        }
-        if (tags) {
-            delete cluster.tags
-        }
-    
-    
-        print.print('sheets', sheets)
-    
-        sheets.map(sheet => sheet.cluster_id = cluster.id)
-    
+    static putCluster(clusterToPut, organization_id, asUniversal) {
+
         var updateCluster = function(cluster) {
-            let newCluster = cluster
-            if (newCluster.theme) {
-                delete newCluster.theme
-            }
-            print.print("cluster to put", newCluster)
             return new Promise((resolve, reject) => {
-                db.query(`UPDATE cluster SET ? WHERE id = ${newCluster.id}`, [newCluster], (err, result) => {
+                db.query(`UPDATE cluster SET ? WHERE id = ${cluster.id}`, [cluster], (err, result) => {
                     if (err) {
-                        print.print('error in update cluster', err)
                         reject()
                     } else {
-                        print.print('in resolve cluster xxxxxxxxxxxx')
                         resolve()
                     }
                 })
@@ -258,14 +256,16 @@ class Cluster {
     
         var saveAllSheets = function(sheets) {
             return new Promise((resolve, reject) => {
-                Promise.all(sheets.map(sheet => saveSheetWithTheme(sheet))).then(resolve()).catch(reject())
+                Promise.all(sheets.map(sheet => saveSheetWithTheme(sheet)))
+                .then(resolve)
+                .catch(reject)
             })
         }
     
         var getSheetsToDelete = function() {
             print.print('in delete sheets')
             return new Promise((resolve, reject) => {
-                db.query(`SELECT * FROM sheet WHERE cluster_id = ${cluster.id}`, (err, result) => {
+                db.query(`SELECT * FROM sheet WHERE cluster_id = ${clusterToPut.id}`, (err, result) => {
                     if (err) {
                         print.print('error deleting sheet', err)
                         reject(err)
@@ -276,53 +276,82 @@ class Cluster {
                 })
             })
         }
-        
+
         return new Promise((resolve, reject) => {
-            updateCluster(cluster)
-            .then(getSheetsToDelete)
-            .then(Cluster.deleteSheets)
-            .then(function() {
-                return saveAllSheets(sheets)
-            })
-            .then(function() {
-                return Cluster.getCluster(cluster.id)
-            })
-            .then(cluster => {
-                var updatedCluster = cluster
-                TagsClass.postTagsHasClusterIfNeeded(cluster, tags)
-                .then(tags => {
-                    updatedCluster.tags = tags
-                    resolve(updatedCluster)
+            if (!clusterToPut.root && !asUniversal) {
+                clusterToPut.organization_id = organization_id
+                createNewClusterFrom(clusterToPut, organization_id)
+                .then(resolve)
+                .catch(reject)
+            } else {
+                var cluster = clusterToPut
+                let tags = cluster.tags
+                if (cluster.theme) {
+                    cluster.theme_id = cluster.theme.id
+                    delete cluster.theme
+                }
+                
+                let sheets = cluster.sheets
+                let instruments = []
+                if (cluster.instruments) {
+                    instruments = cluster.instruments
+                }
+            
+                if (sheets) {
+                    delete cluster.sheets
+                }
+                if (instruments){
+                    delete cluster.instruments
+                }
+                if (tags) {
+                    delete cluster.tags
+                }
+
+                print.print('sheets', sheets)
+                sheets.map(sheet => sheet.cluster_id = cluster.id)
+
+                updateCluster(cluster)
+                .then(getSheetsToDelete)
+                .then(Cluster.deleteSheets)
+                .then(result => {
+                    saveAllSheets(sheets)
+                    .then(TagsClass.postTagsHasCluster(cluster, tags))
+                    .then(Promise.all(instruments.map(instrument => InstrumentsClass.postInstrumentHasClusterIfNeeded(instrument.id, cluster.id))))
+                    .then(result => {
+                        Cluster.getCluster(cluster.id)
+                        .then(cluster => {
+                            resolve(cluster)
+                        })
+                        .catch(reject)
+                    })
                 })
-                .catch(err => { 
-                    reject(err) 
-                })
-            })
-            .catch(err => {
-                reject(err)
-            })
+                .catch(reject)
+            }
         })
     }
 
-    static deleteCluster(cluster) {
+    static deleteCluster(cluster, asUniversal) {
         let clusterId = cluster.id
     
-        var deleteCluster = function() {
+        var deleteCluster = function(asUniversal) {
             return new Promise((resolve, reject) => {
                 let date = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
-                db.query(`UPDATE cluster SET deletedAt = "${date}" WHERE id = ${clusterId}`, (err, result) => {
+                let asUniversalQuery = ""
+                if (asUniversal) {
+                   asUniversalQuery = ` OR root = ${clusterId}`
+                }
+                db.query(`UPDATE cluster SET deletedAt = "${date}" WHERE id = ${clusterId}` + asUniversalQuery, (err, result) => {
                     if (err) {
                       reject(err)
                     } else {
-                        resolve(cluster.sheets)
+                        resolve()
                     }
                 })
             })
         }
     
         return new Promise((resolve, reject) => { 
-            deleteCluster()
-            .then(Cluster.deleteSheets)
+            deleteCluster(asUniversal)
             .then(function() {
                 Cluster.getCluster(clusterId)
                 .then(cluster => {
@@ -332,13 +361,12 @@ class Cluster {
                     reject(err)
                 })
             })
-            .catch(err => {
-                reject(err)
-            })
+            .catch(reject)
         })
     }
     
     static deleteSheets(sheets) {
+
         var deleteSheetTag = function(sheet) {
             return new Promise((resolve, reject) => {
                 if (sheet.theme_id) {
@@ -373,150 +401,330 @@ class Cluster {
             return new Promise((resolve, reject) => {
                 deleteSheetTag(sheet)
                 .then(deleteSheet(sheet))
-                .then(resolve())
-                .catch(reject())
+                .then(resolve)
+                .catch(reject)
             })
         }
     
         return new Promise((resolve, reject) => {
             Promise.all(sheets.map(sheet => deleteSheetWithTag(sheet)))
-            .then(resolve())
-            .catch(reject())
+            .then(result => {
+                resolve()
+            })
+            .catch(reject)
         })
     }
 
     static getCluster(clusterId) {
-        print.print('getting cluster function', clusterId)
+
+        // returns cluster and Theme
         let getCluster = function(clusterId) {
-            return new Promise((resolve, reject) => {
-                let sql = `SELECT * FROM cluster WHERE id=${clusterId}`
-                db.query(sql, (err, result) => {
-                    if (err) {
-                        reject(err)
-                    } else {
-                        resolve(result[0])
-                    }
+            let getCluster = function() {
+                return new Promise((resolve, reject) => {
+                    let sql = `SELECT * FROM cluster WHERE id=${clusterId}`
+                    db.query(sql, (err, result) => {
+                        if (err) {
+                            reject(err)
+                        } else {
+                            resolve(result[0])
+                        }
+                    })
                 })
-            })
-        }
-    
-        let getSheets = function(cluster) {
-            let newCluster = cluster
-            return new Promise((resolve, reject) => {
-                let sql = `SELECT * FROM sheet WHERE cluster_id=${clusterId}`
-                db.query(sql, (err, result) => {
-                    if (err) {
-                        reject(err)
-                    } else {
-                        print.print('success getting sheets')
-                        newCluster.sheets = result
+            }
+
+            let getClusterTheme = function(cluster) {
+                let themeId = cluster.theme_id
+                return new Promise((resolve, reject) => {
+                    Themes.getTheme(themeId)
+                    .then(theme => {
+                        let newCluster = cluster
+                        newCluster.theme = theme
                         resolve(newCluster)
-                    }
+                    })
+                    .catch(reject)
                 })
+            }
+
+            return new Promise((resolve, reject) => {
+                getCluster()
+                .then(getClusterTheme)
+                .then(resolve)
+                .catch(reject)
             })
         }
     
-        let getSheetThemes = function(sheet) {
-            return new Promise((resolve, reject) => {
-                if (!sheet.theme_id) {
-                    resolve(sheet)
-                }
-                let themeId = sheet.theme_id
-                let sql = `SELECT * FROM theme WHERE id=${themeId}`
-                db.query(sql, (err, result) => {
-                    if (err) {
-                        reject(err)
-                    } else if (result.length == 0) {
-                        resolve(sheet)
+        // return cluster and sheet with themes
+        let getSheets = function(cluster) {
+            
+            let getSheets = function() {
+                return new Promise((resolve, reject) => {
+                    let sql = `SELECT * FROM sheet WHERE cluster_id=${clusterId}`
+                    db.query(sql, (err, result) => {
+                        if (err) {
+                            reject(err)
+                        } else {
+                            let newCluster = cluster
+                            newCluster.sheets = result
+                            resolve(newCluster)
+                        }
+                    })
+                })
+            }
+
+            let getSheetThemes = function(clusterWithCleanSheets) {
+                let sheets = clusterWithCleanSheets.sheets
+                return new Promise((resolve, reject) => {
+                    Promise.all(sheets.map(sheet => getSheetTheme(sheet)))
+                    .then(sheetWithThemes => {
+                        let newCluster = cluster
+                        newCluster.sheets = sheetWithThemes
+                        resolve(newCluster)
+                    })
+                    .catch(reject)
+                })
+            }
+
+            let getSheetTheme = function(sheet) {
+                return new Promise((resolve, reject) => {
+                    if (sheet.theme_id) {
+                        Themes.getTheme(sheet.theme_id)
+                        .then(theme => {
+                            let newSheet = sheet
+                            newSheet.theme = theme
+                            resolve(newSheet)
+                        })
+                        .catch(reject)
                     } else {
-                        var newSheet = sheet
-                        newSheet.theme = result[0]
-                        resolve(newSheet)
+                        resolve(sheet)
                     }
                 })
+            }
+
+            return new Promise((resolve, reject) => {
+                getSheets()
+                .then(getSheets)
+                .then(getSheetThemes)
+                .then(resolve)
+                .catch(reject)
+            })
+        }
+
+        let getTags = function(cluster) {
+                return new Promise((resolve, reject) => {
+                    TagsClass.getTagsForCluster(cluster.id)
+                    .then(tags => {
+                        let newCluster = cluster
+                        newCluster.tags = tags
+                        resolve(newCluster)
+                    })
+                    .catch(reject)
+                })
+        }
+
+        let getInstruments = function(cluster) {
+            return new Promise((resolve, reject) => {
+                InstrumentsClass.getInstruments(cluster.id)
+                .then(instruments => {
+                    let newCluster = cluster
+                    newCluster.instruments = instruments
+                    resolve(newCluster)
+                })
+                .catch(reject)
             })
         }
         
         return new Promise((resolve, reject) => {
             getCluster(clusterId)
-            .then(function(cluster) {
-                let newCluster = cluster
-                let themeId = newCluster.theme_id
-                return new Promise((resolve, reject) => {
-                    Themes.getTheme(themeId).then(function(theme){
-                        newCluster.theme = theme
-                        resolve(newCluster)
-                    }).catch(reject)
-                })
-            })
             .then(getSheets)
-            .then(function(cluster) {
-                let newCluster = cluster
-                let sheets = newCluster.sheets
-                if (newCluster.sheets) {
-                    delete newCluster.sheets
-                }
-                return new Promise ((resolve, reject) => {
-                    Promise.all(sheets.map(sheet => getSheetThemes(sheet)))
-                    .then(function(sheetAndThemes) {
-                        newCluster.sheets = sheetAndThemes
-                        resolve(newCluster)
-                    }).catch(reject)
-                })
-            }).then(function(result) {
-                TagsClass.getTagsForCluster(result.id)
-                .then(tags => {
-                    print.print('resolved tags')
-                    var newCluster = result
-                    newCluster.tags = tags
-                    resolve(newCluster)
-                })
-                .catch(err => { 
-                    print.print('err getting tags')
-                    reject(err) 
-                })
-            }).catch(err => { 
-                print.print('err final')
+            .then(getTags)
+            .then(getInstruments)
+            .then(cluster => {
+                resolve(cluster)
+            })
+            .catch(err => { 
+                print.print('err ClusterClass getCluster')
                 reject(err) 
             })
         })
     
-    };
+    }
+}
 
-    static getUniversalClusters(organization_id) {
-
-        let getUniversalClusterIds = function() {
-            return new Promise((resolve, reject) => {
-                let sql = `SELECT id FROM cluster WHERE isUniversal=${1}`
-                db.query(sql, (err, result) => {
-                    if (err) {
-                        reject(err)
-                    } else {
-                        resolve(result)
-                    }
-                })
-            })
-        }
-
-        let getTheme 
+function createNewClusterFrom(editedUniversalCluster, organizationId) {
+    
+    let insertSheetTheme = function(theme) {
+        let newTheme = theme
+        delete newTheme.id
+        delete newTheme.createdAt
+        delete newTheme.updatedAt
+        delete newTheme.organization_id
+        newTheme.organization_id = organizationId
 
         return new Promise((resolve, reject) => {
-            getUniversalClusterIds()
-            .then(clusterIds => {
-                Promise.all(clusterIds.map(id => Cluster.getCluster(id)))
-                .then(clusters => {
+            db.query(`INSERT theme SET ?`, [newTheme], (err, result) => {
+                if(err) {
+                    reject(err)
+                } else {
+                    resolve(result.insertId)
+                }
+            })
+       })
+    }
 
-                    resolve(clusters)
+    let insertSheet = function(sheet, clusterId) {
+        let thisSheet = sheet
+        thisSheet.cluster_id = clusterId
+
+        return new Promise((resolve, reject) => {
+
+            if (sheet.theme) {
+                insertSheetTheme(sheet.theme)
+                .then(themeId => {
+                    if (thisSheet.theme) {
+                        delete thisSheet.theme
+                    }
+                    thisSheet.theme_id = themeId
+                    db.query(`INSERT sheet SET ?`, [thisSheet], (err, result) => {
+                        if(err) {
+                            reject(err)
+                        } else {
+                            resolve(result.insertId)
+                        }
+                    })
                 })
-                .catch(error => {
-                    reject(error)
+                .catch(err => {
+                    reject(err)
                 })
+            } else {
+                db.query(`INSERT sheet SET ?`, [thisSheet], (err, result) => {
+                    if(err) {
+                        reject(err)
+                    } else {
+                        resolve(result.insertId)
+                    }
+                })
+            }
+       })
+    }
+
+    let insertSheets = function(cluster) {
+        let sheets = cluster.sheets
+        return new Promise((resolve, reject) => {
+            Promise.all(sheets.map(sheet => insertSheet(sheet, cluster.clusterId)))
+            .then(sheetsIds => {
+                resolve(cluster)
             })
-            .catch(error => {
-                reject(error)
-            })
+            .catch(reject)
         })
     }
+
+    let insertCluster = function(cluster) {
+        let inserted = cluster.cluster
+        return new Promise((resolve, reject) => {
+            db.query(`INSERT cluster SET ?`, [inserted], (err, result) => {
+                if(err) {
+                    reject(err)
+                } else {
+                    let newCluster = cluster
+                    newCluster.clusterId = result.insertId
+                    resolve(newCluster)
+                }
+            })
+       })
+    }
+
+    let insertTags = function(clusterThemeSheets) {
+        let newTags = []
+        clusterThemeSheets.tags.forEach(function(tag) {
+            let newTag = tag
+            delete newTag.createdAt
+            delete newTag.updatedAt
+            delete newTag.organization_id
+            newTag.organization_id = organizationId
+            newTags.push(newTag)
+        })
+
+        let clusterTemp = {
+            id: clusterThemeSheets.clusterId
+        }
+
+        return new Promise((resolve, reject) => {
+            TagsClass.postTagsHasCluster(clusterTemp, newTags)
+            .then(result => {
+                resolve(clusterThemeSheets.clusterId)
+            })
+            .catch(reject)
+        })
+        
+    }
+
+    let insertClusterHasInstruments = function(clusterThemeSheets) {
+        let clusterId = clusterThemeSheets.clusterId
+        let instruments = clusterThemeSheets.instruments
+        
+        return new Promise((resolve, reject) => {
+            if (instruments) {
+                Promise.all(instruments.map(instrument => InstrumentsClass.postInstrumentHasClusterIfNeeded(instrument.id, clusterId)))
+                .then(result => {
+                    resolve(clusterThemeSheets)
+                })
+                .catch(reject)
+            } else {
+                resolve(clusterThemeSheets)
+            }
+        })
+    }
+
+    let editUniversalCluster = editedUniversalCluster
+    editUniversalCluster.theme_id = editedUniversalCluster.theme.id
+    editUniversalCluster.root = editedUniversalCluster.id
+    
+    editUniversalCluster.organization_id = organizationId
+    // editUniversalCluster.isUniversal = 0
+    
+    let sheets = editUniversalCluster.sheets
+    let instruments = editUniversalCluster.instruments
+    let tags = editUniversalCluster.tags
+    let universalClusterId = editUniversalCluster.id
+
+    delete editUniversalCluster.id
+    delete editUniversalCluster.createdAt
+    delete editUniversalCluster.updatedAt
+    delete editUniversalCluster.sheets
+    delete editUniversalCluster.theme
+    delete editUniversalCluster.instruments
+    delete editUniversalCluster.tags
+
+    sheets.forEach(function(part, index, sheets) {
+        delete sheets[index].id,
+        delete sheets[index].createdAt,
+        delete sheets[index].updatedAt,
+        delete sheets[index].theme_id
+    })
+
+    let clusterThemeSheets = {
+        'universalClusterId': universalClusterId,
+        'organizationId': organizationId,
+        'cluster': editUniversalCluster,
+        'sheets': sheets,
+        'instruments': instruments,
+        "tags": tags
+    }
+
+    return new Promise((resolve, reject) => {
+        
+        insertCluster(clusterThemeSheets)
+        .then(insertSheets)
+        .then(insertClusterHasInstruments)
+        .then(insertTags)
+
+        .then(Cluster.getCluster)
+        .then(result => {
+            resolve(result)
+        })
+        .catch(reject)
+    })
+    
 }
 
 

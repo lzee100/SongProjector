@@ -27,7 +27,7 @@ class LoadingViewController : UIViewController{
 		let afterTime = TimeInterval.seconds(seconds)
 		
 		if withBlurEffect {
-			let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.dark)
+			let blurEffect = UIBlurEffect(style: UIBlurEffect.Style.dark)
 			let blurEffectView = UIVisualEffectView(effect: blurEffect)
 			blurEffectView.frame = view.bounds
 			blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]

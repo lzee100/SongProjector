@@ -38,7 +38,7 @@ class ContractNL {
                 {
                     position: 1,
                     content: "• Onbeperkt aantal eigen thema's opslaan"
-                },
+                }, 
                 {
                     position: 2,
                     content: "• Onbeperkt bijbelteksten dia's genereren en opslaan"

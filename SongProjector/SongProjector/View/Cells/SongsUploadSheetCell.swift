@@ -15,26 +15,34 @@ protocol SongsUploadSheetCellDelegate {
 
 class SongsUploadSheetCell: ChurchBeamCell, UITextFieldDelegate {
 
-	@IBOutlet var lyricsLabel: UILabel!
+	@IBOutlet var sheetViewContainer: UIView!
 	@IBOutlet var timeTextField: UITextField!
 	
 	static let identifier = "SongsUploadSheetCell"
-	var sheet: VSheetTitleContent?
+	var sheet: VSheet?
 	var delegate: SongsUploadSheetCellDelegate?
+	
+	override func prepareForReuse() {
+		super.prepareForReuse()
+		sheetViewContainer.subviews.forEach({ $0.removeFromSuperview() })
+		timeTextField.removeTarget(self, action: #selector(textFieldDidChange), for: UIControl.Event.editingChanged)
+	}
 	
     override func awakeFromNib() {
         super.awakeFromNib()
-		timeTextField.addTarget(self, action: #selector(textFieldDidChange), for: .valueChanged)
     }
 	
-	func setup(_ sheet: VSheetTitleContent, delegate: SongsUploadSheetCellDelegate) {
-		lyricsLabel.text = sheet.content
+	func setup(_ cluster: VCluster, sheet: VSheet, sheetPosition: Int, delegate: SongsUploadSheetCellDelegate) {
+		timeTextField.addTarget(self, action: #selector(textFieldDidChange), for: UIControl.Event.editingChanged)
+		let view = SheetView.createWith(frame: sheetViewContainer.bounds, cluster: cluster, sheet: sheet, theme: sheet.hasTheme ?? cluster.hasTheme, scaleFactor: 1, position: sheetPosition, toExternalDisplay: false)
+		sheetViewContainer.addSubview(view)
 		self.delegate = delegate
 		if sheet.time != 0 {
 			timeTextField.text = "\(sheet.time)"
 		} else {
 			timeTextField.text = nil
 		}
+		self.sheet = sheet
 	}
 	
 	@objc private func textFieldDidChange() {

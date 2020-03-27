@@ -265,3 +265,19 @@ extension Array {
 
 	
 }
+
+public extension Array where Element: Equatable {
+    
+    var unique:[Element] {
+        
+        var list:[Element] = []
+        for item in self {
+            if !list.contains(item) {
+                list.append(item)
+            }
+        }
+        return list
+    }
+}
+
+

@@ -148,7 +148,13 @@ class NewSongServiceIphoneController: ChurchBeamTableViewController, UIGestureRe
 	@IBOutlet var share: UIBarButtonItem!
 	@IBOutlet var emptyView: UIView!
 
-	
+	// MARK: - Private Properties
+	private var clustersFetched = false
+	private var songserviceFetched = false
+
+	override var requesters: [RequesterType] {
+		return [ClusterFetcher, SongServiceSettingsFetcher]
+	}
 	
 	// MARK: - Properties
 
@@ -167,15 +173,11 @@ class NewSongServiceIphoneController: ChurchBeamTableViewController, UIGestureRe
         setup()
     }
 	
-	override func viewWillAppear(_ animated: Bool) {
-		super.viewWillAppear(animated)
-		SongServiceSettingsFetcher.addObserver(self) 
-		SongServiceSettingsFetcher.fetch()
-	}
-	
 	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
-		SongServiceSettingsFetcher.removeObserver(self)
+		if let menu = presentingViewController as? MenuController {
+			menu.activeController()?.viewWillAppear(animated)
+		}
 	}
 	
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -242,17 +244,17 @@ class NewSongServiceIphoneController: ChurchBeamTableViewController, UIGestureRe
 	}
 	
 	override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-		if tableView.cellForRow(at: indexPath) is TextCell {
-			return UITableViewAutomaticDimension
+		if isTextCell(indexPath: indexPath) {
+			return UITableView.automaticDimension
 		}
 		return 60
 	}
 	
-	override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+	override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
 		return clusterModel.songServiceSettings == nil ? .delete : .none
 	}
 	
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+	override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
 			clusterModel.clusters.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)
@@ -275,7 +277,7 @@ class NewSongServiceIphoneController: ChurchBeamTableViewController, UIGestureRe
     }
 
     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-		return (tableView.cellForRow(at: indexPath) is TextCell) ? false : true
+		return isTextCell(indexPath: indexPath) ? false : true
     }
 	
 	override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -292,17 +294,42 @@ class NewSongServiceIphoneController: ChurchBeamTableViewController, UIGestureRe
 		return HeaderView.basicSize.height
 	}
 	
-	override func motionEnded(_ motion: UIEventSubtype, with event: UIEvent?) {
-		if(event?.subtype == UIEventSubtype.motionShake), let settings = VSongServiceSettings.list().last {
-			clusterModel.songServiceSettings = settings
-			clusterModel.clusters = []
-			createRandomSongService()
-			tableView.reloadData()
-			add.title = Text.Actions.cancel
+	override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+		if(event?.subtype == UIEvent.EventSubtype.motionShake), (!clustersFetched && !songserviceFetched) {
+			showLoader()
+			SongServiceSettingsFetcher.fetch()
+			ClusterFetcher.fetch()
+		} else if clustersFetched && songserviceFetched, let settings = VSongServiceSettings.list().last {
+			Queues.main.async {
+				self.clusterModel.songServiceSettings = settings
+				self.clusterModel.clusters = []
+				self.createRandomSongService()
+				self.tableView.reloadData()
+				self.add.title = Text.Actions.cancel
+			}
 		}
 	}
 	
-	
+	override func requestDidFinish(requesterID: String, response: ResponseType, result: AnyObject?) {
+		if requesterID == ClusterFetcher.requesterId {
+			clustersFetched = true
+		}
+		if requesterID == SongServiceSettingsFetcher.requesterId {
+			songserviceFetched = true
+		}
+		if clustersFetched && songserviceFetched {
+			if let settings = VSongServiceSettings.list().last {
+				Queues.main.async {
+					self.clusterModel.songServiceSettings = settings
+					self.clusterModel.clusters = []
+					self.createRandomSongService()
+					self.tableView.reloadData()
+					self.add.title = Text.Actions.cancel
+				}
+			}
+		}
+		super.requestDidFinish(requesterID: requesterID, response: response, result: result)
+	}
 	
 	// MARK: - Custom Functions
 
@@ -354,7 +381,7 @@ class NewSongServiceIphoneController: ChurchBeamTableViewController, UIGestureRe
 	
 	@objc private func editTableView(_ gestureRecognizer: UIGestureRecognizer) {
 		if let gestureRecognizer = gestureRecognizer as? UILongPressGestureRecognizer {
-			if gestureRecognizer.state == UIGestureRecognizerState.began {
+			if gestureRecognizer.state == UIGestureRecognizer.State.began {
 				changeEditingState()
 			}
 		} // for double tab
@@ -378,10 +405,10 @@ class NewSongServiceIphoneController: ChurchBeamTableViewController, UIGestureRe
 			clusterModel.songServiceSettings = settings
 		}
 		var sectionedClusterOrComments: [[ClusterOrComment]] = []
-		let allClusters = VCluster.list()
+		let allClusters = VCluster.list(sortOn: "lastShownAt", ascending: true)
 		for (position, section) in (clusterModel.songServiceSettings?.sections ?? []).enumerated() {
 			sectionedClusterOrComments.append([])
-			for _ in 1...section.numberOfSongs {
+			for songNumber in 1...section.numberOfSongs {
 				let allSelectedClusters = sectionedClusterOrComments.flatMap({ $0 }).compactMap({ $0.cluster })
 				let candidateSongs = allClusters.filter({ !allSelectedClusters.contains(entity: $0) }).filter({ cluster in
 					var contains = false
@@ -392,9 +419,9 @@ class NewSongServiceIphoneController: ChurchBeamTableViewController, UIGestureRe
 						}
 					}
 					return contains
-				})
+				}).sorted(by: { ($0.lastShownAt ?? Date().dateByAddingYears(-1)) < ($1.lastShownAt ?? Date().dateByAddingYears(-1)) })
 				if candidateSongs.count > 0 {
-					let random = Int.random(in: 0...max(candidateSongs.count - 1, 0))
+					let random = Int.random(in: 0...Int(section.numberOfSongs - songNumber))
 					sectionedClusterOrComments[position].append(ClusterOrComment(cluster: candidateSongs[random]))
 				} else if sectionedClusterOrComments[position].filter({ $0.cluster == nil }).count == 0 {
 					sectionedClusterOrComments[position].append(ClusterOrComment(cluster: nil))
@@ -421,6 +448,24 @@ class NewSongServiceIphoneController: ChurchBeamTableViewController, UIGestureRe
 			return true
 		}
 		return false
+	}
+	
+	private func isTextCell(indexPath: IndexPath) -> Bool {
+		if clusterModel.songServiceSettings != nil {
+			if clusterModel.sectionedClusterOrComment.count == 0 {
+				return true
+			}
+			if clusterModel.sectionedClusterOrComment[indexPath.section][indexPath.row].cluster != nil {
+				return false
+			} else {
+				return true
+			}
+		}
+		if clusterModel.clusters.count == 0 {
+			return true
+		} else {
+			return false
+		}
 	}
 	
 	@IBAction func addPressed(_ sender: UIBarButtonItem) {

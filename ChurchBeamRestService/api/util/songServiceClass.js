@@ -60,7 +60,7 @@ function postSongServiceSettings(songServiceSettings, organizationId) {
                 tag_id: tag.id,
                 tag_organization_id: organizationId
              }
-             const sql = `INSERT INTO songServiceSection_has_tag SET ?`
+             const sql = `INSERT INTO tag_has_songServiceSection SET ?`
              db.query(sql, [tagHasSection], (err, result) => {
                 if (err) {
                     reject(err)
@@ -173,7 +173,7 @@ function putSongServiceSettings(songServiceSettings, organizationId) {
     var deleteSectionHasTag = function(section) {
         let sectionId = section.id
         return new Promise((resolve, reject) => {
-            let sql = `DELETE songServiceSection_has_tag WHERE songServiceSection_id = ${sectionId}`
+            let sql = `DELETE tag_has_songServiceSection WHERE songServiceSection_id = ${sectionId}`
             db.query(sql, (err, result) => {
                 if (err) {
                     reject(err)
@@ -194,7 +194,7 @@ function putSongServiceSettings(songServiceSettings, organizationId) {
          }
 
          return new Promise((resolve, reject) => {
-             const sql = `INSERT INTO songServiceSection_has_tag SET ?`
+             const sql = `INSERT INTO tag_has_songServiceSection SET ?`
              db.query(sql, [tagHasSection], (err, result) => {
                 if (err) {
                     reject(err)
@@ -227,7 +227,7 @@ function putSongServiceSettings(songServiceSettings, organizationId) {
                     resolve()
                 }
             })
-        })
+        }) 
 
         deleteSectionHasTag(section)
         .then(function() {
@@ -327,7 +327,7 @@ function getSongServiceSettings(id, organizationId) {
 
     var getTagForSection = function(section) {
         return new Promise((resolve, reject) => {
-            let sql = `SELECT T.id, T.title, T.createdAt, T.updatedAt, T.deletedAt FROM tag as T LEFT JOIN songServiceSection_has_tag as ST ON T.id = ST.tag_id WHERE ST.songServiceSection_id = ${section.id}`
+            let sql = `SELECT T.id, T.title, T.createdAt, T.updatedAt, T.deletedAt FROM tag as T LEFT JOIN tag_has_songServiceSection as ST ON T.id = ST.tag_id WHERE ST.songServiceSection_id = ${section.id}`
             db.query(sql, (err, result) => {
                 if (err) {
                     reject(err)

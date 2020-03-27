@@ -51,6 +51,11 @@ class MenuController: UITabBarController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		setup()
+		NotificationCenter.default.addObserver(forName: NotificationNames.secretChanged, object: nil, queue: nil) { [weak self] (notification) in
+			DispatchQueue.main.async {
+				self?.dismiss()
+			}
+		}
 		NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: NotificationIdentifier.noContract), object: nil, queue: nil) { [weak self] (notification) in
 			DispatchQueue.main.async {
 				self?.dismiss()
@@ -77,6 +82,14 @@ class MenuController: UITabBarController {
 		}
 		
 	}
+	
+	func activeController() -> UIViewController? {
+		if let selected = selected {
+			return controllers[selected] != nil ? controllers[selected] : nil // else return optional features controller (not build yet)
+		}
+		return nil
+	}
+
 	
 	private func setup() {
 		

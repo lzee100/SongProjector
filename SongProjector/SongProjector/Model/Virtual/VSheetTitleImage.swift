@@ -118,17 +118,23 @@ class VSheetTitleImage: VSheet, SheetMetaType {
 			sheet.imageBorderColor = imageBorderColor
 			sheet.imageBorderSize = imageBorderSize
 			sheet.imageContentMode = imageContentMode
+			if sheet.imagePathAWS != imagePathAWS {
+				sheet.imagePath = nil
+				sheet.thumbnailPath = nil
+			}
+			sheet.imagePathAWS = imagePathAWS
 		}
 	}
 	
 	override func getPropertiesFrom(entity: Entity) {
 		super.getPropertiesFrom(entity: entity)
 		if let sheet = entity as? SheetTitleImageEntity {
-		content = sheet.content
-		hasTitle = sheet.hasTitle
-		imageBorderColor = sheet.imageBorderColor
-		imageBorderSize = sheet.imageBorderSize
-		imageContentMode = sheet.imageContentMode
+			content = sheet.content
+			hasTitle = sheet.hasTitle
+			imageBorderColor = sheet.imageBorderColor
+			imageBorderSize = sheet.imageBorderSize
+			imageContentMode = sheet.imageContentMode
+			imagePathAWS = sheet.imagePathAWS
 		}
 	}
 	

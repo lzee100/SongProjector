@@ -39,11 +39,11 @@ class ChurchBeamViewController: UIViewController, RequestObserver {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-		let iv = AnimatingBackgroundView(frame: view.bounds)
-		iv.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-		self.view.addSubview(iv)
-		self.view.sendSubview(toBack: iv)
-//		self.view.bringSubview(toFront: iv)
+//		let iv = AnimatingBackgroundView(frame: view.bounds)
+//		iv.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+//		self.view.addSubview(iv)
+//		self.view.sendSubviewToBackiv)
+//		self.view.bringSubviewToFront(toFront: iv)
 
 		animator = UIViewPropertyAnimator(duration: 0.4, curve: .easeOut) { [errorView] in
 			errorView?.center.x = -((errorView?.frame.height ?? 0) / 2)
@@ -73,7 +73,7 @@ class ChurchBeamViewController: UIViewController, RequestObserver {
 			loadingView.alpha = 0
 			loadingView.animator.startAnimating()
 			self.view.addSubview(loadingView)
-			self.view.bringSubview(toFront: loadingView)
+			self.view.bringSubviewToFront(loadingView)
 			UIView.animate(withDuration: 0.1, animations: {
 				loadingView.alpha = 0.3
 			})
@@ -96,9 +96,9 @@ class ChurchBeamViewController: UIViewController, RequestObserver {
 	func show(error: ResponseType) {
 		switch error {
 		case .error(let response, let error):
-			let status = response?.statusCode.stringValue() ?? "no status code"
+			let status = response?.statusCode.stringValue ?? "no status code"
 			let errMessage = error?.localizedDescription ?? "no message"
-			let message = "status: \(status):/n\(errMessage)"
+			let message = "status: \(status):\n\(errMessage)"
 			createView(message: message)
 		default:
 			return
@@ -138,7 +138,7 @@ class ChurchBeamViewController: UIViewController, RequestObserver {
 	private func createView(message: String) {
 		let content = UNMutableNotificationContent()
 		content.body = message
-		content.sound = .default()
+		content.sound = .default
 		let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
 		UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)
 	}

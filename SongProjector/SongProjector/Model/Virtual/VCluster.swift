@@ -8,6 +8,7 @@
 
 import Foundation
 import CoreData
+import UIKit
 
 public class VCluster: VEntity {
 
@@ -30,6 +31,9 @@ public class VCluster: VEntity {
 	var position: Int16 = 0
 	var time: Double = 0
 	var themeId: Int64 = 0
+	var root: Int64? = nil
+	var isUniversal: Bool = false
+	var lastShownAt: Date? = nil
 	
 	var hasInstruments: [VInstrument] = []
 	var hasSheets: [VSheet] = []
@@ -71,6 +75,9 @@ public class VCluster: VEntity {
 		case hasSheets = "sheets"
 		case hasInstruments = "instruments"
 		case hasTags = "tags"
+		case root
+		case isUniversal
+		case lastShownAt
 	}
 	
 	
@@ -93,6 +100,12 @@ public class VCluster: VEntity {
 		try container.encode(hasTheme, forKey: .theme)
 		try container.encode(clusterSheets.map(AnySheet.init), forKey: .hasSheets)
 		try container.encode(hasInstruments, forKey: .hasInstruments)
+		try container.encode(root, forKey: .root)
+		try container.encode(isUniversal, forKey: .isUniversal)
+		if let lastShownAt = lastShownAt {
+			let lastShownAtString = GlobalDateFormatter.localToUTC(date: lastShownAt as Date)
+			try container.encode(lastShownAtString, forKey: .lastShownAt)
+		}
 		
 		try container.encode(hasTags, forKey: .hasTags)
 
@@ -113,6 +126,10 @@ public class VCluster: VEntity {
 		position = try container.decodeIfPresent(Int16.self, forKey: .position) ?? 0
 		time = try container.decodeIfPresent(Double.self, forKey: .time) ?? 0
 		themeId = try container.decodeIfPresent(Int64.self, forKey: .themeId) ?? 0
+		root = try container.decodeIfPresent(Int64.self, forKey: .root)
+		isUniversal = try Bool(truncating: container.decode(Int16.self, forKey: .isUniversal) as NSNumber)
+		lastShownAt = try decodeDate(container: container, forKey: .lastShownAt) as Date?
+
 		tagIds = try (container.decodeIfPresent([VTag].self, forKey: .hasTags)?.compactMap({ NSNumber(value: $0.id) }) ?? [])
 		let metas = try container.decode([AnySheet].self, forKey: .hasSheets).map{ $0.base }
 		
@@ -153,7 +170,10 @@ public class VCluster: VEntity {
 		copy?.hasInstruments = NSSet(array: hasInstruments.map({ $0.copy(with: zone) }))
 		copy?.hasSheets = NSSet(array: hasSheets.map({ $0.copy(with: zone) }))
 		copy?.tagIds = tagIds
-		
+		copy?.root = root
+		copy?.isUniversal = isUniversal
+		copy?.lastShownAt = lastShownAt as NSDate?
+
 		return copy!
 	}
 	
@@ -165,7 +185,9 @@ public class VCluster: VEntity {
 			position = Int16(cluster.position)
 			time = cluster.time
 			themeId = cluster.themeId
-			
+			root = cluster.root
+			isUniversal = cluster.isUniversal
+			lastShownAt = cluster.lastShownAt as Date?
 			hasInstruments = cluster.hasInstruments == nil ? [] : (cluster.hasInstruments!.allObjects as! [Instrument]).map({ VInstrument(entity: $0) })
 			
 			func getSheets(sheets: [Sheet]) -> [VSheet] {
@@ -199,6 +221,9 @@ public class VCluster: VEntity {
 			cluster.position = Int16(position)
 			cluster.time = time
 			cluster.themeId = themeId
+			cluster.root = root
+			cluster.isUniversal = isUniversal
+//			cluster.lastShownAt = lastShownAt as NSDate?
 			cluster.hasInstruments = NSSet(array: hasInstruments.map({ $0.getManagedObject(context: context) }))
 			if let sheets = cluster.hasSheets {
 				cluster.removeFromHasSheets(sheets)
@@ -234,6 +259,105 @@ public class VCluster: VEntity {
 			return newEntity
 		}
 
+	}
+	
+}
+
+
+extension VCluster {
+	
+	var uploadImagesObjecs: [UploadObject] {
+		let sheetThemesPaths = hasSheets.compactMap({ $0.hasTheme?.imagePath })
+		let pastorstPaths = hasSheets.compactMap({ $0 as? VSheetPastors }).compactMap({ $0.imagePath })
+		let titleImagePaths = hasSheets.compactMap({ $0 as? VSheetTitleImage }).compactMap({ $0.imagePath })
+
+		var allPaths = sheetThemesPaths
+		allPaths += pastorstPaths
+		allPaths += titleImagePaths
+				
+		allPaths = allPaths.unique
+		
+		return allPaths.compactMap({ URL(string: $0) }).compactMap({ UploadObject(localURL: $0) })
+	}
+	
+	var downloadImagesObjects: [DownloadObject] {
+		let sheetThemesPaths = hasSheets.compactMap({ $0.hasTheme?.imagePathAWS })
+		let pastorstPaths = hasSheets.compactMap({ $0 as? VSheetPastors }).compactMap({ $0.imagePathAWS })
+		let titleImagePaths = hasSheets.compactMap({ $0 as? VSheetTitleImage }).compactMap({ $0.imagePathAWS })
+
+		var allPaths = sheetThemesPaths
+		allPaths += pastorstPaths
+		allPaths += titleImagePaths
+		
+		allPaths = allPaths.unique
+		
+		return allPaths.compactMap({ URL(string: $0) }).compactMap({ DownloadObject(remoteURL: $0) })
+	}
+	
+	var downloadMusicObjects: [DownloadObject] {
+		let paths = hasInstruments.compactMap({ $0.resourcePathAWS })
+		return paths.compactMap({ URL(string: $0) }).compactMap({ DownloadObject(remoteURL: $0) })
+	}
+	
+	var uploadMusicObjects: [UploadObject] {
+		let paths = hasInstruments.compactMap({ $0.resourcePath })
+		return paths.compactMap({ URL(string: $0) }).compactMap({ UploadObject(localURL: $0) })
+	}
+	
+	func setUploadValues(_ uploadObjects: [UploadObject]) {
+		let sheetThemes = hasSheets.compactMap({ $0.hasTheme })
+		let pastorsSheets = hasSheets.compactMap({ $0 as? VSheetPastors })
+		let titleImageSheets = hasSheets.compactMap({ $0 as? VSheetTitleImage })
+		
+		for upload in uploadObjects.compactMap({ $0 as UploadObject }) {
+			sheetThemes.forEach { theme in
+				if theme.imagePath == upload.localURL.absoluteString {
+					theme.imagePathAWS = upload.remoteURL?.absoluteString
+				}
+			}
+			pastorsSheets.forEach { pastorSheet in
+				if pastorSheet.imagePath == upload.localURL.absoluteString {
+					pastorSheet.imagePathAWS = upload.remoteURL?.absoluteString
+				}
+			}
+			titleImageSheets.forEach { titleImageSheet in
+				if titleImageSheet.imagePath == upload.localURL.absoluteString {
+					titleImageSheet.imagePathAWS = upload.remoteURL?.absoluteString
+				}
+			}
+		}
+	}
+	
+	func setDownloadValues(_ downloadObjects: [DownloadObject]) {
+		let sheetThemes = hasSheets.compactMap({ $0.hasTheme })
+		let pastorsSheets = hasSheets.compactMap({ $0 as? VSheetPastors })
+		let titleImageSheets = hasSheets.compactMap({ $0 as? VSheetTitleImage })
+		
+		for download in downloadObjects.compactMap({ $0 as DownloadObject }) {
+			sheetThemes.forEach { theme in
+				if theme.imagePathAWS == download.remoteURL.absoluteString {
+					theme.imagePath = download.localURL?.absoluteString
+					theme.imagePathThumbnail = download.localThumbURL?.absoluteString
+				}
+			}
+			pastorsSheets.forEach { pastorSheet in
+				if pastorSheet.imagePathAWS == download.remoteURL.absoluteString {
+					pastorSheet.imagePath = download.localURL?.absoluteString
+					pastorSheet.thumbnailPath = download.localThumbURL?.absoluteString
+				}
+			}
+			titleImageSheets.forEach { titleImageSheet in
+				if titleImageSheet.imagePathAWS == download.remoteURL.absoluteString {
+					titleImageSheet.imagePath = download.localURL?.absoluteString
+					titleImageSheet.thumbnailPath = download.localThumbURL?.absoluteString
+				}
+			}
+			hasInstruments.forEach { instrument in
+				if instrument.resourcePathAWS == download.remoteURL.absoluteString {
+					instrument.resourcePath = download.localURL?.absoluteString
+				}
+			}
+		}
 	}
 	
 }

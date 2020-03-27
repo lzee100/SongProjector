@@ -183,8 +183,8 @@ class LabelPhotoPickerCell: ChurchBeamCell, ThemeImplementation, SheetImplementa
 		self.valueDidChange?(self)
 	}
 	
-	func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-		if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
+	func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+		if let pickedImage = info[.originalImage] as? UIImage {
 			DispatchQueue.main.async {
 				let scaledImage = pickedImage.resizeImage(self.imageThumbnail.frame.size.width, opaque: false)
 				self.imageThumbnail.image = scaledImage

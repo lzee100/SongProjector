@@ -75,6 +75,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	var songServiceSettings: VSongServiceSettings?
 	var songsPerSection: [[VCluster]]?
 	var songsPerSectionWithComents: [[Any]]?
+	var previewCluster: VCluster?
 
 	// MARK: Private Properties
 	
@@ -101,29 +102,11 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		setup()
-//		if !AWSSignInManager.sharedInstance().isLoggedIn {
-//			AWSAuthUIViewController
-//				.presentViewController(with: self.navigationController!,
-//									   configuration: nil,
-//									   completionHandler: { (provider: AWSSignInProvider, error: Error?) in
-//										if error != nil {
-//											print("Error occurred: \(String(describing: error))")
-//										} else {
-//											OrganizationsCRUD.insertOrganizationWith(id: "id", name: "leo")
-//										}
-//				})
-//		} else {
-//			OrganizationsCRUD.insertOrganizationWith(id: "id", name: "leo")
-//
-//		}
-
 	}
 	
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 		update()
-		OrganizationsCRUD.insertOrganizationWith(id: "id", name: "leo")
-
 	}
 	
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -314,6 +297,11 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		updateSheetDisplayersRatios()
 		sheetDisplayerInitialFrame = sheetDisplayer.bounds
 		sheetDisplayerSwipeViewInitialHeight = sheetDisplaySwipeViewCustomHeightConstraint?.constant ?? sheetDisplaySwipeView.bounds.height
+		
+		if let previewCluster = previewCluster {
+			songService.songs = [SongObject(cluster: previewCluster)]
+			navigationItem.leftBarButtonItem = UIBarButtonItem(title: Text.Actions.cancel, style: .plain, target: self, action: #selector(close))
+		}
 		update()
 		
 	}
@@ -589,13 +577,13 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		if let sheetDisplaySwipeViewCustomHeightConstraint = sheetDisplaySwipeViewCustomHeightConstraint {
 			sheetDisplaySwipeView.removeConstraint(sheetDisplaySwipeViewCustomHeightConstraint)
 		}
-		sheetDisplaySwipeViewCustomHeightConstraint = NSLayoutConstraint(item: sheetDisplaySwipeView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: (UIScreen.main.bounds.width - 20) * externalDisplayWindowRatio)
+		sheetDisplaySwipeViewCustomHeightConstraint = NSLayoutConstraint(item: sheetDisplaySwipeView!, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: (UIScreen.main.bounds.width - 20) * externalDisplayWindowRatio)
 		sheetDisplaySwipeView.addConstraint(sheetDisplaySwipeViewCustomHeightConstraint!)
 		
 		if let customSheetDisplayerRatioConstraint = customSheetDisplayerRatioConstraint {
 			sheetDisplayer.removeConstraint(customSheetDisplayerRatioConstraint)
 		}
-		customSheetDisplayerRatioConstraint = NSLayoutConstraint(item: sheetDisplayer, attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.equal, toItem: sheetDisplayer, attribute: NSLayoutAttribute.width, multiplier: externalDisplayWindowRatio, constant: 0)
+		customSheetDisplayerRatioConstraint = NSLayoutConstraint(item: sheetDisplayer!, attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: sheetDisplayer, attribute: NSLayoutConstraint.Attribute.width, multiplier: externalDisplayWindowRatio, constant: 0)
 		sheetDisplayer.addConstraint(customSheetDisplayerRatioConstraint!)
 		sheetDisplayer.layoutIfNeeded()
 		sheetDisplayer.layoutSubviews()
@@ -603,13 +591,13 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		if let customSheetDisplayerPreviousRatioConstraint = customSheetDisplayerPreviousRatioConstraint {
 			sheetDisplayer.removeConstraint(customSheetDisplayerPreviousRatioConstraint)
 		}
-		customSheetDisplayerPreviousRatioConstraint = NSLayoutConstraint(item: sheetDisplayerPrevious, attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.equal, toItem: sheetDisplayerPrevious, attribute: NSLayoutAttribute.width, multiplier: externalDisplayWindowRatio, constant: 0)
+		customSheetDisplayerPreviousRatioConstraint = NSLayoutConstraint(item: sheetDisplayerPrevious!, attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: sheetDisplayerPrevious, attribute: NSLayoutConstraint.Attribute.width, multiplier: externalDisplayWindowRatio, constant: 0)
 		sheetDisplayerPrevious.addConstraint(customSheetDisplayerPreviousRatioConstraint!)
 		
 		if let customSheetDisplayerNextRatioConstraint = customSheetDisplayerNextRatioConstraint {
 			sheetDisplayer.removeConstraint(customSheetDisplayerNextRatioConstraint)
 		}
-		customSheetDisplayerNextRatioConstraint = NSLayoutConstraint(item: sheetDisplayerNext, attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.equal, toItem: sheetDisplayerNext, attribute: NSLayoutAttribute.width, multiplier: externalDisplayWindowRatio, constant: 0)
+		customSheetDisplayerNextRatioConstraint = NSLayoutConstraint(item: sheetDisplayerNext!, attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: sheetDisplayerNext, attribute: NSLayoutConstraint.Attribute.width, multiplier: externalDisplayWindowRatio, constant: 0)
 		sheetDisplayerNext.addConstraint(customSheetDisplayerNextRatioConstraint!)
 		
 		view.layoutIfNeeded()
@@ -770,8 +758,9 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 			let remainder = 60 - seconds
 			let fireDate = date.addingTimeInterval(.seconds(Double(remainder)))
 			print(fireDate.description)
+			
 			displayTimeTimer = Timer(fireAt: fireDate, interval: 60, target: self, selector: #selector(updateScreen), userInfo: nil, repeats: true)
-			RunLoop.main.add(displayTimeTimer, forMode: RunLoopMode.commonModes)
+			RunLoop.main.add(displayTimeTimer, forMode: RunLoop.Mode.common)
 			
 		} else {
 			displayTimeTimer.invalidate()
@@ -788,6 +777,10 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		self.respondToSwipeGesture(self.leftSwipe, automatically: true)
 	}
 	
+	@objc private func close() {
+		self.dismiss(animated: true)
+	}
+
 	
 	@IBAction func deleteDB(_ sender: UIBarButtonItem) {
 		

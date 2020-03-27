@@ -13,7 +13,7 @@ var db = require('../util/db')
 
 router.get('/', (req, res , next) => {
 
-    console.log('in post organizations')
+    console.log('in get organizations')
 
     let appId = req.query.appId
     let userId = req.query.userId
@@ -29,7 +29,15 @@ router.get('/', (req, res , next) => {
             }
         })
         .catch(err => {
-            res.status(500).json(err)
+            if (err.message == 'No authorization') {
+                res.status(401).json({
+                    error: err.message
+                })
+            } else {
+                res.status(500).json({
+                    error: err.message
+                })
+            }
         })
     } else {
         getOrganization(userId, appId)

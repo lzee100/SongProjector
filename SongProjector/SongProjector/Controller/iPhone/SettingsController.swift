@@ -31,6 +31,10 @@ class SettingsController: ChurchBeamTableViewController, GoogleCellDelegate, Lab
 			}
 		}
 	}
+	
+	override var requesters: [RequesterType] {
+		return [UploadSecretFetcher]
+	}
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -63,12 +67,12 @@ class SettingsController: ChurchBeamTableViewController, GoogleCellDelegate, Lab
 			return cell
 		case .googleAgenda:
 			if GIDSignIn.sharedInstance()?.currentUser != nil {
-				let cell = tableView.dequeueReusableCell(withIdentifier: GoogleCell.identifier) as! GoogleCell
+				let cell = tableView.dequeueReusableCell(withIdentifier: GoogleSignedInCell.identifier) as! GoogleSignedInCell
 				cell.setup(delegate: self, sender: self)
 				return cell
 			} else {
-				let cell = tableView.dequeueReusableCell(withIdentifier: GoogleSignedInCell.identifier) as! GoogleSignedInCell
-				cell.delegate = self
+				let cell = tableView.dequeueReusableCell(withIdentifier: GoogleCell.identifier) as! GoogleCell
+				cell.setup(delegate: self, sender: self)
 				return cell
 			}
 		}
@@ -92,22 +96,32 @@ class SettingsController: ChurchBeamTableViewController, GoogleCellDelegate, Lab
 	}
 
 	// Enable detection of shake motion
-	override func motionEnded(_ motion: UIEventSubtype, with event: UIEvent?) {
+	override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
 		if motion == .motionShake {
 			let alert = UIAlertController(title: "Voer code in:", message: nil, preferredStyle: .alert)
 			alert.addTextField { (textField) in
 				textField.placeholder = "Code"
 			}
 			alert.addAction(UIAlertAction(title: Text.Actions.ok, style: .default, handler: { (_) in
-				if let secret = alert.textFields![0].text, secret != "" {
-					UserDefaults.standard.setValue(secret, forKey: secretKey)
-				}
+				let secret = alert.textFields![0].text ?? ""
+				UploadSecretFetcher.secret = secret
+				UploadSecretFetcher.fetch()
 			}))
+			present(alert, animated: true)
 		}
 	}
 	
 	
 	// MARK: - Delegate Functions
+	
+	// MARK: RequestObserver Functions
+	
+	override func handleRequestFinish(requesterId: String, result: AnyObject?) {
+		if requesterId == UploadSecretFetcher.requesterId {
+			UserDefaults.standard.setValue(UploadSecretFetcher.secret, forKey: secretKey)
+			NotificationCenter.default.post(name: NotificationNames.secretChanged, object: nil, userInfo: nil)
+		}
+	}
 	
 	// MARK: GoogleCellDelegate Functions
 	
@@ -136,8 +150,7 @@ class SettingsController: ChurchBeamTableViewController, GoogleCellDelegate, Lab
 	}
 
 	private func setup() {
-		tableView.register(cell: LabelTextFieldCell.identifier)
-		tableView.register(cell: Cells.GoogleCell)
+		tableView.register(cells: [LabelTextFieldCell.identifier, GoogleSignedInCell.identifier, Cells.GoogleCell])
 		tableView.reloadData()
 	}
 }

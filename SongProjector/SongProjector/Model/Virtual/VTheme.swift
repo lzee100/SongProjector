@@ -8,10 +8,14 @@
 
 import Foundation
 import CoreData
+import UIKit
 
 class VTheme: VEntity {
 	
 	class func list(sortOn attributeName: String? = nil, ascending: Bool? = nil) -> [VTheme] {
+		if UserDefaults.standard.object(forKey: secretKey) == nil {
+			CoreTheme.predicates.append("isUniversal", equals: 0)
+		}
 		if let attributeName = attributeName, let ascending = ascending {
 			CoreTheme.setSortDescriptor(attributeName: attributeName, ascending: ascending)
 		}
@@ -55,9 +59,8 @@ class VTheme: VEntity {
 	var titleFontName: String? = nil
 	var titleTextColorHex: String? = nil
 	var titleTextSize: Float = 0
-	var imagePathThumbnailAWS: String? = nil
 	var imagePathAWS: String? = nil
-
+	var isUniversal: Bool = false
 
 	var hasClusters: [VCluster] = []
 	var hasSheets: [VSheet] = []
@@ -93,8 +96,8 @@ class VTheme: VEntity {
 		case titleFontName
 		case titleTextColorHex = "titleTextColor"
 		case titleTextSize
-		case imagePathThumbnailAWS
 		case imagePathAWS
+		case isUniversal
 	}
 	
 	public override func initialization(decoder: Decoder) throws {
@@ -112,8 +115,6 @@ class VTheme: VEntity {
 		try container.encode(backgroundTransparancyNumber.description, forKey: .backgroundTransparancyNumber)
 		try container.encode(Int(truncating: NSNumber(value: displayTime)), forKey: .displayTime)
 		try container.encode(Int(truncating: NSNumber(value: hasEmptySheet)), forKey: .hasEmptySheet)
-		try container.encode(imagePath, forKey: .imagePath)
-		try container.encode(imagePathThumbnail, forKey: .imagePathThumbnail)
 		try container.encode(Int(truncating: NSNumber(value: isEmptySheetFirst)), forKey: .isEmptySheetFirst)
 		try container.encode(Int(truncating: NSNumber(value: isHidden)), forKey: .isHidden)
 		try container.encode(Int(truncating: NSNumber(value: isContentBold)), forKey: .isContentBold)
@@ -136,8 +137,8 @@ class VTheme: VEntity {
 		try container.encode(titleFontName, forKey: .titleFontName)
 		try container.encode(titleTextColorHex, forKey: .titleTextColorHex)
 		try container.encode(titleTextSize, forKey: .titleTextSize)
-		try container.encode(imagePathThumbnailAWS, forKey: .imagePathThumbnailAWS)
 		try container.encode(imagePathAWS, forKey: .imagePathAWS)
+		try container.encode(isUniversal, forKey: .isUniversal)
 		
 		try super.encode(to: encoder)
 	}
@@ -158,8 +159,6 @@ class VTheme: VEntity {
 		backgroundTransparancyNumber = Double(truncating: NSDecimalNumber(decimal:Decimal(string: transparencyString) ?? 0.0))
 		displayTime = try Bool(truncating: (container.decodeIfPresent(Int.self, forKey: .displayTime) ?? 0) as NSNumber)
 		hasEmptySheet = try Bool(truncating: (container.decodeIfPresent(Int.self, forKey: .hasEmptySheet) ?? 0) as NSNumber)
-		imagePath = try container.decodeIfPresent(String.self, forKey: .imagePath)
-		imagePathThumbnail = try container.decodeIfPresent(String.self, forKey: .imagePathThumbnail)
 		isEmptySheetFirst = try Bool(truncating: (container.decodeIfPresent(Int.self, forKey: .isEmptySheetFirst) ?? 0) as NSNumber)
 		isHidden = try Bool(truncating: (container.decodeIfPresent(Int.self, forKey: .isHidden) ?? 0) as NSNumber)
 		isContentBold = try Bool(truncating: (container.decodeIfPresent(Int.self, forKey: .isContentBold) ?? 0) as NSNumber)
@@ -182,8 +181,8 @@ class VTheme: VEntity {
 		titleFontName = try container.decodeIfPresent(String.self, forKey: .titleFontName)
 		titleTextColorHex = try container.decodeIfPresent(String.self, forKey: .titleTextColorHex)
 		titleTextSize = try container.decodeIfPresent(Float.self, forKey: .titleTextSize) ?? 14
-		imagePathThumbnailAWS = try container.decodeIfPresent(String.self, forKey: .imagePathThumbnailAWS)
 		imagePathAWS = try container.decodeIfPresent(String.self, forKey: .imagePathAWS)
+		isUniversal = try Bool(truncating: (container.decodeIfPresent(Int.self, forKey: .isUniversal) ?? 0) as NSNumber)
 		
 		try super.initialization(decoder: decoder)
 
@@ -222,10 +221,10 @@ class VTheme: VEntity {
 		copy.titleFontName = self.titleFontName
 		copy.titleTextColorHex = self.titleTextColorHex
 		copy.titleTextSize = self.titleTextSize
-		copy.imagePathThumbnailAWS = self.imagePathThumbnailAWS
 		copy.imagePathAWS = self.imagePathAWS
 		copy.hasClusters = self.hasClusters
 		copy.hasSheets = self.hasSheets
+		copy.isUniversal = self.isUniversal
 		
 		return copy
 	}
@@ -242,6 +241,10 @@ class VTheme: VEntity {
 			theme.hasEmptySheet = self.hasEmptySheet
 			theme.imagePath = self.imagePath
 			theme.imagePathThumbnail = self.imagePathThumbnail
+			if imagePathAWS == nil {
+				theme.imagePath = nil
+				theme.imagePathThumbnail = nil
+			}
 			theme.isBackgroundImageDeleted = self.isBackgroundImageDeleted
 			theme.isEmptySheetFirst = self.isEmptySheetFirst
 			theme.isHidden = self.isHidden
@@ -265,8 +268,8 @@ class VTheme: VEntity {
 			theme.titleFontName = self.titleFontName
 			theme.titleTextColorHex = self.titleTextColorHex
 			theme.titleTextSize = self.titleTextSize
-			theme.imagePathThumbnailAWS = self.imagePathThumbnailAWS
 			theme.imagePathAWS = self.imagePathAWS
+			theme.isUniversal = self.isUniversal
 						
 		}
 	}
@@ -305,8 +308,8 @@ class VTheme: VEntity {
 			titleFontName = theme.titleFontName
 			titleTextColorHex = theme.titleTextColorHex
 			titleTextSize = theme.titleTextSize
-			imagePathThumbnailAWS = theme.imagePathThumbnailAWS
 			imagePathAWS = theme.imagePathAWS
+			isUniversal = theme.isUniversal
 		}
 	}
 	
@@ -369,8 +372,46 @@ extension VTheme {
 		titleFontName = from.titleFontName
 		titleTextColorHex = from.titleTextColorHex
 		titleTextSize = from.titleTextSize
-		imagePathThumbnailAWS = from.imagePathThumbnailAWS
 		imagePathAWS = from.imagePathAWS
+		isUniversal = from.isUniversal
 	}
 
+}
+
+
+extension VTheme {
+	var uploadImagesObjecs: [UploadObject] {
+		let imagePaths = [imagePath]
+		return imagePaths.compactMap({ URL(string: $0) }).compactMap({ UploadObject(localURL: $0) })
+	}
+	
+	var downloadImagesObjects: [DownloadObject] {
+		var imagePaths = [imagePathAWS]
+		if imagePath != nil {
+			imagePaths = []
+		}
+		return imagePaths.compactMap({ URL(string: $0) }).compactMap({ DownloadObject(remoteURL: $0) })
+	}
+	
+	func setUploadValues(_ uploadObjects: [UploadObject]) {
+		for upload in uploadObjects {
+			if let imagePath = imagePath {
+				if imagePath == upload.localURL.absoluteString {
+					imagePathAWS = upload.remoteURL?.absoluteString
+				}
+			}
+		}
+	}
+	
+	func setDownloadValues(_ downloadObjects: [DownloadObject]) {
+		for download in downloadObjects {
+			if let imagePathAWS = imagePathAWS {
+				if imagePathAWS == download.remoteURL.absoluteString {
+					self.imagePath = download.localURL?.absoluteString
+					imagePathThumbnail = download.localThumbURL?.absoluteString
+				}
+			}
+		}
+	}
+	
 }

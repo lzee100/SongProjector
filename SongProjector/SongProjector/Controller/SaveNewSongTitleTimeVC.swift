@@ -134,7 +134,7 @@ class SaveNewSongTitleTimeVC: ChurchBeamTableViewController {
 		if Section.all[indexPath.section] == .tags {
 			return 60
 		}
-		return UITableViewAutomaticDimension
+		return UITableView.automaticDimension
 	}
 	
 	override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -161,7 +161,7 @@ class SaveNewSongTitleTimeVC: ChurchBeamTableViewController {
 		clusterTitle = cluster?.title ?? ""
 		let tags = VTag.list(sortOn: "position", ascending: true)
 		selectedTags = tags.filter({ tag in cluster?.tagIds.contains(where: { NSNumber(value: tag.id) == $0 }) ?? false })
-		tableView.rowHeight = UITableViewAutomaticDimension
+		tableView.rowHeight = UITableView.automaticDimension
 		tableView.tableFooterView = UIView()
 
 	}

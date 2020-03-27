@@ -36,7 +36,7 @@ extension UIView {
 	
 	func blurEffect() {
 		//only apply the blur if the user hasn't disabled transparency effects
-		if !UIAccessibilityIsReduceTransparencyEnabled() {
+		if !UIAccessibility.isReduceTransparencyEnabled {
 			backgroundColor = .clear
 			
 			let blurEffect = UIBlurEffect(style: .dark)
@@ -46,7 +46,7 @@ extension UIView {
 			blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
 			blurEffectView.alpha = 0.6
 			addSubview(blurEffectView) //if you have more UIViews, use an insertSubview API to place it where needed
-			sendSubview(toBack: blurEffectView)
+			sendSubviewToBack(blurEffectView)
 		}
 	}
 	

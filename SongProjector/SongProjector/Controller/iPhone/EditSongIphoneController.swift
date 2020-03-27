@@ -114,7 +114,7 @@ class EditSongIphoneController: ChurchBeamViewController, UICollectionViewDataSo
 					})
 					delaySheetAimation += 0.12
 				}
-				if let index = visibleCells.index(of: indexPath), segmentControl.selectedSegmentIndex == 1 {
+				if let index = visibleCells.firstIndex(of: indexPath), segmentControl.selectedSegmentIndex == 1 {
 					visibleCells.remove(at: index) // remove cell for one time animation
 				}
 			}
@@ -166,9 +166,9 @@ class EditSongIphoneController: ChurchBeamViewController, UICollectionViewDataSo
 		navigationController?.title = Text.NewSong.title
 		title = Text.CustomSheets.title
 		
-		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name:NSNotification.Name.UIKeyboardWillShow, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name:NSNotification.Name.UIKeyboardWillHide, object: nil)
-		NotificationCenter.default.addObserver(forName: Notification.Name.UIScreenDidConnect, object: nil, queue: nil, using: databaseDidChange)
+		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+		NotificationCenter.default.addObserver(forName: UIScreen.didConnectNotification, object: nil, queue: nil, using: databaseDidChange)
 		
 		segmentControl.setTitle(Text.NewSong.segmentTitleText, forSegmentAt: 0)
 		segmentControl.setTitle(Text.NewSong.segmentTitleSheets, forSegmentAt: 1)
@@ -183,7 +183,7 @@ class EditSongIphoneController: ChurchBeamViewController, UICollectionViewDataSo
 		textView.layer.borderColor = themeHighlighted.cgColor
 		textView.layer.borderWidth = 1
 		textView.layer.cornerRadius = CGFloat(5.0)
-		textView.contentInset = UIEdgeInsetsMake(10, 10, 10, 10)
+		textView.contentInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
 		
 		textView.addGestureRecognizer(leftSwipe)
 		collectionViewSheets.addGestureRecognizer(rightSwipe)
@@ -286,7 +286,7 @@ class EditSongIphoneController: ChurchBeamViewController, UICollectionViewDataSo
 			return true
 		} else {
 			let alert = UIAlertController(title: Text.NewSong.errorTitleNoTheme, message: Text.NewSong.erorrMessageNoTheme, preferredStyle: .alert)
-			alert.addAction(UIAlertAction(title: Text.Actions.ok, style: UIAlertActionStyle.default, handler: nil))
+			alert.addAction(UIAlertAction(title: Text.Actions.ok, style: UIAlertAction.Style.default, handler: nil))
 			self.present(alert, animated: true, completion: nil)
 			
 			return false
@@ -370,17 +370,17 @@ class EditSongIphoneController: ChurchBeamViewController, UICollectionViewDataSo
 	@objc func keyboardWillShow(notification:NSNotification){
 		
 		let userInfo = notification.userInfo!
-		var keyboardFrame:CGRect = (userInfo[UIKeyboardFrameBeginUserInfoKey] as! NSValue).cgRectValue
+		var keyboardFrame:CGRect = (userInfo[UIResponder.keyboardFrameBeginUserInfoKey] as! NSValue).cgRectValue
 		keyboardFrame = self.view.convert(keyboardFrame, from: nil)
 		
-		var contentInset:UIEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10)
+		var contentInset:UIEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
 		contentInset.bottom = keyboardFrame.size.height + 30
 		textView.contentInset = contentInset
 	}
 	
 	@objc func keyboardWillHide(notification:NSNotification){
 		
-		let contentInset:UIEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10)
+		let contentInset:UIEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
 		textView.contentInset = contentInset
 	}
 	

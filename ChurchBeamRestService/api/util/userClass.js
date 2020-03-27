@@ -82,7 +82,7 @@ class UserClass {
                 left join user_has_role as UR on U.id = UR.user_id 
                 left join role as R on R.id = UR.role_id 
                 left join organization  as O on R.organization_id = O.id 
-                WHERE U.inviteToken IS NOT NULL AND O.id = ${organizationId}`
+                WHERE O.id = ${organizationId}`
 
                 db.query(sql, (err, result) => {
                     if(err) {
@@ -125,7 +125,6 @@ class UserClass {
         return new Promise((resolve, reject) => {
             getUsers(organizationId)
             .then(users => {
-                
                 Promise.all(users.map(user => getRoles(user)))
                 .then(users => {
                     resolve(users)

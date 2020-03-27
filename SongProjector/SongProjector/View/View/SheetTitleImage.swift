@@ -232,7 +232,7 @@ class SheetTitleImage: SheetView {
 		} else {
 			self.image.isHidden = false
 			imageWithBorder.isHidden = true
-			self.image.contentMode = UIViewContentMode(rawValue: Int(sheet.imageContentMode))!
+			self.image.contentMode = UIView.ContentMode(rawValue: Int(sheet.imageContentMode))!
 			self.image.image = image
 			self.image.contentMode = .scaleAspectFill
 			self.image.clipsToBounds = true

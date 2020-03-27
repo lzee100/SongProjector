@@ -235,7 +235,7 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 			return true
 		} else {
 			let alert = UIAlertController(title: Text.NewSong.errorTitleNoTheme, message: Text.NewSong.erorrMessageNoTheme, preferredStyle: .alert)
-			alert.addAction(UIAlertAction(title: Text.Actions.ok, style: UIAlertActionStyle.default, handler: nil))
+			alert.addAction(UIAlertAction(title: Text.Actions.ok, style: UIAlertAction.Style.default, handler: nil))
 			self.present(alert, animated: true, completion: nil)
 			
 			return false
@@ -244,7 +244,7 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 	
 	@objc private func editTableView(_ gestureRecognizer: UIGestureRecognizer) {
 		if let gestureRecognizer = gestureRecognizer as? UILongPressGestureRecognizer {
-			if gestureRecognizer.state == UIGestureRecognizerState.began {
+			if gestureRecognizer.state == UIGestureRecognizer.State.began {
 				changeEditingState()
 			}
 		} // for double tab
@@ -337,14 +337,14 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 			isFirstTime = true
 			visibleCells = collectionViewSheets.indexPathsForVisibleItems
 			
-			view.bringSubview(toFront: textView)
+			view.bringSubviewToFront(textView)
 			textView.isHidden = false
 			
 			collectionViewSheets.isHidden = true
-			view.sendSubview(toBack: collectionViewSheets)
+			view.sendSubviewToBack(collectionViewSheets)
 
 			tableView.isHidden = true
-			view.sendSubview(toBack: tableView)
+			view.sendSubviewToBack(tableView)
 			
 		} else if sender.selectedSegmentIndex == 1 {
 			
@@ -355,13 +355,13 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 
 			textView.isHidden = true
 			textView.resignFirstResponder()
-			view.sendSubview(toBack: textView)
+			view.sendSubviewToBack(textView)
 			
 			tableView.isHidden = false
-			view.bringSubview(toFront: tableView)
+			view.bringSubviewToFront(tableView)
 			
 			collectionViewSheets.isHidden = true
-			view.sendSubview(toBack: collectionViewSheets)
+			view.sendSubviewToBack(collectionViewSheets)
 			
 			update()
 			
@@ -369,13 +369,13 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 			
 			textView.isHidden = true
 			textView.resignFirstResponder()
-			view.sendSubview(toBack: textView)
+			view.sendSubviewToBack(textView)
 			
 			tableView.isHidden = true
-			view.sendSubview(toBack: tableView)
+			view.sendSubviewToBack(tableView)
 			
 			collectionViewSheets.isHidden = false
-			view.bringSubview(toFront: collectionViewSheets)
+			view.bringSubviewToFront(collectionViewSheets)
 
 			update()
 			isFirstTime = false

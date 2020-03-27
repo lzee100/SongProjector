@@ -70,7 +70,7 @@ class SoundPlay: NSObject, AVAssetDownloadDelegate, AVAudioPlayerDelegate {
 		
 		do {
 			let audioSession = AVAudioSession.sharedInstance()
-			try audioSession.setCategory(AVAudioSessionCategoryPlayback)
+			try audioSession.setCategory(AVAudioSession.Category.playback)
 			
 		} catch {
 			print(error)
@@ -96,11 +96,9 @@ class SoundPlay: NSObject, AVAssetDownloadDelegate, AVAudioPlayerDelegate {
 	private func loadSongAudioFor(instrument: VInstrument) {
 		
 		var player = InstrumentPlayer()
-		
-		if let resourcePath = instrument.resourcePath, let stringURL = Bundle.main.path(forResource: resourcePath, ofType: "m4a") {
-			
+		if let url = URL(string: FileManager.appFullPathTemp(existingPath: instrument.resourcePath)) {
 			do {
-				player = try InstrumentPlayer(contentsOf: URL(fileURLWithPath: stringURL))
+				player = try InstrumentPlayer(contentsOf: url)
 				player.instrumentType = instrument.type
 				player.prepareToPlay()
 				player.delegate = self
@@ -115,12 +113,5 @@ class SoundPlay: NSObject, AVAssetDownloadDelegate, AVAudioPlayerDelegate {
 			
 		}
 	}
-	
-//	 @objc private func replay() {
-//		if let song = song {
-//			play(song: song)
-//		}
-//	}
-	
 	
 }

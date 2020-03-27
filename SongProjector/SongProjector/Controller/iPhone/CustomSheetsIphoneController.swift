@@ -306,7 +306,7 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 			return true
 		} else {
 			let alert = UIAlertController(title: Text.NewSong.errorTitleNoTheme, message: Text.NewSong.erorrMessageNoTheme, preferredStyle: .alert)
-			alert.addAction(UIAlertAction(title: Text.Actions.ok, style: UIAlertActionStyle.default, handler: nil))
+			alert.addAction(UIAlertAction(title: Text.Actions.ok, style: UIAlertAction.Style.default, handler: nil))
 			self.present(alert, animated: true, completion: nil)
 			
 			return false
@@ -318,7 +318,7 @@ class CustomSheetsIphoneController: UIViewController, UICollectionViewDelegate, 
 			return true
 		} else {
 			let alert = UIAlertController(title: Text.CustomSheets.errorTitle, message: Text.CustomSheets.errorNoName, preferredStyle: .alert)
-			alert.addAction(UIAlertAction(title: Text.Actions.ok, style: UIAlertActionStyle.default, handler: nil))
+			alert.addAction(UIAlertAction(title: Text.Actions.ok, style: UIAlertAction.Style.default, handler: nil))
 			self.present(alert, animated: true, completion: nil)
 			
 			return false

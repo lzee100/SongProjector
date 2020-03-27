@@ -17,7 +17,7 @@ class TestView: UIViewController {
 	override func viewDidLoad() {
         super.viewDidLoad()
 
-		guard let songServiceController = childViewControllers.first as? SongServiceContainerViewController else  {
+		guard let songServiceController = children.first as? SongServiceContainerViewController else  {
 			fatalError("Check storyboard for missing SongServiceContainerViewController")
 		}
 

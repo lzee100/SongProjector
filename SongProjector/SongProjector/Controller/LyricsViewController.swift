@@ -36,6 +36,36 @@ class LyricsViewController: UIViewController {
 		
 		lyricsTextView.text = text
 		
+		lyricsTextView.text = """
+		Ik zing vol blijdschap en lach
+
+		Ik zing vol blijdschap en lach
+		Want de vreugde van God is mijn kracht
+		Wij buigen neer aanbidden Hem nu,
+		hoe groot en machtig is Hij
+		Iedereen zingt, iedereen zingt
+
+		Heilig is de Heer, God almachtig
+		de aarde is vol van Zijn glorie (2x)
+
+		Ik zing vol blijdschap en lach
+		Want de vreugde van God is mijn kracht
+		Wij buigen neer aanbidden Hem nu,
+		hoe groot en machtig is Hij
+		Iedereen zingt, iedereen zingt
+
+		Heilig is de Heer, God almachtig
+		de aarde is vol van Zijn glorie (2x)
+
+		Hij komt terug, Hij heeft het beloofd
+		voor iedereen die in Hem geloofd (2X)
+
+		Iedereen zingt, iedereen zingt
+
+		Heilig is de Heer, God almachtig
+		de aarde is vol van Zijn glorie (2x)
+		"""
+		
 //		if lyricsTextView.text == "" {
 //			lyricsTextView.text = """
 //			Heer, hoe talrijk zijn mijn vijanden

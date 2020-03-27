@@ -81,7 +81,7 @@ class IntroGoogleSigninController: ChurchBeamViewController, UITableViewDelegate
 	func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 		switch Row.all[indexPath.row] {
 		case .SignInButton: return GoogleCell.preferredHeight
-		default: return UITableViewAutomaticDimension
+		default: return UITableView.automaticDimension
 		}
 	}
 	

@@ -52,6 +52,7 @@ public class Theme: Entity {
 	@NSManaged public var titleTextSize: Float
 	@NSManaged public var imagePathThumbnailAWS: String?
 	@NSManaged public var imagePathAWS: String?
+	@NSManaged public var isUniversal: Bool
 
 	@NSManaged public var hasClusters: NSSet?
 	@NSManaged public var hasSheets: NSSet?

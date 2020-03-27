@@ -38,8 +38,13 @@ class SplashScreen: ChurchBeamViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 		
-		NotificationCenter.default.addObserver(self, selector: #selector(checkAccountStatus), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(checkAccountStatus), name: UIApplication.didBecomeActiveNotification, object: nil)
     }
+	
+	override func viewDidAppear(_ animated: Bool) {
+		super.viewDidAppear(animated)
+		checkAccountStatus()
+	}
 	
 	private func fetchIcloudId() {
 		let fetchIcloudIdOperation = FetchIdOperation()

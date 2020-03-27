@@ -74,4 +74,28 @@ extension URL {
 		}
 		
 	}
+	
+	var filestatus: Filestatus {
+		get {
+			let filestatus: Filestatus
+			var isDir: ObjCBool = false
+			if FileManager.default.fileExists(atPath: self.path, isDirectory: &isDir) {
+				if isDir.boolValue {
+					filestatus = .isDir
+				} else {
+					filestatus = .isFile
+				}
+			}
+			else {
+				filestatus = .notExisting
+			}
+			return filestatus
+		}
+	}
 }
+enum Filestatus {
+	case isFile
+	case isDir
+	case notExisting
+}
+

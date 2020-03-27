@@ -21,5 +21,8 @@ struct NotificationNames {
 	static let didSignUpSuccessfully = Notification.Name("didSignUpSuccessfully")
 	static let didSubmitSongServiceSettings = Notification.Name("didSubmitSongServiceSettings")
 	static let applicationDidBecomeActive = Notification.Name("applicationDidBecomeActive")
+	static let secretChanged = Notification.Name("secretChanged")
+	static let newContentAvailable = Notification.Name("newContentAvailable")
+
 
 }

@@ -459,7 +459,10 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	}
 	
 	private func hasThemeSelected() -> Bool {
-		if selectedTheme != nil {
+		let isNormaUser = UserDefaults.standard.object(forKey: secretKey) == nil
+		
+		// normal user and normal theme or universal user and universal theme
+		if let selectedTheme = selectedTheme, (isNormaUser && !selectedTheme.isUniversal) || !isNormaUser && selectedTheme.isUniversal {
 			removeRedBorder()
 			return true
 		} else {
@@ -481,8 +484,7 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	// MARK: - IBAction functions
 	
 	@IBAction func cancel(_ sender: UIBarButtonItem) {
-		moc.reset()
-		mocBackground.reset()
+		presentingViewController?.viewWillAppear(false)
 		dismiss(animated: true)
 	}
 	

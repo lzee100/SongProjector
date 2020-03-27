@@ -22,6 +22,7 @@ public class VEntity: NSObject, Codable {
 		}
 	}
 	var isTemp: Bool = false
+	let localId: String
 	
 	
 	enum CodingKeys: String, CodingKey
@@ -31,6 +32,11 @@ public class VEntity: NSObject, Codable {
 		case createdAt
 		case updatedAt
 		case deleteDate = "deletedAt"
+	}
+	
+	override init() {
+		localId = UUID().uuidString
+		super.init()
 	}
 	
 	
@@ -71,7 +77,7 @@ public class VEntity: NSObject, Codable {
 	public func encode(to encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeys.self)
 		try container.encodeIfPresent(id, forKey: .id)
-		try container.encode(title, forKey: .title)
+		try container.encodeIfPresent(title, forKey: .title)
 		if let createdAt = createdAt {
 			let createdAtString = GlobalDateFormatter.localToUTC(date: createdAt as Date)
 			try container.encode(createdAtString, forKey: .createdAt)

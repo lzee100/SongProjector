@@ -92,15 +92,69 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
 		return cell
 	}
 	
-	func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
-		return UITableViewCellEditingStyle.delete
+	func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+		var actions: [UIContextualAction] = []
+		
+		// delete song
+		if self.tableView(tableView, editingStyleForRowAt: indexPath) == .delete {
+			let deleteAction = UIContextualAction(style: .normal, title: nil) { (_, _, completionHandler) in
+				
+				// DELETE SONG
+				ClusterSubmitter.submit([self.filteredClusters[indexPath.row]], requestMethod: .delete)
+				
+				completionHandler(true)
+			}
+			deleteAction.image = UIImage(named: "Trash")
+			deleteAction.backgroundColor = .systemRed
+			actions.append(deleteAction)
+		}
+		
+		if filteredClusters[indexPath.row].hasInstruments.filter({ $0.resourcePath == nil && $0.resourcePathAWS != nil }).count > 0 {
+			let download = UIContextualAction(style: .normal, title: nil) { (_, _, completionHandler) in
+				
+				// DOWNLOAD CONTENT
+				
+				completionHandler(true)
+			}
+			download.image = UIImage(named: "DownloadIcon")
+			actions.append(download)
+		}
+//		if filteredClusters[indexPath.row].hasInstruments.filter({ $0.resourcePath != nil && $0.resourcePathAWS != nil }).count > 0 {
+
+		if filteredClusters[indexPath.row].hasInstruments.count > 0 { // testen
+			let deleteFiles = UIContextualAction(style: .normal, title: nil) { (_, _, completionHandler) in
+				
+				// Delete Local CONTENT
+				
+				completionHandler(true)
+			}
+			deleteFiles.image = UIImage(named: "TrashMusic")
+			deleteFiles.backgroundColor = .systemGreen
+			actions.append(deleteFiles)
+		}
+		
+		if actions.count > 0 {
+			let configuration = UISwipeActionsConfiguration(actions: actions)
+			configuration.performsFirstActionWithFullSwipe = true
+			return configuration
+		} else {
+			return nil
+		}
 	}
 	
-	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+	
+	
+	func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+		let current = filteredClusters[indexPath.row]
+		if UserDefaults.standard.object(forKey: secretKey) != nil {
+			return .delete
+		}
+		return current.isUniversal || current.root != nil ? .none : .delete
+	}
+	
+	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
 		if editingStyle == .delete {
-			if let index = clusters.index(of: filteredClusters[indexPath.row]) {
-				ClusterSubmitter.submit([clusters[index]], requestMethod: .delete)
-			}
+			ClusterSubmitter.submit([filteredClusters[indexPath.row]], requestMethod: .delete)
 		}
 	}
 	
@@ -324,7 +378,7 @@ class BlurredViewDark: UIView {
 		let blurEffectView = UIVisualEffectView(effect: blurEffect)
 		blurEffectView.frame = bounds
 		addSubview(blurEffectView)
-		sendSubview(toBack: blurEffectView)
+		sendSubviewToBack(blurEffectView)
 		blurEffectView.topAnchor.constraint(equalTo: topAnchor).isActive = true
 		blurEffectView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
 		blurEffectView.leftAnchor.constraint(equalTo: leftAnchor).isActive = true

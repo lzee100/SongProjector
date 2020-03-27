@@ -45,7 +45,7 @@ class LabelTextViewCell: ChurchBeamCell, DynamicHeightCell, SheetImplementation,
 	static func create(id: String, description: String, placeholder: String) -> LabelTextViewCell {
 		let view : LabelTextViewCell! = UIView.create(nib: "LabelTextViewCell")
 		view.id = id
-		view.previewTextField.attributedPlaceholder = NSAttributedString(string: placeholder, attributes: [NSAttributedStringKey.foregroundColor: UIColor.placeholderColor])
+		view.previewTextField.attributedPlaceholder = NSAttributedString(string: placeholder, attributes: [NSAttributedString.Key.foregroundColor: UIColor.placeholderColor])
 		view.previewTextField.isEnabled = false
 		view.textViewContainer.isHidden = true
 		view.textViewContainer.backgroundColor = themeWhiteBlackBackground
@@ -57,7 +57,7 @@ class LabelTextViewCell: ChurchBeamCell, DynamicHeightCell, SheetImplementation,
 	var delegate: LabelTextViewDelegate?
 	
 	func set(placeholder: String) {
-		previewTextField.attributedPlaceholder = NSAttributedString(string: placeholder, attributes: [NSAttributedStringKey.foregroundColor: UIColor.placeholderColor])
+		previewTextField.attributedPlaceholder = NSAttributedString(string: placeholder, attributes: [NSAttributedString.Key.foregroundColor: UIColor.placeholderColor])
 	}
 
 	private func setupTextView() {
@@ -67,7 +67,7 @@ class LabelTextViewCell: ChurchBeamCell, DynamicHeightCell, SheetImplementation,
 				self.textView = UITextView(frame: self.textViewContainer.bounds)
 				self.textView.delegate = self
 				if let font = UIFont (name: "Avenir", size: 16) {
-					self.textView.attributedText = NSAttributedString(string: self.customText, attributes: [NSAttributedStringKey.font : font])
+					self.textView.attributedText = NSAttributedString(string: self.customText, attributes: [NSAttributedString.Key.font : font])
 				}
 				self.textViewContainer.addSubview(self.textView)
 				self.textViewContainer.isHidden = false

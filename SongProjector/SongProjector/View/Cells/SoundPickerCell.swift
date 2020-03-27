@@ -31,17 +31,26 @@ class SoundPickerCell: ChurchBeamCell, UIPickerViewDataSource, UIPickerViewDeleg
 	
 	var allInstruments: [InstrumentType] = [.bassGuitar, .drums, .guitar, .piano, .pianoSolo]
 	var uploadObject: InstrumentUploadObject?
-	var cellState: State = .expanded
+	var cellState: State = .collapsed
 	var delegate: SoundPickerCellDelegate?
 	
 	@IBOutlet var instrumentPickerHeightConstraint: NSLayoutConstraint!
 	
 	override func awakeFromNib() {
         super.awakeFromNib()
+		instrumentPickerHeight.constant = cellState == .collapsed ? 50 : 150
+		if let instrument = uploadObject?.instrument {
+			selectInstrumentButton.setTitle(instrument.rawValue, for: UIControl.State())
+		}
+		selectInstrumentButton.isHidden = cellState == .expanded
+		instrumentPicker.isHidden = cellState == .collapsed
+		instrumentPicker.dataSource = self
+		instrumentPicker.delegate = self
     }
 	
 	func setup(_ uploadObject: InstrumentUploadObject, delegate: SoundPickerCellDelegate) {
 		self.uploadObject = uploadObject
+		self.delegate = delegate
 	}
 	
 	
@@ -64,12 +73,13 @@ class SoundPickerCell: ChurchBeamCell, UIPickerViewDataSource, UIPickerViewDeleg
 	
 	private func toggle() {
 		cellState = cellState == .collapsed ? .expanded : .collapsed
-		instrumentPickerHeight.constant = cellState == .collapsed ? 20 : 188
+		instrumentPickerHeight.constant = cellState == .collapsed ? 50 : 150
 		if let instrument = uploadObject?.instrument {
-			selectInstrumentButton.setTitle(instrument.rawValue, for: UIControlState())
+			selectInstrumentButton.setTitle(instrument.rawValue, for: UIControl.State())
 		}
 		selectInstrumentButton.isHidden = cellState == .expanded
 		instrumentPicker.isHidden = cellState == .collapsed
+		tableView?.updateHeights()
 	}
 	
 	@IBAction func didSelectSelectInstrument(_ sender: UIButton) {

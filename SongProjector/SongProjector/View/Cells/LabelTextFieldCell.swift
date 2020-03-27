@@ -34,7 +34,7 @@ class LabelTextFieldCell: ChurchBeamCell, ThemeImplementation, SheetImplementati
 	
 	override func awakeFromNib() {
 		textField.addTarget(self, action: #selector(textFieldDidChange),
-							for: UIControlEvents.editingChanged)
+							for: UIControl.Event.editingChanged)
 	}
 	
 	static func create(id: String, description: String, placeholder: String) -> LabelTextFieldCell {
@@ -43,7 +43,7 @@ class LabelTextFieldCell: ChurchBeamCell, ThemeImplementation, SheetImplementati
 		view.descriptionTitle.text = description
 		view.textField.placeholder = placeholder
 		view.textField.addTarget(view, action: #selector(view.textFieldDidChange),
-								 for: UIControlEvents.editingChanged)
+								 for: UIControl.Event.editingChanged)
 		return view
 	}
 	
@@ -52,7 +52,7 @@ class LabelTextFieldCell: ChurchBeamCell, ThemeImplementation, SheetImplementati
 		descriptionTitle.text = description
 		textField.placeholder = placeholder
 		textField.addTarget(self, action: #selector(textFieldDidChange),
-								 for: UIControlEvents.editingChanged)
+							for: UIControl.Event.editingChanged)
 	}
 	
 	func setup(description: String?, placeholder: String, delegate: LabelTextFieldCellDelegate) {

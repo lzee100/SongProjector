@@ -12,10 +12,11 @@ var db = require('../util/db');
 
 router.get('/', (req, res , next) => {
 
+    let organizationID = req.get("organizationId")
     let after = req.query.updatedsince
-    var where = ""
+    var where = ` WHERE organization_id = ${organizationID} OR isUniversal = 1`
     if (after) {
-        where = ` WHERE updatedAt >"${after}"`
+        where += ` AND updatedAt >"${after}"`
     }
     console.log(after)
     let sqlAllThemes = `SELECT * FROM theme` + where 
@@ -27,12 +28,12 @@ router.get('/', (req, res , next) => {
             print.print('themes returned', result)
             res.status(200).json(result)
         }
-
     });
 });
 
 router.get('/:themeId', (req, res , next) => {
-    getTheme(req.params.themeId, callback => {
+    let organizationID = req.get("organizationId")
+    getTheme(req.params.themeId, organizationID, callback => {
         if (callback == null) {
             res.status(404).json({
                 theme: callback
@@ -49,13 +50,13 @@ router.post('/', (req, res , next) => {
 
     print.print('themes posted: ', req.body)
 
-    let organizationID = req.get("organizationID")
+    let organizationID = req.get("organizationId")
     var newThemes = req.body;
 
     newThemes.map(theme => theme.organization_id = organizationID)
     newThemes.map(theme => delete theme.id)
 
-    Promise.all(newThemes.map(theme => postTheme(theme)))
+    Promise.all(newThemes.map(theme => postTheme(theme, organizationID)))
     .then(themes => {
         print.print('in resolve themes', themes)
         res.status(200).json(themes);
@@ -66,16 +67,16 @@ router.post('/', (req, res , next) => {
     })
 })
 
-function postTheme(theme) {
+function postTheme(theme, organizationID) {
     var newTheme = theme
     return new Promise((resolve, reject) => {    
         let sql = 'INSERT INTO theme SET ?';
         db.query(sql, newTheme, (err, result) => {
-            if (err) {
+            if (err) { 
                 reject(err)
                 res.status(500).json(err);
             } else {
-                getTheme(result.insertId)
+                getTheme(result.insertId, organizationID)
                 .then(theme => {
                     resolve(theme)
                 })
@@ -89,11 +90,11 @@ router.put('/:themeId', (req, res , next) => {
     console.log('in update theme')
     var theme = req.body
 
-    let organizationID = req.get("organizationID")
+    let organizationID = req.get("organizationId")
     console.log(organizationID)
 
     theme.organization_id = organizationID
-    putTheme(theme)
+    putTheme(theme, organizationID)
     .then(theme => {
         res.status(200).json(theme);
     })
@@ -107,11 +108,11 @@ router.put('/', (req, res , next) => {
     console.log('in update theme')
     var object = req.body
 
-    let organizationID = req.get("organizationID")
+    let organizationID = req.get("organizationId")
     console.log(organizationID)
 
     object.map(theme => theme.organization_id = organizationID)
-    Promise.all(object.map( theme => putTheme(theme) ))
+    Promise.all(object.map( theme => putTheme(theme, organizationID) ))
     .then(themes => {
         res.status(200).json(themes);
     })
@@ -121,13 +122,13 @@ router.put('/', (req, res , next) => {
 
 })
 
-function putTheme(theme) {
+function putTheme(theme, organizationID) {
     return new Promise((resolve, reject) => {
         db.query(`UPDATE theme SET ? WHERE id = ${theme.id}`, [theme], (err, result) => {
             if (err) {
                 reject(err)
             } else {
-                getTheme(theme.id)
+                getTheme(theme.id, organizationID)
                 .then(theme => {
                     resolve(theme)
                 })
@@ -138,10 +139,10 @@ function putTheme(theme) {
    
 }
 
-function getTheme(themeId) {
+function getTheme(themeId, organizationID) {
 
     return new Promise((resolve, reject) => {
-        let sqlTheme = `SELECT * FROM theme WHERE id=${themeId}`
+        let sqlTheme = `SELECT * FROM theme WHERE id=${themeId} AND organization_id = ${organizationID}`
         db.query(sqlTheme, (err, result) => {
             if (err) {
                 reject(err)
@@ -157,13 +158,14 @@ function getTheme(themeId) {
 
 router.delete('/:themeId', (req, res , next) => {
     console.log('in delete theme')
+    let organizationID = req.get("organizationId")
     let themeId = req.params.themeId
 
     let date = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
     
     console.log(`UPDATE theme SET deletedAt = "${date}" WHERE id = ${themeId}`)
 
-    db.query(`UPDATE theme SET deletedAt = "${date}" WHERE id = ${themeId}`, (err, result) => {
+    db.query(`UPDATE theme SET deletedAt = "${date}" WHERE id = ${themeId} AND organization_id = ${organizationID}`, (err, result) => {
         if (err) {
             res.status(500).json({
                 error: result
@@ -182,11 +184,12 @@ router.delete('/:themeId', (req, res , next) => {
 
 router.delete('/', (req, res , next) => {
 
+    let organizationID = req.get("organizationId")
     let themes = req.body
 
     var deleteThemes = function(themes) {
         return new Promise((resolve, reject) => {
-            Promise.all(themes.map(theme => deleteTheme(theme)))
+            Promise.all(themes.map(theme => deleteTheme(theme, organizationID)))
             .then(themes => {
                 resolve(themes)
             })
@@ -205,10 +208,10 @@ router.delete('/', (req, res , next) => {
     })
 });
 
-function deleteTheme(theme) {
+function deleteTheme(theme, organizationID) {
     let date = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
     return new Promise((resolve, reject) => {    
-        db.query(`UPDATE theme SET deletedAt = "${date}" WHERE id = ${theme.id}`, (err, result) => {
+        db.query(`UPDATE theme SET deletedAt = "${date}" WHERE id = ${theme.id} AND organization_id = ${organizationID}`, (err, result) => {
             if (err) {
                 reject(err)
             }

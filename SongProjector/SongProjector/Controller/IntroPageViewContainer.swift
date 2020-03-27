@@ -25,7 +25,7 @@ class IntroPageViewContainer: ChurchBeamViewController, UIPageViewControllerDele
 	}
 	
 	var pageViewController: UIPageViewController {
-		return self.childViewControllers[0] as! UIPageViewController
+		return self.children[0] as! UIPageViewController
 	}
 	
 	override func viewDidLoad() {

@@ -177,8 +177,8 @@ extension VTheme {
 		}
 	}
 	
-	func getTitleAttributes(_ scaleFactor: CGFloat = 1) -> [NSAttributedStringKey: Any] {
-		var attributes : [NSAttributedStringKey: Any] = [:]
+	func getTitleAttributes(_ scaleFactor: CGFloat = 1) -> [NSAttributedString.Key: Any] {
+		var attributes : [NSAttributedString.Key: Any] = [:]
 		if let fontFamily = self.titleFontName {
 			var font = UIFont(name: fontFamily, size: (CGFloat(self.titleTextSize) * scaleFactor))
 			if self.isTitleBold {
@@ -218,7 +218,7 @@ extension VTheme {
 		}
 		
 		if self.isTitleUnderlined {
-			attributes[.underlineStyle] = NSUnderlineStyle.styleSingle.rawValue
+			attributes[.underlineStyle] = NSUnderlineStyle.single.rawValue
 			attributes[.underlineColor] = attributes[.foregroundColor]
 		}
 		
@@ -227,8 +227,8 @@ extension VTheme {
 		return attributes
 	}
 	
-	func getLyricsAttributes(_ scaleFactor: CGFloat = 1) -> [NSAttributedStringKey: Any] {
-		var attributes : [NSAttributedStringKey: Any] = [:]
+	func getLyricsAttributes(_ scaleFactor: CGFloat = 1) -> [NSAttributedString.Key: Any] {
+		var attributes : [NSAttributedString.Key: Any] = [:]
 		if let fontFamily = self.contentFontName {
 			var font = UIFont(name: fontFamily, size: (CGFloat(self.contentTextSize) * scaleFactor))
 			if self.isContentBold {
@@ -269,7 +269,7 @@ extension VTheme {
 		}
 		
 		if self.isContentUnderlined {
-			attributes[.underlineStyle] = NSUnderlineStyle.styleSingle.rawValue
+			attributes[.underlineStyle] = NSUnderlineStyle.single.rawValue
 		}
 		return attributes
 	}

@@ -75,7 +75,7 @@ enum Feature : String {
 	
 	var identifier : String {
 		switch self {
-		case .tags, .users, .songServiceManagement: return titel + "NavController"
+		case .tags, .users, .songServiceManagement, .uploadUniversalSong: return titel + "NavController"
 		default: return titel + "Controller"
 		}
 	}

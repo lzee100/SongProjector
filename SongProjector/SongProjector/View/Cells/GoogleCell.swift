@@ -38,6 +38,7 @@ class GoogleCell: UITableViewCell, GIDSignInDelegate {
 	
 	func setup(delegate: GoogleCellDelegate, sender: UIViewController) {
 		googleSignInOutContainer.addSubview(signInButton)
+		signInButton.frame = googleSignInOutContainer.bounds
 		GIDSignIn.sharedInstance()?.delegate = self
 		GIDSignIn.sharedInstance()?.presentingViewController = sender
 

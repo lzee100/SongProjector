@@ -1,7 +1,6 @@
 //nodemon server.js
 
 const express = require('express');
-const mysql = require('mysql');
 const print = require('./api/util/print');
 
 const app = express();
@@ -21,6 +20,9 @@ const roleRoutes = require('./api/routes/roles');
 const contractRoutes = require('./api/routes/contracts');
 const tagsRoutes = require('./api/routes/tags')
 const songServiceSettingsRoutes = require('./api/routes/songservicesettings')
+const uploadSecretRoutes = require('./api/routes/uploadSecret')
+const universalSongUploadRoutes = require('./api/routes/universalSongUpload')
+const clusterShownDate = require('./api/routes/clusterShownDate')
 
 // const db = mysql.createConnection({
 //     host    : 'localhost',
@@ -67,10 +69,10 @@ app.use('/users', userRoutes);
 app.use('/roles', roleRoutes);
 app.use('/contracts', contractRoutes);
 app.use('/tags', tagsRoutes);
-app.use('/songservicesettings', songServiceSettingsRoutes)
-
-
-
+app.use('/songservicesettings', songServiceSettingsRoutes);
+app.use('/secret', uploadSecretRoutes);
+app.use('/universalSongUpload', universalSongUploadRoutes);
+app.use('/clusters/shownDate', clusterShownDate);
 
 app.use((req, res, next) => {
     const error = new Error('Not found general');

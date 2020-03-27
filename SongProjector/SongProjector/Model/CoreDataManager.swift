@@ -148,6 +148,8 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 	var predicates: [NSPredicate] = []
 	var getTemp = false
 	private var sortDiscriptor: NSSortDescriptor?
+	
+	let Lock = NSRecursiveLock()
 
 	var managedObjectContext: NSManagedObjectContext = moc
 	
@@ -227,6 +229,8 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 	}
 	
 	func getEntities(skipDeleted: Bool = true) -> [T] {
+		
+		Lock.lock()
 		var entities: [T] = []
 		let request = NSFetchRequest<T>(entityName: entityName)
 
@@ -252,6 +256,7 @@ class CoreDataManager<T: NSManagedObject>: NSObject {
 			print("Failed")
 		}
 		clearSettings()
+		Lock.unlock()
 		return entities
 	}
 	

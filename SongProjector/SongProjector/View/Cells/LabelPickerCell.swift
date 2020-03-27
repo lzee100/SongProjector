@@ -189,6 +189,7 @@ class LabelPickerCell: ChurchBeamCell, ThemeImplementation, DynamicHeightCell, S
 	private func setupAsTheme() {
 		CoreTheme.setSortDescriptor(attributeName: "title", ascending: true)
 		CoreTheme.predicates.append("isHidden", notEquals: true)
+		CoreTheme.predicates.append("isUniversal", equals: false)
 		let themes = CoreTheme.getEntities().map{ ($0.id, $0.title ?? "") }
 		pickerValues = themes
 	}

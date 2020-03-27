@@ -34,7 +34,7 @@ class SignUpPersonalInfoController: ChurchBeamViewController, UITableViewDelegat
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		self.becomeFirstResponder()
-		tableView.rowHeight = UITableViewAutomaticDimension
+		tableView.rowHeight = UITableView.automaticDimension
 		view.backgroundColor = themeWhiteBlackBackground
 		titleLabel.textColor = themeWhiteBlackTextColor
 		
@@ -42,9 +42,9 @@ class SignUpPersonalInfoController: ChurchBeamViewController, UITableViewDelegat
 		contractLedger = VContractLedger()
 		user = VUser()
 
-		organization.title = "kerk"
-		contractLedger.phoneNumber = "0628917553"
-		contractLedger.userName = "Leo van der Zee"
+		organization.title = organizationName == "" ? "Upload organization" : organizationName
+		contractLedger.phoneNumber = "0612345678"
+		contractLedger.userName = "Upload user"
 
 		user.appInstallToken = UIDevice.current.identifierForVendor!.uuidString
 		user.userToken = AccountStore.icloudID
@@ -56,7 +56,7 @@ class SignUpPersonalInfoController: ChurchBeamViewController, UITableViewDelegat
 	}
 
 	// Enable detection of shake motion
-	override func motionEnded(_ motion: UIEventSubtype, with event: UIEvent?) {
+	override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
 		if motion == .motionShake {
 			let alert = UIAlertController(title: "Voer code in:", message: nil, preferredStyle: .alert)
 			alert.addTextField { (textField) in
@@ -71,7 +71,7 @@ class SignUpPersonalInfoController: ChurchBeamViewController, UITableViewDelegat
 	}
 	
 	func numberOfSections(in tableView: UITableView) -> Int {
-		return contract?.id == 0 ? 1 : 2
+		return contract?.id == 1 ? 1 : 2
 	}
 	
 	
@@ -107,14 +107,14 @@ class SignUpPersonalInfoController: ChurchBeamViewController, UITableViewDelegat
 	
 	@objc func didSelectDone() {
 		guard AccountStore.icloudID != "" else {
-			let alert = UIAlertController(title: "", message: "", preferredStyle: UIAlertControllerStyle.alert)
+			let alert = UIAlertController(title: "", message: "", preferredStyle: UIAlertController.Style.alert)
 			alert.addAction(UIAlertAction(title: Text.Actions.ok, style: .default, handler: nil))
 			present(alert, animated: true, completion: nil)
 			return
 		}
 		
 		guard let contract = contract else {
-			let alert = UIAlertController(title: nil, message: "Please select a contract", preferredStyle: UIAlertControllerStyle.alert)
+			let alert = UIAlertController(title: nil, message: "Please select a contract", preferredStyle: UIAlertController.Style.alert)
 			alert.addAction(UIAlertAction(title: Text.Actions.ok, style: .default, handler: nil))
 			present(alert, animated: true, completion: nil)
 			return
@@ -124,14 +124,14 @@ class SignUpPersonalInfoController: ChurchBeamViewController, UITableViewDelegat
 		// not yet known
 		// contractLedger.organizationId = organization.id
 		let userInitInfo = UserInitInfo(organizationTitle: organization.title!, phoneNumber: contractLedger.phoneNumber, userName: contractLedger.userName, appInstallToken: user.appInstallToken!, userToken: user.userToken!, contractId: contract.id, hasApplePay: false)
-//		organization.addToHasContractLedgers(contractLedger)
-//		OrganizationSubmitter.submit([organization], requestMethod: .post)
+		navigationItem.rightBarButtonItem?.isEnabled = false
 		InitSubmitter.submitUserInit(userInitInfo, success: { (response, result) in
 			Queues.main.async {
 				UserFetcher.fetchMe(force: true)
 			}
 		}) { (error, response, result) in
 			Queues.main.async {
+				self.navigationItem.rightBarButtonItem?.isEnabled = true
 				let restError = error ?? (result != nil ? NSError(domain: result!.errorMessage, code: 0, userInfo: nil) : nil)
 				self.show(error: .error(response, restError))
 			}
@@ -139,7 +139,8 @@ class SignUpPersonalInfoController: ChurchBeamViewController, UITableViewDelegat
 	}
 	
 	override func handleRequestFinish(requesterId: String, result: AnyObject?) {
-		if let organization = (result as? [Organization])?.first, let role = organization.hasRoles?.allObjects.first as? Role {
+		navigationItem.rightBarButtonItem?.isEnabled = true
+		if let organization = (result as? [VOrganization])?.first, let role = organization.hasRoles.first {
 			Queues.main.async {
 				self.user.roleId = role.id
 				UserSubmitter.submit([self.user], requestMethod: .post)
@@ -198,8 +199,8 @@ class SignUpTextFieldCell: UITableViewCell {
 	
 	func update() {
 		switch row {
-		case .userName: textField.text = "Leo van der Zee"
-		case .phoneNumber: textField.text = "0628917553"
+		case .userName: textField.text = "Upload user"
+		case .phoneNumber: textField.text = "0612345678"
 		default: break
 		}
 		textField.placeholder = row.textValue

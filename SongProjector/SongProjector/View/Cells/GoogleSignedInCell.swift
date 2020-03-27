@@ -19,7 +19,7 @@ class GoogleSignedInCell: ChurchBeamCell {
 	@IBOutlet var profilePictureImageView: UIImageView!
 	@IBOutlet var usernameLabel: UILabel!
 	@IBOutlet var emailLabel: UILabel!
-	@IBOutlet var signOutContainerView: GoogleSignedInCell!
+	@IBOutlet var signOutContainerView: UIView!
 	
 	let signInButton = GIDSignInButton()
 	var sender = UIViewController()
@@ -32,6 +32,8 @@ class GoogleSignedInCell: ChurchBeamCell {
 		signOutButton.setTitle(Text.Settings.googleSignOutButton, for: .normal)
     }
 	
+	
+	
 	@objc func signOut() {
 		let userDefaults = UserDefaults.standard
 		userDefaults.removeObject(forKey: GoogleMail)
@@ -42,7 +44,7 @@ class GoogleSignedInCell: ChurchBeamCell {
 		GIDSignIn.sharedInstance().signOut()
 	}
 	
-	func setup(description: String, delegate: GoogleSignedInCellDelegate, sender: UIViewController) {
+	func setup(delegate: GoogleSignedInCellDelegate, sender: UIViewController) {
 		let userDefaults = UserDefaults.standard
 		let email = userDefaults.object(forKey: GoogleMail) as? String
 		let name = userDefaults.object(forKey: GoogleUsername) as? String

@@ -29,12 +29,12 @@ class Tag {
         })
     }
 
-    static postTagsHasClusterIfNeeded(cluster, tags) {
+    static postTagsHasCluster(cluster, tags) {
         return new Promise((resolve, reject) => {
             if (!tags) {
                 resolve()
             }
-            submitTagsHasClusterIfNeeded(cluster, tags)
+            submitTagsHasCluster(cluster, tags)
             .then(tags => {resolve(tags)})
             .catch(err => {reject(err)})
         })
@@ -168,7 +168,7 @@ function deleteTag(tag) {
     })
 }
 
-function submitTagsHasClusterIfNeeded(cluster, tags) {
+function submitTagsHasCluster(cluster, tags) {
 
     var deleteTagHasCluster = function(clusterId) {
         return new Promise((resolve, reject) => {
@@ -189,7 +189,7 @@ function submitTagsHasClusterIfNeeded(cluster, tags) {
 
     var insertOneTagHasCluster = function(cluster, tag) {
         return new Promise((resolve, reject) => {
-            var sql = `INSERT INTO tag_has_cluster VALUES(${tag.id}, ${cluster.id}, ${cluster.theme_id}, ${cluster.organization_id})`
+            var sql = `INSERT INTO tag_has_cluster VALUES(${tag.id}, ${cluster.id})`
             db.query(sql, (err, result) => {
                 if(err) {
                     reject(err)
@@ -214,19 +214,9 @@ function submitTagsHasClusterIfNeeded(cluster, tags) {
 
     return new Promise((resolve, reject) => {
         deleteTagHasCluster(cluster.id)
-        .then(result => {
-            insertMultiTagHasCluster(cluster, tags)
-            .then(function() {
-                Promise.all(tags.map(tag => getTag(tag.id)))
-                .then(tags => { resolve(tags) })
-                .catch(err => { reject(err) })
-            })
-            .catch(err => {
-                reject(err) 
-            })
-        })
+        .then(insertMultiTagHasCluster(cluster, tags))
+        .then(resolve)
         .catch(err => {reject(err) })
-
     })
 
 }

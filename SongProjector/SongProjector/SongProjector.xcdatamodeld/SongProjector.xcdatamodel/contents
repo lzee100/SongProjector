@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="15702" systemVersion="19B88" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="15702" systemVersion="19D76" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Book" representedClassName=".Book" parentEntity="Entity" syncable="YES" codeGenerationType="class">
         <attribute name="name" attributeType="String"/>
         <relationship name="hasChapters" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Chapter" inverseName="hasBook" inverseEntity="Chapter"/>
@@ -11,7 +11,10 @@
     </entity>
     <entity name="Cluster" representedClassName=".Cluster" parentEntity="Entity" syncable="YES">
         <attribute name="isLoop" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="isUniversal" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="lastShownAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="position" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="rootString" optional="YES" attributeType="String"/>
         <attribute name="tagIds" optional="YES" attributeType="Transformable"/>
         <attribute name="themeId" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="time" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="YES"/>
@@ -47,7 +50,7 @@
     </entity>
     <entity name="Instrument" representedClassName=".Instrument" parentEntity="Entity" syncable="YES">
         <attribute name="isLoop" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
-        <attribute name="resourcePath" attributeType="String"/>
+        <attribute name="resourcePath" optional="YES" attributeType="String"/>
         <attribute name="resourcePathAWS" optional="YES" attributeType="String"/>
         <attribute name="typeString" attributeType="String" defaultValueString="Piano"/>
         <relationship name="hasCluster" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Cluster" inverseName="hasInstruments" inverseEntity="Cluster"/>
@@ -140,6 +143,7 @@
         <attribute name="isTitleBold" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="isTitleItalic" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="isTitleUnderlined" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="isUniversal" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="position" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="titleAlignmentNumber" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="titleBackgroundColor" optional="YES" attributeType="String"/>
@@ -167,12 +171,12 @@
     <elements>
         <element name="Book" positionX="-36" positionY="135" width="128" height="75"/>
         <element name="Chapter" positionX="-27" positionY="144" width="128" height="90"/>
-        <element name="Cluster" positionX="-54" positionY="-9" width="128" height="165"/>
+        <element name="Cluster" positionX="-54" positionY="-9" width="128" height="208"/>
         <element name="Contract" positionX="-36" positionY="135" width="128" height="73"/>
         <element name="ContractLedger" positionX="-18" positionY="153" width="128" height="135"/>
         <element name="Entity" positionX="-63" positionY="-18" width="128" height="135"/>
         <element name="GoogleActivity" positionX="-36" positionY="135" width="128" height="105"/>
-        <element name="Instrument" positionX="-36" positionY="135" width="128" height="120"/>
+        <element name="Instrument" positionX="-36" positionY="135" width="128" height="118"/>
         <element name="Organization" positionX="-18" positionY="153" width="128" height="75"/>
         <element name="Role" positionX="-27" positionY="144" width="128" height="75"/>
         <element name="Sheet" positionX="-18" positionY="27" width="128" height="120"/>
@@ -186,7 +190,7 @@
         <element name="SongServiceSettings" positionX="-9" positionY="153" width="128" height="60"/>
         <element name="Tag" positionX="-27" positionY="135" width="128" height="75"/>
         <element name="TagId" positionX="-18" positionY="144" width="128" height="75"/>
-        <element name="Theme" positionX="-36" positionY="9" width="128" height="553"/>
+        <element name="Theme" positionX="-36" positionY="9" width="128" height="568"/>
         <element name="User" positionX="-36" positionY="135" width="128" height="135"/>
         <element name="Vers" positionX="-18" positionY="153" width="128" height="90"/>
     </elements>

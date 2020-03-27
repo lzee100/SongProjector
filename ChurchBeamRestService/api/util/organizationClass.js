@@ -27,7 +27,8 @@ function getOrganization(orgId) {
                 reject(err)
             } else {
                 if (result.length == 0) {
-                    resolve()
+                    let error = new Error("No authorization")
+                    reject(error)
                 } else {
                     resolve(result[0])
                 }

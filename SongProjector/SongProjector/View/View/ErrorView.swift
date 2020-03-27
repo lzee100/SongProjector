@@ -34,7 +34,7 @@ class ErrorView: UIView {
 		Bundle.main.loadNibNamed("ErrorView", owner: self, options: [:])
 		addSubview(errorView)
 		errorView.frame = bounds
-		let effect = isThemeLight ? UIBlurEffectStyle.dark : UIBlurEffectStyle.light
+		let effect = isThemeLight ? UIBlurEffect.Style.dark : UIBlurEffect.Style.light
 		let blurEffect = UIBlurEffect(style: effect)
 		let blurEffectView = UIVisualEffectView(effect: blurEffect)
 		blurEffectView.layer.cornerRadius = 10
@@ -42,7 +42,7 @@ class ErrorView: UIView {
 		blurEffectView.clipsToBounds = true
 		blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
 		self.addSubview(blurEffectView)
-		sendSubview(toBack: blurEffectView)
+		sendSubviewToBack(blurEffectView)
 		
 		errorView.backgroundColor = UIColor.clear
 		errorView.clipsToBounds = true

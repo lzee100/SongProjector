@@ -64,15 +64,15 @@ class ThemesIphoneController: ChurchBeamTableViewController, UISearchBarDelegate
 		return 60
 	}
 	
-	override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+	override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
 		if let playerTitle = themes[indexPath.row].title, playerTitle == "Player" || playerTitle == "Songs"  {
-			return UITableViewCellEditingStyle.none
+			return UITableViewCell.EditingStyle.none
 		} else {
-			return UITableViewCellEditingStyle.delete
+			return UITableViewCell.EditingStyle.delete
 		}
 	}
 	
-	override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+	override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
 		if editingStyle == .delete {
 			ThemeSubmitter.submit([themes[indexPath.row]], requestMethod: .delete)
 		}
@@ -184,7 +184,7 @@ class ThemesIphoneController: ChurchBeamTableViewController, UISearchBarDelegate
 	
 	@objc private func editTableView(_ gestureRecognizer: UIGestureRecognizer) {
 		if let gestureRecognizer = gestureRecognizer as? UILongPressGestureRecognizer {
-			if gestureRecognizer.state == UIGestureRecognizerState.began {
+			if gestureRecognizer.state == UIGestureRecognizer.State.began {
 				changeEditingState()
 			}
 		} // for double tab

@@ -375,8 +375,8 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 	var dismissMenu: (() -> Void)?
 	
 	private var isSetup = true
-	private var titleAttributes: [NSAttributedStringKey : Any] = [:]
-	private var contentAttributes: [NSAttributedStringKey: Any] = [:]
+	private var titleAttributes: [NSAttributedString.Key : Any] = [:]
+	private var contentAttributes: [NSAttributedString.Key: Any] = [:]
 	private var externalDisplayRatioConstraint: NSLayoutConstraint?
 	private var newSheetContainerViewHeightConstraint: NSLayoutConstraint?
 	private var activeIndexPath: IndexPath?
@@ -551,15 +551,15 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 		return view
 	}
 	
-	func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
-		var editingStyle: UITableViewCellEditingStyle = .none
+	func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+		var editingStyle: UITableViewCell.EditingStyle = .none
 		if let cell = tableView.cellForRow(at: indexPath) as? DynamicHeightCell {
 			editingStyle = cell.isActive ? .none : .delete
 		}
 		return editingStyle
 	}
 	
-	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
 		if editingStyle == .delete, let cell = tableView.cellForRow(at: indexPath) as? ThemeImplementation {
 			cell.set(value: nil)
 			if cell is LabelColorPickerCell {
@@ -589,8 +589,8 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 			
 			switch themeAttribute {
 			case .backgroundTransparancy: updateTransparency()
-		case .title, .titleBorderSize, .titleFontName, .titleTextSize, .titleAlignment, .titleTextColorHex, .titleBorderColorHex, .isTitleBold, .isTitleItalic, .isTitleUnderlined: updateSheetTitle()
-		case .contentFontName, .contentTextSize, .contentTextColorHex, .contentAlignment, .contentBorderColor, .contentBorderSize, .isContentBold, .isContentItalic, .isContentUnderlined: updateSheetContent()
+			case .title, .titleBorderSize, .titleFontName, .titleTextSize, .titleAlignment, .titleTextColorHex, .titleBorderColorHex, .isTitleBold, .isTitleItalic, .isTitleUnderlined: updateSheetTitle()
+			case .contentFontName, .contentTextSize, .contentTextColorHex, .contentAlignment, .contentBorderColor, .contentBorderSize, .isContentBold, .isContentItalic, .isContentUnderlined: updateSheetContent()
 			case .displayTime: updateTime()
 			case .backgroundImage:
 				updateBackgroundImage()
@@ -671,7 +671,6 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 			let theme = VTheme()
 			theme.title = Text.NewTheme.sampleTitle
 			theme.isHidden = false
-			theme.deleteDate = NSDate()
 			theme.titleTextSize = 14
 			theme.textColorTitle = .black
 			theme.contentTextSize = 10
@@ -687,7 +686,6 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 			
 		case .editTheme:
 			let sheet = VSheetTitleContent()
-			sheet.deleteDate = NSDate() // remove at restart app if user quit app
 			sheet.title = Text.NewTheme.sampleTitle
 			sheet.content = Text.NewTheme.sampleLyrics
 			self.sheet = sheet
@@ -696,7 +694,6 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 			let theme = VTheme()
 			theme.title = "theme"
 			theme.isHidden = true
-			theme.deleteDate = NSDate()
 			theme.titleTextSize = 14
 			theme.textColorTitle = .black
 			theme.contentTextSize = 10
@@ -817,14 +814,14 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 	func getIndexPathOfBackgroundColor(modificationMode: ModificationMode, hasImage: Bool, cellGeneral: CellGeneral) -> IndexPath {
 		if modificationMode == .newTheme || modificationMode == .editTheme {
 			if hasImage {
-				let index = CellGeneral.themeTransBackground.index(where: { $0.rawValue == cellGeneral.rawValue })
+				let index = CellGeneral.themeTransBackground.firstIndex(where: { $0.rawValue == cellGeneral.rawValue })
 				return IndexPath(row: index!, section: 0)
 			} else {
-				let index = CellGeneral.theme.index(where: { $0.rawValue == cellGeneral.rawValue })
+				let index = CellGeneral.theme.firstIndex(where: { $0.rawValue == cellGeneral.rawValue })
 				return IndexPath(row: index!, section: 0)
 			}
 		} else {
-			let row = CellGeneral.sheetCells.index(where: { $0.rawValue == cellGeneral.rawValue })!
+			let row = CellGeneral.sheetCells.firstIndex(where: { $0.rawValue == cellGeneral.rawValue })!
 			return IndexPath(row: row, section: 0)
 		}
 	}
@@ -907,7 +904,7 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 		}
 		
 		// add new constraint
-		externalDisplayRatioConstraint = NSLayoutConstraint(item: previewView, attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.equal, toItem: previewView, attribute: NSLayoutAttribute.width, multiplier: externalDisplayWindowRatio, constant: 0)
+		externalDisplayRatioConstraint = NSLayoutConstraint(item: previewView!, attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: previewView, attribute: NSLayoutConstraint.Attribute.width, multiplier: externalDisplayWindowRatio, constant: 0)
 		previewView.addConstraint(externalDisplayRatioConstraint!)
 		
 		
@@ -947,8 +944,8 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 		
 		if showError {
 			let message = UIAlertController(title: Text.NewTheme.errorTitle, message:
-				Text.NewTheme.errorMessage, preferredStyle: UIAlertControllerStyle.alert)
-			message.addAction(UIAlertAction(title: Text.Actions.close, style: UIAlertActionStyle.default,handler: nil))
+				Text.NewTheme.errorMessage, preferredStyle: .alert)
+			message.addAction(UIAlertAction(title: Text.Actions.close, style: .default, handler: nil))
 			
 			self.present(message, animated: true, completion: nil)
 			
@@ -958,6 +955,7 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 				
 			case .newTheme, .editTheme:
 				let requestMethod: RequestMethod = modificationMode == .newTheme ? .post : .put
+				showLoader()
 				ThemeSubmitter.submit([theme], requestMethod: requestMethod)
 				
 			case .newCustomSheet, .editCustomSheet:

@@ -15,7 +15,7 @@ import GoogleSignIn
 import AWSMobileClient
 import AWSGoogleSignIn
 import AWSAuthCore
-
+import AWSS3
 
 var canUsePhotos: Bool {
 
@@ -95,8 +95,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		return CoreUser.getEntities().first != nil
 	}
 
-	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-		setupAndCheckDatabase()
+	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+//		setupAndCheckDatabase()
+		
+//		CoreCluster.getEntities().forEach({
+//			moc.delete($0)
+//		})
+//		do {
+//			try moc.save()
+//		} catch {
+//			print(error)
+//		}
 		setupAirPlay()
 		ChurchBeamConfiguration.environment = .localhost
 //		let entities = CoreEntity.getEntities()
@@ -114,6 +123,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 				}
 			})
 		}
+		UNUserNotificationCenter.current().delegate = self
+		
+		
+		let credentialsProvider = AWSCognitoCredentialsProvider(regionType:.EUCentral1,
+		   identityPoolId:"eu-central-1:fc8d9eca-9ef8-4be9-91db-07ce12de4967")
+		let configuration = AWSServiceConfiguration(region:.EUCentral1, credentialsProvider:credentialsProvider)
+		AWSServiceManager.default().defaultServiceConfiguration = configuration		
 		
 //		AWSGoogleSignInProvider.sharedInstance().setScopes(["profile", "openid"])
 		GIDSignIn.sharedInstance()?.clientID = "1005753122128-dc0k48rg97hdetif0g3ncaf0dq0ue6mc.apps.googleusercontent.com"
@@ -161,7 +177,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	}
 
 	func applicationDidBecomeActive(_ application: UIApplication) {
-		// Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
 	}
 
 	func applicationWillTerminate(_ application: UIApplication) {
@@ -186,7 +201,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		return true
 	}
 	
-	func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+	func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
 		return GIDSignIn.sharedInstance().handle(url)
 
 //		return AWSMobileClient.sharedInstance().interceptApplication(
@@ -493,13 +508,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	private func setupAirPlay() {
 		
 		NotificationCenter.default.addObserver(
-			forName: Notification.Name.UIScreenDidConnect,
+			forName: UIScreen.didConnectNotification,
 			object: nil,
 			queue: nil,
 			using: displayConnected)
 		
 		NotificationCenter.default.addObserver(
-			forName: NSNotification.Name.UIScreenDidDisconnect,
+			forName: UIScreen.didDisconnectNotification,
 			object: nil,
 			queue: nil,
 			using: displayDisconnected
@@ -534,6 +549,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		externalDisplayWindow = nil
 		NotificationCenter.default.post(name: NotificationNames.externalDisplayDidChange, object: nil, userInfo: nil)
 	}
+	
+    func initializeS3() {
+        let poolId = "***** your poolId *****" // 3-1
+		let credentialsProvider = AWSCognitoCredentialsProvider(regionType: .EUWest1, identityPoolId: poolId)//3-2
+        let configuration = AWSServiceConfiguration(region: .EUWest1, credentialsProvider: credentialsProvider)
+        AWSServiceManager.default().defaultServiceConfiguration = configuration
+        
+        
+    }
 
 }
 
+
+extension AppDelegate: UNUserNotificationCenterDelegate {
+	func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+		return completionHandler([.sound, .badge, .alert])
+	}
+	func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+		completionHandler()
+	}
+	
+	
+}

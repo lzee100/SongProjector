@@ -39,7 +39,7 @@ class SheetCollectionCell: UICollectionViewCell {
 		let view = SheetView.createWith(frame: self.bounds, cluster: cluster, sheet: sheet, theme: theme, scaleFactor: 1)
 		view.tag = 7
 		self.addSubview(view)
-		sendSubview(toBack: view)
+		sendSubviewToBack(view)
 	}
 	
 	private func update() {

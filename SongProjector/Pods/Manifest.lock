@@ -20,6 +20,8 @@ PODS:
     - AWSAuthCore (= 2.6.35)
   - AWSMobileClient (2.6.35):
     - AWSAuthCore (= 2.6.35)
+  - AWSS3 (2.6.35):
+    - AWSCore (= 2.6.35)
   - AWSUserPoolsSignIn (2.6.35):
     - AWSAuthCore (= 2.6.35)
     - AWSCognitoIdentityProvider (= 2.6.35)
@@ -54,6 +56,7 @@ DEPENDENCIES:
   - AWSDynamoDB (~> 2.6.13)
   - AWSGoogleSignIn (~> 2.6.13)
   - AWSMobileClient (~> 2.6.13)
+  - AWSS3
   - AWSUserPoolsSignIn (~> 2.6.13)
   - ChromaColorPicker
   - GoogleAPIClientForREST
@@ -74,6 +77,7 @@ SPEC REPOS:
     - AWSDynamoDB
     - AWSGoogleSignIn
     - AWSMobileClient
+    - AWSS3
     - AWSUserPoolsSignIn
     - ChromaColorPicker
     - GoogleAPIClientForREST
@@ -94,6 +98,7 @@ SPEC CHECKSUMS:
   AWSDynamoDB: f4902fc37384dcf9547e2d8a32a5b208d4d1d996
   AWSGoogleSignIn: be8e48a82176288b6961de12ab75803de73ea4e1
   AWSMobileClient: f89a36e0d95fc354a9d3b50d347371788c542449
+  AWSS3: 282a590bb47e9cd88de24979fb28954399c41c52
   AWSUserPoolsSignIn: cf3293cf2c423922e628082a9b09e77473afc8b0
   ChromaColorPicker: 2e47f5acb805d53350fb7af1b511bc534b38ee31
   GoogleAPIClientForREST: a8b95a252014ce2e618df6b75dc72eca2c00b4af
@@ -104,6 +109,6 @@ SPEC CHECKSUMS:
   SwiftKeychainWrapper: 6fc49fbf7d4a6b0772917acb0e53a1639f6078d6
   VerticalSlider: 655f2bc3ed062bac13e21c174f5ff93b8308571d
 
-PODFILE CHECKSUM: 2ef35ffde777c898584222681c50f92a7f1ddc56
+PODFILE CHECKSUM: 75345746b80a135707c61481ade76a3427a0bfd4
 
 COCOAPODS: 1.8.4

@@ -25,15 +25,6 @@ struct RestError: Decodable {
 	
 }
 
-class RequestersInOrder: NSObject {
-	
-	func addRequestOperation(operations: [Operation]) {
-		Operation.dependenciesInOrder(operations)
-		Operation.GlobalQueue.addOperations(operations, waitUntilFinished: true)
-	}
-	
-}
-
 struct RequesterOperations: Equatable {
 	
 	let requester: RequesterDependency
@@ -127,7 +118,7 @@ class AllRequestsOperation: AsynchronousOperation, RequestObserver {
 	
 	func requestDidFinish(requesterID: String, response: ResponseType, result: AnyObject?) {
 		self.responseType = response
-		if requesterId == requester.requesterId {
+		if requesterID == requester.requesterId {
 			self.result = result
 		}
 		let current = requesterDependencies.first(where: { $0.requesterId == requesterID })
@@ -148,6 +139,10 @@ class AllRequestsOperation: AsynchronousOperation, RequestObserver {
 
 class Requester<T>: BaseRS, RequesterType, RequesterDependency where T: VEntity {
 	
+	enum AdditionalProcessResult {
+		case failed(error: Error)
+		case succes(result: [T])
+	}
 		
 	// MARK: - Properties
 	
@@ -237,28 +232,51 @@ class Requester<T>: BaseRS, RequesterType, RequesterDependency where T: VEntity 
 		let url = ChurchBeamConfiguration.environment.endpoint + path + suffix
 		
 		if requestMethod == .get {
+			
 			requestGet(url:  url, parameters: params, success: { (response, result) in
 				self.requestFinished(response: .OK(.updated), result: result)
 			}, failure: { (error, response, result) in
 				let restError = error ?? (result != nil ? NSError(domain: result!.errorMessage, code: 0, userInfo: nil) : nil)
 				self.requestFinished(response: .error(response, restError), result: nil)
 			}, queue: Queues.background)
+			
 		} else {
-			requestSend(url: url, object: body, parameters: params, range: range, success: { (resonpse, result) in
-				var saveResult: [T]? = nil
-				if let result = result {
-					saveResult = result
+			
+			// do uploads
+			prepareForSend(body: body ?? []) { (result) in
+				
+				switch result {
+				
+				case .failed(error: let error):
+					self.requestFinished(response: .error(nil, error), result: nil)
+				
+				case .succes(result: let result):
+					self.requestSend(url: url, object: result, parameters: self.params, range: self.range, success: { (resonpse, result) in
+						var saveResult: [T]? = nil
+						if let result = result {
+							saveResult = result
+						}
+						self.requestFinished(response: .OK(.updated), result: saveResult)
+					}, failure: { (error, response, result) in
+						let restError = error ?? (result != nil ? NSError(domain: result!.errorMessage, code: 0, userInfo: nil) : nil)
+						self.requestFinished(response: .error(response, restError), result: nil)
+					}, queue: Queues.background)
 				}
-				self.requestFinished(response: .OK(.updated), result: saveResult)
-			}, failure: { (error, response, result) in
-				let restError = error ?? (result != nil ? NSError(domain: result!.errorMessage, code: 0, userInfo: nil) : nil)
-				self.requestFinished(response: .error(response, restError), result: nil)
-			}, queue: Queues.background)
+				
+			}
 		}
 		
 	}
 	
 	func requesterDidStart() {
+	}
+	
+	func prepareForSend(body: [T], completion:  @escaping ((AdditionalProcessResult) -> Void)) {
+		completion(.succes(result: body))
+	}
+	
+	func additionalProcessing(_ context: NSManagedObjectContext,_ entities: [T], completion: @escaping ((AdditionalProcessResult) -> Void)) {
+		completion(.succes(result: entities))
 	}
 	
 	func requestFinished(response: ResponseType, result: [T]?) {
@@ -271,16 +289,13 @@ class Requester<T>: BaseRS, RequesterType, RequesterDependency where T: VEntity 
 
 		}
 		Queues.main.async {
-			print("observers")
-			print(self.observers.compactMap({ $0.requesterId }).joined(separator: ", "))
-			self.observers.forEach({ $0.requestDidFinish(requesterID: self.requesterId, response: response, result: result as AnyObject) })
+			self.observers.first(where: { $0.requesterId == "AllRequestsOperation" })?.requestDidFinish(requesterID: self.requesterId, response: response, result: result as AnyObject)
 		}
 	}
 	
 	func requestDidFinish(requesterID: String, response: ResponseType, result: AnyObject?) {
 		
 	}
-	
 	
 	func requestGet(_ method: RequestMethod = .get, url: String, parameters: [String: Any]?, range: CountableRange<Int>? = nil, success: @escaping (_ response: HTTPURLResponse?, _ result: [T]?) -> Void, failure: @escaping (_ error: NSError?, _ response: HTTPURLResponse?, _ object: RestError?) -> Void, queue: DispatchQueue) {
 		
@@ -294,13 +309,24 @@ class Requester<T>: BaseRS, RequesterType, RequesterDependency where T: VEntity 
 					result = try JSONDecoder().decode([T].self, from: data)
 					Store.persistentContainer.performBackgroundTask { (context) in
 						context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
-						result.forEach({ $0.getManagedObject(context: context) })
-						do {
-							try context.save()
-							success(response, result)
-						} catch {
-							print("Error \(error)")
-							failure(error as NSError, nil, nil)
+						self.additionalProcessing(context, result) { (result) in
+							
+							switch result {
+								
+							case .failed(error: let error):
+								failure(error as NSError, nil, nil)
+								
+							case .succes(result: let result):
+								result.forEach({ $0.getManagedObject(context: context) })
+								do {
+									try context.save()
+									success(response, result)
+								} catch {
+									print("Error \(error)")
+									failure(error as NSError, nil, nil)
+								}
+							}
+							
 						}
 					}
 				} catch {
@@ -331,7 +357,7 @@ class Requester<T>: BaseRS, RequesterType, RequesterDependency where T: VEntity 
 
 		print("--------------printing posting \(String(describing: object?.first.debugDescription))")
 		inputBody?.printToJson()
-		
+				
 		super.dispatchRequest(self.requestMethod, url: url, inputBody: inputBody, parameters: parameters, range: range, success: {  (response, data) -> Void in
 			
 //			print("---------------data returned from posting \(String(describing: object?.first.debugDescription))")
@@ -342,13 +368,24 @@ class Requester<T>: BaseRS, RequesterType, RequesterDependency where T: VEntity 
 				do {
 					result = try JSONDecoder().decode([T].self, from: data)
 					Store.persistentContainer.performBackgroundTask { (context) in
-						result.forEach({ $0.getManagedObject(context: context) })
-						do {
-							try context.save()
-							success(response, result)
-						} catch {
-							print("Error \(error)")
-							failure(error as NSError, nil, nil)
+						self.additionalProcessing(context, result) { result in
+							
+							switch result {
+								
+							case .failed(error: let error):
+								failure(error as NSError, nil, nil)
+								
+							case .succes(result: let result):
+								result.forEach({ $0.getManagedObject(context: context) })
+								do {
+									try context.save()
+									success(response, result)
+								} catch {
+									print("Error \(error)")
+									failure(error as NSError, nil, nil)
+								}
+							}
+							
 						}
 					}
 				} catch (let error){

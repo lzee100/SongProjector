@@ -153,9 +153,9 @@ class NewSongIphoneController: ChurchBeamViewController, UICollectionViewDataSou
 
 		collectionView.register(UINib(nibName: Cells.themeCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.themeCellCollection)
 		collectionViewSheets.register(UINib(nibName: Cells.sheetCollectionCell, bundle: nil), forCellWithReuseIdentifier: Cells.sheetCollectionCell)
-		NotificationCenter.default.addObserver(forName: Notification.Name.UIScreenDidConnect, object: nil, queue: nil, using: databaseDidChange)
-		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name:NSNotification.Name.UIKeyboardWillHide, object: nil)
+		NotificationCenter.default.addObserver(forName: UIScreen.didConnectNotification, object: nil, queue: nil, using: databaseDidChange)
+		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
 		
 		navigationController?.title = Text.NewSong.title
 		title = Text.CustomSheets.title
@@ -291,7 +291,7 @@ class NewSongIphoneController: ChurchBeamViewController, UICollectionViewDataSou
 			return true
 		} else {
 			let alert = UIAlertController(title: Text.NewSong.errorTitleNoTheme, message: Text.NewSong.erorrMessageNoTheme, preferredStyle: .alert)
-			alert.addAction(UIAlertAction(title: Text.Actions.ok, style: UIAlertActionStyle.default, handler: nil))
+			alert.addAction(UIAlertAction(title: Text.Actions.ok, style: UIAlertAction.Style.default, handler: nil))
 			self.present(alert, animated: true, completion: nil)
 
 			return false
@@ -362,7 +362,7 @@ class NewSongIphoneController: ChurchBeamViewController, UICollectionViewDataSou
 			isCollectionviewSheetsHidden = false
 			textView.resignFirstResponder()
 			buildSheets(fromText: textView.text)
-			view.bringSubview(toFront: collectionViewSheets)
+			view.bringSubviewToFront(collectionViewSheets)
 			update()
 		} else {
 			isSetup = true
@@ -370,7 +370,7 @@ class NewSongIphoneController: ChurchBeamViewController, UICollectionViewDataSou
 			sheets = []
 			isFirstTime = true
 			isCollectionviewSheetsHidden = true
-			view.sendSubview(toBack: collectionViewSheets)
+			view.sendSubviewToBack(collectionViewSheets)
 			update()
 		}
 	}
@@ -383,17 +383,17 @@ class NewSongIphoneController: ChurchBeamViewController, UICollectionViewDataSou
 	@objc func keyboardWillShow(notification:NSNotification){
 		
 		let userInfo = notification.userInfo!
-		var keyboardFrame:CGRect = (userInfo[UIKeyboardFrameBeginUserInfoKey] as! NSValue).cgRectValue
+		var keyboardFrame:CGRect = (userInfo[UIResponder.keyboardFrameBeginUserInfoKey] as! NSValue).cgRectValue
 		keyboardFrame = self.view.convert(keyboardFrame, from: nil)
 		
-		var contentInset:UIEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10)
+		var contentInset:UIEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
 		contentInset.bottom = keyboardFrame.size.height + 30
 		textView.contentInset = contentInset
 	}
 	
 	@objc func keyboardWillHide(notification:NSNotification){
 		
-		let contentInset:UIEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10)
+		let contentInset:UIEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
 		textView.contentInset = contentInset
 	}
 	

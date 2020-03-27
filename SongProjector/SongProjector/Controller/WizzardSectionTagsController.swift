@@ -77,8 +77,8 @@ class WizzardSectionTagsController: ChurchBeamViewController, UITableViewDataSou
 		navigationItem.rightBarButtonItem?.isEnabled = songServiceObject.isValid
 		
 		let notificationCenter = NotificationCenter.default
-		notificationCenter.addObserver(self, selector: #selector(keyboardWasShown(notification:)), name: Notification.Name.UIKeyboardWillHide, object: nil)
-		notificationCenter.addObserver(self, selector: #selector(keyboardWasShown(notification:)), name: Notification.Name.UIKeyboardWillChangeFrame, object: nil)
+		notificationCenter.addObserver(self, selector: #selector(keyboardWasShown(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+		notificationCenter.addObserver(self, selector: #selector(keyboardWasShown(notification:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
 
 	}
 	
@@ -143,7 +143,7 @@ class WizzardSectionTagsController: ChurchBeamViewController, UITableViewDataSou
 		}
 	}
 	
-	func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+	func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
 		let tagsForSection = songServiceObject.sections[indexPath.section].hasTags.count
 		if tableView.cellForRow(at: indexPath) is BasicCell, tagsForSection > 1 {
 			return .delete
@@ -151,7 +151,7 @@ class WizzardSectionTagsController: ChurchBeamViewController, UITableViewDataSou
 		return .none
 	}
 	
-	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
 		let section = songServiceObject.sections[indexPath.section]
 		if let cell = tableView.cellForRow(at: indexPath) as? BasicCell, let tag = cell.data as? VTag, let index = section.tagIds.firstIndex(of: NSNumber(value: tag.id)) {
 			section.tagIds.remove(at: index)
@@ -216,17 +216,17 @@ class WizzardSectionTagsController: ChurchBeamViewController, UITableViewDataSou
 //	}
 	@objc func keyboardWasShown (notification: NSNotification)
     {
-        var info = notification.userInfo
-		var keyboardSize = (info![UIKeyboardFrameBeginUserInfoKey] as! NSValue).cgRectValue.size
+        let info = notification.userInfo
+		let keyboardSize = (info![UIResponder.keyboardFrameBeginUserInfoKey] as! NSValue).cgRectValue.size
 
-		var contentInsets:UIEdgeInsets
+		var contentInsets: UIEdgeInsets
 
-        if UIInterfaceOrientationIsPortrait(UIApplication.shared.statusBarOrientation) {
+		if UIApplication.shared.statusBarOrientation.isPortrait {
 
-            contentInsets = UIEdgeInsetsMake(0.0, 0.0, keyboardSize.height, 0.0);
+			contentInsets = UIEdgeInsets(top: 0.0, left: 0.0, bottom: keyboardSize.height, right: 0.0);
         }
         else {
-            contentInsets = UIEdgeInsetsMake(0.0, 0.0, keyboardSize.width, 0.0);
+			contentInsets = UIEdgeInsets(top: 0.0, left: 0.0, bottom: keyboardSize.width, right: 0.0);
 
         }
 

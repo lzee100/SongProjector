@@ -65,7 +65,7 @@ class ChurchBeamTableViewController: UITableViewController, RequestObserver {
 		loadingView.alpha = 0
 		loadingView.animator.startAnimating()
 		view.addSubview(loadingView)
-		view.bringSubview(toFront: loadingView)
+		view.bringSubviewToFront(loadingView)
 		UIView.animate(withDuration: 0.1, animations: {
 			loadingView.alpha = 0.3
 		})
@@ -79,18 +79,18 @@ class ChurchBeamTableViewController: UITableViewController, RequestObserver {
 		}
 	}
 	
-	func show(message: String, time: TimeInterval = 4.0) {
-		createView(message: message, time: time)
+	func show(message: String) {
+		createView(message: message)
 	}
 	
 	
-	func show(error: ResponseType, time: TimeInterval = 4.0) {
+	func show(error: ResponseType) {
 		switch error {
 		case .error(let response, let error):
-			let status = response?.statusCode.stringValue() ?? "no status code"
+			let status = response?.statusCode.stringValue ?? "no status code"
 			let errMessage = error?.localizedDescription ?? "no message"
-			let message = "status: \(status):/n\(errMessage)"
-			createView(message: message, time: time)
+			let message = "status: \(status):\n\(errMessage)"
+			createView(message: message)
 		default:
 			return
 		}
@@ -120,23 +120,12 @@ class ChurchBeamTableViewController: UITableViewController, RequestObserver {
 	
 	// MARK: Private functions
 	
-	private func createView(message: String, time: TimeInterval) {
-		let height = message.height(withConstrainedWidth: (self.view.bounds.width * 0.90) - 16, font: UIFont.systemFont(ofSize: 14)) + 16
-		let frame = CGRect(x: (self.view.bounds.width * 0.1) / 2, y: -height, width: (self.view.bounds.width * 0.90), height: height)
-		
-		errorView = ErrorView(frame: frame, message: message, height: height)
-		
-		let swipe = UIPanGestureRecognizer(target: self, action: #selector(handlePan(recognizer:)))
-		errorView?.addGestureRecognizer(swipe)
-		
-		UIApplication.shared.keyWindow?.addSubview(errorView!)
-		let err = errorView!.frame
-		UIView.animate(withDuration: 0.4) {
-			self.errorView!.frame = CGRect(x: err.minX, y: 20, width: err.width, height: err.height)
-		}
-		timer = Timer.scheduledTimer(withTimeInterval: time, repeats: false, block: { _ in
-			self.hideView()
-		})
+	private func createView(message: String) {
+		let content = UNMutableNotificationContent()
+		content.body = message
+		content.sound = .default
+		let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
+		UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)
 	}
 	
 	private func hideView() {

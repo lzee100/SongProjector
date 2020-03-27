@@ -11,7 +11,15 @@ import Foundation
 
 extension Int {
 	
-	func stringValue() -> String {
+	var stringValue: String {
+		return "\(self)"
+	}
+
+}
+
+extension Int64 {
+	
+	var stringValue: String {
 		return "\(self)"
 	}
 }

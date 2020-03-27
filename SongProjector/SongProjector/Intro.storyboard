@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina4_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -15,7 +13,7 @@
             <objects>
                 <navigationController storyboardIdentifier="IntroPageViewContainerNav" id="5PZ-q5-3kV" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="UuN-46-HQR">
-                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -35,7 +33,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="j7e-8D-Qav">
-                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                                <rect key="frame" x="0.0" y="44" width="375" height="623"/>
                                 <connections>
                                     <segue destination="Dlx-jL-UV6" kind="embed" id="x8H-Zu-neK"/>
                                 </connections>
@@ -73,7 +71,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hallo" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ION-oG-tkp">
-                                <rect key="frame" x="50" y="70" width="139" height="80"/>
+                                <rect key="frame" x="50" y="50" width="139" height="80"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="80" id="vrF-6c-Gnt"/>
                                 </constraints>
@@ -82,7 +80,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Welkom bij Churchbeam. Deze app ondersteund de gehele voordienst in jouw kerk. " textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="u5R-OL-P6D">
-                                <rect key="frame" x="85" y="170" width="250" height="70"/>
+                                <rect key="frame" x="85" y="150" width="250" height="70"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="250" id="ejy-bZ-t7B"/>
                                 </constraints>
@@ -120,7 +118,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Log-in" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pba-90-9hb">
-                                <rect key="frame" x="164.5" y="104" width="170.5" height="80"/>
+                                <rect key="frame" x="164.5" y="84" width="170.5" height="80"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="80" id="kge-IC-3zb"/>
                                 </constraints>
@@ -129,7 +127,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Bij deze app kan je inloggen met je google account. Heb je al een account aangemaakt bij Churchbeam?" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zcx-Qo-bvH">
-                                <rect key="frame" x="40" y="204" width="250" height="93"/>
+                                <rect key="frame" x="40" y="184" width="250" height="93"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="250" id="Fxp-TA-PHC"/>
                                 </constraints>
@@ -138,18 +136,18 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="IBL-Fl-wRr">
-                                <rect key="frame" x="30" y="317" width="315" height="350"/>
+                                <rect key="frame" x="30" y="297" width="315" height="370"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="IntroGoogleSigninCell" id="Dfa-1D-b7k" customClass="IntroGoogleSigninCell" customModule="ChurchBeam" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="28" width="315" height="44"/>
+                                        <rect key="frame" x="0.0" y="28" width="315" height="40.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Dfa-1D-b7k" id="Y4P-ap-TNG">
-                                            <rect key="frame" x="0.0" y="0.0" width="315" height="44"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="315" height="40.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nOf-ub-Yga">
-                                                    <rect key="frame" x="10" y="10" width="295" height="24"/>
+                                                    <rect key="frame" x="10" y="10" width="295" height="20.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -208,7 +206,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Van start" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="owU-hI-TDq">
-                                <rect key="frame" x="95" y="70" width="230" height="80"/>
+                                <rect key="frame" x="95" y="50" width="230" height="80"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="80" id="VSG-Ut-nkp"/>
                                 </constraints>
@@ -217,7 +215,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8AW-d6-0x6">
-                                <rect key="frame" x="40" y="170" width="250" height="116.5"/>
+                                <rect key="frame" x="40" y="150" width="250" height="116.5"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="250" id="G3q-Za-ppz"/>
                                 </constraints>
@@ -227,7 +225,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ROS-z0-Ao2">
-                                <rect key="frame" x="40" y="306.5" width="295" height="60"/>
+                                <rect key="frame" x="40" y="286.5" width="295" height="60"/>
                                 <color key="backgroundColor" red="0.93725490570000003" green="0.93725490570000003" blue="0.95686274770000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="60" id="1Na-Ih-VA2"/>
@@ -238,7 +236,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="h5O-Aa-ecG">
-                                <rect key="frame" x="40" y="386.5" width="295" height="60"/>
+                                <rect key="frame" x="40" y="366.5" width="295" height="60"/>
                                 <color key="backgroundColor" red="0.93725490570000003" green="0.93725490570000003" blue="0.95686274770000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="60" id="5LI-eX-OWa"/>
@@ -280,11 +278,11 @@
             <objects>
                 <viewController storyboardIdentifier="IntroPageController2" id="nff-pe-WEc" customClass="IntroPageController2" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="m2z-S2-WhI">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Nieuw" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BKl-QS-1Ah">
-                                <rect key="frame" x="154.5" y="70" width="170.5" height="80"/>
+                                <rect key="frame" x="154.5" y="50" width="170.5" height="80"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="80" id="10v-MS-iBm"/>
                                 </constraints>
@@ -293,7 +291,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Er zijn drie verschillende versies die je kan afnemen." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QUJ-41-d7B">
-                                <rect key="frame" x="40" y="170" width="280" height="46.5"/>
+                                <rect key="frame" x="40" y="150" width="280" height="46.5"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="280" id="sID-lZ-rqI"/>
                                 </constraints>
@@ -302,7 +300,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="Dcb-0L-zQX">
-                                <rect key="frame" x="40" y="236.5" width="295" height="430.5"/>
+                                <rect key="frame" x="40" y="216.5" width="295" height="430.5"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="l1h-2L-m9C">
                                     <size key="itemSize" width="50" height="50"/>
@@ -418,11 +416,11 @@
             <objects>
                 <viewController storyboardIdentifier="InviteCodeController" id="FZb-Yc-TBe" customClass="InviteCodeController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="0tN-Pv-vbn">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Om toe te treden tot een bestaande organisatie heb je een koppelcode nodig. Voer hieronder de koppelcode in." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="id8-lg-060">
-                                <rect key="frame" x="40" y="214" width="250" height="93"/>
+                                <rect key="frame" x="40" y="206" width="250" height="93"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="250" id="C4E-i8-2ok"/>
                                 </constraints>
@@ -431,8 +429,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Koppelcode" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="M4Q-28-3fa">
-                                <rect key="frame" x="40" y="327" width="295" height="30"/>
-                                <nil key="textColor"/>
+                                <rect key="frame" x="40" y="319" width="295" height="34"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                                 <connections>
@@ -440,7 +437,7 @@
                                 </connections>
                             </textField>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Code" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Kg8-hp-TGs">
-                                <rect key="frame" x="177" y="114" width="148" height="80"/>
+                                <rect key="frame" x="177" y="106" width="148" height="80"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="80" id="QBA-UM-LsI"/>
                                 </constraints>
@@ -492,23 +489,22 @@
             <objects>
                 <viewController id="5Lm-AI-d36" customClass="SignUpOrganisationController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Xmc-vr-ajI">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Wat is de naam van de kerk?" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EsW-gK-cG5">
-                                <rect key="frame" x="40" y="346" width="295" height="21"/>
+                                <rect key="frame" x="40" y="338" width="295" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Kerknaam" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="yN1-CA-Mjc">
-                                <rect key="frame" x="40" y="387" width="295" height="30"/>
-                                <nil key="textColor"/>
+                                <rect key="frame" x="40" y="379" width="295" height="34"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Gratis" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ynq-he-lJN">
-                                <rect key="frame" x="177" y="104" width="158" height="80"/>
+                                <rect key="frame" x="177" y="96" width="158" height="80"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="80" id="N1e-3r-i59"/>
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="80" id="eNT-dl-Dhb"/>
@@ -518,7 +514,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uYx-ti-v8M">
-                                <rect key="frame" x="40" y="204" width="295" height="122"/>
+                                <rect key="frame" x="40" y="196" width="295" height="122"/>
                                 <string key="text">Wat leuk dat je aan de slag gegaat met de gratis versie van ChurchBeam.   Om goed van start te kunnen gaan hebben we wat informatie nodig van je. </string>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
@@ -571,11 +567,11 @@
             <objects>
                 <viewController id="PtG-Oe-sRX" customClass="SignUpPersonalInfoController" customModule="ChurchBeam" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="hSD-R3-DLM">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Welkom" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sbQ-UY-ced">
-                                <rect key="frame" x="40" y="104" width="219" height="80"/>
+                                <rect key="frame" x="40" y="96" width="219" height="80"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="80" id="gyS-Xk-kGc"/>
                                 </constraints>
@@ -584,7 +580,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="oeQ-1s-GY4">
-                                <rect key="frame" x="30" y="204" width="315" height="463"/>
+                                <rect key="frame" x="30" y="196" width="315" height="402"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SignUpLabelCell" rowHeight="49" id="X6t-kX-wdN" customClass="SignUpLabelCell" customModule="ChurchBeam" customModuleProvider="target">
@@ -615,16 +611,15 @@
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SignUpTextFieldCell" rowHeight="45" id="W8G-x6-b3y" customClass="SignUpTextFieldCell" customModule="ChurchBeam" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="77" width="315" height="45"/>
                                         <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" ambiguous="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="W8G-x6-b3y" id="Jef-s8-Yvc">
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="W8G-x6-b3y" id="Jef-s8-Yvc">
                                             <rect key="frame" x="0.0" y="0.0" width="315" height="45"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Voornaam" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="iUT-Vf-lxi">
-                                                    <rect key="frame" x="15" y="8" width="285" height="30"/>
+                                                    <rect key="frame" x="15" y="8" width="285" height="29"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="30" id="aeB-oN-sBU"/>
                                                     </constraints>
-                                                    <nil key="textColor"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits"/>
                                                     <connections>
@@ -661,6 +656,8 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="JRX-DP-CaB"/>
                     </view>
+                    <toolbarItems/>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="tableView" destination="oeQ-1s-GY4" id="xHv-vQ-crB"/>
                         <outlet property="titleLabel" destination="sbQ-UY-ced" id="pLE-Dh-onn"/>
@@ -676,7 +673,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Ag7-z4-wuP" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="kg9-Sj-4wa">
-                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -694,7 +691,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="9Fb-2i-mOa" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="mvQ-nf-YzS">
-                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="56"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -712,7 +709,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="NM5-Jg-Ym3" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Z6p-XA-BDb">
-                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="56"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>

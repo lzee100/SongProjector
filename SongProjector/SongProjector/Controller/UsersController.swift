@@ -90,14 +90,14 @@ class UsersController: ChurchBeamViewController, UITableViewDelegate, UITableVie
 		return cell
 	}
 	
-	func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+	func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
 		switch Section.for(indexPath.section) {
 		case .activeUsers: return .delete
 		case .inactiveUsers: return .none
 		}
 	}
 	
-	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
 		switch editingStyle {
 		case .delete:
 			indexPathDelete = indexPath
@@ -118,7 +118,7 @@ class UsersController: ChurchBeamViewController, UITableViewDelegate, UITableVie
 			case .OK(_):
 				if requesterID == UserSubmitter.requesterId, let indexPath = self.indexPathDelete {
 					self.activeUsers.remove(at: indexPath.row)
-					self.tableView.deleteRow(at: indexPath, with: UITableViewRowAnimation.left)
+					self.tableView.deleteRow(at: indexPath, with: UITableView.RowAnimation.left)
 				} else {
 					self.activeUsers = VUser.list().filter({ !$0.isMe })
 					CoreUser.predicates.append("isTemp", equals: false)

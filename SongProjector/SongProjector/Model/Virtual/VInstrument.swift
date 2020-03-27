@@ -40,7 +40,7 @@ class VInstrument: VEntity {
 	{
 		case isLoop
 		case resourcePath
-		case typeString
+		case typeString = "type"
 		case resourcePathAWS
 	}
 	
@@ -52,7 +52,6 @@ class VInstrument: VEntity {
 		var container = encoder.container(keyedBy: CodingKeysInstrument.self)
 		
 		try container.encode(isLoop, forKey: .isLoop)
-		try container.encode(resourcePath, forKey: .resourcePath)
 		try container.encode(typeString, forKey: .typeString)
 		try container.encode(resourcePathAWS, forKey: .resourcePathAWS)
 		
@@ -70,7 +69,6 @@ class VInstrument: VEntity {
 		let container = try decoder.container(keyedBy: CodingKeysInstrument.self)
 
 		isLoop = try Bool(truncating: (container.decodeIfPresent(Int16.self, forKey: .isLoop) ?? 0) as NSNumber)
-		resourcePath = try container.decodeIfPresent(String.self, forKey: .resourcePath)
 		typeString = try container.decodeIfPresent(String.self, forKey: .typeString)
 		resourcePathAWS = try container.decodeIfPresent(String.self, forKey: .resourcePathAWS)
 		

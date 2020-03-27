@@ -35,6 +35,7 @@ class Text: NSObject {
 		static let send = "Verstuur"
 		static let selectImage = "Selecteer afbeelding"
 		static let `import` = "Importeer"
+		static let upload = "Upload"
 	}
 	
 	struct Intro {
@@ -342,7 +343,18 @@ class Text: NSObject {
 	}
 	
 	struct UploadUniversalSong {
+		static let previewButtonTitle = "Preview"
 		static let title = "Upload universal liedje"
+		static let selecteerSheet = "Creeer/bewerk dia's"
+		static let showPreview = "Toon preview"
+		static let noSheets = " (Nog geen sheets)"
+		static let titlePlaceholder = "Niet voor zangdienst nummer"
+		static let noThemeWarning = "Geen thema beschikbaar. Maak eerst een theme aan."
+		static let new = "Nieuw"
+
+		
+
+		
 	}
 
 }

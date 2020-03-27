@@ -82,11 +82,11 @@ class TagsController: ChurchBeamViewController, UITableViewDataSource, UITableVi
 		TagSubmitter.submit(tags, requestMethod: .put)
 	}
 	
-	func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+	func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
 		return .delete
 	}
 	
-	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
 		editingInfo = (.delete, indexPath)
 		TagSubmitter.submit([tags[indexPath.row]], requestMethod: .delete)
 	}
@@ -154,7 +154,7 @@ class TagsController: ChurchBeamViewController, UITableViewDataSource, UITableVi
 	
 	@objc private func editTableView(_ gestureRecognizer: UIGestureRecognizer) {
 		if let gestureRecognizer = gestureRecognizer as? UILongPressGestureRecognizer {
-			if gestureRecognizer.state == UIGestureRecognizerState.began {
+			if gestureRecognizer.state == UIGestureRecognizer.State.began {
 				changeEditingState()
 			}
 		} // for double tab

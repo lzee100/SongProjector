@@ -277,7 +277,7 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 		tableViewClusters.setNeedsDisplay()
 		tableViewSheets.reloadData()
 		tableViewSheets.setNeedsDisplay()
-		if scroll, let row = songService.selectedSong?.sheets.index(where: { $0.id == songService.selectedSheet?.id }), tableViewSheets.numberOfRows(inSection: 0) - 1 >= row {
+		if scroll, let row = songService.selectedSong?.sheets.firstIndex(where: { $0.id == songService.selectedSheet?.id }), tableViewSheets.numberOfRows(inSection: 0) - 1 >= row {
 				self.tableViewSheets.scrollToRow(at: IndexPath(row: Int(row), section: 0), at: .middle, animated: true)
 		}
 	}
@@ -560,13 +560,13 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 		if let sheetDisplaySwipeViewCustomHeightConstraint = sheetDisplaySwipeViewCustomHeightConstraint {
 			sheetDisplaySwipeView.removeConstraint(sheetDisplaySwipeViewCustomHeightConstraint)
 		}
-		sheetDisplaySwipeViewCustomHeightConstraint = NSLayoutConstraint(item: sheetDisplaySwipeView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: (UIScreen.main.bounds.width - 20) * externalDisplayWindowRatio)
+		sheetDisplaySwipeViewCustomHeightConstraint = NSLayoutConstraint(item: sheetDisplaySwipeView!, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: (UIScreen.main.bounds.width - 20) * externalDisplayWindowRatio)
 		sheetDisplaySwipeView.addConstraint(sheetDisplaySwipeViewCustomHeightConstraint!)
 		
 		if let customSheetDisplayerRatioConstraint = customSheetDisplayerRatioConstraint {
 			sheetDisplayer.removeConstraint(customSheetDisplayerRatioConstraint)
 		}
-		customSheetDisplayerRatioConstraint = NSLayoutConstraint(item: sheetDisplayer, attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.equal, toItem: sheetDisplayer, attribute: NSLayoutAttribute.width, multiplier: externalDisplayWindowRatio, constant: 0)
+		customSheetDisplayerRatioConstraint = NSLayoutConstraint(item: sheetDisplayer!, attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: sheetDisplayer, attribute: NSLayoutConstraint.Attribute.width, multiplier: externalDisplayWindowRatio, constant: 0)
 		sheetDisplayer.addConstraint(customSheetDisplayerRatioConstraint!)
 		sheetDisplayer.layoutIfNeeded()
 		sheetDisplayer.layoutSubviews()
@@ -574,13 +574,13 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 		if let customSheetDisplayerPreviousRatioConstraint = customSheetDisplayerPreviousRatioConstraint {
 			sheetDisplayer.removeConstraint(customSheetDisplayerPreviousRatioConstraint)
 		}
-		customSheetDisplayerPreviousRatioConstraint = NSLayoutConstraint(item: sheetDisplayerPrevious, attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.equal, toItem: sheetDisplayerPrevious, attribute: NSLayoutAttribute.width, multiplier: externalDisplayWindowRatio, constant: 0)
+		customSheetDisplayerPreviousRatioConstraint = NSLayoutConstraint(item: sheetDisplayerPrevious!, attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: sheetDisplayerPrevious, attribute: NSLayoutConstraint.Attribute.width, multiplier: externalDisplayWindowRatio, constant: 0)
 		sheetDisplayerPrevious.addConstraint(customSheetDisplayerPreviousRatioConstraint!)
 		
 		if let customSheetDisplayerNextRatioConstraint = customSheetDisplayerNextRatioConstraint {
 			sheetDisplayer.removeConstraint(customSheetDisplayerNextRatioConstraint)
 		}
-		customSheetDisplayerNextRatioConstraint = NSLayoutConstraint(item: sheetDisplayerNext, attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.equal, toItem: sheetDisplayerNext, attribute: NSLayoutAttribute.width, multiplier: externalDisplayWindowRatio, constant: 0)
+		customSheetDisplayerNextRatioConstraint = NSLayoutConstraint(item: sheetDisplayerNext!, attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: sheetDisplayerNext, attribute: NSLayoutConstraint.Attribute.width, multiplier: externalDisplayWindowRatio, constant: 0)
 		sheetDisplayerNext.addConstraint(customSheetDisplayerNextRatioConstraint!)
 		
 		view.layoutIfNeeded()

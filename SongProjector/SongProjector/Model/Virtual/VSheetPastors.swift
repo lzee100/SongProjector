@@ -42,7 +42,6 @@ class VSheetPastors: VSheet, SheetMetaType {
 		case imagePath
 		case thumbnailPath
 		case imagePathAWS
-		case thumbnailPathAWS
 	}
 	
 	
@@ -55,7 +54,6 @@ class VSheetPastors: VSheet, SheetMetaType {
 		try container.encode(imagePath, forKey: .imagePath)
 		try container.encode(thumbnailPath, forKey: .thumbnailPath)
 		try container.encode(imagePathAWS, forKey: .imagePathAWS)
-		try container.encode(thumbnailPathAWS, forKey: .thumbnailPathAWS)
 		try super.encode(to: encoder)
 	}
 	
@@ -73,7 +71,6 @@ class VSheetPastors: VSheet, SheetMetaType {
 		imagePath = try container.decodeIfPresent(String.self, forKey: .imagePath)
 		thumbnailPath = try container.decodeIfPresent(String.self, forKey: .thumbnailPath)
 		imagePathAWS = try container.decodeIfPresent(String.self, forKey: .imagePathAWS)
-		thumbnailPathAWS = try container.decodeIfPresent(String.self, forKey: .thumbnailPathAWS)
 		
 		try super.initialization(decoder: decoder)
 		
@@ -100,8 +97,11 @@ class VSheetPastors: VSheet, SheetMetaType {
 			sheet.content = self.content
 			sheet.imagePath = self.imagePath
 			sheet.thumbnailPath = self.thumbnailPath
+			if sheet.imagePathAWS != imagePathAWS {
+				sheet.imagePath = nil
+				sheet.thumbnailPath = nil
+			}
 			sheet.imagePathAWS = self.imagePathAWS
-			sheet.thumbnailPathAWS = self.thumbnailPathAWS
 		}
 	}
 	
@@ -112,7 +112,6 @@ class VSheetPastors: VSheet, SheetMetaType {
 			imagePath = sheet.imagePath
 			thumbnailPath = sheet.thumbnailPath
 			imagePathAWS = sheet.imagePathAWS
-			thumbnailPathAWS = sheet.thumbnailPathAWS
 		}
 	}
 	
