@@ -12,7 +12,7 @@ protocol NewOrEditThemeControllerDelegate {
 	func hasNewTheme()
 }
 
-class NewOrEditThemeController: UIViewController, UITextFieldDelegate {
+class NewOrEditThemeController: ChurchBeamViewController, UITextFieldDelegate {
 
 	@IBOutlet var pageDescription: UILabel!
 	@IBOutlet var inputField: UITextField!
@@ -30,21 +30,25 @@ class NewOrEditThemeController: UIViewController, UITextFieldDelegate {
 	
 	override func viewDidLoad() {
 		inputField.delegate = self
-		pageDescription.text = Text.NewTheme.pageDescription
+		pageDescription.text = AppText.NewTheme.pageDescription
 		errorDescription.text = ""
 		errorDescription.textColor = .errorColor
-		saveButton.setTitle(Text.Actions.add, for: .normal)
+		saveButton.setTitle(AppText.Actions.add, for: .normal)
 	}
 	
 	@IBAction func saveButtonPressed(_ sender: UIButton) {
 		if inputField.text != "" {
-			let theme = CoreTheme.createEntity()
+            let theme: Theme = DataFetcher().createEntity(moc: moc)
 			theme.title = inputField.text
-			let _ = CoreTheme.saveContext()
-			delegate?.hasNewTheme()
-			dismiss(animated: true)
+            do {
+                try moc.save()
+                delegate?.hasNewTheme()
+                dismiss(animated: true)
+            } catch {
+                show(message: error.localizedDescription)
+            }
 		} else {
-			errorDescription.text = Text.NewTheme.errorMessage
+			errorDescription.text = AppText.NewTheme.errorMessage
 		}
 	}
 	

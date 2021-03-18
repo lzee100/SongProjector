@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina4_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MixerView" customModule="SongProjector" customModuleProvider="target">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MixerView" customModule="ChurchBeam" customModuleProvider="target">
             <connections>
                 <outlet property="airplaySliderContainer" destination="z81-VJ-ObN" id="CuE-00-aI1"/>
                 <outlet property="bassGuitarControl" destination="sDG-4B-4Br" id="RB1-rH-Oq0"/>
@@ -53,7 +50,7 @@
                             <rect key="frame" x="0.0" y="0.0" width="91.5" height="213"/>
                             <subviews>
                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Piano" translatesAutoresizingMaskIntoConstraints="NO" id="gkp-Kl-ovy">
-                                    <rect key="frame" x="31" y="183" width="30" height="30"/>
+                                    <rect key="frame" x="30.5" y="183" width="30" height="30"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="30" id="Ul4-t4-4Zd"/>
                                         <constraint firstAttribute="width" constant="30" id="h4p-g0-DaL"/>
@@ -76,7 +73,7 @@
                             <rect key="frame" x="91.5" y="0.0" width="91" height="213"/>
                             <subviews>
                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Guitar" translatesAutoresizingMaskIntoConstraints="NO" id="YOA-Yh-68o">
-                                    <rect key="frame" x="31" y="183" width="30" height="30"/>
+                                    <rect key="frame" x="30.5" y="183" width="30" height="30"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="30" id="SUa-ye-gFa"/>
                                         <constraint firstAttribute="height" constant="30" id="cBs-98-cCg"/>
@@ -122,7 +119,7 @@
                             <rect key="frame" x="274" y="0.0" width="91" height="213"/>
                             <subviews>
                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Drums" translatesAutoresizingMaskIntoConstraints="NO" id="Rpf-c8-9zS">
-                                    <rect key="frame" x="31" y="183" width="30" height="30"/>
+                                    <rect key="frame" x="30.5" y="183" width="30" height="30"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="30" id="2cS-Fa-Fl0"/>
                                         <constraint firstAttribute="width" constant="30" id="M1K-Qx-CA7"/>
@@ -144,6 +141,7 @@
                     </subviews>
                 </stackView>
             </subviews>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <constraints>
                 <constraint firstItem="94g-Vz-zaQ" firstAttribute="bottom" secondItem="vUN-kp-3ea" secondAttribute="bottom" id="2jW-1e-9wG"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="94g-Vz-zaQ" secondAttribute="trailing" constant="20" id="Sy1-Sh-q0S"/>
@@ -154,14 +152,27 @@
                 <constraint firstItem="94g-Vz-zaQ" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="20" id="vba-J7-hGw"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <point key="canvasLocation" x="34.5" y="-145"/>
         </view>
     </objects>
+    <designables>
+        <designable name="Npb-i7-n2q">
+            <size key="intrinsicContentSize" width="30" height="-1"/>
+        </designable>
+        <designable name="mme-Ql-Hy0">
+            <size key="intrinsicContentSize" width="30" height="-1"/>
+        </designable>
+        <designable name="rKt-BZ-3kk">
+            <size key="intrinsicContentSize" width="30" height="-1"/>
+        </designable>
+        <designable name="sDG-4B-4Br">
+            <size key="intrinsicContentSize" width="30" height="-1"/>
+        </designable>
+    </designables>
     <resources>
-        <image name="BassGuitar" width="267" height="267"/>
-        <image name="Drums" width="267" height="267"/>
-        <image name="Guitar" width="533" height="533"/>
-        <image name="Piano" width="267" height="267"/>
+        <image name="BassGuitar" width="800" height="800"/>
+        <image name="Drums" width="800" height="800"/>
+        <image name="Guitar" width="800" height="800"/>
+        <image name="Piano" width="802" height="802"/>
     </resources>
 </document>

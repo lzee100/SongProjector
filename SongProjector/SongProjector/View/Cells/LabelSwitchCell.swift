@@ -21,20 +21,16 @@ class LabelSwitchCell: ChurchBeamCell, ThemeImplementation, SheetImplementation 
 	var sheet: VSheet?
 	var sheetAttribute: SheetAttribute?
 	var valueDidChange: ((ChurchBeamCell) -> Void)?
-	
-	var switchThumbNailColor: UIColor {
-		return self.switch.isOn ? isThemeLight ? .white : .black : isThemeLight ? .white : UIColor(hex: "FF8324")!
-	}
-	var switchBackgroundColor: UIColor {
-		return self.switch.isOn ? isThemeLight ? .blue : UIColor(hex: "FF8324")! : isThemeLight ? .white : .darkGray
-	}
-
+    
 	static let identifier = "LabelSwitchCell"
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.switch.thumbTintColor = .whiteColor
+    }
 	
 	override func awakeFromNib() {
 		self.switch.isOn = false
-		self.switch.thumbTintColor = switchThumbNailColor
-		self.switch.onTintColor = switchBackgroundColor
 	}
 	
 	static func create(id: String, description: String, initialValueIsOn: Bool = false) -> LabelSwitchCell {
@@ -94,7 +90,7 @@ class LabelSwitchCell: ChurchBeamCell, ThemeImplementation, SheetImplementation 
 		}
 		if let sheetAttribute = sheetAttribute {
 			switch sheetAttribute {
-			case .SheetImageHasBorder: (sheet as! SheetTitleImageEntity).imageHasBorder = self.switch.isOn
+			case .SheetImageHasBorder: (sheet as! VSheetTitleImage).imageHasBorder = self.switch.isOn
 			default: break
 			}
 		}
@@ -118,17 +114,17 @@ class LabelSwitchCell: ChurchBeamCell, ThemeImplementation, SheetImplementation 
 		}
 		if let sheetAttribute = sheetAttribute {
 			switch sheetAttribute {
-			case .SheetImageHasBorder: self.switch.isOn = (sheet as! SheetTitleImageEntity).imageHasBorder
+			case .SheetImageHasBorder: self.switch.isOn = (sheet as! VSheetTitleImage).imageHasBorder
 			default: break
 			}
 		}
-		self.switch.thumbTintColor = switchThumbNailColor
-		self.switch.onTintColor = switchBackgroundColor
+//		self.switch.thumbTintColor = switchThumbNailColor
+//		self.switch.onTintColor = switchBackgroundColor
 	}
 	
 	@IBAction func valueChanged(_ sender: UISwitch) {
-		self.switch.thumbTintColor = switchThumbNailColor
-		self.switch.onTintColor = switchBackgroundColor
+//		self.switch.thumbTintColor = switchThumbNailColor
+//		self.switch.onTintColor = switchBackgroundColor
 		applyCellValueToTheme()
 		valueDidChange?(self)
 	}

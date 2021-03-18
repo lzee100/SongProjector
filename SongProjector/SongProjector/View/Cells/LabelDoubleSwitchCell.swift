@@ -14,6 +14,8 @@ protocol LabelDoubleSwitchDelegate {
 
 class LabelDoubleSwitchCell: ChurchBeamCell, DynamicHeightCell, ThemeImplementation {
 	
+    static let identifier = "LabelDoubleSwitchCell"
+
 	@IBOutlet var descriptionSwitchOne: UILabel!
 	@IBOutlet var switchOne: UISwitch!
 	@IBOutlet var containerView: UIView!
@@ -21,7 +23,7 @@ class LabelDoubleSwitchCell: ChurchBeamCell, DynamicHeightCell, ThemeImplementat
 	@IBOutlet var descriptionSwitchTwo: UILabel!
 	@IBOutlet var switchTwo: UISwitch!
 	
-	@IBOutlet var heightContainerConstraint: NSLayoutConstraint!
+    @IBOutlet var subContainerTopConstraint: NSLayoutConstraint!
 	@IBOutlet var heightImageSwitchTwoConstraint: NSLayoutConstraint!
 	@IBOutlet var heightDescriptionSwitchTwoConstraint: NSLayoutConstraint!
 	@IBOutlet var heightSwitchTwoConstraint: NSLayoutConstraint!
@@ -37,28 +39,17 @@ class LabelDoubleSwitchCell: ChurchBeamCell, DynamicHeightCell, ThemeImplementat
 	var preferredHeight: CGFloat {
 		return switchOne.isOn ? 120 : 60
 	}
-	
-	private var switchThumbNailColorOne: UIColor {
-		return self.switchOne.isOn ? isThemeLight ? .white : .black : isThemeLight ? .white : UIColor(hex: "FF8324")!
-	}
-	private var switchBackgroundColorOne: UIColor {
-		return self.switchOne.isOn ? isThemeLight ? .blue : UIColor(hex: "FF8324")! : isThemeLight ? .white : .darkGray
-	}
-	private var switchThumbNailColorTwo: UIColor {
-		return self.switchTwo.isOn ? isThemeLight ? .white : .black : isThemeLight ? .white : UIColor(hex: "FF8324")!
-	}
-	private var switchBackgroundColorTwo: UIColor {
-		return self.switchTwo.isOn ? isThemeLight ? .blue : UIColor(hex: "FF8324")! : isThemeLight ? .white : .darkGray
-	}
-	
-	static let identifier = "LabelDoubleSwitchCell"
-	
+    	
 	override func awakeFromNib() {
-		imageSwitchTwo.tintColor = themeHighlighted
+        imageSwitchTwo.tintColor = .softBlueGrey
 		imageSwitchTwo.image = Cells.arrowSub
 		switchOne.isOn = false
 		switchTwo.isOn = false
-		setSwitchColors()
+        switchOne.thumbTintColor = .whiteColor
+        switchTwo.thumbTintColor = .whiteColor
+        heightImageSwitchTwoConstraint.constant = 20
+        heightDescriptionSwitchTwoConstraint.constant = 21
+        heightSwitchTwoConstraint.constant = 31
 		showSecondSwitch()
 	}
 
@@ -71,8 +62,8 @@ class LabelDoubleSwitchCell: ChurchBeamCell, DynamicHeightCell, ThemeImplementat
 		view.imageSwitchTwo.tintColor = themeHighlighted
 		view.imageSwitchTwo.image = Cells.arrowSub
 		view.switchOne.isOn = false
-		view.switchOne.thumbTintColor = isThemeLight ? .white : UIColor(hex: "FF8324")
-		view.switchTwo.thumbTintColor = isThemeLight ? .white : UIColor(hex: "FF8324")
+		view.switchOne.thumbTintColor = isThemeLight ? .whiteColor : UIColor(hex: "FF8324")
+		view.switchTwo.thumbTintColor = isThemeLight ? .whiteColor : UIColor(hex: "FF8324")
 		view.switchTwo.isOn = false
 		if !isThemeLight {
 			view.switchTwo.tintColor = .primary
@@ -101,34 +92,23 @@ class LabelDoubleSwitchCell: ChurchBeamCell, DynamicHeightCell, ThemeImplementat
 	}
 	
 	func showSecondSwitch() {
-		if switchOne.isOn {
-			heightContainerConstraint.constant = 60
-			containerView.isHidden = false
-			heightImageSwitchTwoConstraint.constant = 20
-			heightDescriptionSwitchTwoConstraint.constant = 21
-			heightSwitchTwoConstraint.constant = 31
-		} else {
-			containerView.isHidden = true
-			heightContainerConstraint.constant = 1
-			heightImageSwitchTwoConstraint.constant = 1
-			heightDescriptionSwitchTwoConstraint.constant = 1
-			heightSwitchTwoConstraint.constant = 1
-		}
-		
+        UIView.animate(withDuration: 0.4) {
+            self.containerView.alpha = self.switchOne.isOn ? 1 : 0
+            self.subContainerTopConstraint.constant = self.switchOne.isOn ? self.bounds.height : 0
+        }
 	}
 	
 	func apply(theme: VTheme, themeAttribute: ThemeAttribute) {
 		self.sheetTheme = theme
 		self.themeAttribute = themeAttribute
 		self.descriptionSwitchOne.text = themeAttribute.description
-		self.descriptionSwitchTwo.text = Text.NewTheme.descriptionPositionEmptySheet
+		self.descriptionSwitchTwo.text = AppText.NewTheme.descriptionPositionEmptySheet
 		self.applyValueToCell()
 	}
 	
 	func applyValueToCell() {
 		switchOne.isOn = sheetTheme?.hasEmptySheet ?? false
 		switchTwo.isOn = sheetTheme?.isEmptySheetFirst ?? false
-		setSwitchColors()
 	}
 	
 	func applyCellValueToTheme() {
@@ -150,15 +130,7 @@ class LabelDoubleSwitchCell: ChurchBeamCell, DynamicHeightCell, ThemeImplementat
 		}
 	}
 	
-	private func setSwitchColors() {
-		switchOne.thumbTintColor = switchThumbNailColorOne
-		switchTwo.thumbTintColor = switchThumbNailColorTwo
-		switchOne.onTintColor = switchBackgroundColorOne
-		switchTwo.onTintColor = switchBackgroundColorTwo
-	}
-	
 	@IBAction func switchOneChanged(_ sender: UISwitch) {
-		setSwitchColors()
 		if !switchOne.isOn {
 			switchTwo.isOn = false
 			switchTwoChanged(switchTwo)
@@ -170,7 +142,6 @@ class LabelDoubleSwitchCell: ChurchBeamCell, DynamicHeightCell, ThemeImplementat
 	}
 	
 	@IBAction func switchTwoChanged(_ sender: UISwitch) {
-		setSwitchColors()
 		applyCellValueToTheme()
 		valueDidChange?(self)
 	}

@@ -34,6 +34,20 @@ class ImportBibleController: UIViewController {
 	var totalChapters = 0 {
 		didSet { updatePercentage(totalChapters) }
 	}
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        let height = splitViewController?.view.bounds.height ?? self.view.bounds.height
+        var width = UIScreen.main.bounds.width
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            width -= (splitViewController?.viewControllers.first?.view.bounds.width ?? 0)
+            navigationController?.view.frame = CGRect(x: (splitViewController?.viewControllers.first?.view.bounds.width ?? 0), y: 0, width: width, height: height)
+            self.view.frame = CGRect(x: 0, y: 0, width: width, height: height)
+        } else {
+            navigationController?.view.frame = CGRect(x: 0, y: 0, width: width, height: height)
+            self.view.frame = CGRect(x: 0, y: 0, width: width, height: height)
+        }
+    }
 	
 	override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,20 +57,20 @@ class ImportBibleController: UIViewController {
 	private func setup() {
 				
 		view.backgroundColor = themeWhiteBlackBackground
-		descriptionLabel.text = Text.Import.description
-		descriptionLabel.textColor = themeWhiteBlackTextColor
-		textView.textColor = themeWhiteBlackTextColor
-		importButton.title = Text.Actions.import
+		descriptionLabel.text = AppText.Import.description
+		descriptionLabel.textColor = .blackColor
+		textView.textColor = .blackColor
+		importButton.title = AppText.Actions.import
 		
 		containerView.layer.borderColor = themeHighlighted.cgColor
 		containerView.backgroundColor = themeWhiteBlackBackground
 		
-		percentageLabel.textColor = themeWhiteBlackTextColor
+		percentageLabel.textColor = .blackColor
 		progressBar.tintColor = themeHighlighted
 		progressBar.progress = Float(0)
 		cancelButton.backgroundColor = themeWhiteBlackBackground
 		cancelButton.tintColor = themeHighlighted
-		cancelButton.setTitle(Text.Actions.cancel, for: .normal)
+		cancelButton.setTitle(AppText.Actions.cancel, for: .normal)
 		activityIndicator.startAnimating()
 		activityIndicator.tintColor = themeHighlighted
 		activityIndicator.tintColorDidChange()
@@ -112,11 +126,11 @@ class ImportBibleController: UIViewController {
 //		CoreEntity.getTemp = true
 ////		CoreEntity.getEntities().forEach({ $0.delete(false) })
 //		CoreEntity.saveContext(fireNotification: false)
-		
+		let mocBackground = newMOCBackground
 		mocBackground.perform {
 			
-			var hasNextBook = true
-			var hasNextChapter = true
+//			var hasNextBook = true
+//			var hasNextChapter = true
 			var bookNumber = 0
 			var chapterNumber: Int16 = 1
 			var versNumber: Int16 = 1
@@ -138,7 +152,7 @@ class ImportBibleController: UIViewController {
 			// find book range
 			while let bookRange = text.range(of: "xxx"), !self.isCancelled {
 				
-				let book = CoreBook.createEntity()
+                let book: Book = DataFetcher().createEntity(moc: mocBackground)
 				book.deleteDate = nil
 				book.name = BibleIndex.getBookFor(index: bookNumber)
 				book.title = book.name
@@ -154,7 +168,7 @@ class ImportBibleController: UIViewController {
 				while let chapterRange = bookText.range(of: "hhh"), !self.isCancelled {
 					
 					// prepare chapter
-					let chapter = CoreChapter.createEntity()
+                    let chapter: Chapter = DataFetcher().createEntity(moc: mocBackground)
 					chapter.deleteDate = nil
 					chapter.number = chapterNumber
 					chapter.title = String(chapterNumber)
@@ -173,7 +187,7 @@ class ImportBibleController: UIViewController {
 						let rangeVers = start..<range.lowerBound
 						let rangeRemove = start..<range.upperBound
 						
-						let vers = CoreVers.createEntity()
+                        let vers: Vers = DataFetcher().createEntity(moc: mocBackground)
 						vers.deleteDate = nil
 						vers.number = versNumber
 						vers.title = String(versNumber)

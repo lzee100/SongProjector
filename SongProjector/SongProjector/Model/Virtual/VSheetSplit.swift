@@ -13,20 +13,6 @@ class VSheetSplit: VSheet, SheetMetaType {
 	
 	static let type: SheetType = .SheetSplit
 	
-	class func list(sortOn attributeName: String? = nil, ascending: Bool? = nil) -> [VSheetSplit] {
-		if let attributeName = attributeName, let ascending = ascending {
-			CoreSheetSplit.setSortDescriptor(attributeName: attributeName, ascending: ascending)
-		}
-		return CoreSheetSplit.getEntities().map({ VSheetSplit(sheet: $0) })
-	}
-	
-	override class func single(with id: Int64?) -> VSheetSplit? {
-		if let id = id, let sheet = CoreSheetSplit.getEntitieWith(id: id) {
-			return VSheetSplit(sheet: sheet)
-		}
-		return nil
-	}
-	
 	var textLeft: String?
 	var textRight: String?
 
@@ -84,33 +70,27 @@ class VSheetSplit: VSheet, SheetMetaType {
 		}
 	}
 	
-	override func getPropertiesFrom(entity: Entity) {
-		super.getPropertiesFrom(entity: entity)
+    override func getPropertiesFrom(entity: Entity, context: NSManagedObjectContext) {
+        super.getPropertiesFrom(entity: entity, context: context)
 		if let sheet = entity as? SheetSplitEntity {
 			self.textLeft = sheet.textLeft
 			self.textRight = sheet.textRight
 		}
 	}
 	
-	convenience init(sheet: SheetSplitEntity) {
+	convenience init(sheet: SheetSplitEntity, context: NSManagedObjectContext) {
 		self.init()
-		getPropertiesFrom(entity: sheet)
+		getPropertiesFrom(entity: sheet, context: context)
 	}
 	
-	override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-		
-		CoreSheetSplit.managedObjectContext = context
-		if let storedEntity = CoreSheetSplit.getEntitieWith(id: id) {
-			CoreSheetSplit.managedObjectContext = moc
-			setPropertiesTo(entity: storedEntity, context: context)
-			return storedEntity
-		} else {
-			CoreSheetSplit.managedObjectContext = context
-			let newEntity = CoreSheetSplit.createEntity(fireNotification: false)
-			CoreSheetSplit.managedObjectContext = moc
-			setPropertiesTo(entity: newEntity, context: context)
-			return newEntity
-		}
-
-	}
+    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
+        if let entity: SheetSplitEntity = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
+            setPropertiesTo(entity: entity, context: context)
+            return entity
+        } else {
+            let entity: SheetSplitEntity = DataFetcher().createEntity(moc: context)
+            setPropertiesTo(entity: entity, context: context)
+            return entity
+        }
+    }
 }

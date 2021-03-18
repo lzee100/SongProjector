@@ -28,26 +28,20 @@ class MoreController: UITableViewController, UISplitViewControllerDelegate {
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		features.forEach({ (arg) in
-			let (_, controller) = arg
-			splitViewController?.viewControllers.append(controller)
-		})
+        navigationController?.navigationBar.barTintColor = .whiteColor
+        view.backgroundColor = .whiteColor
 		splitViewController?.delegate = self
-		splitViewController?.preferredDisplayMode = .allVisible
-		navigationItem.leftBarButtonItem =
-			splitViewController?.displayModeButtonItem
+        splitViewController?.preferredDisplayMode = .oneBesideSecondary
 		navigationItem.leftItemsSupplementBackButton = true
-
-
 		setup()
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
-		setup()
+		update()
 	}
 	
-	
+	 
 	
 	// MARK: - Table View
 	
@@ -60,25 +54,17 @@ class MoreController: UITableViewController, UISplitViewControllerDelegate {
 	}
 	
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		let cell = tableView.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath)
-		if let cell = cell as? BasicCell {
-			let feature = features[indexPath.row].feature
-			cell.setup(title: feature.titleForDisplay, icon: feature.image.normal)
-		}
+        let cell = tableView.dequeueReusableCell(withIdentifier: MenuCell.identifier, for: indexPath) as! MenuCell
+        cell.setupWith(features[indexPath.row].feature)
 		return cell
 	}
 	
 	override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-		return 60
+		return 70
 	}
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		let controller = features[indexPath.row].controller
-		controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
-		controller.navigationItem.leftItemsSupplementBackButton = true
-		
-		controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
-		controller.navigationItem.leftItemsSupplementBackButton = true
+		let controller = features[indexPath.row].controller		
 		
 		let navController: UINavigationController
 		if let controller = controller as? UINavigationController {
@@ -86,7 +72,6 @@ class MoreController: UITableViewController, UISplitViewControllerDelegate {
 		} else {
 			navController = UINavigationController.init(rootViewController: controller)
 		}
-
 		showDetailViewController(navController, sender: self)
 		
 	}
@@ -97,10 +82,8 @@ class MoreController: UITableViewController, UISplitViewControllerDelegate {
 	}
 	
 	private func setup() {
-		tableView.register(cell: Cells.basicCellid)
-		title = Text.More.title
-		emptyView.backgroundColor = themeWhiteBlackBackground
-		splitViewController?.view.backgroundColor = .black
+        tableView.register(cell: MenuCell.identifier)
+		title = AppText.More.title
 	}
 	
 	private func update() {

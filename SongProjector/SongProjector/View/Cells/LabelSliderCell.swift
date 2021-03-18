@@ -44,9 +44,9 @@ class LabelSliderCell: ChurchBeamCell, ThemeImplementation, DynamicHeightCell {
 		slider.maximumValue = 100
 		slider.value = 100
 		slider.tintColor = themeHighlighted
-		descriptionTitle.textColor = themeWhiteBlackTextColor
-		percentagePreview.textColor = themeWhiteBlackTextColor
-		viewBeforeSlider.backgroundColor = themeWhiteBlackBackground
+		descriptionTitle.textColor = .blackColor
+		percentagePreview.textColor = .blackColor
+        viewBeforeSlider.backgroundColor = .grey0
 		setPreviewWith(value: slider.value)
 		slider.addTarget(self, action: #selector(sliderValueChanged), for: .valueChanged)
 	}
@@ -58,8 +58,8 @@ class LabelSliderCell: ChurchBeamCell, ThemeImplementation, DynamicHeightCell {
 		view.slider.maximumValue = 100
 		view.slider.value = initialValue
 		view.slider.tintColor = themeHighlighted
-		view.descriptionTitle.textColor = themeWhiteBlackTextColor
-		view.percentagePreview.textColor = themeWhiteBlackTextColor
+		view.descriptionTitle.textColor = .blackColor
+		view.percentagePreview.textColor = .blackColor
 		view.viewBeforeSlider.backgroundColor = themeWhiteBlackBackground
 		return view
 	}

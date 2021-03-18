@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import FirebaseAuth
 
-class BibleStudyIphoneController: UIViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, BibleStudyGeneratorIphoneDelegate {
+class BibleStudyIphoneController: ChurchBeamViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, BibleStudyGeneratorIphoneDelegate {
 	
 	
 
@@ -36,18 +37,37 @@ class BibleStudyIphoneController: UIViewController, UITableViewDelegate, UITable
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		update()
+        becomeFirstResponder()
 	}
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        resignFirstResponder()
+    }
+    
+    override var canBecomeFirstResponder: Bool {
+        return true
+    }
 
-	
+    // Enable detection of shake motion
+    override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+        if motion == .motionShake {
+            do {
+                try Auth.auth().signOut()
+            } catch {
+                print(error)
+            }
+        }
+    }
 
     // MARK: - Navigation
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 		if segue.identifier == "SheetsPickerMenuSegue" {
-			let controller = segue.destination as! SheetPickerMenuController
-			controller.didCreateSheet = didCreate(sheet:)
-			controller.bibleStudyGeneratorIphoneDelegate = self
-			controller.selectedTheme = selectedTheme
+//			let controller = segue.destination as! SheetPickerMenuController
+//			controller.didCreateSheet = didCreate(sheet:)
+//			controller.bibleStudyGeneratorIphoneDelegate = self
+//			controller.selectedTheme = selectedTheme
 		}
     }
 	
@@ -159,11 +179,15 @@ class BibleStudyIphoneController: UIViewController, UITableViewDelegate, UITable
 		update()
 	}
 	
-	private func update() {
-		themes = VTheme.list(sortOn: "position", ascending: true)
-		collectionViewThemes.reloadData()
-		collectionViewSheets.reloadData()
-		isFirstTime = true
+    override func update() {
+        moc.perform {
+            let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "position", ascending: true))
+            self.themes = themes.map({ VTheme(theme: $0, context: moc) })
+            self.collectionViewThemes.reloadData()
+            self.collectionViewSheets.reloadData()
+            self.isFirstTime = true
+            self.collectionViewThemes.reloadData()
+        }
 	}
 	
 	

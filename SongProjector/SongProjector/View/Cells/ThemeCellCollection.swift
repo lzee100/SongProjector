@@ -10,8 +10,8 @@ import UIKit
 
 class ThemeCellCollection: UICollectionViewCell {
 	
-	@IBOutlet var icon: UIImageView!
-	@IBOutlet var title: UILabel!
+    @IBOutlet var tagBackgroundView: UIView!
+    @IBOutlet var title: UILabel!
 	
 	var preferredWidth: CGFloat {
 		title.setNeedsDisplay()
@@ -27,15 +27,10 @@ class ThemeCellCollection: UICollectionViewCell {
 	}
 	
 	private func update() {
+        tagBackgroundView.layer.cornerRadius = 5
 		title.text = themeName ?? ""
-		if isSelectedCell {
-			title.textColor = themeHighlighted
-			icon.tintColor = themeHighlighted
-		} else {
-			title.textColor = themeWhiteBlackTextColor
-			icon.tintColor = themeWhiteBlackTextColor
-		}
-		icon.image = isSelectedCell ? Cells.bulletFilled : Cells.bulletOpen
+        tagBackgroundView.backgroundColor = isSelectedCell ? .softBlueGrey : .grey0
+        title.textColor = isSelectedCell ? .white : .blackColor
 	}
 
 	

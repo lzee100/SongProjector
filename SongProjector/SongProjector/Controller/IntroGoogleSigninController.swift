@@ -48,10 +48,10 @@ class IntroGoogleSigninController: ChurchBeamViewController, UITableViewDelegate
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		view.backgroundColor = themeWhiteBlackBackground
-		titleLabel.textColor = themeWhiteBlackTextColor
-		descriptionLabel.textColor = themeWhiteBlackTextColor
-		titleLabel.text = Text.Intro.GoogleSignIn
-		descriptionLabel.text = Text.Intro.GoogleSignInDescription
+		titleLabel.textColor = .blackColor
+		descriptionLabel.textColor = .blackColor
+		titleLabel.text = AppText.Intro.GoogleSignIn
+		descriptionLabel.text = AppText.Intro.GoogleSignInDescription
 		tableView.register(cell: GoogleCell.identifier)
 	}
 	
@@ -70,9 +70,9 @@ class IntroGoogleSigninController: ChurchBeamViewController, UITableViewDelegate
 		let cell = tableView.dequeueReusableCell(withIdentifier: row.identifier)!
 		if let cell = cell as? IntroGoogleSigninCell {
 			if row == .SignInGoogle {
-				cell.descriptionLabel.text = Text.Intro.ClickOnButtonToLogin
+				cell.descriptionLabel.text = AppText.Intro.ClickOnButtonToLogin
 			} else {
-				cell.descriptionLabel.text = Text.Intro.NewAccountOnGoogleAccount
+				cell.descriptionLabel.text = AppText.Intro.NewAccountOnGoogleAccount
 			}
 		}
 		return cell
@@ -86,8 +86,8 @@ class IntroGoogleSigninController: ChurchBeamViewController, UITableViewDelegate
 	}
 	
 	func showInstructions(cell: GoogleCell) {
-		print("instructions google cell")
-	}
+
+    }
 	
 	func didSuccesfullyLogin(googleIdToken: String, userName: String) {
 		self.performSegue(withIdentifier: "presentSignUpOrganisationController", sender: self)

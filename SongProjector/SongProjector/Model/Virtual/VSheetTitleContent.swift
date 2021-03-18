@@ -12,27 +12,14 @@ import CoreData
 public class VSheetTitleContent: VSheet, SheetMetaType {
 	
 	static var type: SheetType = .SheetTitleContent
-	
-	class func list(sortOn attributeName: String? = nil, ascending: Bool? = nil) -> [VSheetTitleContent] {
-		if let attributeName = attributeName, let ascending = ascending {
-			CoreSheetTitleContent.setSortDescriptor(attributeName: attributeName, ascending: ascending)
-		}
-		return CoreSheetTitleContent.getEntities().map({ VSheetTitleContent(sheet: $0) })
-	}
-	
-	override class func single(with id: Int64?) -> VSheet? {
-		if let id = id, let sheet = CoreSheetTitleContent.getEntitieWith(id: id) {
-			return VSheetTitleContent(sheet: sheet)
-		}
-		return nil
-	}
-	
-	
+    
 	var content: String?
+    var isBibleVers = false
 	
 	enum CodingKeysTitleContent:String, CodingKey
 	{
 		case content
+        case isBibleVers
 	}
 	
 	
@@ -42,6 +29,7 @@ public class VSheetTitleContent: VSheet, SheetMetaType {
 	public override func initialization(decoder: Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeysTitleContent.self)
 		content = try container.decodeIfPresent(String.self, forKey: .content)
+        isBibleVers = try container.decodeIfPresent(Bool.self, forKey: .isBibleVers) ?? false
 	}
 	
 	
@@ -51,7 +39,7 @@ public class VSheetTitleContent: VSheet, SheetMetaType {
 	override public func encode(to encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeysTitleContent.self)
 		try container.encode(content, forKey: .content)
-		
+        try container.encode(isBibleVers, forKey: .isBibleVers)
 		try super.encode(to: encoder)
 	}
 	
@@ -65,7 +53,8 @@ public class VSheetTitleContent: VSheet, SheetMetaType {
 		
 		let container = try decoder.container(keyedBy: CodingKeysTitleContent.self)
 		content = try container.decodeIfPresent(String.self, forKey: .content)
-		
+        isBibleVers = try container.decodeIfPresent(Bool.self, forKey: .isBibleVers) ?? false
+
 		try super.initialization(decoder: decoder)
 		
 	}
@@ -77,13 +66,15 @@ public class VSheetTitleContent: VSheet, SheetMetaType {
 	public override func copy(with zone: NSZone? = nil) -> Any {
 		let copy = super.copy(with: zone) as! VSheetTitleContent
 		copy.content = content
+        copy.isBibleVers = isBibleVers
 		return copy
 	}
 	
-	override func getPropertiesFrom(entity: Entity) {
-		super.getPropertiesFrom(entity: entity)
+    override func getPropertiesFrom(entity: Entity, context: NSManagedObjectContext) {
+        super.getPropertiesFrom(entity: entity, context: context)
 		if let sheet = entity as? SheetTitleContentEntity {
 			content = sheet.content
+            isBibleVers = sheet.isBibleVers
 		}
 	}
 		
@@ -91,32 +82,24 @@ public class VSheetTitleContent: VSheet, SheetMetaType {
 		super.setPropertiesTo(entity: entity, context: context)
 		if let sheet = entity as? SheetTitleContentEntity {
 			sheet.content = content
+            sheet.isBibleVers = isBibleVers
 		}
 	}
 	
-	convenience init(sheetTitleContent: SheetTitleContentEntity) {
+    convenience init(sheetTitleContent: SheetTitleContentEntity, context: NSManagedObjectContext) {
 		self.init()
-		getPropertiesFrom(entity: sheetTitleContent)
+		getPropertiesFrom(entity: sheetTitleContent, context: context)
 	}
 	
-	override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-		
-		
-		CoreSheetTitleContent.managedObjectContext = context
-		if let storedEntity = CoreSheetTitleContent.getEntitieWith(id: id) {
-			CoreSheetTitleContent.managedObjectContext = moc
-			setPropertiesTo(entity: storedEntity, context: context)
-			return storedEntity
-		} else {
-			CoreSheetTitleContent.managedObjectContext = context
-			let entityDes = NSEntityDescription.entity(forEntityName: "SheetTitleContentEntity", in: context)
-			let newEntity = NSManagedObject(entity: entityDes!, insertInto: context) as! SheetTitleContentEntity
+    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
+        if let entity: SheetTitleContentEntity = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
+            setPropertiesTo(entity: entity, context: context)
+            return entity
+        } else {
+            let entity: SheetTitleContentEntity = DataFetcher().createEntity(moc: context)
+            setPropertiesTo(entity: entity, context: context)
+            return entity
+        }
+    }
 
-			CoreSheetTitleContent.managedObjectContext = moc
-			setPropertiesTo(entity: newEntity, context: context)
-			return newEntity
-		}
-
-	}
-	
 }

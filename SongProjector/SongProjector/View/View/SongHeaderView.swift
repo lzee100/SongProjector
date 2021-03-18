@@ -9,108 +9,117 @@
 import UIKit
 
 
-class SongHeaderView: UIView {
+class SongHeaderView: UITableViewHeaderFooterView {
+    
+    static let identifier = "SongHeaderView"
+    
+    static func preferredHeight(hasSection: Bool) -> CGFloat {
+        let sectionHeight: CGFloat = 40 + 10
+        let basic: CGFloat = 16 + 25 + 10 + (hasSection ? 0 : 8)
+        return hasSection ? (sectionHeight + basic) : basic
+    }
 
-	@IBOutlet var songHeaderView: UIView!
-	@IBOutlet var iconImageView: UIImageView!
-	@IBOutlet var titleLabel: UILabel!
-	@IBOutlet var headerButton: UIButton!
-	@IBOutlet var pianoButton: UIButton!
-	@IBOutlet var pianoCircleView: UIView!
-	@IBOutlet var pianoIconView: UIImageView!
-	@IBOutlet var mixerAnimationView: MixerAnimationView!
-	@IBOutlet var sectionLabel: UILabel!
-	@IBOutlet var iconCenterConstraint: NSLayoutConstraint!
-	
-	private var customTextColor: UIColor?
-	private var icon: UIImage?
-	private var iconSelected: UIImage?
+    @IBOutlet var sectionLabelBackgroundView: UIView!
+    @IBOutlet var sectionLabel: UILabel!
+    @IBOutlet var titleLabel: UILabel!
+    @IBOutlet var sectionButton: ActionButton!
+    @IBOutlet var actionContainerView: UIView!
+    @IBOutlet var pianoImageView: UIImageView!
+    @IBOutlet var mixerView: MixerAnimationView!
+    @IBOutlet var actionButton: ActionButton!
+    
+    @IBOutlet var sectionLabelHeightConstraint: NSLayoutConstraint!
+    @IBOutlet var sectionLabelTopConstraint: NSLayoutConstraint!
+    @IBOutlet var titleLabelToSuperViewConstraint: NSLayoutConstraint!
+    @IBOutlet var titleLabelToActionViewConstraint: NSLayoutConstraint!
+    @IBOutlet var titleLabelTopToSectionLabelConstraint: NSLayoutConstraint!
+
+    enum RightConstraint {
+        case superView
+        case actionContainer
+    }
+    
 	private var isSelected = false
-	var didSelectHeader: ((Int) -> Void)?
-	var didSelectPiano: ((Int) -> Void)?
-	var isPlayingPianoOnly: Bool {
-		return pianoCircleView.layer.borderColor != themeWhiteBlackTextColor.cgColor
-	}
+    
+    var hasHeader = false
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        sectionLabel.isHidden = true
+        hasHeader = false
+    }
+    
+    override init(reuseIdentifier: String?) {
+        super.init(reuseIdentifier: reuseIdentifier)
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+    
+    func style() {
+        sectionLabelBackgroundView.backgroundColor = .grey0
+        sectionLabel.font = .xxNormalBold
+        titleLabel.font = .normalBold
+        actionContainerView.backgroundColor = .softBlueGrey
+        actionContainerView.layer.cornerRadius = 4
+        actionContainerView.clipsToBounds = true
+        pianoImageView.tintColor = .whiteColor
+        sectionLabel.isHidden = true
+        sectionLabel.textColor = .blackColor
+        sectionLabelHeightConstraint.constant = 0
+        sectionLabelTopConstraint.constant = 0
+        titleLabelTopToSectionLabelConstraint.constant = 18
+    }
 	
-	static func preferredSize(hasHeader: Bool) -> CGRect {
-		let height: CGFloat = hasHeader ? 89 : 60
-		return CGRect(x: 0, y: 0, width: UIApplication.shared.keyWindow!.bounds.width, height: height)
-	}
-	
-	override init(frame: CGRect) {
-		super.init(frame: frame)
-		customInit()
-	}
-	
-	required init?(coder aDecoder: NSCoder) {
-		super.init(coder: aDecoder)
-		customInit()
-	}
-	
-	func customInit() {
-		Bundle.main.loadNibNamed("SongHeaderView", owner: self, options: [:])
-		songHeaderView.frame = self.frame
-		songHeaderView.backgroundColor = themeWhiteBlackBackground
-		addSubview(songHeaderView)
-		pianoCircleView.layer.borderWidth = 2
-		pianoCircleView.layer.borderColor = themeWhiteBlackTextColor.cgColor
-		pianoCircleView.layer.cornerRadius = pianoCircleView.bounds.width / 2
-		pianoIconView.tintColor = themeWhiteBlackTextColor
-		sectionLabel.isHidden = true
-		sectionLabel.textColor = themeWhiteBlackTextColor
-	}
-	
-	func setup(title: String?, icon: UIImage? = nil, iconSelected: UIImage? = nil, textColor: UIColor? = nil, isSelected: Bool = false, tag: Int = 0, hasPianoSolo: Bool) {
+	func setup(title: String?, isSelected: Bool = false, hasPianoSolo: Bool) {
 		self.isSelected = isSelected
-		self.iconImageView.image = icon
-		self.iconSelected = iconSelected
-		self.icon = icon
-		self.customTextColor = textColor
 		self.titleLabel.text = title
-		self.headerButton.tag = tag
-		self.pianoButton.tag = tag
-		self.pianoButton.isEnabled = hasPianoSolo
-		self.pianoCircleView.isHidden = !hasPianoSolo
-		self.pianoIconView.isHidden = !hasPianoSolo
+		self.actionButton.isEnabled = hasPianoSolo
+		self.actionContainerView.isHidden = !hasPianoSolo
+		self.pianoImageView.isHidden = !hasPianoSolo
+        setTitleRightConstraint(to: hasPianoSolo ? .actionContainer : .superView)        
 		update()
 	}
 	
 	func update() {
-		self.iconImageView.image = isSelected ? (iconSelected ?? icon) : icon
-		self.iconImageView.tintColor = isSelected ? themeHighlighted : themeWhiteBlackTextColor
-		self.titleLabel.textColor = isSelected ? themeHighlighted : themeWhiteBlackTextColor
+        titleLabel.textColor = isSelected ? .white : .blackColor
+        sectionLabelBackgroundView.backgroundColor = isSelected ? .softBlueGrey : .grey0
+        actionContainerView.backgroundColor = isSelected ? .white : .softBlueGrey
+        self.pianoImageView.tintColor = isSelected ? .black : .white
 	}
 	
-	func togglePianoPlay() {
-		let isWhite = pianoCircleView.layer.borderColor == themeWhiteBlackTextColor.cgColor
-		pianoCircleView.layer.borderColor = isWhite ? themeHighlighted.cgColor : themeWhiteBlackTextColor.cgColor
-		pianoIconView.tintColor = isWhite ? themeHighlighted : themeWhiteBlackTextColor
-		if isWhite {
-			pianoIconView.isHidden = true
-			mixerAnimationView.isHidden = false
-			mixerAnimationView.play()
-		} else {
-			DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-				self.pianoIconView.isHidden = false
-				self.mixerAnimationView.isHidden = true
-			}
-			mixerAnimationView.stop()
-		}
-	}
+    func setPianoAction(isPlaying: Bool) {
+        if isPlaying {
+            pianoImageView.isHidden = true
+            mixerView.isHidden = false
+            mixerView.play()
+        } else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+                self?.pianoImageView.isHidden = false
+                self?.mixerView.isHidden = true
+            }
+            mixerView.stop()
+        }
+    }
+    
+    private func setTitleRightConstraint(to: RightConstraint) {
+        titleLabelToSuperViewConstraint.priority = UILayoutPriority(rawValue: 250)
+        titleLabelToActionViewConstraint.priority = UILayoutPriority(rawValue: 250)
+        
+        switch to {
+        case .superView: titleLabelToSuperViewConstraint.priority = UILayoutPriority(rawValue: 999)
+        case .actionContainer: titleLabelToActionViewConstraint.priority = UILayoutPriority(rawValue: 999)
+        }
+    }
 	
 	func set(sectionHeader: String) {
+        hasHeader = true
+        sectionLabelTopConstraint.constant = 10
+        sectionLabelHeightConstraint.constant = 30
+        titleLabelTopToSectionLabelConstraint.constant = 10
 		sectionLabel.isHidden = false
 		sectionLabel.text = sectionHeader
-		iconCenterConstraint.constant += 14.5
-	}
-	
-	@IBAction func songHeaderViewPressed(_ sender: UIButton) {
-		didSelectHeader?(sender.tag)
-	}
-	
-	@IBAction func pianoPressed(_ sender: UIButton) {
-		togglePianoPlay()
-		didSelectPiano?(sender.tag)
 	}
 	
 }

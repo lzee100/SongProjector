@@ -65,7 +65,7 @@ class PickerCell: UITableViewCell, UIPickerViewDelegate, UIPickerViewDataSource 
 	}
 	
 	func pickerView(_ pickerView: UIPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString? {
-		return NSAttributedString(string: "\(values[row])", attributes: [NSAttributedString.Key.foregroundColor : themeWhiteBlackTextColor])
+		return NSAttributedString(string: "\(values[row])", attributes: [NSAttributedString.Key.foregroundColor : UIColor.blackColor])
 	}
 	
 	func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {

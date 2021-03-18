@@ -22,7 +22,8 @@ class SheetTitleContent: SheetView {
 	
 	@IBOutlet var titleLeftConstraint: NSLayoutConstraint!
 	@IBOutlet var titleTopConstraint: NSLayoutConstraint!
-	@IBOutlet var timeRightConstraint: NSLayoutConstraint!
+    @IBOutlet var titleRightConstraint: NSLayoutConstraint!
+    @IBOutlet var timeRightConstraint: NSLayoutConstraint!
 	@IBOutlet var contentLeftConstraint: NSLayoutConstraint!
 	@IBOutlet var contentRightConstraint: NSLayoutConstraint!
 	@IBOutlet var contentBottomConstraint: NSLayoutConstraint!
@@ -51,11 +52,12 @@ class SheetTitleContent: SheetView {
 	
 	override func update() {
 		timeLabel.text = ""
-		
+        contentTextView.noPadding()
 		if let scaleFactor = scaleFactor {
 			
 			titleLeftConstraint.constant = titleLeftConstraint.constant * scaleFactor
 			titleTopConstraint.constant = titleTopConstraint.constant * scaleFactor
+            titleRightConstraint.constant = titleRightConstraint.constant * scaleFactor
 			timeRightConstraint.constant = timeRightConstraint.constant * scaleFactor
 			contentLeftConstraint.constant = contentLeftConstraint.constant * scaleFactor
 			contentBottomConstraint.constant = contentBottomConstraint.constant * scaleFactor
@@ -70,24 +72,31 @@ class SheetTitleContent: SheetView {
 			} else {
 
 				updateTitle()
-				
+                updateContent()
+
 			}
 			
-			updateContent()
 			updateBackgroundImage()
 			updateBackgroundColor()
 			updateOpacity()
-			
+            			
 		}
 	}
 	
 	override func updateTitle() {
-		if let songTitle = songTitle {
-			if let theme = sheetTheme { // is custom sheet
+        var isBibleVers: Bool {
+            guard let sheet = sheet as? VSheetTitleContent else {
+                return true
+            }
+            return sheet.isBibleVers
+        }
+        if let songTitle = songTitle, !isBibleVers {
+			if let theme = sheetTheme, let titleLabel = titleLabel { // is custom sheet
 				
 				if !theme.allHaveTitle && position > 0 {
 					titleHeightConstraint.isActive = false
-					zeroHeightConstraint = NSLayoutConstraint(item: titleLabel, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
+                    zeroHeightConstraint = NSLayoutConstraint(item: titleLabel, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
+                    zeroHeightConstraint?.isActive = true
 					titleLabel.addConstraint(zeroHeightConstraint!)
 				} else {
 					if let zeroHeightConstraint = zeroHeightConstraint {
@@ -95,13 +104,28 @@ class SheetTitleContent: SheetView {
 					}
 					titleHeightConstraint.isActive = true
 				}
-				titleLabel.attributedText = NSAttributedString(string: songTitle, attributes: theme.getTitleAttributes(scaleFactor ?? 1))
-				updateTime(isOn: theme.displayTime)
+                
+                func height(attributedText: NSAttributedString) -> CGFloat {
+
+                    let rect = attributedText.boundingRect(with: CGSize.init(width: .greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude),
+                                                 options: [.usesLineFragmentOrigin, .usesFontLeading],
+                                                 context: nil)
+                    return ceil(rect.size.height)
+                }
+                
+                let attTitle = NSAttributedString(string: songTitle, attributes: theme.getTitleAttributes(scaleFactor ?? 1))
+                titleLabel.attributedText = attTitle
+                titleHeightConstraint.constant = height(attributedText: attTitle)
+                updateTime(isOn: theme.displayTime)
 			} else {
 				titleLabel.text = songTitle
 			}
 		} else {
 			titleLabel.text = nil
+            titleHeightConstraint.isActive = false
+            zeroHeightConstraint = NSLayoutConstraint(item: titleLabel!, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
+            zeroHeightConstraint?.isActive = true
+            titleLabel.addConstraint(zeroHeightConstraint!)
 		}
 	}
 	
@@ -118,14 +142,10 @@ class SheetTitleContent: SheetView {
 		}
 	}
 	
-	
-	
 	override func updateOpacity() {
-		if let alpha = sheetTheme?.backgroundTransparancy, alpha != 1 {
-			backgroundImageView.alpha = CGFloat(alpha)
-		}
-		if let alpha = sheetTheme?.backgroundTransparancy, alpha != 1 {
-			if sheetTheme?.backgroundImage != nil {
+        let image = isForExternalDispay ? sheetTheme?.tempSelectedImage ?? sheetTheme?.backgroundImage : sheetTheme?.tempSelectedImageThumbNail ?? sheetTheme?.thumbnail
+		if let alpha = sheetTheme?.backgroundTransparancy {
+            if image != nil, !(sheetTheme?.isTempSelectedImageDeleted ?? true) {
 				backgroundImageView.alpha = CGFloat(alpha)
 				sheetBackground.alpha = 1
 			} else {
@@ -134,21 +154,22 @@ class SheetTitleContent: SheetView {
 			}
 		}
 	}
-	
-	override func updateBackgroundImage() {
-		let image = isForExternalDispay ? sheetTheme?.backgroundImage : sheetTheme?.thumbnail
-		if let backgroundImage = image, !(sheetTheme?.isBackgroundImageDeleted ?? true) {
-			backgroundImageView.isHidden = false
-			backgroundImageView.contentMode = .scaleAspectFill
-			backgroundImageView.image = backgroundImage
-			backgroundImageView.clipsToBounds = true
-			if let backgroundTransparency = sheetTheme?.backgroundTransparancy {
-				backgroundImageView.alpha = CGFloat(backgroundTransparency)
-			}
-		} else {
-			backgroundImageView.isHidden = true
-		}
-	}
+    
+    override func updateBackgroundImage() {
+        let image = isForExternalDispay ? sheetTheme?.tempSelectedImage ?? sheetTheme?.backgroundImage : sheetTheme?.tempSelectedImageThumbNail ?? sheetTheme?.thumbnail
+        if let backgroundImage = image, !(sheetTheme?.isTempSelectedImageDeleted ?? true) {
+            backgroundImageView.isHidden = false
+            backgroundImageView.contentMode = .scaleAspectFill
+            backgroundImageView.image = backgroundImage
+            backgroundImageView.clipsToBounds = true
+            if let backgroundTransparency = sheetTheme?.backgroundTransparancy {
+                backgroundImageView.alpha = CGFloat(backgroundTransparency)
+            }
+        } else {
+            backgroundImageView.isHidden = true
+        }
+    }
+
 	
 	override func updateBackgroundColor() {
 		if let titleBackgroundColor = sheetTheme?.backgroundColorTitle, let title = sheetTheme?.title, title != "" {
@@ -167,6 +188,7 @@ class SheetTitleContent: SheetView {
 		
 		if let backgroundColor = sheetTheme?.sheetBackgroundColor {
 			self.sheetBackground.backgroundColor = backgroundColor
+            self.sheetBackground.alpha = CGFloat((sheetTheme?.backgroundTransparancy  ?? 0.0) > 0.0 ? sheetTheme!.backgroundTransparancy : 1.0)
 		} else {
 			self.sheetBackground.backgroundColor = .white
 		}
@@ -176,6 +198,7 @@ class SheetTitleContent: SheetView {
 		
 		let test = Date().time
 		if !isOn {
+            titleRightConstraint.constant = 0
 			timeLabel.text = ""
 			return
 		}

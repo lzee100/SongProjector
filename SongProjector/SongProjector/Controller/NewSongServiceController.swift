@@ -88,7 +88,7 @@
 //				cell.setup(title: Text.NewSongService.noSelectedSongs)
 //				return cell
 //			}
-//			cell.setup(title: selectedClusters[indexPath.row].title, icon: Cells.songIcon)
+//			cell.setup(title: selectedClusters[indexPath.row].title)
 //		}
 //		return cell
 //	}
@@ -145,7 +145,7 @@
 //
 //	// MARK: - Requester Functions
 //
-//	override func handleRequestFinish(requesterId: String, result: AnyObject?) {
+//	override func handleRequestFinish(requesterId: String, result: Any?) {
 //		Queues.main.async {
 //			self.tableView.reloadData()
 //		}

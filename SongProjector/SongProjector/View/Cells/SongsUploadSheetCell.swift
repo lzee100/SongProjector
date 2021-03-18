@@ -30,11 +30,12 @@ class SongsUploadSheetCell: ChurchBeamCell, UITextFieldDelegate {
 	
     override func awakeFromNib() {
         super.awakeFromNib()
+        timeTextField.keyboardType = .numberPad
     }
 	
 	func setup(_ cluster: VCluster, sheet: VSheet, sheetPosition: Int, delegate: SongsUploadSheetCellDelegate) {
 		timeTextField.addTarget(self, action: #selector(textFieldDidChange), for: UIControl.Event.editingChanged)
-		let view = SheetView.createWith(frame: sheetViewContainer.bounds, cluster: cluster, sheet: sheet, theme: sheet.hasTheme ?? cluster.hasTheme, scaleFactor: 1, position: sheetPosition, toExternalDisplay: false)
+		let view = SheetView.createWith(frame: sheetViewContainer.bounds, cluster: cluster, sheet: sheet, theme: sheet.hasTheme ?? cluster.hasTheme(moc: moc), scaleFactor: 1, toExternalDisplay: false)
 		sheetViewContainer.addSubview(view)
 		self.delegate = delegate
 		if sheet.time != 0 {

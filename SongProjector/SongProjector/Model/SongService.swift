@@ -7,25 +7,44 @@
 //
 
 import Foundation
+import FirebaseAuth
+
+var isForPreviewUniversalSongEditing = false
+
+protocol SongServiceDelegate {
+    func countDown(value: Int)
+    func swipeLeft()
+    func displaySheet(_ sheet: VSheet)
+    func shutDownBeamer()
+}
 
 class SongService {
 	
+    private static let countDownMax = 3
 	private var playerTimer = Timer()
-	private var stopAfterLastSheetTimer = Timer()
-	
+    private var countDownTimer = Timer()
+    private var countDownValue: Int = countDownMax
+    private var stopAfterLastSheetTimer: Timer?
+    private let sheetTimeOffset: Double
 	var songs: [SongObject] = [] { didSet { songs.sort{ $0.cluster.position < $1.cluster.position } }}
 	var selectedSection: Int?
 	var selectedSong: SongObject? {
 		didSet {
 			if selectedSong != nil {
 				selectedSheet = selectedSong?.sheets.first
-				CoreCluster.managedObjectContext = moc
-				let cluster = selectedSong?.cluster.getManagedObject(context: moc) as! Cluster
-				cluster.lastShownAt = NSDate()
-				do {
-					try moc.save()
-				} catch {}
-				self.startPlay()
+                if !isForPreviewUniversalSongEditing {
+                    selectedSong?.cluster.setLastShownAt()
+                }
+                if let appInstallId = UserDefaults.standard.object(forKey: ApplicationIdentifier) as? String {
+                    DispatchQueue.main.async {
+                        let playDate: SongServicePlayDate? = DataFetcher().getEntity(moc: moc, predicates: [.skipDeleted])
+                        let playDateEntity = [playDate].compactMap({ $0 }).map({ VSongServicePlayDate(entity: $0, context: moc) }).first ?? VSongServicePlayDate()
+                        playDateEntity.appInstallId = appInstallId
+                        playDateEntity.userUID = Auth.auth().currentUser?.uid ?? ""
+                        playDateEntity.playDate = Date()
+                        SongServicePlayDateSubmitter.submit([playDateEntity], requestMethod: .post)
+                    }
+                }
 			} else {
 				self.stopPlay()
 			}
@@ -39,27 +58,28 @@ class SongService {
 				if newSong != selectedSong {
 					selectedSong = newSong
 				}
-				displaySheet(sheet)
+                if (sheet.time != 0 && (selectedSong?.cluster.hasLocalMusic ?? false)) || selectedSong?.cluster.time != 0 {
+                    startPlay()
+                }
+                delegate?.displaySheet(sheet)
 			} else {
 				selectedSong = nil
 				selectedSection = nil
-				shutDownBeamer()
+                delegate?.shutDownBeamer()
 			}
 		}
 	}
-	var selectedTheme: VTheme? { return selectedSheet?.hasTheme ?? selectedSong?.cluster.hasTheme }
+	var selectedTheme: VTheme? { return selectedSheet?.hasTheme ?? selectedSong?.cluster.hasTheme(moc: moc) }
 	var previousTheme: VTheme? { return getPreviousTheme() }
 	var nextTheme: VTheme? { return getNextTheme() }
 	var isPlaying = false
 	var isAnimating = false
-	let swipeLeft: (() -> Void)
-	let displaySheet: ((VSheet) -> Void)
-	let shutDownBeamer: (() -> Void)
+    var delegate: SongServiceDelegate?
 	
-	init(swipeLeft: @escaping (() -> Void), displaySheet: @escaping ((VSheet) -> Void), shutDownBeamer: @escaping (() -> Void)) {
-		self.swipeLeft = swipeLeft
-		self.displaySheet = displaySheet
-		self.shutDownBeamer = shutDownBeamer
+    init(delegate: SongServiceDelegate?) {
+        self.delegate = delegate
+        let user: User? = DataFetcher().getEntity(moc: moc, predicates: [.skipDeleted])
+        self.sheetTimeOffset = [user].compactMap({ $0 }).map({ VUser(user: $0, context: moc) }).first?.sheetTimeOffset ?? 0
 	}
 	
 	@discardableResult
@@ -68,10 +88,10 @@ class SongService {
 			let selectedSheetPosition = Int(selectedSheet.position)
 			if selectedSheetPosition + 1 < selectedSong.sheets.count {
 				if !select {
-					return selectedSong.sheets[selectedSheetPosition + 1]
+                    return selectedSong.sheets[selectedSheetPosition + 1]
 				}
 				self.selectedSheet = selectedSong.sheets[selectedSheetPosition + 1]
-				if let selectedSheet = self.selectedSheet, selectedSheet.time != 0, selectedSong.cluster.hasMusic {
+                if let selectedSheet = self.selectedSheet, selectedSheet.time != 0, selectedSong.cluster.hasLocalMusic, !SoundPlayer.isPlaying {
 					startPlay()
 				}
 				return self.selectedSheet
@@ -84,7 +104,7 @@ class SongService {
 					return selectedSong.sheets.first
 				}
 				
-				guard let index = songs.index(where: { $0 == selectedSong }) else {
+                guard let index = songs.firstIndex(where: { $0 == selectedSong }) else {
 					return nil
 				}
 				
@@ -120,7 +140,7 @@ class SongService {
 				self.selectedSheet = selectedSong.sheets[selectedSheetPosition - 1]
 				return self.selectedSheet
 			} else {
-				guard let index = songs.index(where: { $0 == selectedSong }) else {
+                guard let index = songs.firstIndex(where: { $0 == selectedSong }) else {
 					return nil
 				}
 				
@@ -148,7 +168,7 @@ class SongService {
 			if selectedSheetPosition + 1 < selectedSong.sheets.count {
 				return IndexPath(row: selectedSheetPosition + 1, section: Int(selectedSong.cluster.position))
 			} else {
-				guard let index = songs.index(where: { $0 == selectedSong }) else {
+                guard let index = songs.firstIndex(where: { $0 == selectedSong }) else {
 					return nil
 				}
 				
@@ -173,7 +193,7 @@ class SongService {
 			if selectedSheetPosition - 1 >= 0 {
 				return IndexPath(row: selectedSheetPosition - 1, section: Int(selectedSong.cluster.position))
 			} else {
-				guard let index = songs.index(where: { $0 == selectedSong }) else {
+                guard let index = songs.firstIndex(where: { $0 == selectedSong }) else {
 					return nil
 				}
 				
@@ -195,7 +215,7 @@ class SongService {
 		if let position = selectedSheet?.position, Int(position) + 1 < (selectedSong?.sheets.count ?? 0) {
 			return selectedSong
 		} else {
-			if let index = songs.index(where: { $0 == selectedSong }) {
+            if let index = songs.firstIndex(where: { $0 == selectedSong }) {
 				if index + 1 < songs.count {
 					return songs[index + 1]
 				}
@@ -210,7 +230,7 @@ class SongService {
 		if let position = selectedSheet?.position, Int(position) - 1 >= 0 {
 			return selectedSong
 		} else {
-			if let index = songs.index(where: { $0 == selectedSong }) {
+            if let index = songs.firstIndex(where: { $0 == selectedSong }) {
 				if index - 1 >= 0 {
 					return songs[index - 1]
 				}
@@ -225,9 +245,9 @@ class SongService {
 		if let selectedSong = selectedSong {
 			let selectedSheetPosition = Int(selectedSheet!.position)
 			if selectedSheetPosition - 1 >= 0 {
-				return selectedSong.sheets[selectedSheetPosition - 1].hasTheme ?? selectedSong.cluster.hasTheme
+				return selectedSong.sheets[selectedSheetPosition - 1].hasTheme ?? selectedSong.cluster.hasTheme(moc: moc)
 			} else {
-				guard let index = songs.index(where: { $0 == selectedSong }) else {
+                guard let index = songs.firstIndex(where: { $0 == selectedSong }) else {
 					return nil
 				}
 				
@@ -235,7 +255,7 @@ class SongService {
 					return nil
 				}
 				
-				return songs[index - 1].sheets.first?.hasTheme ?? songs[index - 1].cluster.hasTheme
+				return songs[index - 1].sheets.first?.hasTheme ?? songs[index - 1].cluster.hasTheme(moc: moc)
 				
 			}
 		} else {
@@ -252,37 +272,37 @@ class SongService {
 			let selectedSheetPosition = Int(selectedSheet!.position)
 			
 			if selectedSheetPosition + 1 < selectedSong.sheets.count {
-				return selectedSong.sheets[selectedSheetPosition + 1].hasTheme ?? selectedSong.cluster.hasTheme
+				return selectedSong.sheets[selectedSheetPosition + 1].hasTheme ?? selectedSong.cluster.hasTheme(moc: moc)
 			} else {
-				guard let index = songs.index(where: { $0 == selectedSong }) else {
+                guard let index = songs.firstIndex(where: { $0 == selectedSong }) else {
 					return nil
 				}
 				
 				if index + 1 >= songs.count {
 					if isAnimating {
-						return songs[index].sheets.first?.hasTheme ?? songs[index].cluster.hasTheme
+						return songs[index].sheets.first?.hasTheme ?? songs[index].cluster.hasTheme(moc: moc)
 					}
 					return nil
 				}
 				
 				if isAnimating {
-					return songs[index].sheets.first?.hasTheme ?? songs[index].cluster.hasTheme
+					return songs[index].sheets.first?.hasTheme ?? songs[index].cluster.hasTheme(moc: moc)
 				}
 				
-				return songs[index + 1].sheets.first?.hasTheme ?? songs[index + 1].cluster.hasTheme
+				return songs[index + 1].sheets.first?.hasTheme ?? songs[index + 1].cluster.hasTheme(moc: moc)
 				
 			}
 		} else {
-			return songs.first?.sheets.first?.hasTheme ?? songs.first?.cluster.hasTheme
+			return songs.first?.sheets.first?.hasTheme ?? songs.first?.cluster.hasTheme(moc: moc)
 		}
 	}
 	
 	private func startPlay() {
 		
-		if (selectedSheet?.hasCluster?.hasMusic ?? false) && selectedSheet?.position == selectedSong?.sheets.last?.position && selectedSong?.cluster.hasSheets.count != 1 {
+        if selectedSong?.cluster.hasLocalMusic ?? false && selectedSheet?.position == selectedSong?.sheets.last?.position && selectedSong?.cluster.hasSheets.count != 1 {
 			playerTimer.invalidate()
 			if let time = selectedSheet?.time {
-				stopAfterLastSheetTimer = Timer.scheduledTimer(timeInterval: time, target: self, selector: #selector(stopPlay), userInfo: nil, repeats: true)
+				stopAfterLastSheetTimer = Timer.scheduledTimer(timeInterval: time, target: self, selector: #selector(stopPlay), userInfo: nil, repeats: false)
 			}
 			return
 		}
@@ -294,28 +314,49 @@ class SongService {
 		
 		if let time = time, time > 0 {
 			
-			if let song = selectedSong?.cluster, song.hasMusic, !SoundPlayer.isPlaying {
-				
-//				if !SoundPlayer.isLooping, Int(selectedSheet?.position ?? 0) == (song.hasSheets?.count ?? 0) - 1 {
-//					SoundPlayer.stop()
-//				}
+			if let song = selectedSong?.cluster, song.hasLocalMusic, !SoundPlayer.isPlaying {
 				SoundPlayer.play(song: song)
 				isPlaying = true
+                countDownValue = SongService.countDownMax
+                if song.startTime > 0 {
+                    countDownTimer.invalidate()
+                    switch song.startTime {
+                    case 5...: countDownValue = 3
+                    case 1 ..< 1.6: countDownValue = 1
+                    default: countDownValue = Int(song.startTime - 1)
+                    }
+                    countDownTimer = Timer.scheduledTimer(timeInterval: TimeInterval(song.startTime - Double(countDownValue)), target: self, selector: #selector(triggerCountDown), userInfo: nil, repeats: true)
+                }
 			} else {
 				isAnimating = true
 			}
 			playerTimer.invalidate()
-			playerTimer = Timer.scheduledTimer(timeInterval: time, target: self, selector: #selector(swipeAutomatically), userInfo: nil, repeats: true)
+			playerTimer = Timer.scheduledTimer(timeInterval: time + sheetTimeOffset, target: self, selector: #selector(swipeAutomatically), userInfo: nil, repeats: true)
 		}
 	}
-	
+    
+    @objc private func triggerCountDown() {
+        delegate?.countDown(value: countDownValue)
+        countDownValue -= 1
+        if countDownValue >= 0 {
+            countDownTimer.invalidate()
+            countDownTimer = Timer.scheduledTimer(timeInterval: TimeInterval(1), target: self, selector: #selector(triggerCountDown), userInfo: nil, repeats: true)
+        } else {
+            countDownTimer.invalidate()
+            countDownValue = SongService.countDownMax
+        }
+    }
+
 	@objc private func swipeAutomatically() {
-		print("swipe left")
-		self.swipeLeft()
+		delegate?.swipeLeft()
 	}
 	
 	@objc private func stopPlay() {
+        stopAfterLastSheetTimer?.invalidate()
+        stopAfterLastSheetTimer = nil
 		playerTimer.invalidate()
+        countDownTimer.invalidate()
+        countDownValue = SongService.countDownMax
 		SoundPlayer.stop()
 		isPlaying = false
 		isAnimating = false
@@ -336,7 +377,7 @@ class SongObject: Comparable {
 	var sheets: [VSheet] = []
 	
 	private func addEmptySheet() {
-		if cluster.hasTheme?.hasEmptySheet ?? false {
+		if cluster.hasTheme(moc: moc)?.hasEmptySheet ?? false {
 			
 			var emptySheetsAdded: [VSheet] = []
 			
@@ -344,7 +385,7 @@ class SongObject: Comparable {
 			emptySheet.deleteDate = NSDate()
 			emptySheet.isEmptySheet = true
 			
-			if cluster.hasTheme?.isEmptySheetFirst ?? false {
+			if cluster.hasTheme(moc: moc)?.isEmptySheetFirst ?? false {
 				emptySheetsAdded.append(emptySheet)
 				emptySheetsAdded.append(contentsOf: cluster.hasSheets)
 			} else {
@@ -366,7 +407,7 @@ class SongObject: Comparable {
 	
 //	var selectedSheet: Sheet?
 	var clusterTheme: VTheme? {
-		return cluster.hasTheme
+		return cluster.hasTheme(moc: moc)
 	}
 	
 	init(cluster: VCluster) {

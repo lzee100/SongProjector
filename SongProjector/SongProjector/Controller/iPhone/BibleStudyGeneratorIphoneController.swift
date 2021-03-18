@@ -122,10 +122,10 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 
 	private func setup() {
 		
-		saveButton.title = Text.Actions.save
+		saveButton.title = AppText.Actions.save
 		
-		navigationController?.title = Text.CustomSheets.title
-		title = Text.CustomSheets.title
+		navigationController?.title = AppText.CustomSheets.title
+		title = AppText.CustomSheets.title
 		view.backgroundColor = themeWhiteBlackBackground
 		emptyView.backgroundColor = themeWhiteBlackBackground
 		
@@ -134,21 +134,22 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 		collectionViewSheets.register(UINib(nibName: Cells.sheetCollectionCell, bundle: nil), forCellWithReuseIdentifier: Cells.sheetCollectionCell)
 		collectionViewThemes.register(UINib(nibName: Cells.themeCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.themeCellCollection)
 		
-		NotificationCenter.default.addObserver(forName: NotificationNames.externalDisplayDidChange, object: nil, queue: nil, using: externalDisplayDidChange)
+		NotificationCenter.default.addObserver(forName: .externalDisplayDidChange, object: nil, queue: nil, using: externalDisplayDidChange)
 		
 		tableView.register(cell: Cells.basicCellid)
 		tableView.keyboardDismissMode = .interactive
 		
-		themes = VTheme.list(sortOn: "position", ascending: true)
+        let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "position", ascending: true))
+        self.themes = themes.map({ VTheme(theme: $0, context: moc) })
 		
 		setSheetSize()
 
 		textView.backgroundColor = themeWhiteBlackBackground
-		textView.textColor = themeWhiteBlackTextColor
+		textView.textColor = .blackColor
 		
-		segmentControl.setTitle(Text.CustomSheets.segmentInput, forSegmentAt: 0)
-		segmentControl.setTitle(Text.CustomSheets.segmentCheck, forSegmentAt: 1)
-		segmentControl.setTitle(Text.CustomSheets.segmentSheets, forSegmentAt: 2)
+		segmentControl.setTitle(AppText.CustomSheets.segmentInput, forSegmentAt: 0)
+		segmentControl.setTitle(AppText.CustomSheets.segmentCheck, forSegmentAt: 1)
+		segmentControl.setTitle(AppText.CustomSheets.segmentSheets, forSegmentAt: 2)
 		segmentControl.selectedSegmentIndex = 0
 		
 		
@@ -183,8 +184,10 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 	}
 	
 	private func update() {
-		CoreTheme.predicates.append("isHidden", equals: 0)
-		themes = VTheme.list(sortOn: "position", ascending: true)
+        var predicates: [NSPredicate] = [.skipDeleted]
+		predicates.append("isHidden", equals: 0)
+        let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: predicates, sort: NSSortDescriptor(key: "position", ascending: true))
+        self.themes = themes.map({ VTheme(theme: $0, context: moc) })
 		collectionViewThemes.reloadData()
 		collectionViewSheets.reloadData()
 		tableView.reloadData()
@@ -234,8 +237,8 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 		if selectedTheme != nil {
 			return true
 		} else {
-			let alert = UIAlertController(title: Text.NewSong.errorTitleNoTheme, message: Text.NewSong.erorrMessageNoTheme, preferredStyle: .alert)
-			alert.addAction(UIAlertAction(title: Text.Actions.ok, style: UIAlertAction.Style.default, handler: nil))
+			let alert = UIAlertController(title: AppText.NewSong.errorTitleNoTheme, message: AppText.NewSong.erorrMessageNoTheme, preferredStyle: .alert)
+			alert.addAction(UIAlertAction(title: AppText.Actions.ok, style: UIAlertAction.Style.default, handler: nil))
 			self.present(alert, animated: true, completion: nil)
 			
 			return false

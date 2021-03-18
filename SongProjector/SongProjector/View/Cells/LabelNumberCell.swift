@@ -12,7 +12,7 @@ protocol LabelNumerCellDelegate {
 	func numberChangedForCell(cell: LabelNumberCell)
 }
 
-class LabelNumberCell: ChurchBeamCell, ThemeImplementation {
+class LabelNumberCell: ChurchBeamCell, ThemeImplementation, SheetImplementation {
 	
 	@IBOutlet var minus: UIButton!
 	@IBOutlet var plus: UIButton!
@@ -27,11 +27,25 @@ class LabelNumberCell: ChurchBeamCell, ThemeImplementation {
 	var minLimit = 0
 	var maxLimit = 0
 	
+    var sheet: VSheet?
 	var sheetTheme: VTheme?
+    var sheetAttribute: SheetAttribute?
 	var themeAttribute: ThemeAttribute?
 	var valueDidChange: ((ChurchBeamCell) -> Void)?
 	
 	static let identifier = "LabelNumberCell"
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        valueDidChange = nil
+        sheetTheme = nil
+        themeAttribute = nil
+        positive = true
+        value = 0
+        delegate = nil
+        minLimit = 0
+        maxLimit = 0
+    }
 	
 	override func awakeFromNib() {
 		plus.tintColor = themeHighlighted
@@ -83,6 +97,20 @@ class LabelNumberCell: ChurchBeamCell, ThemeImplementation {
 		}
 		applyValueToCell()
 	}
+    
+    func apply(sheet: VSheet, sheetAttribute: SheetAttribute) {
+        self.sheet = sheet
+        self.sheetAttribute = sheetAttribute
+        self.descriptionTitle.text = sheetAttribute.description
+        
+        switch sheetAttribute {
+        case .SheetImageBorderSize:
+            setup(minLimit: 0, maxLimit: 10, positive: true)
+        default:
+            break
+        }
+        applyValueToCell()
+    }
 	
 	func applyValueToCell() {
 		if let themeAttribute = themeAttribute, let theme = sheetTheme {
@@ -95,6 +123,14 @@ class LabelNumberCell: ChurchBeamCell, ThemeImplementation {
 			}
 			valueLabel.text = String(abs(value))
 		}
+        if let sheetAttribute = sheetAttribute, let sheet = sheet {
+            switch sheetAttribute {
+            case .SheetImageBorderSize: value = Int((sheet as? VSheetTitleImage)?.imageBorderSize ?? 0)
+            default: break
+            }
+            valueLabel.text = String(abs(value))
+        }
+
 	}
 	
 	func applyCellValueToTheme() {
@@ -107,6 +143,12 @@ class LabelNumberCell: ChurchBeamCell, ThemeImplementation {
 			default: return
 			}
 		}
+        if let sheetAttribute = sheetAttribute, let sheet = sheet {
+            switch sheetAttribute {
+            case .SheetImageBorderSize: (sheet as? VSheetTitleImage)?.imageBorderSize = Int16(value)
+            default: break
+            }
+        }
 	}
 	
 	func set(value: Any?) {

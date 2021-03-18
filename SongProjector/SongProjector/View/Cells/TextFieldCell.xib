@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17126"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -18,13 +17,13 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xyk-5N-7ih">
-                        <rect key="frame" x="15" y="11" width="42" height="39"/>
+                        <rect key="frame" x="30" y="11" width="42" height="39"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" horizontalCompressionResistancePriority="749" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="k j;lkjsdf;lksdj" borderStyle="roundedRect" adjustsFontSizeToFit="NO" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="2px-uK-yNJ">
-                        <rect key="frame" x="65" y="15" width="232" height="31"/>
+                        <rect key="frame" x="80" y="15" width="210" height="31"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <textInputTraits key="textInputTraits"/>
                         <connections>
@@ -36,9 +35,9 @@
                 <constraints>
                     <constraint firstItem="2px-uK-yNJ" firstAttribute="leading" secondItem="xyk-5N-7ih" secondAttribute="trailing" constant="8" id="456-ri-Yye"/>
                     <constraint firstAttribute="bottomMargin" secondItem="xyk-5N-7ih" secondAttribute="bottom" id="EMb-dK-uGM"/>
-                    <constraint firstAttribute="trailingMargin" secondItem="2px-uK-yNJ" secondAttribute="trailing" constant="8" id="Jrq-pa-Gbr"/>
+                    <constraint firstAttribute="trailing" secondItem="2px-uK-yNJ" secondAttribute="trailing" constant="30" id="Jrq-pa-Gbr"/>
                     <constraint firstItem="2px-uK-yNJ" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="XFs-be-zQL"/>
-                    <constraint firstItem="xyk-5N-7ih" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="aIC-KV-vya"/>
+                    <constraint firstItem="xyk-5N-7ih" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="30" id="aIC-KV-vya"/>
                     <constraint firstAttribute="bottom" secondItem="2px-uK-yNJ" secondAttribute="bottom" constant="15" id="oAP-ff-eKc"/>
                     <constraint firstItem="2px-uK-yNJ" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="15" id="x0U-bH-t09"/>
                     <constraint firstItem="xyk-5N-7ih" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" id="xZK-wC-hXN"/>
@@ -47,9 +46,10 @@
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
                 <outlet property="descriptionLabel" destination="xyk-5N-7ih" id="JFU-6j-8WQ"/>
+                <outlet property="labelTextFieldConstraint" destination="456-ri-Yye" id="az4-0Y-7hn"/>
                 <outlet property="textField" destination="2px-uK-yNJ" id="PmG-I4-Oee"/>
             </connections>
-            <point key="canvasLocation" x="139" y="153"/>
+            <point key="canvasLocation" x="137.59999999999999" y="152.47376311844079"/>
         </tableViewCell>
     </objects>
 </document>

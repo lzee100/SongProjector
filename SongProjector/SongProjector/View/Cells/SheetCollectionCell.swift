@@ -29,21 +29,21 @@ class SheetCollectionCell: UICollectionViewCell {
 	
 	private var customRatioConstraint = NSLayoutConstraint()
 	
-	func setupWith(cluster: VCluster?, sheet: VSheet, theme: VTheme?, didDeleteSheet: ((VSheet) -> Void)?, isDeleteEnabled: Bool = true) {
+    func setupWith(cluster: VCluster?, sheet: VSheet, theme: VTheme?, didDeleteSheet: ((VSheet) -> Void)?, isDeleteEnabled: Bool = true, scaleFactor: CGFloat = 1) {
 		self.sheet = sheet
 		self.didDeleteSheet = didDeleteSheet
 		self.isDeleteEnabled = isDeleteEnabled
 		animateIcon()
 		update()
-		
-		let view = SheetView.createWith(frame: self.bounds, cluster: cluster, sheet: sheet, theme: theme, scaleFactor: 1)
+        let view = SheetView.createWith(frame: self.bounds, cluster: cluster, sheet: sheet, theme: theme, scaleFactor: scaleFactor)
 		view.tag = 7
 		self.addSubview(view)
 		sendSubviewToBack(view)
+        self.clipsToBounds = false
 	}
 	
 	private func update() {
-		deleteIcon.tintColor = .black
+        deleteIcon.tintColor = .red1
 		deleteIcon.isHidden = !isDeleteEnabled
 	}
 	

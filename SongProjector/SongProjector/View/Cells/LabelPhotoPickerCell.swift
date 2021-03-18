@@ -17,8 +17,11 @@ class LabelPhotoPickerCell: ChurchBeamCell, ThemeImplementation, SheetImplementa
 	@IBOutlet var imageThumbnail: UIImageView!
 	@IBOutlet var button: UIButton!
 	@IBOutlet var buttonContainer: UIView!
-	
-	@IBOutlet var buttonBottomConstraint: NSLayoutConstraint!
+    @IBOutlet var deleteButton: ActionButton!
+    
+    @IBOutlet var deleteButtonRightConstraint: NSLayoutConstraint!
+    @IBOutlet var deleteButtonWidthConstraint: NSLayoutConstraint!
+    @IBOutlet var buttonBottomConstraint: NSLayoutConstraint!
 	@IBOutlet var buttonHeightConstraint: NSLayoutConstraint!
 	@IBOutlet var descriptionBeamerHeightConstraint: NSLayoutConstraint!
 	
@@ -36,7 +39,7 @@ class LabelPhotoPickerCell: ChurchBeamCell, ThemeImplementation, SheetImplementa
 	var isActive = false { didSet { showImage() } }
 	let imagePicker = UIImagePickerController()
 	var pickedImage: UIImage?
-	var sender: UIViewController?
+	unowned var sender: UIViewController?
 	var preferredHeight: CGFloat {
 		return isActive ? 162 : 60
 	}
@@ -47,55 +50,60 @@ class LabelPhotoPickerCell: ChurchBeamCell, ThemeImplementation, SheetImplementa
 		valueDidChange = nil
 		sheet = nil
 		let beamerResolution = "\(Int(externalDisplayWindowWidth)) x \(Int(externalDisplayWindowHeight))"
-		descriptionLastBeamerResolution.text = Text.NewTheme.descriptionLastBeamerResolution + beamerResolution
+		descriptionLastBeamerResolution.text = AppText.NewTheme.descriptionLastBeamerResolution + beamerResolution
 	}
 	
 	static let identifier = "LabelPhotoPickerCell"
 	
 	override func awakeFromNib() {
 		imagePicker.delegate = self
-		descriptionLastBeamerResolution.textColor = themeWhiteBlackBackground
+        descriptionLastBeamerResolution.textColor = .grey3
 		buttonContainer.isHidden = true
 		imageThumbnail.contentMode = .scaleAspectFill
 		imageThumbnail.clipsToBounds = true
 		imageThumbnail.layer.cornerRadius = CGFloat(5)
 		let beamerResolution = "\(Int(externalDisplayWindowWidth)) x \(Int(externalDisplayWindowHeight))"
-		descriptionLastBeamerResolution.text = Text.NewTheme.descriptionLastBeamerResolution + beamerResolution
-		descriptionLastBeamerResolution.textColor = isThemeLight ? UIColor(red: 0, green: 0, blue: 0, alpha: 0.5) : UIColor(red: 255, green: 255, blue: 255, alpha: 0.4)
+		descriptionLastBeamerResolution.text = AppText.NewTheme.descriptionLastBeamerResolution + beamerResolution
 		button.isEnabled = false
-		buttonContainer.backgroundColor = themeWhiteBlackBackground
+        buttonContainer.backgroundColor = .clear
 		button.backgroundColor = themeHighlighted
 		button.layer.cornerRadius = 5.0
-		button.setTitleColor(.white, for: .normal)
+		button.setTitleColor(UIColor(hex: "FFFFFF"), for: .normal)
+        deleteButton.tintColor = .red2
+        deleteButton.setTitle(nil, for: UIControl.State())
+        deleteButton.add {
+            self.set(value: nil)
+        }
 	}
 	
 	static func create(id: String, description: String, sender: UIViewController) -> LabelPhotoPickerCell {
 		let view : LabelPhotoPickerCell! = UIView.create(nib: "LabelPhotoPickerCell")
 		view.id = id
 		view.descriptionTitle.text = description
-		view.descriptionLastBeamerResolution.textColor = themeWhiteBlackBackground
 		view.buttonContainer.isHidden = true
 		view.imageThumbnail.layer.cornerRadius = CGFloat(5)
 		let beamerResolution = "\(Int(externalDisplayWindowWidth)) x \(Int(externalDisplayWindowHeight))"
-		view.descriptionLastBeamerResolution.text = Text.NewTheme.descriptionLastBeamerResolution + beamerResolution
-		view.descriptionLastBeamerResolution.textColor = isThemeLight ? UIColor(red: 0, green: 0, blue: 0, alpha: 0.5) : UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 0.4)
+		view.descriptionLastBeamerResolution.text = AppText.NewTheme.descriptionLastBeamerResolution + beamerResolution
 		view.button.isEnabled = false
-		view.buttonContainer.backgroundColor = themeWhiteBlackBackground
+        view.buttonContainer.backgroundColor = .clear
 		view.button.backgroundColor = themeHighlighted
 		view.button.layer.cornerRadius = 5.0
-		view.button.setTitleColor(.white, for: .normal)
+		view.button.setTitleColor(.whiteColor, for: .normal)
 		view.sender = sender
 		return view
 	}
 	
 	func setImage(image: UIImage?) {
-		button.setTitle(image == nil ? Text.NewTheme.buttonBackgroundImagePick : Text.NewTheme.buttonBackgroundImageChange, for: .normal)
+		button.setTitle(image == nil ? AppText.NewTheme.buttonBackgroundImagePick : AppText.NewTheme.buttonBackgroundImageChange, for: .normal)
 		imageThumbnail.image = image
 		pickedImage = image
+        deleteButton.isEnabled = image != nil
+        deleteButtonWidthConstraint.constant = image == nil ? 0 : 40
+        deleteButtonRightConstraint.constant = image == nil ? 30 : 20
 	}
 	
 	func showImage() {
-		button.setTitle(pickedImage == nil ? Text.NewTheme.buttonBackgroundImagePick : Text.NewTheme.buttonBackgroundImageChange, for: .normal)
+		button.setTitle(pickedImage == nil ? AppText.NewTheme.buttonBackgroundImagePick : AppText.NewTheme.buttonBackgroundImageChange, for: .normal)
 		if isActive {
 			buttonContainer.isHidden = false
 			button.isEnabled = true
@@ -133,19 +141,19 @@ class LabelPhotoPickerCell: ChurchBeamCell, ThemeImplementation, SheetImplementa
 		if let theme = sheetTheme, let themeAttribute = themeAttribute {
 			switch themeAttribute {
 			case .backgroundImage:
-				if theme.isBackgroundImageDeleted {
+				if theme.isTempSelectedImageDeleted {
 					setImage(image: nil)
 				} else {
-					setImage(image: theme.backgroundImage)
+                    setImage(image: theme.tempSelectedImage ?? theme.backgroundImage)
 				}
 			default: return
 			}
 		}
 		if let sheet = sheet as? VSheetTitleImage {
-			setImage(image: sheet.thumbnail)
+            setImage(image: sheet.tempSelectedImageThumbNail ?? sheet.thumbnail)
 		}
 		if let sheet = sheet as? VSheetPastors {
-			setImage(image: sheet.thumbnail)
+			setImage(image: sheet.tempSelectedImageThumbNail ?? sheet.thumbnail)
 		}
 	}
 	
@@ -153,19 +161,20 @@ class LabelPhotoPickerCell: ChurchBeamCell, ThemeImplementation, SheetImplementa
 		if let theme = sheetTheme, let themeAttribute = themeAttribute {
 			switch themeAttribute {
 			case .backgroundImage:
-				if pickedImage != nil {
-					try theme.setBackgroundImage(image: pickedImage)
-					theme.isBackgroundImageDeleted = false
-				} else {
-					theme.isBackgroundImageDeleted = true
-				}
+                theme.tempSelectedImage = pickedImage
+                theme.isTempSelectedImageDeleted = pickedImage == nil
+                if pickedImage == nil {
+                    theme.backgroundTransparancy = 100
+                }
 			default: return
 			}
 		}
 		if let sheet = sheet as? VSheetTitleImage {
-			try sheet.set(image: pickedImage)
+            sheet.tempSelectedImage = pickedImage
+            sheet.isTempSelectedImageDeleted = pickedImage == nil
 		} else if let sheet = sheet as? VSheetPastors {
-			try sheet.set(image: pickedImage)
+            sheet.tempSelectedImage = pickedImage
+            sheet.isTempSelectedImageDeleted = pickedImage == nil
 		}
 	}
 	
@@ -207,6 +216,13 @@ class LabelPhotoPickerCell: ChurchBeamCell, ThemeImplementation, SheetImplementa
 	}
 	
 	@IBAction func changeImage(_ sender: UIButton) {
+        guard !SubscriptionsSettings.hasLimitedAccess else {
+            if let sender = self.sender {
+                SubscriptionsSettings.showSubscriptionsViewController(presentingViewController: sender)
+            }
+            return
+        }
+        
 		if !canUsePhotos {
 			PHPhotoLibrary.requestAuthorization({ (status) in
 				if status == PHAuthorizationStatus.authorized {

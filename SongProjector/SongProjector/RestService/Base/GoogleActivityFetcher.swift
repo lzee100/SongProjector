@@ -10,8 +10,7 @@
 import Foundation
 import GoogleAPIClientForREST
 import GoogleSignIn
-
-
+import FirebaseAuth
 
 let GoogleActivityFetcher = GoogleActivityFetch()
 
@@ -23,6 +22,7 @@ protocol GoogleFetcherLoginDelegate {
 class GoogleActivityFetch: NSObject {
 
 //	var loginDelegate: GoogleFetcherLoginDelegate?
+    private var numberOfTries = 0
 	
 	fileprivate lazy var calendarService: GTLRCalendarService? = {
 		let service = GTLRCalendarService()
@@ -44,39 +44,31 @@ class GoogleActivityFetch: NSObject {
 
 	override init() {
 		super.init()
-		
-
-//		GIDSignIn.sharedInstance().delegate = self
 		GIDSignIn.sharedInstance().scopes = ["https://www.googleapis.com/auth/calendar.readonly"]
-
-		if GIDSignIn.sharedInstance().currentUser != nil {
-			GIDSignIn.sharedInstance()?.restorePreviousSignIn()
-		}
 	}
 
-//	func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
-//		if let error = error {
-//			self.loginDelegate?.loginDidFailWithError(message: error.localizedDescription)
-//		} else {
-//			let userDefaults = UserDefaults.standard
-//			userDefaults.set(user.profile.email, forKey: "googleEmail")
-////			fetchFinished(result: .OK(.updated))
-//		}
-//	}
 
 
-	func fetch(_ force: Bool) {
+	func fetch(force: Bool) {
+        GIDSignIn.sharedInstance()?.restorePreviousSignIn()
 		if GIDSignIn.sharedInstance().currentUser != nil {
-			GIDSignIn.sharedInstance().scopes = ["https://www.googleapis.com/auth/calendar.readonly"]
+			GIDSignIn.sharedInstance().scopes = ["https://www.googleapis.com/auth/calendar.readonly", "https://www.googleapis.com/auth/calendar.events.readonly"]
 			fetchEvents()
-		}
+        } else {
+            if numberOfTries == 1 {
+                NotificationCenter.default.post(name: .googleCalendarNotAuthenticated, object: nil)
+            }
+            numberOfTries += 1
+        }
 	}
-
+    
 	func fetchEvents() {
-		let query = GTLRCalendarQuery_EventsList.query(withCalendarId: "doic7liuceeq33trub6klcb8qs@group.calendar.google.com")
-		query.maxResults = 8
+        let users: [User] = DataFetcher().getEntities(moc: moc)
+        guard let calendarId = users.first?.googleCalendarId else { return }
+        let query = GTLRCalendarQuery_EventsList.query(withCalendarId: calendarId)
+		query.maxResults = 200
 		query.timeMin = GTLRDateTime(date: Date())
-		query.timeMax = GTLRDateTime(date: Date().addingTimeInterval(.days(60)))
+		query.timeMax = GTLRDateTime(date: Date().addingTimeInterval(.days(21)))
 		query.singleEvents = true
 		query.orderBy = kGTLRCalendarOrderByStartTime
 		calendarService?.executeQuery(
@@ -91,22 +83,35 @@ class GoogleActivityFetch: NSObject {
 		finishedWithObject response : GTLRCalendar_Events,
 		error : NSError?) {
 
-		if error != nil {
-//			fetchFinished(result: .error(error?.localizedDescription ?? ""))
+		if let error = error {
+            print(error)
 			return
 		}
-
-		if let events = response.items, !events.isEmpty {
-			for event in events {
-				let activity = CoreGoogleActivities.createEntity()
-				activity.startDate = event.start?.dateTime?.date as NSDate?
-				activity.endDate = event.end?.dateTime?.date as NSDate?
-				activity.eventDescription = event.summary
-			}
-		}
-
-		_ = CoreGoogleActivities.saveContext()
-//		fetchFinished(result: .OK(.updated))
+        
+        let mocBackground = newMOCBackground
+        mocBackground.performAndWait {
+            let activities: [GoogleActivity] = DataFetcher().getEntities(moc: mocBackground)
+            activities.forEach({ mocBackground.delete($0) })
+            
+            if let events = response.items, !events.isEmpty {
+                for event in events {
+                    let activity: GoogleActivity = DataFetcher().createEntity(moc: mocBackground)
+                    activity.id = UUID().uuidString
+                    activity.startDate = event.start?.dateTime?.date as NSDate?
+                    activity.endDate = event.end?.dateTime?.date as NSDate?
+                    activity.eventDescription = event.summary
+                    activity.createdAt = NSDate()
+                    activity.userUID = Auth.auth().currentUser?.uid ?? "-"
+                }
+            }
+            do {
+                try mocBackground.save()
+            } catch { }
+            
+        }
+        do {
+            try moc.save()
+        } catch { }
 	}
 
 }

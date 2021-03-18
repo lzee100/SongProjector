@@ -8,25 +8,28 @@
 
 import Foundation
 import AVFoundation
+import UIKit
+import MediaPlayer
+
 
 //https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3
 
 let SoundPlayer = SoundPlay()
 
-class SoundPlay: NSObject, AVAssetDownloadDelegate, AVAudioPlayerDelegate {
+class SoundPlay: NSObject, AVAssetDownloadDelegate {
 	
 	var isPlaying = false
 	var isPianoOnlyPlaying = false
 	var isLooping = false
 	
-	private var song: VCluster?
+	private (set) var song: VCluster?
 	private var timer: Timer?
 	private var loopTime: TimeInterval = 0
 	private var queuePlayer = AVQueuePlayer()
 	private var playerLooper: AVPlayerLooper?
 	
-	private var players: [InstrumentPlayer] = []
-	
+    private var players: [InstrumentPlayer] = []
+    
 	func play(song: VCluster, pianoSolo: Bool = false) {
 		stop()
 		isPianoOnlyPlaying = pianoSolo
@@ -35,31 +38,38 @@ class SoundPlay: NSObject, AVAssetDownloadDelegate, AVAudioPlayerDelegate {
 			self.song = song
 			self.loadAudio(pianoSolo: pianoSolo)
 			
-//			if isLooping {
-//				timer = Timer.scheduledTimer(timeInterval: song.time, target: self, selector: #selector(replay), userInfo: nil, repeats: true)
-//			}
-			for player in players {
-				player.volume = 0
-				player.play()
-				player.setVolume(1, fadeDuration: 2)
-			}
-			isPlaying = !isPlaying
+            DispatchQueue.global(qos: .background).async {
+                let commandCenter = MPRemoteCommandCenter.shared()
+                commandCenter.playCommand.isEnabled = true
+
+                for player in self.players {
+                    commandCenter.playCommand.addTarget { (_) -> MPRemoteCommandHandlerStatus in
+                        if player.rate == 0.0 {
+                            player.play()
+                            return .success
+                        }
+                        return .commandFailed
+                    }
+                    player.volume = 0
+                    player.play()
+                    player.setVolume(1, fadeDuration: 2)
+                }
+            }
+			isPlaying = true
 		}
 	}
 	
 	func stop() {
-		if isPlaying {
-			timer?.invalidate()
-			timer = nil
-			for player in players {
-				player.setVolume(0, fadeDuration: 2)
-				DispatchQueue.main.asyncAfter(deadline: .now() + TimeInterval.seconds(2)) {
-					player.stop()
-				}
-			}
-			isPlaying = false
-			isPianoOnlyPlaying = false
-		}
+        timer?.invalidate()
+        timer = nil
+        for player in players {
+            player.setVolume(0, fadeDuration: 2)
+            DispatchQueue.main.asyncAfter(deadline: .now() + TimeInterval.seconds(2)) {
+                player.stop()
+            }
+        }
+        isPlaying = false
+        isPianoOnlyPlaying = false
 	}
 	
 	func playerFor(instrumentType: InstrumentType) -> InstrumentPlayer? {
@@ -69,9 +79,10 @@ class SoundPlay: NSObject, AVAssetDownloadDelegate, AVAudioPlayerDelegate {
 	private func loadAudio(pianoSolo: Bool) {
 		
 		do {
+            UIApplication.shared.beginReceivingRemoteControlEvents()
 			let audioSession = AVAudioSession.sharedInstance()
-			try audioSession.setCategory(AVAudioSession.Category.playback)
-			
+            try audioSession.setCategory(.playback, mode: .moviePlayback, policy: .longFormAudio, options: [.mixWithOthers, .allowAirPlay, .allowBluetooth])
+            
 		} catch {
 			print(error)
 		}
@@ -96,12 +107,12 @@ class SoundPlay: NSObject, AVAssetDownloadDelegate, AVAudioPlayerDelegate {
 	private func loadSongAudioFor(instrument: VInstrument) {
 		
 		var player = InstrumentPlayer()
-		if let url = URL(string: FileManager.appFullPathTemp(existingPath: instrument.resourcePath)) {
+        if let urlString = instrument.resourcePath {
+            let url = FileManager.getURLfor(name: urlString) 
 			do {
 				player = try InstrumentPlayer(contentsOf: url)
 				player.instrumentType = instrument.type
 				player.prepareToPlay()
-				player.delegate = self
 				player.isLoop = instrument.isLoop
 				player.numberOfLoops = instrument.isLoop ? -1 : 0
 				players.append(player)

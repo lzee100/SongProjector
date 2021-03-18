@@ -12,7 +12,8 @@ class TextFieldCell: UITableViewCell {
 
 	@IBOutlet var descriptionLabel: UILabel!
 	@IBOutlet var textField: UITextField!
-	
+    @IBOutlet var labelTextFieldConstraint: NSLayoutConstraint!
+    
 	static let identifier = "TextFieldCell"
 	
 	private var textFieldDidChange: ((String?) -> Void)?
@@ -22,7 +23,8 @@ class TextFieldCell: UITableViewCell {
 		textField.text = nil
 	}
 	
-	func setup(description: String, content: String?, textFieldDidChange: @escaping ((String?) -> Void)) {
+	func setup(description: String?, content: String?, textFieldDidChange: @escaping ((String?) -> Void)) {
+        labelTextFieldConstraint.constant = description == nil ? 0 : 10
 		descriptionLabel.text = description
 		textField.text = content
 		self.textFieldDidChange = textFieldDidChange

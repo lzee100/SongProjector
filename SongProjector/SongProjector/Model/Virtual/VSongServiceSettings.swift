@@ -11,20 +11,6 @@ import CoreData
 
 public class VSongServiceSettings: VEntity {
 	
-	class func list(sortOn attributeName: String? = nil, ascending: Bool? = nil) -> [VSongServiceSettings] {
-		if let attributeName = attributeName, let ascending = ascending {
-			CoreSongServiceSettings.setSortDescriptor(attributeName: attributeName, ascending: ascending)
-		}
-		return CoreSongServiceSettings.getEntities().map({ VSongServiceSettings(songserviceSettings: $0) })
-	}
-	
-	class func single(with id: Int64?) -> VSongServiceSettings? {
-		if let id = id, let songserviceSettings = CoreSongServiceSettings.getEntitieWith(id: id) {
-			return VSongServiceSettings(songserviceSettings: songserviceSettings)
-		}
-		return nil
-	}
-	
 	var sections: [VSongServiceSection] = []
 	
 	enum CodingKeysSongServiceSettings: String, CodingKey
@@ -70,38 +56,33 @@ public class VSongServiceSettings: VEntity {
 	override func setPropertiesTo(entity: Entity, context: NSManagedObjectContext) {
 		super.setPropertiesTo(entity: entity, context: context)
 		if let songserviceSettings = entity as? SongServiceSettings {
-			songserviceSettings.hasSongServiceSections = NSSet(array: sections.map({ $0.getManagedObject(context: context) }))
+            sections.forEach({ _ = $0.getManagedObject(context: context) })
+            songserviceSettings.sectionIds = sections.map({ $0.id }).joined(separator: ",")
 		}
 	}
 	
-	override func getPropertiesFrom(entity: Entity) {
-		super.getPropertiesFrom(entity: entity)
+    override func getPropertiesFrom(entity: Entity, context: NSManagedObjectContext) {
+        super.getPropertiesFrom(entity: entity, context: context)
 		if let songserviceSettings = entity as? SongServiceSettings {
-			sections = (songserviceSettings.hasSongServiceSections?.allObjects as? [SongServiceSection] ?? []).map({ VSongServiceSection(entity: $0) }).sorted(by: { $0.position < $1.position })
+            sections = songserviceSettings.hasSections(moc: moc).map({ VSongServiceSection(songServiceSection: $0, context: context) })
 		}
 	}
 	
-	convenience init(songserviceSettings: SongServiceSettings) {
+    convenience init(songserviceSettings: SongServiceSettings, context: NSManagedObjectContext) {
 		self.init()
-		getPropertiesFrom(entity: songserviceSettings)
+        getPropertiesFrom(entity: songserviceSettings, context: context)
 	}
 	
-	override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-		
-		CoreSongServiceSettings.managedObjectContext = context
-		if let storedEntity = CoreSongServiceSettings.getEntitieWith(id: id) {
-			CoreSongServiceSettings.managedObjectContext = moc
-			setPropertiesTo(entity: storedEntity, context: context)
-			return storedEntity
-		} else {
-			CoreSongServiceSettings.managedObjectContext = context
-			let newEntity = CoreSongServiceSettings.createEntityNOTsave()
-			CoreSongServiceSettings.managedObjectContext = moc
-			setPropertiesTo(entity: newEntity, context: context)
-			return newEntity
-		}
+    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
+        if let entity: SongServiceSettings = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
+            setPropertiesTo(entity: entity, context: context)
+            return entity
+        } else {
+            let entity: SongServiceSettings = DataFetcher().createEntity(moc: context)
+            setPropertiesTo(entity: entity, context: context)
+            return entity
+        }
+    }
 
-	}
-	
 	
 }

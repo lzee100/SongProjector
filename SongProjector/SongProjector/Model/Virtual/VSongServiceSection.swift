@@ -10,32 +10,20 @@ import Foundation
 import CoreData
 
 public class VSongServiceSection: VEntity {
-	
-	class func list(sortOn attributeName: String? = nil, ascending: Bool? = nil) -> [VSongServiceSection] {
-		if let attributeName = attributeName, let ascending = ascending {
-			CoreSongServiceSection.setSortDescriptor(attributeName: attributeName, ascending: ascending)
-		}
-		return CoreSongServiceSection.getEntities().map({ VSongServiceSection(songServiceSection: $0) })
-	}
-	
-	class func single(with id: Int64?) -> VSongServiceSection? {
-		if let id = id, let songServiceSection = CoreSongServiceSection.getEntitieWith(id: id) {
-			return VSongServiceSection(songServiceSection: songServiceSection)
-		}
-		return nil
-	}
-	
+		
 	var position: Int16 = 0
 	var numberOfSongs: Int16 = 0
-	var tagIds: [NSNumber] = []
+	var tagIds: [String] = []
 	var hasSongServiceSettings: VSongServiceSettings? = nil
 
-	public var hasTags: [VTag] {
-		return CoreTag.getEntities().filter({ tag in tagIds.contains(where: { NSNumber(value: tag.id) == $0 }) }).compactMap({ VTag(entity: $0) })
-	}
-	
+    func hasTags(moc: NSManagedObjectContext) -> [VTag] {
+        let persitentTags: [Tag] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted])
+        return persitentTags.filter({ tag in tagIds.contains(tag.id) }).compactMap({ VTag(tag: $0, context: moc) })
+    }
+    	
 	enum CodingKeysSongServiceSection: String, CodingKey
 	{
+        case id
 		case position
 		case numberOfSongs
 		case tags
@@ -49,9 +37,9 @@ public class VSongServiceSection: VEntity {
 		let container = try decoder.container(keyedBy: CodingKeysSongServiceSection.self)
 		position = try container.decode(Int16.self, forKey: .position)
 		numberOfSongs = try container.decode(Int16.self, forKey: .numberOfSongs)
-		
+        id = try container.decode(String.self, forKey: .id)
 		let tags = try container.decodeIfPresent([VTag].self, forKey: .tags) ?? []
-		tagIds = tags.compactMap({ NSNumber(value: $0.id) })
+		tagIds = tags.compactMap({ $0.id })
 		
 		try super.initialization(decoder: decoder)
 		
@@ -63,9 +51,10 @@ public class VSongServiceSection: VEntity {
 	
 	override public func encode(to encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeysSongServiceSection.self)
+        try container.encode(id, forKey: .id)
 		try container.encode(position, forKey: .position)
 		try container.encode(numberOfSongs, forKey: .numberOfSongs)
-		try container.encode(hasTags, forKey: .tags)
+		try container.encode(hasTags(moc: newMOCBackground), forKey: .tags)
 		try super.encode(to: encoder)
 	}
 	
@@ -80,9 +69,10 @@ public class VSongServiceSection: VEntity {
 		let container = try decoder.container(keyedBy: CodingKeysSongServiceSection.self)
 		position = try container.decode(Int16.self, forKey: .position)
 		numberOfSongs = try container.decode(Int16.self, forKey: .numberOfSongs)
-		
+        id = try container.decode(String.self, forKey: .id)
+
 		let tags = try container.decodeIfPresent([VTag].self, forKey: .tags) ?? []
-		tagIds = tags.compactMap({ NSNumber(value: $0.id) })
+		tagIds = tags.compactMap({ $0.id })
 		
 		try super.initialization(decoder: decoder)
 		
@@ -94,40 +84,36 @@ public class VSongServiceSection: VEntity {
 		if let songServiceSection = entity as? SongServiceSection {
 			songServiceSection.position = position
 			songServiceSection.numberOfSongs = numberOfSongs
-			songServiceSection.tagIds = tagIds
+            songServiceSection.tagIds = tagIds.joined(separator: ",")
+            songServiceSection.id = id
 		}
 	}
 	
-	override func getPropertiesFrom(entity: Entity) {
-		super.getPropertiesFrom(entity: entity)
+    override func getPropertiesFrom(entity: Entity, context: NSManagedObjectContext) {
+        super.getPropertiesFrom(entity: entity, context: context)
 		if let songServiceSection = entity as? SongServiceSection {
 			position = songServiceSection.position
 			numberOfSongs = songServiceSection.numberOfSongs
-			tagIds = songServiceSection.tagIds
+            tagIds = songServiceSection.tagIds.split(separator: ",").map({ String($0) })
+            id = songServiceSection.id
 		}
 	}
 	
-	convenience init(songServiceSection: SongServiceSection) {
+    convenience init(songServiceSection: SongServiceSection, context: NSManagedObjectContext) {
 		self.init()
-		getPropertiesFrom(entity: songServiceSection)
+        getPropertiesFrom(entity: songServiceSection, context: context)
 	}
 	
-	override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-		
-		CoreSongServiceSection.managedObjectContext = context
-		if let storedEntity = CoreSongServiceSection.getEntitieWith(id: id) {
-			CoreSongServiceSection.managedObjectContext = moc
-			setPropertiesTo(entity: storedEntity, context: context)
-			return storedEntity
-		} else {
-			CoreSongServiceSection.managedObjectContext = context
-			let newEntity = CoreSongServiceSection.createEntityNOTsave()
-			CoreSongServiceSection.managedObjectContext = moc
-			setPropertiesTo(entity: newEntity, context: context)
-			return newEntity
-		}
-
-	}
+    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
+        if let entity: SongServiceSection = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
+            setPropertiesTo(entity: entity, context: context)
+            return entity
+        } else {
+            let entity: SongServiceSection = DataFetcher().createEntity(moc: context)
+            setPropertiesTo(entity: entity, context: context)
+            return entity
+        }
+    }
 
 	
 }

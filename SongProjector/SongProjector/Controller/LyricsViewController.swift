@@ -9,7 +9,7 @@
 import UIKit
 
 protocol LyricsControllerDelegate {
-	func didPressDone(text: String)
+    func didPressDone(text: String, isCompleted: Bool)
 }
 
 class LyricsViewController: UIViewController {
@@ -21,108 +21,96 @@ class LyricsViewController: UIViewController {
 	
 	var text = ""
 	var delegate: LyricsControllerDelegate?
-	
+    var isBibleTextGenerator = true
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        borderView.setCornerRadius(corners: .allCorners, radius: 5)
+        if let placeholder = lyricsTextView.subviews.compactMap({ $0 as? UILabel }).first {
+            let height = placeholder.text!.height(withConstrainedWidth: lyricsTextView.bounds.width - 6, font: .normal)
+            placeholder.heightAnchor.constraint(equalToConstant: height).isActive = true
+        }
+    }
+    
 	override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = themeWhiteBlackBackground
-		cancelButton.title = Text.Actions.cancel
-		doneButton.title = Text.Actions.done
-		borderView.layer.borderWidth = 2
-		borderView.layer.cornerRadius = 5
-		borderView.layer.borderColor = themeHighlighted.cgColor
-		
-		lyricsTextView.textColor = themeWhiteBlackTextColor
-		
+        view.backgroundColor = .whiteColor
+		cancelButton.title = AppText.Actions.cancel
+		doneButton.title = AppText.Actions.done
+        cancelButton.tintColor = themeHighlighted
+        doneButton.tintColor = themeHighlighted
+        borderView.backgroundColor = .grey0
+		lyricsTextView.textColor = .blackColor
 		lyricsTextView.text = text
-		
-		lyricsTextView.text = """
-		Ik zing vol blijdschap en lach
-
-		Ik zing vol blijdschap en lach
-		Want de vreugde van God is mijn kracht
-		Wij buigen neer aanbidden Hem nu,
-		hoe groot en machtig is Hij
-		Iedereen zingt, iedereen zingt
-
-		Heilig is de Heer, God almachtig
-		de aarde is vol van Zijn glorie (2x)
-
-		Ik zing vol blijdschap en lach
-		Want de vreugde van God is mijn kracht
-		Wij buigen neer aanbidden Hem nu,
-		hoe groot en machtig is Hij
-		Iedereen zingt, iedereen zingt
-
-		Heilig is de Heer, God almachtig
-		de aarde is vol van Zijn glorie (2x)
-
-		Hij komt terug, Hij heeft het beloofd
-		voor iedereen die in Hem geloofd (2X)
-
-		Iedereen zingt, iedereen zingt
-
-		Heilig is de Heer, God almachtig
-		de aarde is vol van Zijn glorie (2x)
-		"""
-		
-//		if lyricsTextView.text == "" {
-//			lyricsTextView.text = """
-//			Heer, hoe talrijk zijn mijn vijanden
-//
-//			Heer, hoe talrijk zijn mijn vijanden
-//			en velen die opstaan tegen mij.
-//			Zij, die spotten en zeggen van mij
-//			hij vindt geen hulp bij zijn God.
-//
-//			Maar U, o Heer bent een schild voor mij
-//			mijn Redder en Bevrijder elke dag.
-//			Want U, o Heer bent een schild voor mij
-//			mijn Redder en Bevrijder elke dag.
-//
-//			Ik ben niet bang voor tienduizenden mensen
-//			die zich stellen rondom mij.
-//			Als ik luide roep tot God
-//			dan antwoord Hij mij van Zijn heil’ge berg.
-//
-//			Maar U, o Heer bent een schild voor mij
-//			mijn Redder en Bevrijder elke dag.
-//			Want U, o Heer bent een schild voor mij
-//			mijn Redder en Bevrijder elke dag.
-//
-//			Heer, hoe talrijk zijn mijn vijanden
-//			en velen die opstaan tegen mij.
-//			Zij, die spotten en zeggen van mij
-//			hij vindt geen hulp bij zijn God.
-//
-//			Maar U, o Heer bent een schild voor mij
-//			mijn Redder en Bevrijder elke dag.
-//			Want U, o Heer bent een schild voor mij
-//			mijn Redder en Bevrijder elke dag.
-//
-//			Ik ben niet bang voor tienduizenden mensen
-//			die zich stellen rondom mij.
-//			Als ik luide roep tot God
-//			dan antwoord Hij mij van Zijn heil’ge berg.
-//
-//			Maar U, o Heer bent een schild voor mij
-//			mijn Redder en Bevrijder elke dag.
-//			Want U, o Heer bent een schild voor mij
-//			mijn Redder en Bevrijder elke dag.
-//			"""
-//		}
+        lyricsTextView.delegate = self
+        lyricsTextView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
+		let placeholder = lyricsPlaceholder
+        placeholder.isHidden = !text.isEmpty
+        title = isBibleTextGenerator ? AppText.Lyrics.titleBibleText : AppText.Lyrics.titleLyrics
     }
-
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        NotificationCenter.default.post(name: .closeSheetPickerMenuPopUp, object: nil)
+        (presentingViewController?.unwrap() as? CustomSheetsController)?.viewWillAppear(animated)
+    }
+    
+    var lyricsPlaceholder: UILabel {
+        if let placeholder = lyricsTextView.subviews.compactMap({ $0 as? UILabel }).first {
+            return placeholder
+        } else {
+            let placeholder = UILabel(frame: CGRect(x: 0, y: 0, width: lyricsTextView.bounds.width, height: 21))
+            placeholder.text = isBibleTextGenerator ? AppText.Lyrics.placeholderBibleText : AppText.Lyrics.placeholderLyrics
+            placeholder.font = .normal
+            placeholder.textColor = .placeholder
+            lyricsTextView.addSubview(placeholder)
+            view.layoutIfNeeded()
+            let height = placeholder.text!.height(withConstrainedWidth: lyricsTextView.bounds.width - 6, font: .normal)
+            placeholder.numberOfLines = 0
+            placeholder.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                placeholder.topAnchor.constraint(equalTo: lyricsTextView.topAnchor, constant: 7),
+                placeholder.leftAnchor.constraint(equalTo: lyricsTextView.leftAnchor, constant: 3),
+                placeholder.widthAnchor.constraint(equalTo: lyricsTextView.widthAnchor, constant: 3),
+                placeholder.heightAnchor.constraint(equalToConstant: height)
+            ])
+            return placeholder
+        }
+    }
+    
 	@IBAction func cancelPressed(_ sender: UIBarButtonItem) {
 		self.dismiss(animated: true)
 	}
 	
 	@IBAction func donePressed(_ sender: UIBarButtonItem) {
-		if let text = lyricsTextView.text {
-			delegate?.didPressDone(text: text)
-		}
-		self.dismiss(animated: true)
+        self.delegate?.didPressDone(text: text, isCompleted: false)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            if let text = self.lyricsTextView.text {
+                self.delegate?.didPressDone(text: text, isCompleted: true)
+            }
+        }
+        self.dismiss(animated: true)
 	}
 	
-	
+}
+
+extension LyricsViewController: UITextViewDelegate {
+    
+    func textViewDidChange(_ textView: UITextView) {
+        if let text = textView.text, !text.isEmpty {
+            lyricsPlaceholder.isHidden = true
+        } else {
+            lyricsPlaceholder.isHidden = false
+        }
+    }
+   
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if let text = textView.text, !text.isEmpty {
+            lyricsPlaceholder.isHidden = true
+        } else {
+            lyricsPlaceholder.isHidden = false
+        }
+    }
+    
 }

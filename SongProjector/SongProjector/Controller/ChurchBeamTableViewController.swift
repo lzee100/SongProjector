@@ -8,7 +8,9 @@
 
 import UIKit
 
-class ChurchBeamTableViewController: UITableViewController, RequestObserver {
+class ChurchBeamTableViewController: UITableViewController, RequesterObserver1 {
+    
+    
 
 	// MARK: - Private properties
 	
@@ -23,13 +25,16 @@ class ChurchBeamTableViewController: UITableViewController, RequestObserver {
 	var requesterId: String {
 		return "ChurchBeamViewController"
 	}
-	var requesters: [RequesterType] {
+	var requesters: [RequesterBase] {
 		return []
 	}
 	var shouldRemoveObserversOnDissappear: Bool {
 		return true
 	}
 
+    deinit {
+        requesters.forEach({ $0.removeObserver(self) })
+    }
 	
 	
 	// MARK: UIViewController functions
@@ -82,41 +87,30 @@ class ChurchBeamTableViewController: UITableViewController, RequestObserver {
 	func show(message: String) {
 		createView(message: message)
 	}
-	
-	
-	func show(error: ResponseType) {
-		switch error {
-		case .error(let response, let error):
-			let status = response?.statusCode.stringValue ?? "no status code"
-			let errMessage = error?.localizedDescription ?? "no message"
-			let message = "status: \(status):\n\(errMessage)"
-			createView(message: message)
-		default:
-			return
-		}
-	}
-	
-	func handleRequestFinish(requesterId: String, result: AnyObject?) {
+    
+    func handleRequestFinish(requesterId: String, result: Any?) {
 		
 	}
 	
+    
+    
 	// MARK: RequestObserver functions
 	
 	func requesterDidStart() {
 		showLoader()
 	}
+    
+    func requesterDidFinish(requester: RequesterBase, result: RequestResult, isPartial: Bool) {
+        Queues.main.async {
+            self.hideLoader()
+            switch result {
+            case .failed(let error): self.show(message: error.localizedDescription)
+            case .success(let result): self.handleRequestFinish(requesterId: requester.id, result: result)
+            }
+        }
+    }
 	
-	func requestDidFinish(requesterID: String, response: ResponseType, result: AnyObject?) {
-		Queues.main.async {
-			self.hideLoader()
-			switch response {
-			case .error(_, _): self.show(error: response)
-			case .OK(_): self.handleRequestFinish(requesterId: requesterID, result: result)
-			}
-		}
-	}
-	
-	
+    
 	
 	// MARK: Private functions
 	

@@ -21,26 +21,26 @@ class SheetTest: UIViewController {
 		theme.isHidden = true
 		theme.deleteDate = NSDate()
 		theme.titleTextSize = 14
-		theme.textColorTitle = .black
+		theme.textColorTitle = .blackColor
 		theme.contentTextSize = 10
-		theme.textColorLyrics = .black
+		theme.textColorLyrics = .blackColor
 		theme.backgroundTransparancy = 100
 		theme.allHaveTitle = true
 		theme.hasEmptySheet = false
 		theme.titleAlignmentNumber = 0
 		theme.contentAlignmentNumber = 0
 
-		theme.textColorTitle = .white
-		theme.textColorLyrics = .white
+		theme.textColorTitle = .whiteColor
+		theme.textColorLyrics = .whiteColor
 		theme.isTitleItalic = true
 		theme.isContentItalic = true
 		theme.titleAlignmentNumber = 1
 		theme.contentAlignmentNumber = 1
 		
-		sheet.title = Text.newPastorsSheet.title
-		sheet.content = Text.newPastorsSheet.content
+		sheet.title = AppText.newPastorsSheet.title
+		sheet.content = AppText.newPastorsSheet.content
 
-		let view = SheetPastors.createWith(frame: previewView.bounds, cluster: nil, sheet: sheet, theme: theme, isPreview: false, position: 0, toExternalDisplay: true)
+		let view = SheetPastors.createWith(frame: previewView.bounds, cluster: nil, sheet: sheet, theme: theme, isPreview: false, toExternalDisplay: true)
 
 		previewView.addSubview(view)
 		self.view.backgroundColor = .gray

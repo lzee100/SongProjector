@@ -8,32 +8,35 @@
 
 import UIKit
 import GoogleSignIn
+import FirebaseAuth
 
 let SheetTimeOffsetKey = "SheetTimeOffsetKey"
 
-class SettingsController: ChurchBeamTableViewController, GoogleCellDelegate, LabelTextFieldCellDelegate, GoogleSignedInCellDelegate {
+class SettingsController: ChurchBeamViewController, UITableViewDelegate, UITableViewDataSource, GoogleCellDelegate, LabelTextFieldCellDelegate, GoogleSignedInCellDelegate {
 	
-	
-	enum Section: Int {
-		case songService = 0
-		case googleAgenda = 1
-		
-		static let all = [songService, googleAgenda]
-		
+    @IBOutlet var tableView: UITableView!
+    
+	enum Section: Int, CaseIterable {
+//		case songService = 0
+		case googleAccount = 0
+        case googleCalendarId = 1
+				
 		static func `for`(_ section: Int) -> Section {
-			return all[section]
+            return Section.allCases[section]
 		}
 		
 		var title: String {
 			switch self {
-			case .songService: return Text.Settings.SectionSongServiceSettings
-			case .googleAgenda: return Text.Settings.SectionGmailAccount
+//			case .songService: return AppText.Settings.SectionSongServiceSettings
+			case .googleAccount: return AppText.Settings.SectionGmailAccount
+            case .googleCalendarId: return AppText.Settings.SectionCalendarId
+
 			}
 		}
 	}
 	
-	override var requesters: [RequesterType] {
-		return [UploadSecretFetcher]
+	override var requesters: [RequesterBase] {
+		return [AdminFetcher, UserSubmitter]
 	}
 
     override func viewDidLoad() {
@@ -49,24 +52,24 @@ class SettingsController: ChurchBeamTableViewController, GoogleCellDelegate, Lab
 
     // MARK: - Table view data source
 
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return Section.all.count
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return Section.allCases.count
     }
 
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 1
     }
 	
-	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
 		switch Section.for(indexPath.section) {
-		case .songService:
-			let cell = tableView.dequeueReusableCell(withIdentifier: LabelTextFieldCell.identifier) as! LabelTextFieldCell
-			cell.create(id: LabelTextViewCell.identifier, description: Text.Settings.sheetTimeOffset, placeholder: Text.Settings.sheetTimeOffsetPlaceholder)
-			cell.delegate = self
-			return cell
-		case .googleAgenda:
-			if GIDSignIn.sharedInstance()?.currentUser != nil {
+//		case .songService:
+//			let cell = tableView.dequeueReusableCell(withIdentifier: LabelTextFieldCell.identifier) as! LabelTextFieldCell
+//			cell.create(id: LabelTextViewCell.identifier, description: AppText.Settings.sheetTimeOffset, placeholder: AppText.Settings.sheetTimeOffsetPlaceholder)
+//			cell.delegate = self
+//			return cell
+		case .googleAccount:
+            if GIDSignIn.sharedInstance()?.currentUser != nil || Auth.auth().currentUser != nil {
 				let cell = tableView.dequeueReusableCell(withIdentifier: GoogleSignedInCell.identifier) as! GoogleSignedInCell
 				cell.setup(delegate: self, sender: self)
 				return cell
@@ -75,39 +78,67 @@ class SettingsController: ChurchBeamTableViewController, GoogleCellDelegate, Lab
 				cell.setup(delegate: self, sender: self)
 				return cell
 			}
+        case .googleCalendarId:
+            let cell = tableView.dequeueReusableCell(withIdentifier: LabelTextFieldCell.identifier) as! LabelTextFieldCell
+            cell.id = AppText.Settings.CalendarIdPlaceHolder
+            cell.setup(description: "ID", placeholder: AppText.Settings.CalendarIdPlaceHolder, delegate: self)
+            let user: User? = DataFetcher().getEntity(moc: moc)
+            cell.textField.text = user?.googleCalendarId
+            return cell
 		}
 	}
 	
-	override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 		switch Section.for(indexPath.section) {
-		case .songService:
-			return 44
-		case .googleAgenda:
+//        case .songService, .googleCalendarId:
+        case .googleCalendarId:
+            return UITableView.automaticDimension
+		case .googleAccount:
 			return GIDSignIn.sharedInstance()?.currentUser != nil ? GoogleSignedInCell.preferredHeight : GoogleCell.preferredHeight
 		}
 	}
 	
-	override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-		return Section.for(section).title
-	}
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        tableView.style(cell, forRowAt: indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return HeaderView.height
+    }
+    
+    func tableView(_ tableView: UITableView, estimatedHeightForHeaderInSection section: Int) -> CGFloat {
+        return HeaderView.height
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        guard let view = tableView.basicHeaderView else { return nil }
+        view.descriptionLabel.text = Section.for(section).title
+        return view
+    }
+
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        if section == Section.allCases.count - 1 {
+            let view = tableView.basicFooterView
+            let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+            view?.setup(description: AppText.Settings.Appversion + (appVersion ?? ""))
+            view?.descriptionLabel.textAlignment = .center
+            return view
+        }
+        return nil
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return section == Section.allCases.count - 1 ? 100 : CGFloat.leastNonzeroMagnitude
+    }
 	
-	override var canBecomeFirstResponder: Bool {
+    override var canBecomeFirstResponder: Bool {
 		return true
 	}
 
 	// Enable detection of shake motion
 	override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
 		if motion == .motionShake {
-			let alert = UIAlertController(title: "Voer code in:", message: nil, preferredStyle: .alert)
-			alert.addTextField { (textField) in
-				textField.placeholder = "Code"
-			}
-			alert.addAction(UIAlertAction(title: Text.Actions.ok, style: .default, handler: { (_) in
-				let secret = alert.textFields![0].text ?? ""
-				UploadSecretFetcher.secret = secret
-				UploadSecretFetcher.fetch()
-			}))
-			present(alert, animated: true)
+            AdminFetcher.fetch()
 		}
 	}
 	
@@ -115,13 +146,40 @@ class SettingsController: ChurchBeamTableViewController, GoogleCellDelegate, Lab
 	// MARK: - Delegate Functions
 	
 	// MARK: RequestObserver Functions
-	
-	override func handleRequestFinish(requesterId: String, result: AnyObject?) {
-		if requesterId == UploadSecretFetcher.requesterId {
-			UserDefaults.standard.setValue(UploadSecretFetcher.secret, forKey: secretKey)
-			NotificationCenter.default.post(name: NotificationNames.secretChanged, object: nil, userInfo: nil)
-		}
-	}
+    
+    override func requesterDidFinish(requester: RequesterBase, result: RequestResult, isPartial: Bool) {
+        switch result {
+        case .success(let result):
+            guard (result as? [VAdmin])?.count ?? 0 > 0 else {
+                return
+            }
+            Queues.main.async {
+                
+                UserDefaults.standard.set("true", forKey: secretKey)
+                let alert = UIAlertController(title: nil, message: "Wil je van omgeving wisselen? \(ChurchBeamConfiguration.environment.name)", preferredStyle: .actionSheet)
+                alert.addAction(UIAlertAction(title: "Wissel naar: \(ChurchBeamConfiguration.environment.next)", style: .default, handler: { (_) in
+                    ChurchBeamConfiguration.environment = ChurchBeamConfiguration.environment.next
+                    GIDSignIn.sharedInstance().signOut()
+                    Queues.background.asyncAfter(deadline: .now() + 1) {
+                        fatalError("Wissel van omgeving")
+                    }
+                }))
+                alert.addAction(UIAlertAction(title: AppText.Actions.cancel, style: .cancel, handler: { (_) in
+                    Queues.main.async {
+                        NotificationCenter.default.post(name: .secretChanged, object: nil, userInfo: nil)
+                    }
+                }))
+                alert.popoverPresentationController?.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.maxY, width: 1, height: 1)
+                alert.popoverPresentationController?.sourceView = UIView(frame: CGRect(x: self.view.bounds.midX, y: self.view.bounds.maxY, width: 1, height: 1))
+                self.present(alert, animated: true)
+            }
+        case .failed(let error):
+            if requester.id == UserSubmitter.id {
+                show(error)
+            }
+            return
+        }
+    }
 	
 	// MARK: GoogleCellDelegate Functions
 	
@@ -130,27 +188,44 @@ class SettingsController: ChurchBeamTableViewController, GoogleCellDelegate, Lab
 	}
 
 	func didSuccesfullyLogin(googleIdToken: String, userName: String) {
-		tableView.reloadRows(at: [IndexPath(row: 0, section: Section.googleAgenda.rawValue)], with: .fade)
+		tableView.reloadRows(at: [IndexPath(row: 0, section: Section.googleAccount.rawValue)], with: .fade)
 	}
 	
 	// MARK: GoogleSignedInCellDelegate Functions
 	
 	func didSignedOut() {
-		tableView.reloadRows(at: [IndexPath(row: 0, section: Section.googleAgenda.rawValue)], with: .fade)
+		tableView.reloadRows(at: [IndexPath(row: 0, section: Section.googleAccount.rawValue)], with: .fade)
 	}
 	
 	// MARK: LabelTextFieldCellDelegate Functions
 	
 	func textFieldDidChange(cell: LabelTextFieldCell, text: String?) {
-		if let value = text, let time = Double(value) {
-			UserDefaults.standard.setValue(time, forKey: SheetTimeOffsetKey)
-		} else {
-			show(message: Text.Settings.sheetTimeOffsetError)
-		}
+        if cell.id == AppText.Settings.CalendarIdPlaceHolder {
+            let user: User? = DataFetcher().getEntity(moc: moc, predicates: [.skipDeleted])
+            let vUser = [user].compactMap({ $0 }).map({ VUser(user: $0, context: moc) }).first
+            if let user = vUser {
+                user.googleCalendarId = text
+                UserSubmitter.submit([user], requestMethod: .put)
+            }
+        } else {
+            if let value = text, let time = Double(value) {
+                let user: User? = DataFetcher().getEntity(moc: moc, predicates: [.skipDeleted])
+                let vUser = [user].compactMap({ $0 }).map({ VUser(user: $0, context: moc) }).first
+                if let user = vUser {
+                    user.sheetTimeOffset = time
+                    UserSubmitter.submit([user], requestMethod: .put)
+                }
+            } else {
+                show(message: AppText.Settings.sheetTimeOffsetError)
+            }
+        }
 	}
 
 	private func setup() {
 		tableView.register(cells: [LabelTextFieldCell.identifier, GoogleSignedInCell.identifier, Cells.GoogleCell])
+        tableView.registerBasicHeaderView()
+        tableView.registerTextFooterView()
 		tableView.reloadData()
+        title = AppText.Settings.title
 	}
 }

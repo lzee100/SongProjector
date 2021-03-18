@@ -7,6 +7,15 @@
 
 import Foundation
 
+class Queues: NSObject {
+    static var background: DispatchQueue {
+        return DispatchQueue.global(qos: DispatchQoS.QoSClass.background)
+    }
+    static var main: DispatchQueue {
+        return DispatchQueue.main
+    }
+}
+
 open class Operation : Foundation.Operation {
 	
 	public static let GlobalQueue: OperationQueue = {
@@ -42,7 +51,7 @@ open class Operation : Foundation.Operation {
 		
 		var previous : Foundation.Operation?
 		
-		for current in operations.reversed() {
+		for current in operations {
 			
 			if let previous = previous {
 				

@@ -38,32 +38,37 @@ class SheetEmpty: SheetView {
 			updateOpacity()
 			
 		}
+        if [sheetTheme?.displayTime, cluster?.hasTheme(moc: moc)?.displayTime].compactMap({ $0 }).contains(true) {
+            updateTime(isOn: true)
+        }
 	}
 	
 	override func updateOpacity() {
-		if let alpha = sheetTheme?.backgroundTransparancy, alpha != 1 {
-			if sheetTheme?.backgroundImage != nil {
-				backgroundImageView.alpha = CGFloat(alpha)
-				backgroundView.alpha = 1
-			} else {
-				backgroundImageView.alpha = 0
-				backgroundView.alpha = CGFloat(alpha)
-			}
-		}
+        let image = isForExternalDispay ? sheetTheme?.tempSelectedImage ?? sheetTheme?.backgroundImage : sheetTheme?.tempSelectedImageThumbNail ?? sheetTheme?.thumbnail
+        if let alpha = sheetTheme?.backgroundTransparancy {
+            if image != nil, !(sheetTheme?.isTempSelectedImageDeleted ?? true) {
+                backgroundImageView.alpha = CGFloat(alpha)
+                backgroundView.alpha = 1
+            } else {
+                backgroundImageView.alpha = 0
+                backgroundView.alpha = CGFloat(alpha)
+            }
+        }
 	}
 	
 	override func updateBackgroundImage() {
-		let image = isForExternalDispay ? sheetTheme?.backgroundImage : sheetTheme?.thumbnail
-		if let backgroundImage = image, !(sheetTheme?.isBackgroundImageDeleted ?? true) {
-			backgroundImageView.isHidden = false
-			backgroundImageView.contentMode = .scaleAspectFill
-			backgroundImageView.image = backgroundImage
-			if let backgroundTransparency = sheetTheme?.backgroundTransparancy {
-				backgroundImageView.alpha = CGFloat(backgroundTransparency)
-			}
-		} else {
-			backgroundImageView.isHidden = true
-		}
+        let image = isForExternalDispay ? sheetTheme?.tempSelectedImage ?? sheetTheme?.backgroundImage : sheetTheme?.tempSelectedImageThumbNail ?? sheetTheme?.thumbnail
+        if let backgroundImage = image, !(sheetTheme?.isTempSelectedImageDeleted ?? true) {
+            backgroundImageView.isHidden = false
+            backgroundImageView.contentMode = .scaleAspectFill
+            backgroundImageView.image = backgroundImage
+            backgroundImageView.clipsToBounds = true
+            if let backgroundTransparency = sheetTheme?.backgroundTransparancy {
+                backgroundImageView.alpha = CGFloat(backgroundTransparency)
+            }
+        } else {
+            backgroundImageView.isHidden = true
+        }
 	}
 	
 	override func updateBackgroundColor() {
@@ -83,11 +88,15 @@ class SheetEmpty: SheetView {
 		}
 		
 		if let theme = sheetTheme, let scaleFactor = scaleFactor { // is custom sheet
+			var attributes = theme.getTitleAttributes(scaleFactor)
+            if !theme.displayTime, let font = UIFont(name: "Avenir", size: 10 * scaleFactor) {
+                attributes[NSAttributedString.Key.foregroundColor] = UIColor.white
+                attributes[NSAttributedString.Key.font] = font
+            }
+			timeLabel.attributedText = NSAttributedString(string: test, attributes: attributes)
 			
-			timeLabel.attributedText = NSAttributedString(string: test, attributes: theme.getTitleAttributes(scaleFactor))
-			
-		} else {
-			timeLabel.text = test
+		} else if let font = UIFont(name: "Avenir", size: 10 * (scaleFactor ?? 1)) {
+            timeLabel.attributedText = NSAttributedString(string: test, attributes: [NSAttributedString.Key.foregroundColor : UIColor.white, NSAttributedString.Key.font : font])
 		}
 		
 	}

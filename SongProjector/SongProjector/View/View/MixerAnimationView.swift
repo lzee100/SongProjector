@@ -41,18 +41,30 @@ class MixerAnimationView: UIView {
 		return bounds.height
 	}
 	
+    
+    // MARK: - Properties
+    
+    var isPlaying: Bool {
+        return timer != nil
+    }
+    var mixerColor: UIColor = .whiteColor
 	
 	
 	// MARK: - UIView Functions
 
 	
-	override init(frame: CGRect) {
+    override init(frame: CGRect) {
 		super.init(frame: frame)
 		customInit()
-		
 	}
 	
-	required init?(coder aDecoder: NSCoder) {
+    convenience init(frame: CGRect, mixerColor: UIColor) {
+        self.init(frame: frame)
+        self.mixerColor = mixerColor
+        customInit()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
 		customInit()
 	}
@@ -75,6 +87,7 @@ class MixerAnimationView: UIView {
 	
 	func stop() {
 		timer?.invalidate()
+        timer = nil
 		self.barConstraints.forEach({
 			$0.constant = maxHeight
 		})
@@ -91,7 +104,7 @@ class MixerAnimationView: UIView {
 		mixerAnimationView.frame = self.bounds
 		mixerAnimationView.backgroundColor = .clear
 		addSubview(mixerAnimationView)
-		bars.forEach({ $0.backgroundColor = themeHighlighted })
+		bars.forEach({ $0.backgroundColor = mixerColor })
 		barConstraints.forEach({ $0.constant = maxHeight })
 	}
 	

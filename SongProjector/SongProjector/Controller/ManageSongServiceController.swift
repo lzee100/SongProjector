@@ -13,17 +13,11 @@ class ManageSongServiceController: ChurchBeamViewController, UITableViewDataSour
 	
 	
 	@IBOutlet var addOrEditButton: UIBarButtonItem!
-	
 	@IBOutlet var tableView: UITableView!
-
-	private var songServiceObject: VSongServiceSettings? = nil {
-		didSet { print(songServiceObject?.sections.count ?? 0) }
-	}
-	override var requesterId: String {
-		return ""
-	}
-	override var requesters: [RequesterType] {
-		return [SongServiceSettingsFetcher]
+    
+	private var songServiceObject: VSongServiceSettings? = nil
+	override var requesters: [RequesterBase] {
+		return [SongServiceSettingsFetcher, SongServiceSettingsSubmitter]
 	}
 	
 	// MARK: - UIView Functions
@@ -31,15 +25,15 @@ class ManageSongServiceController: ChurchBeamViewController, UITableViewDataSour
     override func viewDidLoad() {
         super.viewDidLoad()
 		tableView.register(cell: BasicCell.identifier)
-		tableView.rowHeight = 68
+        tableView.rowHeight = UITableView.automaticDimension
 		tableView.register(cell: TextCell.identifier)
+        tableView.register(header: BasicHeaderView.identifier)
     }
 	
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
+        update()
 		SongServiceSettingsFetcher.fetch()
-		addOrEditButton.tintColor = .clear
-		addOrEditButton.isEnabled = false
 	}
 	
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -55,54 +49,55 @@ class ManageSongServiceController: ChurchBeamViewController, UITableViewDataSour
 	}
 	
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return (songServiceObject?.sections[section].hasTags.count ?? 0) + 1
+        let numberOfSongsCell = 1
+        let numberOfTags = (songServiceObject?.sections[section].hasTags(moc: moc).count ?? 0)
+        let tagsHeader = numberOfTags > 0 ? 1 : 0
+		return numberOfSongsCell + tagsHeader + numberOfTags
 	}
 	
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		if indexPath.row == 0 {
 			let cell = tableView.dequeueReusableCell(withIdentifier: TextCell.identifier) as! TextCell
-			cell.setupWith(text: Text.SongServiceManagement.numberOfSongs + "\(songServiceObject?.sections[indexPath.section].numberOfSongs ?? 0)")
+			cell.setupWith(text: AppText.SongServiceManagement.numberOfSongs + "\(songServiceObject?.sections[indexPath.section].numberOfSongs ?? 0)")
 			return cell
 		}
-		
+        
+        if indexPath.row == 1 {
+            let cell = tableView.dequeueReusableCell(withIdentifier: TextCell.identifier) as! TextCell
+            cell.setupWith(text: AppText.Tags.title + ":")
+            cell.asSmallHeader()
+            return cell
+        }
+
 		let cell = tableView.dequeueReusableCell(withIdentifier: BasicCell.identifier) as! BasicCell
-		cell.setup(title: songServiceObject?.sections[indexPath.section].hasTags[indexPath.row - 1].title, icon: Cells.bulletFilled, iconSelected: nil, textColor: themeWhiteBlackTextColor, hasPianoOnly: false)
+		cell.setup(title: songServiceObject?.sections[indexPath.section].hasTags(moc: moc)[indexPath.row - 2].title, textColor: .blackColor)
+        cell.titleLeftConstraint.constant = 30
 		return cell
 	}
-	
-	func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-		if indexPath.row == 0 {
-			return UITableView.automaticDimension
-		}
-		return 68
-	}
-	
-	func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-		return songServiceObject?.sections[section].title ?? "No title"
-	}
-	
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        tableView.style(cell, forRowAt: indexPath)
+    }
+        
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let view = tableView.basicHeaderView
+        view?.descriptionLabel.text = songServiceObject?.sections[section].title ?? "No title"
+        return view
+    }
+    	
 	func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-		return HeaderView.basicSize.height
+		return HeaderView.height
 	}
+    
+    override func update() {
+        let settings: [SongServiceSettings] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "updatedAt", ascending: false))
+        self.songServiceObject = [settings.first].compactMap({ $0 }).map({ VSongServiceSettings(songserviceSettings: $0, context: moc) }).first
+        self.addOrEditButton.title = self.songServiceObject == nil ? AppText.Actions.new : AppText.Actions.edit
+        self.tableView.reloadData()
+    }
 	
-	override func handleRequestFinish(requesterId: String, result: AnyObject?) {
-		Queues.main.async {
-			self.songServiceObject = VSongServiceSettings.list().last
-			self.tableView.reloadData()
-		}
+	override func handleRequestFinish(requesterId: String, result: Any?) {
+        update()
 	}
-	
-	override func requestDidFinish(requesterID: String, response: ResponseType, result: AnyObject?) {
-		Queues.main.async {
-			self.hideLoader()
-			switch response {
-			case .error(_, _): self.show(error: response)
-			case .OK(_): self.handleRequestFinish(requesterId: requesterID, result: result)
-			}
-			self.addOrEditButton.title = self.songServiceObject == nil ? Text.Actions.new : Text.Actions.edit
-			self.addOrEditButton.tintColor = themeHighlighted
-			self.addOrEditButton.isEnabled = true
-		}
-	}
-
+    
 }

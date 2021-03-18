@@ -11,20 +11,17 @@
 		E305BB9223CF6D8500A753A2 /* SoundPickerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E305BB9023CF6D8500A753A2 /* SoundPickerCell.xib */; };
 		E306D8F52323BF3900299200 /* AnimatingBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E306D8F42323BF3900299200 /* AnimatingBackgroundView.swift */; };
 		E30833F723D2A31100E5DCE6 /* FileManagerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E30833F623D2A31100E5DCE6 /* FileManagerExtensions.swift */; };
-		E30833F923D3621100E5DCE6 /* UploadSecretFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E30833F823D3621100E5DCE6 /* UploadSecretFetcher.swift */; };
 		E309DCE61FF26CB700C3D135 /* NewSongServiceIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E309DCE51FF26CB700C3D135 /* NewSongServiceIphoneController.swift */; };
 		E309DCE81FF44E6A00C3D135 /* ThemesIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E309DCE71FF44E6A00C3D135 /* ThemesIphoneController.swift */; };
 		E309DCEA1FF45A8A00C3D135 /* MoreSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E309DCE91FF45A8A00C3D135 /* MoreSplitViewController.swift */; };
 		E309DCF31FF48F0800C3D135 /* LabelSwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E309DCF11FF48F0800C3D135 /* LabelSwitchCell.swift */; };
 		E309DCF41FF48F0800C3D135 /* LabelSwitchCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E309DCF21FF48F0800C3D135 /* LabelSwitchCell.xib */; };
-		E309DCF71FF48FF100C3D135 /* LabelColorPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E309DCF51FF48FF100C3D135 /* LabelColorPickerCell.swift */; };
-		E309DCF81FF48FF100C3D135 /* LabelColorPickerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E309DCF61FF48FF100C3D135 /* LabelColorPickerCell.xib */; };
 		E309DCFA1FF4954100C3D135 /* ThemeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E309DCF91FF4954100C3D135 /* ThemeExtensions.swift */; };
 		E309DD021FF5127400C3D135 /* LabelNumberCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E309DD001FF5127400C3D135 /* LabelNumberCell.swift */; };
 		E309DD031FF5127400C3D135 /* LabelNumberCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E309DD011FF5127400C3D135 /* LabelNumberCell.xib */; };
 		E309DD051FF5179B00C3D135 /* Cells.swift in Sources */ = {isa = PBXBuildFile; fileRef = E309DD041FF5179B00C3D135 /* Cells.swift */; };
-		E30B8EC12248BBA300F121D9 /* TagFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E30B8EC02248BBA300F121D9 /* TagFetcher.swift */; };
-		E30B8EC32248BCA400F121D9 /* TagSubmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E30B8EC22248BCA400F121D9 /* TagSubmitter.swift */; };
+		E30B30EA24CF82A900C8E9A4 /* PopUpManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E30B30E924CF82A900C8E9A4 /* PopUpManager.swift */; };
+		E30B30EC24CF8E7400C8E9A4 /* DefaultPopUpController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E30B30EB24CF8E7400C8E9A4 /* DefaultPopUpController.swift */; };
 		E30B8EC722497C2600F121D9 /* TagsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E30B8EC622497C2600F121D9 /* TagsController.swift */; };
 		E30B8EC9224A192C00F121D9 /* Tag.swift in Sources */ = {isa = PBXBuildFile; fileRef = E30B8EC8224A192C00F121D9 /* Tag.swift */; };
 		E30B8ECE224BD80800F121D9 /* WizzardSectionsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E30B8ECD224BD80800F121D9 /* WizzardSectionsController.swift */; };
@@ -54,7 +51,6 @@
 		E31171661FE5A0E7008D9D51 /* SongServiceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E311715E1FE5A0E7008D9D51 /* SongServiceController.swift */; };
 		E31171671FE5A0E7008D9D51 /* MoreController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E311715F1FE5A0E7008D9D51 /* MoreController.swift */; };
 		E31171681FE5A0E7008D9D51 /* SongsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31171601FE5A0E7008D9D51 /* SongsController.swift */; };
-		E31171691FE5A0E7008D9D51 /* NewSongController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31171611FE5A0E7008D9D51 /* NewSongController.swift */; };
 		E311716A1FE5A0E7008D9D51 /* NewSongServiceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31171621FE5A0E7008D9D51 /* NewSongServiceController.swift */; };
 		E311716B1FE5A0E7008D9D51 /* SplashScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31171631FE5A0E7008D9D51 /* SplashScreen.swift */; };
 		E31171751FE5A1A0008D9D51 /* BasicCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E311716D1FE5A1A0008D9D51 /* BasicCell.swift */; };
@@ -74,23 +70,19 @@
 		E31F0B7120F5029500C22FD1 /* Pio-Sebastiaan-en-Marilou.jpg in Resources */ = {isa = PBXBuildFile; fileRef = E31F0B7020F5029500C22FD1 /* Pio-Sebastiaan-en-Marilou.jpg */; };
 		E31F0B7320F50A6E00C22FD1 /* Liedjes - wallpaper 16-9.png in Resources */ = {isa = PBXBuildFile; fileRef = E31F0B7220F50A6D00C22FD1 /* Liedjes - wallpaper 16-9.png */; };
 		E31F0B7520F5D1E800C22FD1 /* SheetPastorsExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31F0B7420F5D1E800C22FD1 /* SheetPastorsExtensions.swift */; };
-		E31F87BD1FE7035D00D5D4BA /* Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31F87BC1FE7035D00D5D4BA /* Text.swift */; };
-		E326E9041FFEC9EC00FEAC9C /* CustomSheetsIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E326E9031FFEC9EC00FEAC9C /* CustomSheetsIphoneController.swift */; };
+		E31F87BD1FE7035D00D5D4BA /* AppText.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31F87BC1FE7035D00D5D4BA /* AppText.swift */; };
 		E326E9071FFECD0E00FEAC9C /* SheetCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E326E9051FFECD0E00FEAC9C /* SheetCollectionCell.swift */; };
 		E326E9081FFECD0E00FEAC9C /* SheetCollectionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E326E9061FFECD0E00FEAC9C /* SheetCollectionCell.xib */; };
-		E32A02A92116441A00C78410 /* Drums.m4a in Resources */ = {isa = PBXBuildFile; fileRef = E32A02A42116441600C78410 /* Drums.m4a */; };
-		E32A02B12116466200C78410 /* Guitar.m4a in Resources */ = {isa = PBXBuildFile; fileRef = E32A02B02116466200C78410 /* Guitar.m4a */; };
-		E32A02B3211646DA00C78410 /* Keyboard.m4a in Resources */ = {isa = PBXBuildFile; fileRef = E32A02B2211646D900C78410 /* Keyboard.m4a */; };
-		E32A02B521164A8800C78410 /* Bass.m4a in Resources */ = {isa = PBXBuildFile; fileRef = E32A02B421164A8800C78410 /* Bass.m4a */; };
 		E32A02B7211715B300C78410 /* SongService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32A02B6211715B300C78410 /* SongService.swift */; };
 		E32D4D6520017E0100ED81A7 /* EditSongIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32D4D6420017E0100ED81A7 /* EditSongIphoneController.swift */; };
-		E32DB8DA2221E23400277C45 /* ContractFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32DB8D92221E23400277C45 /* ContractFetcher.swift */; };
 		E32DB8DC2221E29600277C45 /* Contract.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32DB8DB2221E29600277C45 /* Contract.swift */; };
 		E32DB8E02230283A00277C45 /* ContractLedger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32DB8DF2230283A00277C45 /* ContractLedger.swift */; };
 		E32DB8E2223460D800277C45 /* IntroStartingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32DB8E1223460D800277C45 /* IntroStartingController.swift */; };
 		E32DB8E4223468D500277C45 /* InviteCodeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32DB8E3223468D500277C45 /* InviteCodeController.swift */; };
 		E32DB8E622347AF000277C45 /* UsersController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32DB8E522347AF000277C45 /* UsersController.swift */; };
 		E32DB8E82235B90E00277C45 /* AddNewUserController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32DB8E72235B90E00277C45 /* AddNewUserController.swift */; };
+		E330A036253118DD0014DB44 /* BasicHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E330A035253118DD0014DB44 /* BasicHeaderView.swift */; };
+		E330A039253119180014DB44 /* BasicHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E330A038253119170014DB44 /* BasicHeaderView.xib */; };
 		E3314B6620077DD100F470C0 /* SheetExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3314B6520077DD100F470C0 /* SheetExtensions.swift */; };
 		E3314B682007836D00F470C0 /* SheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3314B672007836D00F470C0 /* SheetView.swift */; };
 		E33268BC2022241E002CDA7C /* SongsMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33268BB2022241E002CDA7C /* SongsMenuController.swift */; };
@@ -104,18 +96,48 @@
 		E334B10B21ED03B40088CD48 /* SheetActivities.swift in Sources */ = {isa = PBXBuildFile; fileRef = E334B10A21ED03B40088CD48 /* SheetActivities.swift */; };
 		E334B10D21ED045C0088CD48 /* GoogleActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = E334B10C21ED045C0088CD48 /* GoogleActivity.swift */; };
 		E334B10F21ED201B0088CD48 /* Instrument.swift in Sources */ = {isa = PBXBuildFile; fileRef = E334B10E21ED201B0088CD48 /* Instrument.swift */; };
-		E334B11121ED21F80088CD48 /* ClusterFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E334B11021ED21F80088CD48 /* ClusterFetcher.swift */; };
-		E334B11321ED22910088CD48 /* ClusterSubmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E334B11221ED22910088CD48 /* ClusterSubmitter.swift */; };
 		E334FD6B20CF9C0700FC1FAE /* SongHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E334FD6A20CF9C0700FC1FAE /* SongHeaderView.xib */; };
 		E334FD6D20CF9E2E00FC1FAE /* SongHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E334FD6C20CF9E2E00FC1FAE /* SongHeaderView.swift */; };
 		E3355D6F1FEDA645004C03AE /* TextViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3355D6E1FEDA645004C03AE /* TextViewExtensions.swift */; };
 		E3355D711FEE6436004C03AE /* ClusterExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3355D701FEE6436004C03AE /* ClusterExtensions.swift */; };
+		E33681702565C7DC0006F043 /* TextFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E336816F2565C7DC0006F043 /* TextFooterView.swift */; };
+		E33681732565D6C20006F043 /* ErrorAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33681722565D6C20006F043 /* ErrorAnimationView.swift */; };
+		E336819E25672E550006F043 /* UniversalClusterOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = E336819D25672E550006F043 /* UniversalClusterOperations.swift */; };
+		E33746AB24A89DC900F44852 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E33746AA24A89DC900F44852 /* Colors.xcassets */; };
+		E33746AD24A89EEF00F44852 /* AppColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33746AC24A89EEF00F44852 /* AppColors.swift */; };
+		E33746AF24A8A66400F44852 /* CircleProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33746AE24A8A66400F44852 /* CircleProgressView.swift */; };
+		E33746B124A8E5B300F44852 /* ChurchFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33746B024A8E5B300F44852 /* ChurchFetcher.swift */; };
+		E33746B324A8F6EF00F44852 /* Church.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33746B224A8F6EF00F44852 /* Church.swift */; };
+		E33746B524A8F74C00F44852 /* VChurch.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33746B424A8F74C00F44852 /* VChurch.swift */; };
+		E33746B724AA6C9F00F44852 /* IntroAdminController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33746B624AA6C9F00F44852 /* IntroAdminController.swift */; };
+		E33B418224BF958000DE4F4E /* SongServicePlayDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33B418124BF958000DE4F4E /* SongServicePlayDate.swift */; };
+		E33BE3F0256317BE00DEAD54 /* ProgressController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33BE3EF256317BE00DEAD54 /* ProgressController.swift */; };
+		E33BE3F425631A4200DEAD54 /* CheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33BE3F325631A4200DEAD54 /* CheckView.swift */; };
+		E33D6F952547526A00493C47 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E33D6F942547526A00493C47 /* StoreKit.framework */; };
+		E33D6F9C254A1EDB00493C47 /* KeyChainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33D6F9B254A1EDB00493C47 /* KeyChainHelper.swift */; };
+		E342E9E8255D905F0093AE5D /* AboutController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E342E9E7255D905F0093AE5D /* AboutController.swift */; };
+		E344A0B424F674FF005588CE /* CountDownView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E344A0B324F674FE005588CE /* CountDownView.xib */; };
+		E344A0B624F67514005588CE /* CountDownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E344A0B524F67514005588CE /* CountDownView.swift */; };
+		E345C488254F61E10031DCF1 /* SubscriptionsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E345C487254F61E10031DCF1 /* SubscriptionsSettings.swift */; };
+		E345C48B254F6F780031DCF1 /* SubscriptionOfferController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E345C48A254F6F780031DCF1 /* SubscriptionOfferController.swift */; };
+		E345C48E255055D60031DCF1 /* SubscriptionOffersContainerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E345C48D255055D60031DCF1 /* SubscriptionOffersContainerController.swift */; };
+		E34B0D6D2570449200993872 /* UniversalClusterSubmitterOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = E34B0D6C2570449200993872 /* UniversalClusterSubmitterOperations.swift */; };
+		E34B0D702570FD9D00993872 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = E34B0D6F2570FD9D00993872 /* Reachability.swift */; };
+		E34B306A25B63AFA009BFE58 /* UploadUniTimesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E34B306925B63AFA009BFE58 /* UploadUniTimesController.swift */; };
 		E34EA3A521CECCA100A65719 /* SongServiceSettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E34EA3A321CECCA100A65719 /* SongServiceSettingsCell.swift */; };
 		E34EA3A621CECCA100A65719 /* SongServiceSettingsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E34EA3A421CECCA100A65719 /* SongServiceSettingsCell.xib */; };
 		E34ED29B2008D62300534C72 /* SheetSplit.xib in Resources */ = {isa = PBXBuildFile; fileRef = E34ED29A2008D62300534C72 /* SheetSplit.xib */; };
 		E34ED29D2008D63700534C72 /* SheetSplit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E34ED29C2008D63700534C72 /* SheetSplit.swift */; };
+		E3501498248596AC0082741A /* IntroPageController22.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3501497248596AC0082741A /* IntroPageController22.swift */; };
+		E350149A248599120082741A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E3501499248599120082741A /* GoogleService-Info.plist */; };
+		E35014A9248985A30082741A /* UserSubmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E35014A8248985A30082741A /* UserSubmitter.swift */; };
+		E35014AB248AB9440082741A /* ThemeSubmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E35014AA248AB9440082741A /* ThemeSubmitter.swift */; };
+		E35014AD248B6D810082741A /* ThemeFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E35014AC248B6D810082741A /* ThemeFetcher.swift */; };
+		E35014AF248B6EB20082741A /* TagSubmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E35014AE248B6EB20082741A /* TagSubmitter.swift */; };
+		E35014B3248B6FE10082741A /* TagFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E35014B2248B6FE10082741A /* TagFetcher.swift */; };
 		E35099EF20DCD152005CA984 /* LyricsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E35099EE20DCD152005CA984 /* LyricsViewController.swift */; };
 		E35099F120DD4FA7005CA984 /* SaveNewSongTitleTimeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E35099F020DD4FA7005CA984 /* SaveNewSongTitleTimeVC.swift */; };
+		E35A1A6925616EAE008CF6A3 /* FileDeleter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E35A1A6825616EAE008CF6A3 /* FileDeleter.swift */; };
 		E35B63C3221A8F22006C50AB /* IntroGoogleSigninController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E35B63C2221A8F22006C50AB /* IntroGoogleSigninController.swift */; };
 		E35E7CE123B76AE70071DCC8 /* VEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = E35E7CE023B76AE70071DCC8 /* VEntity.swift */; };
 		E35E7CE423B76F420071DCC8 /* VTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = E35E7CE323B76F420071DCC8 /* VTheme.swift */; };
@@ -135,7 +157,6 @@
 		E35E7D0023BA4F790071DCC8 /* VTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = E35E7CFF23BA4F790071DCC8 /* VTag.swift */; };
 		E35E7D0223BA50620071DCC8 /* VSongServiceSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E35E7D0123BA50620071DCC8 /* VSongServiceSettings.swift */; };
 		E35E7D0423BA50DD0071DCC8 /* VSongServiceSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E35E7D0323BA50DD0071DCC8 /* VSongServiceSection.swift */; };
-		E361E88421C994C00011A544 /* kort.m4a in Resources */ = {isa = PBXBuildFile; fileRef = E361E88321C994C00011A544 /* kort.m4a */; };
 		E3635A09217CAEC5002758D5 /* MixerAnimationView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3635A08217CAEC5002758D5 /* MixerAnimationView.xib */; };
 		E3635A0B217CAF98002758D5 /* MixerAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3635A0A217CAF98002758D5 /* MixerAnimationView.swift */; };
 		E36E76D821EF51DA002E20EF /* ChurchBeamViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E36E76D721EF51DA002E20EF /* ChurchBeamViewController.swift */; };
@@ -146,8 +167,6 @@
 		E36F41681FEE965200E989E5 /* NewSongIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E36F41671FEE965200E989E5 /* NewSongIphoneController.swift */; };
 		E37137BE205EBB8300DF86F1 /* LabelSliderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37137BC205EBB8300DF86F1 /* LabelSliderCell.swift */; };
 		E37137BF205EBB8300DF86F1 /* LabelSliderCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E37137BD205EBB8300DF86F1 /* LabelSliderCell.xib */; };
-		E37498F821BD5DB800974126 /* LordSong.m4a in Resources */ = {isa = PBXBuildFile; fileRef = E37498F721BD5DB800974126 /* LordSong.m4a */; };
-		E37938E92121DE8E0091698D /* LordLoop.m4a in Resources */ = {isa = PBXBuildFile; fileRef = E37938E82121DE8E0091698D /* LordLoop.m4a */; };
 		E37938EC21271EC90091698D /* PickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37938EA21271EC90091698D /* PickerCell.swift */; };
 		E37938ED21271EC90091698D /* PickerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E37938EB21271EC90091698D /* PickerCell.xib */; };
 		E37938EF212723630091698D /* TableViewCellExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37938EE212723630091698D /* TableViewCellExtensions.swift */; };
@@ -155,13 +174,6 @@
 		E37A49222218C3B0003BD945 /* Role.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37A49212218C3B0003BD945 /* Role.swift */; };
 		E37A49242218C406003BD945 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37A49232218C406003BD945 /* User.swift */; };
 		E37A49262218C42E003BD945 /* Organization.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37A49252218C42E003BD945 /* Organization.swift */; };
-		E37A49282218CB3A003BD945 /* OrganizationSubmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37A49272218CB3A003BD945 /* OrganizationSubmitter.swift */; };
-		E37A492A2218CC7E003BD945 /* UserSubmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37A49292218CC7E003BD945 /* UserSubmitter.swift */; };
-		E37A492C2218CDD3003BD945 /* UserFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37A492B2218CDD3003BD945 /* UserFetcher.swift */; };
-		E37A492E2218D1C4003BD945 /* OrganizationFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37A492D2218D1C4003BD945 /* OrganizationFetcher.swift */; };
-		E37A49302218D27D003BD945 /* RoleFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37A492F2218D27D003BD945 /* RoleFetcher.swift */; };
-		E37A49322219F4A9003BD945 /* SignUpPersonalInfoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37A49312219F4A9003BD945 /* SignUpPersonalInfoController.swift */; };
-		E37A49342219F4F3003BD945 /* SignUpOrganisationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37A49332219F4F3003BD945 /* SignUpOrganisationController.swift */; };
 		E3812DE7201C972B00F10B2C /* SettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3812DE6201C972B00F10B2C /* SettingsController.swift */; };
 		E3812DEA201C992300F10B2C /* GoogleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3812DE8201C992300F10B2C /* GoogleCell.swift */; };
 		E3812DEB201C992300F10B2C /* GoogleCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3812DE9201C992300F10B2C /* GoogleCell.xib */; };
@@ -171,15 +183,20 @@
 		E38347601FF7E8B5008AE69D /* LabelPhotoPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E383475E1FF7E8B5008AE69D /* LabelPhotoPickerCell.swift */; };
 		E38347611FF7E8B5008AE69D /* LabelPhotoPickerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E383475F1FF7E8B5008AE69D /* LabelPhotoPickerCell.xib */; };
 		E38347631FF8434D008AE69D /* ImageExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38347621FF8434D008AE69D /* ImageExtensions.swift */; };
-		E38347651FF9382F008AE69D /* ExternalDisplayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38347641FF9382F008AE69D /* ExternalDisplayController.swift */; };
 		E38347671FFA5099008AE69D /* SheetTitleContent.xib in Resources */ = {isa = PBXBuildFile; fileRef = E38347661FFA5099008AE69D /* SheetTitleContent.xib */; };
 		E38347691FFA512D008AE69D /* SheetTitleContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38347681FFA512D008AE69D /* SheetTitleContent.swift */; };
+		E3847EFA248ED020002D4BED /* AdminFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3847EF9248ED020002D4BED /* AdminFetcher.swift */; };
+		E3847EFC248ED132002D4BED /* VAdmin.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3847EFB248ED132002D4BED /* VAdmin.swift */; };
+		E3847EFE248ED3EC002D4BED /* UniversalClusterSubmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3847EFD248ED3EC002D4BED /* UniversalClusterSubmitter.swift */; };
+		E3847F02248FE419002D4BED /* UniversalClusterFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3847F01248FE419002D4BED /* UniversalClusterFetcher.swift */; };
 		E384E06F23CE7DB80017B73F /* client_1005753122128-dc0k48rg97hdetif0g3ncaf0dq0ue6mc.apps.googleusercontent.com.plist in Resources */ = {isa = PBXBuildFile; fileRef = E384E06E23CE7DB80017B73F /* client_1005753122128-dc0k48rg97hdetif0g3ncaf0dq0ue6mc.apps.googleusercontent.com.plist */; };
 		E384E07423CEF09A0017B73F /* GoogleSignedInCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E384E07223CEF09A0017B73F /* GoogleSignedInCell.swift */; };
 		E384E07523CEF09A0017B73F /* GoogleSignedInCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E384E07323CEF09A0017B73F /* GoogleSignedInCell.xib */; };
 		E384E07723CF159F0017B73F /* UploadUniversalSongController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E384E07623CF159F0017B73F /* UploadUniversalSongController.swift */; };
 		E384E07A23CF18190017B73F /* SongsUploadSheetCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E384E07823CF18190017B73F /* SongsUploadSheetCell.swift */; };
 		E384E07B23CF18190017B73F /* SongsUploadSheetCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E384E07923CF18190017B73F /* SongsUploadSheetCell.xib */; };
+		E387537024842CC20050B425 /* QueryDocumentSnapshotExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E387536F24842CC20050B425 /* QueryDocumentSnapshotExtensions.swift */; };
+		E3875373248432550050B425 /* RequestManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3875372248432550050B425 /* RequestManager.swift */; };
 		E3896A2A21E3EFF2008CB5A5 /* URLExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3896A2921E3EFF2008CB5A5 /* URLExtensions.swift */; };
 		E3896A2C21E3F011008CB5A5 /* HTTPURLResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3896A2B21E3F011008CB5A5 /* HTTPURLResponse.swift */; };
 		E3896A3121E3F04B008CB5A5 /* Entity.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3896A2E21E3F04B008CB5A5 /* Entity.swift */; };
@@ -188,18 +205,12 @@
 		E3896A3521E3F0E3008CB5A5 /* AccountStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3896A3421E3F0E3008CB5A5 /* AccountStore.swift */; };
 		E3896A3721E3F156008CB5A5 /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3896A3621E3F156008CB5A5 /* Operation.swift */; };
 		E3896A3921E3F17C008CB5A5 /* HTTPError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3896A3821E3F17C008CB5A5 /* HTTPError.swift */; };
-		E3896A3B21E3F3D3008CB5A5 /* ThemeFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3896A3A21E3F3D2008CB5A5 /* ThemeFetcher.swift */; };
 		E3896A3E21E3F56D008CB5A5 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3896A3D21E3F56D008CB5A5 /* CloudKit.framework */; };
-		E3896A4021E5D8A3008CB5A5 /* Requester.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3896A3F21E5D8A3008CB5A5 /* Requester.swift */; };
-		E3896A4B21E7A3FD008CB5A5 /* ThemeSubmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3896A4A21E7A3FD008CB5A5 /* ThemeSubmitter.swift */; };
 		E390864D22105EA300320421 /* DataExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E390864C22105EA300320421 /* DataExtensions.swift */; };
 		E393B7652008D20B0073D0A9 /* SheetEmpty.xib in Resources */ = {isa = PBXBuildFile; fileRef = E393B7642008D20B0073D0A9 /* SheetEmpty.xib */; };
 		E393B7672008D25F0073D0A9 /* SheetEmpty.swift in Sources */ = {isa = PBXBuildFile; fileRef = E393B7662008D25F0073D0A9 /* SheetEmpty.swift */; };
 		E393B7692008D3FC0073D0A9 /* SheetTitleImage.xib in Resources */ = {isa = PBXBuildFile; fileRef = E393B7682008D3FC0073D0A9 /* SheetTitleImage.xib */; };
 		E393B76B2008D40A0073D0A9 /* SheetTitleImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E393B76A2008D40A0073D0A9 /* SheetTitleImage.swift */; };
-		E39864DA2098D24100DF5199 /* OrganizationsCRUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = E39864D92098D24100DF5199 /* OrganizationsCRUD.swift */; };
-		E39864DE2098D5BD00DF5199 /* Organizations.swift in Sources */ = {isa = PBXBuildFile; fileRef = E39864DD2098D5BC00DF5199 /* Organizations.swift */; };
-		E39864E0209A0FA700DF5199 /* awsconfiguration.json in Resources */ = {isa = PBXBuildFile; fileRef = E39864DF209A0FA700DF5199 /* awsconfiguration.json */; };
 		E399EA87202F574600E8CE0E /* NewSongMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E399EA86202F574600E8CE0E /* NewSongMenuController.swift */; };
 		E399EA89202F73D700E8CE0E /* CustomSheetsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E399EA88202F73D700E8CE0E /* CustomSheetsController.swift */; };
 		E399EA8B203074DD00E8CE0E /* BibleStudyGeneratorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E399EA8A203074DD00E8CE0E /* BibleStudyGeneratorController.swift */; };
@@ -209,29 +220,36 @@
 		E39B6A1622184E4F002B53B1 /* IntroPageController1.swift in Sources */ = {isa = PBXBuildFile; fileRef = E39B6A1522184E4F002B53B1 /* IntroPageController1.swift */; };
 		E39B6A1822184E5D002B53B1 /* IntroPageController2.swift in Sources */ = {isa = PBXBuildFile; fileRef = E39B6A1722184E5D002B53B1 /* IntroPageController2.swift */; };
 		E39D29F020308F4E00C1C0D9 /* BibleStudyController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E39D29EF20308F4E00C1C0D9 /* BibleStudyController.swift */; };
+		E39EEB652482E5CC00C247BE /* Requester.swift in Sources */ = {isa = PBXBuildFile; fileRef = E39EEB642482E5CC00C247BE /* Requester.swift */; };
 		E3A19734200947AB0044DB1B /* SheetTitleImageExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A19733200947AB0044DB1B /* SheetTitleImageExtensions.swift */; };
 		E3A19736200A76EF0044DB1B /* ViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A19735200A76EF0044DB1B /* ViewControllerExtensions.swift */; };
-		E3A4702E21E0CBF9000CB3D3 /* BaseRestService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A4702D21E0CBF9000CB3D3 /* BaseRestService.swift */; };
 		E3A4703021E0CC80000CB3D3 /* ChurchBeamConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A4702F21E0CC80000CB3D3 /* ChurchBeamConfiguration.swift */; };
 		E3A4703221E10B57000CB3D3 /* RequestOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A4703121E10B57000CB3D3 /* RequestOperation.swift */; };
 		E3A4703421E10D35000CB3D3 /* AsynchronousOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A4703321E10D35000CB3D3 /* AsynchronousOperation.swift */; };
-		E3AB276C221EB31600B9145C /* InitSubmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AB276B221EB31600B9145C /* InitSubmitter.swift */; };
-		E3AB9CE923D7887E00F83455 /* NewContentFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AB9CE823D7887E00F83455 /* NewContentFetcher.swift */; };
-		E3AB9CEB23D7921B00F83455 /* NewContentFetchJob.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AB9CEA23D7921B00F83455 /* NewContentFetchJob.swift */; };
-		E3AB9CED23D79DE300F83455 /* UniversalClusterSubmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AB9CEC23D79DE300F83455 /* UniversalClusterSubmitter.swift */; };
+		E3B1EABE24B4937500304A2D /* SongServiceHeaderCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B1EABC24B4937500304A2D /* SongServiceHeaderCollectionReusableView.swift */; };
+		E3B1EABF24B4937500304A2D /* SongServiceHeaderCollectionReusableView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3B1EABD24B4937500304A2D /* SongServiceHeaderCollectionReusableView.xib */; };
+		E3B1EAC124B4948400304A2D /* UICollectionViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B1EAC024B4948400304A2D /* UICollectionViewExtensions.swift */; };
 		E3B494C523BEA7C200DB2A7F /* VUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B494C423BEA7C200DB2A7F /* VUser.swift */; };
 		E3B494C723BEAB2500DB2A7F /* VContract.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B494C623BEAB2500DB2A7F /* VContract.swift */; };
+		E3BA5BEB24EF1AA400BB7BAD /* GoogleService-Info-Test.plist in Resources */ = {isa = PBXBuildFile; fileRef = E3BA5BEA24EF1AA400BB7BAD /* GoogleService-Info-Test.plist */; };
+		E3BBB55D25459CAD00F18DCC /* IAPManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3BBB55C25459CAD00F18DCC /* IAPManager.swift */; };
 		E3BC6BB71FFEBE350039E0CA /* HeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3BC6BB61FFEBE350039E0CA /* HeaderView.xib */; };
 		E3BC6BBA1FFEBECA0039E0CA /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3BC6BB91FFEBECA0039E0CA /* HeaderView.swift */; };
-		E3C0C5A924030BB0002A381A /* ClusterShownDateSubmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C0C5A824030BB0002A381A /* ClusterShownDateSubmitter.swift */; };
-		E3C133D8224FA80F00893C03 /* SongServiceSettingsSubmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C133D7224FA80F00893C03 /* SongServiceSettingsSubmitter.swift */; };
-		E3C133DA224FAC6500893C03 /* SongServiceSettingsFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C133D9224FAC6500893C03 /* SongServiceSettingsFetcher.swift */; };
+		E3BDB3E22554B37900D564BE /* FeatureCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3BDB3E02554B37900D564BE /* FeatureCell.swift */; };
+		E3BDB3E32554B37900D564BE /* FeatureCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3BDB3E12554B37900D564BE /* FeatureCell.xib */; };
 		E3C133DC224FAEB400893C03 /* ManageSongServiceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C133DB224FAEB400893C03 /* ManageSongServiceController.swift */; };
+		E3C13F1024C772CB00BE3C35 /* CalendarIdExplainController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C13F0F24C772CB00BE3C35 /* CalendarIdExplainController.swift */; };
 		E3C2AD102025A5D500ACFFE7 /* MixerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3C2AD0F2025A5D500ACFFE7 /* MixerView.xib */; };
 		E3C2AD122025A5E900ACFFE7 /* MixerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C2AD112025A5E900ACFFE7 /* MixerView.swift */; };
 		E3C2AD1E202749CD00ACFFE7 /* InstrumentExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C2AD1D202749CD00ACFFE7 /* InstrumentExtensions.swift */; };
 		E3C2AD2220275AE200ACFFE7 /* InstrumentPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C2AD2120275AE200ACFFE7 /* InstrumentPlayer.swift */; };
+		E3C63DCB253CAFF7006AB94B /* SerialOperationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C63DCA253CAFF7006AB94B /* SerialOperationManager.swift */; };
+		E3C63DD4253E1DE5006AB94B /* MenuCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C63DD2253E1DE5006AB94B /* MenuCell.swift */; };
+		E3C63DD5253E1DE5006AB94B /* MenuCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3C63DD3253E1DE5006AB94B /* MenuCell.xib */; };
+		E3C63DE52540C734006AB94B /* DoubleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C63DE42540C734006AB94B /* DoubleExtensions.swift */; };
+		E3C63E1A25421BC3006AB94B /* PopupGenerateSongServiceSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C63E1925421BC3006AB94B /* PopupGenerateSongServiceSettings.swift */; };
 		E3CAE6A120C5137000D3B36F /* ChurchBeamCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CAE6A020C5137000D3B36F /* ChurchBeamCell.swift */; };
+		E3CB398C2551F338003DD07E /* SubscriptionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CB398B2551F338003DD07E /* SubscriptionCell.swift */; };
 		E3CB684E2003900D00F007B2 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CB684D2003900D00F007B2 /* AppTheme.swift */; };
 		E3CB6850200634A600F007B2 /* LoadingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CB684F200634A500F007B2 /* LoadingIndicator.swift */; };
 		E3CB6852200634EC00F007B2 /* TimeIntervalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CB6851200634EC00F007B2 /* TimeIntervalExtensions.swift */; };
@@ -240,7 +258,15 @@
 		E3CB815122F82AAE00F1C240 /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CB815022F82AAE00F1C240 /* Device.swift */; };
 		E3CD8AB5212818B000EB75BB /* TextFieldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CD8AB3212818B000EB75BB /* TextFieldCell.swift */; };
 		E3CD8AB6212818B000EB75BB /* TextFieldCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3CD8AB4212818B000EB75BB /* TextFieldCell.xib */; };
-		E3D12AAF2018EE2100BD060C /* Fetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D12AAE2018EE2100BD060C /* Fetcher.swift */; };
+		E3CF0BD8248BA3F70032007E /* SongServiceSettingsFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CF0BD7248BA3F70032007E /* SongServiceSettingsFetcher.swift */; };
+		E3CF0BDA248BA52D0032007E /* SongServiceSettingsSubmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CF0BD9248BA52D0032007E /* SongServiceSettingsSubmitter.swift */; };
+		E3CF0BDC248C11D40032007E /* ClusterSubmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CF0BDB248C11D40032007E /* ClusterSubmitter.swift */; };
+		E3CF0BDE248CD8D50032007E /* ClusterFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CF0BDD248CD8D50032007E /* ClusterFetcher.swift */; };
+		E3CF0BE0248CE32A0032007E /* FileSubmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CF0BDF248CE32A0032007E /* FileSubmitter.swift */; };
+		E3CF0BE2248D0DBA0032007E /* TransferManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CF0BE1248D0DBA0032007E /* TransferManager.swift */; };
+		E3CF0BE4248D39050032007E /* FileFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CF0BE3248D39050032007E /* FileFetcher.swift */; };
+		E3D0F21124B2159000508A89 /* MusicDownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D0F21024B2159000508A89 /* MusicDownloadManager.swift */; };
+		E3D0F21324B225D200508A89 /* SignInCalendarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D0F21224B225D200508A89 /* SignInCalendarController.swift */; };
 		E3D12AB12018EE4800BD060C /* FetcherResultTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D12AB02018EE4800BD060C /* FetcherResultTypes.swift */; };
 		E3D1CEE71FF6930600F9D7D9 /* LabelPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D1CEE51FF6930600F9D7D9 /* LabelPickerCell.swift */; };
 		E3D1CEE81FF6930600F9D7D9 /* LabelPickerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3D1CEE61FF6930600F9D7D9 /* LabelPickerCell.xib */; };
@@ -253,6 +279,11 @@
 		E3D927571FECF622006EDE75 /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D927561FECF622006EDE75 /* ViewExtensions.swift */; };
 		E3D9C28E20D6F11E006EDFE3 /* TestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D9C28D20D6F11E006EDFE3 /* TestView.swift */; };
 		E3D9C29020D6F4E8006EDFE3 /* SongServiceContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D9C28F20D6F4E8006EDFE3 /* SongServiceContainerViewController.swift */; };
+		E3DFF24A2524D78000DA26C1 /* AppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3DFF2492524D78000DA26C1 /* AppConfiguration.swift */; };
+		E3E78B822519401100AF9284 /* ClusterOrComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3E78B812519401100AF9284 /* ClusterOrComment.swift */; };
+		E3E78B842519409F00AF9284 /* TempClusterModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3E78B832519409F00AF9284 /* TempClusterModel.swift */; };
+		E3E78B922520825E00AF9284 /* SheetTypesMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3E78B912520825E00AF9284 /* SheetTypesMenu.swift */; };
+		E3EED5002494E21E00AE47BC /* UniversalClusterUpdatedAtSubmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3EED4FF2494E21E00AE47BC /* UniversalClusterUpdatedAtSubmitter.swift */; };
 		E3F201D6201E04FC002FF06E /* FetcherTimeInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F201D5201E04FC002FF06E /* FetcherTimeInterval.swift */; };
 		E3F201D8201E0685002FF06E /* SheetActivitiesView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3F201D7201E0685002FF06E /* SheetActivitiesView.xib */; };
 		E3F201DA201E0698002FF06E /* SheetActivitiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F201D9201E0698002FF06E /* SheetActivitiesView.swift */; };
@@ -264,10 +295,9 @@
 		E3F2020E20205BBF002FF06E /* EntityExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F2020D20205BBF002FF06E /* EntityExtensions.swift */; };
 		E3F421A41FFE457500C332B0 /* LabelDoubleSwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F421A21FFE457500C332B0 /* LabelDoubleSwitchCell.swift */; };
 		E3F421A51FFE457500C332B0 /* LabelDoubleSwitchCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3F421A31FFE457500C332B0 /* LabelDoubleSwitchCell.xib */; };
-		E3F7509223F5B7A300D2AE81 /* AmazonTransfer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F7509123F5B7A300D2AE81 /* AmazonTransfer.swift */; };
-		E3F7509423F5B89E00D2AE81 /* FileUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F7509323F5B89E00D2AE81 /* FileUploader.swift */; };
-		E3F7509723F8044300D2AE81 /* FileDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F7509623F8044300D2AE81 /* FileDownloader.swift */; };
-		E3F7509923F9DBAB00D2AE81 /* AWSS3Manager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F7509823F9DBAB00D2AE81 /* AWSS3Manager.swift */; };
+		E3F4A15824BCC4E3004E6B08 /* VSongServicePlayDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F4A15724BCC4E3004E6B08 /* VSongServicePlayDate.swift */; };
+		E3F4A15A24BCC7B8004E6B08 /* SongServicePlayDateFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F4A15924BCC7B8004E6B08 /* SongServicePlayDateFetcher.swift */; };
+		E3F4A15C24BCC81C004E6B08 /* SongServicePlayDateSubmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F4A15B24BCC81C004E6B08 /* SongServicePlayDateSubmitter.swift */; };
 		E3F8C9D220168F6F00C94292 /* BibleStudyGeneratorIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F8C9D120168F6F00C94292 /* BibleStudyGeneratorIphoneController.swift */; };
 		E3F8C9D4201690FC00C94292 /* BibleStudyIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F8C9D3201690FC00C94292 /* BibleStudyIphoneController.swift */; };
 		E3F8C9D82017153A00C94292 /* SheetPickerMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F8C9D72017153A00C94292 /* SheetPickerMenuController.swift */; };
@@ -279,6 +309,14 @@
 		E3FA3DF5200D45F00038C97B /* NewOrEditIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3FA3DF4200D45F00038C97B /* NewOrEditIphoneController.swift */; };
 		E3FA3DF8200DE8570038C97B /* LabelTextViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3FA3DF6200DE8570038C97B /* LabelTextViewCell.swift */; };
 		E3FA3DF9200DE8570038C97B /* LabelTextViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3FA3DF7200DE8570038C97B /* LabelTextViewCell.xib */; };
+		E3FB64492484D65800E03617 /* UserFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3FB64482484D65800E03617 /* UserFetcher.swift */; };
+		E3FD4D932492642C00DFD176 /* LabelColorPickerNewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3FD4D912492642C00DFD176 /* LabelColorPickerNewCell.swift */; };
+		E3FD4D942492642C00DFD176 /* LabelColorPickerNewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3FD4D922492642C00DFD176 /* LabelColorPickerNewCell.xib */; };
+		E3FD4D9624926BE300DFD176 /* ActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3FD4D9524926BE300DFD176 /* ActionButton.swift */; };
+		E3FD4D98249272A200DFD176 /* ColorPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3FD4D97249272A200DFD176 /* ColorPickerViewController.swift */; };
+		E3FD4D9A2493DA0700DFD176 /* UniversalUpdatedAtFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3FD4D992493DA0700DFD176 /* UniversalUpdatedAtFetcher.swift */; };
+		E3FD4D9C2493DAFC00DFD176 /* UniversalUpdatedAtEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3FD4D9B2493DAFC00DFD176 /* UniversalUpdatedAtEntity.swift */; };
+		E3FD4D9E2493DD4A00DFD176 /* VUniversalUpdatedAtEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3FD4D9D2493DD4A00DFD176 /* VUniversalUpdatedAtEntity.swift */; };
 		E7226C9E497B8BF49AA031B2 /* Pods_SongProjector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95070415C3C6BD5B7639F73A /* Pods_SongProjector.framework */; };
 /* End PBXBuildFile section */
 
@@ -290,20 +328,17 @@
 		E305BB9023CF6D8500A753A2 /* SoundPickerCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SoundPickerCell.xib; sourceTree = "<group>"; };
 		E306D8F42323BF3900299200 /* AnimatingBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatingBackgroundView.swift; sourceTree = "<group>"; };
 		E30833F623D2A31100E5DCE6 /* FileManagerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManagerExtensions.swift; sourceTree = "<group>"; };
-		E30833F823D3621100E5DCE6 /* UploadSecretFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadSecretFetcher.swift; sourceTree = "<group>"; };
 		E309DCE51FF26CB700C3D135 /* NewSongServiceIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewSongServiceIphoneController.swift; sourceTree = "<group>"; };
 		E309DCE71FF44E6A00C3D135 /* ThemesIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemesIphoneController.swift; sourceTree = "<group>"; };
 		E309DCE91FF45A8A00C3D135 /* MoreSplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreSplitViewController.swift; sourceTree = "<group>"; };
 		E309DCF11FF48F0800C3D135 /* LabelSwitchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelSwitchCell.swift; sourceTree = "<group>"; };
 		E309DCF21FF48F0800C3D135 /* LabelSwitchCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelSwitchCell.xib; sourceTree = "<group>"; };
-		E309DCF51FF48FF100C3D135 /* LabelColorPickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelColorPickerCell.swift; sourceTree = "<group>"; };
-		E309DCF61FF48FF100C3D135 /* LabelColorPickerCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelColorPickerCell.xib; sourceTree = "<group>"; };
 		E309DCF91FF4954100C3D135 /* ThemeExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeExtensions.swift; sourceTree = "<group>"; };
 		E309DD001FF5127400C3D135 /* LabelNumberCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelNumberCell.swift; sourceTree = "<group>"; };
 		E309DD011FF5127400C3D135 /* LabelNumberCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelNumberCell.xib; sourceTree = "<group>"; };
 		E309DD041FF5179B00C3D135 /* Cells.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cells.swift; sourceTree = "<group>"; };
-		E30B8EC02248BBA300F121D9 /* TagFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagFetcher.swift; sourceTree = "<group>"; };
-		E30B8EC22248BCA400F121D9 /* TagSubmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagSubmitter.swift; sourceTree = "<group>"; };
+		E30B30E924CF82A900C8E9A4 /* PopUpManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopUpManager.swift; sourceTree = "<group>"; };
+		E30B30EB24CF8E7400C8E9A4 /* DefaultPopUpController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultPopUpController.swift; sourceTree = "<group>"; };
 		E30B8EC622497C2600F121D9 /* TagsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsController.swift; sourceTree = "<group>"; };
 		E30B8EC8224A192C00F121D9 /* Tag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tag.swift; sourceTree = "<group>"; };
 		E30B8ECD224BD80800F121D9 /* WizzardSectionsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WizzardSectionsController.swift; sourceTree = "<group>"; };
@@ -335,7 +370,6 @@
 		E311715E1FE5A0E7008D9D51 /* SongServiceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongServiceController.swift; sourceTree = "<group>"; };
 		E311715F1FE5A0E7008D9D51 /* MoreController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoreController.swift; sourceTree = "<group>"; };
 		E31171601FE5A0E7008D9D51 /* SongsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongsController.swift; sourceTree = "<group>"; };
-		E31171611FE5A0E7008D9D51 /* NewSongController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewSongController.swift; sourceTree = "<group>"; };
 		E31171621FE5A0E7008D9D51 /* NewSongServiceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewSongServiceController.swift; sourceTree = "<group>"; };
 		E31171631FE5A0E7008D9D51 /* SplashScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplashScreen.swift; sourceTree = "<group>"; };
 		E311716D1FE5A1A0008D9D51 /* BasicCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicCell.swift; sourceTree = "<group>"; };
@@ -355,23 +389,19 @@
 		E31F0B7020F5029500C22FD1 /* Pio-Sebastiaan-en-Marilou.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "Pio-Sebastiaan-en-Marilou.jpg"; sourceTree = "<group>"; };
 		E31F0B7220F50A6D00C22FD1 /* Liedjes - wallpaper 16-9.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Liedjes - wallpaper 16-9.png"; path = "../../kerk plaatjes/Liedjes - wallpaper 16-9.png"; sourceTree = "<group>"; };
 		E31F0B7420F5D1E800C22FD1 /* SheetPastorsExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetPastorsExtensions.swift; sourceTree = "<group>"; };
-		E31F87BC1FE7035D00D5D4BA /* Text.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Text.swift; sourceTree = "<group>"; };
-		E326E9031FFEC9EC00FEAC9C /* CustomSheetsIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSheetsIphoneController.swift; sourceTree = "<group>"; };
+		E31F87BC1FE7035D00D5D4BA /* AppText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppText.swift; sourceTree = "<group>"; };
 		E326E9051FFECD0E00FEAC9C /* SheetCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetCollectionCell.swift; sourceTree = "<group>"; };
 		E326E9061FFECD0E00FEAC9C /* SheetCollectionCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SheetCollectionCell.xib; sourceTree = "<group>"; };
-		E32A02A42116441600C78410 /* Drums.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Drums.m4a; sourceTree = "<group>"; };
-		E32A02B02116466200C78410 /* Guitar.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Guitar.m4a; sourceTree = "<group>"; };
-		E32A02B2211646D900C78410 /* Keyboard.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Keyboard.m4a; sourceTree = "<group>"; };
-		E32A02B421164A8800C78410 /* Bass.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Bass.m4a; sourceTree = "<group>"; };
 		E32A02B6211715B300C78410 /* SongService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongService.swift; sourceTree = "<group>"; };
 		E32D4D6420017E0100ED81A7 /* EditSongIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSongIphoneController.swift; sourceTree = "<group>"; };
-		E32DB8D92221E23400277C45 /* ContractFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContractFetcher.swift; sourceTree = "<group>"; };
 		E32DB8DB2221E29600277C45 /* Contract.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contract.swift; sourceTree = "<group>"; };
 		E32DB8DF2230283A00277C45 /* ContractLedger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContractLedger.swift; sourceTree = "<group>"; };
 		E32DB8E1223460D800277C45 /* IntroStartingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroStartingController.swift; sourceTree = "<group>"; };
 		E32DB8E3223468D500277C45 /* InviteCodeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteCodeController.swift; sourceTree = "<group>"; };
 		E32DB8E522347AF000277C45 /* UsersController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersController.swift; sourceTree = "<group>"; };
 		E32DB8E72235B90E00277C45 /* AddNewUserController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewUserController.swift; sourceTree = "<group>"; };
+		E330A035253118DD0014DB44 /* BasicHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicHeaderView.swift; sourceTree = "<group>"; };
+		E330A038253119170014DB44 /* BasicHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BasicHeaderView.xib; sourceTree = "<group>"; };
 		E3314B6520077DD100F470C0 /* SheetExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetExtensions.swift; sourceTree = "<group>"; };
 		E3314B672007836D00F470C0 /* SheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetView.swift; sourceTree = "<group>"; };
 		E33268BB2022241E002CDA7C /* SongsMenuController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongsMenuController.swift; sourceTree = "<group>"; };
@@ -386,19 +416,49 @@
 		E334B10A21ED03B40088CD48 /* SheetActivities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetActivities.swift; sourceTree = "<group>"; };
 		E334B10C21ED045C0088CD48 /* GoogleActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleActivity.swift; sourceTree = "<group>"; };
 		E334B10E21ED201B0088CD48 /* Instrument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Instrument.swift; sourceTree = "<group>"; };
-		E334B11021ED21F80088CD48 /* ClusterFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClusterFetcher.swift; sourceTree = "<group>"; };
-		E334B11221ED22910088CD48 /* ClusterSubmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClusterSubmitter.swift; sourceTree = "<group>"; };
 		E334FD6A20CF9C0700FC1FAE /* SongHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SongHeaderView.xib; sourceTree = "<group>"; };
 		E334FD6C20CF9E2E00FC1FAE /* SongHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongHeaderView.swift; sourceTree = "<group>"; };
 		E3355D6E1FEDA645004C03AE /* TextViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextViewExtensions.swift; sourceTree = "<group>"; };
 		E3355D701FEE6436004C03AE /* ClusterExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClusterExtensions.swift; sourceTree = "<group>"; };
+		E336816F2565C7DC0006F043 /* TextFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFooterView.swift; sourceTree = "<group>"; };
+		E33681722565D6C20006F043 /* ErrorAnimationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorAnimationView.swift; sourceTree = "<group>"; };
+		E336819D25672E550006F043 /* UniversalClusterOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalClusterOperations.swift; sourceTree = "<group>"; };
+		E33746AA24A89DC900F44852 /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
+		E33746AC24A89EEF00F44852 /* AppColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColors.swift; sourceTree = "<group>"; };
+		E33746AE24A8A66400F44852 /* CircleProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleProgressView.swift; sourceTree = "<group>"; };
+		E33746B024A8E5B300F44852 /* ChurchFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChurchFetcher.swift; sourceTree = "<group>"; };
+		E33746B224A8F6EF00F44852 /* Church.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Church.swift; sourceTree = "<group>"; };
+		E33746B424A8F74C00F44852 /* VChurch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VChurch.swift; sourceTree = "<group>"; };
+		E33746B624AA6C9F00F44852 /* IntroAdminController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroAdminController.swift; sourceTree = "<group>"; };
+		E33B418124BF958000DE4F4E /* SongServicePlayDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongServicePlayDate.swift; sourceTree = "<group>"; };
+		E33BE3EF256317BE00DEAD54 /* ProgressController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressController.swift; sourceTree = "<group>"; };
+		E33BE3F325631A4200DEAD54 /* CheckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckView.swift; sourceTree = "<group>"; };
+		E33D6F942547526A00493C47 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		E33D6F9B254A1EDB00493C47 /* KeyChainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyChainHelper.swift; sourceTree = "<group>"; };
+		E342E9E7255D905F0093AE5D /* AboutController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutController.swift; sourceTree = "<group>"; };
+		E344A0B324F674FE005588CE /* CountDownView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CountDownView.xib; sourceTree = "<group>"; };
+		E344A0B524F67514005588CE /* CountDownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountDownView.swift; sourceTree = "<group>"; };
+		E345C487254F61E10031DCF1 /* SubscriptionsSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionsSettings.swift; sourceTree = "<group>"; };
+		E345C48A254F6F780031DCF1 /* SubscriptionOfferController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionOfferController.swift; sourceTree = "<group>"; };
+		E345C48D255055D60031DCF1 /* SubscriptionOffersContainerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionOffersContainerController.swift; sourceTree = "<group>"; };
+		E34B0D6C2570449200993872 /* UniversalClusterSubmitterOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalClusterSubmitterOperations.swift; sourceTree = "<group>"; };
+		E34B0D6F2570FD9D00993872 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
+		E34B306925B63AFA009BFE58 /* UploadUniTimesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadUniTimesController.swift; sourceTree = "<group>"; };
 		E34EA3A321CECCA100A65719 /* SongServiceSettingsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongServiceSettingsCell.swift; sourceTree = "<group>"; };
 		E34EA3A421CECCA100A65719 /* SongServiceSettingsCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SongServiceSettingsCell.xib; sourceTree = "<group>"; };
 		E34ED29A2008D62300534C72 /* SheetSplit.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SheetSplit.xib; sourceTree = "<group>"; };
 		E34ED29C2008D63700534C72 /* SheetSplit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetSplit.swift; sourceTree = "<group>"; };
+		E3501497248596AC0082741A /* IntroPageController22.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroPageController22.swift; sourceTree = "<group>"; };
+		E3501499248599120082741A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		E35014A8248985A30082741A /* UserSubmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSubmitter.swift; sourceTree = "<group>"; };
+		E35014AA248AB9440082741A /* ThemeSubmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSubmitter.swift; sourceTree = "<group>"; };
+		E35014AC248B6D810082741A /* ThemeFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeFetcher.swift; sourceTree = "<group>"; };
+		E35014AE248B6EB20082741A /* TagSubmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagSubmitter.swift; sourceTree = "<group>"; };
+		E35014B2248B6FE10082741A /* TagFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagFetcher.swift; sourceTree = "<group>"; };
 		E35099EE20DCD152005CA984 /* LyricsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsViewController.swift; sourceTree = "<group>"; };
 		E35099F020DD4FA7005CA984 /* SaveNewSongTitleTimeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveNewSongTitleTimeVC.swift; sourceTree = "<group>"; };
 		E356F2A61FF666E5002A3F3A /* ChromaColorPicker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ChromaColorPicker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E35A1A6825616EAE008CF6A3 /* FileDeleter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileDeleter.swift; sourceTree = "<group>"; };
 		E35B63C2221A8F22006C50AB /* IntroGoogleSigninController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroGoogleSigninController.swift; sourceTree = "<group>"; };
 		E35E7CE023B76AE70071DCC8 /* VEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VEntity.swift; sourceTree = "<group>"; };
 		E35E7CE323B76F420071DCC8 /* VTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VTheme.swift; sourceTree = "<group>"; };
@@ -418,7 +478,6 @@
 		E35E7CFF23BA4F790071DCC8 /* VTag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VTag.swift; sourceTree = "<group>"; };
 		E35E7D0123BA50620071DCC8 /* VSongServiceSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VSongServiceSettings.swift; sourceTree = "<group>"; };
 		E35E7D0323BA50DD0071DCC8 /* VSongServiceSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VSongServiceSection.swift; sourceTree = "<group>"; };
-		E361E88321C994C00011A544 /* kort.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = kort.m4a; sourceTree = "<group>"; };
 		E3635A08217CAEC5002758D5 /* MixerAnimationView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MixerAnimationView.xib; sourceTree = "<group>"; };
 		E3635A0A217CAF98002758D5 /* MixerAnimationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MixerAnimationView.swift; sourceTree = "<group>"; };
 		E36E76D721EF51DA002E20EF /* ChurchBeamViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChurchBeamViewController.swift; sourceTree = "<group>"; };
@@ -429,8 +488,6 @@
 		E36F41671FEE965200E989E5 /* NewSongIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewSongIphoneController.swift; sourceTree = "<group>"; };
 		E37137BC205EBB8300DF86F1 /* LabelSliderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelSliderCell.swift; sourceTree = "<group>"; };
 		E37137BD205EBB8300DF86F1 /* LabelSliderCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelSliderCell.xib; sourceTree = "<group>"; };
-		E37498F721BD5DB800974126 /* LordSong.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = LordSong.m4a; sourceTree = "<group>"; };
-		E37938E82121DE8E0091698D /* LordLoop.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = LordLoop.m4a; sourceTree = "<group>"; };
 		E37938EA21271EC90091698D /* PickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerCell.swift; sourceTree = "<group>"; };
 		E37938EB21271EC90091698D /* PickerCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PickerCell.xib; sourceTree = "<group>"; };
 		E37938EE212723630091698D /* TableViewCellExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCellExtensions.swift; sourceTree = "<group>"; };
@@ -438,13 +495,6 @@
 		E37A49212218C3B0003BD945 /* Role.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Role.swift; sourceTree = "<group>"; };
 		E37A49232218C406003BD945 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		E37A49252218C42E003BD945 /* Organization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Organization.swift; sourceTree = "<group>"; };
-		E37A49272218CB3A003BD945 /* OrganizationSubmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrganizationSubmitter.swift; sourceTree = "<group>"; };
-		E37A49292218CC7E003BD945 /* UserSubmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSubmitter.swift; sourceTree = "<group>"; };
-		E37A492B2218CDD3003BD945 /* UserFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserFetcher.swift; sourceTree = "<group>"; };
-		E37A492D2218D1C4003BD945 /* OrganizationFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrganizationFetcher.swift; sourceTree = "<group>"; };
-		E37A492F2218D27D003BD945 /* RoleFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoleFetcher.swift; sourceTree = "<group>"; };
-		E37A49312219F4A9003BD945 /* SignUpPersonalInfoController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpPersonalInfoController.swift; sourceTree = "<group>"; };
-		E37A49332219F4F3003BD945 /* SignUpOrganisationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpOrganisationController.swift; sourceTree = "<group>"; };
 		E3812DE6201C972B00F10B2C /* SettingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsController.swift; sourceTree = "<group>"; };
 		E3812DE8201C992300F10B2C /* GoogleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleCell.swift; sourceTree = "<group>"; };
 		E3812DE9201C992300F10B2C /* GoogleCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GoogleCell.xib; sourceTree = "<group>"; };
@@ -454,15 +504,20 @@
 		E383475E1FF7E8B5008AE69D /* LabelPhotoPickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelPhotoPickerCell.swift; sourceTree = "<group>"; };
 		E383475F1FF7E8B5008AE69D /* LabelPhotoPickerCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelPhotoPickerCell.xib; sourceTree = "<group>"; };
 		E38347621FF8434D008AE69D /* ImageExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageExtensions.swift; sourceTree = "<group>"; };
-		E38347641FF9382F008AE69D /* ExternalDisplayController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalDisplayController.swift; sourceTree = "<group>"; };
 		E38347661FFA5099008AE69D /* SheetTitleContent.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SheetTitleContent.xib; sourceTree = "<group>"; };
 		E38347681FFA512D008AE69D /* SheetTitleContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetTitleContent.swift; sourceTree = "<group>"; };
+		E3847EF9248ED020002D4BED /* AdminFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminFetcher.swift; sourceTree = "<group>"; };
+		E3847EFB248ED132002D4BED /* VAdmin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VAdmin.swift; sourceTree = "<group>"; };
+		E3847EFD248ED3EC002D4BED /* UniversalClusterSubmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalClusterSubmitter.swift; sourceTree = "<group>"; };
+		E3847F01248FE419002D4BED /* UniversalClusterFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalClusterFetcher.swift; sourceTree = "<group>"; };
 		E384E06E23CE7DB80017B73F /* client_1005753122128-dc0k48rg97hdetif0g3ncaf0dq0ue6mc.apps.googleusercontent.com.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "client_1005753122128-dc0k48rg97hdetif0g3ncaf0dq0ue6mc.apps.googleusercontent.com.plist"; sourceTree = "<group>"; };
 		E384E07223CEF09A0017B73F /* GoogleSignedInCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleSignedInCell.swift; sourceTree = "<group>"; };
 		E384E07323CEF09A0017B73F /* GoogleSignedInCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GoogleSignedInCell.xib; sourceTree = "<group>"; };
 		E384E07623CF159F0017B73F /* UploadUniversalSongController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadUniversalSongController.swift; sourceTree = "<group>"; };
 		E384E07823CF18190017B73F /* SongsUploadSheetCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongsUploadSheetCell.swift; sourceTree = "<group>"; };
 		E384E07923CF18190017B73F /* SongsUploadSheetCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SongsUploadSheetCell.xib; sourceTree = "<group>"; };
+		E387536F24842CC20050B425 /* QueryDocumentSnapshotExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueryDocumentSnapshotExtensions.swift; sourceTree = "<group>"; };
+		E3875372248432550050B425 /* RequestManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestManager.swift; sourceTree = "<group>"; };
 		E3896A2921E3EFF2008CB5A5 /* URLExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URLExtensions.swift; sourceTree = "<group>"; };
 		E3896A2B21E3F011008CB5A5 /* HTTPURLResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPURLResponse.swift; sourceTree = "<group>"; };
 		E3896A2E21E3F04B008CB5A5 /* Entity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Entity.swift; sourceTree = "<group>"; };
@@ -471,19 +526,13 @@
 		E3896A3421E3F0E3008CB5A5 /* AccountStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountStore.swift; sourceTree = "<group>"; };
 		E3896A3621E3F156008CB5A5 /* Operation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Operation.swift; sourceTree = "<group>"; };
 		E3896A3821E3F17C008CB5A5 /* HTTPError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPError.swift; sourceTree = "<group>"; };
-		E3896A3A21E3F3D2008CB5A5 /* ThemeFetcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThemeFetcher.swift; sourceTree = "<group>"; };
 		E3896A3C21E3F56A008CB5A5 /* SongProjector.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SongProjector.entitlements; sourceTree = "<group>"; };
 		E3896A3D21E3F56D008CB5A5 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
-		E3896A3F21E5D8A3008CB5A5 /* Requester.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Requester.swift; sourceTree = "<group>"; };
-		E3896A4A21E7A3FD008CB5A5 /* ThemeSubmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSubmitter.swift; sourceTree = "<group>"; };
 		E390864C22105EA300320421 /* DataExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataExtensions.swift; sourceTree = "<group>"; };
 		E393B7642008D20B0073D0A9 /* SheetEmpty.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SheetEmpty.xib; sourceTree = "<group>"; };
 		E393B7662008D25F0073D0A9 /* SheetEmpty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetEmpty.swift; sourceTree = "<group>"; };
 		E393B7682008D3FC0073D0A9 /* SheetTitleImage.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SheetTitleImage.xib; sourceTree = "<group>"; };
 		E393B76A2008D40A0073D0A9 /* SheetTitleImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetTitleImage.swift; sourceTree = "<group>"; };
-		E39864D92098D24100DF5199 /* OrganizationsCRUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrganizationsCRUD.swift; sourceTree = "<group>"; };
-		E39864DD2098D5BC00DF5199 /* Organizations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Organizations.swift; sourceTree = "<group>"; };
-		E39864DF209A0FA700DF5199 /* awsconfiguration.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = awsconfiguration.json; sourceTree = "<group>"; };
 		E399EA86202F574600E8CE0E /* NewSongMenuController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewSongMenuController.swift; sourceTree = "<group>"; };
 		E399EA88202F73D700E8CE0E /* CustomSheetsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSheetsController.swift; sourceTree = "<group>"; };
 		E399EA8A203074DD00E8CE0E /* BibleStudyGeneratorController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BibleStudyGeneratorController.swift; sourceTree = "<group>"; };
@@ -494,29 +543,36 @@
 		E39B6A1522184E4F002B53B1 /* IntroPageController1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroPageController1.swift; sourceTree = "<group>"; };
 		E39B6A1722184E5D002B53B1 /* IntroPageController2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroPageController2.swift; sourceTree = "<group>"; };
 		E39D29EF20308F4E00C1C0D9 /* BibleStudyController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BibleStudyController.swift; sourceTree = "<group>"; };
+		E39EEB642482E5CC00C247BE /* Requester.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Requester.swift; sourceTree = "<group>"; };
 		E3A19733200947AB0044DB1B /* SheetTitleImageExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetTitleImageExtensions.swift; sourceTree = "<group>"; };
 		E3A19735200A76EF0044DB1B /* ViewControllerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewControllerExtensions.swift; sourceTree = "<group>"; };
-		E3A4702D21E0CBF9000CB3D3 /* BaseRestService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseRestService.swift; sourceTree = "<group>"; };
 		E3A4702F21E0CC80000CB3D3 /* ChurchBeamConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChurchBeamConfiguration.swift; sourceTree = "<group>"; };
 		E3A4703121E10B57000CB3D3 /* RequestOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestOperation.swift; sourceTree = "<group>"; };
 		E3A4703321E10D35000CB3D3 /* AsynchronousOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsynchronousOperation.swift; sourceTree = "<group>"; };
-		E3AB276B221EB31600B9145C /* InitSubmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitSubmitter.swift; sourceTree = "<group>"; };
-		E3AB9CE823D7887E00F83455 /* NewContentFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewContentFetcher.swift; sourceTree = "<group>"; };
-		E3AB9CEA23D7921B00F83455 /* NewContentFetchJob.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewContentFetchJob.swift; sourceTree = "<group>"; };
-		E3AB9CEC23D79DE300F83455 /* UniversalClusterSubmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalClusterSubmitter.swift; sourceTree = "<group>"; };
+		E3B1EABC24B4937500304A2D /* SongServiceHeaderCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongServiceHeaderCollectionReusableView.swift; sourceTree = "<group>"; };
+		E3B1EABD24B4937500304A2D /* SongServiceHeaderCollectionReusableView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SongServiceHeaderCollectionReusableView.xib; sourceTree = "<group>"; };
+		E3B1EAC024B4948400304A2D /* UICollectionViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UICollectionViewExtensions.swift; sourceTree = "<group>"; };
 		E3B494C423BEA7C200DB2A7F /* VUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VUser.swift; sourceTree = "<group>"; };
 		E3B494C623BEAB2500DB2A7F /* VContract.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VContract.swift; sourceTree = "<group>"; };
+		E3BA5BEA24EF1AA400BB7BAD /* GoogleService-Info-Test.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Test.plist"; sourceTree = "<group>"; };
+		E3BBB55C25459CAD00F18DCC /* IAPManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPManager.swift; sourceTree = "<group>"; };
 		E3BC6BB61FFEBE350039E0CA /* HeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HeaderView.xib; sourceTree = "<group>"; };
 		E3BC6BB91FFEBECA0039E0CA /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
-		E3C0C5A824030BB0002A381A /* ClusterShownDateSubmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClusterShownDateSubmitter.swift; sourceTree = "<group>"; };
-		E3C133D7224FA80F00893C03 /* SongServiceSettingsSubmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongServiceSettingsSubmitter.swift; sourceTree = "<group>"; };
-		E3C133D9224FAC6500893C03 /* SongServiceSettingsFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongServiceSettingsFetcher.swift; sourceTree = "<group>"; };
+		E3BDB3E02554B37900D564BE /* FeatureCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureCell.swift; sourceTree = "<group>"; };
+		E3BDB3E12554B37900D564BE /* FeatureCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FeatureCell.xib; sourceTree = "<group>"; };
 		E3C133DB224FAEB400893C03 /* ManageSongServiceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageSongServiceController.swift; sourceTree = "<group>"; };
+		E3C13F0F24C772CB00BE3C35 /* CalendarIdExplainController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarIdExplainController.swift; sourceTree = "<group>"; };
 		E3C2AD0F2025A5D500ACFFE7 /* MixerView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MixerView.xib; sourceTree = "<group>"; };
 		E3C2AD112025A5E900ACFFE7 /* MixerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MixerView.swift; sourceTree = "<group>"; };
 		E3C2AD1D202749CD00ACFFE7 /* InstrumentExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstrumentExtensions.swift; sourceTree = "<group>"; };
 		E3C2AD2120275AE200ACFFE7 /* InstrumentPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstrumentPlayer.swift; sourceTree = "<group>"; };
+		E3C63DCA253CAFF7006AB94B /* SerialOperationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SerialOperationManager.swift; sourceTree = "<group>"; };
+		E3C63DD2253E1DE5006AB94B /* MenuCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuCell.swift; sourceTree = "<group>"; };
+		E3C63DD3253E1DE5006AB94B /* MenuCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MenuCell.xib; sourceTree = "<group>"; };
+		E3C63DE42540C734006AB94B /* DoubleExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoubleExtensions.swift; sourceTree = "<group>"; };
+		E3C63E1925421BC3006AB94B /* PopupGenerateSongServiceSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupGenerateSongServiceSettings.swift; sourceTree = "<group>"; };
 		E3CAE6A020C5137000D3B36F /* ChurchBeamCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChurchBeamCell.swift; sourceTree = "<group>"; };
+		E3CB398B2551F338003DD07E /* SubscriptionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionCell.swift; sourceTree = "<group>"; };
 		E3CB684D2003900D00F007B2 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
 		E3CB684F200634A500F007B2 /* LoadingIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingIndicator.swift; sourceTree = "<group>"; };
 		E3CB6851200634EC00F007B2 /* TimeIntervalExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeIntervalExtensions.swift; sourceTree = "<group>"; };
@@ -525,7 +581,15 @@
 		E3CB815022F82AAE00F1C240 /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		E3CD8AB3212818B000EB75BB /* TextFieldCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldCell.swift; sourceTree = "<group>"; };
 		E3CD8AB4212818B000EB75BB /* TextFieldCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TextFieldCell.xib; sourceTree = "<group>"; };
-		E3D12AAE2018EE2100BD060C /* Fetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fetcher.swift; sourceTree = "<group>"; };
+		E3CF0BD7248BA3F70032007E /* SongServiceSettingsFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongServiceSettingsFetcher.swift; sourceTree = "<group>"; };
+		E3CF0BD9248BA52D0032007E /* SongServiceSettingsSubmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongServiceSettingsSubmitter.swift; sourceTree = "<group>"; };
+		E3CF0BDB248C11D40032007E /* ClusterSubmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClusterSubmitter.swift; sourceTree = "<group>"; };
+		E3CF0BDD248CD8D50032007E /* ClusterFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClusterFetcher.swift; sourceTree = "<group>"; };
+		E3CF0BDF248CE32A0032007E /* FileSubmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileSubmitter.swift; sourceTree = "<group>"; };
+		E3CF0BE1248D0DBA0032007E /* TransferManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransferManager.swift; sourceTree = "<group>"; };
+		E3CF0BE3248D39050032007E /* FileFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileFetcher.swift; sourceTree = "<group>"; };
+		E3D0F21024B2159000508A89 /* MusicDownloadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicDownloadManager.swift; sourceTree = "<group>"; };
+		E3D0F21224B225D200508A89 /* SignInCalendarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInCalendarController.swift; sourceTree = "<group>"; };
 		E3D12AB02018EE4800BD060C /* FetcherResultTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetcherResultTypes.swift; sourceTree = "<group>"; };
 		E3D12AB22019BFEB00BD060C /* BridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BridgingHeader.h; sourceTree = "<group>"; };
 		E3D18C6F20238BDC00CBAAF6 /* KDEAudioPlayer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = KDEAudioPlayer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -539,6 +603,11 @@
 		E3D927561FECF622006EDE75 /* ViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewExtensions.swift; sourceTree = "<group>"; };
 		E3D9C28D20D6F11E006EDFE3 /* TestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestView.swift; sourceTree = "<group>"; };
 		E3D9C28F20D6F4E8006EDFE3 /* SongServiceContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongServiceContainerViewController.swift; sourceTree = "<group>"; };
+		E3DFF2492524D78000DA26C1 /* AppConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfiguration.swift; sourceTree = "<group>"; };
+		E3E78B812519401100AF9284 /* ClusterOrComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClusterOrComment.swift; sourceTree = "<group>"; };
+		E3E78B832519409F00AF9284 /* TempClusterModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempClusterModel.swift; sourceTree = "<group>"; };
+		E3E78B912520825E00AF9284 /* SheetTypesMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetTypesMenu.swift; sourceTree = "<group>"; };
+		E3EED4FF2494E21E00AE47BC /* UniversalClusterUpdatedAtSubmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalClusterUpdatedAtSubmitter.swift; sourceTree = "<group>"; };
 		E3F201D5201E04FC002FF06E /* FetcherTimeInterval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetcherTimeInterval.swift; sourceTree = "<group>"; };
 		E3F201D7201E0685002FF06E /* SheetActivitiesView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SheetActivitiesView.xib; sourceTree = "<group>"; };
 		E3F201D9201E0698002FF06E /* SheetActivitiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetActivitiesView.swift; sourceTree = "<group>"; };
@@ -550,10 +619,9 @@
 		E3F2020D20205BBF002FF06E /* EntityExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityExtensions.swift; sourceTree = "<group>"; };
 		E3F421A21FFE457500C332B0 /* LabelDoubleSwitchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelDoubleSwitchCell.swift; sourceTree = "<group>"; };
 		E3F421A31FFE457500C332B0 /* LabelDoubleSwitchCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelDoubleSwitchCell.xib; sourceTree = "<group>"; };
-		E3F7509123F5B7A300D2AE81 /* AmazonTransfer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmazonTransfer.swift; sourceTree = "<group>"; };
-		E3F7509323F5B89E00D2AE81 /* FileUploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileUploader.swift; sourceTree = "<group>"; };
-		E3F7509623F8044300D2AE81 /* FileDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileDownloader.swift; sourceTree = "<group>"; };
-		E3F7509823F9DBAB00D2AE81 /* AWSS3Manager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AWSS3Manager.swift; sourceTree = "<group>"; };
+		E3F4A15724BCC4E3004E6B08 /* VSongServicePlayDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VSongServicePlayDate.swift; sourceTree = "<group>"; };
+		E3F4A15924BCC7B8004E6B08 /* SongServicePlayDateFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongServicePlayDateFetcher.swift; sourceTree = "<group>"; };
+		E3F4A15B24BCC81C004E6B08 /* SongServicePlayDateSubmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongServicePlayDateSubmitter.swift; sourceTree = "<group>"; };
 		E3F8C9D120168F6F00C94292 /* BibleStudyGeneratorIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BibleStudyGeneratorIphoneController.swift; sourceTree = "<group>"; };
 		E3F8C9D3201690FC00C94292 /* BibleStudyIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BibleStudyIphoneController.swift; sourceTree = "<group>"; };
 		E3F8C9D72017153A00C94292 /* SheetPickerMenuController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetPickerMenuController.swift; sourceTree = "<group>"; };
@@ -565,6 +633,14 @@
 		E3FA3DF4200D45F00038C97B /* NewOrEditIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewOrEditIphoneController.swift; sourceTree = "<group>"; };
 		E3FA3DF6200DE8570038C97B /* LabelTextViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelTextViewCell.swift; sourceTree = "<group>"; };
 		E3FA3DF7200DE8570038C97B /* LabelTextViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelTextViewCell.xib; sourceTree = "<group>"; };
+		E3FB64482484D65800E03617 /* UserFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserFetcher.swift; sourceTree = "<group>"; };
+		E3FD4D912492642C00DFD176 /* LabelColorPickerNewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelColorPickerNewCell.swift; sourceTree = "<group>"; };
+		E3FD4D922492642C00DFD176 /* LabelColorPickerNewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabelColorPickerNewCell.xib; sourceTree = "<group>"; };
+		E3FD4D9524926BE300DFD176 /* ActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionButton.swift; sourceTree = "<group>"; };
+		E3FD4D97249272A200DFD176 /* ColorPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPickerViewController.swift; sourceTree = "<group>"; };
+		E3FD4D992493DA0700DFD176 /* UniversalUpdatedAtFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalUpdatedAtFetcher.swift; sourceTree = "<group>"; };
+		E3FD4D9B2493DAFC00DFD176 /* UniversalUpdatedAtEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalUpdatedAtEntity.swift; sourceTree = "<group>"; };
+		E3FD4D9D2493DD4A00DFD176 /* VUniversalUpdatedAtEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VUniversalUpdatedAtEntity.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -572,6 +648,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E33D6F952547526A00493C47 /* StoreKit.framework in Frameworks */,
 				E7226C9E497B8BF49AA031B2 /* Pods_SongProjector.framework in Frameworks */,
 				E3896A3E21E3F56D008CB5A5 /* CloudKit.framework in Frameworks */,
 			);
@@ -583,6 +660,7 @@
 		9768F81D7D85F2A651153E7A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E33D6F942547526A00493C47 /* StoreKit.framework */,
 				E399FEBC2250F43900AF38B3 /* GPUImage.framework */,
 				E3896A3D21E3F56D008CB5A5 /* CloudKit.framework */,
 				E3D18C6F20238BDC00CBAAF6 /* KDEAudioPlayer.framework */,
@@ -624,10 +702,8 @@
 			isa = PBXGroup;
 			children = (
 				E3896A3C21E3F56A008CB5A5 /* SongProjector.entitlements */,
-				E3A4702C21E00FE1000CB3D3 /* fetchers */,
 				E31F0B7220F50A6D00C22FD1 /* Liedjes - wallpaper 16-9.png */,
 				E31F0B7020F5029500C22FD1 /* Pio-Sebastiaan-en-Marilou.jpg */,
-				E39864D42098D0E600DF5199 /* Amazon Entities */,
 				E33268BD2022FCD2002CDA7C /* SoundPlayer.swift */,
 				E3C2AD2120275AE200ACFFE7 /* InstrumentPlayer.swift */,
 				E3D12AA22018E9E500BD060C /* RestService */,
@@ -636,13 +712,14 @@
 				E31171451FE59E98008D9D51 /* Model */,
 				E31171461FE59E9F008D9D51 /* View */,
 				E31171341FE59DA3008D9D51 /* Main.storyboard */,
+				E342E9E7255D905F0093AE5D /* AboutController.swift */,
 				E31171321FE59DA3008D9D51 /* ViewController.swift */,
 				E311713C1FE59DA3008D9D51 /* LaunchScreen.storyboard */,
-				E39864DF209A0FA700DF5199 /* awsconfiguration.json */,
 				E311713F1FE59DA3008D9D51 /* Info.plist */,
 				E311713A1FE59DA3008D9D51 /* Assets.xcassets */,
 				E384E06E23CE7DB80017B73F /* client_1005753122128-dc0k48rg97hdetif0g3ncaf0dq0ue6mc.apps.googleusercontent.com.plist */,
 				E31171371FE59DA3008D9D51 /* SongProjector.xcdatamodeld */,
+				E33746AA24A89DC900F44852 /* Colors.xcassets */,
 				E39B6A132216BDB2002B53B1 /* Intro.storyboard */,
 			);
 			path = SongProjector;
@@ -655,13 +732,9 @@
 				E32A02B6211715B300C78410 /* SongService.swift */,
 				E3896A2D21E3F04B008CB5A5 /* CoreDataEntities */,
 				E31171481FE59EBD008D9D51 /* CoreDataManager.swift */,
-				E3355D701FEE6436004C03AE /* ClusterExtensions.swift */,
-				E309DCF91FF4954100C3D135 /* ThemeExtensions.swift */,
-				E3314B6520077DD100F470C0 /* SheetExtensions.swift */,
-				E3A19733200947AB0044DB1B /* SheetTitleImageExtensions.swift */,
-				E3F2020D20205BBF002FF06E /* EntityExtensions.swift */,
-				E3C2AD1D202749CD00ACFFE7 /* InstrumentExtensions.swift */,
-				E31F0B7420F5D1E800C22FD1 /* SheetPastorsExtensions.swift */,
+				E3E78B812519401100AF9284 /* ClusterOrComment.swift */,
+				E3E78B832519409F00AF9284 /* TempClusterModel.swift */,
+				E3E78B912520825E00AF9284 /* SheetTypesMenu.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -686,10 +759,8 @@
 				E311715E1FE5A0E7008D9D51 /* SongServiceController.swift */,
 				E31171621FE5A0E7008D9D51 /* NewSongServiceController.swift */,
 				E31171601FE5A0E7008D9D51 /* SongsController.swift */,
-				E31171611FE5A0E7008D9D51 /* NewSongController.swift */,
 				E3D927501FEC3036006EDE75 /* NewOrEditTagController.swift */,
 				E309DCE91FF45A8A00C3D135 /* MoreSplitViewController.swift */,
-				E38347641FF9382F008AE69D /* ExternalDisplayController.swift */,
 				E3CB684F200634A500F007B2 /* LoadingIndicator.swift */,
 				E3CB6853200635D600F007B2 /* LoadingViewController.swift */,
 				E399EA86202F574600E8CE0E /* NewSongMenuController.swift */,
@@ -708,9 +779,9 @@
 				E39B6A112216B140002B53B1 /* PageController.swift */,
 				E39B6A1522184E4F002B53B1 /* IntroPageController1.swift */,
 				E39B6A1722184E5D002B53B1 /* IntroPageController2.swift */,
+				E3501497248596AC0082741A /* IntroPageController22.swift */,
+				E33746B624AA6C9F00F44852 /* IntroAdminController.swift */,
 				E37A491F221856C5003BD945 /* StoryBoard.swift */,
-				E37A49332219F4F3003BD945 /* SignUpOrganisationController.swift */,
-				E37A49312219F4A9003BD945 /* SignUpPersonalInfoController.swift */,
 				E35B63C2221A8F22006C50AB /* IntroGoogleSigninController.swift */,
 				E32DB8E1223460D800277C45 /* IntroStartingController.swift */,
 				E32DB8E3223468D500277C45 /* InviteCodeController.swift */,
@@ -722,6 +793,14 @@
 				E30B8ED5224DFBE900F121D9 /* TagSelectionController.swift */,
 				E3C133DB224FAEB400893C03 /* ManageSongServiceController.swift */,
 				E384E07623CF159F0017B73F /* UploadUniversalSongController.swift */,
+				E3FD4D97249272A200DFD176 /* ColorPickerViewController.swift */,
+				E3D0F21224B225D200508A89 /* SignInCalendarController.swift */,
+				E3C13F0F24C772CB00BE3C35 /* CalendarIdExplainController.swift */,
+				E3C63E1925421BC3006AB94B /* PopupGenerateSongServiceSettings.swift */,
+				E345C48A254F6F780031DCF1 /* SubscriptionOfferController.swift */,
+				E345C48D255055D60031DCF1 /* SubscriptionOffersContainerController.swift */,
+				E33BE3EF256317BE00DEAD54 /* ProgressController.swift */,
+				E34B306925B63AFA009BFE58 /* UploadUniTimesController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -729,6 +808,13 @@
 		E311714A1FE5A04A008D9D51 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				E3355D701FEE6436004C03AE /* ClusterExtensions.swift */,
+				E309DCF91FF4954100C3D135 /* ThemeExtensions.swift */,
+				E3314B6520077DD100F470C0 /* SheetExtensions.swift */,
+				E3A19733200947AB0044DB1B /* SheetTitleImageExtensions.swift */,
+				E3F2020D20205BBF002FF06E /* EntityExtensions.swift */,
+				E3C2AD1D202749CD00ACFFE7 /* InstrumentExtensions.swift */,
+				E31F0B7420F5D1E800C22FD1 /* SheetPastorsExtensions.swift */,
 				E3896A2B21E3F011008CB5A5 /* HTTPURLResponse.swift */,
 				E3896A2921E3EFF2008CB5A5 /* URLExtensions.swift */,
 				E311714D1FE5A071008D9D51 /* ArrayExtensions.swift */,
@@ -747,6 +833,9 @@
 				E36E76D921EF5338002E20EF /* IntExtensions.swift */,
 				E390864C22105EA300320421 /* DataExtensions.swift */,
 				E30833F623D2A31100E5DCE6 /* FileManagerExtensions.swift */,
+				E387536F24842CC20050B425 /* QueryDocumentSnapshotExtensions.swift */,
+				E3B1EAC024B4948400304A2D /* UICollectionViewExtensions.swift */,
+				E3C63DE42540C734006AB94B /* DoubleExtensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -759,11 +848,17 @@
 				E3D12AB22019BFEB00BD060C /* BridgingHeader.h */,
 				E31171591FE5A0A3008D9D51 /* Features.swift */,
 				E31171581FE5A0A3008D9D51 /* Notifications.swift */,
-				E31F87BC1FE7035D00D5D4BA /* Text.swift */,
+				E31F87BC1FE7035D00D5D4BA /* AppText.swift */,
 				E309DD041FF5179B00C3D135 /* Cells.swift */,
 				E3CB684D2003900D00F007B2 /* AppTheme.swift */,
 				E3F8C9D920175A8800C94292 /* BibleIndex.swift */,
 				E3CB815022F82AAE00F1C240 /* Device.swift */,
+				E33746AC24A89EEF00F44852 /* AppColors.swift */,
+				E30B30E924CF82A900C8E9A4 /* PopUpManager.swift */,
+				E30B30EB24CF8E7400C8E9A4 /* DefaultPopUpController.swift */,
+				E3DFF2492524D78000DA26C1 /* AppConfiguration.swift */,
+				E33D6F9B254A1EDB00493C47 /* KeyChainHelper.swift */,
+				E345C487254F61E10031DCF1 /* SubscriptionsSettings.swift */,
 			);
 			path = Global;
 			sourceTree = "<group>";
@@ -786,8 +881,6 @@
 				E31171741FE5A1A0008D9D51 /* NewSongSheetCell.xib */,
 				E309DCF11FF48F0800C3D135 /* LabelSwitchCell.swift */,
 				E309DCF21FF48F0800C3D135 /* LabelSwitchCell.xib */,
-				E309DCF51FF48FF100C3D135 /* LabelColorPickerCell.swift */,
-				E309DCF61FF48FF100C3D135 /* LabelColorPickerCell.xib */,
 				E309DD001FF5127400C3D135 /* LabelNumberCell.swift */,
 				E309DD011FF5127400C3D135 /* LabelNumberCell.xib */,
 				E3D1CEE51FF6930600F9D7D9 /* LabelPickerCell.swift */,
@@ -822,6 +915,13 @@
 				E305BB9023CF6D8500A753A2 /* SoundPickerCell.xib */,
 				E3D583C923EC2035007584D7 /* BasicBaseCell.swift */,
 				E3D583CA23EC2035007584D7 /* BasicBaseCell.xib */,
+				E3FD4D912492642C00DFD176 /* LabelColorPickerNewCell.swift */,
+				E3FD4D922492642C00DFD176 /* LabelColorPickerNewCell.xib */,
+				E3C63DD2253E1DE5006AB94B /* MenuCell.swift */,
+				E3C63DD3253E1DE5006AB94B /* MenuCell.xib */,
+				E3CB398B2551F338003DD07E /* SubscriptionCell.swift */,
+				E3BDB3E02554B37900D564BE /* FeatureCell.swift */,
+				E3BDB3E12554B37900D564BE /* FeatureCell.xib */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -849,6 +949,10 @@
 				E35E7D0323BA50DD0071DCC8 /* VSongServiceSection.swift */,
 				E3B494C423BEA7C200DB2A7F /* VUser.swift */,
 				E3B494C623BEAB2500DB2A7F /* VContract.swift */,
+				E3847EFB248ED132002D4BED /* VAdmin.swift */,
+				E3FD4D9D2493DD4A00DFD176 /* VUniversalUpdatedAtEntity.swift */,
+				E33746B424A8F74C00F44852 /* VChurch.swift */,
+				E3F4A15724BCC4E3004E6B08 /* VSongServicePlayDate.swift */,
 			);
 			path = Virtual;
 			sourceTree = "<group>";
@@ -860,7 +964,6 @@
 				E309DCE51FF26CB700C3D135 /* NewSongServiceIphoneController.swift */,
 				E36F41671FEE965200E989E5 /* NewSongIphoneController.swift */,
 				E309DCE71FF44E6A00C3D135 /* ThemesIphoneController.swift */,
-				E326E9031FFEC9EC00FEAC9C /* CustomSheetsIphoneController.swift */,
 				E32D4D6420017E0100ED81A7 /* EditSongIphoneController.swift */,
 				E3FA3DF4200D45F00038C97B /* NewOrEditIphoneController.swift */,
 				E3F8C9D120168F6F00C94292 /* BibleStudyGeneratorIphoneController.swift */,
@@ -871,6 +974,16 @@
 				E311A44720725B72007BB6CB /* ImportBibleController.swift */,
 			);
 			path = iPhone;
+			sourceTree = "<group>";
+		};
+		E3875371248432280050B425 /* NewBase */ = {
+			isa = PBXGroup;
+			children = (
+				E39EEB642482E5CC00C247BE /* Requester.swift */,
+				E3875372248432550050B425 /* RequestManager.swift */,
+				E3C63DCA253CAFF7006AB94B /* SerialOperationManager.swift */,
+			);
+			path = NewBase;
 			sourceTree = "<group>";
 		};
 		E3896A2D21E3F04B008CB5A5 /* CoreDataEntities */ = {
@@ -897,6 +1010,9 @@
 				E30B8EC8224A192C00F121D9 /* Tag.swift */,
 				E30B8ED1224CA78100F121D9 /* SongServiceSettings.swift */,
 				E30B8ED3224CA79500F121D9 /* SongServiceSection.swift */,
+				E3FD4D9B2493DAFC00DFD176 /* UniversalUpdatedAtEntity.swift */,
+				E33746B224A8F6EF00F44852 /* Church.swift */,
+				E33B418124BF958000DE4F4E /* SongServicePlayDate.swift */,
 			);
 			path = CoreDataEntities;
 			sourceTree = "<group>";
@@ -904,16 +1020,17 @@
 		E3896A4521E7A383008CB5A5 /* Fetchers */ = {
 			isa = PBXGroup;
 			children = (
-				E3896A3A21E3F3D2008CB5A5 /* ThemeFetcher.swift */,
-				E334B11021ED21F80088CD48 /* ClusterFetcher.swift */,
-				E37A492B2218CDD3003BD945 /* UserFetcher.swift */,
-				E37A492D2218D1C4003BD945 /* OrganizationFetcher.swift */,
-				E37A492F2218D27D003BD945 /* RoleFetcher.swift */,
-				E32DB8D92221E23400277C45 /* ContractFetcher.swift */,
-				E30B8EC02248BBA300F121D9 /* TagFetcher.swift */,
-				E3C133D9224FAC6500893C03 /* SongServiceSettingsFetcher.swift */,
-				E30833F823D3621100E5DCE6 /* UploadSecretFetcher.swift */,
-				E3AB9CE823D7887E00F83455 /* NewContentFetcher.swift */,
+				E35014AC248B6D810082741A /* ThemeFetcher.swift */,
+				E3FB64482484D65800E03617 /* UserFetcher.swift */,
+				E35014B2248B6FE10082741A /* TagFetcher.swift */,
+				E3CF0BD7248BA3F70032007E /* SongServiceSettingsFetcher.swift */,
+				E3CF0BDD248CD8D50032007E /* ClusterFetcher.swift */,
+				E3CF0BE3248D39050032007E /* FileFetcher.swift */,
+				E3847EF9248ED020002D4BED /* AdminFetcher.swift */,
+				E3FD4D992493DA0700DFD176 /* UniversalUpdatedAtFetcher.swift */,
+				E3847F01248FE419002D4BED /* UniversalClusterFetcher.swift */,
+				E33746B024A8E5B300F44852 /* ChurchFetcher.swift */,
+				E3F4A15924BCC7B8004E6B08 /* SongServicePlayDateFetcher.swift */,
 			);
 			path = Fetchers;
 			sourceTree = "<group>";
@@ -921,17 +1038,18 @@
 		E3896A4621E7A3A5008CB5A5 /* Base */ = {
 			isa = PBXGroup;
 			children = (
-				E3D12AAE2018EE2100BD060C /* Fetcher.swift */,
 				E3D12AB02018EE4800BD060C /* FetcherResultTypes.swift */,
 				E3812DEC201CE1D300F10B2C /* GoogleActivityFetcher.swift */,
 				E3F201D5201E04FC002FF06E /* FetcherTimeInterval.swift */,
-				E3A4702D21E0CBF9000CB3D3 /* BaseRestService.swift */,
 				E3A4702F21E0CC80000CB3D3 /* ChurchBeamConfiguration.swift */,
 				E3A4703121E10B57000CB3D3 /* RequestOperation.swift */,
 				E3A4703321E10D35000CB3D3 /* AsynchronousOperation.swift */,
 				E3896A3621E3F156008CB5A5 /* Operation.swift */,
 				E3896A3821E3F17C008CB5A5 /* HTTPError.swift */,
-				E3896A3F21E5D8A3008CB5A5 /* Requester.swift */,
+				E3D0F21024B2159000508A89 /* MusicDownloadManager.swift */,
+				E336819D25672E550006F043 /* UniversalClusterOperations.swift */,
+				E34B0D6C2570449200993872 /* UniversalClusterSubmitterOperations.swift */,
+				E34B0D6F2570FD9D00993872 /* Reachability.swift */,
 			);
 			path = Base;
 			sourceTree = "<group>";
@@ -939,45 +1057,19 @@
 		E3896A4921E7A3E5008CB5A5 /* Submitters */ = {
 			isa = PBXGroup;
 			children = (
-				E3AB276B221EB31600B9145C /* InitSubmitter.swift */,
-				E3896A4A21E7A3FD008CB5A5 /* ThemeSubmitter.swift */,
-				E334B11221ED22910088CD48 /* ClusterSubmitter.swift */,
-				E3C0C5A824030BB0002A381A /* ClusterShownDateSubmitter.swift */,
-				E37A49272218CB3A003BD945 /* OrganizationSubmitter.swift */,
-				E37A49292218CC7E003BD945 /* UserSubmitter.swift */,
-				E30B8EC22248BCA400F121D9 /* TagSubmitter.swift */,
-				E3C133D7224FA80F00893C03 /* SongServiceSettingsSubmitter.swift */,
-				E3AB9CEC23D79DE300F83455 /* UniversalClusterSubmitter.swift */,
-				E3F7509123F5B7A300D2AE81 /* AmazonTransfer.swift */,
-				E3F7509323F5B89E00D2AE81 /* FileUploader.swift */,
-				E3F7509623F8044300D2AE81 /* FileDownloader.swift */,
-				E3F7509823F9DBAB00D2AE81 /* AWSS3Manager.swift */,
+				E35014A8248985A30082741A /* UserSubmitter.swift */,
+				E35014AA248AB9440082741A /* ThemeSubmitter.swift */,
+				E35014AE248B6EB20082741A /* TagSubmitter.swift */,
+				E3CF0BD9248BA52D0032007E /* SongServiceSettingsSubmitter.swift */,
+				E3CF0BDB248C11D40032007E /* ClusterSubmitter.swift */,
+				E3CF0BDF248CE32A0032007E /* FileSubmitter.swift */,
+				E3CF0BE1248D0DBA0032007E /* TransferManager.swift */,
+				E3847EFD248ED3EC002D4BED /* UniversalClusterSubmitter.swift */,
+				E3EED4FF2494E21E00AE47BC /* UniversalClusterUpdatedAtSubmitter.swift */,
+				E3F4A15B24BCC81C004E6B08 /* SongServicePlayDateSubmitter.swift */,
+				E35A1A6825616EAE008CF6A3 /* FileDeleter.swift */,
 			);
 			path = Submitters;
-			sourceTree = "<group>";
-		};
-		E39864D42098D0E600DF5199 /* Amazon Entities */ = {
-			isa = PBXGroup;
-			children = (
-				E361E88321C994C00011A544 /* kort.m4a */,
-				E37498F721BD5DB800974126 /* LordSong.m4a */,
-				E37938E82121DE8E0091698D /* LordLoop.m4a */,
-				E32A02B421164A8800C78410 /* Bass.m4a */,
-				E32A02A42116441600C78410 /* Drums.m4a */,
-				E32A02B02116466200C78410 /* Guitar.m4a */,
-				E32A02B2211646D900C78410 /* Keyboard.m4a */,
-				E39864DD2098D5BC00DF5199 /* Organizations.swift */,
-				E39864D92098D24100DF5199 /* OrganizationsCRUD.swift */,
-			);
-			path = "Amazon Entities";
-			sourceTree = "<group>";
-		};
-		E3A4702C21E00FE1000CB3D3 /* fetchers */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = fetchers;
-			path = "New Group";
 			sourceTree = "<group>";
 		};
 		E3BC6BB81FFEBEA80039E0CA /* View */ = {
@@ -1014,6 +1106,17 @@
 				E311148322048DF8007C7A61 /* LoadingView.xib */,
 				E3CB814E22F829B400F1C240 /* PopUpViewController.swift */,
 				E306D8F42323BF3900299200 /* AnimatingBackgroundView.swift */,
+				E3FD4D9524926BE300DFD176 /* ActionButton.swift */,
+				E33746AE24A8A66400F44852 /* CircleProgressView.swift */,
+				E3B1EABC24B4937500304A2D /* SongServiceHeaderCollectionReusableView.swift */,
+				E3B1EABD24B4937500304A2D /* SongServiceHeaderCollectionReusableView.xib */,
+				E344A0B324F674FE005588CE /* CountDownView.xib */,
+				E344A0B524F67514005588CE /* CountDownView.swift */,
+				E330A035253118DD0014DB44 /* BasicHeaderView.swift */,
+				E330A038253119170014DB44 /* BasicHeaderView.xib */,
+				E33BE3F325631A4200DEAD54 /* CheckView.swift */,
+				E336816F2565C7DC0006F043 /* TextFooterView.swift */,
+				E33681722565D6C20006F043 /* ErrorAnimationView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -1021,10 +1124,13 @@
 		E3D12AA22018E9E500BD060C /* RestService */ = {
 			isa = PBXGroup;
 			children = (
-				E3AB9CEA23D7921B00F83455 /* NewContentFetchJob.swift */,
+				E3BA5BEA24EF1AA400BB7BAD /* GoogleService-Info-Test.plist */,
+				E3501499248599120082741A /* GoogleService-Info.plist */,
+				E3875371248432280050B425 /* NewBase */,
 				E3896A4621E7A3A5008CB5A5 /* Base */,
 				E3896A4921E7A3E5008CB5A5 /* Submitters */,
 				E3896A4521E7A383008CB5A5 /* Fetchers */,
+				E3BBB55C25459CAD00F18DCC /* IAPManager.swift */,
 			);
 			path = RestService;
 			sourceTree = "<group>";
@@ -1059,7 +1165,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0910;
-				LastUpgradeCheck = 0910;
+				LastUpgradeCheck = 1200;
 				ORGANIZATIONNAME = iozee;
 				TargetAttributes = {
 					E311712C1FE59DA3008D9D51 = {
@@ -1105,45 +1211,45 @@
 				E3CD8AB6212818B000EB75BB /* TextFieldCell.xib in Resources */,
 				E31171761FE5A1A0008D9D51 /* BasicCell.xib in Resources */,
 				E38347611FF7E8B5008AE69D /* LabelPhotoPickerCell.xib in Resources */,
+				E3FD4D942492642C00DFD176 /* LabelColorPickerNewCell.xib in Resources */,
 				E36E76DC21EF53AE002E20EF /* ErrorView.xib in Resources */,
 				E3812DEB201C992300F10B2C /* GoogleCell.xib in Resources */,
 				E34ED29B2008D62300534C72 /* SheetSplit.xib in Resources */,
 				E3D7705622E4DAAF009AB4E4 /* TextCell.xib in Resources */,
 				E31171781FE5A1A0008D9D51 /* ThemeCellCollection.xib in Resources */,
-				E32A02B3211646DA00C78410 /* Keyboard.m4a in Resources */,
 				E3635A09217CAEC5002758D5 /* MixerAnimationView.xib in Resources */,
 				E384E07B23CF18190017B73F /* SongsUploadSheetCell.xib in Resources */,
 				E3F201E2201E2011002FF06E /* ActivityHeader.xib in Resources */,
+				E3C63DD5253E1DE5006AB94B /* MenuCell.xib in Resources */,
+				E33746AB24A89DC900F44852 /* Colors.xcassets in Resources */,
 				E38347671FFA5099008AE69D /* SheetTitleContent.xib in Resources */,
-				E32A02B521164A8800C78410 /* Bass.m4a in Resources */,
 				E311713E1FE59DA3008D9D51 /* LaunchScreen.storyboard in Resources */,
 				E311713B1FE59DA3008D9D51 /* Assets.xcassets in Resources */,
-				E309DCF81FF48FF100C3D135 /* LabelColorPickerCell.xib in Resources */,
 				E31F0B6F20F4F3DD00C22FD1 /* SheetPastors.xib in Resources */,
 				E309DD031FF5127400C3D135 /* LabelNumberCell.xib in Resources */,
-				E32A02B12116466200C78410 /* Guitar.m4a in Resources */,
-				E361E88421C994C00011A544 /* kort.m4a in Resources */,
-				E37938E92121DE8E0091698D /* LordLoop.m4a in Resources */,
 				E3D1CEE81FF6930600F9D7D9 /* LabelPickerCell.xib in Resources */,
 				E3F9964B201285CD00634C5E /* AddButtonCollectionCell.xib in Resources */,
 				E3F201DC201E0BD0002FF06E /* ActivityView.xib in Resources */,
 				E384E06F23CE7DB80017B73F /* client_1005753122128-dc0k48rg97hdetif0g3ncaf0dq0ue6mc.apps.googleusercontent.com.plist in Resources */,
+				E3BA5BEB24EF1AA400BB7BAD /* GoogleService-Info-Test.plist in Resources */,
 				E3BC6BB71FFEBE350039E0CA /* HeaderView.xib in Resources */,
+				E3B1EABF24B4937500304A2D /* SongServiceHeaderCollectionReusableView.xib in Resources */,
 				E3F201D8201E0685002FF06E /* SheetActivitiesView.xib in Resources */,
 				E393B7652008D20B0073D0A9 /* SheetEmpty.xib in Resources */,
 				E31171361FE59DA3008D9D51 /* Main.storyboard in Resources */,
-				E39864E0209A0FA700DF5199 /* awsconfiguration.json in Resources */,
 				E309DCF41FF48F0800C3D135 /* LabelSwitchCell.xib in Resources */,
-				E37498F821BD5DB800974126 /* LordSong.m4a in Resources */,
 				E31F0B7320F50A6E00C22FD1 /* Liedjes - wallpaper 16-9.png in Resources */,
 				E311148422048DF8007C7A61 /* LoadingView.xib in Resources */,
 				E37938ED21271EC90091698D /* PickerCell.xib in Resources */,
+				E3BDB3E32554B37900D564BE /* FeatureCell.xib in Resources */,
 				E3F421A51FFE457500C332B0 /* LabelDoubleSwitchCell.xib in Resources */,
 				E3D583CC23EC2035007584D7 /* BasicBaseCell.xib in Resources */,
 				E311717A1FE5A1A0008D9D51 /* AddButtonCell.xib in Resources */,
 				E384E07523CEF09A0017B73F /* GoogleSignedInCell.xib in Resources */,
 				E31F0B7120F5029500C22FD1 /* Pio-Sebastiaan-en-Marilou.jpg in Resources */,
 				E37137BF205EBB8300DF86F1 /* LabelSliderCell.xib in Resources */,
+				E330A039253119180014DB44 /* BasicHeaderView.xib in Resources */,
+				E344A0B424F674FF005588CE /* CountDownView.xib in Resources */,
 				E305BB9223CF6D8500A753A2 /* SoundPickerCell.xib in Resources */,
 				E3F99647201209F100634C5E /* LabelNumberPickerCell.xib in Resources */,
 				E3FA3DF9200DE8570038C97B /* LabelTextViewCell.xib in Resources */,
@@ -1152,9 +1258,9 @@
 				E311717C1FE5A1A0008D9D51 /* NewSongSheetCell.xib in Resources */,
 				E326E9081FFECD0E00FEAC9C /* SheetCollectionCell.xib in Resources */,
 				E334FD6B20CF9C0700FC1FAE /* SongHeaderView.xib in Resources */,
-				E32A02A92116441A00C78410 /* Drums.m4a in Resources */,
 				E38347591FF7AAC9008AE69D /* LabelTextFieldCell.xib in Resources */,
 				E3C2AD102025A5D500ACFFE7 /* MixerView.xib in Resources */,
+				E350149A248599120082741A /* GoogleService-Info.plist in Resources */,
 				E311717E1FE5A5F5008D9D51 /* StoryboardiPad.storyboard in Resources */,
 				E39B6A142216BDB2002B53B1 /* Intro.storyboard in Resources */,
 			);
@@ -1188,45 +1294,41 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-SongProjector/Pods-SongProjector-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/AWSAuthCore/AWSAuthCore.framework",
-				"${BUILT_PRODUCTS_DIR}/AWSAuthUI/AWSAuthUI.framework",
-				"${BUILT_PRODUCTS_DIR}/AWSCognitoIdentityProvider/AWSCognitoIdentityProvider.framework",
-				"${BUILT_PRODUCTS_DIR}/AWSCognitoIdentityProviderASF/AWSCognitoIdentityProviderASF.framework",
-				"${BUILT_PRODUCTS_DIR}/AWSCore/AWSCore.framework",
-				"${BUILT_PRODUCTS_DIR}/AWSDynamoDB/AWSDynamoDB.framework",
-				"${BUILT_PRODUCTS_DIR}/AWSGoogleSignIn/AWSGoogleSignIn.framework",
-				"${BUILT_PRODUCTS_DIR}/AWSMobileClient/AWSMobileClient.framework",
-				"${BUILT_PRODUCTS_DIR}/AWSS3/AWSS3.framework",
-				"${BUILT_PRODUCTS_DIR}/AWSUserPoolsSignIn/AWSUserPoolsSignIn.framework",
 				"${BUILT_PRODUCTS_DIR}/AppAuth/AppAuth.framework",
-				"${BUILT_PRODUCTS_DIR}/ChromaColorPicker/ChromaColorPicker.framework",
+				"${BUILT_PRODUCTS_DIR}/BoringSSL-GRPC/openssl_grpc.framework",
+				"${BUILT_PRODUCTS_DIR}/FlexColorPicker/FlexColorPicker.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMAppAuth/GTMAppAuth.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMOAuth2/GTMOAuth2.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleAPIClientForREST/GoogleAPIClientForREST.framework",
+				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
+				"${BUILT_PRODUCTS_DIR}/PromisesObjC/FBLPromises.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftKeychainWrapper/SwiftKeychainWrapper.framework",
 				"${BUILT_PRODUCTS_DIR}/VerticalSlider/VerticalSlider.framework",
+				"${BUILT_PRODUCTS_DIR}/abseil/absl.framework",
+				"${BUILT_PRODUCTS_DIR}/gRPC-C++/grpcpp.framework",
+				"${BUILT_PRODUCTS_DIR}/gRPC-Core/grpc.framework",
+				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
+				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSAuthCore.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSAuthUI.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSCognitoIdentityProvider.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSCognitoIdentityProviderASF.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSCore.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSDynamoDB.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSGoogleSignIn.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSMobileClient.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSS3.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSUserPoolsSignIn.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AppAuth.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ChromaColorPicker.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/openssl_grpc.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FlexColorPicker.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMAppAuth.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMOAuth2.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleAPIClientForREST.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBLPromises.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftKeychainWrapper.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/VerticalSlider.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/absl.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/grpcpp.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/grpc.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1258,85 +1360,102 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E35014AD248B6D810082741A /* ThemeFetcher.swift in Sources */,
 				E3F201E0201E1AEC002FF06E /* DateExtensions.swift in Sources */,
 				E33268BE2022FCD2002CDA7C /* SoundPlayer.swift in Sources */,
+				E39EEB652482E5CC00C247BE /* Requester.swift in Sources */,
+				E35014AB248AB9440082741A /* ThemeSubmitter.swift in Sources */,
 				E3C2AD122025A5E900ACFFE7 /* MixerView.swift in Sources */,
+				E3847EFC248ED132002D4BED /* VAdmin.swift in Sources */,
 				E3F201DA201E0698002FF06E /* SheetActivitiesView.swift in Sources */,
+				E33746B124A8E5B300F44852 /* ChurchFetcher.swift in Sources */,
 				E311716B1FE5A0E7008D9D51 /* SplashScreen.swift in Sources */,
 				E3D12AB12018EE4800BD060C /* FetcherResultTypes.swift in Sources */,
 				E3314B682007836D00F470C0 /* SheetView.swift in Sources */,
 				E3896A2A21E3EFF2008CB5A5 /* URLExtensions.swift in Sources */,
-				E3AB9CE923D7887E00F83455 /* NewContentFetcher.swift in Sources */,
 				E37A49222218C3B0003BD945 /* Role.swift in Sources */,
 				E36F41661FEE8CDA00E989E5 /* SongServiceIphoneController.swift in Sources */,
-				E37A492E2218D1C4003BD945 /* OrganizationFetcher.swift in Sources */,
 				E3C2AD1E202749CD00ACFFE7 /* InstrumentExtensions.swift in Sources */,
-				E3F7509223F5B7A300D2AE81 /* AmazonTransfer.swift in Sources */,
+				E3F4A15A24BCC7B8004E6B08 /* SongServicePlayDateFetcher.swift in Sources */,
 				E311715B1FE5A0A3008D9D51 /* Features.swift in Sources */,
-				E37A492C2218CDD3003BD945 /* UserFetcher.swift in Sources */,
 				E3A4703421E10D35000CB3D3 /* AsynchronousOperation.swift in Sources */,
 				E3C133DC224FAEB400893C03 /* ManageSongServiceController.swift in Sources */,
+				E330A036253118DD0014DB44 /* BasicHeaderView.swift in Sources */,
 				E3D7705522E4DAAF009AB4E4 /* TextCell.swift in Sources */,
-				E37A492A2218CC7E003BD945 /* UserSubmitter.swift in Sources */,
 				E37A4920221856C5003BD945 /* StoryBoard.swift in Sources */,
 				E37938EF212723630091698D /* TableViewCellExtensions.swift in Sources */,
 				E311148222048DE6007C7A61 /* LoadingView.swift in Sources */,
+				E3FD4D9E2493DD4A00DFD176 /* VUniversalUpdatedAtEntity.swift in Sources */,
 				E309DCF31FF48F0800C3D135 /* LabelSwitchCell.swift in Sources */,
 				E309DD051FF5179B00C3D135 /* Cells.swift in Sources */,
 				E35E7CE423B76F420071DCC8 /* VTheme.swift in Sources */,
-				E3F7509423F5B89E00D2AE81 /* FileUploader.swift in Sources */,
 				E31171521FE5A071008D9D51 /* StringExtensions.swift in Sources */,
 				E3896A3321E3F04B008CB5A5 /* Theme.swift in Sources */,
-				E334B11121ED21F80088CD48 /* ClusterFetcher.swift in Sources */,
 				E3F421A41FFE457500C332B0 /* LabelDoubleSwitchCell.swift in Sources */,
 				E3CAE6A120C5137000D3B36F /* ChurchBeamCell.swift in Sources */,
 				E35E7CEE23BA29570071DCC8 /* VSheetTitleImage.swift in Sources */,
 				E32DB8E4223468D500277C45 /* InviteCodeController.swift in Sources */,
+				E35014A9248985A30082741A /* UserSubmitter.swift in Sources */,
 				E3812DE7201C972B00F10B2C /* SettingsController.swift in Sources */,
 				E390864D22105EA300320421 /* DataExtensions.swift in Sources */,
 				E334B10D21ED045C0088CD48 /* GoogleActivity.swift in Sources */,
 				E37A49262218C42E003BD945 /* Organization.swift in Sources */,
 				E3B494C523BEA7C200DB2A7F /* VUser.swift in Sources */,
 				E3D9C29020D6F4E8006EDFE3 /* SongServiceContainerViewController.swift in Sources */,
+				E3FD4D98249272A200DFD176 /* ColorPickerViewController.swift in Sources */,
 				E36E76DA21EF5338002E20EF /* IntExtensions.swift in Sources */,
 				E399EA87202F574600E8CE0E /* NewSongMenuController.swift in Sources */,
-				E3C133D8224FA80F00893C03 /* SongServiceSettingsSubmitter.swift in Sources */,
 				E32DB8E82235B90E00277C45 /* AddNewUserController.swift in Sources */,
 				E309DCFA1FF4954100C3D135 /* ThemeExtensions.swift in Sources */,
-				E3F7509923F9DBAB00D2AE81 /* AWSS3Manager.swift in Sources */,
 				E3CB815122F82AAE00F1C240 /* Device.swift in Sources */,
+				E3B1EAC124B4948400304A2D /* UICollectionViewExtensions.swift in Sources */,
+				E3CF0BE2248D0DBA0032007E /* TransferManager.swift in Sources */,
 				E334B10F21ED201B0088CD48 /* Instrument.swift in Sources */,
 				E3CB814F22F829B400F1C240 /* PopUpViewController.swift in Sources */,
+				E3D0F21324B225D200508A89 /* SignInCalendarController.swift in Sources */,
 				E3896A3121E3F04B008CB5A5 /* Entity.swift in Sources */,
+				E3E78B922520825E00AF9284 /* SheetTypesMenu.swift in Sources */,
+				E3C13F1024C772CB00BE3C35 /* CalendarIdExplainController.swift in Sources */,
 				E39B6A102216236A002B53B1 /* IntroPageViewContainer.swift in Sources */,
 				E309DCEA1FF45A8A00C3D135 /* MoreSplitViewController.swift in Sources */,
+				E35014AF248B6EB20082741A /* TagSubmitter.swift in Sources */,
 				E3F8C9D220168F6F00C94292 /* BibleStudyGeneratorIphoneController.swift in Sources */,
+				E3CF0BDE248CD8D50032007E /* ClusterFetcher.swift in Sources */,
 				E31171511FE5A071008D9D51 /* UITableViewExtensions.swift in Sources */,
+				E3BDB3E22554B37900D564BE /* FeatureCell.swift in Sources */,
 				E30B8EC722497C2600F121D9 /* TagsController.swift in Sources */,
+				E336819E25672E550006F043 /* UniversalClusterOperations.swift in Sources */,
+				E3F4A15824BCC4E3004E6B08 /* VSongServicePlayDate.swift in Sources */,
 				E35E7CFC23BA33E00071DCC8 /* VOrganization.swift in Sources */,
 				E3F99646201209F100634C5E /* LabelNumberPickerCell.swift in Sources */,
-				E37A49342219F4F3003BD945 /* SignUpOrganisationController.swift in Sources */,
-				E37A49302218D27D003BD945 /* RoleFetcher.swift in Sources */,
+				E33681702565C7DC0006F043 /* TextFooterView.swift in Sources */,
 				E393B76B2008D40A0073D0A9 /* SheetTitleImage.swift in Sources */,
+				E3E78B822519401100AF9284 /* ClusterOrComment.swift in Sources */,
 				E38347581FF7AAC9008AE69D /* LabelTextFieldCell.swift in Sources */,
-				E31171691FE5A0E7008D9D51 /* NewSongController.swift in Sources */,
+				E3CF0BE4248D39050032007E /* FileFetcher.swift in Sources */,
+				E3875373248432550050B425 /* RequestManager.swift in Sources */,
 				E35E7CF423BA30540071DCC8 /* VSheetSplit.swift in Sources */,
+				E34B306A25B63AFA009BFE58 /* UploadUniTimesController.swift in Sources */,
 				E31F0B7520F5D1E800C22FD1 /* SheetPastorsExtensions.swift in Sources */,
 				E399EA89202F73D700E8CE0E /* CustomSheetsController.swift in Sources */,
+				E3B1EABE24B4937500304A2D /* SongServiceHeaderCollectionReusableView.swift in Sources */,
 				E30B8EC9224A192C00F121D9 /* Tag.swift in Sources */,
 				E3896A3921E3F17C008CB5A5 /* HTTPError.swift in Sources */,
-				E3AB276C221EB31600B9145C /* InitSubmitter.swift in Sources */,
 				E3F8C9D4201690FC00C94292 /* BibleStudyIphoneController.swift in Sources */,
 				E311A44820725B72007BB6CB /* ImportBibleController.swift in Sources */,
 				E31171791FE5A1A0008D9D51 /* AddButtonCell.swift in Sources */,
+				E345C48B254F6F780031DCF1 /* SubscriptionOfferController.swift in Sources */,
+				E34B0D702570FD9D00993872 /* Reachability.swift in Sources */,
 				E309DCE61FF26CB700C3D135 /* NewSongServiceIphoneController.swift in Sources */,
 				E3355D711FEE6436004C03AE /* ClusterExtensions.swift in Sources */,
 				E306D8F52323BF3900299200 /* AnimatingBackgroundView.swift in Sources */,
-				E31F87BD1FE7035D00D5D4BA /* Text.swift in Sources */,
+				E31F87BD1FE7035D00D5D4BA /* AppText.swift in Sources */,
+				E3FD4D9624926BE300DFD176 /* ActionButton.swift in Sources */,
 				E311715A1FE5A0A3008D9D51 /* Notifications.swift in Sources */,
 				E36F41681FEE965200E989E5 /* NewSongIphoneController.swift in Sources */,
 				E32DB8DC2221E29600277C45 /* Contract.swift in Sources */,
 				E334B10321ED02BA0088CD48 /* SheetTitleImageEntity.swift in Sources */,
+				E33D6F9C254A1EDB00493C47 /* KeyChainHelper.swift in Sources */,
 				E38347631FF8434D008AE69D /* ImageExtensions.swift in Sources */,
 				E31171531FE5A071008D9D51 /* ArrayExtensions.swift in Sources */,
 				E3F8C9DA20175A8800C94292 /* BibleIndex.swift in Sources */,
@@ -1344,70 +1463,85 @@
 				E311716A1FE5A0E7008D9D51 /* NewSongServiceController.swift in Sources */,
 				E31171541FE5A071008D9D51 /* UIColorExtension.swift in Sources */,
 				E35E7CEA23B773F50071DCC8 /* VSheetTitleContent.swift in Sources */,
+				E3BBB55D25459CAD00F18DCC /* IAPManager.swift in Sources */,
 				E35E7D0423BA50DD0071DCC8 /* VSongServiceSection.swift in Sources */,
 				E311717B1FE5A1A0008D9D51 /* ThemeCellCollection.swift in Sources */,
 				E39B6A122216B140002B53B1 /* PageController.swift in Sources */,
 				E37A49242218C406003BD945 /* User.swift in Sources */,
+				E33746B724AA6C9F00F44852 /* IntroAdminController.swift in Sources */,
+				E3CF0BD8248BA3F70032007E /* SongServiceSettingsFetcher.swift in Sources */,
 				E35E7CEC23BA1C990071DCC8 /* VInstrument.swift in Sources */,
 				E31171671FE5A0E7008D9D51 /* MoreController.swift in Sources */,
 				E35E7CF623BA31200071DCC8 /* VSheetActivities.swift in Sources */,
+				E3501498248596AC0082741A /* IntroPageController22.swift in Sources */,
 				E334B10721ED031C0088CD48 /* SheetEmptyEntity.swift in Sources */,
+				E35A1A6925616EAE008CF6A3 /* FileDeleter.swift in Sources */,
 				E3CB6854200635D600F007B2 /* LoadingViewController.swift in Sources */,
 				E31114862206460C007C7A61 /* ChurchBeamTableViewController.swift in Sources */,
-				E39864DE2098D5BD00DF5199 /* Organizations.swift in Sources */,
+				E3D0F21124B2159000508A89 /* MusicDownloadManager.swift in Sources */,
+				E3C63DE52540C734006AB94B /* DoubleExtensions.swift in Sources */,
+				E3CF0BDC248C11D40032007E /* ClusterSubmitter.swift in Sources */,
+				E3F4A15C24BCC81C004E6B08 /* SongServicePlayDateSubmitter.swift in Sources */,
+				E3FD4D932492642C00DFD176 /* LabelColorPickerNewCell.swift in Sources */,
 				E384E07423CEF09A0017B73F /* GoogleSignedInCell.swift in Sources */,
 				E34EA3A521CECCA100A65719 /* SongServiceSettingsCell.swift in Sources */,
-				E38347651FF9382F008AE69D /* ExternalDisplayController.swift in Sources */,
 				E3A19736200A76EF0044DB1B /* ViewControllerExtensions.swift in Sources */,
 				E30833F723D2A31100E5DCE6 /* FileManagerExtensions.swift in Sources */,
-				E3896A3B21E3F3D3008CB5A5 /* ThemeFetcher.swift in Sources */,
+				E33746AF24A8A66400F44852 /* CircleProgressView.swift in Sources */,
+				E35014B3248B6FE10082741A /* TagFetcher.swift in Sources */,
 				E3A4703021E0CC80000CB3D3 /* ChurchBeamConfiguration.swift in Sources */,
-				E326E9041FFEC9EC00FEAC9C /* CustomSheetsIphoneController.swift in Sources */,
+				E3847F02248FE419002D4BED /* UniversalClusterFetcher.swift in Sources */,
 				E3D9C28E20D6F11E006EDFE3 /* TestView.swift in Sources */,
+				E3FB64492484D65800E03617 /* UserFetcher.swift in Sources */,
 				E3D583CB23EC2035007584D7 /* BasicBaseCell.swift in Sources */,
-				E37A49322219F4A9003BD945 /* SignUpPersonalInfoController.swift in Sources */,
 				E3F8C9D82017153A00C94292 /* SheetPickerMenuController.swift in Sources */,
+				E3DFF24A2524D78000DA26C1 /* AppConfiguration.swift in Sources */,
 				E31171771FE5A1A0008D9D51 /* NewSongSheetCell.swift in Sources */,
-				E3AB9CED23D79DE300F83455 /* UniversalClusterSubmitter.swift in Sources */,
 				E35099F120DD4FA7005CA984 /* SaveNewSongTitleTimeVC.swift in Sources */,
-				E32DB8DA2221E23400277C45 /* ContractFetcher.swift in Sources */,
 				E37938EC21271EC90091698D /* PickerCell.swift in Sources */,
 				E3812DED201CE1D300F10B2C /* GoogleActivityFetcher.swift in Sources */,
 				E3635A0B217CAF98002758D5 /* MixerAnimationView.swift in Sources */,
+				E33BE3F0256317BE00DEAD54 /* ProgressController.swift in Sources */,
+				E3E78B842519409F00AF9284 /* TempClusterModel.swift in Sources */,
 				E384E07A23CF18190017B73F /* SongsUploadSheetCell.swift in Sources */,
 				E31171331FE59DA3008D9D51 /* ViewController.swift in Sources */,
 				E31171311FE59DA3008D9D51 /* AppDelegate.swift in Sources */,
-				E30833F923D3621100E5DCE6 /* UploadSecretFetcher.swift in Sources */,
 				E38347601FF7E8B5008AE69D /* LabelPhotoPickerCell.swift in Sources */,
+				E3CB398C2551F338003DD07E /* SubscriptionCell.swift in Sources */,
 				E3CD8AB5212818B000EB75BB /* TextFieldCell.swift in Sources */,
 				E32A02B7211715B300C78410 /* SongService.swift in Sources */,
 				E31171491FE59EBD008D9D51 /* CoreDataManager.swift in Sources */,
+				E33681732565D6C20006F043 /* ErrorAnimationView.swift in Sources */,
 				E311A44A2072733A007BB6CB /* LoadingBibleController.swift in Sources */,
 				E399EA8B203074DD00E8CE0E /* BibleStudyGeneratorController.swift in Sources */,
+				E3847EFE248ED3EC002D4BED /* UniversalClusterSubmitter.swift in Sources */,
 				E334B10121ED02870088CD48 /* SheetTitleContentEntity.swift in Sources */,
+				E30B30EA24CF82A900C8E9A4 /* PopUpManager.swift in Sources */,
 				E35E7CFE23BA34E20071DCC8 /* VContractLedger.swift in Sources */,
-				E309DCF71FF48FF100C3D135 /* LabelColorPickerCell.swift in Sources */,
 				E3A19734200947AB0044DB1B /* SheetTitleImageExtensions.swift in Sources */,
 				E35E7CFA23BA33060071DCC8 /* VRole.swift in Sources */,
 				E31F0B6D20F4F3D100C22FD1 /* SheetPastors.swift in Sources */,
 				E3314B6620077DD100F470C0 /* SheetExtensions.swift in Sources */,
+				E3EED5002494E21E00AE47BC /* UniversalClusterUpdatedAtSubmitter.swift in Sources */,
 				E3CB6850200634A600F007B2 /* LoadingIndicator.swift in Sources */,
 				E3F201DE201E0CC9002FF06E /* ActivityView.swift in Sources */,
-				E37A49282218CB3A003BD945 /* OrganizationSubmitter.swift in Sources */,
 				E32D4D6520017E0100ED81A7 /* EditSongIphoneController.swift in Sources */,
 				E334FD6D20CF9E2E00FC1FAE /* SongHeaderView.swift in Sources */,
 				E35E7CF823BA325B0071DCC8 /* VGoogleActivity.swift in Sources */,
 				E3D7705B22E4EAF5009AB4E4 /* Cluster.swift in Sources */,
 				E309DCE81FF44E6A00C3D135 /* ThemesIphoneController.swift in Sources */,
-				E3F7509723F8044300D2AE81 /* FileDownloader.swift in Sources */,
 				E31171391FE59DA3008D9D51 /* SongProjector.xcdatamodeld in Sources */,
 				E326E9071FFECD0E00FEAC9C /* SheetCollectionCell.swift in Sources */,
 				E31F0B6B20F4F36000C22FD1 /* SheetTest.swift in Sources */,
+				E342E9E8255D905F0093AE5D /* AboutController.swift in Sources */,
 				E39B6A1622184E4F002B53B1 /* IntroPageController1.swift in Sources */,
 				E36E76DE21EF5411002E20EF /* ErrorView.swift in Sources */,
 				E35E7D0023BA4F790071DCC8 /* VTag.swift in Sources */,
 				E30B8ED0224BD82E00F121D9 /* WizzardSectionTagsController.swift in Sources */,
+				E33746B524A8F74C00F44852 /* VChurch.swift in Sources */,
 				E305BB9123CF6D8500A753A2 /* SoundPickerCell.swift in Sources */,
+				E3CF0BE0248CE32A0032007E /* FileSubmitter.swift in Sources */,
+				E3C63DD4253E1DE5006AB94B /* MenuCell.swift in Sources */,
 				E35E7D0223BA50620071DCC8 /* VSongServiceSettings.swift in Sources */,
 				E35E7CE123B76AE70071DCC8 /* VEntity.swift in Sources */,
 				E3F9964A201285CD00634C5E /* AddButtonCollectionCell.swift in Sources */,
@@ -1417,31 +1551,29 @@
 				E3D927571FECF622006EDE75 /* ViewExtensions.swift in Sources */,
 				E3CB684E2003900D00F007B2 /* AppTheme.swift in Sources */,
 				E3C2AD2220275AE200ACFFE7 /* InstrumentPlayer.swift in Sources */,
+				E33B418224BF958000DE4F4E /* SongServicePlayDate.swift in Sources */,
 				E39D29F020308F4E00C1C0D9 /* BibleStudyController.swift in Sources */,
-				E3A4702E21E0CBF9000CB3D3 /* BaseRestService.swift in Sources */,
-				E3D12AAF2018EE2100BD060C /* Fetcher.swift in Sources */,
 				E35E7CE623B771A70071DCC8 /* VCluster.swift in Sources */,
 				E3D927511FEC3036006EDE75 /* NewOrEditTagController.swift in Sources */,
-				E3896A4B21E7A3FD008CB5A5 /* ThemeSubmitter.swift in Sources */,
 				E31171551FE5A071008D9D51 /* UIFontExtensions.swift in Sources */,
-				E334B11321ED22910088CD48 /* ClusterSubmitter.swift in Sources */,
-				E30B8EC32248BCA400F121D9 /* TagSubmitter.swift in Sources */,
 				E3355D6F1FEDA645004C03AE /* TextViewExtensions.swift in Sources */,
 				E3B494C723BEAB2500DB2A7F /* VContract.swift in Sources */,
+				E345C488254F61E10031DCF1 /* SubscriptionsSettings.swift in Sources */,
 				E3FA3DF8200DE8570038C97B /* LabelTextViewCell.swift in Sources */,
 				E384E07723CF159F0017B73F /* UploadUniversalSongController.swift in Sources */,
 				E35E7CE823B7730F0071DCC8 /* VSheet.swift in Sources */,
+				E3CF0BDA248BA52D0032007E /* SongServiceSettingsSubmitter.swift in Sources */,
 				E32DB8E2223460D800277C45 /* IntroStartingController.swift in Sources */,
-				E3C133DA224FAC6500893C03 /* SongServiceSettingsFetcher.swift in Sources */,
+				E387537024842CC20050B425 /* QueryDocumentSnapshotExtensions.swift in Sources */,
 				E31171661FE5A0E7008D9D51 /* SongServiceController.swift in Sources */,
 				E3CB6852200634EC00F007B2 /* TimeIntervalExtensions.swift in Sources */,
-				E39864DA2098D24100DF5199 /* OrganizationsCRUD.swift in Sources */,
+				E33746B324A8F6EF00F44852 /* Church.swift in Sources */,
 				E33268BC2022241E002CDA7C /* SongsMenuController.swift in Sources */,
-				E3AB9CEB23D7921B00F83455 /* NewContentFetchJob.swift in Sources */,
 				E30B8ED2224CA78100F121D9 /* SongServiceSettings.swift in Sources */,
 				E3F201E4201E206D002FF06E /* ActivityHeader.swift in Sources */,
 				E3FA3DF5200D45F00038C97B /* NewOrEditIphoneController.swift in Sources */,
 				E3F2020E20205BBF002FF06E /* EntityExtensions.swift in Sources */,
+				E3FD4D9A2493DA0700DFD176 /* UniversalUpdatedAtFetcher.swift in Sources */,
 				E30B8ED4224CA79500F121D9 /* SongServiceSection.swift in Sources */,
 				E35E7CF223BA2FE30071DCC8 /* VSheetEmpty.swift in Sources */,
 				E3896A2C21E3F011008CB5A5 /* HTTPURLResponse.swift in Sources */,
@@ -1451,15 +1583,18 @@
 				E37137BE205EBB8300DF86F1 /* LabelSliderCell.swift in Sources */,
 				E393B7672008D25F0073D0A9 /* SheetEmpty.swift in Sources */,
 				E3896A3721E3F156008CB5A5 /* Operation.swift in Sources */,
+				E3C63DCB253CAFF7006AB94B /* SerialOperationManager.swift in Sources */,
+				E33BE3F425631A4200DEAD54 /* CheckView.swift in Sources */,
 				E334B10B21ED03B40088CD48 /* SheetActivities.swift in Sources */,
 				E35B63C3221A8F22006C50AB /* IntroGoogleSigninController.swift in Sources */,
 				E3D1CEE71FF6930600F9D7D9 /* LabelPickerCell.swift in Sources */,
+				E3FD4D9C2493DAFC00DFD176 /* UniversalUpdatedAtEntity.swift in Sources */,
 				E39B6A1822184E5D002B53B1 /* IntroPageController2.swift in Sources */,
 				E30B8ED6224DFBE900F121D9 /* TagSelectionController.swift in Sources */,
-				E3896A4021E5D8A3008CB5A5 /* Requester.swift in Sources */,
 				E3896A3521E3F0E3008CB5A5 /* AccountStore.swift in Sources */,
-				E3C0C5A924030BB0002A381A /* ClusterShownDateSubmitter.swift in Sources */,
+				E30B30EC24CF8E7400C8E9A4 /* DefaultPopUpController.swift in Sources */,
 				E309DD021FF5127400C3D135 /* LabelNumberCell.swift in Sources */,
+				E3847EFA248ED020002D4BED /* AdminFetcher.swift in Sources */,
 				E31171681FE5A0E7008D9D51 /* SongsController.swift in Sources */,
 				E31171751FE5A1A0008D9D51 /* BasicCell.swift in Sources */,
 				E31171561FE5A071008D9D51 /* NSManagedObjectExtension.swift in Sources */,
@@ -1467,12 +1602,16 @@
 				E34ED29D2008D63700534C72 /* SheetSplit.swift in Sources */,
 				E334B10921ED03840088CD48 /* SheetSplitEntity.swift in Sources */,
 				E334B0FF21ED02190088CD48 /* Sheet.swift in Sources */,
+				E33746AD24A89EEF00F44852 /* AppColors.swift in Sources */,
+				E34B0D6D2570449200993872 /* UniversalClusterSubmitterOperations.swift in Sources */,
+				E345C48E255055D60031DCF1 /* SubscriptionOffersContainerController.swift in Sources */,
 				E32DB8E02230283A00277C45 /* ContractLedger.swift in Sources */,
+				E3C63E1A25421BC3006AB94B /* PopupGenerateSongServiceSettings.swift in Sources */,
+				E344A0B624F67514005588CE /* CountDownView.swift in Sources */,
 				E38347691FFA512D008AE69D /* SheetTitleContent.swift in Sources */,
 				E3BC6BBA1FFEBECA0039E0CA /* HeaderView.swift in Sources */,
 				E32DB8E622347AF000277C45 /* UsersController.swift in Sources */,
 				E30B8ECE224BD80800F121D9 /* WizzardSectionsController.swift in Sources */,
-				E30B8EC12248BBA300F121D9 /* TagFetcher.swift in Sources */,
 				E3896A3221E3F04B008CB5A5 /* GlobalDateFormatter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1513,6 +1652,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -1520,8 +1660,10 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1548,7 +1690,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -1571,6 +1713,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -1578,8 +1721,10 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1600,7 +1745,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -1615,35 +1760,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = SongProjector/SongProjector.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = LXU7BA48AY;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/AWSAuthCore\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/AWSAuthUI\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/AWSCognitoIdentityProvider\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/AWSCognitoIdentityProviderASF\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/AWSCore\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/AWSDynamoDB\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/AWSGoogleSignIn\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/AWSMobileClient\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/AWSUserPoolsSignIn\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/ChromaColorPicker\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/GPUImage\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/GTMOAuth2\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/GTMSessionFetcher\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/GoogleAPIClientForREST\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/GoogleToolboxForMac\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/SwiftKeychainWrapper\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/SwiftOCR\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/VerticalSlider\"",
-					"\"${PODS_ROOT}/FirebaseAnalytics/Frameworks\"",
-					"\"${PODS_ROOT}/FirebaseCore/Frameworks\"",
-					"\"${PODS_ROOT}/FirebaseInstanceID/Frameworks\"",
-					"\"${PODS_ROOT}/Google/Frameworks\"",
-					"\"${PODS_ROOT}/GoogleSignIn/Frameworks\"",
-				);
+				CURRENT_PROJECT_VERSION = 15;
+				DEVELOPMENT_TEAM = 4RH34LGMLA;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = SongProjector/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.iozee.ChurchBeam;
 				PRODUCT_MODULE_NAME = ChurchBeam;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1659,35 +1782,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = SongProjector/SongProjector.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = LXU7BA48AY;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/AWSAuthCore\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/AWSAuthUI\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/AWSCognitoIdentityProvider\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/AWSCognitoIdentityProviderASF\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/AWSCore\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/AWSDynamoDB\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/AWSGoogleSignIn\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/AWSMobileClient\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/AWSUserPoolsSignIn\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/ChromaColorPicker\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/GPUImage\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/GTMOAuth2\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/GTMSessionFetcher\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/GoogleAPIClientForREST\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/GoogleToolboxForMac\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/SwiftKeychainWrapper\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/SwiftOCR\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/VerticalSlider\"",
-					"\"${PODS_ROOT}/FirebaseAnalytics/Frameworks\"",
-					"\"${PODS_ROOT}/FirebaseCore/Frameworks\"",
-					"\"${PODS_ROOT}/FirebaseInstanceID/Frameworks\"",
-					"\"${PODS_ROOT}/Google/Frameworks\"",
-					"\"${PODS_ROOT}/GoogleSignIn/Frameworks\"",
-				);
+				CURRENT_PROJECT_VERSION = 15;
+				DEVELOPMENT_TEAM = 4RH34LGMLA;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = SongProjector/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.iozee.ChurchBeam;
 				PRODUCT_MODULE_NAME = ChurchBeam;
 				PRODUCT_NAME = "$(TARGET_NAME)";

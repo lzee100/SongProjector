@@ -162,9 +162,9 @@ class SheetPastors: SheetView {
 		}
 		let isHidden = sheet.content == nil || sheet.content == ""
 		descriptionLabel.isHidden = isHidden
-		descriptionBackground.isHidden = isHidden
-		descriptionBackgroundEnd.isHidden = isHidden
-		descriptionBackgroundStart.isHidden = isHidden
+//		descriptionBackground.isHidden = isHidden
+//		descriptionBackgroundEnd.isHidden = isHidden
+//		descriptionBackgroundStart.isHidden = isHidden
 		setup()
 	}
 	
@@ -177,9 +177,8 @@ class SheetPastors: SheetView {
 	}
 	
 	override func updateBackgroundImage() {
-		let image = isForExternalDispay ? sheetTheme?.backgroundImage : sheetTheme?.thumbnail
-		
-		if let image = image, !(sheetTheme?.isBackgroundImageDeleted ?? true) {
+        let image = isForExternalDispay ? sheetTheme?.tempSelectedImage ?? sheetTheme?.backgroundImage : sheetTheme?.tempSelectedImageThumbNail ?? sheetTheme?.thumbnail
+		if let image = image, !(sheetTheme?.isTempSelectedImageDeleted ?? true) {
 			sheetBackgroundImageView.isHidden = false
 			sheetBackgroundImageView.contentMode = .scaleAspectFill
 			sheetBackgroundImageView.image = image
@@ -191,17 +190,18 @@ class SheetPastors: SheetView {
 		}
 	}
 	
-	override func updateOpacity() {
-		if let alpha = sheetTheme?.backgroundTransparancy, alpha != 1 {
-			if sheetTheme?.backgroundImage != nil {
-				sheetBackgroundImageView.alpha = CGFloat(alpha)
-				sheetBackgroundView.alpha = 1
-			} else {
-				sheetBackgroundImageView.alpha = 0
-				sheetBackgroundView.alpha = CGFloat(alpha)
-			}
-		}
-	}
+    override func updateOpacity() {
+        let image = isForExternalDispay ? sheetTheme?.tempSelectedImage ?? sheetTheme?.backgroundImage : sheetTheme?.tempSelectedImageThumbNail ?? sheetTheme?.thumbnail
+        if let alpha = sheetTheme?.backgroundTransparancy {
+            if image != nil, !(sheetTheme?.isTempSelectedImageDeleted ?? true) {
+                sheetBackgroundImageView.alpha = CGFloat(alpha)
+                sheetBackgroundView.alpha = 1
+            } else {
+                sheetBackgroundImageView.alpha = 0
+                sheetBackgroundView.alpha = CGFloat(alpha)
+            }
+        }
+    }
 	
 	override func updateSheetImage() {
 		if let sheet = sheet as? VSheetPastors {

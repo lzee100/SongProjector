@@ -7,12 +7,13 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 protocol BibleStudyGeneratorDelegate {
 	func didFinishBibleStudyGeneratorWith(sheets: [Sheet])
 }
 
-class BibleStudyController: UIViewController, BibleStudyGeneratorDelegate {
+class BibleStudyController: ChurchBeamViewController, BibleStudyGeneratorDelegate {
 	
 	
 	
@@ -22,6 +23,20 @@ class BibleStudyController: UIViewController, BibleStudyGeneratorDelegate {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        becomeFirstResponder()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        resignFirstResponder()
+    }
+    
+    override var canBecomeFirstResponder: Bool {
+        return true
     }
 
     // MARK: - Navigation
@@ -36,6 +51,17 @@ class BibleStudyController: UIViewController, BibleStudyGeneratorDelegate {
 	
 	
 	
+    // Enable detection of shake motion
+    override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+        if motion == .motionShake {
+            do {
+                try Auth.auth().signOut()
+            } catch {
+                print(error)
+            }
+        }
+    }
+    
 	
 	
 	func didFinishBibleStudyGeneratorWith(sheets: [Sheet]) {

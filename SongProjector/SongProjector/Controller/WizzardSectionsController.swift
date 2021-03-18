@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 class WizzardSectionsController: ChurchBeamViewController, UITableViewDelegate, UITableViewDataSource, LabelNumerCellDelegate {
 	
@@ -24,14 +25,18 @@ class WizzardSectionsController: ChurchBeamViewController, UITableViewDelegate, 
 	private var numberOfSections = 1
 	
 	
+    
 	// MARK: - UIView Functions
 
 	override func viewDidLoad() {
         super.viewDidLoad()
-		nextButton.title = Text.Actions.next
+        tableView.backgroundColor = .clear
+		nextButton.title = AppText.Actions.next
+        cancelButton.tintColor = themeHighlighted
+        nextButton.tintColor = themeHighlighted
+        navigationController?.navigationBar.tintColor = themeHighlighted
 		tableView.register(cell: LabelNumberCell.identifier)
 		tableView.rowHeight = 60
-		NotificationCenter.default.addObserver(self, selector: #selector(didSubmitSongServiceSettings), name: NotificationNames.didSubmitSongServiceSettings, object: nil)
     }
 	
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -79,19 +84,16 @@ class WizzardSectionsController: ChurchBeamViewController, UITableViewDelegate, 
 		let cell = tableView.dequeueReusableCell(withIdentifier: LabelNumberCell.identifier) as! LabelNumberCell
 		let value = songServiceObject?.sections.count ?? 1
 		cell.setup(initialValue: value, minLimit: 1, maxLimit: 15, positive: true)
-		cell.descriptionTitle.text = Text.SongServiceManagement.numberOfSections
+		cell.descriptionTitle.text = AppText.SongServiceManagement.numberOfSections
 		cell.delegate = self
 		return cell
 	}
-	
-	// MARK: - Private Functions
-
-	@objc private func didSubmitSongServiceSettings() {
-		Queues.main.async {
-			self.dismiss(animated: true, completion: nil)
-		}
-	}
-	
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        tableView.style(cell, forRowAt: indexPath)
+    }
+    
+    
 	
 	// MARK: - LabelNumerCellDelegate Functions
 	
@@ -104,10 +106,6 @@ class WizzardSectionsController: ChurchBeamViewController, UITableViewDelegate, 
 	// MARK: - IBAction Functions
 
 	@IBAction func didPressCancel(_ sender: UIBarButtonItem) {
-		if songServiceObject != nil {
-			moc.rollback()
-			mocBackground.rollback()
-		}
 		self.dismiss(animated: true)
 	}
 	

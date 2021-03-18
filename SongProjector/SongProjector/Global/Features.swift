@@ -25,15 +25,15 @@ enum Feature : String {
 	case songServiceManagement = "SongServiceManagement"
 	case users = "Users"
 	case settings = "Settings"
-	case `import` = "ImportBible"
 	case uploadUniversalSong = "UploadUniversalSong"
+    case about = "About"
 	
 	
 	
 	// MARK: - Properties
 	
-	static let all = [songService, songs, bibleStudy, themes, tags, users, settings, songServiceManagement, `import`, uploadUniversalSong, more]
-	
+    static let all = [songService, songs, themes, more, tags, songServiceManagement, settings, uploadUniversalSong, about]
+
 	var titel : String {
 		return rawValue
 	}
@@ -41,42 +41,42 @@ enum Feature : String {
 	var titleForDisplay : String {
 		switch self {
 		case .songService:
-			return Text.SongService.title
+			return AppText.SongService.title
 		case .songs:
-			return Text.Songs.title
+			return AppText.Songs.title
 		case .bibleStudy:
-			return Text.BibleStudy.title
+			return AppText.BibleStudy.title
 		case .themes:
-			return Text.Themes.title
+			return AppText.Themes.title
 		case .tags:
-			return Text.Tags.title
+			return AppText.Tags.title
 		case .users:
-			return Text.Users.title
+			return AppText.Users.title
 		case .songServiceManagement:
-			return Text.SongServiceManagement.title
+			return AppText.SongServiceManagement.title
 		case .settings:
-			return Text.Settings.title
+			return AppText.Settings.title
 		case .more:
-			return Text.More.title
-		case .import:
-			return Text.Import.title
-		case .uploadUniversalSong: return Text.UploadUniversalSong.title
+			return AppText.More.title
+		case .uploadUniversalSong: return AppText.UploadUniversalSong.title
+        case .about:
+            return AppText.AboutController.title
 		}
 	}
 	
 	var storyBoard: UIStoryboard {
 		switch self {
-		case .songService, .songs, .bibleStudy, .settings, .more, .import:
+		case .songService, .more:
 			return UIDevice.current.userInterfaceIdiom == .pad ? Storyboard.Ipad : Storyboard.MainStoryboard
-		case .themes, .tags, .users, .songServiceManagement, .uploadUniversalSong:
+        case .themes, .tags, .songs, .bibleStudy, .users, .songServiceManagement, .uploadUniversalSong, .settings, .about:
 			return Storyboard.MainStoryboard
 		}
 	}
 	
 	var identifier : String {
 		switch self {
-		case .tags, .users, .songServiceManagement, .uploadUniversalSong: return titel + "NavController"
-		default: return titel + "Controller"
+        case .more: return "MoreSplitController"
+		default: return titel + "NavController"
 		}
 	}
 	
@@ -85,9 +85,9 @@ enum Feature : String {
 	var isStandaard : Bool {
 		
 		switch self {
-		case .songService, .songs, .bibleStudy, .more, .themes, .settings, .import:
+        case .songService, .songs, .more, .themes, .settings, .tags, .about:
 			return true
-		case .tags, .users, .songServiceManagement, .uploadUniversalSong:
+        case .users, .bibleStudy, .songServiceManagement, .uploadUniversalSong:
 			return false
 		}
 	}
@@ -97,8 +97,7 @@ enum Feature : String {
 	var isActief : Bool {
 		
 		switch self {
-		case .tags, .users, .songServiceManagement: return CoreUser.getEntities().filter({ $0.isMe }).first?.inviteToken == nil
-		case .uploadUniversalSong: return uploadSecret != nil
+        case .bibleStudy, .uploadUniversalSong: return uploadSecret != nil
 		default: return true
 		}
 		
@@ -111,25 +110,25 @@ enum Feature : String {
 		case .songService:
 			return (#imageLiteral(resourceName: "SongService"), #imageLiteral(resourceName: "SongService"), #imageLiteral(resourceName: "SongService"))
 		case .songs:
-			return (#imageLiteral(resourceName: "Song"), #imageLiteral(resourceName: "Song"), #imageLiteral(resourceName: "Song"))
+			return (UIImage(named: "Collections")!, UIImage(named: "Collections")!, UIImage(named: "Collections")!)
 		case .bibleStudy:
 			return (#imageLiteral(resourceName: "Bullet"), #imageLiteral(resourceName: "BulletSelected"), #imageLiteral(resourceName: "Bullet"))
 		case .more:
 			return (#imageLiteral(resourceName: "More"), #imageLiteral(resourceName: "More"), #imageLiteral(resourceName: "More"))
 		case .themes:
-			return (#imageLiteral(resourceName: "Tags"), #imageLiteral(resourceName: "Tags"), #imageLiteral(resourceName: "Tags"))
+			return (UIImage(named: "Theme")!, UIImage(named: "Theme")!, UIImage(named: "Theme")!)
 		case .tags:
 			return (#imageLiteral(resourceName: "Tags"), #imageLiteral(resourceName: "Tags"), #imageLiteral(resourceName: "Tags"))
 		case .users:
 			return (#imageLiteral(resourceName: "More"), #imageLiteral(resourceName: "More"), #imageLiteral(resourceName: "More"))
 		case .songServiceManagement:
-			return (#imageLiteral(resourceName: "More"), #imageLiteral(resourceName: "More"), #imageLiteral(resourceName: "More"))
+			return (UIImage(named: "SongServiceSettings")!, UIImage(named: "SongServiceSettings")!, UIImage(named: "SongServiceSettings")!)
 		case .settings:
-			return (#imageLiteral(resourceName: "Bullet"), #imageLiteral(resourceName: "BulletSelected"), #imageLiteral(resourceName: "Bullet"))
-		case .import:
-			return (#imageLiteral(resourceName: "Bullet"), #imageLiteral(resourceName: "BulletSelected"), #imageLiteral(resourceName: "Bullet"))
+            return (UIImage(named: "Settings")!, UIImage(named: "Settings")!, UIImage(named: "Settings")!)
 		case .uploadUniversalSong:
 			return (#imageLiteral(resourceName: "Bullet"), #imageLiteral(resourceName: "BulletSelected"), #imageLiteral(resourceName: "Bullet"))
+        case .about:
+            return (UIImage(named: "Contact")!, UIImage(named: "Contact")!, UIImage(named: "Contact")!)
 		}
 		
 	}

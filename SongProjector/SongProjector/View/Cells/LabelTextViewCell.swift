@@ -35,9 +35,11 @@ class LabelTextViewCell: ChurchBeamCell, DynamicHeightCell, SheetImplementation,
 	static let identifier = "LabelTextViewCell"
 	
 	override func awakeFromNib() {
+        super.awakeFromNib()
 		previewTextField.isEnabled = false
 		textViewContainer.isHidden = true
-		textViewContainer.backgroundColor = themeWhiteBlackBackground
+        textViewContainer.backgroundColor = .whiteColor
+        textView.textColor = .blackColor
 		textView.delegate = self
 		descriptionTitle.text = description
 	}
@@ -65,10 +67,10 @@ class LabelTextViewCell: ChurchBeamCell, DynamicHeightCell, SheetImplementation,
 			previewTextField.isHidden = true
 			DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: {
 				self.textView = UITextView(frame: self.textViewContainer.bounds)
+                self.textView.textColor = .blackColor
 				self.textView.delegate = self
-				if let font = UIFont (name: "Avenir", size: 16) {
-					self.textView.attributedText = NSAttributedString(string: self.customText, attributes: [NSAttributedString.Key.font : font])
-				}
+                self.textView.font = .xNormal
+                self.textView.text = self.customText
 				self.textViewContainer.addSubview(self.textView)
 				self.textViewContainer.isHidden = false
 				self.textViewContainer.alpha = 0.0

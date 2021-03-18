@@ -10,6 +10,16 @@ import Foundation
 import UIKit
 
 extension UIImage {
+    
+    enum SaveImageError: LocalizedError {
+        case couldNotGenerateData
+        
+        var localizedDescription: String? {
+            switch self {
+            case .couldNotGenerateData: return AppText.Generic.errorGeneratingDataForImage
+            }
+        }
+    }
 	
 	struct SavedImage {
 		let imagePath: String?
@@ -166,31 +176,57 @@ extension UIImage {
 		draw(in: CGRect(origin: .zero, size: canvasSize))
 		return UIGraphicsGetImageFromCurrentImageContext()
 	}
+    
+    func saveTemp() throws -> String {
+        
+        let resImage = self.resizeImage(targetSize: CGSize(width: externalDisplayWindowWidth, height: externalDisplayWindowHeight))
+        let tempName = try FileManager.getNameFor(fileType: .jpg)
+        let imagePath = FileManager.getURLfor(name: tempName)
+        
+        if let image = resImage, let data = image.jpegData(compressionQuality: 0.9) {
+            try? data.write(to: imagePath)
+            return tempName
+        } else {
+            throw SaveImageError.couldNotGenerateData
+        }
+    }
+
 	
-	static func set(image: UIImage?, imagePath: String?, thumbnailPath: String?) throws -> SavedImage {
-		if let image = image, let data = image.jpegData(compressionQuality: 1.0), let resizedImage = image.resized(toWidth: 500), let dataResized = resizedImage.jpegData(compressionQuality: 0.5) {
+	static func set(image: UIImage?, imageName: String?, thumbNailName: String?) throws -> SavedImage {
+                
+        let resImage = image?.resizeImage(targetSize: CGSize(width: externalDisplayWindowWidth, height: externalDisplayWindowHeight))
+        
+        if let image = resImage ?? image, let data = image.jpegData(compressionQuality: 0.9), let resizedImage = image.resized(toWidth: 500), let dataResized = resizedImage.jpegData(compressionQuality: 0.5) {
 			
-			if let imagePath = URL(string: imagePath), case .isFile = imagePath.filestatus {
-				try FileManager.default.removeItem(at: imagePath)
+            if let imageName = imageName {
+                let imagePath = FileManager.getURLfor(name: imageName)
+                if case .isFile = imagePath.filestatus {
+                    try FileManager.default.removeItem(at: imagePath)
+                }
 			}
-			if let imagePath = URL(string: thumbnailPath), case .isFile = imagePath.filestatus {
-				try FileManager.default.removeItem(at: imagePath)
+            
+			if let thumbNailName = thumbNailName {
+                let imagePath = FileManager.getURLfor(name: thumbNailName)
+                if case .isFile = imagePath.filestatus {
+                    try FileManager.default.removeItem(at: imagePath)
+                }
 			}
 			
-			guard let newImagePath = FileManager.createUrlFor(fileType: ".jpg"), let newThumbPath = FileManager.createUrlFor(fileType: ".jpg") else {
-				return SavedImage(imagePath: nil, thumbPath: nil)
-			}
+            let defaultName = try FileManager.getNameFor(fileType: .jpg)
+            let defaultThumbName = try FileManager.getNameFor(fileType: .jpg)
+            let imageURL = FileManager.getURLfor(name: imageName ?? defaultName)
+            let thumbURL = FileManager.getURLfor(name: thumbNailName ?? defaultThumbName)
+            
+			try? data.write(to: imageURL)
+			try? dataResized.write(to: thumbURL)
 			
-			try? data.write(to: newImagePath)
-			try? dataResized.write(to: newThumbPath)
-			
-			return SavedImage(imagePath: newImagePath.absoluteString, thumbPath: newThumbPath.absoluteString)
+			return SavedImage(imagePath: imageName ?? defaultName, thumbPath: thumbNailName ?? defaultThumbName)
 			
 		} else {
-			if let url = FileManager.urlFor(fileName: imagePath) {
+			if let url = try FileManager.getUrlFor(fileName: imageName) {
 				try FileManager.default.removeItem(at: url)
 			}
-			if let url = FileManager.urlFor(fileName: thumbnailPath) {
+			if let url = try FileManager.getUrlFor(fileName: thumbNailName) {
 				try FileManager.default.removeItem(at: url)
 			}
 			return SavedImage(imagePath: nil, thumbPath: nil)
@@ -198,7 +234,8 @@ extension UIImage {
 	}
 	
 	static func get(imagePath: String?) -> UIImage? {
-		if let url = URL(string: imagePath) {
+		if let imagePath = imagePath {
+            let url = FileManager.getURLfor(name: imagePath)
 			do {
 				let data = try Data(contentsOf: url)
 				return UIImage(data: data)
@@ -209,5 +246,37 @@ extension UIImage {
 			return nil
 		}
 	}
+    
+    
+    
+    
+    
+    
+    private func resizeImage(targetSize: CGSize) -> UIImage? {
+        let size = self.size
+
+        let widthRatio  = targetSize.width  / size.width
+        let heightRatio = targetSize.height / size.height
+
+        // Figure out what our orientation is, and use that to form the rectangle
+        var newSize: CGSize
+        if(widthRatio > heightRatio) {
+            newSize = CGSize(width: size.width * heightRatio, height: size.height * heightRatio)
+        } else {
+            newSize = CGSize(width: size.width * widthRatio,  height: size.height * widthRatio)
+        }
+
+        // This is the rect that we've calculated out and this is what is actually used below
+        let rect = CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height)
+
+        // Actually do the resizing to the rect using the ImageContext stuff
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
+        self.draw(in: rect)
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        return newImage
+    }
+
 	
 }

@@ -10,35 +10,15 @@ import Foundation
 import CoreData
 
 public class VTag: VEntity {
-	
-	class func list(sortOn attributeName: String? = nil, ascending: Bool? = nil) -> [VTag] {
-		if let attributeName = attributeName, let ascending = ascending {
-			CoreTag.setSortDescriptor(attributeName: attributeName, ascending: ascending)
-		}
-		return CoreTag.getEntities().map({ VTag(tag: $0) })
-	}
-	
-	class func single(with id: Int64?) -> VTag? {
-		if let id = id, let tag = CoreTag.getEntitieWith(id: id) {
-			return VTag(tag: tag)
-		}
-		return nil
-	}
-
-	
+	    
 	var position: Int16 = 0
-
-	
-	public var hasClusters: [VCluster] {
-		return CoreCluster.getEntities().filter({ (cluster) -> Bool in
-			return cluster.tagIds.contains(where: { $0 == NSNumber(value: cluster.id) })
-			}).map({ VCluster(cluster: $0) })
-	}
-	
+    var isDeletable = true
 	var hasSongServiceSections: [VSongServiceSection] = []
-
+    
 	enum CodingKeysTag: String, CodingKey {
 		case position
+        case id
+        case isDeletable
 	}
 		
 	
@@ -48,6 +28,8 @@ public class VTag: VEntity {
 	override public func encode(to encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeysTag.self)
 		try container.encode(position, forKey: .position)
+        try container.encode(id, forKey: .id)
+        try container.encode(Int(truncating: NSNumber(value: isDeletable)), forKey: .isDeletable)
 		try super.encode(to: encoder)
 	}
 	
@@ -61,6 +43,7 @@ public class VTag: VEntity {
 		
 		let container = try decoder.container(keyedBy: CodingKeysTag.self)
 		position = try container.decodeIfPresent(Int16.self, forKey: .position) ?? 0
+        isDeletable = try Bool(truncating: (container.decodeIfPresent(Int.self, forKey: .isDeletable) ?? 0) as NSNumber)
 
 		try super.initialization(decoder: decoder)
 		
@@ -70,36 +53,32 @@ public class VTag: VEntity {
 		super.setPropertiesTo(entity: entity, context: context)
 		if let tag = entity as? Tag {
 			tag.position = position
+            tag.isDeletable = isDeletable
 		}
 
 	}
 	
-	override func getPropertiesFrom(entity: Entity) {
-		super.getPropertiesFrom(entity: entity)
+    override func getPropertiesFrom(entity: Entity, context: NSManagedObjectContext) {
+        super.getPropertiesFrom(entity: entity, context: context)
 		if let tag = entity as? Tag {
 			position = tag.position
+            isDeletable = tag.isDeletable
 		}
 	}
 	
-	convenience init(tag: Tag) {
+	convenience init(tag: Tag, context: NSManagedObjectContext) {
 		self.init()
-		getPropertiesFrom(entity: tag)
+		getPropertiesFrom(entity: tag, context: context)
 	}
 	
-	override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-		
-		CoreTag.managedObjectContext = context
-		if let storedEntity = CoreTag.getEntitieWith(id: id) {
-			CoreTag.managedObjectContext = moc
-			setPropertiesTo(entity: storedEntity, context: context)
-			return storedEntity
-		} else {
-			CoreTag.managedObjectContext = context
-			let newEntity = CoreTag.createEntityNOTsave()
-			CoreTag.managedObjectContext = moc
-			setPropertiesTo(entity: newEntity, context: context)
-			return newEntity
-		}
-
-	}
+    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
+        if let entity: Tag = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
+            setPropertiesTo(entity: entity, context: context)
+            return entity
+        } else {
+            let entity: Tag = DataFetcher().createEntity(moc: context)
+            setPropertiesTo(entity: entity, context: context)
+            return entity
+        }
+    }
 }

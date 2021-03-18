@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -18,35 +18,79 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="jZT-bh-bNU">
-                        <rect key="frame" x="20" y="20" width="276" height="110"/>
+                        <rect key="frame" x="30" y="20" width="256" height="110"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uDn-wK-LUU">
-                                <rect key="frame" x="0.0" y="0.0" width="276" height="50"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uDn-wK-LUU">
+                                <rect key="frame" x="0.0" y="0.0" width="256" height="50"/>
                                 <state key="normal" title="Button"/>
                                 <connections>
                                     <action selector="instruction:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="Q5d-nq-7LK"/>
                                 </connections>
                             </button>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5iv-OM-kVM">
-                                <rect key="frame" x="0.0" y="60" width="276" height="50"/>
+                                <rect key="frame" x="0.0" y="60" width="256" height="50"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="II0-Rb-kMD">
+                                        <rect key="frame" x="0.0" y="0.0" width="256" height="50"/>
+                                        <subviews>
+                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="google.png" translatesAutoresizingMaskIntoConstraints="NO" id="DuT-HP-n5S">
+                                                <rect key="frame" x="0.0" y="12.5" width="25" height="25"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="25" id="483-Lm-pyV"/>
+                                                    <constraint firstAttribute="width" constant="25" id="YoB-oZ-wwp"/>
+                                                </constraints>
+                                            </imageView>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hpq-ve-9Ix">
+                                                <rect key="frame" x="0.0" y="0.0" width="256" height="50"/>
+                                                <state key="normal" title="Uitloggen"/>
+                                                <connections>
+                                                    <action selector="didPressSignOut:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="P8D-co-G8G"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                        <constraints>
+                                            <constraint firstItem="DuT-HP-n5S" firstAttribute="leading" secondItem="II0-Rb-kMD" secondAttribute="leading" id="74a-kc-c8O"/>
+                                            <constraint firstItem="hpq-ve-9Ix" firstAttribute="leading" secondItem="II0-Rb-kMD" secondAttribute="leading" id="Ldh-ZX-yos"/>
+                                            <constraint firstAttribute="bottom" secondItem="hpq-ve-9Ix" secondAttribute="bottom" id="eej-5p-UWI"/>
+                                            <constraint firstItem="DuT-HP-n5S" firstAttribute="centerY" secondItem="II0-Rb-kMD" secondAttribute="centerY" id="gdr-ZS-0XT"/>
+                                            <constraint firstItem="hpq-ve-9Ix" firstAttribute="top" secondItem="II0-Rb-kMD" secondAttribute="top" id="ppC-3o-WYc"/>
+                                            <constraint firstAttribute="trailing" secondItem="hpq-ve-9Ix" secondAttribute="trailing" id="tQQ-su-B2M"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstItem="II0-Rb-kMD" firstAttribute="top" secondItem="5iv-OM-kVM" secondAttribute="top" id="NRw-Sr-QY3"/>
+                                    <constraint firstAttribute="trailing" secondItem="II0-Rb-kMD" secondAttribute="trailing" id="bby-Sg-5e0"/>
+                                    <constraint firstAttribute="bottom" secondItem="II0-Rb-kMD" secondAttribute="bottom" id="hkC-6l-0bK"/>
+                                    <constraint firstItem="II0-Rb-kMD" firstAttribute="leading" secondItem="5iv-OM-kVM" secondAttribute="leading" id="p7Y-VF-KK7"/>
+                                </constraints>
                             </view>
                         </subviews>
                     </stackView>
                 </subviews>
                 <constraints>
                     <constraint firstAttribute="bottom" secondItem="jZT-bh-bNU" secondAttribute="bottom" constant="20" id="eST-MM-3Wj"/>
-                    <constraint firstItem="jZT-bh-bNU" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="20" id="fWI-30-QZV"/>
+                    <constraint firstItem="jZT-bh-bNU" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="30" id="fWI-30-QZV"/>
                     <constraint firstItem="jZT-bh-bNU" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="20" id="qi9-02-UiD"/>
-                    <constraint firstAttribute="trailing" secondItem="jZT-bh-bNU" secondAttribute="trailing" constant="20" id="yc6-nO-t8P"/>
+                    <constraint firstAttribute="trailing" secondItem="jZT-bh-bNU" secondAttribute="trailing" constant="30" id="yc6-nO-t8P"/>
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
                 <outlet property="googleSignInOutContainer" destination="5iv-OM-kVM" id="ryZ-ti-b36"/>
                 <outlet property="instructionButton" destination="uDn-wK-LUU" id="fep-Cb-1NU"/>
+                <outlet property="signOutButton" destination="hpq-ve-9Ix" id="cQW-4u-6td"/>
+                <outlet property="signOutContainerView" destination="II0-Rb-kMD" id="T52-gi-1aD"/>
             </connections>
             <point key="canvasLocation" x="30.399999999999999" y="80.059970014992516"/>
         </tableViewCell>
     </objects>
+    <resources>
+        <image name="google.png" width="18" height="18"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
 </document>

@@ -8,6 +8,11 @@
 
 import Foundation
 
+enum FileManagerError: Error {
+    case noFileName
+    case cannotCreateTempDir
+}
+
 extension FileManager {
 	
 	/// existing path will be used to remove previous item at path
@@ -61,13 +66,33 @@ extension FileManager {
 			.appendingPathComponent(existingPath).absoluteString
 	}
 	
-	static func urlFor(fileName: String?) -> URL? {
+	static func getUrlFor(fileName: String?) throws -> URL? {
+        try createDirectory()
 		guard let fileName = fileName else { return nil }
 		let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
 		return documentsDirectory
 		.appendingPathComponent("churchbeam")
-			.appendingPathComponent(fileName)
+			.appendingPathComponent(fileName, isDirectory: false)
 	}
+    
+
+    static func getNewTempUrlFor(fileName: String?) throws -> URL {
+        try createTempDirectory()
+        guard let fileName = fileName else {
+            throw FileManagerError.noFileName
+        }
+        let tempDirURL = FileManager.default.temporaryDirectory.appendingPathComponent("churchbeam").appendingPathComponent(fileName, isDirectory: false)
+        do {
+            try FileManager.default.removeItem(at: tempDirURL)
+        } catch {}
+        try FileManager.default.createDirectory(at: tempDirURL, withIntermediateDirectories: true, attributes: nil)
+        return tempDirURL
+    }
+    
+    static func getTempURLFor(name: String) -> URL {
+        return FileManager.default.temporaryDirectory.appendingPathComponent("churchbeam").appendingPathComponent(name, isDirectory: false)
+    }
+
 	
 	static func createDirectory() throws {
 		let documentsDirectory = NSURL(fileURLWithPath: NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0])
@@ -82,27 +107,64 @@ extension FileManager {
 		default: return
 		}
 	}
+    
+    static func createTempDirectory() throws {
+        let dataPath = FileManager.default.temporaryDirectory.appendingPathComponent("churchbeam")
+        switch dataPath.filestatus {
+        case .notExisting:
+            if let url = URL.createFolder(folderName: "churchbeam") {
+                print(url)
+            } else {
+                print("")
+            }
+        default: return
+        }
+    }
 	
-	static func createUrlFor(fileType: String) -> URL? {
-		let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-
-		do {
-			try createDirectory()
-		} catch let error {
-			print(error)
-			return nil
-		}
-		
+	static func getNameFor(fileType: FileType) throws -> String {
+        try createDirectory()
 		let dateFormatter = DateFormatter()
 		dateFormatter.dateFormat = "yyyyMMddHHmmssss"
 		dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
 
 		let stringDate = dateFormatter.string(from: Date())
 		
-		let newDataPath = stringDate + UUID().uuidString + ".\(fileType)"
+        let newDataPath = stringDate + UUID().uuidString + ".\(fileType.rawValue)"
 		
-		return documentsDirectory.appendingPathComponent("churchbeam").appendingPathComponent(newDataPath)
+		return newDataPath
 	}
+    
+    static func getNameForTemp(fileType: FileType) throws -> String {
+        try createTempDirectory()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyyMMddHHmmssss"
+        dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
+
+        let stringDate = dateFormatter.string(from: Date())
+        
+        let newDataPath = stringDate + UUID().uuidString + ".\(fileType.rawValue)"
+        
+        return newDataPath
+    }
+
+    
+    static func getURLfor(name: String) -> URL {
+        let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        return documentsDirectory.appendingPathComponent("churchbeam").appendingPathComponent(name, isDirectory: false)
+    }
+    
+    static func fileExists(path: String) -> Bool {
+        var isDir : ObjCBool = false
+        return FileManager.default.fileExists(atPath: path, isDirectory:&isDir)
+    }
+    
+    static func deleteFile(name: String) throws {
+        let path = getURLfor(name: name)
+        if fileExists(path: path.absoluteString) {
+            try FileManager.default.removeItem(at: path)
+        }
+    }
+
 
 }
 

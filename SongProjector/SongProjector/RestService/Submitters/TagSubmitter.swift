@@ -2,25 +2,21 @@
 //  TagSubmitter.swift
 //  SongProjector
 //
-//  Created by Leo van der Zee on 25/03/2019.
-//  Copyright © 2019 iozee. All rights reserved.
+//  Created by Leo van der Zee on 06/06/2020.
+//  Copyright © 2020 iozee. All rights reserved.
 //
 
 import Foundation
 
-let TagSubmitter: TgSubmitter = {
-	return TgSubmitter()
-}()
+let TagSubmitter = TgSubmitter()
 
 class TgSubmitter: Requester<VTag> {
-	
-	
-	override var requesterId: String {
-		return "TagSubmitter"
-	}
-	
-	override var path: String {
-		return "tags"
-	}
-	
+    
+    override var id: String {
+        return "TagSubmitter"
+    }
+    override var path: String {
+        return "tags"
+    }
+    
 }

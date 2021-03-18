@@ -11,28 +11,17 @@ import CoreData
 
 public class VSheet: VEntity {
 	
-	class func list(sortOn attributeName: String? = nil, ascending: Bool? = nil) -> [VSheet] {
-		if let attributeName = attributeName, let ascending = ascending {
-			CoreSheet.setSortDescriptor(attributeName: attributeName, ascending: ascending)
-		}
-		return CoreSheet.getEntities().map({ VSheet(sheet: $0) })
-	}
-	
-	class func single(with id: Int64?) -> VSheet? {
-		if let id = id, let sheet = CoreSheet.getEntitieWith(id: id) {
-			return VSheet(sheet: sheet)
-		}
-		return nil
-	}
-	
+    var isNew: Bool {
+        return updatedAt == nil
+    }
 	var isEmptySheet = false
 	var position: Int = 0
 	var time: Double = 0
-	var hasCluster: VCluster? = nil
 	var hasTheme: VTheme? = nil
 	
 	enum CodingKeysTheme:String,CodingKey
 	{
+        case id
 		case isEmptySheet
 		case position
 		case time
@@ -69,7 +58,8 @@ public class VSheet: VEntity {
 		let container = try decoder.container(keyedBy: CodingKeysTheme.self)
 		isEmptySheet = try Bool(truncating: (container.decodeIfPresent(Int16.self, forKey: .isEmptySheet) ?? 0) as NSNumber)
 		position = Int(try container.decodeIfPresent(Int16.self, forKey: .position) ?? 0)
-		time = try container.decodeIfPresent(Double.self, forKey: .time) ?? 0.0
+        let sheetTimeString = try container.decodeIfPresent(String.self, forKey: .time) ?? ""
+        time = Double(sheetTimeString) ?? 0.0
 		hasTheme = try container.decodeIfPresent(VTheme.self, forKey: .hasTheme)
 		
 		try super.initialization(decoder: decoder)
@@ -84,6 +74,8 @@ public class VSheet: VEntity {
 		var container = encoder.container(keyedBy: CodingKeysTheme.self)
 		try container.encode(Int(truncating: NSNumber(value: isEmptySheet)), forKey: .isEmptySheet)
 		try container.encode(position, forKey: .position)
+        try container.encode(id, forKey: .id)
+        try container.encode(time.stringValue, forKey: .time)
 		if hasTheme != nil {
 			try container.encode(hasTheme, forKey: .hasTheme)
 		}
@@ -103,7 +95,8 @@ public class VSheet: VEntity {
 		
 		isEmptySheet = try Bool(truncating: (container.decodeIfPresent(Int16.self, forKey: .isEmptySheet) ?? 0) as NSNumber)
 		position = try container.decodeIfPresent(Int.self, forKey: .position) ?? 0
-		time = try container.decodeIfPresent(Double.self, forKey: .time) ?? 0.0
+        let sheetTimeString = try container.decodeIfPresent(String.self, forKey: .time) ?? ""
+        time = Double(sheetTimeString) ?? 0.0
 		hasTheme = try container.decodeIfPresent(VTheme.self, forKey: .hasTheme)
 		
 		try super.initialization(decoder: decoder)
@@ -125,18 +118,17 @@ public class VSheet: VEntity {
 		copy.isEmptySheet = isEmptySheet
 		copy.position = position
 		copy.time = time
-		copy.hasCluster = hasCluster?.copy() as? VCluster
 		copy.hasTheme = hasTheme?.copy() as? VTheme
 		return copy
 	}
 	
-	override func getPropertiesFrom(entity: Entity) {
-		super.getPropertiesFrom(entity: entity)
+    override func getPropertiesFrom(entity: Entity, context: NSManagedObjectContext) {
+        super.getPropertiesFrom(entity: entity, context: context)
 		if let sheet = entity as? Sheet {
 			isEmptySheet = sheet.isEmptySheet
 			position = Int(sheet.position)
 			time = sheet.time
-			hasTheme = sheet.hasTheme == nil ? nil : VTheme(theme: sheet.hasTheme!)
+            hasTheme = sheet.hasTheme == nil ? nil : VTheme(theme: sheet.hasTheme!, context: context)
 		}
 	}
 	
@@ -150,28 +142,21 @@ public class VSheet: VEntity {
 		}
 	}
 	
-	convenience init(sheet: Sheet) {
+	convenience init(sheet: Sheet, context: NSManagedObjectContext) {
 		self.init()
-		getPropertiesFrom(entity: sheet)
+		getPropertiesFrom(entity: sheet, context: context)
 	}
 	
-	override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-		
-		
-		CoreSheet.managedObjectContext = context
-		if let storedEntity = CoreSheet.getEntitieWith(id: id) {
-			CoreSheet.managedObjectContext = moc
-			setPropertiesTo(entity: storedEntity, context: context)
-			return storedEntity
-		} else {
-			CoreSheet.managedObjectContext = context
-			let newEntity = CoreSheet.createEntityNOTsave()
-			CoreSheet.managedObjectContext = moc
-			setPropertiesTo(entity: newEntity, context: context)
-			return newEntity
-		}
-
-	}
+    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
+        if let entity: Cluster = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
+            setPropertiesTo(entity: entity, context: context)
+            return entity
+        } else {
+            let entity: Cluster = DataFetcher().createEntity(moc: context)
+            setPropertiesTo(entity: entity, context: context)
+            return entity
+        }
+    }
 	
 	
 }

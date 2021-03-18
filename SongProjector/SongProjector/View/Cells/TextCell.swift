@@ -16,22 +16,42 @@ class TextCell: UITableViewCell {
 	@IBOutlet var descriptionLabel: UILabel!
 	
 	static let identifier = "TextCell"
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        subviews.first(where: { $0.tag == 2 })?.frame = contentView.bounds
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        descriptionLabel.font = .xNormal
+        descriptionLabel.textColor = .blackColor
+        subviews.first(where: { $0.tag == 2 })?.removeFromSuperview()
+    }
 	
 	override func awakeFromNib() {
         super.awakeFromNib()
-		descriptionLabel.textColor = themeWhiteBlackTextColor
-		contentView.backgroundColor = themeWhiteBlackBackground
+        descriptionLabel.font = .xNormal
+		descriptionLabel.textColor = .blackColor
+        contentView.backgroundColor = .clear
     }
 	
 	func setupWith(text: String, hasTopMargin: Bool = true, hasBottomMargin: Bool = true) {
 		descriptionLabel.text = text
-		topConstraint.constant = hasTopMargin ? 8 : 0
-		bottomConstraint.constant = hasBottomMargin ? 8 : 0
+		topConstraint.constant = hasTopMargin ? 15 : 0
+		bottomConstraint.constant = hasBottomMargin ? 15 : 0
 	}
 
     override func setSelected(_ selected: Bool, animated: Bool) {
     }
 	override func setHighlighted(_ highlighted: Bool, animated: Bool) {
 	}
+    
+    func asSmallHeader() {
+        topConstraint.constant = 15
+        bottomConstraint.constant = 4
+        descriptionLabel.font = .xNormalBold
+        descriptionLabel.textColor = .softBlueGrey
+    }
     
 }

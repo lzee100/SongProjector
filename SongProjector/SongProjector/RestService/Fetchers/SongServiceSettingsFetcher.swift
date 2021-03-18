@@ -2,40 +2,27 @@
 //  SongServiceSettingsFetcher.swift
 //  SongProjector
 //
-//  Created by Leo van der Zee on 30/03/2019.
-//  Copyright © 2019 iozee. All rights reserved.
+//  Created by Leo van der Zee on 06/06/2020.
+//  Copyright © 2020 iozee. All rights reserved.
 //
 
 import Foundation
+import CoreData
 
-let SongServiceSettingsFetcher: SngServiceSettingsFetcher = {
-	return SngServiceSettingsFetcher()
-}()
-
+let SongServiceSettingsFetcher = SngServiceSettingsFetcher()
 
 class SngServiceSettingsFetcher: Requester<VSongServiceSettings> {
-	
-	override var requesterId: String {
-		return "SongServiceSettingsFetcher"
-	}
-	
-	override var path: String {
-		return "songservicesettings"
-	}
-	
-	override var params: [String : Any] {
-		var params = super.params
-		if let id = VSongServiceSettings.list(sortOn: "updatedAt", ascending: false).first?.id {
-			params["songServiceId"] = id
-		}
-		return params
-	}
-	
-	func fetch() {
-		guard isSuperRequesterTotalFinished else { return }
-		requestMethod = .get
-		request(isSuperRequester: false)
-	}
-	
-	
+    
+    override var id: String {
+        return "SongServiceSettingsFetcher"
+    }
+    override var path: String {
+        return "songservicesettings"
+    }
+    
+    override func getLastUpdatedAt(moc: NSManagedObjectContext) -> Date? {
+        let songServiceSettings: SongServiceSettings? = DataFetcher().getLastUpdated(moc: moc)
+        return songServiceSettings?.updatedAt as Date?
+    }
+        
 }

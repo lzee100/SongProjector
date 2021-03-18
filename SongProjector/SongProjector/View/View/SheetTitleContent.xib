@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="ipad12_9" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="ipad12_9" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -26,6 +23,7 @@
                 <outlet property="titleHeightConstraint" destination="JVx-ct-vfT" id="ff3-gZ-sBi"/>
                 <outlet property="titleLabel" destination="hnb-bU-00a" id="TYw-e7-MfW"/>
                 <outlet property="titleLeftConstraint" destination="NYt-Iy-toW" id="cfj-UJ-Iyg"/>
+                <outlet property="titleRightConstraint" destination="lnD-dS-j7s" id="bo1-kP-3wy"/>
                 <outlet property="titleTopConstraint" destination="nTY-rf-cm4" id="FTx-tv-ccg"/>
             </connections>
         </placeholder>
@@ -48,7 +46,7 @@
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hnb-bU-00a">
                     <rect key="frame" x="10" y="10" width="370" height="10"/>
                     <constraints>
-                        <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="10" id="JVx-ct-vfT"/>
+                        <constraint firstAttribute="height" constant="10" id="JVx-ct-vfT"/>
                     </constraints>
                     <fontDescription key="fontDescription" type="system" pointSize="50"/>
                     <nil key="textColor"/>
@@ -66,6 +64,7 @@
                     <nil key="highlightedColor"/>
                 </label>
             </subviews>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
                 <constraint firstAttribute="trailing" secondItem="RRi-xG-ex4" secondAttribute="trailing" id="ELw-4f-A5Y"/>
@@ -92,7 +91,6 @@
                 <constraint firstItem="Yrd-bo-GIk" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="pkE-ZQ-wWA"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <point key="canvasLocation" x="-76" y="-72"/>
         </view>
     </objects>

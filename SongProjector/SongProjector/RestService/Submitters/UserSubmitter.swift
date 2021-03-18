@@ -1,26 +1,25 @@
 //
-//  UserSubmitter.swift
+// UserSubmitter.swift
 //  SongProjector
 //
-//  Created by Leo van der Zee on 16/02/2019.
-//  Copyright © 2019 iozee. All rights reserved.
+//  Created by Leo van der Zee on 04/06/2020.
+//  Copyright © 2020 iozee. All rights reserved.
 //
 
 import Foundation
-import CoreData
 
-let UserSubmitter: UerSubmitter = {
-	return UerSubmitter()
-}()
+let UserSubmitter = UerSubmitter()
 
 class UerSubmitter: Requester<VUser> {
-	
-	override var requesterId: String {
-		return "UserSubmitter"
-	}
-	
-	override var path: String {
-		return "users"
-	}
-	
+    
+    override var id: String {
+        return "UserSubmitter"
+    }
+    override var path: String {
+        return "users"
+    }
+    
+    override func submit(_ entity: [VUser], requestMethod: RequestMethod) {
+        super.submit(entity, requestMethod: requestMethod)
+    }
 }

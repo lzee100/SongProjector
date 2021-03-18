@@ -46,10 +46,11 @@ class ActivityHeader: UIView {
 	}
 	
 	func update() {
+        layoutIfNeeded()
 		var fontName = ""
 		if var attributes = selectedTheme?.getTitleAttributes(scaleFactor), let font = attributes[.font] as? UIFont {
-			fontName = font.fontName
-			attributes[.font] = UIFont(name: fontName, size: (self.descriptionTitle.frame.height / 3) * scaleFactor)
+            fontName = font.setBoldFnc().fontName
+            attributes[.font] = UIFont(name: fontName, size: (descriptionTitle.bounds.height / 2) * scaleFactor)
 			descriptionTitle.attributedText = NSAttributedString(string: titleDescription, attributes: attributes)
 		} else {
 			descriptionTitle.attributedText = NSAttributedString(string: titleDescription, attributes: selectedTheme?.getTitleAttributes(scaleFactor))

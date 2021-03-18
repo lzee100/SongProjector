@@ -9,7 +9,7 @@
 import UIKit
 
 protocol LabelPickerCellDelegate {
-	func didSelect(item: (Int64, String), cell: LabelPickerCell)
+	func didSelect(item: (String, String), cell: LabelPickerCell)
 }
 
 class LabelPickerCell: ChurchBeamCell, ThemeImplementation, DynamicHeightCell, SheetImplementation, UIPickerViewDataSource, UIPickerViewDelegate {
@@ -39,7 +39,7 @@ class LabelPickerCell: ChurchBeamCell, ThemeImplementation, DynamicHeightCell, S
 	var id: String = ""
 	var isActive = false { didSet { updatePicker() } }
 	var delegate: LabelPickerCellDelegate?
-	var pickerValues: [(Int64, String)] = []
+	var pickerValues: [(String, String)] = []
 	var picker = UIPickerView()
 	var selectedIndex: Int = 0
 	
@@ -48,15 +48,28 @@ class LabelPickerCell: ChurchBeamCell, ThemeImplementation, DynamicHeightCell, S
 	var valueDidChange: ((ChurchBeamCell) -> Void)?
 	
 	static let identifier = "LabelPickerCell"
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        themeAttribute = nil
+        sheetAttribute = nil
+        valueDidChange = nil
+        selectedIndex = 0
+        pickerValues = []
+        delegate = nil
+        isActive = false
+        sheet = nil
+        sheetTheme = nil
+    }
 	
 	override func awakeFromNib() {
 		picker = UIPickerView(frame: CGRect(x: 0, y: 0, width: 300, height: 300))
 		picker.dataSource = self
 		picker.delegate = self
-		pickerHolder.backgroundColor = themeWhiteBlackBackground
+        pickerHolder.backgroundColor = .grey0
 	}
 	
-	static func create(id: String, description: String, initialValueName: String, pickerValues: [(Int64, String)]) -> LabelPickerCell {
+	static func create(id: String, description: String, initialValueName: String, pickerValues: [(String, String)]) -> LabelPickerCell {
 		let view : LabelPickerCell! = UIView.create(nib: "LabelPickerCell")
 		view.id = id
 		view.descriptionTitel.text = description
@@ -64,15 +77,15 @@ class LabelPickerCell: ChurchBeamCell, ThemeImplementation, DynamicHeightCell, S
 		view.picker = UIPickerView(frame: CGRect(x: 0, y: 0, width: 300, height: 300))
 		view.picker.dataSource = view
 		view.picker.delegate = view
-		view.pickerHolder.backgroundColor = themeWhiteBlackBackground
+		view.pickerHolder.backgroundColor = .grey0
 		view.pickerValues = pickerValues
 		return view
 	}
 		
-	func setValue(value: String? = nil, id: Int16? = nil) {
-		if let value = value, let index = pickerValues.index(where: { (item) -> Bool in item.1 == value }) {
+	func setValue(value: String? = nil, id: String? = nil) {
+        if let value = value, let index = pickerValues.firstIndex(where: { (item) -> Bool in item.1 == value }) {
 			pickerView(picker, didSelectRow: index, inComponent: 0)
-		} else if let id = id, let index = pickerValues.index(where: { (value) -> Bool in value.0 == id }) {
+        } else if let id = id, let index = pickerValues.firstIndex(where: { (value) -> Bool in value.0 == id }) {
 			pickerView(picker, didSelectRow: index, inComponent: 0)
 		} else {
 			pickerView(picker, didSelectRow: 0, inComponent: 0)
@@ -108,6 +121,7 @@ class LabelPickerCell: ChurchBeamCell, ThemeImplementation, DynamicHeightCell, S
 	}
 	
 	func apply(sheet: VSheet, sheetAttribute: SheetAttribute) {
+        self.descriptionTitel.text = sheetAttribute.description
 		self.sheet = sheet
 		self.sheetAttribute = sheetAttribute
 		setupImageAspect()
@@ -164,7 +178,7 @@ class LabelPickerCell: ChurchBeamCell, ThemeImplementation, DynamicHeightCell, S
 	
 	func pickerView(_ pickerView: UIPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString? {
 		let title = pickerValues[row].1
-		let myTitle = NSAttributedString(string: title, attributes: [ .foregroundColor : themeWhiteBlackTextColor ])
+		let myTitle = NSAttributedString(string: title, attributes: [ .foregroundColor : UIColor.blackColor ])
 		return myTitle
 	}
 	
@@ -187,30 +201,30 @@ class LabelPickerCell: ChurchBeamCell, ThemeImplementation, DynamicHeightCell, S
 	
 	
 	private func setupAsTheme() {
-		CoreTheme.setSortDescriptor(attributeName: "title", ascending: true)
-		CoreTheme.predicates.append("isHidden", notEquals: true)
-		CoreTheme.predicates.append("isUniversal", equals: false)
-		let themes = CoreTheme.getEntities().map{ ($0.id, $0.title ?? "") }
-		pickerValues = themes
+        var predicates: [NSPredicate] = [.skipDeleted]
+        predicates.append("isHidden", notEquals: true)
+        predicates.append("isUniversal", equals: false)
+        let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: predicates, sort: NSSortDescriptor(key: "title", ascending: true))
+        pickerValues = themes.map({ ($0.id, $0.title ?? "") })
 	}
 	
 	private func setupFonts() {
-		let fontFamilyValues = UIFont.familyNames.map{ (Int64(0), $0) }.sorted { $0.1 < $1.1 }
+		let fontFamilyValues = UIFont.familyNames.map{ ("0", $0) }.sorted { $0.1 < $1.1 }
 		pickerValues = fontFamilyValues
 	}
 	
 	private func setupImageAspect() {
-		var modeValues: [(Int64, String)] = []
+		var modeValues: [(String, String)] = []
 		for (index, mode) in dutchContentMode().enumerated() {
-			modeValues.append((Int64(index), mode))
+			modeValues.append(("\(index)", mode))
 		}
 		pickerValues = modeValues
 		set(value: dutchContentMode()[2])
 	}
 	
 	private func setupFontAlignment() {
-		pickerValues = [(Int64(0), Text.NewTheme.alignLeft), (Int64(1), Text.NewTheme.alignCenter), (Int64(2), Text.NewTheme.alignRight)]
-		set(value: Text.NewTheme.alignLeft)
+		pickerValues = [("0", AppText.NewTheme.alignLeft), ("1", AppText.NewTheme.alignCenter), ("2", AppText.NewTheme.alignRight)]
+		set(value: AppText.NewTheme.alignLeft)
 	}
 	
 	private func dutchContentMode() -> [String] {

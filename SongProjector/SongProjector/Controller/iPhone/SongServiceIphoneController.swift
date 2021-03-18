@@ -9,17 +9,10 @@
 import UIKit
 import QuartzCore
 import MediaPlayer
-import AWSAuthCore
-import AWSAuthUI
-import MessageUI
+import GoogleSignIn
 
-extension NSLayoutConstraint {
-	func constraintWithMultiplier(_ multiplier: CGFloat) -> NSLayoutConstraint {
-		return NSLayoutConstraint(item: self.firstItem, attribute: self.firstAttribute, relatedBy: self.relation, toItem: self.secondItem, attribute: self.secondAttribute, multiplier: multiplier, constant: self.constant)
-	}
-}
-
-class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, RequestObserver, SongsControllerDelegate {
+class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, SongsControllerDelegate {
+    
 	
 	@IBOutlet var new: UIBarButtonItem!
 	@IBOutlet var sheetDisplaySwipeView: UIView!
@@ -51,7 +44,10 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	var customSheetDisplayerNextRatioConstraint: NSLayoutConstraint?
 	var sheetDisplaySwipeViewCustomHeightConstraint: NSLayoutConstraint?
 	var swipeAnimationIsActive = false
-	@IBOutlet var mixerHeightConstraint: NSLayoutConstraint!
+    @IBOutlet var swipeLineLeftHeightConstraint: NSLayoutConstraint!
+    @IBOutlet var swipeLineRightHeightConstraint: NSLayoutConstraint!
+    
+    @IBOutlet var mixerHeightConstraint: NSLayoutConstraint!
 	
 	@IBOutlet var mixerContainerView: UIView!
 	@IBOutlet var moveUpDownSection: UIView!
@@ -86,7 +82,6 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	private var songService: SongService!
 	private var isAnimatingUpDown = false
 	private var displayMode: displayModeTypes = .normal
-	private var scaleFactor: CGFloat = 1
 	private var sheetDisplayerInitialFrame: CGRect = CGRect(x: 0, y: 0, width: 0, height: 0)
 	private var sheetDisplayerSwipeViewInitialHeight: CGFloat = 0
 	private var isPlaying = false
@@ -94,15 +89,26 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	private var viewToBeamer: SheetView?
 	private var emptySheet: VSheet?
 	private var model: TempClustersModel?
-	
+    private var canPlay: Bool = true
+    
+    override var requesters: [RequesterBase] {
+        return [UniversalClusterFetcher, SongServicePlayDateFetcher]
+    }
+    
 	// MARK: - Functions
 	
 	// MARK: UIViewController Functions
-	
+    
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		setup()
 	}
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        GoogleActivityFetcher.fetch(force: true)
+        UniversalClusterFetcher.initialFetch()
+    }
 	
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
@@ -145,18 +151,19 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		
 		if let cell = cell as? BasicCell {
 			if songService.songs.count == 0 {
-				cell.setup(title: Text.NewSongService.noSelectedSongs)
-				cell.isSelected = false
+				cell.setup(title: AppText.NewSongService.noSelectedSongs)
+				cell.selectedCell = false
 				return cell
 			}
 			let title: String?
 			if let sheet = currentSheet as? VSheetTitleContent {
-				title = sheet.isEmptySheet ? Text.Sheet.emptySheetTitle : sheet.title
+				title = sheet.isEmptySheet ? AppText.Sheet.emptySheetTitle : sheet.title
 			} else {
 				title = currentSheet.title
 			}
-			cell.setup(title: title, icon: Cells.sheetIcon)
+			cell.setup(title: title)
 			cell.isInnerCell = true
+            cell.selectionColor = .softBlueGrey
 			cell.selectedCell = songService.selectedSheet?.id == currentSheet.id
 			
 		}
@@ -181,7 +188,15 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		let firstClusters = model?.sectionedClusterOrComment.compactMap({ $0.first?.cluster })
 		let hasHeader = firstClusters?.contains(entity: songService.songs[section].cluster) ?? false
 		
-		let view = SongHeaderView(frame: SongHeaderView.preferredSize(hasHeader: hasHeader))
+        guard let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: SongHeaderView.identifier) as? SongHeaderView else { return nil }
+        
+        view.style()
+        view.sectionButton.add {
+            self.didSelectSection(section: section)
+        }
+        view.actionButton.add {
+            self.didSelectPianoInSection(section: section)
+        }
 		if let model = model, let songServiceSetting = model.songServiceSettings, hasHeader {
 			if let index = model.sectionedClusterOrComment.firstIndex(where: { sectionClusterOrComment in
 				sectionClusterOrComment.compactMap({ $0.cluster }).contains(entity: song.cluster)
@@ -189,22 +204,26 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				view.set(sectionHeader: songServiceSetting.sections[index].title ?? "")
 			}
 		}
-		view.didSelectHeader = didSelectSection(section:)
-		view.didSelectPiano = didSelectPianoInSection(section:)
 		let isSelected = section == songService.selectedSection
-		view.setup(title: song.cluster.title, icon: Cells.songIcon, iconSelected: Cells.songIcon, textColor: isSelected ? themeHighlighted : themeWhiteBlackTextColor, isSelected: isSelected, tag: section, hasPianoSolo: song.cluster.hasPianoSolo)
-		if SoundPlayer.isPianoOnlyPlaying && SoundPlayer.isPlaying {
-			view.togglePianoPlay()
-		}
+		view.setup(title: song.cluster.title, isSelected: isSelected, hasPianoSolo: song.cluster.hasPianoSolo)
+        let isPlaying = SoundPlayer.isPianoOnlyPlaying && SoundPlayer.isPlaying && SoundPlayer.song == song.cluster
+        view.setPianoAction(isPlaying: isPlaying)
 		return view
 	}
 	
 	func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
 		let firstClusters = model?.sectionedClusterOrComment.compactMap({ $0.first?.cluster })
 		let hasHeader = firstClusters?.contains(entity: songService.songs[section].cluster) ?? false
-		return SongHeaderView.preferredSize(hasHeader: hasHeader).height
+        return SongHeaderView.preferredHeight(hasSection: hasHeader)
 	}
 	
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        tableView.style(cell, forRowAt: indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        tableView.styleHeaderView(view: view)
+    }
 	
 	
 	// MARK: NewSongServiceDelegate Functions
@@ -221,52 +240,65 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				.compactMap({ $0.cluster })
 				.map({ SongObject(cluster: $0) })
 		}
+        if self.songService.songs.count > 0 {
+            SongServicePlayDateFetcher.fetch()
+        }
 		update()
 	}
 	
 	
 	
 	// MARK: Fetcher Functions
-	
-	func requesterDidStart() {
-		
-	}
-	
-	func requestDidFinish(requesterID: String, response: ResponseType, result: AnyObject?) {
-		switch response {
-		case .OK(let result):
-			if result == .updated {
-				update()
-			}
-		default: return
-		}
-	}
-	
-	
+    
+    override func handleRequestFinish(requesterId: String, result: Any?) {
+        if requesterId == SongServicePlayDateFetcher.id, let playEntity = result as? [VSongServicePlayDate] {
+            canPlay = playEntity.last?.allowedToPlay ?? true
+        }
+        update()
+    }
+    
+    
 	
 	// MARK: - Private Functions
 	
 	private func setup() {
-		songService = SongService(swipeLeft: swipeAutomatically, displaySheet: display(sheet:), shutDownBeamer: shutDownDisplayer)
-		navigationController?.title = Text.SongService.title
-		title = Text.SongService.title
+        songService = SongService(delegate: self)
+		navigationController?.title = AppText.SongService.title
+		title = AppText.SongService.title
 		mixerHeightConstraint.constant = 0
 		
-		new.title = Text.Actions.add
-		swipeUpDownImageView.tintColor = themeHighlighted
-		GoogleActivityFetcher.fetch(true)
+		new.title = AppText.Actions.add
+        new.tintColor = themeHighlighted
+        swipeUpDownImageView.tintColor = .softBlueGrey
 		view.backgroundColor = themeWhiteBlackBackground
 		emptyViewTableView.backgroundColor = themeWhiteBlackBackground
 		moveUpDownSection.backgroundColor = themeWhiteBlackBackground
-		swipeLineLeft.backgroundColor = themeHighlighted
-		swipeLineRight.backgroundColor = themeHighlighted
+        swipeLineLeft.backgroundColor = .grey3
+        swipeLineRight.backgroundColor = .grey3
+        swipeLineRightHeightConstraint.constant = 1 / 3
+        swipeLineLeftHeightConstraint.constant = 1 / 3
 		swipeLineLeftWidthConstraint.constant = UIScreen.main.bounds.width * 0.35
 		swipeLineRightWidthConstraint.constant = UIScreen.main.bounds.width * 0.35
 		
-		NotificationCenter.default.addObserver(forName: NotificationNames.externalDisplayDidChange, object: nil, queue: nil, using: externalDisplayDidChange)
+		NotificationCenter.default.addObserver(forName: .externalDisplayDidChange, object: nil, queue: nil, using: externalDisplayDidChange)
+        
+        NotificationCenter.default.addObserver(forName: .didSubmitSongServiceSettings, object: nil, queue: .main) { (_) in
+            self.songService = SongService(delegate: self)
+            self.model = nil
+        }
+
+        NotificationCenter.default.addObserver(forName: .googleCalendarNotAuthenticated, object: nil, queue: .main) { [weak self] (_) in
+            self?.present(Storyboard.MainStoryboard.instantiateViewController(identifier: SignInCalendarController.nav), animated: true)
+        }
+        
+        NotificationCenter.default.addObserver(forName: .universalClusterSubmitterFailed, object: nil, queue: .main) { [weak self] (not) in
+            if let error = not.object as? RequestError {
+                self?.show(error)
+            }
+        }
 		
 		NotificationCenter.default.addObserver(
-			forName: NotificationNames.dataBaseDidChange,
+			forName: .dataBaseDidChange,
 			object: nil,
 			queue: nil,
 			using: databaseDidChange)
@@ -294,18 +326,24 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		sheetDisplaySwipeView.addGestureRecognizer(rightSwipe)
 		
 		tableView.register(cell: Cells.basicCellid)
+        tableView.register(header: SongHeaderView.identifier)
 		updateSheetDisplayersRatios()
 		sheetDisplayerInitialFrame = sheetDisplayer.bounds
 		sheetDisplayerSwipeViewInitialHeight = sheetDisplaySwipeViewCustomHeightConstraint?.constant ?? sheetDisplaySwipeView.bounds.height
 		
 		if let previewCluster = previewCluster {
 			songService.songs = [SongObject(cluster: previewCluster)]
-			navigationItem.leftBarButtonItem = UIBarButtonItem(title: Text.Actions.cancel, style: .plain, target: self, action: #selector(close))
+			navigationItem.leftBarButtonItem = UIBarButtonItem(title: AppText.Actions.cancel, style: .plain, target: self, action: #selector(close))
 		}
+        
 		update()
 		
 	}
 	
+    override func update() {
+        update(scroll: false)
+    }
+    
 	private func update(scroll: Bool = false) {
 		if songService.selectedSong == nil {
 			shutDownDisplayer()
@@ -317,15 +355,21 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				self.tableView.scrollToRow(at: IndexPath(row: Int(row), section: section), at: .middle, animated: true)
 			}
 		}
-	}
-
-	private func didSelectSection(section: Int) {
-		SoundPlayer.stop()
-		songService.selectedSong = songService.selectedSection == section ? nil : songService.songs[section]
-		songService.selectedSection = songService.selectedSection == section ? nil : section
-		
-		update()
-	}
+    }
+    
+    private func didSelectSection(section: Int) {
+        guard canPlay else {
+            let alert = UIAlertController(title: nil, message: AppText.SongService.warnCannotPlay, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: AppText.Actions.ok, style: .default, handler: nil))
+            self.present(alert, animated: true)
+            return
+        }
+        SoundPlayer.stop()
+        songService.selectedSong = songService.selectedSection == section ? nil : songService.songs[section]
+        songService.selectedSection = songService.selectedSection == section ? nil : section
+        
+        update()
+    }
 	
 	private func didSelectPianoInSection(section: Int) {
 		
@@ -421,7 +465,6 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				isAnimatingUpDown = true
 				switch sender.direction {
 				case .up:
-					print("up")
 					switch displayMode {
 					case .mixer:
 						if let topConstraint = newSheetDisplayerSwipeViewTopConstraint, topConstraint.isActive {
@@ -464,7 +507,6 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 							}, completion: { (bool) in
 								self.sheetDisplayer.isHidden = false
 								imageView.removeFromSuperview()
-								self.scaleFactor = self.sheetDisplayer.bounds.width / self.sheetDisplayerInitialFrame.width
 								if let selectedSheet = self.songService.selectedSheet {
 									self.display(sheet: selectedSheet)
 								}
@@ -480,7 +522,6 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 					}
 					
 				case .down:
-					print("down")
 					switch displayMode {
 					case .small:
 						if let heightConstraint = sheetDisplaySwipeViewCustomHeightConstraint, heightConstraint.isActive, heightConstraint.constant < sheetDisplayerSwipeViewInitialHeight && heightConstraint.constant > 0 {
@@ -504,7 +545,6 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 							}, completion: { (bool) in
 								self.sheetDisplayer.isHidden = false
 								imageView.removeFromSuperview()
-								self.scaleFactor = self.sheetDisplayer.bounds.width / self.sheetDisplayerInitialFrame.width
 								if let selectedSheet = self.songService.selectedSheet {
 									self.display(sheet: selectedSheet)
 								}
@@ -522,7 +562,7 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 							
 							// move sheets up
 							sheetDisplayerSwipeViewTopConstraint.isActive = false
-							newSheetDisplayerSwipeViewTopConstraint = NSLayoutConstraint(item: sheetDisplaySwipeView, attribute: .top, relatedBy: .equal, toItem: self.view, attribute: .top, multiplier: 1, constant: -sheetDisplayerSwipeViewInitialHeight)
+							newSheetDisplayerSwipeViewTopConstraint = NSLayoutConstraint(item: sheetDisplaySwipeView!, attribute: .top, relatedBy: .equal, toItem: self.view, attribute: .top, multiplier: 1, constant: -sheetDisplayerSwipeViewInitialHeight)
 							newSheetDisplayerSwipeViewTopConstraint?.isActive = true
 							
 							// move mixer 50 down and to top of superview
@@ -548,7 +588,6 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	}
 	
 	func externalDisplayDidChange(_ notification: Notification) {
-		scaleFactor = 1
 		updateSheetDisplayersRatios()
 		if let selectedSheet = songService.selectedSheet {
 			display(sheet: selectedSheet)
@@ -558,12 +597,15 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	func databaseDidChange( _ notification: Notification) {
 		songService.selectedSection = nil
 		songService.selectedSheet = nil
-
+        
 		if songService.songs.count > 0 {
-			for cluster in songService.songs.compactMap({ $0.cluster }) {
-				CoreCluster.predicates.append("id", equals: cluster.id)
-			}
-			songService.songs = VCluster.list().compactMap({ SongObject(cluster: $0) })
+            let songs: [VCluster] = songService.songs.compactMap({ $0.cluster.id }).compactMap({
+                if let cluster: Cluster = DataFetcher().getEntity(moc: moc, predicates: [.get(id: $0)]) {
+                    return VCluster(cluster: cluster, context: moc)
+                }
+                return nil
+            })
+            songService.songs = songs.map({ SongObject(cluster: $0) })
 		}
 	}
 	
@@ -577,7 +619,8 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		if let sheetDisplaySwipeViewCustomHeightConstraint = sheetDisplaySwipeViewCustomHeightConstraint {
 			sheetDisplaySwipeView.removeConstraint(sheetDisplaySwipeViewCustomHeightConstraint)
 		}
-		sheetDisplaySwipeViewCustomHeightConstraint = NSLayoutConstraint(item: sheetDisplaySwipeView!, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: (UIScreen.main.bounds.width - 20) * externalDisplayWindowRatio)
+        sheetDisplaySwipeViewCustomHeightConstraint = NSLayoutConstraint(item: sheetDisplaySwipeView!, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: UIScreen.main.bounds.width * externalDisplayWindowRatio)
+
 		sheetDisplaySwipeView.addConstraint(sheetDisplaySwipeViewCustomHeightConstraint!)
 		
 		if let customSheetDisplayerRatioConstraint = customSheetDisplayerRatioConstraint {
@@ -607,7 +650,6 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	
 	
 	func display(sheet: VSheet) {
-		
 		for subview in sheetDisplayer.subviews {
 			subview.removeFromSuperview()
 		}
@@ -617,7 +659,8 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		sheetDisplayerPrevious.isHidden = true
 		sheetDisplayerNext.isHidden = true
 		
-		sheetDisplayer.addSubview(SheetView.createWith(frame: sheetDisplayer.bounds, cluster: sheet.hasCluster, sheet: sheet, theme: songService.selectedTheme, scaleFactor: scaleFactor, toExternalDisplay: true))
+        sheetDisplayer.addSubview(SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.selectedSong?.cluster, sheet: sheet, theme: songService.selectedTheme, scaleFactor: getScaleFactor(width: sheetDisplayer.bounds.width), toExternalDisplay: true))
+        updateTime()
 	}
 	
 	private func shutDownDisplayer() {
@@ -630,23 +673,22 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 		}
 		if let externalDisplayWindow = externalDisplayWindow {
 			let view = UIView(frame: externalDisplayWindow.frame)
-			view.backgroundColor = .black
+			view.backgroundColor = .blackColor
 			externalDisplayWindow.addSubview(view)
 			viewToBeamer?.removeFromSuperview()
 		}
+        displayTimeTimer.invalidate()
 	}
 	
 	private func animateSheetsWith(_ direction : AnimationDirection, isNextOrPreviousCluster: Bool = false, completion: @escaping () -> Void) {
 		switch direction {
 		case .left:
-			
-			print("left")
-			
+						
 			// current sheet
 			// current sheet, move to left
 			if let sheet = songService.selectedSheet, let nextSheet = songService.nextSheet(select: false) {
-				let currentSheetView = SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.selectedSong?.cluster, sheet: sheet, theme: songService.selectedTheme, scaleFactor: scaleFactor)
-				let nextSheetView = SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.getSongForNextSheet()?.cluster, sheet: nextSheet, theme: songService.nextTheme, scaleFactor: scaleFactor)
+                let currentSheetView = SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.selectedSong?.cluster, sheet: sheet, theme: songService.selectedTheme, scaleFactor: getScaleFactor(width: sheetDisplayer.bounds.width))
+				let nextSheetView = SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.getSongForNextSheet()?.cluster, sheet: nextSheet, theme: songService.nextTheme, scaleFactor: getScaleFactor(width: sheetDisplayer.bounds.width))
 				
 				currentSheetView.frame = CGRect(
 					x: sheetDisplayer.frame.minX,
@@ -703,8 +745,8 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 				
 					// current sheet
 					// current sheet, move to left
-				let currentSheetView = SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.selectedSong?.cluster, sheet: sheet, theme: songService.selectedTheme, scaleFactor: scaleFactor)
-					let previousSheetView = SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.getSongForPreviousSheet()?.cluster, sheet: previousSheet, theme: songService.previousTheme, scaleFactor: scaleFactor)
+                let currentSheetView = SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.selectedSong?.cluster, sheet: sheet, theme: songService.selectedTheme, scaleFactor: getScaleFactor(width: sheetDisplayer.bounds.width))
+					let previousSheetView = SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.getSongForPreviousSheet()?.cluster, sheet: previousSheet, theme: songService.previousTheme, scaleFactor: getScaleFactor(width: sheetDisplayer.bounds.width))
 					
 					currentSheetView.frame = CGRect(
 						x: sheetDisplayer.frame.minX,
@@ -752,16 +794,14 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	}
 
 	private func updateTime() {
-		if let displayTimeTheme = songService.selectedTheme?.displayTime, displayTimeTheme {
+        if let displayTimeTheme = songService.selectedTheme?.displayTime ?? songService.selectedSong?.clusterTheme?.displayTime, displayTimeTheme {
 			let date = Date()
 			let seconds = Calendar.current.component(.second, from: date)
 			let remainder = 60 - seconds
 			let fireDate = date.addingTimeInterval(.seconds(Double(remainder)))
-			print(fireDate.description)
-			
+            displayTimeTimer.invalidate()
 			displayTimeTimer = Timer(fireAt: fireDate, interval: 60, target: self, selector: #selector(updateScreen), userInfo: nil, repeats: true)
 			RunLoop.main.add(displayTimeTimer, forMode: RunLoop.Mode.common)
-			
 		} else {
 			displayTimeTimer.invalidate()
 		}
@@ -780,10 +820,39 @@ class SongServiceIphoneController: UIViewController, UITableViewDelegate, UITabl
 	@objc private func close() {
 		self.dismiss(animated: true)
 	}
+	
+}
 
-	
-	@IBAction func deleteDB(_ sender: UIBarButtonItem) {
-		
-	}
-	
+extension SongServiceIphoneController: SongServiceDelegate {
+    
+    func countDown(value: Int) {
+        guard value > 0 else {
+            sheetDisplayer.subviews.compactMap({ $0 as? CountDownView }).forEach({ $0.removeFromSuperview() })
+            return
+        }
+        
+        if let countDownView = sheetDisplayer.subviews.compactMap({ $0 as? CountDownView }).first {
+            countDownView.countDownLabel.text = value.stringValue
+        } else {
+            let countDownView = CountDownView(frame: sheetDisplayer.bounds)
+            countDownView.countDownLabel.text = value.stringValue
+            sheetDisplayer.addSubview(countDownView)
+            sheetDisplayer.topAnchor.constraint(equalTo: countDownView.topAnchor).isActive =  true
+            sheetDisplayer.rightAnchor.constraint(equalTo: countDownView.rightAnchor).isActive =  true
+            sheetDisplayer.bottomAnchor.constraint(equalTo: countDownView.bottomAnchor).isActive =  true
+            sheetDisplayer.leftAnchor.constraint(equalTo: countDownView.leftAnchor).isActive =  true
+        }
+    }
+    
+    func swipeLeft() {
+        swipeAutomatically()
+    }
+    
+    func displaySheet(_ sheet: VSheet) {
+        display(sheet: sheet)
+    }
+    
+    func shutDownBeamer() {
+        shutDownDisplayer()
+    }
 }

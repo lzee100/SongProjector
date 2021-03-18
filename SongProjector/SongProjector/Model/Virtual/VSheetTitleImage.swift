@@ -7,26 +7,12 @@
 //
 
 import Foundation
+import UIKit
 import CoreData
 
 class VSheetTitleImage: VSheet, SheetMetaType {
 	
 	static var type: SheetType = .SheetTitleImage
-	
-	class func list(sortOn attributeName: String? = nil, ascending: Bool? = nil) -> [VSheetTitleImage] {
-		if let attributeName = attributeName, let ascending = ascending {
-			CoreSheetTitleImage.setSortDescriptor(attributeName: attributeName, ascending: ascending)
-		}
-		return CoreSheetTitleImage.getEntities().map({ VSheetTitleImage(sheet: $0) })
-	}
-	
-	override class func single(with id: Int64?) -> VSheetTitleImage? {
-		if let id = id, let sheet = CoreSheetTitleImage.getEntitieWith(id: id) {
-			return VSheetTitleImage(sheet: sheet)
-		}
-		return nil
-	}
-
 
 	var content: String? = nil
 	var hasTitle: Bool = true
@@ -34,10 +20,35 @@ class VSheetTitleImage: VSheet, SheetMetaType {
 	var imageBorderSize: Int16 = 0
 	var imageContentMode: Int16 = 0
 	var imageHasBorder: Bool = false
-	var imagePath: String? = nil
+    var imagePath: String? = nil
 	var thumbnailPath: String? = nil
-	var thumbnailPathAWS: String? = nil
 	var imagePathAWS: String? = nil
+    
+    var tempSelectedImage: UIImage? {
+        didSet {
+            tempSelectedImageThumbNail = tempSelectedImage?.resized(withPercentage: 0.5)
+        }
+    }
+    var tempSelectedImageThumbNail: UIImage?
+    var isTempSelectedImageDeleted = false
+    var tempLocalImageName: String?
+    
+    var hasNewRemoteImage: Bool {
+        if let imagePathAWS = imagePathAWS {
+            if
+                let imagePath = imagePath,
+                let url = URL(string: imagePath),
+                let remoteURL = URL(string: imagePathAWS),
+                url.lastPathComponent == remoteURL.lastPathComponent
+            {
+                return false
+            } else {
+                return true
+            }
+        } else {
+            return false
+        }
+    }
 	
 	
 	enum CodingKeysTitleImage:String,CodingKey
@@ -64,7 +75,6 @@ class VSheetTitleImage: VSheet, SheetMetaType {
 		try container.encode(imageBorderSize, forKey: .imageBorderSize)
 		try container.encode(imageContentMode, forKey: .imageContentMode)
 		try container.encode(Int(truncating: NSNumber(value: imageHasBorder)), forKey: .imageHasBorder)
-		try container.encode(thumbnailPathAWS, forKey: .thumbnailPathAWS)
 		try container.encode(imagePathAWS, forKey: .imagePathAWS)
 		
 		try super.encode(to: encoder)
@@ -84,7 +94,6 @@ class VSheetTitleImage: VSheet, SheetMetaType {
 		imageBorderSize = try container.decodeIfPresent(Int16.self, forKey: .imageBorderSize) ?? 0
 		imageContentMode = try container.decodeIfPresent(Int16.self, forKey: .imageContentMode) ?? 0
 		imageHasBorder = try Bool(truncating: (container.decodeIfPresent(Int16.self, forKey: .imageHasBorder) ?? 0) as NSNumber)
-		thumbnailPathAWS = try container.decodeIfPresent(String.self, forKey: .thumbnailPathAWS)
 		imagePathAWS = try container.decodeIfPresent(String.self, forKey: .imagePathAWS)
 		
 		try super.initialization(decoder: decoder)
@@ -105,7 +114,6 @@ class VSheetTitleImage: VSheet, SheetMetaType {
 		copy.imageHasBorder = imageHasBorder
 		copy.imagePath = imagePath
 		copy.thumbnailPath = thumbnailPath
-		copy.thumbnailPathAWS = thumbnailPathAWS
 		copy.imagePathAWS = imagePathAWS
 		return copy
 	}
@@ -118,46 +126,42 @@ class VSheetTitleImage: VSheet, SheetMetaType {
 			sheet.imageBorderColor = imageBorderColor
 			sheet.imageBorderSize = imageBorderSize
 			sheet.imageContentMode = imageContentMode
-			if sheet.imagePathAWS != imagePathAWS {
-				sheet.imagePath = nil
-				sheet.thumbnailPath = nil
-			}
+            sheet.imageHasBorder = imageHasBorder
 			sheet.imagePathAWS = imagePathAWS
+            sheet.imagePath = imagePath
+            sheet.thumbnailPath = thumbnailPath
 		}
 	}
 	
-	override func getPropertiesFrom(entity: Entity) {
-		super.getPropertiesFrom(entity: entity)
+    override func getPropertiesFrom(entity: Entity, context: NSManagedObjectContext) {		super.getPropertiesFrom(entity: entity, context: context)
 		if let sheet = entity as? SheetTitleImageEntity {
 			content = sheet.content
 			hasTitle = sheet.hasTitle
 			imageBorderColor = sheet.imageBorderColor
 			imageBorderSize = sheet.imageBorderSize
 			imageContentMode = sheet.imageContentMode
+            imageHasBorder = sheet.imageHasBorder
 			imagePathAWS = sheet.imagePathAWS
+            imagePath = sheet.imagePath
+            thumbnailPath = sheet.thumbnailPath
+            tempSelectedImage = nil
 		}
 	}
 	
-	convenience init(sheetTitleContent: SheetTitleContentEntity) {
+    convenience init(sheetTitleImage: SheetTitleImageEntity, context: NSManagedObjectContext) {
 		self.init()
-		getPropertiesFrom(entity: sheetTitleContent)
+		getPropertiesFrom(entity: sheetTitleImage, context: context)
 	}
 	
-	override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-		
-		CoreSheetTitleImage.managedObjectContext = context
-		if let storedEntity = CoreSheetTitleImage.getEntitieWith(id: id) {
-			CoreSheetTitleImage.managedObjectContext = moc
-			setPropertiesTo(entity: storedEntity, context: context)
-			return storedEntity
-		} else {
-			CoreSheetTitleImage.managedObjectContext = context
-			let newEntity = CoreSheetTitleImage.createEntity(fireNotification: false)
-			CoreSheetTitleImage.managedObjectContext = moc
-			setPropertiesTo(entity: newEntity, context: context)
-			return newEntity
-		}
+    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
+        if let entity: SheetTitleImageEntity = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
+            setPropertiesTo(entity: entity, context: context)
+            return entity
+        } else {
+            let entity: SheetTitleImageEntity = DataFetcher().createEntity(moc: context)
+            setPropertiesTo(entity: entity, context: context)
+            return entity
+        }
+    }
 
-	}
-	
 }

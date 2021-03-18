@@ -11,21 +11,6 @@ import CoreData
 
 class VInstrument: VEntity {
 	
-	
-	class func list(sortOn attributeName: String? = nil, ascending: Bool? = nil) -> [VInstrument] {
-		if let attributeName = attributeName, let ascending = ascending {
-			CoreInstrument.setSortDescriptor(attributeName: attributeName, ascending: ascending)
-		}
-		return CoreInstrument.getEntities().map({ VInstrument(instrument: $0) })
-	}
-	
-	class func single(with id: Int64?) -> VInstrument? {
-		if let id = id, let instrument = CoreInstrument.getEntitieWith(id: id) {
-			return VInstrument(instrument: instrument)
-		}
-		return nil
-	}
-	
 	var isLoop: Bool = false
 	var resourcePath: String? = nil
 	var typeString: String? =  nil
@@ -34,10 +19,10 @@ class VInstrument: VEntity {
 	}
 	var resourcePathAWS: String? = nil
 	var hasCluster: VCluster? = nil
-	
-	
+    
 	enum CodingKeysInstrument:String,CodingKey
 	{
+        case id
 		case isLoop
 		case resourcePath
 		case typeString = "type"
@@ -51,7 +36,8 @@ class VInstrument: VEntity {
 	override public func encode(to encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeysInstrument.self)
 		
-		try container.encode(isLoop, forKey: .isLoop)
+        try container.encode(id, forKey: .id)
+        try container.encode(Int(truncating: NSNumber(value: isLoop)), forKey: .isLoop)
 		try container.encode(typeString, forKey: .typeString)
 		try container.encode(resourcePathAWS, forKey: .resourcePathAWS)
 		
@@ -93,43 +79,39 @@ class VInstrument: VEntity {
 	override func setPropertiesTo(entity: Entity, context: NSManagedObjectContext) {
 		super.setPropertiesTo(entity: entity, context: context)
 		if let instrument = entity as? Instrument {
-			instrument.isLoop = self.isLoop
-			instrument.resourcePath = self.resourcePath
-			instrument.typeString = self.typeString
-			instrument.resourcePathAWS = self.resourcePathAWS
+			instrument.isLoop = isLoop
+			instrument.resourcePath = resourcePath
+			instrument.typeString = typeString
+            instrument.resourcePath = resourcePath
+			instrument.resourcePathAWS = resourcePathAWS
 		}
 	}
 	
-	override func getPropertiesFrom(entity: Entity) {
-		super.getPropertiesFrom(entity: entity)
+    override func getPropertiesFrom(entity: Entity, context: NSManagedObjectContext) {
+		super.getPropertiesFrom(entity: entity, context: context)
 		if let instrument = entity as? Instrument {
 			isLoop = instrument.isLoop
 			resourcePath = instrument.resourcePath
 			typeString = instrument.typeString
+            resourcePath = instrument.resourcePath
 			resourcePathAWS = instrument.resourcePathAWS
 		}
 	}
 	
-	convenience init(instrument: Instrument) {
+    convenience init(instrument: Instrument, context: NSManagedObjectContext) {
 		self.init()
-		getPropertiesFrom(entity: instrument)
+        getPropertiesFrom(entity: instrument, context: context)
 	}
 	
 	override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-		
-		CoreInstrument.managedObjectContext = context
-		if let storedEntity = CoreInstrument.getEntitieWith(id: id) {
-			CoreInstrument.managedObjectContext = moc
-			setPropertiesTo(entity: storedEntity, context: context)
-			return storedEntity
-		} else {
-			CoreInstrument.managedObjectContext = context
-			let newEntity = CoreInstrument.createEntityNOTsave()
-			CoreInstrument.managedObjectContext = moc
-			setPropertiesTo(entity: newEntity, context: context)
-			return newEntity
-		}
-
+        if let entity: Instrument = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
+            setPropertiesTo(entity: entity, context: context)
+            return entity
+        } else {
+            let entity: Instrument = DataFetcher().createEntity(moc: context)
+            setPropertiesTo(entity: entity, context: context)
+            return entity
+        }
 	}
 	
 }

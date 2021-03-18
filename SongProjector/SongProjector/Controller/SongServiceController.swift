@@ -32,36 +32,36 @@ enum AnimationDirection {
 
 
 
-class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UITableViewDelegate, SongsControllerDelegate {
+class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UITableViewDelegate, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, SongsControllerDelegate  {
 	
 	
 	
 	// MARK: - Properties
 	
-	@IBOutlet var sheetDisplaySwipeView: BlurredViewDark!
+	@IBOutlet var sheetDisplaySwipeView: UIView!
 	@IBOutlet var sheetDisplayerPrevious: UIView!
 	@IBOutlet var sheetDisplayer: UIView!
 	@IBOutlet var sheetDisplayerNext: UIView!
 	@IBOutlet var swipeUpDownImageView: UIImageView!
-	@IBOutlet var tableViewClusters: TransParentTableView!
-	@IBOutlet var tableViewSheets: TransParentTableView!
-	@IBOutlet var titleTableCluster: UILabel!
-	@IBOutlet var titleTableSheet: UILabel!
-	@IBOutlet var clear: UIBarButtonItem!
 	@IBOutlet var add: UIBarButtonItem!
 	@IBOutlet var mixerContainerView: UIView!
 	@IBOutlet var moveUpDownSection: UIView!
-	
+    @IBOutlet var songCollectionView: UICollectionView!
+    
 	@IBOutlet var sheetDisplayerSwipeViewTop: NSLayoutConstraint!
 	@IBOutlet var sheetDisplayerSwipeViewHeight: NSLayoutConstraint!
 	@IBOutlet var sheetDisplayerRatioConstraint: NSLayoutConstraint!
 	@IBOutlet var sheetDisplayerPreviousRatioConstraint: NSLayoutConstraint!
 	@IBOutlet var sheetDisplayerNextRatioConstraint: NSLayoutConstraint!
 	@IBOutlet var moveUpDownSectionTopConstraint: NSLayoutConstraint!
-	@IBOutlet var mixerTopStackViewConstraint: NSLayoutConstraint!
-	@IBOutlet var mixerTopSuperViewConstraint: NSLayoutConstraint!
-
-	var customSheetDisplayerRatioConstraint: NSLayoutConstraint?
+	@IBOutlet var mixerBottomToTopSwipeViewConstraint: NSLayoutConstraint!
+    @IBOutlet var mixerTopStackViewConstraint: NSLayoutConstraint!
+    @IBOutlet var sheetDisplayerHeightConstraint: NSLayoutConstraint!
+    @IBOutlet var songsCollectionViewLeftConstraint: NSLayoutConstraint!
+    @IBOutlet var songsCollectionViewRightConstraint: NSLayoutConstraint!
+    
+    var sheetDisplayerWipeViewEqualHeightConstraint: NSLayoutConstraint?
+    var customSheetDisplayerRatioConstraint: NSLayoutConstraint?
 	var customSheetDisplayerPreviousRatioConstraint: NSLayoutConstraint?
 	var customSheetDisplayerNextRatioConstraint: NSLayoutConstraint?
 	var sheetDisplaySwipeViewCustomHeightConstraint: NSLayoutConstraint?
@@ -75,6 +75,35 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 		case normal
 		case mixer
 	}
+    
+    private enum SongServiceListItems {
+        case sectionedCluster(section: String?, cluster: VCluster)
+        case sheet(vsheet: VSheet)
+        
+        var isSection: Bool {
+            switch self {
+            case .sectionedCluster(cluster: _): return true
+            default: return false
+            }
+        }
+    }
+    
+    private struct InsertAction {
+        let section: Int
+        let items: Int
+        let none: Bool
+        
+        var indexPaths: [IndexPath] {
+            var index = 0
+            var indexPaths: [IndexPath] = []
+            repeat {
+                indexPaths.append(IndexPath(row: index, section: section))
+                index += 1
+            } while index < items
+            return indexPaths
+        }
+    }
+
 	
 	// MARK: - Private Properties
 	
@@ -82,7 +111,6 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 	
 	private var isAnimatingUpDown = false
 	private var displayMode: displayModeTypes = .normal
-	private var scaleFactor: CGFloat = 1
 	private var sheetDisplayerInitialFrame: CGRect = CGRect(x: 0, y: 0, width: 0, height: 0)
 	private var sheetDisplayerSwipeViewInitialHeight: CGFloat = 0
 	private var isPlaying = false
@@ -91,20 +119,33 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 	private var model: TempClustersModel?
 	
 	private var songService: SongService!
+    private var collectionViewItems: [SongServiceListItems] = []
+    private var canPlay: Bool = true
+    
+    override var requesters: [RequesterBase] {
+        return [SongServicePlayDateFetcher]
+    }
+
 	
 	// MARK: - Functions
 	
 	// MARK: UIViewController Functions
-	
+    
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		setup()
+        self.navigationController?.navigationBar.barStyle = .black
+        self.setNeedsStatusBarAppearanceUpdate()
 	}
-	
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        SongServicePlayDateFetcher.fetch()
+    }
+
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 		update()
-		show(message: "error message")
 	}
 	
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -117,6 +158,116 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 		}
 	}
 	
+    
+    // MARK: UICollectionView Functions
+    
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        if collectionViewItems.count == 0 {
+            return 0
+        }
+        let sections = collectionViewItems.filter({ $0.isSection }).count
+        return sections == 0 ? 1 : sections
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        if let index = collectionViewItems.firstIndex(where: { !$0.isSection }), max(index - 1, 0) == section {
+            return collectionViewItems.filter({ !$0.isSection }).count
+        }
+        return 0
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SheetCollectionCell.identitier, for: indexPath) as! SheetCollectionCell
+        switch collectionViewItems.filter({ !$0.isSection })[indexPath.row] {
+        case .sheet(vsheet: let sheet):
+            cell.setupWith(cluster: songService.selectedSong?.cluster, sheet: sheet, theme: sheet.hasTheme ?? songService.selectedSong?.cluster.hasTheme(moc: moc), didDeleteSheet: nil, isDeleteEnabled: false, scaleFactor: getScaleFactor(width: getSheetSize().width))
+            cell.layer.cornerRadius = 10
+            cell.clipsToBounds = true
+        default: break
+        }
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SongServiceHeaderCollectionReusableView.identifier, for: indexPath) as! SongServiceHeaderCollectionReusableView
+        switch collectionViewItems.filter({ $0.isSection })[indexPath.section] {
+        case .sectionedCluster(_, cluster: let cluster):
+            headerView.data = cluster
+            headerView.sectionBackgroundView.backgroundColor = cluster.id == songService.selectedSong?.cluster.id ? .orange : .grey1
+            headerView.setup(title: cluster.title ?? "Geen naam voor nummer") {
+                
+                guard self.canPlay else {
+                    let alert = UIAlertController(title: nil, message: AppText.SongService.warnCannotPlay, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: AppText.Actions.ok, style: .default, handler: nil))
+                    self.present(alert, animated: true)
+                    return
+                }
+                
+                collectionView.performBatchUpdates({
+                    if self.songService.selectedSong == nil || (self.songService.selectedSong != nil && self.songService.selectedSong?.cluster.id != cluster.id) {
+                        if let selectedClusterId = self.songService.selectedSong?.cluster.id, selectedClusterId != cluster.id {
+                            let sectionIndexSectioned = self.model?.sectionedClusterOrComment.flatMap({ $0 }).firstIndex(where: { $0.id == selectedClusterId })
+                            let sectionIndexUnsectioned = self.model?.clusters.firstIndex(where: { $0.id == selectedClusterId })
+                            if let sectionIndex = sectionIndexSectioned ?? sectionIndexUnsectioned  {
+                                let endIndex = self.collectionViewItems.filter({ !$0.isSection }).count
+                                var currentIndex = 0
+                                var indexPaths: [IndexPath] = []
+                                repeat {
+                                    indexPaths.append(IndexPath(row: currentIndex, section: sectionIndex))
+                                    currentIndex += 1
+                                } while currentIndex < endIndex
+                                self.songCollectionView.deleteItems(at: indexPaths)
+                            }
+                        }
+                        self.songService.selectedSong = SongObject(cluster: cluster)
+                        let inserted = self.refreshCollectionViewListItems()
+                        self.songCollectionView.insertItems(at: inserted.indexPaths)
+                    } else {
+                        let endIndex = self.collectionViewItems.filter({ !$0.isSection }).count
+                        var currentIndex = 0
+                        var indexPaths: [IndexPath] = []
+                        repeat {
+                            indexPaths.append(IndexPath(row: currentIndex, section: indexPath.section))
+                            currentIndex += 1
+                        } while currentIndex < endIndex
+                        self.songCollectionView.deleteItems(at: indexPaths)
+                        self.songService.selectedSheet = nil
+                        self.refreshCollectionViewListItems()
+                    }
+                }) { (completed) in
+                    Queues.main.async {
+                        collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                    }
+                    collectionView.visibleSupplementaryViews(ofKind: UICollectionView.elementKindSectionHeader).compactMap({ $0 as? SongServiceHeaderCollectionReusableView }).forEach({ $0.sectionBackgroundView.backgroundColor = .grey1 })
+                    if let selectedSongId = self.songService.selectedSong?.cluster.id {
+                        collectionView.visibleSupplementaryViews(ofKind: UICollectionView.elementKindSectionHeader).compactMap({ $0 as? SongServiceHeaderCollectionReusableView }).first(where: { ($0.data as? VCluster)?.id == selectedSongId })?.sectionBackgroundView.backgroundColor = .orange
+                    }
+                }
+            }
+        default: break
+            
+        }
+        return headerView
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return getSheetSize()
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        if view.bounds.height > view.bounds.width {
+            return CGSize(width: collectionView.bounds.width, height: 100)
+        }
+        return CGSize(width: collectionView.bounds.height, height: collectionView.bounds.height)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+//        if section == (collectionViewItems.filter({ $0.isSection }).count - 1) {
+//            return UIEdgeInsets.zero
+//        }
+        return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 10)
+    }
+    
 	
 	
 	// MARK: UITableViewDelegate Functions
@@ -127,50 +278,11 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 	
 	
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		guard songService != nil, model?.sectionedClusterOrComment.count != 0 else {
-			return 0
-		}
-		if tableView == tableViewClusters {
-			if let rows = model?.sectionedClusterOrComment[section].count {
-				return rows
-			}
-			return songService.songs.count
-		} else {
-			if let selectedSection = songService.selectedSection {
-				return songService.songs[selectedSection].sheets.count
-			} else {
-				return 0
-			}
-		}
+		return 0
 	}
 	
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		
-		if tableView == tableViewClusters {
-			let cell = tableViewClusters.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath) as! BasicCell
-			if let sectionTitle = model?.songServiceSettings?.sections[indexPath.section].title {
-				cell.set(sectionHeader: sectionTitle)
-			}
-			cell.setup(title: songService.songs[indexPath.row].cluster.title, icon: Cells.songIcon, hasPianoOnly: songService.songs[indexPath.row].cluster.hasPianoSolo)
-			cell.selectedCell = songService.selectedSection == indexPath.row
-			
-			return cell
-		} else {
-			
-			let sheet = songService.songs[songService.selectedSection!].sheets[indexPath.row]
-			let cell = tableViewSheets.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath)
-			let title: String?
-			if let currentSheet = sheet as? VSheetTitleContent {
-				title = currentSheet.isEmptySheet ? Text.Sheet.emptySheetTitle : currentSheet.title
-			} else {
-				title = sheet.title
-			}
-			if let cell = cell as? BasicCell {
-				cell.setup(title: title, icon: Cells.sheetIcon)
-				cell.selectedCell = songService.selectedSheet?.id == sheet.id
-			}
-			return cell
-		}
+		return UITableViewCell()
 	}
 	
 	func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -178,31 +290,19 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 	}
 	
 	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		if tableView == tableViewClusters {
-			let hasReselectedCurrentSong = songService.selectedSection == indexPath.row
-			songService.selectedSection = hasReselectedCurrentSong ? nil : indexPath.row
-			let selectedSong = songService.songs[indexPath.row]
-			if selectedSong != songService.selectedSong {
-				songService.selectedSheet = songService.songs[indexPath.row].sheets.first
-			} else {
-				songService.selectedSong = nil
-				songService.selectedSheet = nil
-				shutDownDisplayer()
-			}
-			
-		} else {
-			if songService.isPlaying || songService.isAnimating {
-				return
-			}
-			let selectedSheet = songService.songs[songService.selectedSection!].sheets[indexPath.row]
-			let previousSelected = songService.selectedSheet
-			let isEqual = selectedSheet.isEqualTo(previousSelected)
-			songService.selectedSheet = isEqual ? nil : selectedSheet
-		}
 		update()
 	}
 	
-	
+    
+    override func handleRequestFinish(requesterId: String, result: Any?) {
+        if requesterId == SongServicePlayDateFetcher.id, let playEntity = result as? [VSongServicePlayDate] {
+            canPlay = playEntity.last?.allowedToPlay ?? true
+        }
+        update()
+
+    }
+    
+    
 	
 	// MARK: SongsControllerDelegate Functions
 
@@ -217,7 +317,10 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 				.compactMap({ $0.cluster })
 				.map({ SongObject(cluster: $0) })
 		}
-		update()
+        if songService.songs.count > 0 {
+            SongServicePlayDateFetcher.fetch()
+        }
+        self.update(scroll: true)
 	}
 	
 	
@@ -225,30 +328,42 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 	// MARK: - Private Functions
 	
 	private func setup() {
-		
-		songService = SongService(swipeLeft: swipeAutomatically, displaySheet: display(sheet:), shutDownBeamer: shutDownDisplayer)
-		view.backgroundColor = .clear
+        songService = SongService(delegate: self)
 		swipeUpDownImageView.image = #imageLiteral(resourceName: "More")
 		swipeUpDownImageView.tintColor = themeHighlighted
-		navigationController?.title = Text.SongService.title
-		titleTableCluster.text = Text.SongService.titleTableClusters
-		titleTableSheet.text = Text.SongService.titleTableSheets
-		
+		navigationController?.title = AppText.SongService.title
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
+        navigationController?.navigationBar.isTranslucent = false
+        navigationController?.navigationBar.barTintColor = UIColor(hex: "2E2C2C")
+        view.backgroundColor = UIColor(hex: "000000")
 		sheetDisplayer.layer.cornerRadius = 4
 		sheetDisplayerNext.layer.cornerRadius = 3
 		sheetDisplayerPrevious.layer.cornerRadius = 3
+        
+        NotificationCenter.default.addObserver(forName: .didSubmitSongServiceSettings, object: nil, queue: .main) { (_) in
+            self.songService = SongService(delegate: self)
+            self.model = nil
+        }
 		
-		clear.title = Text.Actions.new
-		add.title = Text.Actions.add
-		title = Text.SongService.title
-		
-		titleTableCluster.textColor = themeWhiteBlackTextColor
-		titleTableCluster.backgroundColor = .clear
-		titleTableSheet.textColor = themeWhiteBlackTextColor
-		titleTableSheet.backgroundColor = .clear
-		
-		NotificationCenter.default.addObserver(forName: NotificationNames.externalDisplayDidChange, object: nil, queue: nil, using: externalDisplayDidChange)
-		
+		add.title = AppText.Actions.add
+        add.tintColor = themeHighlighted
+		title = AppText.SongService.title
+        songCollectionView.backgroundColor = UIColor(hex: "000000")
+        moveUpDownSection.backgroundColor = UIColor(hex: "000000")
+        songCollectionView.registerHeader(reusableView: SongServiceHeaderCollectionReusableView.identifier)
+        songCollectionView.register(cell: SheetCollectionCell.identitier)
+        
+        let layout = UICollectionViewFlowLayout()
+        layout.sectionHeadersPinToVisibleBounds = true
+        layout.scrollDirection = .horizontal
+        layout.minimumInteritemSpacing = 10
+        layout.minimumLineSpacing = 10
+        songCollectionView.collectionViewLayout = layout
+        
+        
+        NotificationCenter.default.addObserver(forName: .externalDisplayDidChange, object: nil, queue: nil, using: externalDisplayDidChange)
+//        NotificationCenter.default.addObserver(self, selector: #selector(rotated), name: UIDevice.orientationDidChangeNotification, object: nil)
+
 		leftSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))
 		let rightSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))
 		
@@ -265,21 +380,19 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 		moveUpDownSection.addGestureRecognizer(downSwipe)
 		moveUpDownSection.addGestureRecognizer(upSwipe)
 		
-		tableViewClusters.register(cell: Cells.basicCellid)
-		tableViewSheets.register(cell: Cells.basicCellid)
-		
+        rotated()
 		update()
 		
 	}
+    
+    override func update() {
+        super.update()
+        UniversalClusterFetcher.initialFetch()
+    }
 	
 	private func update(scroll: Bool = false) {
-		tableViewClusters.reloadData()
-		tableViewClusters.setNeedsDisplay()
-		tableViewSheets.reloadData()
-		tableViewSheets.setNeedsDisplay()
-		if scroll, let row = songService.selectedSong?.sheets.firstIndex(where: { $0.id == songService.selectedSheet?.id }), tableViewSheets.numberOfRows(inSection: 0) - 1 >= row {
-				self.tableViewSheets.scrollToRow(at: IndexPath(row: Int(row), section: 0), at: .middle, animated: true)
-		}
+        refreshCollectionViewListItems()
+        songCollectionView.reloadData()
 	}
 	
 	private func display(sheet: VSheet) {
@@ -293,9 +406,9 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 			subview.removeFromSuperview()
 		}
 		
-		let nextPreviousScaleFactor: CGFloat = sheetDisplayerNext.bounds.height / sheetDisplayer.bounds.height
+        let nextPreviousScaleFactor: CGFloat = getScaleFactor(width: sheetDisplayerNext.bounds.width)
 		
-		sheetDisplayer.addSubview(SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.selectedSong?.cluster, sheet: sheet, theme: songService.selectedTheme, scaleFactor: scaleFactor, toExternalDisplay: true))
+        sheetDisplayer.addSubview(SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.selectedSong?.cluster, sheet: sheet, theme: songService.selectedTheme, scaleFactor: getScaleFactor(width: sheetDisplayer.bounds.width), toExternalDisplay: true))
 		sheetDisplayer.isHidden = false
 		
 		if let sheetNext = songService.nextSheet(select: false) {
@@ -324,10 +437,17 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 		}
 		if let externalDisplayWindow = externalDisplayWindow {
 			let view = UIView(frame: externalDisplayWindow.frame)
-			view.backgroundColor = .black
+			view.backgroundColor = .blackColor
 			externalDisplayWindow.addSubview(view)
 		}
 	}
+    
+    private func getSheetSize() -> CGSize {
+        if view.bounds.height > view.bounds.width {
+            return getSizeWith(height: nil, width: songCollectionView.bounds.width)
+        }
+        return getSizeWith(height: songCollectionView.bounds.height, width: nil)
+    }
 	
 	@objc private func respondToSwipeGesture(_ sender: UISwipeGestureRecognizer, automatically: Bool = false) {
 		switch sender.direction {
@@ -385,13 +505,12 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 	@objc private func respondToSwipeGestureUpDown(_ sender: UISwipeGestureRecognizer) {
 		switch sender.direction {
 		case .up:
-			print("up")
 			if isMixerVisible { // SHOW MIXER
 				
 				// move sheets up
 				sheetDisplayerSwipeViewTop.constant = 0
 				moveUpDownSectionTopConstraint.constant = 0
-				mixerTopSuperViewConstraint.isActive = false
+				mixerBottomToTopSwipeViewConstraint.isActive = false
 				mixerTopStackViewConstraint.isActive = true
 				
 				
@@ -405,9 +524,7 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 					self.isAnimatingUpDown = false
 				})
 			}
-		case .down:
-			print("down")
-			
+		case .down:			
 			if !isMixerVisible { // SHOW MIXER
 
 				let mixerView = MixerView(frame: CGRect(x: 0, y: 0, width: mixerContainerView.bounds.width, height: mixerContainerView.bounds.height + 100))
@@ -417,7 +534,7 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 				// move sheets up
 				moveUpDownSectionTopConstraint.constant = sheetDisplaySwipeView.bounds.height + 100
 				sheetDisplayerSwipeViewTop.constant = -sheetDisplaySwipeView.bounds.height
-				mixerTopSuperViewConstraint.isActive = true
+				mixerBottomToTopSwipeViewConstraint.isActive = true
 				mixerTopStackViewConstraint.isActive = false
 				
 				
@@ -434,11 +551,6 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 			break
 		}
 	}
-
-	
-	@IBAction func clearButtonPressed(_ sender: UIBarButtonItem) {
-		
-	}
 	
 	@IBAction func addNewSongServicePressed(_ sender: UIBarButtonItem) {
 		if let nav = Storyboard.MainStoryboard.instantiateViewController(withIdentifier: "newSongServiceIphoneNav") as? UINavigationController, let vc = nav.topViewController  as? NewSongServiceIphoneController {
@@ -451,13 +563,15 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 	
 	
 	private func animateSheetsWith(_ direction : AnimationDirection, completion: @escaping () -> Void) {
+        let nextPreviousScaleFactor = getScaleFactor(width: sheetDisplayerNext.bounds.width)
+
 		switch direction {
 		case .left:
 
 			if let sheet = songService.selectedSheet, let nextSheet = songService.nextSheet(select: false) {
-				let currentSheetView = SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.selectedSong?.cluster, sheet: sheet, theme: songService.selectedTheme, scaleFactor: scaleFactor, toExternalDisplay: true)
+                let currentSheetView = SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.selectedSong?.cluster, sheet: sheet, theme: songService.selectedTheme, scaleFactor: getScaleFactor(width: sheetDisplayer.bounds.width), toExternalDisplay: true)
 				
-				let nextSheetView = SheetView.createWith(frame: sheetDisplayerNext.bounds, cluster: songService.getSongForNextSheet()?.cluster, sheet: nextSheet, theme: songService.nextTheme, scaleFactor: sheetDisplayerNext.bounds.height / sheetDisplayer.bounds.height)
+				let nextSheetView = SheetView.createWith(frame: sheetDisplayerNext.bounds, cluster: songService.getSongForNextSheet()?.cluster, sheet: nextSheet, theme: songService.nextTheme, scaleFactor: nextPreviousScaleFactor)
 				
 				let imageCurrentSheet = currentSheetView.asImage()
 				let currentImageView = UIImageView(frame: sheetDisplayer.frame)
@@ -495,9 +609,9 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 //				sheetDisplayerNext.isHidden = position == numberOfSheets ? true : false
 //				sheetDisplayerPrevious.isHidden = position == 0 ? true : false
 
-				let currentSheetView = SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.selectedSong?.cluster, sheet: sheet, theme: songService.selectedTheme, scaleFactor: scaleFactor,  toExternalDisplay: true)
+                let currentSheetView = SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.selectedSong?.cluster, sheet: sheet, theme: songService.selectedTheme, scaleFactor: getScaleFactor(width: sheetDisplayer.bounds.width),  toExternalDisplay: true)
 				
-				let previousSheetView = SheetView.createWith(frame: sheetDisplayerPrevious.bounds, cluster: songService.getSongForPreviousSheet()?.cluster, sheet: previousSheet, theme: songService.previousTheme, scaleFactor: sheetDisplayerNext.bounds.height / sheetDisplayer.bounds.height)
+				let previousSheetView = SheetView.createWith(frame: sheetDisplayerPrevious.bounds, cluster: songService.getSongForPreviousSheet()?.cluster, sheet: previousSheet, theme: songService.previousTheme, scaleFactor: nextPreviousScaleFactor)
 				
 				let imageCurrentSheet = currentSheetView.asImage()
 				let currentImageView = UIImageView(frame: sheetDisplayer.frame)
@@ -534,16 +648,14 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 		songService.selectedSheet = nil
 		songService.selectedSection = nil
 		
-		if songService.songs.count > 0 {
-			for cluster in songService.songs.compactMap({ $0.cluster }) {
-				CoreCluster.predicates.append("id", equals: cluster.id)
-			}
-			songService.songs = VCluster.list().compactMap { SongObject(cluster: $0) }
-		}
+        if songService.songs.count > 0 {
+            let clusters: [Cluster] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted, .skipRootDeleted])
+            let filteredClusters = clusters.filter({ cluster in songService.songs.contains(where: { song in song.cluster.id == cluster.id }) })
+            songService.songs = filteredClusters.map({ SongObject(cluster: VCluster(cluster: $0, context: moc)) })
+        }
 	}
 	
 	func externalDisplayDidChange(_ notification: Notification) {
-		scaleFactor = 1
 		updateSheetDisplayersRatios()
 		if let sheet = songService.selectedSheet {
 			display(sheet: sheet)
@@ -627,5 +739,118 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 	private func stopPlay() {
 		isPlaying = false
 	}
-	
+    
+    @objc private func rotated() {
+        if let constraint = sheetDisplayerWipeViewEqualHeightConstraint {
+            view.removeConstraint(constraint)
+        }
+        sheetDisplayerHeightConstraint.isActive = false
+        if UIDevice.current.orientation.isLandscape {
+            let heightConstraint = NSLayoutConstraint(item: sheetDisplaySwipeView!, attribute: .height, relatedBy: .equal, toItem: view!, attribute: .height, multiplier: 0.65, constant: 0)
+            sheetDisplayerWipeViewEqualHeightConstraint = heightConstraint
+            heightConstraint.isActive = true
+            view.addConstraint(heightConstraint)
+        } else if UIDevice.current.orientation.isPortrait {
+            let heightConstraint = NSLayoutConstraint(item: sheetDisplaySwipeView!, attribute: .height, relatedBy: .equal, toItem: view!, attribute: .height, multiplier: 0.3, constant: 0)
+            sheetDisplayerWipeViewEqualHeightConstraint = heightConstraint
+            heightConstraint.isActive = true
+            view.addConstraint(heightConstraint)
+        }
+        view.layoutIfNeeded()
+        externalDisplayDidChange(Notification(name: .dataBaseDidChange))
+        
+        let isHorizontal = view.bounds.height > view.bounds.width
+        
+        let layout = UICollectionViewFlowLayout()
+        layout.sectionHeadersPinToVisibleBounds = true
+        layout.scrollDirection = isHorizontal ? .vertical : .horizontal
+        layout.minimumInteritemSpacing = 10
+        layout.minimumLineSpacing = 10
+        songCollectionView.collectionViewLayout = layout
+        songsCollectionViewLeftConstraint.constant = isHorizontal ? 100 : 0
+        songsCollectionViewRightConstraint.constant = isHorizontal ? 100 : 0
+        songCollectionView.reloadData()
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        coordinator.animate(alongsideTransition: { (_) in
+            self.rotated()
+        }) { (_) in
+            self.songCollectionView.reloadData()
+        }
+    }
+        
+    @discardableResult
+    private func refreshCollectionViewListItems() -> InsertAction {
+        var allValues: [SongServiceListItems] = []
+        var insertAction = InsertAction(section: 0, items: 0, none: true)
+        
+        guard model?.clusters.count ?? 0 > 0 || model?.sectionedClusterOrComment.count ?? 0 > 0 else {
+            collectionViewItems = []
+            return insertAction
+        }
+        if let model = model, let songServiceSettings = model.songServiceSettings {
+            var clusterIndex = 0
+            for (sectionIndex, section) in songServiceSettings.sections.enumerated() {
+                // append cluster
+                for cluster in model.sectionedClusterOrComment[sectionIndex] {
+                    allValues.append(.sectionedCluster(section: section.title, cluster: cluster.cluster!))
+                    // append sheets
+                    if let selectedSong = songService.selectedSong, selectedSong.cluster.id == cluster.id {
+                        allValues += selectedSong.sheets.compactMap({ SongServiceListItems.sheet(vsheet: $0) })
+                        insertAction = InsertAction(section: clusterIndex, items: selectedSong.sheets.count, none: false)
+                    }
+                    clusterIndex += 1
+                }
+            }
+        } else if let model = model {
+            for (index, cluster) in model.clusters.enumerated() {
+                // append cluster
+                allValues.append(.sectionedCluster(section: nil, cluster: cluster.cluster!))
+                // append sheets
+                if let selectedSong = songService.selectedSong, selectedSong.cluster.id == cluster.id {
+                    allValues += selectedSong.sheets.compactMap({ SongServiceListItems.sheet(vsheet: $0) })
+                    insertAction = InsertAction(section: index, items: selectedSong.sheets.count, none: false)
+                }
+            }
+        }
+        collectionViewItems = allValues
+        return insertAction
+    }
+}
+
+extension SongServiceController: SongServiceDelegate {
+    
+    func countDown(value: Int) {
+        guard value > 0 else {
+            sheetDisplayer.subviews.compactMap({ $0 as? CountDownView }).forEach({ $0.removeFromSuperview() })
+            return
+        }
+        
+        if let countDownView = sheetDisplayer.subviews.compactMap({ $0 as? CountDownView }).first {
+            countDownView.countDownLabel.text = value.stringValue
+        } else {
+            let countDownView = CountDownView(frame: sheetDisplayer.bounds)
+            countDownView.countDownLabel.text = value.stringValue
+            sheetDisplayer.addSubview(countDownView)
+            sheetDisplayer.topAnchor.constraint(equalTo: countDownView.topAnchor).isActive =  true
+            sheetDisplayer.rightAnchor.constraint(equalTo: countDownView.rightAnchor).isActive =  true
+            sheetDisplayer.bottomAnchor.constraint(equalTo: countDownView.bottomAnchor).isActive =  true
+            sheetDisplayer.leftAnchor.constraint(equalTo: countDownView.leftAnchor).isActive =  true
+        }
+    }
+    
+    func swipeLeft() {
+        swipeAutomatically()
+    }
+    
+    func displaySheet(_ sheet: VSheet) {
+        display(sheet: sheet)
+    }
+    
+    func shutDownBeamer() {
+        shutDownDisplayer()
+    }
+    
 }

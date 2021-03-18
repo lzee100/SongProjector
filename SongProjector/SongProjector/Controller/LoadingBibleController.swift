@@ -31,12 +31,12 @@ class LoadingBibleController: UIViewController {
 	private func setup() {
 		
 		containerView.backgroundColor = themeWhiteBlackBackground
-		percentageLabel.textColor = themeWhiteBlackTextColor
+		percentageLabel.textColor = .blackColor
 		progressbar.tintColor = themeHighlighted
 		progressbar.progress = Float(0)
 		cancelButton.backgroundColor = themeWhiteBlackBackground
 		cancelButton.tintColor = themeHighlighted
-		cancelButton.setTitle(Text.Actions.cancel, for: .normal)
+		cancelButton.setTitle(AppText.Actions.cancel, for: .normal)
 		activityIndicator.startAnimating()
 	}
 
@@ -61,8 +61,8 @@ class LoadingBibleController: UIViewController {
 //		CoreVers.getEntities().forEach({ $0.delete(false) })
 //		CoreEntity.saveContext(fireNotification: false)
 
-		var hasNextBook = true
-		var hasNextChapter = true
+//		var hasNextBook = true
+//		var hasNextChapter = true
 		var bookNumber = 0
 		var chapterNumber: Int16 = 1
 		var versNumber: Int16 = 1
@@ -81,7 +81,7 @@ class LoadingBibleController: UIViewController {
 		// find book range
 		while let bookRange = text.range(of: "xxx"), !isCancelled {
 			
-			let book = CoreBook.createEntity()
+            let book: Book = DataFetcher().createEntity(moc: moc)
 			book.deleteDate = nil
 			book.name = BibleIndex.getBookFor(index: bookNumber)
 			book.title = book.name
@@ -97,7 +97,7 @@ class LoadingBibleController: UIViewController {
 			while let chapterRange = bookText.range(of: "hhh"), !isCancelled {
 				
 				// prepare chapter
-				let chapter = CoreChapter.createEntity()
+                let chapter: Chapter = DataFetcher().createEntity(moc: moc)
 				chapter.deleteDate = nil
 				chapter.number = chapterNumber
 				chapter.title = String(chapterNumber)
@@ -116,7 +116,7 @@ class LoadingBibleController: UIViewController {
 					let rangeVers = start..<range.lowerBound
 					let rangeRemove = start..<range.upperBound
 					
-					let vers = CoreVers.createEntity()
+                    let vers: Vers = DataFetcher().createEntity(moc: moc)
 					vers.deleteDate = nil
 					vers.number = versNumber
 					vers.title = String(versNumber)
@@ -141,7 +141,7 @@ class LoadingBibleController: UIViewController {
 					}
 				}
 				
-				let vers = CoreVers.createEntity()
+                let vers: Vers = DataFetcher().createEntity(moc: moc)
 				vers.deleteDate = nil
 				vers.number = versNumber
 				vers.title = String(versNumber)
@@ -176,9 +176,7 @@ class LoadingBibleController: UIViewController {
 //		CoreEntity.saveContext(fireNotification: false)
 //
 //		CoreChapter.predicates.append("hasBook.name", equals: "Genesis")
-//		print(CoreChapter.getEntities().count)
 //		CoreChapter.predicates.append("hasBook.name", equals: "Exodus")
-//		print(CoreChapter.getEntities().count)
 //
 	}
 	

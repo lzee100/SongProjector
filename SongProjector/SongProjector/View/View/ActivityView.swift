@@ -44,7 +44,7 @@ class ActivityView: UIView {
 		let view = ActivityView(frame: frame)
 		view.selectedTheme = theme
 		view.activity = activity
-		view.bulletView.backgroundColor = .black
+		view.bulletView.backgroundColor = .blackColor
 		view.scaleFactor = scaleFactor
 		view.update()
 		
@@ -62,9 +62,9 @@ class ActivityView: UIView {
 			dateTime += (date as Date).toString
 		}
 		if dateTime.isEmpty {
-			dateTime = Text.ActivitySheet.dayActivity
+			dateTime = AppText.ActivitySheet.dayActivity
 		}
-		let activityDescription = activity?.eventDescription ?? Text.ActivitySheet.descriptionNoActivities
+		let activityDescription = activity?.eventDescription ?? AppText.ActivitySheet.descriptionNoActivities
 		
 		var fontName = ""
 		if var attributes = selectedTheme?.getLyricsAttributes(scaleFactor ?? 1), let font = attributes[.font] as? UIFont {

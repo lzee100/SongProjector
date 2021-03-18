@@ -11,22 +11,7 @@ import CoreData
 
 class VOrganization: VEntity {
 	
-	
-	class func list(sortOn attributeName: String? = nil, ascending: Bool? = nil) -> [VOrganization] {
-		if let attributeName = attributeName, let ascending = ascending {
-			CoreOrganization.setSortDescriptor(attributeName: attributeName, ascending: ascending)
-		}
-		return CoreOrganization.getEntities().map({ VOrganization(organization: $0) })
-	}
-	
-	class func single(with id: Int64?) -> VOrganization? {
-		if let id = id, let organization = CoreOrganization.getEntitieWith(id: id) {
-			return VOrganization(organization: organization)
-		}
-		return nil
-	}
-	
-	var hasRoles: [VRole] = []
+    var hasRoles: [VRole] = []
 	var hasContractLedgers: [VContractLedger] = []
 	
 	
@@ -87,34 +72,28 @@ class VOrganization: VEntity {
 		}
 	}
 	
-	override func getPropertiesFrom(entity: Entity) {
-		super.getPropertiesFrom(entity: entity)
+    override func getPropertiesFrom(entity: Entity, context: NSManagedObjectContext) {
+        super.getPropertiesFrom(entity: entity, context: context)
 		if let organization = entity as? Organization {
-			hasRoles = (organization.hasRoles?.allObjects as? [Role] ?? []).map({ VRole(entity: $0) })
-			hasContractLedgers = (organization.hasContractLedgers?.allObjects as? [ContractLedger] ?? []).map({ VContractLedger(entity: $0) })
+            hasRoles = (organization.hasRoles?.allObjects as? [Role] ?? []).map({ VRole(entity: $0, context: context) })
+            hasContractLedgers = (organization.hasContractLedgers?.allObjects as? [ContractLedger] ?? []).map({ VContractLedger(entity: $0, context: context) })
 		}
 	}
 	
-	convenience init(organization: Organization) {
+	convenience init(organization: Organization, context: NSManagedObjectContext) {
 		self.init()
-		getPropertiesFrom(entity: organization)
+		getPropertiesFrom(entity: organization, context: context)
 	}
 	
-	override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-		
-		CoreOrganization.managedObjectContext = context
-		if let storedEntity = CoreOrganization.getEntitieWith(id: id) {
-			CoreOrganization.managedObjectContext = moc
-			setPropertiesTo(entity: storedEntity, context: context)
-			return storedEntity
-		} else {
-			CoreOrganization.managedObjectContext = context
-			let newEntity = CoreOrganization.createEntityNOTsave()
-			CoreOrganization.managedObjectContext = moc
-			setPropertiesTo(entity: newEntity, context: context)
-			return newEntity
-		}
+    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
+        if let entity: Organization = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
+            setPropertiesTo(entity: entity, context: context)
+            return entity
+        } else {
+            let entity: Organization = DataFetcher().createEntity(moc: context)
+            setPropertiesTo(entity: entity, context: context)
+            return entity
+        }
+    }
 
-	}
-	
 }

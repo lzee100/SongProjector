@@ -49,15 +49,20 @@ class MixerView: UIView {
 		let volumeView = MPVolumeView(frame: airplaySliderContainer.bounds)
 		airplaySliderContainer.addSubview(volumeView)
 	
-		pianoImageView.tintColor = themeHighlighted
-		guitarImageView.tintColor = themeHighlighted
-		bassGuitarImageView.tintColor = themeHighlighted
-		drumsImageView.tintColor = themeHighlighted
-		
-		pianoControl.value = 1
-		guitarControl.value = 1
-		bassGuitarControl.value = 1
-		drumsControl.value = 1
+        pianoImageView.tintColor = .blackColor
+		guitarImageView.tintColor = .blackColor
+		bassGuitarImageView.tintColor = .blackColor
+		drumsImageView.tintColor = .blackColor
+        
+        pianoControl.tintColor = .softBlueGreyBright
+        guitarControl.tintColor = .softBlueGreyBright
+        bassGuitarControl.tintColor = .softBlueGreyBright
+        drumsControl.tintColor = .softBlueGreyBright
+        
+        pianoControl.value = SoundPlayer.playerFor(instrumentType: .piano)?.volume ?? 1
+        guitarControl.value = SoundPlayer.playerFor(instrumentType: .guitar)?.volume ?? 1
+        bassGuitarControl.value = SoundPlayer.playerFor(instrumentType: .bassGuitar)?.volume ?? 1
+        drumsControl.value = SoundPlayer.playerFor(instrumentType: .drums)?.volume ?? 1
 		
 		pianoControl.addTarget(self, action: #selector(pianoSliderChanged), for: .valueChanged)
 		guitarControl.addTarget(self, action: #selector(guitarSliderChanged), for: .valueChanged)
@@ -67,7 +72,9 @@ class MixerView: UIView {
 	}
 	
 	@objc func pianoSliderChanged() {
-		SoundPlayer.playerFor(instrumentType: .piano)?.setVolume(pianoControl.value, fadeDuration: 0)
+        Queues.main.async {
+            SoundPlayer.playerFor(instrumentType: .piano)?.setVolume(self.pianoControl.value, fadeDuration: 0)
+        }
 	}
 	
 	@objc func guitarSliderChanged() {

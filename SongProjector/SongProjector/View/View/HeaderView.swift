@@ -14,8 +14,8 @@ class HeaderView: UIView {
 	@IBOutlet var headerView: UIView!
 	@IBOutlet var descriptionLabel: UILabel!
 	
-	static let basicSize = CGRect(x: 0, y: 0, width: UIApplication.shared.keyWindow!.bounds.width, height: 50)
-	
+    static let height: CGFloat = 50
+    
 	override init(frame: CGRect) {
 		super.init(frame: frame)
 		customInit()
@@ -31,7 +31,7 @@ class HeaderView: UIView {
 		addSubview(headerView)
 		headerView.frame = bounds
 		descriptionLabel.textColor = themeHighlighted
-		headerView.backgroundColor = isThemeLight ? UIColor(hex: "F0F0F2") : UIColor(hex: "101010")
+        headerView.backgroundColor = .grey1
 
 	}
 	

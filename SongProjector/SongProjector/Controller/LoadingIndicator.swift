@@ -10,7 +10,7 @@ import UIKit
 
 let Loader = LoadingIndicator()
 
-class LoadingIndicator{
+class LoadingIndicator {
 	
 	fileprivate var lastError : NSError?
 	
@@ -20,8 +20,9 @@ class LoadingIndicator{
 	
 	fileprivate var loader : LoadingViewController?
 	
-	fileprivate func createLoader() -> LoadingViewController?{
-		if let window = UIApplication.shared.keyWindow{
+	fileprivate func createLoader() -> LoadingViewController? {
+        
+        if let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) {
 			let loader = window.rootViewController?.storyboard?.instantiateViewController(withIdentifier: "") as? LoadingViewController
 			loader?.view?.frame = window.frame
 			if let view = loader?.view{

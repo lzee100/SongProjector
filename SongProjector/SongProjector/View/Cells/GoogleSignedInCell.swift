@@ -8,6 +8,7 @@
 
 import UIKit
 import GoogleSignIn
+import FirebaseAuth
 
 protocol GoogleSignedInCellDelegate {
 	func didSignedOut()
@@ -16,49 +17,50 @@ protocol GoogleSignedInCellDelegate {
 class GoogleSignedInCell: ChurchBeamCell {
 
 	static let identifier = "GoogleSignedInCell"
-	@IBOutlet var profilePictureImageView: UIImageView!
+	@IBOutlet var profilePictureImageView: ChurchBeamImageView!
 	@IBOutlet var usernameLabel: UILabel!
 	@IBOutlet var emailLabel: UILabel!
 	@IBOutlet var signOutContainerView: UIView!
-	
+    @IBOutlet var imageWidthConstraint: NSLayoutConstraint!
+    @IBOutlet var imageToUserNameConstraint: NSLayoutConstraint!
+    
 	let signInButton = GIDSignInButton()
 	var sender = UIViewController()
 	@IBOutlet var signOutButton: UIButton!
 	var delegate: GoogleSignedInCellDelegate?
 	static let preferredHeight : CGFloat = 150
 	
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        profilePictureImageView.cornerRadius = profilePictureImageView.bounds.height / 2
+        signOutContainerView.layer.cornerRadius = 6
+    }
+    
     override func awakeFromNib() {
         super.awakeFromNib()
-		signOutButton.setTitle(Text.Settings.googleSignOutButton, for: .normal)
+		signOutButton.setTitle(AppText.Settings.googleSignOutButton, for: .normal)
     }
 	
-	
-	
 	@objc func signOut() {
-		let userDefaults = UserDefaults.standard
-		userDefaults.removeObject(forKey: GoogleMail)
-		userDefaults.removeObject(forKey: GoogleIdToken)
-		userDefaults.removeObject(forKey: GoogleUsername)
 		signOutButton.removeFromSuperview()
 		signOutContainerView.addSubview(signInButton)
 		GIDSignIn.sharedInstance().signOut()
 	}
 	
 	func setup(delegate: GoogleSignedInCellDelegate, sender: UIViewController) {
-		let userDefaults = UserDefaults.standard
-		let email = userDefaults.object(forKey: GoogleMail) as? String
-		let name = userDefaults.object(forKey: GoogleUsername) as? String
-
-		if let user = GIDSignIn.sharedInstance()?.currentUser {
-			if user.profile.hasImage {
-				
-			} else {
-				// set constaint to 0
-			}
-			emailLabel.text = email
-			usernameLabel.text = name
-		}
-
+        if let user = Auth.auth().currentUser {
+            if let url = user.photoURL {
+                profilePictureImageView.url = user.photoURL
+                imageWidthConstraint.constant = 50
+                imageToUserNameConstraint.constant = 8
+            } else {
+                imageWidthConstraint.constant = 0
+                imageToUserNameConstraint.constant = 0
+            }
+            emailLabel.text = user.email
+            usernameLabel.text = user.displayName
+        }
+        
 		self.sender = sender
 		GIDSignIn.sharedInstance()?.presentingViewController = sender
 	}
@@ -67,8 +69,8 @@ class GoogleSignedInCell: ChurchBeamCell {
 	// MARK: Google Fetcher Delegates
 	
 	func loginDidFailWithError(message: String) {
-		let alert = UIAlertController(title: Text.Settings.errorTitleGoogleAuth, message: message, preferredStyle: .alert)
-		alert.addAction(UIAlertAction(title: Text.Actions.ok, style: .default, handler: nil))
+		let alert = UIAlertController(title: AppText.Settings.errorTitleGoogleAuth, message: message, preferredStyle: .alert)
+		alert.addAction(UIAlertAction(title: AppText.Actions.ok, style: .default, handler: nil))
 		sender.present(alert, animated: true)
 	}
 	
@@ -82,10 +84,7 @@ class GoogleSignedInCell: ChurchBeamCell {
 	
 	func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
 		if error == nil {
-			UserDefaults.standard.set(user.authentication.idToken, forKey: GoogleIdToken)
-			UserDefaults.standard.set(user.profile.email, forKey: GoogleMail)
-			UserDefaults.standard.set(user.profile.name + " " + user.profile.familyName, forKey: GoogleUsername)
-			GoogleActivityFetcher.fetch(true)
+            GoogleActivityFetcher.fetch(force: true)
 		}
 	}
 	
@@ -100,15 +99,60 @@ class GoogleSignedInCell: ChurchBeamCell {
 			viewController.dismiss(animated: true)
 		}
 	}
-
-
-
+    
 	@IBAction func didSelectSignOut(_ sender: UIButton) {
-		delegate?.didSignedOut()
-	}
+        do {
+            try Auth.auth().signOut()
+        } catch {
+            print(error)
+        }
+        GIDSignIn.sharedInstance()?.signOut()
+        NotificationCenter.default.post(name: .checkAuthentication, object: nil)
+    }
 	
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
     
+}
+
+
+class ChurchBeamImageView: UIImageView {
+    
+    
+    var url: URL? {
+        didSet {
+            update()
+        }
+    }
+    
+    var cornerRadius: CGFloat = 0
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        layer.cornerRadius = cornerRadius
+    }
+    
+    
+    private func update() {
+        guard let url = url else { return }
+        contentMode = .scaleAspectFill
+        
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            guard
+                let httpURLResponse = response as? HTTPURLResponse, httpURLResponse.statusCode == 200,
+                let mimeType = response?.mimeType, mimeType.hasPrefix("image"),
+                let data = data, error == nil,
+                let image = UIImage(data: data)
+                else {
+                
+                return
+            }
+            DispatchQueue.main.async() { [weak self] in
+                self?.image = image
+            }
+        }.resume()
+        
+        
+    }
 }

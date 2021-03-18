@@ -24,35 +24,38 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	
 	@IBOutlet var collectionViewThemes: UICollectionView!
 	@IBOutlet var collectionView: UICollectionView!
-	
-	@IBOutlet weak var addLyricsButton: UIButton?
-	@IBOutlet weak var addSheetButton: UIButton?
-	
-	var isNew = true
+    @IBOutlet var themesBackgroundView: UIView!
+    
+    @IBOutlet var tagsCollectionViewLeftConstraint: NSLayoutConstraint!
+    @IBOutlet var tagCollectionViewRightConstraint: NSLayoutConstraint!
+    @IBOutlet var tagsCollectionViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet var songsTableViewLeftConstraint: NSLayoutConstraint!
+    @IBOutlet var songTableViewRightConstraint: NSLayoutConstraint!
+    @IBOutlet var songsTableViewBottomConstraint: NSLayoutConstraint!
+    
+    var isNew = true
 	var themes: [VTheme] = []
 	var selectedTheme: VTheme? {
 		didSet {
-			cluster?.themeId = selectedTheme?.id ?? 0
-			if cluster?.isTypeSong ?? false {
-				updateWithAnimation()
-			}
+            if let themeId = selectedTheme?.id {
+                cluster?.themeId = themeId
+            }
+            if let cluster = cluster, (cluster.isTypeSong || cluster.hasBibleVerses) {
+                updateWithAnimation()
+            } else {
+                update()
+            }
 		}
 	}
 	var isEdited = false
 	var delegate: CustomSheetsControllerDelegate?
-	
+    
 	var cluster: VCluster? {
 		didSet {
 			if let cluster = cluster {
 				sheets = cluster.hasSheets
 			}
 		}
-	}
-	override var requesterId: String {
-		return "CustomSheetsController"
-	}
-	override var requesters: [RequesterType] {
-		return [ClusterSubmitter]
 	}
 	var sheets: [VSheet] = [] {
 		didSet {
@@ -62,19 +65,31 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 			}
 		}
 	}
-	var newSheetId: Int64 {
-		let sheets = self.sheets.sorted(by: { $0.id < $1.id })
-		return (sheets.last?.id ?? 0) + 1
-	}
-	
-	
+	var isBibleStudySheetGenerator = false
+    
+    
 	// MARK: Private properties
-	private var sheetSize = CGSize(width: 250 * externalDisplayWindowRatioHeightWidth, height: 250)
+    private var itemSize = CGSize.zero
 	private var longPressGesture: UILongPressGestureRecognizer!
 	
 	
 	
 	// MARK - UIView functions
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
+        let isIpad = UIDevice.current.userInterfaceIdiom == .pad
+        view.layoutIfNeeded()
+        collectionView.layoutIfNeeded()
+        itemSize = isIpad ? getSizeWith(height: collectionView.bounds.height, width: nil) : getSizeWith(height: nil, width: collectionView.bounds.width)
+        layout.scrollDirection = isIpad  ? .horizontal : .vertical
+        layout.itemSize = itemSize
+        layout.minimumInteritemSpacing = 0
+        layout.minimumLineSpacing = 30
+        collectionView.collectionViewLayout = layout
+        collectionView.reloadData()
+    }
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -85,23 +100,42 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 		super.viewWillAppear(animated)
 		update()
 	}
-	
-	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-		
-		if let controller = segue.destination.unwrap() as? SaveNewSongTitleTimeVC {
-			controller.didSave = didSaveSongWith
-			controller.cluster = cluster
-			controller.selectedTheme = selectedTheme
-		}
-		
-		if let controller = segue.destination.unwrap() as? LyricsViewController {
-			controller.text = getTextFromSheets()
-		}
-		
-		if let controller = segue.destination.unwrap() as? SheetPickerMenuController {
-			controller.delegate = self
-		}
-	}
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let controller = segue.destination.unwrap() as? SaveNewSongTitleTimeVC {
+            controller.didSave = didSaveSongWith
+            controller.cluster = cluster
+            controller.selectedTheme = selectedTheme
+        }
+        
+        if let controller = segue.destination.unwrap() as? SheetPickerMenuController {
+            controller.delegate = self
+            let isSong = (cluster?.isTypeSong ?? false) && getTextFromSheets().length > 0
+            let isCustom = sheets.contains(where: { $0.hasTheme?.isHidden == true })
+            controller.mode = isSong ? .song : isCustom ? .custom : .none
+
+        }
+        
+        if segue.identifier == "BibleStudyIphoneGeneratorSegue" {
+            let controller = segue.destination as! BibleStudyGeneratorIphoneController
+            controller.selectedTheme = selectedTheme
+        }
+        if segue.identifier == "BibleStudyGeneratorSegue" {
+            let nav = segue.destination as! UINavigationController
+            let controller = nav.topViewController as! BibleStudyGeneratorController
+            controller.selectedTheme = selectedTheme
+        }
+        
+        if let vc = segue.destination.unwrap() as? LyricsViewController {
+            vc.isBibleTextGenerator = isBibleStudySheetGenerator
+            if isBibleStudySheetGenerator {
+                vc.text = getBibleStudyTextFromSheets()
+            } else {
+                vc.text = getTextFromSheets()
+            }
+            vc.delegate = self
+        }
+    }
 	
 	
 	
@@ -121,16 +155,19 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 			let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.themeCellCollection, for: indexPath) as! ThemeCellCollection
 			
 			cell.setup(themeName: themes[indexPath.row].title ?? "")
-			cell.isSelectedCell = themes[indexPath.row] == selectedTheme
+            cell.isSelectedCell = themes[indexPath.row].id == selectedTheme?.id
 			return cell
 			
 		} else {
+            let isBibleStudy = (sheets[indexPath.row] as? VSheetTitleContent)?.isBibleVers ?? false
 			let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.sheetCollectionCell, for: indexPath) as! SheetCollectionCell
 			cell.setupWith(
 				cluster: cluster,
 				sheet: sheets[indexPath.row],
-				theme: sheets[indexPath.row].hasTheme ?? cluster?.hasTheme,
-				didDeleteSheet: didDeleteSheet(sheet:))
+				theme: sheets[indexPath.row].hasTheme ?? selectedTheme,
+                didDeleteSheet: isBibleStudy ? nil : didDeleteSheet(sheet:),
+                isDeleteEnabled: !isBibleStudy,
+                scaleFactor: getScaleFactor(width: itemSize.width))
 			return cell
 		}
 		
@@ -142,27 +179,33 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 			let width = (themes[indexPath.row].title ?? "").width(withConstrainedHeight: 22, font: font) + 50
 			return CGSize(width: width, height: 50)
 		} else {
-			return UIDevice.current.userInterfaceIdiom == .pad ? getSizeWith(height: collectionView.frame.height) : getSizeWith(height: nil, width: collectionView.frame.width)
+			return itemSize
 		}
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		if collectionView == collectionViewThemes {
-			selectedTheme = selectedTheme == themes[indexPath.row] ? nil : themes[indexPath.row]
-			update()
+            selectedTheme = selectedTheme?.id == themes[indexPath.row].id ? nil : themes[indexPath.row]
 		} else {
-			if cluster?.isTypeSong ?? false {
-				performSegue(withIdentifier: "ChangeLyricsSegue", sender: self)
-				return
-			}
-			let sheet = sheets[indexPath.row]
-			let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
-			controller.modificationMode = .editCustomSheet
-			controller.sheet = sheet
-			controller.theme = sheet.hasTheme
-			controller.delegate = self
-			let nav = UINavigationController(rootViewController: controller)
-			present(nav, animated: true)
+            Queues.main.async {
+                let isBibleStudyVersion = self.sheets.compactMap({ $0 as? VSheetTitleContent }).contains(where: { $0.isBibleVers })
+                if self.cluster?.isTypeSong ?? false {
+                    self.isBibleStudySheetGenerator = self.sheets.compactMap({ $0 as? VSheetTitleContent }).contains(where: { $0.isBibleVers })
+                    self.performSegue(withIdentifier: "ChangeLyricsSegue", sender: self)
+                    return
+                } else if isBibleStudyVersion {
+                    self.checkAndShowBibleStudyController()
+                } else {
+                    let sheet = self.sheets[indexPath.row]
+                    let controller = self.storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
+                    controller.modificationMode = .editCustomSheet
+                    controller.sheet = sheet
+                    controller.theme = sheet.hasTheme
+                    controller.delegate = self
+                    let nav = UINavigationController(rootViewController: controller)
+                    self.present(nav, animated: true)
+                }
+            }
 		}
 	}
 	
@@ -182,21 +225,18 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	// MARK: - Delegate Functions
 	
 	func didCreate(sheet: VSheet) {
-		if sheet.id == 0 {
-			sheet.id = newSheetId
-		}
 		if sheets.first(where: {  $0.id == sheet.id }) == nil {
 			sheets.append(sheet)
 			cluster?.hasSheets = sheets.sorted(by: { $0.position < $1.position })
 		}
 		
 		isEdited = true
-		checkAddButton()
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
 			if let index = self.sheets.firstIndex(of: sheet) {
 				self.collectionView.insertItems(at: [IndexPath(row: index, section: 0)])
 			}
 		}
+        setRightBarButtonItem()
 	}
 	
 	func didCloseNewOrEditIphoneController() {
@@ -204,23 +244,52 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 		delegate?.didCloseCustomSheet()
 	}
 	
-	func didPressDone(text: String) {
-		buildSheets(fromText: text)
-		checkAddButton()
+    func didPressDone(text: String, isCompleted: Bool) {
+        guard !(cluster?.hasRemoteMusic ?? false) else {
+            
+            buildSheets(fromText: text) { (numberOfSheets) in
+                // you cannot change the number of sheets on a universal song, these hase display time set on every sheet
+                if numberOfSheets != self.sheets.count {
+                    let controller = UIAlertController(title: AppText.CustomSheets.universalSongEditErrorTitle, message: AppText.CustomSheets.universalSongEditErrorMessage, preferredStyle: .alert)
+                    controller.addAction(UIAlertAction(title: AppText.Actions.ok, style: .default))
+                    self.present(controller, animated: true)
+                } else {
+                    
+                    // update sheets, but set the original times again
+                    let times = self.sheets.compactMap({ $0.time })
+                    self.buildSheets(fromText: text, onlyCount: nil)
+                    for (index, sheet) in self.sheets.enumerated() {
+                        sheet.time = times[index]
+                    }
+                    if let cluster = self.cluster {
+                        for (index, sheet) in cluster.hasSheets.enumerated() {
+                            sheet.time = times[index]
+                        }
+                    }
+                }
+            }
+            return
+        }
+        collectionView.isHidden = true
+        if isCompleted {
+            buildSheets(fromText: text, onlyCount: nil)
+        }
 	}
 	
 	
 	
 	// MARK: - Submit Observer Functions
 	
-	override func handleRequestFinish(requesterId: String, result: AnyObject?) {
+	override func handleRequestFinish(requesterId: String, result: Any?) {
 		Queues.main.async {
+            NotificationCenter.default.post(name: .dataBaseDidChange, object: nil)
 			self.delegate?.didCloseCustomSheet()
+            self.dismiss(animated: true)
 		}
 	}
 	
-	
-	
+    
+    
 	// MARK: - Functions
 	
 	@objc func handleLongGesture(gesture: UILongPressGestureRecognizer) {
@@ -248,13 +317,19 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 		
 		if let index = sheets.firstIndex(of: sheet) {
 			sheets.remove(at: index)
+            if let index = cluster?.hasSheets.firstIndex(entity: sheet) {
+                let deletedSheetImage = (cluster?.hasSheets[index] as? VSheetPastors)?.imagePathAWS ?? (cluster?.hasSheets[index] as? VSheetTitleImage)?.imagePathAWS
+                let deletedThemeImage = cluster?.hasSheets[index].hasTheme?.imagePathAWS
+                cluster?.deletedSheetsImageURLs.append(contentsOf: [deletedSheetImage, deletedThemeImage].compactMap({ $0 }))
+                cluster?.hasSheets.remove(at: index)
+            }
 			collectionView.deleteItems(at: [IndexPath(row: index, section: 0)])
 		}
 		
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
 			self.collectionView.reloadData()
 		}
-		checkAddButton()
+        setRightBarButtonItem()
 	}
 	
 	func didSaveSongWith() {
@@ -262,8 +337,24 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 			cluster?.themeId = themeId
 		}
 		if let cluster = cluster {
-			let method: RequestMethod = cluster.id == 0 ? .post : .put
-			ClusterSubmitter.submit([cluster], requestMethod: method)
+            let method: RequestMethod = cluster.updatedAt == nil ? .post : .put
+            if uploadSecret == nil {
+                if cluster.hasSheets.filter({ $0.hasTheme?.tempSelectedImage != nil }).count > 0 {
+                    showProgress(requester: ClusterSubmitter)
+                } else {
+                    showLoader()
+                    ClusterSubmitter.addObserver(self)
+                }
+                ClusterSubmitter.submit([cluster], requestMethod: method)
+            } else {
+                if cluster.hasSheets.filter({ $0.hasTheme?.tempSelectedImage != nil }).count > 0 {
+                    showProgress(requester: UniversalClusterSubmitter)
+                } else {
+                    UniversalClusterSubmitter.addObserver(self)
+                    UniversalClusterSubmitter.dontUploadFiles = true
+                }
+                UniversalClusterSubmitter.submit([cluster], requestMethod: method)
+            }
 		} else {
 			Queues.main.async {
 				self.dismiss(animated: true)
@@ -271,74 +362,73 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 		}
 	}
 	
-	
+    
 	
 	// MARK: - Private functions
 	
 	private func setup() {
 		
-		selectedTheme = cluster?.hasTheme
-		if cluster == nil {
-			cluster = VCluster()
-		}
-
-		save.title = Text.Actions.save
-		cancel.title = Text.Actions.cancel
-		addSheetButton?.backgroundColor = themeHighlighted
-		addSheetButton?.setTitleColor(themeWhiteBlackTextColor, for: .normal)
-		addSheetButton?.layer.cornerRadius = 5
-		addLyricsButton?.backgroundColor = themeHighlighted
-		addLyricsButton?.setTitleColor(themeWhiteBlackTextColor, for: .normal)
-		addLyricsButton?.layer.cornerRadius = 5
-		
-		navigationController?.title = Text.CustomSheets.title
-		title = Text.CustomSheets.title
-		view.backgroundColor = themeWhiteBlackBackground
-		
+        save.title = AppText.Actions.save
+		cancel.title = AppText.Actions.cancel
+        cancel.tintColor = .orange
+        save.tintColor = .orange
+        themesBackgroundView.backgroundColor = .whiteColor
+        
+		navigationController?.title = AppText.CustomSheets.title
+		title = AppText.CustomSheets.title
+        
 		hideKeyboardWhenTappedAround()
 		
 		longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.handleLongGesture(gesture:)))
 		longPressGesture.minimumPressDuration = 1
 		collectionView.addGestureRecognizer(longPressGesture)
 		
-		collectionViewThemes.register(UINib(nibName: Cells.themeCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.themeCellCollection)
-		
-		CoreTheme.predicates.append("isHidden", notEquals: true)
-		themes = VTheme.list()
-		
-		let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
-		layout.scrollDirection = (UIDevice.current.userInterfaceIdiom == .pad) ? .horizontal : .vertical
-		layout.itemSize = sheetSize
-		layout.minimumInteritemSpacing = 0
-		layout.minimumLineSpacing = 30
-		collectionView.collectionViewLayout = layout
-		collectionView.register(UINib(nibName: SheetCollectionCell.identitier, bundle: nil), forCellWithReuseIdentifier: SheetCollectionCell.identitier)
-		
-		update()
+        collectionViewThemes.register(cell: Cells.themeCellCollection)
+        collectionView.register(cell: SheetCollectionCell.identitier)
+        var bottomEdge: CGFloat = 20
+        if #available(iOS 11.0, *) {
+            let window = UIApplication.shared.windows[0]
+            bottomEdge += window.safeAreaInsets.bottom
+        }
+        collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: bottomEdge, right: 0)
+        var predicates: [NSPredicate] = [.skipDeleted]
+        predicates.append("isHidden", notEquals: true)
+        let checkthemes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: predicates)
+        self.themes = checkthemes.map({ VTheme(theme: $0, context: moc) })
+        
+        if let cluster = cluster {
+            selectedTheme = cluster.hasTheme(moc: moc)
+        } else {
+            cluster = VCluster()
+        }
+        
+        updateBorderConstraints()
+        setRightBarButtonItem()
 	}
 	
-	private func update() {
+	override func update() {
 		removeRedBorder()
-		checkAddButton()
 		collectionViewThemes.reloadData()
 		collectionView.reloadData()
 	}
-	
-	private func checkAddButton() {
-		let isSong = (cluster?.isTypeSong ?? false) && getTextFromSheets().length > 0
-		
-		edit?.isEnabled = !isSong
-		edit?.tintColor = isSong ? .clear : themeHighlighted
-
-		if !isNew || isEdited {
-			if sheets.contains(where: { $0.hasTheme?.isHidden == true }) {
-				addLyricsButton?.removeFromSuperview()
-			} else {
-				addSheetButton?.removeFromSuperview()
-			}
-		}
-	}
-	
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        preferredContentSize = CGSize(width: UIScreen.main.bounds.width * 0.95, height: 450)
+        updateBorderConstraints()
+    }
+    
+    private func updateBorderConstraints() {
+        let isIpad = UIDevice.current.userInterfaceIdiom == .pad
+        let padding: CGFloat = isIpad ? 40 : 10
+        tagsCollectionViewHeightConstraint.constant = isIpad ? 60 : 50
+        tagsCollectionViewLeftConstraint.constant = padding
+        tagCollectionViewRightConstraint.constant = padding
+        songTableViewRightConstraint.constant = padding
+        songsTableViewLeftConstraint.constant = padding
+        songsTableViewBottomConstraint.constant = isIpad ? 40 : 0
+    }
+    		
 	private func hasThemeSelected(_ hasTheme: Bool) {
 		if hasTheme {
 			collectionViewThemes.layer.borderColor = nil
@@ -351,15 +441,22 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 		}
 	}
 	
-	private func buildSheets(fromText: String) {
-		if cluster == nil {
+    private func buildSheets(fromText: String, onlyCount: ((Int) -> Void)?) {
+		if cluster == nil, onlyCount == nil {
 			cluster = VCluster()
 		}
 		
 		cluster?.deleteDate = nil
-		if let themeId = selectedTheme?.id {
+		if let themeId = selectedTheme?.id, onlyCount == nil {
 			cluster?.themeId = themeId
 		}
+        
+        guard !isBibleStudySheetGenerator else {
+            buildBibleSheets(fromText: fromText)
+            return
+        }
+        
+        
 		var contentToDevide = fromText + "\n\n"
 		
 		// get title
@@ -367,7 +464,9 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 			let start = contentToDevide.index(contentToDevide.startIndex, offsetBy: 0)
 			let rangeSheet = start..<range.lowerBound
 			let rangeRemove = start..<range.upperBound
-			cluster?.title = String(contentToDevide[rangeSheet])
+            if onlyCount == nil {
+                cluster?.title = String(contentToDevide[rangeSheet])
+            }
 			contentToDevide.removeSubrange(rangeRemove)
 		}
 		
@@ -382,7 +481,7 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 			let rangeRemove = start..<range.upperBound
 			
 			let sheetLyrics = String(contentToDevide[rangeSheet])
-			var sheetTitle: String = Text.NewSong.NoTitleForSheet
+			var sheetTitle: String = AppText.NewSong.NoTitleForSheet
 			
 			// get title
 			if let rangeTitle = contentToDevide.range(of: "\n") {
@@ -392,7 +491,7 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 			}
 			
 			let newSheet = VSheetTitleContent()
-			newSheet.id = Int64(exactly: NSNumber(value: position + 1)) ?? 0
+            newSheet.id = UUID().uuidString
 			newSheet.title = sheetTitle
 			newSheet.content = sheetLyrics
 			newSheet.position = position
@@ -402,6 +501,11 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 			contentToDevide.removeSubrange(rangeRemove)
 			position += 1
 		}
+        
+        guard onlyCount == nil else {
+            onlyCount?(newSheets.count)
+            return
+        }
 		
 		newSheets.sort{ $0.position < $1.position }
 		
@@ -415,13 +519,94 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 			}
 		}
 		sheets = newSheets
+        cluster?.hasSheets = newSheets
 		isEdited = true
 		updateWithAnimation()
+        setRightBarButtonItem()
 	}
-	
+    
+    private func buildBibleSheets(fromText: String) {
+        
+        var position = 0
+        var newSheets: [VSheet] = []
+        // get sheets
+        
+        let devided = fromText.components(separatedBy: "\n\n")
+        let allTitles = devided.compactMap({ $0.split(separator: "\n").first }).compactMap({ String($0) })
+        let onlyScriptures: [String] = devided.compactMap({
+            guard $0.count > 1 else { return nil }
+            var splitOnReturns = $0.split(separator: "\n")
+            splitOnReturns.removeFirst()
+            return splitOnReturns.joined(separator: "\n")
+        })
+        
+        for (index, title) in allTitles.enumerated() {
+            let sheets = getSheetsFor(text: onlyScriptures[index], position: &position, title: title)
+            newSheets.append(contentsOf: sheets)
+            position += 1
+        }
+        
+        newSheets.sort{ $0.position < $1.position }
+        
+        if let sheets = newSheets as? [VSheetTitleContent] {
+            var tempNewSheets: [VSheetTitleContent] = []
+            for tempSheet in sheets {
+                let sheet = VSheetTitleContent()
+                sheet.title = tempSheet.title
+                sheet.content = tempSheet.content
+                sheet.position = tempSheet.position
+                sheet.isBibleVers = true
+                tempNewSheets.append(sheet)
+            }
+            newSheets = tempNewSheets
+        }
+        sheets = newSheets
+        cluster?.hasSheets = newSheets
+        isEdited = true
+        updateWithAnimation()
+        isBibleStudySheetGenerator = false
+        setRightBarButtonItem()
+    }
+    
+    private func setRightBarButtonItem() {
+        let isTypeSong = !sheets.contains(where: { $0.hasTheme?.isHidden == true  }) && sheets.count > 0 && !sheets.compactMap({ $0 as? VSheetTitleContent }).contains(where: { $0.isBibleVers })
+        if isTypeSong {
+            self.isBibleStudySheetGenerator = self.sheets.compactMap({ $0 as? VSheetTitleContent }).contains(where: { $0.isBibleVers })
+            let editButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(showLyricsController))
+            editButton.tintColor = themeHighlighted
+            navigationItem.rightBarButtonItem = editButton
+        } else {
+            let showLyricsOption = !self.sheets.contains(where: { $0.hasTheme != nil || (($0 as? VSheetTitleContent)?.isBibleVers ?? false) })
+            let editButton = UIBarButtonItem(systemItem: .add, primaryAction: nil, menu: SheetTypeMenu.createMenu(delegate: self, showLyricsOption: showLyricsOption, checkCustomSheets: {
+                self.checkAndShowBibleStudyController()
+            }, hasThemeSelected: hasThemeSelected))
+            editButton.tintColor = themeHighlighted
+            navigationItem.rightBarButtonItem = editButton
+        }
+        
+    }
+    
+    @objc private func showLyricsController() {
+        self.performSegue(withIdentifier: "ChangeLyricsSegue", sender: self)
+    }
+    
+    private func checkAndShowBibleStudyController() {
+        if self.sheets.filter({ $0.isNotLyricsAndNotBibleVers }).count > 0 {
+            // show warning deleting those custom sheets
+            let alert = UIAlertController(title: nil, message: AppText.CustomSheets.errorLoseOtherSheets, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: AppText.Actions.edit, style: .destructive, handler: { _ in
+                self.showBibleStudyInputController()
+            }))
+            alert.addAction(UIAlertAction(title: AppText.Actions.cancel, style: .cancel))
+            self.present(alert, animated: true)
+        } else {
+            self.showBibleStudyInputController()
+        }
+    }
+    	
 	private func getTextFromSheets() -> String {
 		if let sheets = sheets as? [VSheetTitleContent], sheets.count != 0 {
-			var totalString = (cluster?.title ?? "") + "\n\n"
+            var totalString = isBibleStudySheetGenerator ? "" : (cluster?.title ?? "") + "\n\n"
 			let tempSheets:[VSheetTitleContent] = sheets.count > 0 ? sheets : cluster?.hasSheets as? [VSheetTitleContent] ?? []
 			for (index, sheet) in tempSheets.enumerated() {
 				totalString += sheet.content ?? ""
@@ -433,6 +618,87 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 		}
 		return ""
 	}
+    
+    private func getBibleStudyTextFromSheets() -> String {
+        var titleContentSheets = sheets.compactMap({ $0 as? VSheetTitleContent })
+        titleContentSheets = titleContentSheets.filter({ $0.hasTheme == nil })
+        
+        var totalString = ""
+        let titles = titleContentSheets.compactMap({ $0.title }).unique
+        
+        for title in titles {
+            
+            var fullContent = titleContentSheets.filter({ $0.title == title }).compactMap({ $0.content }).joined(separator: " ")
+            
+            fullContent = fullContent.replacingOccurrences(of: "\n\(title)", with: "")
+            var addSpace = false
+            if titles.last != title {
+                addSpace = true
+            }
+            totalString += fullContent
+            totalString += addSpace ? "\n\n" : ""
+        }
+        return totalString
+    }
+    
+    private func getSheetsFor(text: String, position: inout Int, title: String) -> [VSheet] {
+        
+        guard let selectedTheme = selectedTheme else {
+            return []
+        }
+        
+        var textWithoutTitle = text
+        if let range = text.range(of: "\n" + title) {
+            textWithoutTitle.removeSubrange(range)
+        }
+        let sheetHeight = UIDevice.current.userInterfaceIdiom == .pad ? getSizeWith(height: collectionView.frame.height).height : getSizeWith(height: nil, width: collectionView.frame.width).height
+        let topBottomMargin: CGFloat = (40 + 10)
+        let textViewHeight = sheetHeight - topBottomMargin
+        var words = textWithoutTitle.words
+        var currentSheetText: [String] = []
+        var sheetTexts: [String ] = []
+        var sheets: [VSheetTitleContent] = []
+        
+        let width: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? getSizeWith(height: collectionView.frame.height).width : getSizeWith(height: nil, width: collectionView.frame.width).width
+        let scaleFactor = getScaleFactor(width: width)
+        let attributes = selectedTheme.getLyricsAttributes(scaleFactor)
+        let font = (attributes[.font] as? UIFont) ?? UIFont.normal
+        
+        var isLessThanHeightTextView: Bool {
+            let nextSheetText = (currentSheetText + [String(words.first ?? "")] + ["\n" + title]).joined(separator: " ")
+            return nextSheetText.height(withConstrainedWidth: width, font: font) < textViewHeight
+        }
+        
+        repeat {
+            
+            repeat {
+                if let word = words.first {
+                    currentSheetText.append(String(word))
+                    words.removeFirst()
+                }
+            } while isLessThanHeightTextView && words.count > 0
+            
+            if sheetTexts.count == 0 {
+                sheetTexts.append(title + "\n" + currentSheetText.joined(separator: " "))
+            } else {
+                sheetTexts.append(currentSheetText.joined(separator: " ") + "\n" + title)
+            }
+            currentSheetText = []
+            
+        } while words.count > 0
+        
+        for sheetText in sheetTexts {
+            let newSheet = VSheetTitleContent()
+            newSheet.id = UUID().uuidString
+            newSheet.title = title
+            newSheet.content = sheetText
+            newSheet.position = position
+            sheets.append(newSheet)
+            position += 1
+        }
+        
+        return sheets
+    }
 	
 	private func animate(cell: UICollectionViewCell) {
 		if let cell = cell as? SheetCollectionCell {
@@ -444,25 +710,54 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 			cell.layer.add(transformAnim, forKey: "transform")
 		}
 	}
-	
+    
+    var timer: Timer?
+	var cellIndex = 0
 	private func updateWithAnimation() {
-		self.collectionView.alpha = 0
-		UIView.animate(withDuration: 0.3, animations: {
-		}) { _ in
-			self.update()
-			self.collectionView.layer.setAffineTransform(CGAffineTransform(translationX: 1, y: -6))
-			UIView.animate(withDuration: 1, animations: {
-				self.collectionView.alpha = 1
-				self.collectionView.layer.setAffineTransform(CGAffineTransform.identity)
-			})
-		}
+        update()
+        view.layoutIfNeeded()
+        timer?.invalidate()
+        cellIndex = 0
+        timer = nil
+        let cells = collectionView.visibleCells
+
+        for cell in collectionView.visibleCells {
+            cell.transform = CGAffineTransform(translationX: 0, y: view.bounds.height + cell.frame.minY)
+        }
+        collectionView.isHidden = false
+        timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(animateCell), userInfo: cells, repeats: true)
 	}
+    
+    @objc private func animateCell(_ timer: Timer) {
+        guard let cells = timer.userInfo as? [UICollectionViewCell], cells.count > 0 else { return }
+
+        UIView.animate(withDuration: 0.7, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 1, options: .curveEaseOut) {
+            cells[self.cellIndex].transform = .identity
+        } completion: { [weak self] _ in
+            guard let _self = self else { return }
+            if _self.cellIndex + 1 == _self.collectionView.visibleCells.count {
+                _self.timer?.invalidate()
+                _self.cellIndex = 0
+                _self.timer = nil
+            }
+        }
+        
+        if cellIndex + 1 < cells.count {
+            cellIndex += 1
+        }
+        
+    }
+    
+    private func showBibleStudyInputController() {
+        self.isBibleStudySheetGenerator = true
+        Queues.main.async {
+            self.performSegue(withIdentifier: "ChangeLyricsSegue", sender: self)
+        }
+    }
 	
+    @discardableResult
 	private func hasThemeSelected() -> Bool {
-		let isNormaUser = UserDefaults.standard.object(forKey: secretKey) == nil
-		
-		// normal user and normal theme or universal user and universal theme
-		if let selectedTheme = selectedTheme, (isNormaUser && !selectedTheme.isUniversal) || !isNormaUser && selectedTheme.isUniversal {
+		if selectedTheme != nil {
 			removeRedBorder()
 			return true
 		} else {
@@ -470,6 +765,7 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 			collectionViewThemes.layer.borderWidth = 2
 			collectionViewThemes.layer.cornerRadius = 5
 			collectionViewThemes.shake()
+            show(message: AppText.CustomSheets.errorSelectTheme)
 			return false
 		}
 	}
@@ -479,88 +775,27 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 		collectionViewThemes.layer.borderWidth = 0
 		collectionViewThemes.layer.cornerRadius = 0
 	}
-
+    
+    private func themeSelected() -> Bool {
+        return selectedTheme != nil
+    }
 	
+    
+    
 	// MARK: - IBAction functions
 	
 	@IBAction func cancel(_ sender: UIBarButtonItem) {
+        cluster?.deletedSheetsImageURLs = []
 		presentingViewController?.viewWillAppear(false)
 		dismiss(animated: true)
 	}
-	
-	@IBAction func savedPressed(_ sender: UIBarButtonItem) {
-		if hasThemeSelected() {
-			performSegue(withIdentifier: "saveNewSongSegue", sender: self)
-		}
-	}
-	
+    
 	@IBAction func saveIphonePressed(_ sender: UIBarButtonItem) {
 		if hasThemeSelected() {
 			performSegue(withIdentifier: "saveNewSongSegue", sender: self)
 		}
 	}
-	
-	@IBAction func editPressed(_ sender: UIBarButtonItem) {
-		guard let controller = storyboard?.instantiateViewController(withIdentifier: "SheetPickerMenuController") as? SheetPickerMenuController else {
-			return
-		}
-		
-		let isSong = (cluster?.isTypeSong ?? false) && getTextFromSheets().length > 0
-		let isCustom = sheets.contains(where: { $0.hasTheme?.isHidden == true })
-
-		controller.didCreateSheet = didCreate(sheet:)
-		controller.selectedTheme = selectedTheme
-		controller.delegate = self
-		controller.mode = isSong ? .song : isCustom ? .custom : .none
-		controller.lyricsControllerDelegate = self
-		controller.text = getTextFromSheets()
-		
-		let rect = view.bounds.insetBy(dx: view.bounds.width / 10, dy: view.bounds.height / 10)
-		controller.preferredContentSize = rect.size
-		
-		controller.modalPresentationStyle = .popover
-		controller.popoverPresentationController?.delegate = self
-		controller.popoverPresentationController?.barButtonItem = edit
-		
-		present(controller, animated: true, completion: nil)
-		return
-//
-//		if (clusterTemp?.isTypeSong ?? false) && getTextFromSheets().length > 0 {
-//			self.performSegue(withIdentifier: "ChangeLyricsSegue", sender: self)
-//			return
-//		}
-//
-//		let hasLyrics = getTextFromSheets() != ""
-//
-//		let optionsMenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-//
-//		let changeGeneralSettings = UIAlertAction(title: Text.NewSong.changeTitleTime, style: .default) { _ in
-//			self.performSegue(withIdentifier: "changeTitleTimeSegue", sender: self)
-//		}
-//		let addSheet = UIAlertAction(title: Text.NewSong.addSheet, style: .default) { _ in
-//			self.performSegue(withIdentifier: "SheetPickerMenuControllerSegue", sender: self)
-//		}
-//		let changeLyrics = UIAlertAction(title: hasLyrics ? Text.NewSong.changeLyrics : Text.NewSong.newLyrics, style: .default) { _ in
-//			self.performSegue(withIdentifier: "ChangeLyricsSegue", sender: self)
-//		}
-//		let cancel = UIAlertAction(title: Text.Actions.cancel, style: .cancel)
-//
-//		if sheetsTemp.count == 0 {
-//			optionsMenu.addAction(addSheet)
-//			optionsMenu.addAction(changeLyrics)
-//		} else {
-//			if sheetsTemp.contains(where: { $0.hasTheme?.isHidden == true }) {
-//				optionsMenu.addAction(addSheet)
-//				optionsMenu.addAction(changeGeneralSettings)
-//			} else {
-//				optionsMenu.addAction(changeLyrics)
-//			}
-//		}
-//		optionsMenu.addAction(cancel)
-//
-//		present(optionsMenu, animated: true)
-	}
-	
+    
 }
 
 extension CustomSheetsController: UIPopoverPresentationControllerDelegate {
@@ -569,4 +804,68 @@ extension CustomSheetsController: UIPopoverPresentationControllerDelegate {
 		return UIModalPresentationStyle.none
 	}
 	
+}
+
+extension CustomSheetsController: SheetPickerMenuControllerDelegate {
+    
+    func didSelectOption(option: SheetPickerMenuOption) {
+        presentedViewController?.dismiss(animated: false)
+        switch option {
+        case .lyrics:
+            Queues.main.async {
+                self.performSegue(withIdentifier: "ChangeLyricsSegue", sender: self)
+            }
+        case .sheet(sheet: let sheet):
+            // open edit sheet controller
+            let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
+            controller.delegate = self
+            controller.modificationMode = .newCustomSheet
+            controller.sheet = sheet
+            let nav = UINavigationController(rootViewController: controller)
+            Queues.main.async {
+                self.present(nav, animated: true)
+            }
+        case .bibleStudy:
+            showBibleStudyInputController()
+        }
+    }
+    
+}
+
+private extension VSheet {
+    
+    var isNotLyricsAndNotBibleVers: Bool {
+        
+        if let sheet = self as? VSheetTitleContent {
+            if let theme = sheet.hasTheme, theme.isHidden {
+                return false
+            }
+            return !sheet.isBibleVers
+        } else {
+            return true
+        }
+    }
+    
+}
+
+private extension CGFloat {
+    
+    func numberOfLines(width: CGFloat, font: UIFont) -> Int {
+        let charSize = font.lineHeight
+        let linesRoundedUp = Int(ceil(self/charSize))
+        return linesRoundedUp
+    }
+}
+
+private extension String {
+    
+    func numberOfLines(width: CGFloat, font: UIFont) -> Int {
+        let maxSize = CGSize(width: width, height: CGFloat(Float.infinity))
+        let charSize = font.lineHeight
+        let text = self as NSString
+        let textSize = text.boundingRect(with: maxSize, options: .usesLineFragmentOrigin, attributes: [NSAttributedString.Key.font: font], context: nil)
+        let linesRoundedUp = Int(ceil(textSize.height/charSize))
+        return linesRoundedUp
+    }
+    
 }

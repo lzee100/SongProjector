@@ -10,21 +10,7 @@ import Foundation
 import CoreData
 
 class VGoogleActivity: VEntity {
-	
-	class func list(sortOn attributeName: String? = nil, ascending: Bool? = nil) -> [VGoogleActivity] {
-		if let attributeName = attributeName, let ascending = ascending {
-			CoreGoogleActivities.setSortDescriptor(attributeName: attributeName, ascending: ascending)
-		}
-		return CoreGoogleActivities.getEntities().map({ VGoogleActivity(activity: $0) })
-	}
-	
-	class func single(with id: Int64?) -> VGoogleActivity? {
-		if let id = id, let activity = CoreGoogleActivities.getEntitieWith(id: id) {
-			return VGoogleActivity(activity: activity)
-		}
-		return nil
-	}
-	
+		
 	var endDate: NSDate? = nil
 	var eventDescription: String? = nil
 	var startDate: NSDate? = nil
@@ -45,12 +31,10 @@ class VGoogleActivity: VEntity {
 		try container.encode(eventDescription, forKey: .eventDescription)
 		
 		if let startDate = startDate {
-			let startDateString = GlobalDateFormatter.localToUTC(date: startDate as Date)
-			try container.encode(startDateString, forKey: .startDate)
+            try container.encode((startDate as Date).intValue, forKey: .startDate)
 		}
 		if let endDate = endDate {
-			let endDateString = GlobalDateFormatter.localToUTC(date: endDate as Date)
-			try container.encode(endDateString, forKey: .endDate)
+            try container.encode((endDate as Date).intValue, forKey: .endDate)
 		}
 
 		try super.encode(to: encoder)
@@ -64,9 +48,12 @@ class VGoogleActivity: VEntity {
 		self.init()
 		
 		let container = try decoder.container(keyedBy: CodingKeysGoogleActivity.self)
-		endDate = try decodeDate(container: container, forKey: .endDate) ?? NSDate()
+        let endDateInt = try container.decodeIfPresent(Int64.self, forKey: .endDate) ?? Date().intValue
+        endDate = Date(timeIntervalSince1970: TimeInterval(endDateInt)) as NSDate
+        let startDateInt = try container.decodeIfPresent(Int64.self, forKey: .startDate) ?? Date().intValue
+        startDate = Date(timeIntervalSince1970: TimeInterval(startDateInt)) as NSDate
+
 		eventDescription = try container.decodeIfPresent(String.self, forKey: .eventDescription)
-		startDate = try decodeDate(container: container, forKey: .startDate) ?? NSDate()
 
 		try super.initialization(decoder: decoder)
 		
@@ -89,8 +76,7 @@ class VGoogleActivity: VEntity {
 		}
 	}
 	
-	override func getPropertiesFrom(entity: Entity) {
-		super.getPropertiesFrom(entity: entity)
+    override func getPropertiesFrom(entity: Entity, context: NSManagedObjectContext) {		super.getPropertiesFrom(entity: entity, context: context)
 		if let activity = entity as? GoogleActivity {
 			endDate = activity.endDate
 			eventDescription = activity.eventDescription
@@ -98,27 +84,21 @@ class VGoogleActivity: VEntity {
 		}
 	}
 	
-	convenience init(activity: GoogleActivity) {
+    convenience init(activity: GoogleActivity, context: NSManagedObjectContext) {
 		self.init()
-		getPropertiesFrom(entity: activity)
+		getPropertiesFrom(entity: activity, context: context)
 	}
 	
-	override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-		
-		CoreGoogleActivities.managedObjectContext = context
-		if let storedEntity = CoreGoogleActivities.getEntitieWith(id: id) {
-			CoreGoogleActivities.managedObjectContext = moc
-			setPropertiesTo(entity: storedEntity, context: context)
-			return storedEntity
-		} else {
-			CoreGoogleActivities.managedObjectContext = context
-			let newEntity = CoreGoogleActivities.createEntityNOTsave()
-			CoreGoogleActivities.managedObjectContext = moc
-			setPropertiesTo(entity: newEntity, context: context)
-			return newEntity
-		}
-
-	}
+    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
+        if let entity: GoogleActivity = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
+            setPropertiesTo(entity: entity, context: context)
+            return entity
+        } else {
+            let entity: GoogleActivity = DataFetcher().createEntity(moc: context)
+            setPropertiesTo(entity: entity, context: context)
+            return entity
+        }
+    }
 
 
 }

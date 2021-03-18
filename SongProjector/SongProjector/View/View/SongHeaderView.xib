@@ -1,65 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina4_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17126"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SongHeaderView" customModule="ChurchBeam" customModuleProvider="target">
-            <connections>
-                <outlet property="headerButton" destination="k0r-Lc-vb0" id="Rlp-FA-7QM"/>
-                <outlet property="iconCenterConstraint" destination="PwM-x1-hGx" id="T4j-vZ-HHr"/>
-                <outlet property="iconImageView" destination="zMC-TK-0B8" id="pOv-NK-CAf"/>
-                <outlet property="mixerAnimationView" destination="0bB-fX-akj" id="hj7-MF-3gW"/>
-                <outlet property="pianoButton" destination="6mo-wN-G23" id="sRm-Qa-NbW"/>
-                <outlet property="pianoCircleView" destination="edy-rN-WaN" id="Hc0-T5-7ka"/>
-                <outlet property="pianoIconView" destination="VdZ-Kk-F0b" id="dFS-vE-nFJ"/>
-                <outlet property="sectionLabel" destination="9s8-Mp-NHv" id="yYb-Ta-83U"/>
-                <outlet property="songHeaderView" destination="iN0-l3-epB" id="Udt-c1-hSY"/>
-                <outlet property="titleLabel" destination="WjX-bo-l1b" id="LOD-HX-U5N"/>
-            </connections>
-        </placeholder>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <view contentMode="scaleToFill" id="iN0-l3-epB">
-            <rect key="frame" x="0.0" y="0.0" width="375" height="60"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="SongHeaderView" customModule="ChurchBeam" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="101"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WjX-bo-l1b">
-                    <rect key="frame" x="55" y="20" width="237" height="20.5"/>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dMu-K4-UtH">
+                    <rect key="frame" x="0.0" y="52" width="375" height="41"/>
+                    <color key="backgroundColor" systemColor="systemGray5Color"/>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                            <integer key="value" value="7"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                </view>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BZZ-zc-HtY">
+                    <rect key="frame" x="30" y="10" width="315" height="40"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="40" id="LEI-HE-cb8"/>
+                    </constraints>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="zMC-TK-0B8">
-                    <rect key="frame" x="20" y="17.5" width="25" height="25"/>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WjX-bo-l1b">
+                    <rect key="frame" x="30" y="60" width="232" height="25"/>
                     <constraints>
-                        <constraint firstAttribute="width" secondItem="zMC-TK-0B8" secondAttribute="height" id="DY7-qK-4rs"/>
-                        <constraint firstAttribute="height" constant="25" id="xEp-4s-fgT"/>
+                        <constraint firstAttribute="height" constant="25" id="q0t-Xr-4Fv"/>
                     </constraints>
-                </imageView>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="k0r-Lc-vb0">
-                    <rect key="frame" x="0.0" y="0.0" width="375" height="60"/>
-                    <connections>
-                        <action selector="songHeaderViewPressed:" destination="-1" eventType="touchUpInside" id="SeX-Pj-3fV"/>
-                    </connections>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="k0r-Lc-vb0" customClass="ActionButton" customModule="ChurchBeam" customModuleProvider="target">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="101"/>
                 </button>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="edy-rN-WaN">
-                    <rect key="frame" x="305" y="5" width="50" height="50"/>
+                    <rect key="frame" x="275" y="56" width="70" height="33"/>
                     <subviews>
                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Piano" translatesAutoresizingMaskIntoConstraints="NO" id="VdZ-Kk-F0b">
-                            <rect key="frame" x="15" y="15" width="20" height="20"/>
+                            <rect key="frame" x="25" y="6.5" width="20" height="20"/>
                             <constraints>
                                 <constraint firstAttribute="width" secondItem="VdZ-Kk-F0b" secondAttribute="height" id="TCQ-Ec-0Qe"/>
                                 <constraint firstAttribute="height" constant="20" id="qYs-O3-3pL"/>
                             </constraints>
                         </imageView>
                         <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0bB-fX-akj" customClass="MixerAnimationView" customModule="ChurchBeam" customModuleProvider="target">
-                            <rect key="frame" x="15" y="15" width="20" height="20"/>
+                            <rect key="frame" x="25" y="6.5" width="20" height="20"/>
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="20" id="e7h-n5-qPu"/>
@@ -67,57 +63,69 @@
                             </constraints>
                         </view>
                     </subviews>
-                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
                         <constraint firstItem="VdZ-Kk-F0b" firstAttribute="centerX" secondItem="edy-rN-WaN" secondAttribute="centerX" id="7gu-9N-kFn"/>
-                        <constraint firstAttribute="width" secondItem="edy-rN-WaN" secondAttribute="height" id="BhW-XU-Ba2"/>
+                        <constraint firstAttribute="width" constant="70" id="Gye-2n-nCV"/>
+                        <constraint firstItem="VdZ-Kk-F0b" firstAttribute="centerY" secondItem="edy-rN-WaN" secondAttribute="centerY" id="IGB-Qb-0RE"/>
+                        <constraint firstItem="0bB-fX-akj" firstAttribute="centerY" secondItem="edy-rN-WaN" secondAttribute="centerY" id="Kj5-Bo-Qvh"/>
                         <constraint firstItem="0bB-fX-akj" firstAttribute="centerX" secondItem="edy-rN-WaN" secondAttribute="centerX" id="P9L-hS-qmT"/>
-                        <constraint firstItem="0bB-fX-akj" firstAttribute="centerY" secondItem="edy-rN-WaN" secondAttribute="centerY" id="aRD-Y3-ARd"/>
                     </constraints>
                 </view>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6mo-wN-G23">
-                    <rect key="frame" x="300" y="0.0" width="75" height="60"/>
-                    <connections>
-                        <action selector="pianoPressed:" destination="-1" eventType="touchUpInside" id="u8x-Wg-chO"/>
-                    </connections>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6mo-wN-G23" customClass="ActionButton" customModule="ChurchBeam" customModuleProvider="target">
+                    <rect key="frame" x="270" y="0.0" width="105" height="101"/>
                 </button>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9s8-Mp-NHv">
-                    <rect key="frame" x="20" y="8" width="335" height="1.5"/>
-                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <nil key="textColor"/>
-                    <nil key="highlightedColor"/>
-                </label>
             </subviews>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
-                <constraint firstItem="zMC-TK-0B8" firstAttribute="top" secondItem="9s8-Mp-NHv" secondAttribute="bottom" constant="8" id="3bL-m3-kMU"/>
-                <constraint firstItem="edy-rN-WaN" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="5" id="7Xf-ao-6N4"/>
-                <constraint firstItem="9s8-Mp-NHv" firstAttribute="trailing" secondItem="edy-rN-WaN" secondAttribute="trailing" id="Fhe-5e-J6z"/>
-                <constraint firstAttribute="trailing" secondItem="edy-rN-WaN" secondAttribute="trailing" constant="20" id="GTf-6V-gXE"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="WjX-bo-l1b" secondAttribute="trailing" priority="998" constant="16" id="11f-YS-dD8"/>
+                <constraint firstItem="dMu-K4-UtH" firstAttribute="top" secondItem="WjX-bo-l1b" secondAttribute="top" constant="-8" id="7o1-3F-9XR"/>
+                <constraint firstAttribute="trailing" secondItem="edy-rN-WaN" secondAttribute="trailing" constant="30" id="GTf-6V-gXE"/>
+                <constraint firstItem="edy-rN-WaN" firstAttribute="bottom" secondItem="WjX-bo-l1b" secondAttribute="bottom" constant="4" id="KS8-mb-E9W"/>
+                <constraint firstItem="WjX-bo-l1b" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="30" id="LFL-br-RXw"/>
+                <constraint firstItem="dMu-K4-UtH" firstAttribute="bottom" secondItem="WjX-bo-l1b" secondAttribute="bottom" constant="8" id="LKt-SW-3Uz"/>
                 <constraint firstItem="k0r-Lc-vb0" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="MIN-fG-eUU"/>
-                <constraint firstItem="9s8-Mp-NHv" firstAttribute="leading" secondItem="zMC-TK-0B8" secondAttribute="leading" id="MRG-Cm-pm0"/>
                 <constraint firstItem="k0r-Lc-vb0" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="OFG-B2-q9S"/>
+                <constraint firstAttribute="trailing" secondItem="BZZ-zc-HtY" secondAttribute="trailing" constant="30" id="OFP-mm-zDQ"/>
                 <constraint firstItem="6mo-wN-G23" firstAttribute="leading" secondItem="edy-rN-WaN" secondAttribute="leading" constant="-5" id="PtX-XG-loQ"/>
-                <constraint firstItem="zMC-TK-0B8" firstAttribute="centerY" secondItem="vUN-kp-3ea" secondAttribute="centerY" id="PwM-x1-hGx"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="6mo-wN-G23" secondAttribute="trailing" id="SeT-ZB-1pO"/>
-                <constraint firstItem="WjX-bo-l1b" firstAttribute="centerY" secondItem="zMC-TK-0B8" secondAttribute="centerY" id="WKn-Ba-y0v"/>
-                <constraint firstItem="6mo-wN-G23" firstAttribute="leading" secondItem="WjX-bo-l1b" secondAttribute="trailing" constant="8" id="YGF-C1-fZe"/>
-                <constraint firstItem="WjX-bo-l1b" firstAttribute="leading" secondItem="zMC-TK-0B8" secondAttribute="trailing" constant="10" id="Zvi-tb-kv5"/>
+                <constraint firstItem="BZZ-zc-HtY" firstAttribute="leading" secondItem="WjX-bo-l1b" secondAttribute="leading" id="T5R-YU-HWe"/>
+                <constraint firstItem="WjX-bo-l1b" firstAttribute="top" secondItem="BZZ-zc-HtY" secondAttribute="bottom" constant="10" id="Web-4I-H5L"/>
+                <constraint firstItem="6mo-wN-G23" firstAttribute="leading" secondItem="WjX-bo-l1b" secondAttribute="trailing" priority="999" constant="8" id="YGF-C1-fZe"/>
                 <constraint firstItem="6mo-wN-G23" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="gQz-3z-PxJ"/>
+                <constraint firstItem="BZZ-zc-HtY" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="10" id="h0p-xY-boz"/>
                 <constraint firstItem="k0r-Lc-vb0" firstAttribute="bottom" secondItem="vUN-kp-3ea" secondAttribute="bottom" id="jv8-3b-YIe"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="k0r-Lc-vb0" secondAttribute="trailing" id="lY2-2G-qez"/>
-                <constraint firstItem="VdZ-Kk-F0b" firstAttribute="centerY" secondItem="zMC-TK-0B8" secondAttribute="centerY" id="sVc-P2-990"/>
-                <constraint firstAttribute="bottom" secondItem="edy-rN-WaN" secondAttribute="bottom" constant="5" id="sh8-Dk-uQF"/>
+                <constraint firstItem="edy-rN-WaN" firstAttribute="top" secondItem="WjX-bo-l1b" secondAttribute="top" constant="-4" id="pOJ-Sw-XLf"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="6mo-wN-G23" secondAttribute="bottom" id="t76-YO-caa"/>
-                <constraint firstItem="zMC-TK-0B8" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="20" id="xOg-gH-WrV"/>
-                <constraint firstItem="9s8-Mp-NHv" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="8" id="zi9-jH-ABL"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="WjX-bo-l1b" secondAttribute="bottom" constant="16" id="tZQ-xP-hay"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="dMu-K4-UtH" secondAttribute="trailing" id="yWJ-c0-YpI"/>
+                <constraint firstItem="dMu-K4-UtH" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="yaC-fk-SL5"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
-            <point key="canvasLocation" x="92" y="53.973013493253376"/>
+            <connections>
+                <outlet property="actionButton" destination="6mo-wN-G23" id="lG1-B5-8wh"/>
+                <outlet property="actionContainerView" destination="edy-rN-WaN" id="1bK-iN-4ob"/>
+                <outlet property="mixerView" destination="0bB-fX-akj" id="FFj-zu-MS6"/>
+                <outlet property="pianoImageView" destination="VdZ-Kk-F0b" id="KOx-hZ-CD4"/>
+                <outlet property="sectionButton" destination="k0r-Lc-vb0" id="foK-Gc-SJx"/>
+                <outlet property="sectionLabel" destination="BZZ-zc-HtY" id="zRL-1I-KOQ"/>
+                <outlet property="sectionLabelBackgroundView" destination="dMu-K4-UtH" id="IbW-ky-WMx"/>
+                <outlet property="sectionLabelHeightConstraint" destination="LEI-HE-cb8" id="6Fh-zM-nb4"/>
+                <outlet property="sectionLabelTopConstraint" destination="h0p-xY-boz" id="9ix-XH-oGz"/>
+                <outlet property="titleLabel" destination="WjX-bo-l1b" id="nmi-F2-ne4"/>
+                <outlet property="titleLabelToActionViewConstraint" destination="YGF-C1-fZe" id="eE9-IN-1Df"/>
+                <outlet property="titleLabelToSuperViewConstraint" destination="11f-YS-dD8" id="dae-uf-qbt"/>
+                <outlet property="titleLabelTopToSectionLabelConstraint" destination="Web-4I-H5L" id="XeY-0c-8AI"/>
+            </connections>
+            <point key="canvasLocation" x="92" y="45.42728635682159"/>
         </view>
     </objects>
     <resources>
-        <image name="Piano" width="267" height="267"/>
+        <image name="Piano" width="802" height="802"/>
+        <systemColor name="systemGray5Color">
+            <color red="0.89803921568627454" green="0.89803921568627454" blue="0.91764705882352937" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
     </resources>
 </document>

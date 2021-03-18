@@ -161,6 +161,19 @@ extension Date {
 		return weekday
 		
 	}
+    
+    public var dayOfWeekNumber: Int {
+        switch weekday {
+        case .monday: return 1
+        case .tuesday: return 2
+        case .wednesday: return 3
+        case .thursday: return 4
+        case .friday: return 5
+        case .saturday: return 6
+        case .sunday: return 7
+        case .unknown: return 0
+        }
+    }
 	
 	public var weekOfYear : Int {
 		return component(.weekOfYear)
@@ -495,6 +508,19 @@ extension Date {
 		formatter.dateFormat = format
 		return formatter.string(from: self)
 	}
+    
+    public func toStringTodayTomorrow(_ format:String) -> String {
+        
+        if isToday {
+            return AppText.Generic.vandaag
+        } else if isOnSameDay(Date().dateByAddingDays(1)) {
+            return AppText.Generic.morgen
+        }
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = format
+        return formatter.string(from: self)
+    }
 	
 	public func setting(seconds: Int) -> Date?{
 		let time = self.timeClass

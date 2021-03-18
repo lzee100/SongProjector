@@ -10,24 +10,9 @@ import Foundation
 import CoreData
 
 class VContractLedger: VEntity {
-	
-	class func list(sortOn attributeName: String? = nil, ascending: Bool? = nil) -> [VContractLedger] {
-		if let attributeName = attributeName, let ascending = ascending {
-			CoreContractLedger.setSortDescriptor(attributeName: attributeName, ascending: ascending)
-		}
-		return CoreContractLedger.getEntities().map({ VContractLedger(contractLedger: $0) })
-	}
-	
-	class func single(with id: Int64?) -> VContractLedger? {
-		if let id = id, let contractLedger = CoreContractLedger.getEntitieWith(id: id) {
-			return VContractLedger(contractLedger: contractLedger)
-		}
-		return nil
-	}
-
-	
-	var contractId: Int64 = 0
-	var organizationId: Int64 = 0
+		
+    var contractId: String = UUID().uuidString
+	var organizationId: String = UUID().uuidString
 	var userName: String = ""
 	var phoneNumber: String = ""
 	var hasApplePay: Bool = false
@@ -43,13 +28,14 @@ class VContractLedger: VEntity {
 
 	}
 	
-	var hasOrganization: Organization? {
-		return CoreOrganization.getEntitieWith(id: organizationId)
-	}
-	var hasContract: Contract? {
-		return CoreContract.getEntitieWith(id: contractId)
-	}
-	
+    func hasOrganization(moc: NSManagedObjectContext) -> Organization? {
+        let org: Organization? = DataFetcher().getEntity(moc: moc, predicates: [.get(id: organizationId)])
+        return org
+    }
+    func hasContract(moc: NSManagedObjectContext) -> Contract? {
+        let contract: Contract? = DataFetcher().getEntity(moc: moc, predicates: [.get(id: contractId)])
+        return contract
+    }
 	
 	
 	// MARK: - Encodable
@@ -77,8 +63,8 @@ class VContractLedger: VEntity {
 		
 		let container = try decoder.container(keyedBy: CodingKeysContractLedger.self)
 				
-		contractId = try container.decodeIfPresent(Int64.self, forKey: .contractId) ?? 0
-		organizationId = try container.decodeIfPresent(Int64.self, forKey: .organizationId) ?? 0
+		contractId = try container.decodeIfPresent(String.self, forKey: .contractId) ?? ""
+		organizationId = try container.decodeIfPresent(String.self, forKey: .organizationId) ?? ""
 		
 		userName = try container.decodeIfPresent(String.self, forKey: .userName) ?? ""
 		phoneNumber = try container.decodeIfPresent(String.self, forKey: .phoneNumber) ?? ""
@@ -103,8 +89,8 @@ class VContractLedger: VEntity {
 		}
 	}
 	
-	override func getPropertiesFrom(entity: Entity) {
-		super.getPropertiesFrom(entity: entity)
+    override func getPropertiesFrom(entity: Entity, context: NSManagedObjectContext) {
+        super.getPropertiesFrom(entity: entity, context: context)
 		if let contractLedger = entity as? ContractLedger {
 			contractId = contractLedger.contractId
 			organizationId = contractLedger.organizationId
@@ -114,27 +100,20 @@ class VContractLedger: VEntity {
 		}
 	}
 	
-	convenience init(contractLedger: ContractLedger) {
+    convenience init(contractLedger: ContractLedger, context: NSManagedObjectContext) {
 		self.init()
-		getPropertiesFrom(entity: contractLedger)
+        getPropertiesFrom(entity: contractLedger, context: context)
 	}
 	
-	override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-		
-		CoreContractLedger.managedObjectContext = context
-		if let storedEntity = CoreContractLedger.getEntitieWith(id: id) {
-			CoreContractLedger.managedObjectContext = moc
-			setPropertiesTo(entity: storedEntity, context: context)
-			return storedEntity
-		} else {
-			CoreContractLedger.managedObjectContext = context
-			let newEntity = CoreContractLedger.createEntityNOTsave()
-			CoreContractLedger.managedObjectContext = moc
-			setPropertiesTo(entity: newEntity, context: context)
-			return newEntity
-		}
+    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
+        if let entity: ContractLedger = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
+            setPropertiesTo(entity: entity, context: context)
+            return entity
+        } else {
+            let entity: ContractLedger = DataFetcher().createEntity(moc: context)
+            setPropertiesTo(entity: entity, context: context)
+            return entity
+        }
+    }
 
-	}
-	
-	
 }

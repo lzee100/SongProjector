@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -11,27 +10,20 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="SoundPickerCell" rowHeight="318" id="KGk-i7-Jjw" customClass="SoundPickerCell" customModule="ChurchBeam" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="430" height="318"/>
+            <rect key="frame" x="0.0" y="0.0" width="430" height="130"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" ambiguous="YES" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
-                <rect key="frame" x="0.0" y="0.0" width="430" height="318"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="430" height="130"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MnM-Qj-wfo">
-                        <rect key="frame" x="0.0" y="0.0" width="430" height="188"/>
+                        <rect key="frame" x="0.0" y="10" width="350" height="50"/>
                         <constraints>
-                            <constraint firstAttribute="height" constant="188" id="xP8-Kp-5uT"/>
+                            <constraint firstAttribute="height" constant="50" id="xP8-Kp-5uT"/>
                         </constraints>
                     </pickerView>
-                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rzb-zT-CLa">
-                        <rect key="frame" x="0.0" y="0.0" width="430" height="188"/>
-                        <state key="normal" title="Type instrument"/>
-                        <connections>
-                            <action selector="didSelectSelectInstrument:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="Nue-9P-AVr"/>
-                        </connections>
-                    </button>
-                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lgg-EU-0vI">
-                        <rect key="frame" x="0.0" y="218" width="430" height="50"/>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lgg-EU-0vI">
+                        <rect key="frame" x="0.0" y="70" width="430" height="50"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="50" id="fT7-Hb-iFk"/>
                         </constraints>
@@ -40,43 +32,37 @@
                             <action selector="didSelectSelectFile:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="rLl-3k-ZEw"/>
                         </connections>
                     </button>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="filelocation: ...." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pK4-78-bwx">
-                        <rect key="frame" x="20" y="188" width="390" height="30"/>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Check" translatesAutoresizingMaskIntoConstraints="NO" id="ccq-QB-ier">
+                        <rect key="frame" x="360" y="15" width="40" height="40"/>
                         <constraints>
-                            <constraint firstAttribute="height" constant="30" id="xON-nq-bVA"/>
+                            <constraint firstAttribute="width" constant="40" id="FCb-aU-Hwc"/>
+                            <constraint firstAttribute="width" secondItem="ccq-QB-ier" secondAttribute="height" id="iCs-H1-muE"/>
                         </constraints>
-                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                        <nil key="textColor"/>
-                        <nil key="highlightedColor"/>
-                    </label>
+                    </imageView>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="rzb-zT-CLa" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="4GC-Wp-2fU"/>
-                    <constraint firstItem="rzb-zT-CLa" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="6fx-Li-YFx"/>
+                    <constraint firstItem="ccq-QB-ier" firstAttribute="leading" secondItem="MnM-Qj-wfo" secondAttribute="trailing" constant="10" id="2kS-3x-wnR"/>
                     <constraint firstItem="lgg-EU-0vI" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="89I-Cr-KFf"/>
-                    <constraint firstItem="pK4-78-bwx" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="9W9-8G-3Hi"/>
-                    <constraint firstItem="lgg-EU-0vI" firstAttribute="top" secondItem="pK4-78-bwx" secondAttribute="bottom" id="Ac6-cH-9lE"/>
+                    <constraint firstItem="lgg-EU-0vI" firstAttribute="top" secondItem="MnM-Qj-wfo" secondAttribute="bottom" constant="10" id="Bc7-9c-ql4"/>
                     <constraint firstItem="MnM-Qj-wfo" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="IRf-gU-E0z"/>
-                    <constraint firstItem="rzb-zT-CLa" firstAttribute="bottom" secondItem="MnM-Qj-wfo" secondAttribute="bottom" id="MDh-sm-w5w"/>
                     <constraint firstAttribute="trailing" secondItem="lgg-EU-0vI" secondAttribute="trailing" id="ZDz-lu-cAr"/>
-                    <constraint firstAttribute="trailing" secondItem="rzb-zT-CLa" secondAttribute="trailing" id="grd-2n-juM"/>
-                    <constraint firstAttribute="trailing" secondItem="MnM-Qj-wfo" secondAttribute="trailing" id="hBU-HZ-S8L"/>
-                    <constraint firstAttribute="bottom" secondItem="lgg-EU-0vI" secondAttribute="bottom" id="mjP-4L-Fe0"/>
-                    <constraint firstAttribute="trailingMargin" secondItem="pK4-78-bwx" secondAttribute="trailing" id="nBD-NU-0OS"/>
-                    <constraint firstItem="pK4-78-bwx" firstAttribute="top" secondItem="MnM-Qj-wfo" secondAttribute="bottom" id="r4f-aO-MIG"/>
-                    <constraint firstItem="MnM-Qj-wfo" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="yNo-NV-WUA"/>
+                    <constraint firstAttribute="trailing" secondItem="ccq-QB-ier" secondAttribute="trailing" constant="30" id="hRv-9J-W1k"/>
+                    <constraint firstAttribute="bottom" secondItem="lgg-EU-0vI" secondAttribute="bottom" constant="10" id="mjP-4L-Fe0"/>
+                    <constraint firstItem="ccq-QB-ier" firstAttribute="centerY" secondItem="MnM-Qj-wfo" secondAttribute="centerY" id="u4A-Ix-4z0"/>
+                    <constraint firstItem="MnM-Qj-wfo" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="10" id="yNo-NV-WUA"/>
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
-                <outlet property="fileLocationLabel" destination="pK4-78-bwx" id="2GR-7r-SRg"/>
                 <outlet property="instrumentPicker" destination="MnM-Qj-wfo" id="3gu-LS-qrT"/>
                 <outlet property="instrumentPickerHeight" destination="xP8-Kp-5uT" id="SM8-x5-f6K"/>
-                <outlet property="instrumentPickerHeightConstraint" destination="xP8-Kp-5uT" id="HAa-EB-6Hf"/>
+                <outlet property="isSelectedImageView" destination="ccq-QB-ier" id="X5z-KE-kIG"/>
                 <outlet property="selectFileButton" destination="lgg-EU-0vI" id="vuM-YQ-hnn"/>
-                <outlet property="selectInstrumentButton" destination="rzb-zT-CLa" id="Dpm-4H-p5J"/>
             </connections>
             <point key="canvasLocation" x="65.217391304347828" y="114.50892857142857"/>
         </tableViewCell>
     </objects>
+    <resources>
+        <image name="Check" width="800" height="800"/>
+    </resources>
 </document>

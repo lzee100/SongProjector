@@ -204,7 +204,7 @@ extension Array {
 	@discardableResult
 	mutating func delete<T: Entity>(entity: T) -> Bool {
 		if let array = self as? Array<T> {
-			if let index = array.index(where: { $0.id == entity.id }){
+            if let index = array.firstIndex(where: { $0.id == entity.id }){
 				self.remove(at: index)
 				return true
 			}
@@ -214,7 +214,7 @@ extension Array {
 	
 	func contains<T: Entity>(entity: T) -> Bool {
 		if let array = self as? Array<T> {
-			if let _ = array.index(where: { $0.id == entity.id }){
+            if let _ = array.firstIndex(where: { $0.id == entity.id }){
 				return true
 			}
 			return false
@@ -224,7 +224,7 @@ extension Array {
 
 	func firstIndex<T: Entity>(entity: T) -> Int? {
 		if let array = self as? Array<T> {
-			if let index = array.index(where: { $0.id == entity.id }){
+            if let index = array.firstIndex(where: { $0.id == entity.id }){
 				return index
 			}
 			return nil
@@ -235,7 +235,7 @@ extension Array {
 	@discardableResult
 	mutating func delete<T: VEntity>(entity: T) -> Bool {
 		if let array = self as? Array<T> {
-			if let index = array.index(where: { $0.id == entity.id }){
+            if let index = array.firstIndex(where: { $0.id == entity.id }){
 				self.remove(at: index)
 				return true
 			}
@@ -245,7 +245,7 @@ extension Array {
 	
 	func contains<T: VEntity>(entity: T) -> Bool {
 		if let array = self as? Array<T> {
-			if let _ = array.index(where: { $0.id == entity.id }){
+            if let _ = array.firstIndex(where: { $0.id == entity.id }){
 				return true
 			}
 			return false
@@ -255,7 +255,7 @@ extension Array {
 
 	func firstIndex<T: VEntity>(entity: T) -> Int? {
 		if let array = self as? Array<T> {
-			if let index = array.index(where: { $0.id == entity.id }){
+            if let index = array.firstIndex(where: { $0.id == entity.id }){
 				return index
 			}
 			return nil
@@ -273,6 +273,22 @@ public extension Array where Element: Equatable {
         var list:[Element] = []
         for item in self {
             if !list.contains(item) {
+                list.append(item)
+            }
+        }
+        return list
+    }
+    
+}
+
+extension Array {
+    func unique(on: (Element, Element) -> Bool) -> [Element] {
+        var list: [Element] = []
+        
+        for item in self {
+            if !list.contains(where: { (existingItem) -> Bool in
+                return on(existingItem, item)
+            }) {
                 list.append(item)
             }
         }

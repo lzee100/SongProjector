@@ -40,7 +40,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -58,6 +58,10 @@
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
 			<string>com.iozee.ChurchBeam</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.280588048480-j8kmllr4jk7h7ucopoh0ii31c3mavjl9</string>
+			</array>
 		</dict>
 		<dict>
 			<key>CFBundleURLSchemes</key>
@@ -65,9 +69,27 @@
 				<string>com.googleusercontent.apps.ChurchBeam</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>churchbeam-test</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.389251522464-rq6fspgsmhhl8imptjha771hre3a63bh</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string></string>
+			<key>CFBundleURLSchemes</key>
+			<array/>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>CLIENT_ID</key>
 	<string>1005753122128-dn4qrfc38m5udiag7rv35pfqo1bc38rf.apps.googleusercontent.com</string>
 	<key>GOOGLE_APP_ID</key>
@@ -101,8 +123,6 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
-	<key>UIMainStoryboardFile~ipad</key>
-	<string>StoryboardiPad</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
@@ -120,5 +140,7 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<true/>
 </dict>
 </plist>

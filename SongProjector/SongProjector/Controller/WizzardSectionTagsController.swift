@@ -47,10 +47,7 @@ class WizzardSectionTagsController: ChurchBeamViewController, UITableViewDataSou
 	// MARK: - Properties
 	
 	var songServiceObject: VSongServiceSettings!
-	override var requesterId: String {
-		return "WizzardSectionTagsController"
-	}
-	override var requesters: [RequesterType] {
+	override var requesters: [RequesterBase] {
 		return [SongServiceSettingsSubmitter]
 	}
 	
@@ -62,6 +59,8 @@ class WizzardSectionTagsController: ChurchBeamViewController, UITableViewDataSou
 	
 	override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.backgroundColor = .clear
+        tableView.register(header: BasicHeaderView.identifier)
 		tableView.register(cell: BasicCell.identifier)
 		tableView.register(cell: AddButtonCell.identifier)
 		tableView.register(cell: LabelTextFieldCell.identifier)
@@ -72,8 +71,7 @@ class WizzardSectionTagsController: ChurchBeamViewController, UITableViewDataSou
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		tableView.reloadData()
-		SongServiceSettingsSubmitter.addObserver(self)
-		navigationItem.rightBarButtonItem = UIBarButtonItem(title: Text.Actions.save, style: .plain, target: self, action: #selector(didPressDone(_:)))
+		navigationItem.rightBarButtonItem = UIBarButtonItem(title: AppText.Actions.save, style: .plain, target: self, action: #selector(didPressDone(_:)))
 		navigationItem.rightBarButtonItem?.isEnabled = songServiceObject.isValid
 		
 		let notificationCenter = NotificationCenter.default
@@ -82,16 +80,10 @@ class WizzardSectionTagsController: ChurchBeamViewController, UITableViewDataSou
 
 	}
 	
-	override func viewWillDisappear(_ animated: Bool) {
-		super.viewWillDisappear(animated)
-		SongServiceSettingsSubmitter.removeObserver(self)
-		NotificationCenter.default.removeObserver(self)
-	}
-	
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 		if let controller = segue.destination.unwrap() as? TagSelectionController, let selectedSection = selectedSection {
 			controller.section = selectedSection
-			controller.selectedTags = songServiceObject.sections[selectedSection].hasTags
+			controller.selectedTags = songServiceObject.sections[selectedSection].hasTags(moc: moc)
 			controller.delegate = self
 		}
 	}
@@ -105,37 +97,59 @@ class WizzardSectionTagsController: ChurchBeamViewController, UITableViewDataSou
 	}
 
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return songServiceObject.sections[section].hasTags.count + 3
+		return songServiceObject.sections[section].hasTags(moc: moc).count + 3
 	}
 	
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		
-		let tags = songServiceObject.sections[indexPath.section].hasTags
+		let tags = songServiceObject.sections[indexPath.section].hasTags(moc: moc)
 		
 		let cell: UITableViewCell! = tableView.dequeueReusableCell(withIdentifier: Row.for(indexPath, tags: tags).identifier)
 		if let cell = cell as? LabelTextFieldCell {
-			cell.setup(description: Text.SongServiceManagement.nameSection, placeholder: Text.SongServiceManagement.name, delegate: self)
+			cell.setup(description: AppText.SongServiceManagement.nameSection, placeholder: AppText.SongServiceManagement.name, delegate: self)
 			cell.textField.text = songServiceObject.sections[indexPath.section].title
  		}
 		if let cell = cell as? BasicCell {
-			cell.setup(title: songServiceObject.sections[indexPath.section].hasTags[indexPath.row - 2].title, icon: nil, iconSelected: nil, textColor: themeWhiteBlackTextColor, hasPianoOnly: false)
-			cell.data = songServiceObject.sections[indexPath.section].hasTags[indexPath.row - 2]
+			cell.setup(title: tags[indexPath.row - 2].title, textColor: .blackColor)
+			cell.data = tags[indexPath.row - 2]
 		}
 		if let cell = cell as? AddButtonCell {
-			cell.apply(title: Text.SongServiceManagement.addTags)
+			cell.apply(title: AppText.SongServiceManagement.addTags)
 		}
 		if let cell = cell as? LabelNumberPickerCell {
-			cell.create(id: "\(indexPath.row)", description: Text.SongServiceManagement.numberOfSongs, subtitle: nil, initialValue: Int(songServiceObject.sections[indexPath.section].numberOfSongs), values: Array(0...20))
+			cell.create(id: "\(indexPath.row)", description: AppText.SongServiceManagement.numberOfSongs, subtitle: nil, initialValue: Int(songServiceObject.sections[indexPath.section].numberOfSongs), values: Array(0...20))
 			cell.id = "\(indexPath.section)"
 			cell.delegate = self
 		}
 		
 		return cell
 	}
-	
-	func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-		return Text.SongServiceManagement.section + " \(section + 1)"
-	}
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        cell.contentView.backgroundColor = .grey1
+        if (indexPath.row == 0 && indexPath.row == tableView.numberOfRows(inSection: indexPath.section)-1) {
+            cell.setCornerRadiusAsMask(corners: .all)
+//            cell.setCornerRadiusAsMask(corners: [.allCorners])
+        } else if (indexPath.row == 0) {
+            cell.setCornerRadiusAsMask(corners: .leftTopRightTop)
+//            cell.setCornerRadiusAsMask(corners: [.topLeft, .topRight])
+        } else if (indexPath.row == tableView.numberOfRows(inSection: indexPath.section)-1) {
+            cell.setCornerRadiusAsMask(corners: .leftBottomRightBottom)
+//            cell.setCornerRadiusAsMask(corners: [.bottomLeft, .bottomRight])
+        } else {
+            cell.setBorderMask()
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let view = tableView.basicHeaderView
+        view?.descriptionLabel.text = AppText.SongServiceManagement.section + " \(section + 1)"
+        return view
+    }
+        
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return BasicHeaderView.height
+    }
 	
 	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		if tableView.cellForRow(at: indexPath) is AddButtonCell {
@@ -144,7 +158,7 @@ class WizzardSectionTagsController: ChurchBeamViewController, UITableViewDataSou
 	}
 	
 	func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-		let tagsForSection = songServiceObject.sections[indexPath.section].hasTags.count
+		let tagsForSection = songServiceObject.sections[indexPath.section].hasTags(moc: moc).count
 		if tableView.cellForRow(at: indexPath) is BasicCell, tagsForSection > 1 {
 			return .delete
 		}
@@ -153,7 +167,7 @@ class WizzardSectionTagsController: ChurchBeamViewController, UITableViewDataSou
 	
 	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
 		let section = songServiceObject.sections[indexPath.section]
-		if let cell = tableView.cellForRow(at: indexPath) as? BasicCell, let tag = cell.data as? VTag, let index = section.tagIds.firstIndex(of: NSNumber(value: tag.id)) {
+		if let cell = tableView.cellForRow(at: indexPath) as? BasicCell, let tag = cell.data as? VTag, let index = section.tagIds.firstIndex(of: tag.id) {
 			section.tagIds.remove(at: index)
 		}
 		tableView.deleteRows(at: [indexPath], with: .left)
@@ -173,20 +187,17 @@ class WizzardSectionTagsController: ChurchBeamViewController, UITableViewDataSou
 	}
 	
 	func didSelectTagsFor(section: Int, tags: [VTag]) {
-		songServiceObject.sections[section].tagIds = tags.compactMap({ NSNumber(value: $0.id) })
+		songServiceObject.sections[section].tagIds = tags.compactMap({ $0.id })
 		tableView.reloadData()
 //		tableView.reloadSections(IndexSet([section]), with: .none)
 //		tableView.updateHeights()
 		navigationItem.rightBarButtonItem?.isEnabled = songServiceObject.isValid
 	}
 	
-	override func handleRequestFinish(requesterId: String, result: AnyObject?) {
-		Queues.main.async { [weak self] in
-			if let zelf = self {
-				NotificationCenter.default.post(Notification(name: NotificationNames.didSubmitSongServiceSettings))
-				zelf.navigationController?.popToRootViewController(animated: true)
-			}
-		}
+	override func handleRequestFinish(requesterId: String, result: Any?) {
+        TempClustersModel.resetSavedValues()
+        NotificationCenter.default.post(name: .didSubmitSongServiceSettings, object: nil)
+        navigationController?.dismiss(animated: true)
 	}
 	
 	func numberPickerValueChanged(cell: LabelNumberPickerCell, value: Int) {
@@ -221,21 +232,19 @@ class WizzardSectionTagsController: ChurchBeamViewController, UITableViewDataSou
 
 		var contentInsets: UIEdgeInsets
 
-		if UIApplication.shared.statusBarOrientation.isPortrait {
-
-			contentInsets = UIEdgeInsets(top: 0.0, left: 0.0, bottom: keyboardSize.height, right: 0.0);
+        if (UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.windowScene?.interfaceOrientation.isPortrait ?? true) {
+            contentInsets = UIEdgeInsets(top: 0.0, left: 0.0, bottom: keyboardSize.height, right: 0.0);
+        } else {
+            contentInsets = UIEdgeInsets(top: 0.0, left: 0.0, bottom: keyboardSize.width, right: 0.0);
         }
-        else {
-			contentInsets = UIEdgeInsets(top: 0.0, left: 0.0, bottom: keyboardSize.width, right: 0.0);
-
-        }
-
+        
         tableView.contentInset = contentInsets
 //		if let lastCell = tableView.visibleCells.last, let indexPath = tableView.indexPath(for: lastCell) {
 //			tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
 //		}
         tableView.scrollIndicatorInsets = tableView.contentInset
     }
+    
 
 	
 	// MARK: - Private Functions
@@ -252,7 +261,7 @@ class WizzardSectionTagsController: ChurchBeamViewController, UITableViewDataSou
 	
 	private func isLast(_ indexPath: IndexPath) -> Bool {
 		let editTitleAndAddbutton = 2
-		return songServiceObject.sections[indexPath.section].hasTags.count + editTitleAndAddbutton == indexPath.row + 1
+		return songServiceObject.sections[indexPath.section].hasTags(moc: moc).count + editTitleAndAddbutton == indexPath.row + 1
 	}
 	
 	private func addTagForSection(_ section: Int) {

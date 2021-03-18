@@ -78,9 +78,9 @@ class SongServiceContainerViewController: UIViewController, UICollectionViewDele
 	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 		let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.sheetCollectionCell, for: indexPath)
 		
-		if let collectionCell = collectionCell as? SheetCollectionCell {
-//			collectionCell.previewView.addSubview(SheetView.createWith(frame: collectionView.frame, cluster: selectedSong.cluster, sheet: selectedSong.sheets[indexPath.row], tag: selectedSong.sheets[indexPath.row].hasTag, scaleFactor: 1, isPreview: true, position: indexPath.row, toExternalDisplay: false))
-		}
+//		if let collectionCell = collectionCell as? SheetCollectionCell {
+////			collectionCell.previewView.addSubview(SheetView.createWith(frame: collectionView.frame, cluster: selectedSong.cluster, sheet: selectedSong.sheets[indexPath.row], tag: selectedSong.sheets[indexPath.row].hasTag, scaleFactor: 1, isPreview: true, position: indexPath.row, toExternalDisplay: false))
+//		}
 		transForm(cell: collectionCell)
 		return collectionCell
 	}

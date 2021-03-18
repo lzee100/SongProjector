@@ -92,7 +92,7 @@ class EditSongIphoneController: ChurchBeamViewController, UICollectionViewDataSo
 			let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.sheetCollectionCell, for: indexPath)
 			if let collectionCell = collectionCell as? SheetCollectionCell {
 				if let sheet = sheets.count > 0 ? sheets[indexPath.section] : cluster?.hasSheets[indexPath.section] as? VSheetTitleContent {
-					collectionCell.setupWith(cluster: cluster, sheet: sheet, theme: selectedTheme ?? cluster?.hasTheme, didDeleteSheet: nil, isDeleteEnabled: true)
+					collectionCell.setupWith(cluster: cluster, sheet: sheet, theme: selectedTheme ?? cluster?.hasTheme(moc: moc), didDeleteSheet: nil, isDeleteEnabled: true)
 				}
 				
 				if visibleCells.contains(indexPath) { // is cell was visible to user, animate
@@ -136,7 +136,7 @@ class EditSongIphoneController: ChurchBeamViewController, UICollectionViewDataSo
 		if collectionView != collectionViewSheets {
 			if selectedTheme?.id != themes[indexPath.row].id {
 				selectedTheme = themes[indexPath.row]
-				save.title = Text.Actions.save
+				save.title = AppText.Actions.save
 				update()
 			}
 		}
@@ -155,23 +155,25 @@ class EditSongIphoneController: ChurchBeamViewController, UICollectionViewDataSo
 	// MARK: - Private Functions
 	
 	private func setup() {
-		themes = VTheme.list(sortOn: "position", ascending: true)
+        let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "position", ascending: true))
+            
+        self.themes = themes.map({ VTheme(theme: $0, context: moc) })
 		
 		view.backgroundColor = themeWhiteBlackBackground
 		textView.backgroundColor = themeWhiteBlackBackground
-		textView.textColor = themeWhiteBlackTextColor
+		textView.textColor = .blackColor
 		
 		collectionView.register(UINib(nibName: Cells.themeCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.themeCellCollection)
 		collectionViewSheets.register(UINib(nibName: Cells.sheetCollectionCell, bundle: nil), forCellWithReuseIdentifier: Cells.sheetCollectionCell)
-		navigationController?.title = Text.NewSong.title
-		title = Text.CustomSheets.title
+		navigationController?.title = AppText.NewSong.title
+		title = AppText.CustomSheets.title
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
 		NotificationCenter.default.addObserver(forName: UIScreen.didConnectNotification, object: nil, queue: nil, using: databaseDidChange)
 		
-		segmentControl.setTitle(Text.NewSong.segmentTitleText, forSegmentAt: 0)
-		segmentControl.setTitle(Text.NewSong.segmentTitleSheets, forSegmentAt: 1)
+		segmentControl.setTitle(AppText.NewSong.segmentTitleText, forSegmentAt: 0)
+		segmentControl.setTitle(AppText.NewSong.segmentTitleSheets, forSegmentAt: 1)
 		segmentControl.selectedSegmentIndex = 1
 		
 		let leftSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))
@@ -188,8 +190,8 @@ class EditSongIphoneController: ChurchBeamViewController, UICollectionViewDataSo
 		textView.addGestureRecognizer(leftSwipe)
 		collectionViewSheets.addGestureRecognizer(rightSwipe)
 
-		cancel.title = Text.Actions.cancel
-		save.title = Text.Actions.save
+		cancel.title = AppText.Actions.cancel
+		save.title = AppText.Actions.save
 		
 		multiplier = externalDisplayWindowRatio
 		let cellHeight = multiplier * (UIScreen.main.bounds.width - 20)
@@ -206,14 +208,14 @@ class EditSongIphoneController: ChurchBeamViewController, UICollectionViewDataSo
 		textView.keyboardDismissMode = .interactive
 		
 		isCollectionviewSheetsHidden = false
-		selectedTheme = cluster?.hasTheme
+		selectedTheme = cluster?.hasTheme(moc: moc)
 		
 //		visibleCells = getMaxVisiblecells()
 
 		update()
 	}
 	
-	private func update() {
+	override func update() {
 		// TODO: uncomment
 		collectionView.reloadData()
 		collectionViewSheets.reloadData()
@@ -245,7 +247,7 @@ class EditSongIphoneController: ChurchBeamViewController, UICollectionViewDataSo
 			let rangeRemove = start..<range.upperBound
 			
 			let sheetLyrics = String(contentToDevide[rangeSheet])
-			var sheetTitle: String = Text.NewSong.NoTitleForSheet
+			var sheetTitle: String = AppText.NewSong.NoTitleForSheet
 			
 			// get title
 			if let rangeTitle = contentToDevide.range(of: "\n") {
@@ -285,8 +287,8 @@ class EditSongIphoneController: ChurchBeamViewController, UICollectionViewDataSo
 		if selectedTheme != nil {
 			return true
 		} else {
-			let alert = UIAlertController(title: Text.NewSong.errorTitleNoTheme, message: Text.NewSong.erorrMessageNoTheme, preferredStyle: .alert)
-			alert.addAction(UIAlertAction(title: Text.Actions.ok, style: UIAlertAction.Style.default, handler: nil))
+			let alert = UIAlertController(title: AppText.NewSong.errorTitleNoTheme, message: AppText.NewSong.erorrMessageNoTheme, preferredStyle: .alert)
+			alert.addAction(UIAlertAction(title: AppText.Actions.ok, style: UIAlertAction.Style.default, handler: nil))
 			self.present(alert, animated: true, completion: nil)
 			
 			return false
@@ -306,7 +308,8 @@ class EditSongIphoneController: ChurchBeamViewController, UICollectionViewDataSo
 	
 	private func databaseDidChange(_ notification: Notification) {
 		selectedTheme = nil
-		themes = VTheme.list(sortOn: "position", ascending: true)
+        let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "position", ascending: true))
+        self.themes = themes.map({ VTheme(theme: $0, context: moc) })
 		update()
 	}
 	
@@ -337,16 +340,8 @@ class EditSongIphoneController: ChurchBeamViewController, UICollectionViewDataSo
 			if let themeId = selectedTheme?.id {
 				cluster.themeId = themeId
 			}
-			NSManagedObjectContext.saveForeground(vEntity: cluster, success: {
-				Queues.main.async {
-					self.dismiss(animated: true)
-				}
-			}) { (error) in
-				Queues.main.async {
-					self.show(message: error.localizedDescription)
-				}
-			}
 		}
+        self.dismiss(animated: true)
 	}
 	
 	@IBAction func segmentControlValueChanged(_ sender: UISegmentedControl) {

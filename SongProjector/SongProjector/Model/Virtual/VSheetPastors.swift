@@ -7,33 +7,45 @@
 //
 
 import Foundation
+import UIKit
 import CoreData
 
 class VSheetPastors: VSheet, SheetMetaType {
 	
 	static var type: SheetType = .SheetPastors
 	
-
-	
-	class func list(sortOn attributeName: String? = nil, ascending: Bool? = nil) -> [VSheetPastors] {
-		if let attributeName = attributeName, let ascending = ascending {
-			CoreSheetPastors.setSortDescriptor(attributeName: attributeName, ascending: ascending)
-		}
-		return CoreSheetPastors.getEntities().map({ VSheetPastors(sheet: $0) })
-	}
-	
-	override class func single(with id: Int64?) -> VSheetPastors? {
-		if let id = id, let sheet = CoreSheetPastors.getEntitieWith(id: id) {
-			return VSheetPastors(sheet: sheet)
-		}
-		return nil
-	}
-
 	var content: String? = nil
 	var imagePath: String? = nil
 	var thumbnailPath: String? = nil
 	var imagePathAWS: String? = nil
 	var thumbnailPathAWS: String? = nil
+    
+    var tempSelectedImage: UIImage? {
+        didSet {
+            tempSelectedImageThumbNail = tempSelectedImage?.resized(withPercentage: 0.5)
+        }
+    }
+    var tempSelectedImageThumbNail: UIImage?
+    var isTempSelectedImageDeleted = false
+    var tempLocalImageName: String?
+    
+    var hasNewRemoteImage: Bool {
+        if let imagePathAWS = imagePathAWS {
+            if
+                let imagePath = imagePath,
+                let url = URL(string: imagePath),
+                let remoteURL = URL(string: imagePathAWS),
+                url.lastPathComponent == remoteURL.lastPathComponent
+            {
+                return false
+            } else {
+                return true
+            }
+        } else {
+            return false
+        }
+    }
+    
 
 	// not saving image path local
 	enum CodingKeysPastors:String,CodingKey
@@ -51,8 +63,6 @@ class VSheetPastors: VSheet, SheetMetaType {
 	override public func encode(to encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeysPastors.self)
 		try container.encode(content, forKey: .content)
-		try container.encode(imagePath, forKey: .imagePath)
-		try container.encode(thumbnailPath, forKey: .thumbnailPath)
 		try container.encode(imagePathAWS, forKey: .imagePathAWS)
 		try super.encode(to: encoder)
 	}
@@ -68,8 +78,6 @@ class VSheetPastors: VSheet, SheetMetaType {
 
 		content = try container.decodeIfPresent(String.self, forKey: .content)
 		// FixMe: delete image paths local
-		imagePath = try container.decodeIfPresent(String.self, forKey: .imagePath)
-		thumbnailPath = try container.decodeIfPresent(String.self, forKey: .thumbnailPath)
 		imagePathAWS = try container.decodeIfPresent(String.self, forKey: .imagePathAWS)
 		
 		try super.initialization(decoder: decoder)
@@ -97,7 +105,7 @@ class VSheetPastors: VSheet, SheetMetaType {
 			sheet.content = self.content
 			sheet.imagePath = self.imagePath
 			sheet.thumbnailPath = self.thumbnailPath
-			if sheet.imagePathAWS != imagePathAWS {
+			if imagePathAWS == nil {
 				sheet.imagePath = nil
 				sheet.thumbnailPath = nil
 			}
@@ -105,8 +113,8 @@ class VSheetPastors: VSheet, SheetMetaType {
 		}
 	}
 	
-	override func getPropertiesFrom(entity: Entity) {
-		super.getPropertiesFrom(entity: entity)
+    override func getPropertiesFrom(entity: Entity, context: NSManagedObjectContext) {
+        super.getPropertiesFrom(entity: entity, context: context)
 		if let sheet = entity as? SheetPastorsEntity {
 			content = sheet.content
 			imagePath = sheet.imagePath
@@ -115,27 +123,21 @@ class VSheetPastors: VSheet, SheetMetaType {
 		}
 	}
 	
-	convenience init(sheet: SheetPastorsEntity) {
+	convenience init(sheet: SheetPastorsEntity, context: NSManagedObjectContext) {
 		self.init()
-		getPropertiesFrom(entity: sheet)
+        getPropertiesFrom(entity: sheet, context: context)
 	}
 	
-	override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-		
-		CoreSheetPastors.managedObjectContext = context
-		if let storedEntity = CoreSheetPastors.getEntitieWith(id: id) {
-			CoreSheetPastors.managedObjectContext = moc
-			setPropertiesTo(entity: storedEntity, context: context)
-			return storedEntity
-		} else {
-			CoreSheetPastors.managedObjectContext = context
-			let newEntity = CoreSheetPastors.createEntityNOTsave()
-			CoreSheetPastors.managedObjectContext = moc
-			setPropertiesTo(entity: newEntity, context: context)
-			return newEntity
-		}
-
-	}
+    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
+        if let entity: SheetPastorsEntity = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
+            setPropertiesTo(entity: entity, context: context)
+            return entity
+        } else {
+            let entity: SheetPastorsEntity = DataFetcher().createEntity(moc: context)
+            setPropertiesTo(entity: entity, context: context)
+            return entity
+        }
+    }
 
 	
 

@@ -13,7 +13,7 @@ class MenuController: UITabBarController {
 	// MARK: - Constants
 	
 	fileprivate struct Constants {
-		static let MaxRootFeatures = 3
+		static let MaxRootFeatures = 4
 		static let roomForMore = 1
 	}
 	
@@ -51,36 +51,46 @@ class MenuController: UITabBarController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		setup()
-		NotificationCenter.default.addObserver(forName: NotificationNames.secretChanged, object: nil, queue: nil) { [weak self] (notification) in
+        
+		NotificationCenter.default.addObserver(forName: .secretChanged, object: nil, queue: nil) { [weak self] (notification) in
 			DispatchQueue.main.async {
 				self?.dismiss()
 			}
 		}
-		NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: NotificationIdentifier.noContract), object: nil, queue: nil) { [weak self] (notification) in
+        NotificationCenter.default.addObserver(forName: .signedOut, object: nil, queue: nil) { [weak self] (notification) in
 			DispatchQueue.main.async {
 				self?.dismiss()
 			}
 		}
 	}
 	
-	override func viewWillAppear(_ animated: Bool) {
-		super.viewWillAppear(animated)
-	}
-	
-	
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        switch selected {
+        case .songService: return .lightContent
+        default: return .darkContent
+        }
+    }
 	
 	override var supportedInterfaceOrientations : UIInterfaceOrientationMask {
 		return UIInterfaceOrientationMask.portrait
 	}
 	
 	override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
-		
-		if let index = tabBar.items?.index(of: item) {
+
+		if let index = tabBar.items?.firstIndex(of: item) {
 			selected = features[index]
 		} else {
 			selected = nil
 		}
-		
+        if case .dev = ChurchBeamConfiguration.environment {
+            tabBar.barTintColor = UIColor(hex: "#891938")
+            return
+        }
+        switch selected {
+        case .songService: tabBar.barTintColor = UIColor(hex: "2E2C2C")
+        default: tabBar.barTintColor = .grey2
+        }
+
 	}
 	
 	func activeController() -> UIViewController? {
@@ -89,33 +99,76 @@ class MenuController: UITabBarController {
 		}
 		return nil
 	}
-
-	
+    
 	private func setup() {
 		
-		// Maak controllers
-//		let storyboard = UIStoryboard(name: "StoryboardiPad", bundle: nil)
-//		let storyboardiPad = UIStoryboard(name: "StoryboardiPad", bundle: nil)
-		
+		tabBar.barTintColor = UIColor(hex: "#2E2C2C")
+        
+        switch ChurchBeamConfiguration.environment {
+        case .dev: tabBar.barTintColor = UIColor(hex: "#891938")
+        case .production: tabBar.barTintColor = UIColor(hex: "2E2C2C")
+        }
+
+        tabBar.tintColor = .orange
+
+        var tabFeatures: [Feature] = []
+        var moreFeatures: [Feature] = []
+
+
 		if let storyboard = storyboard {
 			if let name = storyboard.value(forKey: "name") as? String, name == "StoryboardiPad" {
 				UserDefaults.standard.setValue("ipad", forKey: "device")
 			}
-			Feature.all.forEach{
-				controllers[$0] = $0.storyBoard.instantiateViewController(withIdentifier: $0.identifier)
+            
+            var contr: [UIViewController] = []
+            
+            Feature.all.prefix(Constants.MaxRootFeatures).forEach({
+                if $0 == .songService {
+                    if UIDevice.current.userInterfaceIdiom == .pad {
+                        contr.append(Storyboard.Ipad.instantiateViewController(identifier: $0.identifier))
+                    } else {
+                        contr.append(Storyboard.MainStoryboard.instantiateViewController(identifier: $0.identifier))
+                    }
+                } else {
+                    contr.append(Storyboard.MainStoryboard.instantiateViewController(identifier: $0.identifier))
+                }
+            })
+            viewControllers = contr
+                       
+            
+            for (index, controller) in (viewControllers ?? []).enumerated() {
+                tabFeatures.append(Feature.all[index])
+                if Feature.all[index] != .more {
+                    controllers[Feature.all[index]] = controller
+                }
+            }
+
+            Feature.all.filter({ $0.isActief == true }).forEach {
+                if !tabFeatures.contains($0) {
+                    moreFeatures.append($0)
+                    controllers[$0] = $0.storyBoard.instantiateViewController(withIdentifier: $0.identifier)
+                }
 			}
-			// remove more UIViewController, more will become split viewController
-			controllers.removeValue(forKey: .more)
-			
-			splitController = UISplitViewController()
-			
-			let master = storyboard.instantiateViewController(withIdentifier: "Master")
-			let navMaster = UINavigationController(rootViewController: master)
-			
-			splitController?.viewControllers = [navMaster]
-			
-			controllers[.more] = splitViewController
-			update()
+            
+            tabBar.items?.enumerated().forEach {
+                index, item in
+                
+                let feature = tabFeatures[index]
+                            
+                item.title = feature.titleForDisplay
+                item.image = feature.image.normal
+                item.selectedImage = feature.image.selected
+                
+            }
+            
+            splitController = viewControllers?.last as? UISplitViewController
+
+            if let navMaster = splitController?.viewControllers[0] as? UINavigationController, let master = navMaster.topViewController as? MoreController {
+                master.features = moreFeatures.map{ ($0, controller($0)!) }
+            }
+
+            menuFeatures = tabFeatures
+//			update()
 		}
 	}
 	
@@ -127,7 +180,7 @@ class MenuController: UITabBarController {
 		var moreFeatures = menuFeatures
 		
 		// remove meer from menu
-		let moreIndex = menuFeatures.index(of: .more) ?? 0
+        let moreIndex = menuFeatures.firstIndex(of: .more) ?? 0
 		menuFeatures.remove(at: moreIndex)
 		
 		// get tabbar menu items
@@ -144,7 +197,7 @@ class MenuController: UITabBarController {
 		// get meer menu items
 		if !moreFeatures.isEmpty {
 			moreFeatures.removeFirst(maxFeatures)
-			if let index = moreFeatures.index(of: .more) {
+            if let index = moreFeatures.firstIndex(of: .more) {
 				moreFeatures.remove(at: index)
 			}
 		}
@@ -165,7 +218,7 @@ class MenuController: UITabBarController {
 		// set custom navigationbar color
 		for viewController in viewControllers ?? [] {
 			if let nav = viewController as? UINavigationController {
-				nav.view.backgroundColor = .clear
+                nav.view.backgroundColor = .whiteColor
 			}
 		}
 		
@@ -176,17 +229,14 @@ class MenuController: UITabBarController {
 			index, item in
 			
 			let feature = menuFeatures[index]
-			
-			let image = feature.image.selected
-			let selectedImage = feature.image.selected
-			
+						
 			item.title = feature.titleForDisplay
-			item.image = image
-			item.selectedImage = selectedImage
-			
+			item.image = feature.image.normal
+			item.selectedImage = feature.image.selected
+            
 		}
-		
-	}
+
+    }
 	
 	private func controller(_ feature: Feature) -> UIViewController? {
 		

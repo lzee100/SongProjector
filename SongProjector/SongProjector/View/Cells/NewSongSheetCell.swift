@@ -46,7 +46,6 @@ class NewSongSheetCell: UITableViewCell, UITextViewDelegate {
     }
 	
 	func textViewDidEndEditing(_ textView: UITextView) {
-		print("")
 	}
 	
 	func textViewDidChange(_ textView: UITextView) {

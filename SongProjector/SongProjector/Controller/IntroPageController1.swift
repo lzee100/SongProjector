@@ -12,35 +12,36 @@ class IntroPageController1: PageController {
 
 	@IBOutlet var titleLabel: UILabel!
 	@IBOutlet var ContentLabel: UILabel!
-	
-	@IBOutlet var titleLeftConstraint: NSLayoutConstraint!
-	@IBOutlet var contentRightConstraint: NSLayoutConstraint!
-	
+		
 	static let identifier = "IntroPageController1"
 	
 	override func viewDidLoad() {
         super.viewDidLoad()
-		titleLabel.text = Text.Intro.IntroHalloTitle
-		ContentLabel.text = Text.Intro.IntroHalloContent
-		titleLabel.textColor = .white
-		ContentLabel.textColor = .white
-		view.backgroundColor = .black
+		titleLabel.text = AppText.Intro.IntroHalloTitle
+		ContentLabel.text = AppText.Intro.IntroHalloContent
+		titleLabel.textColor = .whiteColor
+		ContentLabel.textColor = .whiteColor
+		view.backgroundColor = .blackColor
+        
     }
-	
-	override func viewDidAppear(_ animated: Bool) {
-		super.viewDidAppear(animated)
-		Queues.main.asyncAfter(deadline: .now() + 1) {
-			self.titleLeftConstraint.constant = 40
-			UIView.animate(withDuration: 0.7, animations: {
-				self.view.layoutIfNeeded()
-			}) { _ in
-				self.contentRightConstraint.constant = 40
-				UIView.animate(withDuration: 0.7, animations: {
-					self.view.layoutIfNeeded()
-				})
-			}
-		}
-	}
-	
-	
+    
+    override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+        if(event?.subtype == UIEvent.EventSubtype.motionShake) {
+            let alert = UIAlertController(title: nil, message: "Selecteer omgeving:", preferredStyle: .actionSheet)
+            let actions = Environment.allValues.map({ environment in
+                UIAlertAction(title: environment.name, style: .default) { (_) in
+                    Queues.main.async {
+                        ChurchBeamConfiguration.environment = environment
+                        environment.loadGoogleFile()
+                    }
+                }
+            })
+            actions.forEach({ alert.addAction($0) })
+            alert.popoverPresentationController?.sourceView = self.view
+            alert.popoverPresentationController?.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.maxY, width: 0, height: 0)
+            alert.popoverPresentationController?.permittedArrowDirections = []
+            present(alert, animated: true)
+        }
+    }
+    
 }

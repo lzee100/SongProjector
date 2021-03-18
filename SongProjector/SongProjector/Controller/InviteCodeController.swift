@@ -24,12 +24,9 @@ class InviteCodeController: ChurchBeamViewController {
 	var user: VUser = {
 		return VUser()
 	}()
-	override var requesterId: String {
-		return "InviteCodeController"
-	}
-	override var requesters: [RequesterType] {
-		return [OrganizationFetcher, InitSubmitter]
-	}
+//	override var requesters: [RequesterType] {
+//		return [OrganizationFetcher, InitSubmitter]
+//	}
 	
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
@@ -43,35 +40,32 @@ class InviteCodeController: ChurchBeamViewController {
 	}
 	
 	@IBAction func didPressDone(_ sender: UIBarButtonItem) {
-		user.appInstallToken = UIDevice.current.identifierForVendor!.uuidString
-		user.userToken = AccountStore.icloudID
-		user.inviteToken = code
-		InitSubmitter.submit([user], requestMethod: .post)
+//		InitSubmitter.submit([user], requestMethod: .post)
 	}
 	
-	override func requestDidFinish(requesterID: String, response: ResponseType, result: AnyObject?) {
-		self.hideLoader()
-		switch response {
-		case .OK(_):
-			if requesterID == InitSubmitter.requesterId {
-				UserFetcher.fetchMe(force: true)
-			} else if requesterID == OrganizationFetcher.requesterId {
-				Queues.main.async {
-					self.dismiss(animated: true, completion: {
-						NotificationCenter.default.post(name: NotificationNames.didSignUpSuccessfully, object: nil)
-					})
-				}
-			}
-		case .error(let httpResponse, _):
-			switch httpResponse?.statusCode {
-			case .some(404):
-				Queues.main.async {
-					self.show(message: "Deze koppelcode is niet geldig")
-				}
-			default: show(error: response)
-			}
-		}
-	}
+//	override func requestDidFinish(requesterID: String, response: ResponseType, result: AnyObject?) {
+//		self.hideLoader()
+//		switch response {
+//		case .OK(_):
+//			if requesterID == InitSubmitter.requesterId {
+//				UserFetcher.fetchMe(force: true)
+//			} else if requesterID == OrganizationFetcher.requesterId {
+//				Queues.main.async {
+//					self.dismiss(animated: true, completion: {
+//						NotificationCenter.default.post(name: .didSignUpSuccessfully, object: nil)
+//					})
+//				}
+//			}
+//		case .error(let httpResponse, _):
+//			switch httpResponse?.statusCode {
+//			case .some(404):
+//				Queues.main.async {
+//					self.show(message: "Deze koppelcode is niet geldig")
+//				}
+//			default: show(error: response)
+//			}
+//		}
+//	}
 	
 	@IBAction func didPressCancel(_ sender: UIBarButtonItem) {
 		self.dismiss(animated: true)

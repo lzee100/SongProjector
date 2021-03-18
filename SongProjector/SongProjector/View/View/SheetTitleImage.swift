@@ -75,7 +75,7 @@ class SheetTitleImage: SheetView {
 				
 				contentHeightConstraint.isActive = false
 				
-				newContentHeightConstraint = NSLayoutConstraint(item: descriptionContent, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
+                newContentHeightConstraint = NSLayoutConstraint(item: descriptionContent!, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
 				
 				descriptionContent.addConstraint(newContentHeightConstraint!)
 				
@@ -105,7 +105,7 @@ class SheetTitleImage: SheetView {
 					
 					// set height constraint to zero
 					titleHightConstraint.isActive = false
-					zeroHeightConstraint = NSLayoutConstraint(item: descriptionTitle, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
+					zeroHeightConstraint = NSLayoutConstraint(item: descriptionTitle!, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
 					descriptionTitle.addConstraint(zeroHeightConstraint!)
 					
 				} else {
@@ -132,7 +132,7 @@ class SheetTitleImage: SheetView {
 		} else {
 			// set height constraint to zero
 			titleHightConstraint.isActive = false
-			zeroHeightConstraint = NSLayoutConstraint(item: descriptionTitle, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
+			zeroHeightConstraint = NSLayoutConstraint(item: descriptionTitle!, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
 			descriptionTitle.addConstraint(zeroHeightConstraint!)
 			
 		}
@@ -161,9 +161,8 @@ class SheetTitleImage: SheetView {
 	}
 	
 	override func updateBackgroundImage() {
-		let image = isForExternalDispay ? sheetTheme?.backgroundImage : sheetTheme?.thumbnail
-
-		if let image = image, !(sheetTheme?.isBackgroundImageDeleted ?? true) {
+        let image = isForExternalDispay ? sheetTheme?.tempSelectedImage ?? sheetTheme?.backgroundImage : sheetTheme?.tempSelectedImageThumbNail ?? sheetTheme?.thumbnail
+		if let image = image, !(sheetTheme?.isTempSelectedImageDeleted ?? true) {
 			backgroundImage.isHidden = false
 			backgroundImage.contentMode = .scaleAspectFill
 			backgroundImage.image = image
@@ -217,7 +216,7 @@ class SheetTitleImage: SheetView {
 	
 	override func updateSheetImage() {
 		let sheet = self.sheet as! VSheetTitleImage
-		let image = isForExternalDispay ? sheet.image : sheet.thumbnail
+        let image = isForExternalDispay ? sheet.tempSelectedImage ?? sheet.image : sheet.tempSelectedImageThumbNail ?? sheet.thumbnail
 		
 		if sheet.imageHasBorder {
 			self.image.isHidden = true
@@ -232,9 +231,8 @@ class SheetTitleImage: SheetView {
 		} else {
 			self.image.isHidden = false
 			imageWithBorder.isHidden = true
-			self.image.contentMode = UIView.ContentMode(rawValue: Int(sheet.imageContentMode))!
+            self.image.contentMode = ContentMode(rawValue: Int(sheet.imageContentMode)) ?? .scaleAspectFill
 			self.image.image = image
-			self.image.contentMode = .scaleAspectFill
 			self.image.clipsToBounds = true
 
 		}

@@ -86,7 +86,7 @@ class SheetSplit: SheetView {
 		} else {
 			// set height constraint to zero
 			titleHeightConstraint.isActive = false
-			zeroHeightConstraint = NSLayoutConstraint(item: descriptionTitle, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
+            zeroHeightConstraint = NSLayoutConstraint(item: descriptionTitle!, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
 			descriptionTitle.addConstraint(zeroHeightConstraint!)
 		}
 	}
@@ -143,13 +143,13 @@ class SheetSplit: SheetView {
 		if let backgroundColor = sheetTheme?.sheetBackgroundColor {
 			self.sheetBackgroundView.backgroundColor = backgroundColor
 		} else {
-			self.sheetBackgroundView.backgroundColor = .white
+			self.sheetBackgroundView.backgroundColor = .whiteColor
 		}
 	}
 	
 	override func updateBackgroundImage() {
 		let image = isForExternalDispay ? sheetTheme?.backgroundImage : sheetTheme?.thumbnail
-		if let backgroundImage = image, !(sheetTheme?.isBackgroundImageDeleted ?? true) {
+		if let backgroundImage = image, !(sheetTheme?.isTempSelectedImageDeleted ?? true) {
 			sheetBackgroundImageView.isHidden = false
 			sheetBackgroundImageView.contentMode = .scaleAspectFill
 			sheetBackgroundImageView.image = backgroundImage

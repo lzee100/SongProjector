@@ -17,8 +17,8 @@ extension UIFont {
 	
 	enum Fonts: String {
 		case heavy = "HelveticaNeue-CondensedBlack"
-		case bold = "HelveticaNeue-Bold"
-		case normal = "GillSans"
+		case bold = "Avenir-Heavy"
+        case normal = "Avenir"
 		case light = "GillSans-Light"
 	}
 	
@@ -47,6 +47,10 @@ extension UIFont {
 	static let introHeader = fontWith(name: .bold, size: .xxLarge)
 	static let introFooter = fontWith(name: .light, size: .xLarge)
 	
+    static let xxxLarge = fontWith(name: .normal, size: .xxxLarge)
+    static let xxxLargeBold = fontWith(name: .bold, size: .xxxLarge)
+    static let xxxLargeLight = fontWith(name: .light, size: .xxxLarge)
+
 	static let xLarge = fontWith(name: .normal, size: .xLarge)
 	static let xLargeBold = fontWith(name: .bold, size: .xLarge)
 	static let xLargeLight = fontWith(name: .light, size: .xLarge)

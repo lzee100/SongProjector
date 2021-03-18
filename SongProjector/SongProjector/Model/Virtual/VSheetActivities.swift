@@ -11,22 +11,7 @@ import CoreData
 
 class VSheetActivities: VSheet, SheetMetaType {
 	static let type: SheetType = .SheetActivities
-	
-	
-	class func list(sortOn attributeName: String? = nil, ascending: Bool? = nil) -> [VSheetActivities] {
-		if let attributeName = attributeName, let ascending = ascending {
-			CoreSheetActivities.setSortDescriptor(attributeName: attributeName, ascending: ascending)
-		}
-		return CoreSheetActivities.getEntities().map({ VSheetActivities(sheetActivities: $0) })
-	}
-	
-	override class func single(with id: Int64?) -> VSheetActivities? {
-		if let id = id, let sheetActivities = CoreSheetActivities.getEntitieWith(id: id) {
-			return VSheetActivities(sheetActivities: sheetActivities)
-		}
-		return nil
-	}
-	
+		
 	var hasGoogleActivity: [VGoogleActivity] = []
 	
 
@@ -63,34 +48,28 @@ class VSheetActivities: VSheet, SheetMetaType {
 		}
 	}
 	
-	override func getPropertiesFrom(entity: Entity) {
-		super.getPropertiesFrom(entity: entity)
+    override func getPropertiesFrom(entity: Entity, context: NSManagedObjectContext) {
+		super.getPropertiesFrom(entity: entity, context: context)
 		if let sheetActivities = entity as? SheetActivitiesEntity {
-			hasGoogleActivity = (sheetActivities.hasGoogleActivity?.allObjects as? [GoogleActivity] ?? []).map({ VGoogleActivity(entity: $0) })
+            hasGoogleActivity = (sheetActivities.hasGoogleActivity?.allObjects as? [GoogleActivity] ?? []).map({ VGoogleActivity(entity: $0, context: context) })
 		}
 	}
 	
-	convenience init(sheetActivities: SheetActivitiesEntity) {
+    convenience init(sheetActivities: SheetActivitiesEntity, context: NSManagedObjectContext) {
 		self.init()
-		getPropertiesFrom(entity: sheetActivities)
+        getPropertiesFrom(entity: sheetActivities, context: context)
 	}
 	
-	override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-		
-		CoreSheetActivities.managedObjectContext = context
-		if let storedEntity = CoreSheetActivities.getEntitieWith(id: id) {
-			CoreSheetActivities.managedObjectContext = moc
-			setPropertiesTo(entity: storedEntity, context: context)
-			return storedEntity
-		} else {
-			CoreSheetActivities.managedObjectContext = context
-			let newEntity = CoreSheetActivities.createEntityNOTsave()
-			CoreSheetActivities.managedObjectContext = moc
-			setPropertiesTo(entity: newEntity, context: context)
-			return newEntity
-		}
-
-	}
+    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
+        if let entity: SheetActivitiesEntity = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
+            setPropertiesTo(entity: entity, context: context)
+            return entity
+        } else {
+            let entity: SheetActivitiesEntity = DataFetcher().createEntity(moc: context)
+            setPropertiesTo(entity: entity, context: context)
+            return entity
+        }
+    }
 
 }
 

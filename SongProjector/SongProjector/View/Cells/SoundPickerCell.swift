@@ -17,11 +17,10 @@ class SoundPickerCell: ChurchBeamCell, UIPickerViewDataSource, UIPickerViewDeleg
 	
 	static let identifier = "SoundPickerCell"
 
-	@IBOutlet var selectInstrumentButton: UIButton!
 	@IBOutlet var instrumentPicker: UIPickerView!
-	@IBOutlet var fileLocationLabel: UILabel!
 	@IBOutlet var selectFileButton: UIButton!
-	
+    @IBOutlet var isSelectedImageView: UIImageView!
+    
 	@IBOutlet var instrumentPickerHeight: NSLayoutConstraint!
 		
 	enum State {
@@ -33,24 +32,20 @@ class SoundPickerCell: ChurchBeamCell, UIPickerViewDataSource, UIPickerViewDeleg
 	var uploadObject: InstrumentUploadObject?
 	var cellState: State = .collapsed
 	var delegate: SoundPickerCellDelegate?
-	
-	@IBOutlet var instrumentPickerHeightConstraint: NSLayoutConstraint!
-	
+		
 	override func awakeFromNib() {
         super.awakeFromNib()
-		instrumentPickerHeight.constant = cellState == .collapsed ? 50 : 150
-		if let instrument = uploadObject?.instrument {
-			selectInstrumentButton.setTitle(instrument.rawValue, for: UIControl.State())
-		}
-		selectInstrumentButton.isHidden = cellState == .expanded
-		instrumentPicker.isHidden = cellState == .collapsed
 		instrumentPicker.dataSource = self
 		instrumentPicker.delegate = self
+        isSelectedImageView.tintColor = .green1
+        isSelectedImageView.isHidden = true
     }
 	
 	func setup(_ uploadObject: InstrumentUploadObject, delegate: SoundPickerCellDelegate) {
 		self.uploadObject = uploadObject
-		self.delegate = delegate
+        let hasFileSelected = uploadObject.localURL != nil
+        isSelectedImageView.isHidden = !hasFileSelected
+        self.delegate = delegate
 	}
 	
 	
@@ -68,22 +63,6 @@ class SoundPickerCell: ChurchBeamCell, UIPickerViewDataSource, UIPickerViewDeleg
 	
 	func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
 		uploadObject?.instrument = allInstruments[row]
-		toggle()
-	}
-	
-	private func toggle() {
-		cellState = cellState == .collapsed ? .expanded : .collapsed
-		instrumentPickerHeight.constant = cellState == .collapsed ? 50 : 150
-		if let instrument = uploadObject?.instrument {
-			selectInstrumentButton.setTitle(instrument.rawValue, for: UIControl.State())
-		}
-		selectInstrumentButton.isHidden = cellState == .expanded
-		instrumentPicker.isHidden = cellState == .collapsed
-		tableView?.updateHeights()
-	}
-	
-	@IBAction func didSelectSelectInstrument(_ sender: UIButton) {
-		toggle()
 	}
 	
 	@IBAction func didSelectSelectFile(_ sender: UIButton) {

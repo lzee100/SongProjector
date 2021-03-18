@@ -64,7 +64,7 @@ class LabelNumberPickerCell: ChurchBeamCell, UIPickerViewDataSource, UIPickerVie
 	}
 	
 	func setValue(_ value: Int?) {
-		if let value = value, let index = pickerValues.index(of: value) {
+        if let value = value, let index = pickerValues.firstIndex(of: value) {
 			picker.selectRow(index, inComponent: 0, animated: false)
 		}
 	}
@@ -86,7 +86,7 @@ class LabelNumberPickerCell: ChurchBeamCell, UIPickerViewDataSource, UIPickerVie
 	
 	func pickerView(_ pickerView: UIPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString? {
 		let title = String(pickerValues[row])
-		let myTitle = NSAttributedString(string: title, attributes: [ .foregroundColor : themeWhiteBlackTextColor ])
+		let myTitle = NSAttributedString(string: title, attributes: [ .foregroundColor : UIColor.blackColor ])
 		return myTitle
 	}
 	

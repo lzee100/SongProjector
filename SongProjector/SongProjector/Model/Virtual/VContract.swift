@@ -10,22 +10,7 @@ import Foundation
 import CoreData
 
 class VContract: VEntity {
-	
-	
-	class func list(sortOn attributeName: String? = nil, ascending: Bool? = nil) -> [VContract] {
-		if let attributeName = attributeName, let ascending = ascending {
-			CoreContract.setSortDescriptor(attributeName: attributeName, ascending: ascending)
-		}
-		return CoreContract.getEntities().map({ VContract(contract: $0) })
-	}
-	
-	class func single(with id: Int64?) -> VContract? {
-		if let id = id, let contract = CoreContract.getEntitieWith(id: id) {
-			return VContract(contract: contract)
-		}
-		return nil
-	}
-	
+		
 	var name: String = ""
 	var buttonContent: String = ""
 	
@@ -57,7 +42,7 @@ class VContract: VEntity {
 		self.init()
 		
 		let container = try decoder.container(keyedBy: CodingKeysContract.self)
-		id = try container.decode(Int64.self, forKey: .id)
+		id = try container.decode(String.self, forKey: .id)
 		name = try container.decode(String.self, forKey: .name)
 		buttonContent = try container.decode(String.self, forKey: .button)
 	}
@@ -70,34 +55,28 @@ class VContract: VEntity {
 		}
 	}
 	
-	override func getPropertiesFrom(entity: Entity) {
-		super.getPropertiesFrom(entity: entity)
+    override func getPropertiesFrom(entity: Entity, context: NSManagedObjectContext) {
+        super.getPropertiesFrom(entity: entity, context: context)
 		if let contract = entity as? Contract {
 			name = contract.name
 			buttonContent = contract.buttonContent
 		}
 	}
 	
-	convenience init(contract: Contract) {
+    convenience init(contract: Contract, context: NSManagedObjectContext) {
 		self.init()
-		getPropertiesFrom(entity: contract)
+        getPropertiesFrom(entity: contract, context: context)
 	}
 	
-	override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-		
-		CoreContract.managedObjectContext = context
-		if let storedEntity = CoreContract.getEntitieWith(id: id) {
-			CoreContract.managedObjectContext = moc
-			setPropertiesTo(entity: storedEntity, context: context)
-			return storedEntity
-		} else {
-			CoreContract.managedObjectContext = context
-			let newEntity = CoreContract.createEntityNOTsave()
-			CoreContract.managedObjectContext = moc
-			setPropertiesTo(entity: newEntity, context: context)
-			return newEntity
-		}
-
-	}
+    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
+        if let entity: Contract = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
+            setPropertiesTo(entity: entity, context: context)
+            return entity
+        } else {
+            let entity: Contract = DataFetcher().createEntity(moc: context)
+            setPropertiesTo(entity: entity, context: context)
+            return entity
+        }
+    }
 
 }

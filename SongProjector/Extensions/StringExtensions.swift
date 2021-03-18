@@ -14,11 +14,19 @@ extension String {
 	var isBlanc: Bool {
 		return self.trimmingCharacters(in: .whitespacesAndNewlines) == ""
 	}
+    
+    var intValue: Int? {
+        return Int(self)
+    }
+    
+    var doubleValue: Double? {
+        return Double(self)
+    }
 	
 	var isLetter: Bool {
 		let characterIndex = "abcdefghijklmnopqrstuvwxyz"
 		if let character = self.first {
-			if (characterIndex.index(of: character) == nil) {
+            if (characterIndex.firstIndex(of: character) == nil) {
 				return false
 			}
 			return true
@@ -30,7 +38,7 @@ extension String {
 		var isNumber: Bool {
 			let characterIndex = "0123456789"
 			if let character = self.first {
-				if (characterIndex.index(of: character) == nil) {
+                if (characterIndex.firstIndex(of: character) == nil) {
 					return false
 				}
 				return true
@@ -92,4 +100,31 @@ extension String {
 		
 		return ceil(boundingBox.width)
 	}
+    
+    mutating func removeLastWord() -> Array<String.Element>.Index {
+        let size = reversed().firstIndex(of: " ") ?? count
+        self = String(self.dropLast(size))
+        return size
+    }
+}
+
+extension StringProtocol { // for Swift 4 you need to add the constrain `where Index == String.Index`
+    var onlyWords: [SubSequence] { // no comma's or anything
+        var byWords: [SubSequence] = []
+        enumerateSubstrings(in: startIndex..., options: .byWords) { _, range, _, _ in
+            byWords.append(self[range])
+        }
+        return byWords
+    }
+    
+    var lastWord: SubSequence {
+        let size = reversed().firstIndex(of: " ") ?? count
+        let startWord = index(endIndex, offsetBy: -size)
+        return self[startWord...]
+    }
+    
+    var words: [SubSequence] {
+        return split(separator: " ")
+    }
+    
 }

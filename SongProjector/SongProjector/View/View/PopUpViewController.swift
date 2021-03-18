@@ -115,9 +115,9 @@ class PopUpViewController: ChurchBeamViewController {
 		let tab = UITapGestureRecognizer(target: self, action: #selector(didTabOutsideContainer))
 		tab.numberOfTapsRequired = 1
 		darkBackgroundView.addGestureRecognizer(tab)
-		titleLabel.textColor = themeWhiteBlackTextColor
-		contentLabel.textColor = themeWhiteBlackTextColor
-		checkBoxExplainLabel.textColor = themeWhiteBlackTextColor
+		titleLabel.textColor = .blackColor
+		contentLabel.textColor = .blackColor
+		checkBoxExplainLabel.textColor = .blackColor
 		darkBackgroundView.alpha = 0
 		containerViewTopConstraint.constant = 0
 		bottomView.isHidden = UIDevice.current.userInterfaceIdiom == .pad
@@ -222,19 +222,19 @@ class PopUpViewController: ChurchBeamViewController {
 	private func styleButtons() {
 		buttonLeft.backgroundColor = UIColor.clear
 		buttonLeft.layer.borderWidth = 2
-		buttonLeft.layer.borderColor = themeWhiteBlackTextColor.cgColor
+		buttonLeft.layer.borderColor = UIColor.blackColor.cgColor
 		buttonLeft.layer.cornerRadius = 5
 		buttonLeft.ignoresInvertColors = true
-		buttonLeft.setTitleColor(themeWhiteBlackTextColor, for: .normal)
+		buttonLeft.setTitleColor(.blackColor, for: .normal)
 		
-		buttonRight.backgroundColor = themeWhiteBlackTextColor
+		buttonRight.backgroundColor = .blackColor
 		buttonRight.layer.cornerRadius = 5
-		buttonRight.setTitleColor(.white, for: .normal)
+		buttonRight.setTitleColor(.whiteColor, for: .normal)
 		buttonRight.ignoresInvertColors = true
 		
-		oneCenterButton.backgroundColor = themeWhiteBlackTextColor
+		oneCenterButton.backgroundColor = .blackColor
 		oneCenterButton.layer.cornerRadius = 5
-		oneCenterButton.setTitleColor(.white, for: .normal)
+		oneCenterButton.setTitleColor(.whiteColor, for: .normal)
 		oneCenterButton.ignoresInvertColors = true
 	}
 	

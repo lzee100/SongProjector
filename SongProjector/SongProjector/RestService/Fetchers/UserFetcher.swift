@@ -2,8 +2,8 @@
 //  UserFetcher.swift
 //  SongProjector
 //
-//  Created by Leo van der Zee on 17/02/2019.
-//  Copyright © 2019 iozee. All rights reserved.
+//  Created by Leo van der Zee on 01/06/2020.
+//  Copyright © 2020 iozee. All rights reserved.
 //
 
 import Foundation
@@ -11,46 +11,18 @@ import CoreData
 
 let UserFetcher = UerFetcher()
 
-
 class UerFetcher: Requester<VUser> {
-	
-	private var fetchMe = false
-
-	override var dependencies: [RequesterDependency] {
-		return [RoleFetcher]
-	}
-	
-	override var requesterId: String {
-		return "UserFetcher"
-	}
-	
-	override var path: String {
-		return "users"
-	}
-	
-	override var suffix: String {
-		guard let userId = VUser.list().first(where: { $0.isMe })?.id else {
-			return ""
-		}
-		if fetchMe {
-			fetchMe = false
-			return "/\(userId)"
-		}
-		return ""
-	}
-	
-	func fetchMe(force: Bool) {
-		guard isSuperRequesterTotalFinished else { return }
-		fetchMe = true
-		requestMethod = .get
-		request(isSuperRequester: false)
-	}
-	
-	func fetch() {
-		guard isSuperRequesterTotalFinished else { return }
-		requestMethod = .get
-		request(isSuperRequester: false)
-	}
-	
-	
+    
+    override var id: String {
+        return "UserFetcher"
+    }
+    override var path: String {
+        return "users"
+    }
+    
+    override func getLastUpdatedAt(moc: NSManagedObjectContext) -> Date? {
+        let user: User? = DataFetcher().getLastUpdated(moc: moc)
+        return user?.updatedAt as Date?
+    }
+    
 }

@@ -130,13 +130,7 @@ open class RequestOperation : AsynchronousOperation, ShiftOutOperation {
 		if let body = body {
 			request.httpBody = body
 		}
-		
-		var requestPrint = "Requesting '\(method.rawValue):\(url.absoluteString)'"
-		if let range = range {
-			requestPrint += " (\(range.startIndex)-\(range.endIndex))"
-		}
-		print(requestPrint)
-		
+        
 		let task = createTask(session: session, request: request)
 		
 		self.task = task
@@ -156,7 +150,6 @@ open class RequestOperation : AsynchronousOperation, ShiftOutOperation {
 		if let error = error {
 			
 			self.error = error
-			print("Request failed: \(error.localizedDescription)")
 			self.didFail()
 			
 		} else if let response = response as? HTTPURLResponse {

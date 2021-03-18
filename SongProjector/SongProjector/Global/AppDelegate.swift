@@ -8,567 +8,270 @@
 //
 
 import UIKit
+import UserNotifications
 import CoreData
 import Photos
 import UIKit
+import Firebase
 import GoogleSignIn
-import AWSMobileClient
-import AWSGoogleSignIn
-import AWSAuthCore
-import AWSS3
+import FirebaseAuth
+
+let ApplicationIdentifier = "ApplicationIdentifier"
 
 var canUsePhotos: Bool {
-
-	get {
-		let defaults = UserDefaults.standard
-		return defaults.bool(forKey: "canUsePhotos")
-	}
-	set {
-		let defaults = UserDefaults.standard
-		defaults.set(newValue, forKey: "canUsePhotos")
-	}
+    
+    get {
+        let defaults = UserDefaults.standard
+        return defaults.bool(forKey: "canUsePhotos")
+    }
+    set {
+        let defaults = UserDefaults.standard
+        defaults.set(newValue, forKey: "canUsePhotos")
+    }
 }
 
 var externalDisplayWindow: UIWindow? {
-	didSet {
-		let defaults = UserDefaults.standard
-		defaults.set(externalDisplayWindow?.frame.width, forKey: "lastScreenWidth")
-		defaults.set(externalDisplayWindow?.frame.height, forKey: "lastScreenHeight")
-	}
+    didSet {
+        let defaults = UserDefaults.standard
+        defaults.set(externalDisplayWindow?.frame.width, forKey: "lastScreenWidth")
+        defaults.set(externalDisplayWindow?.frame.height, forKey: "lastScreenHeight")
+    }
 }
 
 var externalDisplayWindowRatio: CGFloat {
-	let defaults = UserDefaults.standard
-	if defaults.float(forKey: "lastScreenHeight") != 0 && defaults.float(forKey: "lastScreenWidth") != 0 {
-		return CGFloat(defaults.float(forKey: "lastScreenHeight")) / CGFloat(defaults.float(forKey: "lastScreenWidth"))
-	} else {
-		return 9/16
-	}
+    let defaults = UserDefaults.standard
+    if defaults.float(forKey: "lastScreenHeight") != 0 && defaults.float(forKey: "lastScreenWidth") != 0 {
+        return CGFloat(defaults.float(forKey: "lastScreenHeight")) / CGFloat(defaults.float(forKey: "lastScreenWidth"))
+    } else {
+        return 9/16
+    }
 }
 
 var externalDisplayWindowRatioHeightWidth: CGFloat {
-	let defaults = UserDefaults.standard
-	if defaults.float(forKey: "lastScreenHeight") != 0 && defaults.float(forKey: "lastScreenWidth") != 0 {
-		return CGFloat(defaults.float(forKey: "lastScreenWidth")) / CGFloat(defaults.float(forKey: "lastScreenHeight"))
-	} else {
-		return 16/9
-	}
+    let defaults = UserDefaults.standard
+    if defaults.float(forKey: "lastScreenHeight") != 0 && defaults.float(forKey: "lastScreenWidth") != 0 {
+        return CGFloat(defaults.float(forKey: "lastScreenWidth")) / CGFloat(defaults.float(forKey: "lastScreenHeight"))
+    } else {
+        return 16/9
+    }
 }
 
 var externalDisplayWindowHeight: CGFloat {
-	let defaults = UserDefaults.standard
-	if defaults.float(forKey: "lastScreenHeight") != 0 {
-		return CGFloat(defaults.float(forKey: "lastScreenHeight"))
-	} else {
-		return 1080
-	}
+    let defaults = UserDefaults.standard
+    if defaults.float(forKey: "lastScreenHeight") != 0 {
+        return CGFloat(defaults.float(forKey: "lastScreenHeight"))
+    } else {
+        return 1080
+    }
 }
 
 var externalDisplayWindowWidth: CGFloat {
-	let defaults = UserDefaults.standard
-	if defaults.float(forKey: "lastScreenWidth") != 0 {
-		return CGFloat(defaults.float(forKey: "lastScreenWidth"))
-	} else {
-		return 1920
-	}
+    let defaults = UserDefaults.standard
+    if defaults.float(forKey: "lastScreenWidth") != 0 {
+        return CGFloat(defaults.float(forKey: "lastScreenWidth"))
+    } else {
+        return 1920
+    }
 }
 
 func getSizeWith(height: CGFloat? = nil, width: CGFloat? = nil) -> CGSize {
-	if let height = height {
-		return CGSize(width: height * externalDisplayWindowRatioHeightWidth, height: height)
-	} else if let width = width {
-		return CGSize(width: width, height: width / externalDisplayWindowRatioHeightWidth)
-	} else {
-		return CGSize(width: 10, height: 10)
-	}
+    if let height = height {
+        return CGSize(width: height * externalDisplayWindowRatioHeightWidth, height: height)
+    } else if let width = width {
+        return CGSize(width: width, height: width / externalDisplayWindowRatioHeightWidth)
+    } else {
+        return CGSize(width: 10, height: 10)
+    }
+}
+
+func getScaleFactor(width: CGFloat) -> CGFloat {
+    return width / 250
 }
 
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-	
-	var window: UIWindow?
-	//Used for checking whether Push Notification is enabled in Amazon Pinpoint
-	static let remoteNotificationKey = "RemoteNotification"
-	var isInitialized: Bool = false
-	private var isRegistered: Bool {
-		return CoreUser.getEntities().first != nil
-	}
-
-	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-//		setupAndCheckDatabase()
-		
-//		CoreCluster.getEntities().forEach({
-//			moc.delete($0)
-//		})
-//		do {
-//			try moc.save()
-//		} catch {
-//			print(error)
-//		}
-		setupAirPlay()
-		ChurchBeamConfiguration.environment = .localhost
-//		let entities = CoreEntity.getEntities()
-//		entities.forEach({ $0.delete(false) })
-//		CoreEntity.saveContext(fireNotification: true)
-		
-//		application.statusBarStyle = .lightContent
-//		AppTheme.setup()
-		if PHPhotoLibrary.authorizationStatus() == .notDetermined {
-			PHPhotoLibrary.requestAuthorization({ (status) in
-				if status == PHAuthorizationStatus.authorized {
-					canUsePhotos = true
-				} else {
-					canUsePhotos = false
-				}
-			})
-		}
-		UNUserNotificationCenter.current().delegate = self
-		
-		
-		let credentialsProvider = AWSCognitoCredentialsProvider(regionType:.EUCentral1,
-		   identityPoolId:"eu-central-1:fc8d9eca-9ef8-4be9-91db-07ce12de4967")
-		let configuration = AWSServiceConfiguration(region:.EUCentral1, credentialsProvider:credentialsProvider)
-		AWSServiceManager.default().defaultServiceConfiguration = configuration		
-		
-//		AWSGoogleSignInProvider.sharedInstance().setScopes(["profile", "openid"])
-		GIDSignIn.sharedInstance()?.clientID = "1005753122128-dc0k48rg97hdetif0g3ncaf0dq0ue6mc.apps.googleusercontent.com"
-
-//		AWSSignInManager.sharedInstance().register(signInProvider: AWSGoogleSignInProvider.sharedInstance())
-//		let didFinishLaunching = AWSSignInManager.sharedInstance().interceptApplication(application, didFinishLaunchingWithOptions: launchOptions)
-//
-//		if (!isInitialized) {
-//			AWSSignInManager.sharedInstance().resumeSession(completionHandler: { (result: Any?, error: Error?) in
-//				print("Result: \(result) \n Error:\(error)")
-//			})
-//			isInitialized = true
-//		}
-//
-//
-//
-//		// Initialize the Amazon Cognito credentials provider
-//
-//		let credentialsProvider = AWSCognitoCredentialsProvider(regionType:.EUWest2,
-//																identityPoolId:"eu-west-2:e0602561-4fd7-4f01-94f2-790acd22d640")
-//		let configuration = AWSServiceConfiguration(region:.EUWest2, credentialsProvider: credentialsProvider)
-//
-//		AWSServiceManager.default().defaultServiceConfiguration = configuration
-//
-//		AWSDDLog.add(AWSDDTTYLogger.sharedInstance)
-//		AWSDDLog.sharedInstance.logLevel = .info
-//		return AWSMobileClient.sharedInstance().interceptApplication(
-//			application, didFinishLaunchingWithOptions:
-//			launchOptions)
-		return true
-	}
-
-	func applicationWillResignActive(_ application: UIApplication) {
-		// Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-		// Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
-	}
-
-	func applicationDidEnterBackground(_ application: UIApplication) {
-		// Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
-		// If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-	}
-
-	func applicationWillEnterForeground(_ application: UIApplication) {
-		// Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
-	}
-
-	func applicationDidBecomeActive(_ application: UIApplication) {
-	}
-
-	func applicationWillTerminate(_ application: UIApplication) {
-		// Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-		// Saves changes in the application's managed object context before the application terminates.
-	}
-
-	
-	
-	func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
-		return GIDSignIn.sharedInstance().handle(url)
-		// print("application application: \(application.description), openURL: \(url.absoluteURL), sourceApplication: \(sourceApplication)")
-		
-//		AWSMobileClient.sharedInstance().interceptApplication(
-//			application, open: url,
-//			sourceApplication: sourceApplication,
-//			annotation: annotation)
-//
-//		AWSSignInManager.sharedInstance().interceptApplication(application, open: url, sourceApplication: sourceApplication, annotation: annotation)
-//		isInitialized = true
-		
-		return true
-	}
-	
-	func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-		return GIDSignIn.sharedInstance().handle(url)
-
-//		return AWSMobileClient.sharedInstance().interceptApplication(
-//			app, open: url, sourceApplication: options[UIApplicationOpenURLOptionsKey.sourceApplication] as? String, annotation: options[UIApplicationOpenURLOptionsKey.annotation]!)
-		
-//		return GIDSignIn.sharedInstance().handle(url,
-//													sourceApplication: options[UIApplicationOpenURLOptionsKey.sourceApplication] as? String,
-//													annotation: options[UIApplicationOpenURLOptionsKey.annotation])
-		return true
-	}
-	
-	
-
-	private func setupAndCheckDatabase() {
-
-		// remove temporary sheets or tags that were created but session got lost (app terminated durring configuration process)
-//
-//		CoreTag.predicates.append("title", equals: "Player")
-//		var tags = CoreTag.getEntities()
-//		if tags.count == 0 {
-//			let tag = CoreTag.createEntity()
-//			tag.title = "Player"
-//			tag.deleteDate = nil
-//			let _ = CoreTag.saveContext()
-//		}
-		
-		CoreTheme.predicates.append("title", equals: "Alles")
-		if CoreTheme.getEntities().count == 0 {
-			let tag = CoreTheme.createEntity()
-			tag.title = "Alles"
-			tag.deleteDate = nil
-			let _ = CoreTheme.saveContext()
-		}
-		
-//		CoreInstrument.predicates.append("resourcePath", equals: "kort")
-//		let kort = CoreInstrument.getEntities()
-//		if kort.count == 0 {
-//			let kort = CoreInstrument.createEntity()
-//			kort.type = .piano
-//			kort.resourcePath = "kort"
-//			kort.isLoop = false
-//			kort.deleteDate = nil
-//			kort.title = "kort"
-//		}
-
-
-		CoreInstrument.predicates.append("resourcePath", equals: "LordLoop")
-		let lord = CoreInstrument.getEntities()
-		if lord.count == 0 {
-			let lord = CoreInstrument.createEntity()
-			lord.type = .pianoSolo
-			lord.resourcePath = "LordLoop"
-			lord.isLoop = true
-			lord.deleteDate = nil
-			lord.title = "LordLoop"
-		}
-
-		CoreInstrument.predicates.append("resourcePath", equals: "LordSong")
-		let lordSong = CoreInstrument.getEntities()
-		if lordSong.count == 0 {
-			let lordSong = CoreInstrument.createEntity()
-			lordSong.type = .piano
-			lordSong.resourcePath = "LordSong"
-			lordSong.isLoop = true
-			lordSong.deleteDate = nil
-			lordSong.title = "LordSong"
-		}
-
-		CoreInstrument.predicates.append("typeString", equals: "Keyboard")
-		let pianos = CoreInstrument.getEntities()
-		if pianos.count == 0 {
-			let piano = CoreInstrument.createEntity()
-			piano.type = .piano
-			piano.resourcePath = "Keyboard"
-			piano.title = "piano"
-			piano.deleteDate = nil
-		}
-
-		CoreInstrument.predicates.append("typeString", equals: "Guitar")
-		let guitars = CoreInstrument.getEntities()
-		if guitars.count == 0 {
-			let guitar = CoreInstrument.createEntity()
-			guitar.type = .guitar
-			guitar.resourcePath = "Guitar"
-			guitar.title = "guitar"
-			guitar.deleteDate = nil
-		}
-
-		CoreInstrument.predicates.append("typeString", equals: "Bass")
-		let bassGuitars = CoreInstrument.getEntities()
-		if bassGuitars.count == 0 {
-			let bassGuitar = CoreInstrument.createEntity()
-			bassGuitar.type = .bassGuitar
-			bassGuitar.resourcePath = "Bass"
-			bassGuitar.title = "bassGuitar"
-			bassGuitar.deleteDate = nil
-		}
-
-		CoreInstrument.predicates.append("typeString", equals: "Drums")
-		let drums = CoreInstrument.getEntities()
-		if drums.count == 0 {
-			let drum = CoreInstrument.createEntity()
-			drum.type = .drums
-			drum.resourcePath = "Drums"
-			drum.title = "drums"
-			drum.deleteDate = nil
-		}
-
-		let _ = CoreInstrument.saveContext()
-
-		CoreCluster.predicates.append("title", equals: "Ik zing vol blijdschap en lach")
-		if CoreCluster.getEntities().count == 0 {
-			let themeId = VTheme.list().first(where: { $0.title == "Alles" })!.id
-			let ikZing = CoreCluster.createEntity()
-			ikZing.title = "Ik zing vol blijdschap en lach"
-			ikZing.deleteDate = nil
-			ikZing.themeId = themeId
-			let tagId = VTag.list().first(where: { $0.title == "Intro" })?.id
-			ikZing.tagIds = tagId == nil ? [] : [NSNumber(value: tagId!)]
-
-			let sheet1 = CoreSheetTitleContent.createEntity()
-			sheet1.title = "Ik zing vol blijdschap en lach"
-			sheet1.content = """
-			Ik zing vol blijdschap en lach
-			Want de vreugde van God is mijn kracht
-			Wij buigen neer aanbidden Hem nu,
-			hoe groot en machtig is Hij
-			Iedereen zingt, iedereen zingt
-			"""
-			sheet1.time = 36
-			sheet1.hasCluster = ikZing
-			sheet1.position = 0
-			sheet1.deleteDate = nil
-
-			let sheet2 = CoreSheetTitleContent.createEntity()
-			sheet2.title = "Heilig is de heer"
-			sheet2.content = """
-			Heilig is de Heer, God almachtig
-			de aarde is vol van Zijn glorie (2x)
-			"""
-			sheet2.time = 26.80
-			sheet2.hasCluster = ikZing
-			sheet2.position = 1
-			sheet2.deleteDate = nil
-
-			let sheet3 = CoreSheetTitleContent.createEntity()
-			sheet3.title = "Ik zing vol blijdschap en lach"
-			sheet3.content = """
-			Ik zing vol blijdschap en lach
-			Want de vreugde van God is mijn kracht
-			Wij buigen neer aanbidden Hem nu,
-			hoe groot en machtig is Hij
-			Iedereen zingt, iedereen zingt
-			"""
-			sheet3.time = 29.70
-			sheet3.hasCluster = ikZing
-			sheet3.position = 2
-			sheet3.deleteDate = nil
-
-
-			let sheet4 = CoreSheetTitleContent.createEntity()
-			sheet4.title = "Heilig is de heer"
-			sheet4.content = """
-			Heilig is de Heer, God almachtig
-			de aarde is vol van Zijn glorie (2x)
-			"""
-			sheet4.time = 27
-			sheet4.hasCluster = ikZing
-			sheet4.position = 3
-			sheet4.deleteDate = nil
-
-			let sheet5 = CoreSheetTitleContent.createEntity()
-			sheet5.title = "Hij komt terug"
-			sheet5.content = """
-			Hij komt terug, Hij heeft het beloofd
-			voor iedereen die in Hem geloofd (2X)
-			"""
-			sheet5.time = 24.10
-			sheet5.hasCluster = ikZing
-			sheet5.position = 4
-			sheet5.deleteDate = nil
-
-
-			let sheet6 = CoreSheetTitleContent.createEntity()
-			sheet6.title = "Iedereen zingt"
-			sheet6.content = """
-			Iedereen zingt, iedereen zingt
-			"""
-			sheet6.time = 10
-			sheet6.hasCluster = ikZing
-			sheet6.position = 5
-			sheet6.deleteDate = nil
-
-			let sheet7 = CoreSheetTitleContent.createEntity()
-			sheet7.title = "Heilig is de heer"
-			sheet7.content = """
-			Heilig is de Heer, God almachtig
-			de aarde is vol van Zijn glorie (2x)
-			"""
-			sheet7.time = 59
-			sheet7.hasCluster = ikZing
-			sheet7.position = 6
-			sheet7.deleteDate = nil
-
-			CoreInstrument.predicates.append("resourcePath", notEquals: "LordLoop")
-			CoreInstrument.predicates.append("resourcePath", notEquals: "kort")
-			let instruments = CoreInstrument.getEntities()
-
-			for instrument in instruments {
-				instrument.hasCluster = ikZing
-			}
-		}
-
-		CoreCluster.predicates.append("title", equals: "Hij is heer")
-		if CoreCluster.getEntities().count == 0 {
-			let themeId = VTheme.list().first(where: { $0.title == "Alles" })!.id
-			let heIsLord = CoreCluster.createEntity()
-			heIsLord.title = "Hij is heer"
-			heIsLord.deleteDate = nil
-			heIsLord.isLoop = true
-			heIsLord.themeId = themeId
-			
-			let tagId = VTag.list().first(where: { $0.title == "Oproep" })?.id
-			heIsLord.tagIds = tagId == nil ? [] : [NSNumber(value: tagId!)]
-
-			let lordSheet = CoreSheetTitleContent.createEntity()
-			lordSheet.title = "Hij is heer."
-			lordSheet.time = Double.greatestFiniteMagnitude
-			lordSheet.hasCluster = heIsLord
-			lordSheet.position = 0
-			lordSheet.content = """
-			Want Hij is heer, Hij is heer.
-			Hij is opgestaan, want Jezus Hij is heer.
-			Elke knie zal zich buigen, elke tong belijden.
-			Dat Jezus, Hij is heer.
-			"""
-
-			CoreInstrument.predicates.append("resourcePath", equals: "LordLoop")
-			let lordLoop = CoreInstrument.getEntities().first
-
-			CoreInstrument.predicates.append("resourcePath", equals: "LordSong")
-			let lordSong = CoreInstrument.getEntities()
-
-			lordSong.forEach({ $0.hasCluster = heIsLord })
-
-			lordLoop?.hasCluster = heIsLord
-			CoreCluster.saveContext()
-		}
-
-//		CoreCluster.predicates.append("title", equals: "Test kort")
-//		if CoreCluster.getEntities().count == 0 {
-//			let kort = VCluster()
-//			kort.title = "Test kort"
-//			kort.deleteDate = nil
-//
-//			CoreTag.predicates.append("title", equals: "Security")
-//			let tag = CoreTag.getEntities().first
-//
-//			let tagId = VTag.list().first(where: { $0.title == "Oproep" })?.id
-//			kort.tagIds = tagId == nil ? [] : [NSNumber(value: tagId)]
-//
-//			let sheet1 = CoreSheetTitleContent.createEntity()
-//			sheet1.title = "Test kort"
-//			sheet1.content = """
-//			Test kort
-//			"""
-//			sheet1.time = 3
-//			sheet1.hasCluster = kort
-//			sheet1.position = 0
-//			sheet1.deleteDate = nil
-//
-//			let sheet2 = CoreSheetTitleContent.createEntity()
-//			sheet2.title = "Test Kort 1"
-//			sheet2.content = """
-//			test kort 1
-//			"""
-//			sheet2.time = 3
-//			sheet2.hasCluster = kort
-//			sheet2.position = 1
-//			sheet2.deleteDate = nil
-//
-//			let sheet3 = CoreSheetTitleContent.createEntity()
-//			sheet3.title = "Test kort 2"
-//			sheet3.content = """
-//			Test kort 2
-//			"""
-//			sheet3.time = Double.infinity
-//			sheet3.hasCluster = kort
-//			sheet3.position = 2
-//			sheet3.deleteDate = nil
-//
-//			CoreInstrument.predicates.append("resourcePath", equals: "kort")
-//			let instruments = CoreInstrument.getEntities()
-//
-//			for instrument in instruments {
-//				instrument.hasCluster = kort
-//			}
-//		}
-
-
-
-	}
-	
-	private func setupAirPlay() {
-		
-		NotificationCenter.default.addObserver(
-			forName: UIScreen.didConnectNotification,
-			object: nil,
-			queue: nil,
-			using: displayConnected)
-		
-		NotificationCenter.default.addObserver(
-			forName: UIScreen.didDisconnectNotification,
-			object: nil,
-			queue: nil,
-			using: displayDisconnected
-		)
-		checkForExternalDisplay()
-
-	}
-	
-	func displayConnected(notification: Notification) {
-		checkForExternalDisplay()
-	}
-	
-	func checkForExternalDisplay() {
-		if UIScreen.screens.count > 1 {
-			guard let screen = UIScreen.screens.last
-				else { return }
-			print(screen.bounds)
-			if externalDisplayWindow == nil {
-				externalDisplayWindow = UIWindow(
-					frame: screen.bounds
-				)
-				externalDisplayWindow?.screen = screen
-				NotificationCenter.default.post(name: NotificationNames.externalDisplayDidChange, object: nil, userInfo: nil)
-				externalDisplayWindow?.isHidden = false
-			}
-			
-		}
-	}
-	
-	func displayDisconnected(notification: Notification) {
-		externalDisplayWindow?.isHidden = true
-		externalDisplayWindow = nil
-		NotificationCenter.default.post(name: NotificationNames.externalDisplayDidChange, object: nil, userInfo: nil)
-	}
-	
-    func initializeS3() {
-        let poolId = "***** your poolId *****" // 3-1
-		let credentialsProvider = AWSCognitoCredentialsProvider(regionType: .EUWest1, identityPoolId: poolId)//3-2
-        let configuration = AWSServiceConfiguration(region: .EUWest1, credentialsProvider: credentialsProvider)
-        AWSServiceManager.default().defaultServiceConfiguration = configuration
+    
+    var window: UIWindow?
+    //Used for checking whether Push Notification is enabled in Amazon Pinpoint
+    static let remoteNotificationKey = "RemoteNotification"
+    var isInitialized: Bool = false
+    private var isRegistered: Bool {
+        let user: User? = DataFetcher().getEntity(moc: moc, predicates: [.skipDeleted])
+        return user != nil
+    }
+    
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+                
+        UINavigationBar.appearance(whenContainedInInstancesOf: [UISplitViewController.self]).tintColor = themeHighlighted
+        let userDefaults = UserDefaults.standard
+        if userDefaults.object(forKey: ApplicationIdentifier) == nil {
+            let UUID = NSUUID().uuidString
+            userDefaults.set(UUID, forKey: ApplicationIdentifier)
+        }
         
+        if UserDefaults.standard.integer(forKey: "config.environment") != 0 {
+            ChurchBeamConfiguration.environment.loadGoogleFile()
+        } else {
+            ChurchBeamConfiguration.environment = .production
+            ChurchBeamConfiguration.environment.loadGoogleFile()
+
+//            switch AppConfiguration.mode {
+//            case .TestFlight, .AppStore:
+//                ChurchBeamConfiguration.environment = .production
+//            case .Debug:
+//                ChurchBeamConfiguration.environment = .dev
+//            }
+//            ChurchBeamConfiguration.environment.loadGoogleFile()
+        }
+        
+        setupAirPlay()
+        
+        UNUserNotificationCenter.current().delegate = self
+        
+        NotificationCenter.default.addObserver(forName: .checkAuthentication, object: nil, queue: .main) { (_) in
+            self.checkAuthentication()
+        }
+        if SystemInfo.sharedInstance.isDebugMode() == .debug {
+            PopUpTimeManager.resetAll()
+        }
+        
+//        let manager = IAPManager(delegate: nil, sharedSecret: "0269d507736f44638d69284ad77f2ba7")
+//        manager.refreshSubscriptionsStatus()
+        
+        return true
+    }
+    
+    func applicationWillResignActive(_ application: UIApplication) {
+        // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
+        // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
+    }
+    
+    func applicationDidEnterBackground(_ application: UIApplication) {
+        // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
+        // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+    }
+    
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
+    }
+    
+    func applicationDidBecomeActive(_ application: UIApplication) {
+    }
+    
+    func applicationWillTerminate(_ application: UIApplication) {
+        // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+        // Saves changes in the application's managed object context before the application terminates.
+    }
+    
+    func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any])
+        -> Bool {
+            return GIDSignIn.sharedInstance().handle(url)
+    }
+    
+    private func setupAirPlay() {
+        
+        NotificationCenter.default.addObserver(
+            forName: UIScreen.didConnectNotification,
+            object: nil,
+            queue: nil,
+            using: displayConnected)
+        
+        NotificationCenter.default.addObserver(
+            forName: UIScreen.didDisconnectNotification,
+            object: nil,
+            queue: nil,
+            using: displayDisconnected
+        )
+        checkForExternalDisplay()
         
     }
-
+    
+    func displayConnected(notification: Notification) {
+        checkForExternalDisplay()
+    }
+    
+    func checkForExternalDisplay() {
+        if UIScreen.screens.count > 1 {
+            guard let screen = UIScreen.screens.last
+                else { return }
+            if externalDisplayWindow == nil {
+                externalDisplayWindow = UIWindow(
+                    frame: screen.bounds
+                )
+                externalDisplayWindow?.screen = screen
+                NotificationCenter.default.post(name: .externalDisplayDidChange, object: nil, userInfo: nil)
+                externalDisplayWindow?.isHidden = false
+            }
+            
+        }
+    }
+    
+    func displayDisconnected(notification: Notification) {
+        externalDisplayWindow?.isHidden = true
+        externalDisplayWindow = nil
+        NotificationCenter.default.post(name: .externalDisplayDidChange, object: nil, userInfo: nil)
+    }
+    
+    fileprivate func checkAuthentication() {
+        let user: User? = DataFetcher().getEntity(moc: moc, predicates: [.skipDeleted])
+        let userId = user?.userUID
+        let authId = Auth.auth().currentUser?.uid
+        if userId != nil, authId != nil, userId == authId {
+            NotificationCenter.default.post(name: .authenticated, object: nil)
+        } else {
+            UserDefaults.standard.removeObject(forKey: secretKey)
+            let entities: [Entity] = DataFetcher().getEntities(moc: moc)
+            entities.forEach({ moc.delete($0) })
+            do {
+                try moc.save()
+            } catch {
+                print(error)
+            }
+            NotificationCenter.default.post(name: .signedOut, object: nil)
+        }
+    }
+    
 }
 
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
-	func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-		return completionHandler([.sound, .badge, .alert])
-	}
-	func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-		completionHandler()
-	}
-	
-	
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        return completionHandler(UNNotificationPresentationOptions.banner)
+    }
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        completionHandler()
+    }
+    
+    
+}
+
+
+extension AppDelegate: GIDSignInDelegate {
+    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
+        Queues.main.async {
+            if let error = error {
+                print("error signing in")
+                print(error)
+                return
+            }
+            
+            guard let authentication = user.authentication else { return }
+            let credential = GoogleAuthProvider.credential(withIDToken: authentication.idToken,
+                                                           accessToken: authentication.accessToken)
+            
+            if let email = Auth.auth().currentUser?.email {
+                UserDefaults.standard.set(email, forKey: GoogleMail)
+            }
+            self.checkAuthentication()
+            NotificationCenter.default.post(name: .authenticatedGoogle, object: credential)
+        }
+    }
+    
+    func sign(_ signIn: GIDSignIn!, didDisconnectWith user: GIDGoogleUser!, withError error: Error!) {
+        Queues.main.async {
+            self.checkAuthentication()
+        }
+    }
+    
 }

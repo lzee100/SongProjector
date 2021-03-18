@@ -30,14 +30,18 @@ class IntroPageViewContainer: ChurchBeamViewController, UIPageViewControllerDele
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		NotificationCenter.default.addObserver(forName: NotificationNames.didSignUpSuccessfully, object: nil, queue: OperationQueue.main) { _ in
-			self.presentingViewController?.dismiss(animated: true, completion: nil)
-		}
 		guard let pageController = pageControllers.first else {
 			return
 		}
 		pageViewController.setViewControllers([pageController], direction: .forward, animated: true, completion: nil)
-
+        
+        NotificationCenter.default.addObserver(forName: .newUser, object: nil, queue: .main) { [weak self] (_) in
+            Queues.main.async {
+                if let last = self?.pageControllers.last {
+                    self?.pageViewController.setViewControllers([last], direction: .forward, animated: true, completion: nil)
+                }
+            }
+        }
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
@@ -65,7 +69,7 @@ class IntroPageViewContainer: ChurchBeamViewController, UIPageViewControllerDele
 	}
 	
 	func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-		if currentIndex == (self.pageControllers.count - 1) {
+		if currentIndex == (self.pageControllers.count - 1) || currentIndex == 1 {
 			return nil
 		}
 		return pageControllers[currentIndex + 1]
@@ -89,8 +93,9 @@ class IntroPageViewContainer: ChurchBeamViewController, UIPageViewControllerDele
 	
 	class func introControllers() -> [PageController] {
 		let page1 = Storyboard.Intro.instantiateViewController(withIdentifier: IntroPageController1.identifier) as! IntroPageController1
-		let page2 = Storyboard.Intro.instantiateViewController(withIdentifier: IntroStartingController.identifier) as! IntroStartingController
-		return [page1, page2]
+        let page2 = Storyboard.Intro.instantiateViewController(withIdentifier: IntroPageController22.identifier) as! IntroPageController22
+        let page3 = Storyboard.Intro.instantiateViewController(withIdentifier: IntroAdminController.identifier) as! IntroAdminController
+		return [page1, page2, page3]
 	}
 	
 }

@@ -1,26 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina4_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="LabelSliderCell" rowHeight="120" id="KGk-i7-Jjw" customClass="LabelSliderCell" customModule="SongProjector" customModuleProvider="target">
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="LabelSliderCell" rowHeight="120" id="KGk-i7-Jjw" customClass="LabelSliderCell" customModule="ChurchBeam" customModuleProvider="target">
             <rect key="frame" x="0.0" y="0.0" width="320" height="120"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
-                <rect key="frame" x="0.0" y="0.0" width="320" height="119.5"/>
+                <rect key="frame" x="0.0" y="0.0" width="320" height="120"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="sia-Vl-Ziv">
-                        <rect key="frame" x="18" y="15" width="284" height="31"/>
+                        <rect key="frame" x="28" y="15" width="264" height="31"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="30" id="XZh-43-WJn"/>
                         </constraints>
@@ -30,7 +27,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </view>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OOV-yS-qjW">
-                        <rect key="frame" x="20" y="19" width="42" height="21"/>
+                        <rect key="frame" x="30" y="19" width="42" height="21"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="21" id="6xm-hP-f6p"/>
                         </constraints>
@@ -39,7 +36,7 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dc9-cp-2fc">
-                        <rect key="frame" x="72" y="19" width="228" height="21"/>
+                        <rect key="frame" x="82" y="19" width="208" height="21"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="21" id="AuU-Cl-Thg"/>
                         </constraints>
@@ -49,15 +46,15 @@
                     </label>
                 </subviews>
                 <constraints>
-                    <constraint firstAttribute="trailing" secondItem="sia-Vl-Ziv" secondAttribute="trailing" constant="20" id="3nq-k3-ODL"/>
+                    <constraint firstAttribute="trailing" secondItem="sia-Vl-Ziv" secondAttribute="trailing" constant="30" id="3nq-k3-ODL"/>
                     <constraint firstItem="OOV-yS-qjW" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="19" id="CLq-1w-N73"/>
-                    <constraint firstItem="sia-Vl-Ziv" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="20" id="KDy-26-LV5"/>
+                    <constraint firstItem="sia-Vl-Ziv" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="30" id="KDy-26-LV5"/>
                     <constraint firstAttribute="trailing" secondItem="EPk-kp-zdk" secondAttribute="trailing" id="OHu-AQ-KGA"/>
                     <constraint firstItem="dc9-cp-2fc" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="19" id="Qq1-MK-Lxv"/>
                     <constraint firstItem="sia-Vl-Ziv" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="15" id="RsT-vm-gNk"/>
-                    <constraint firstItem="OOV-yS-qjW" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="20" id="Zc7-rx-xF2"/>
+                    <constraint firstItem="OOV-yS-qjW" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="30" id="Zc7-rx-xF2"/>
                     <constraint firstItem="EPk-kp-zdk" firstAttribute="bottom" secondItem="OOV-yS-qjW" secondAttribute="bottom" constant="19" id="aMG-1p-fza"/>
-                    <constraint firstAttribute="trailing" secondItem="dc9-cp-2fc" secondAttribute="trailing" constant="20" id="c7c-B8-mYp"/>
+                    <constraint firstAttribute="trailing" secondItem="dc9-cp-2fc" secondAttribute="trailing" constant="30" id="c7c-B8-mYp"/>
                     <constraint firstItem="EPk-kp-zdk" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="ehe-aF-NNE"/>
                     <constraint firstItem="EPk-kp-zdk" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="vE4-u8-uXl"/>
                     <constraint firstItem="dc9-cp-2fc" firstAttribute="leading" secondItem="OOV-yS-qjW" secondAttribute="trailing" constant="10" id="xvS-kT-QOw"/>
@@ -71,6 +68,7 @@
                 <outlet property="sliderTopConstraint" destination="RsT-vm-gNk" id="R75-Jp-4A3"/>
                 <outlet property="viewBeforeSlider" destination="EPk-kp-zdk" id="Llc-H1-sXQ"/>
             </connections>
+            <point key="canvasLocation" x="53" y="154"/>
         </tableViewCell>
     </objects>
 </document>

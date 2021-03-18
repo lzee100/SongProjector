@@ -84,7 +84,7 @@ class NewSongIphoneController: ChurchBeamViewController, UICollectionViewDataSou
 			
 			let collectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.sheetCollectionCell, for: indexPath)
 			if let collectionCell = collectionCell as? SheetCollectionCell {
-				collectionCell.setupWith(cluster: cluster, sheet: sheets[indexPath.section], theme: selectedTheme ?? cluster?.hasTheme, didDeleteSheet: nil, isDeleteEnabled: false)
+				collectionCell.setupWith(cluster: cluster, sheet: sheets[indexPath.section], theme: selectedTheme ?? cluster?.hasTheme(moc: moc), didDeleteSheet: nil, isDeleteEnabled: false)
 				
 				if visibleCells.contains(indexPath) {
 					let y = collectionCell.bounds.minY
@@ -107,7 +107,7 @@ class NewSongIphoneController: ChurchBeamViewController, UICollectionViewDataSou
 				}
 			}
 			
-			if let index = visibleCells.index(of: indexPath), segmentControl.selectedSegmentIndex == 1 {
+            if let index = visibleCells.firstIndex(of: indexPath), segmentControl.selectedSegmentIndex == 1 {
 				visibleCells.remove(at: index) // remove cell for one time animation
 			}
 			
@@ -144,32 +144,34 @@ class NewSongIphoneController: ChurchBeamViewController, UICollectionViewDataSou
 	// MARK: - Private Functions
 	
 	private func setup() {
-		CoreTheme.predicates.append("isHidden", notEquals: true)
-		themes = VTheme.list(sortOn: "position", ascending: true)
-		
+        var predicates: [NSPredicate] = [.skipDeleted]
+        predicates.append("isHidden", notEquals: true)
+        let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: predicates, sort: NSSortDescriptor(key: "position", ascending: true))
+        self.themes = themes.compactMap({ VTheme(theme: $0, context: moc) })
+        
 		if cluster == nil {
 			cluster = VCluster()
 		}
-
+        
 		collectionView.register(UINib(nibName: Cells.themeCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.themeCellCollection)
 		collectionViewSheets.register(UINib(nibName: Cells.sheetCollectionCell, bundle: nil), forCellWithReuseIdentifier: Cells.sheetCollectionCell)
 		NotificationCenter.default.addObserver(forName: UIScreen.didConnectNotification, object: nil, queue: nil, using: databaseDidChange)
 		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
 		
-		navigationController?.title = Text.NewSong.title
-		title = Text.CustomSheets.title
+		navigationController?.title = AppText.NewSong.title
+		title = AppText.CustomSheets.title
 		textViewContainer.layer.borderColor = themeHighlighted.cgColor
 		
-		cancel.title = Text.Actions.cancel
-		done.title = Text.Actions.save
+		cancel.title = AppText.Actions.cancel
+		done.title = AppText.Actions.save
 		
 		view.backgroundColor = themeWhiteBlackBackground
 		textView.backgroundColor = themeWhiteBlackBackground
-		textView.textColor = themeWhiteBlackTextColor
+		textView.textColor = .blackColor
 		
-		segmentControl.setTitle(Text.NewSong.segmentTitleText, forSegmentAt: 0)
-		segmentControl.setTitle(Text.NewSong.segmentTitleSheets, forSegmentAt: 1)
+		segmentControl.setTitle(AppText.NewSong.segmentTitleText, forSegmentAt: 0)
+		segmentControl.setTitle(AppText.NewSong.segmentTitleSheets, forSegmentAt: 1)
 		
 		let leftSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))
 		let rightSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))
@@ -196,7 +198,7 @@ class NewSongIphoneController: ChurchBeamViewController, UICollectionViewDataSou
 		if editExistingCluster {
 			textView.text = getTextFromSheets()
 			segmentControl.selectedSegmentIndex = 1
-			selectedTheme = cluster?.hasTheme
+			selectedTheme = cluster?.hasTheme(moc: moc)
 		} else {
 			isCollectionviewSheetsHidden = true
 			segmentControl.selectedSegmentIndex = 0
@@ -204,7 +206,7 @@ class NewSongIphoneController: ChurchBeamViewController, UICollectionViewDataSou
 		}
 	}
 	
-	private func update() {
+	override func update() {
 		collectionView.reloadData()
 		collectionViewSheets.reloadData()
 		isFirstTime = true
@@ -212,8 +214,10 @@ class NewSongIphoneController: ChurchBeamViewController, UICollectionViewDataSou
 	
 	private func databaseDidChange(_ notification: Notification) {
 		selectedTheme = nil
-		CoreTheme.predicates.append("isHidden", notEquals: true)
-		themes = VTheme.list(sortOn: "position", ascending: true)
+        var predicates: [NSPredicate] = [.skipDeleted]
+        predicates.append("isHidden", notEquals: true)
+        let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: predicates, sort: NSSortDescriptor(key: "position", ascending: true))
+        self.themes = themes.compactMap({ VTheme(theme: $0, context: moc) })
 		update()
 	}
 	
@@ -240,7 +244,7 @@ class NewSongIphoneController: ChurchBeamViewController, UICollectionViewDataSou
 			let rangeRemove = start..<range.upperBound
 			
 			let sheetcontent = String(contentToDevide[rangeSheet])
-			var sheetTitle: String = Text.NewSong.NoTitleForSheet
+			var sheetTitle: String = AppText.NewSong.NoTitleForSheet
 			
 			// get title
 			if let rangeTitle = contentToDevide.range(of: "\n") {
@@ -290,8 +294,8 @@ class NewSongIphoneController: ChurchBeamViewController, UICollectionViewDataSou
 		if selectedTheme != nil {
 			return true
 		} else {
-			let alert = UIAlertController(title: Text.NewSong.errorTitleNoTheme, message: Text.NewSong.erorrMessageNoTheme, preferredStyle: .alert)
-			alert.addAction(UIAlertAction(title: Text.Actions.ok, style: UIAlertAction.Style.default, handler: nil))
+			let alert = UIAlertController(title: AppText.NewSong.errorTitleNoTheme, message: AppText.NewSong.erorrMessageNoTheme, preferredStyle: .alert)
+			alert.addAction(UIAlertAction(title: AppText.Actions.ok, style: UIAlertAction.Style.default, handler: nil))
 			self.present(alert, animated: true, completion: nil)
 
 			return false
@@ -337,22 +341,7 @@ class NewSongIphoneController: ChurchBeamViewController, UICollectionViewDataSou
 			if let themeId = selectedTheme?.id {
 				cluster?.themeId = themeId
 			}
-			
-			if let cluster = cluster {
-				NSManagedObjectContext.saveForeground(vEntity: cluster, success: {
-					Queues.main.async {
-						self.dismiss(animated: true)
-					}
-				}) { (error) in
-					Queues.main.async {
-						self.show(message: error.localizedDescription)
-					}
-				}
-			} else {
-				Queues.main.async {
-					self.dismiss(animated: true)
-				}
-			}
+            self.dismiss(animated: true)
 		}
 	}
 	

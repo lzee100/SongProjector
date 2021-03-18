@@ -12,10 +12,16 @@ class LoadingView: UIView {
 
 	@IBOutlet var loadingView: UIView!
 	@IBOutlet var animator: UIActivityIndicatorView!
-	
-	override func awakeFromNib() {
+    @IBOutlet var squareView: UIView!
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        squareView.layer.cornerRadius = 7
+    }
+    
+    override func awakeFromNib() {
 		super.awakeFromNib()
-		backgroundColor = .black
+		backgroundColor = .blackColor
 		alpha = 0.3
 		animator.startAnimating()
 	}
@@ -34,8 +40,15 @@ class LoadingView: UIView {
 		Bundle.main.loadNibNamed("LoadingView", owner: self, options: [:])
 		loadingView.frame = self.frame
 		addSubview(loadingView)
-
-		backgroundColor = .black
+        let effect = self.traitCollection.userInterfaceStyle == .dark ? UIBlurEffect(style: .light) : UIBlurEffect(style: .dark)
+        let effectView = UIVisualEffectView(effect: effect)
+        squareView.addSubview(effectView)
+        squareView.leadingAnchor.constraint(equalTo: effectView.leadingAnchor).isActive = true
+        squareView.topAnchor.constraint(equalTo: effectView.topAnchor).isActive = true
+        squareView.trailingAnchor.constraint(equalTo: effectView.trailingAnchor).isActive = true
+        squareView.bottomAnchor.constraint(equalTo: effectView.bottomAnchor).isActive = true
+		backgroundColor = .blackColor
+        animator.tintColor = .blackColor
 		alpha = 0.3
 	}
 }

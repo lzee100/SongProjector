@@ -17,7 +17,8 @@ class LabelTextFieldCell: ChurchBeamCell, ThemeImplementation, SheetImplementati
 	
 	@IBOutlet var descriptionTitle: UILabel!
 	@IBOutlet var textField: UITextField!
-	
+    @IBOutlet var labelTextFieldConstraint: NSLayoutConstraint!
+    
 	var id = ""
 	var delegate: LabelTextFieldCellDelegate?
 	
@@ -32,6 +33,11 @@ class LabelTextFieldCell: ChurchBeamCell, ThemeImplementation, SheetImplementati
 	
 	static var identitier: String { return "LabelTextFieldCell" }
 	
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        labelTextFieldConstraint.constant = 10
+    }
+    
 	override func awakeFromNib() {
 		textField.addTarget(self, action: #selector(textFieldDidChange),
 							for: UIControl.Event.editingChanged)
@@ -80,9 +86,9 @@ class LabelTextFieldCell: ChurchBeamCell, ThemeImplementation, SheetImplementati
 		if let modificationMode = getModificationMode?() {
 			switch modificationMode {
 			case .newTheme, .editTheme:
-				textField.text = sheetTheme?.title ?? Text.NewTheme.sampleTitle
+				textField.text = sheetTheme?.title ?? AppText.NewTheme.sampleTitle
 			case .newCustomSheet, .editCustomSheet:
-				textField.text = sheet?.title ?? Text.NewTheme.sampleTitle
+				textField.text = sheet?.title ?? AppText.NewTheme.sampleTitle
 			}
 		}
 	}
@@ -92,7 +98,7 @@ class LabelTextFieldCell: ChurchBeamCell, ThemeImplementation, SheetImplementati
 		if let modificationMode = getModificationMode?() {
 			switch modificationMode {
 			case .newTheme, .editTheme:
-				sheetTheme?.title = textField.text ?? Text.NewTheme.sampleTitle
+				sheetTheme?.title = textField.text ?? AppText.NewTheme.sampleTitle
 			case .newCustomSheet, .editCustomSheet:
 				sheet?.title = textField.text
 			}

@@ -35,12 +35,21 @@ extension UITableView {
 		}
 		
 	}
+    
+    public func register(header: String) {
+        register(UINib(nibName: header, bundle: nil), forHeaderFooterViewReuseIdentifier: header)
+    }
 	
 	public func register(cell: String) {
-		
 		register(nib: cell, identifier: cell)
-		
 	}
+    
+    public func registerBasicHeaderView() {
+        register(header: BasicHeaderView.identifier)
+    }
+    public func registerTextFooterView() {
+        register(TextFooterView.self, forHeaderFooterViewReuseIdentifier: TextFooterView.identifier)
+    }
 	
 	public func register(cells: [String]) {
 		
@@ -66,5 +75,37 @@ extension UITableView {
 		self.contentInset = edgeInset
 		self.scrollIndicatorInsets = edgeInset
 	}
+    
+    var basicHeaderView: BasicHeaderView? {
+        return dequeueReusableHeaderFooterView(withIdentifier: BasicHeaderView.identifier) as? BasicHeaderView
+    }
+    
+    var basicFooterView: TextFooterView? {
+        return dequeueReusableHeaderFooterView(withIdentifier: TextFooterView.identifier) as? TextFooterView
+    }
+    
+    func style(_ cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if (indexPath.row == 0 && indexPath.row == numberOfRows(inSection: indexPath.section)-1) {
+            cell.setCornerRadiusAsMask(corners: .all)
+        } else if (indexPath.row == 0) {
+            cell.setCornerRadiusAsMask(corners: .leftTopRightTop)
+        } else if (indexPath.row == numberOfRows(inSection: indexPath.section)-1) {
+            cell.setCornerRadiusAsMask(corners: .leftBottomRightBottom)
+        } else {
+            cell.setBorderMask()
+        }
+    }
+    
+    func styleHeaderView(view: UIView) {
+        
+        var current: UIView? = (view as? SongHeaderView)?.contentView
+        repeat {
+            if !(current is SongHeaderView) {
+                current?.backgroundColor = .whiteColor
+            }
+            current = current?.superview
+        } while current != nil
+        
+    }
 	
 }

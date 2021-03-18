@@ -7,8 +7,8 @@
 //
 
 import UIKit
+import FirebaseAuth
 import GoogleSignIn
-
 
 protocol GoogleCellDelegate {
 	func showInstructions(cell: GoogleCell)
@@ -24,7 +24,9 @@ class GoogleCell: UITableViewCell, GIDSignInDelegate {
 		
 	@IBOutlet var instructionButton: UIButton!
 	@IBOutlet var googleSignInOutContainer: UIView!
-	
+    @IBOutlet var signOutContainerView: UIView!
+    @IBOutlet var signOutButton: UIButton!
+    
 	
 	let signInButton = GIDSignInButton()
 	
@@ -35,17 +37,29 @@ class GoogleCell: UITableViewCell, GIDSignInDelegate {
 	
 	static let identifier = "GoogleCell"
 	
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        signOutContainerView.isHidden = true
+        signOutButton.isUserInteractionEnabled = false
+    }
 	
 	func setup(delegate: GoogleCellDelegate, sender: UIViewController) {
-		googleSignInOutContainer.addSubview(signInButton)
-		signInButton.frame = googleSignInOutContainer.bounds
-		GIDSignIn.sharedInstance()?.delegate = self
-		GIDSignIn.sharedInstance()?.presentingViewController = sender
-
-		self.sender = sender
-		instructionButton.setTitle(Text.Settings.descriptionInstructions, for: .normal)
-		instructionButton.tintColor = themeHighlighted
-		googleSignInOutContainer.backgroundColor = themeWhiteBlackBackground
+        
+        let isSignedIn = Auth.auth().currentUser != nil || GIDSignIn.sharedInstance()?.currentUser != nil
+        
+        signOutButton.isUserInteractionEnabled = isSignedIn
+        signOutContainerView.isHidden = !isSignedIn
+        
+        if !isSignedIn {
+            googleSignInOutContainer.addSubview(signInButton)
+            signInButton.frame = googleSignInOutContainer.bounds
+            GIDSignIn.sharedInstance()?.presentingViewController = sender
+            
+            self.sender = sender
+            instructionButton.setTitle(AppText.Settings.descriptionInstructions, for: .normal)
+            instructionButton.tintColor = themeHighlighted
+            googleSignInOutContainer.backgroundColor = themeWhiteBlackBackground
+        }
 	}
 	
 	var delegate: GoogleCellDelegate?
@@ -66,11 +80,8 @@ class GoogleCell: UITableViewCell, GIDSignInDelegate {
 	
 	func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
 		if error == nil {
-			UserDefaults.standard.set(user.authentication.idToken, forKey: GoogleIdToken)
-			UserDefaults.standard.set(user.profile.email, forKey: GoogleMail)
-			UserDefaults.standard.set(user.profile.name + " " + user.profile.familyName, forKey: GoogleUsername)
 			delegate?.didSuccesfullyLogin(googleIdToken: user.authentication.idToken, userName: user.profile.email)
-			GoogleActivityFetcher.fetch(true)
+            GoogleActivityFetcher.fetch(force: true)
 		}
 	}
 	
@@ -86,7 +97,16 @@ class GoogleCell: UITableViewCell, GIDSignInDelegate {
 		}
 	}
 	
-	override func setSelected(_ selected: Bool, animated: Bool) {
+    @IBAction func didPressSignOut(_ sender: UIButton) {
+        do {
+            try Auth.auth().signOut()
+        } catch {
+            print(error)
+        }
+        GIDSignIn.sharedInstance()?.signOut()
+    }
+    
+    override func setSelected(_ selected: Bool, animated: Bool) {
 	}
 	
 	override func setHighlighted(_ highlighted: Bool, animated: Bool) {

@@ -2,84 +2,97 @@
 //  ThemeSubmitter.swift
 //  SongProjector
 //
-//  Created by Leo van der Zee on 10/01/2019.
-//  Copyright © 2019 iozee. All rights reserved.
+//  Created by Leo van der Zee on 05/06/2020.
+//  Copyright © 2020 iozee. All rights reserved.
 //
 
 import Foundation
-import CoreData
+import Firebase
 
-struct SubmittedID: Codable {
-	let id: Int64
-	
-	private enum CodingKeys: String, CodingKey {
-		case id
-	}
-	
-	init(from decoder: Decoder) throws {
-		let container = try decoder.container(keyedBy: CodingKeys.self)
-		id = try container.decode(Int64.self, forKey: .id)
-	}
-	
-}
+let ThemeSubmitter = TemeSubmitter()
 
-let ThemeSubmitter: TmSubmitter = {
-	return TmSubmitter()
-}()
+class TemeSubmitter: Requester<VTheme> {
+    
+    override var id: String {
+        return "ChurchBeamUserSubmitter"
+    }
+    override var path: String {
+        return "themes"
+    }
+    
+    override func prepareForSubmit(body: [VTheme], completion: @escaping ((Requester<VTheme>.AdditionalProcessResult) -> Void)) {
+        
+        var deletableFiles: [StorageReference] = []
+        
+        do {
+            try body.forEach { theme in
+                if theme.isTempSelectedImageDeleted || self.requestMethod == .delete {
+                    if let name = theme.imagePathAWS {
+                        let uploadFile = Storage.storage().reference().child("images").child(name)
+                        deletableFiles.append(uploadFile)
+                    }
+                } else if let image = theme.tempSelectedImage {
+                    if let name = theme.imagePathAWS {
+                        let uploadFile = Storage.storage().reference().child("images").child(name)
+                        deletableFiles.append(uploadFile)
+                    }
+                    theme.tempLocalImageName = try image.saveTemp()
+                }
+            }
+        } catch {
+            completion(.failed(error: .failedSavingImageLocallyBeforeSubmit(requester: self.id, error: error)))
+            return
+        }
+        
+        let uploadObjects = body.flatMap({ $0.uploadObjecs }).unique { (lhs, rhs) -> Bool in
+            return lhs.fileName == rhs.fileName
+        }
+        let uploadManager = TransferManager(objects: uploadObjects)
+        
+        uploadManager.start(progress: { (progress) in
+            self.observers.forEach({ $0.requesterDidProgress(progress: CGFloat(progress)) })
+        }) { (result) in
+            switch result {
+            case .failed(error: let error):
+                body.compactMap({ $0.tempLocalImageName }).forEach { try? FileManager.deleteFile(name: $0) }
+                completion(.failed(error: .failedUploadingMedia(requester: self.id, error: error)))
+            case .success:
+                
+                self.deleteLocalImages(body: body)
+                
+                var failed = false
+                for theme in body {
+                    do {
+                        if let image = theme.tempSelectedImage {
+                            try theme.setBackgroundImage(image: image, imageName: theme.imagePath)
+                        }
+                    } catch let error {
+                        failed = true
+                        completion(.failed(error: .failedSavingLocalImage(requester: self.id, error: error)))
+                        break
+                    }
+                    theme.setUploadValues(uploadObjects)
+                }
+                if !failed {
+                    deletableFiles.forEach({ $0.delete(completion: nil) })
+                    completion(.succes(result: body))
+                }
+            }
+        }
+        
+    }
+    
+    override func submit(_ entity: [VTheme], requestMethod: RequestMethod) {
+        super.submit(entity, requestMethod: requestMethod)
+    }
+    
+    private func deleteLocalImages(body: [VTheme]) {
+        body.forEach { theme in
+            if theme.isTempSelectedImageDeleted {
+                try? theme.setBackgroundImage(image: nil, imageName: nil)
+            }
+        }
+    }
 
-class TmSubmitter: Requester<VTheme> {
-	
-	
-	override var requesterId: String {
-		return "ThemeSubmitter"
-	}
-	
-	override var path: String {
-		return "themes"
-	}
-	
-	override func submit(_ entity: [VTheme], requestMethod: RequestMethod) {
-		if UserDefaults.standard.object(forKey: secretKey) != nil {
-			entity.forEach({ $0.isUniversal = true })
-			super.submit(entity, requestMethod: requestMethod)
-		} else {
-			entity.forEach({ $0.isUniversal = false })
-			super.submit(entity, requestMethod: requestMethod)
-		}
-	}
-	
-	override func prepareForSend(body: [VTheme], completion: @escaping ((AdditionalProcessResult) -> Void)) {
-		let uploads = body.flatMap({ $0.uploadImagesObjecs })
-		AmazonTransfer.startTransfer(uploads: uploads, downloads: []) { (result) in
-			switch result {
-			case .failed(error: let error):
-				completion(.failed(error: error))
-			case .success(result: let uploadObjects):
-				body.forEach({ $0.setUploadValues(uploadObjects as! [UploadObject]) })
-				completion(.succes(result: body))
-			}
-		}
-	}
-	
-	override func additionalProcessing(_ context: NSManagedObjectContext, _ entities: [VTheme], completion: @escaping ((Requester<VTheme>.AdditionalProcessResult) -> Void)) {
-		for theme in entities {
-			for bodyTheme in body ?? [] {
-				if bodyTheme.imagePathAWS == theme.imagePathAWS {
-					theme.imagePath = bodyTheme.imagePath
-					theme.imagePathThumbnail = bodyTheme.imagePathThumbnail
-				}
-			}
-		}
-		let downloadObjects = entities.flatMap({ $0.downloadImagesObjects })
-		AmazonTransfer.startTransfer(uploads: [], downloads: downloadObjects, completion: { result in
-			switch result {
-			case .failed(error: let error):
-				completion(.failed(error: error))
-			case .success(result: let downloadObjects):
-				entities.forEach({ $0.setDownloadValues(downloadObjects as! [DownloadObject]) })
-				completion(.succes(result: entities))
-			}
-		})
-	}
-	
+    
 }

@@ -11,21 +11,6 @@ import CoreData
 
 class VRole: VEntity {
 	
-	
-	class func list(sortOn attributeName: String? = nil, ascending: Bool? = nil) -> [VRole] {
-		if let attributeName = attributeName, let ascending = ascending {
-			CoreRole.setSortDescriptor(attributeName: attributeName, ascending: ascending)
-		}
-		return CoreRole.getEntities().map({ VRole(role: $0) })
-	}
-	
-	class func single(with id: Int64?) -> VRole? {
-		if let id = id, let role = CoreRole.getEntitieWith(id: id) {
-			return VRole(role: role)
-		}
-		return nil
-	}
-	
 	var organizationId: Int64 = 0
 	var hasOrganization: Organization? = nil
 	
@@ -97,34 +82,28 @@ class VRole: VEntity {
 		}
 	}
 	
-	override func getPropertiesFrom(entity: Entity) {
-		super.getPropertiesFrom(entity: entity)
+    override func getPropertiesFrom(entity: Entity, context: NSManagedObjectContext) {
+        super.getPropertiesFrom(entity: entity, context: context)
 		if let role = entity as? Role {
 			organizationId = role.organizationId
 			hasOrganization = role.hasOrganization
 		}
 	}
 	
-	convenience init(role: Role) {
+    convenience init(role: Role, context: NSManagedObjectContext) {
 		self.init()
-		getPropertiesFrom(entity: role)
+		getPropertiesFrom(entity: role, context: context)
 	}
 	
-	override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-		
-		CoreRole.managedObjectContext = context
-		if let storedEntity = CoreRole.getEntitieWith(id: id) {
-			CoreRole.managedObjectContext = moc
-			setPropertiesTo(entity: storedEntity, context: context)
-			return storedEntity
-		} else {
-			CoreRole.managedObjectContext = context
-			let newEntity = CoreRole.createEntityNOTsave()
-			CoreRole.managedObjectContext = moc
-			setPropertiesTo(entity: newEntity, context: context)
-			return newEntity
-		}
-		
-	}
-	
+    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
+        if let entity: Role = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
+            setPropertiesTo(entity: entity, context: context)
+            return entity
+        } else {
+            let entity: Role = DataFetcher().createEntity(moc: context)
+            setPropertiesTo(entity: entity, context: context)
+            return entity
+        }
+    }
+
 }

@@ -46,7 +46,7 @@ class ErrorView: UIView {
 		
 		errorView.backgroundColor = UIColor.clear
 		errorView.clipsToBounds = true
-		titleLabel.textColor = themeWhiteBlackTextColor
+		titleLabel.textColor = .blackColor
 		errorView.layer.cornerRadius = 10
 		titleLabel.font = UIFont.systemFont(ofSize: 14)
 		

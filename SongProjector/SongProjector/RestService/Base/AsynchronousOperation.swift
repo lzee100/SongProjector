@@ -59,6 +59,9 @@ open class AsynchronousOperation : Operation{
         return super.isReady && state == .unstarted
     }
     
+    var failed: Bool {
+        return state == .failed
+    }
     
     
     // MARK: - Public Functions
@@ -83,7 +86,7 @@ open class AsynchronousOperation : Operation{
     
     override open func start() {
         
-        if ( isCancelled ) {
+        if isCancelled {
             
             didFinish()
             

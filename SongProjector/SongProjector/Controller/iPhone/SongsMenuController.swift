@@ -43,9 +43,9 @@ class SongsMenuController: UITableViewController {
 		
 		switch Menu.for(indexPath) {
 		case .newSongController:
-			cell.setup(title: Text.NewSong.title, icon: Cells.bulletOpen)
+			cell.setup(title: AppText.NewSong.title)
 		case .customSheetController:
-			cell.setup(title: Text.CustomSheets.title, icon: Cells.bulletOpen)
+			cell.setup(title: AppText.CustomSheets.title)
 		}
 		return cell
 	}
@@ -61,13 +61,14 @@ class SongsMenuController: UITableViewController {
 				})
 			}
 		case .customSheetController:
-			let controller = storyboard?.instantiateViewController(withIdentifier: "CustomSheetsIphoneController") as! CustomSheetsIphoneController
-			let nav = UINavigationController(rootViewController: controller)
-			DispatchQueue.main.async {
-				self.present(nav, animated: true, completion: {
-					self.navigationController?.popViewController(animated: false)
-				})
-			}
+            return
+//			let controller = storyboard?.instantiateViewController(withIdentifier: "CustomSheetsIphoneController") as! CustomSheetsIphoneController
+//			let nav = UINavigationController(rootViewController: controller)
+//			DispatchQueue.main.async {
+//				self.present(nav, animated: true, completion: {
+//					self.navigationController?.popViewController(animated: false)
+//				})
+//			}
 		}
 	}
 	
@@ -77,7 +78,7 @@ class SongsMenuController: UITableViewController {
 	
 	private func setup() {
 		tableView.register(cell: Cells.basicCellid)
-		title = Text.Songs.menuTitle
+		title = AppText.Songs.menuTitle
 	}
 
 

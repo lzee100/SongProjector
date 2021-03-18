@@ -8,19 +8,25 @@
 
 import UIKit
 
+enum SheetPickerMenuOption {
+    case sheet(sheet: VSheet)
+    case bibleStudy
+    case lyrics
+}
+
+protocol SheetPickerMenuControllerDelegate {
+    func didSelectOption(option: SheetPickerMenuOption)
+}
+
 class SheetPickerMenuController: UITableViewController, NewOrEditIphoneControllerDelegate {
 	
 		
 	@IBOutlet weak var cancelButton: UIBarButtonItem?
 	
-	var didCreateSheet: ((VSheet) -> Void)?
 	var bibleStudyGeneratorIphoneDelegate: BibleStudyGeneratorIphoneDelegate?
 	var bibleStudyGeneratorDelegate: BibleStudyGeneratorDelegate?
-	var selectedTheme: VTheme?
-	var delegate: NewOrEditIphoneControllerDelegate?
-	var lyricsControllerDelegate: LyricsControllerDelegate?
-	var text: String?
 	var mode: Mode = .none
+    var delegate: SheetPickerMenuControllerDelegate?
 	
 	enum Mode {
 		case song
@@ -45,12 +51,12 @@ class SheetPickerMenuController: UITableViewController, NewOrEditIphoneControlle
 			case .none: return all[section]
 			}
 		}
-		
+        
 		var title: String {
 			switch self {
-			case .songs: return "Liedjes"
-			case .custom: return "Andere dia's"
-			case .bible: return "Bijbelstudie"
+            case .songs: return AppText.SheetsMenu.sectionSongs
+			case .custom: return AppText.SheetsMenu.sectionOther
+			case .bible: return AppText.SheetsMenu.sectionBibleStudy
 			}
 		}
 	}
@@ -90,14 +96,14 @@ class SheetPickerMenuController: UITableViewController, NewOrEditIphoneControlle
 		
 		var title: String {
 			switch self {
-			case .song: return "Liedje kjk"
-			case .SheetTitleContent: return Text.SheetsMenu.sheetTitleText
-			case .SheetTitleImage: return Text.SheetsMenu.sheetTitleImage
-			case .SheetPastors: return Text.SheetsMenu.sheetPastors
-			case .SheetEmpty: return Text.SheetsMenu.sheetEmpty
-			case .SheetSplit: return Text.SheetsMenu.sheetSplit
-			case .SheetActivities: return Text.SheetsMenu.sheetActivity
-			case .bible: return "Bible study generator sdfksldfj"
+            case .song: return AppText.SheetsMenu.lyrics
+			case .SheetTitleContent: return AppText.SheetsMenu.sheetTitleText
+			case .SheetTitleImage: return AppText.SheetsMenu.sheetTitleImage
+			case .SheetPastors: return AppText.SheetsMenu.sheetPastors
+			case .SheetEmpty: return AppText.SheetsMenu.sheetEmpty
+			case .SheetSplit: return AppText.SheetsMenu.sheetSplit
+			case .SheetActivities: return AppText.SheetsMenu.sheetActivity
+            case .bible: return AppText.SheetsMenu.bibleStudyGen
 			}
 		}
 		
@@ -121,24 +127,7 @@ class SheetPickerMenuController: UITableViewController, NewOrEditIphoneControlle
         setup()
     }
 	
-	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-		if segue.identifier == "BibleStudyIphoneGeneratorSegue" {
-			let controller = segue.destination as! BibleStudyGeneratorIphoneController
-			controller.delegate = bibleStudyGeneratorIphoneDelegate
-			controller.selectedTheme = selectedTheme
-		}
-		if segue.identifier == "BibleStudyGeneratorSegue" {
-			let nav = segue.destination as! UINavigationController
-			let controller = nav.topViewController as! BibleStudyGeneratorController
-			controller.delegate = bibleStudyGeneratorDelegate
-			controller.selectedTheme = selectedTheme
-		}
-		
-		if let vc = segue.destination.unwrap() as? LyricsViewController {
-			vc.delegate = lyricsControllerDelegate
-			vc.text = text ?? ""
-		}
-	}
+    
 
     // MARK: - Table view data source
 
@@ -160,7 +149,7 @@ class SheetPickerMenuController: UITableViewController, NewOrEditIphoneControlle
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath) as! BasicCell
-		cell.setup(title: Row.for(indexPath, mode: mode).title, icon: Row.for(indexPath, mode: mode).icon)
+		cell.setup(title: Row.for(indexPath, mode: mode).title)
 		return cell
     }
 
@@ -181,29 +170,11 @@ class SheetPickerMenuController: UITableViewController, NewOrEditIphoneControlle
 		
 		// open edit sheet controller
 		if let sheet = sheet {
-			let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
-			controller.delegate = delegate
-			controller.modificationMode = .newCustomSheet
-			controller.dismissMenu = dismissMenu
-			controller.sheet = sheet
-			let nav = UINavigationController(rootViewController: controller)
-			Queues.main.async {
-				self.present(nav, animated: true)
-			}
+            delegate?.didSelectOption(option: .sheet(sheet: sheet))
 		} else if isBible { // open bible study
-			if let device = UserDefaults.standard.value(forKey: "device") as? String, device == "ipad" {
-				Queues.main.async {
-					self.performSegue(withIdentifier: "BibleStudyGeneratorSegue", sender: self)
-				}
-			} else {
-				Queues.main.async {
-					self.performSegue(withIdentifier: "BibleStudyIphoneGeneratorSegue", sender: self)
-				}
-			}
+            delegate?.didSelectOption(option: .bibleStudy)
 		} else { // open song
-			Queues.main.async {
-				self.performSegue(withIdentifier: "ChangeLyricsSegue", sender: self)
-			}
+            delegate?.didSelectOption(option: .lyrics)
 		}
 	}
 	
@@ -228,6 +199,7 @@ class SheetPickerMenuController: UITableViewController, NewOrEditIphoneControlle
 
 	private func setup() {
 		tableView.register(cell: Cells.basicCellid)
+        navigationItem.leftBarButtonItem?.tintColor = themeHighlighted
 	}
 	
 	func dismissMenu() {

@@ -32,7 +32,7 @@ class SheetView: UIView {
 		customInit()
 	}
 	
-	func set(frame: CGRect, cluster: VCluster? = nil, sheet: VSheet, theme: VTheme?, scaleFactor: CGFloat? = 1, isPreview: Bool = false, position: Int = 0, toExternalDisplay: Bool = false) {
+	func set(frame: CGRect, cluster: VCluster? = nil, sheet: VSheet, theme: VTheme?, scaleFactor: CGFloat? = 1, isPreview: Bool = false, toExternalDisplay: Bool = false) {
 		
 		for view in subviews {
 			view.removeFromSuperview()
@@ -48,10 +48,14 @@ class SheetView: UIView {
 			sendToExternalDisplay(frame: externalDisplay.frame, sheet: sheet, theme: theme, scaleFactor: externalDisplay.frame.width / frame.width * (scaleFactor ?? 1))
 		}
 		view.update()
+        view.layer.shadowColor = UIColor.black.cgColor
+        view.layer.shadowOpacity = 0.3
+        view.layer.shadowOffset = .zero
+        view.layer.shadowRadius = 5
 		addSubview(view)
 	}
 	
-	static func createWith(frame: CGRect, cluster: VCluster? = nil, sheet: VSheet, theme: VTheme?, scaleFactor: CGFloat? = 1, isPreview: Bool = false, position: Int = 0, toExternalDisplay: Bool = false) -> SheetView {
+	static func createWith(frame: CGRect, cluster: VCluster? = nil, sheet: VSheet, theme: VTheme?, scaleFactor: CGFloat? = 1, isPreview: Bool = false, toExternalDisplay: Bool = false) -> SheetView {
 		
 		let view: SheetView
 		
@@ -75,6 +79,10 @@ class SheetView: UIView {
 		view.sheetTheme = theme
 		view.scaleFactor = scaleFactor
 		view.isPreview = isPreview
+        view.layer.shadowColor = UIColor.black.cgColor
+        view.layer.shadowOpacity = 0.3
+        view.layer.shadowOffset = .zero
+        view.layer.shadowRadius = 5
 		
 		view.update()
 		

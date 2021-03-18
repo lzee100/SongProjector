@@ -7,14 +7,14 @@
 //
 
 import Foundation
+import Firebase
+import GoogleSignIn
+import FirebaseAuth
 
 let ChurchBeamConfiguration = Config()
 
 class Config: NSObject {
 	
-	//Hier aanpassen voor release
-	//    static let RestServiceVersion: String = "31"
-	let RestServiceVersion: String = "latest"
 	
 	fileprivate struct Keys {
 		
@@ -24,7 +24,6 @@ class Config: NSObject {
 		static let AppStoreIdentifier = "AppStoreIdentifier"
 		static let RESTServiceVersion = "RESTServiceVersion"
 		static let BundleName = "CFBundleName"
-		
 	}
 	
 	lazy var appVersion: String = {
@@ -62,20 +61,18 @@ class Config: NSObject {
 	
 	var environment: Environment {
 		get {
-			UserDefaults.standard.synchronize()
 			let int = UserDefaults.standard.integer(forKey: Keys.Environment)
 			if int != 0 {
 				if let env = Environment(rawValue: int) {
 					return env
 				}
 			}
-			return Environment.localhost
+            return Environment.production
 		}
 		set {
 			if environment != newValue {
 				UserDefaults.standard.set(newValue.rawValue, forKey: Keys.Environment)
-				UserDefaults.standard.synchronize()
-				NotificationCenter.default.post(name: NotificationNames.environmentChanged, object: nil)
+				NotificationCenter.default.post(name: .environmentChanged, object: nil)
 			}
 		}
 	}
@@ -85,40 +82,50 @@ class Config: NSObject {
 		let urls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
 		return urls[urls.count - 1]
 	}()
-	
-	let supportMailAdress = "churchbeamsupport@gmail.com"
-	let endpointChooserUsername = "geon!"
-	
+		
 }
 
 enum Environment: Int {
 	
-	static let allValues = [localhost, dev, production]
+	static let allValues = [dev, production]
 	
-	case localhost = 1
-	case dev = 2
-	case production = 10
+	case dev = 1
+	case production = 2
 	
 	var name: String {
 		switch self {
-		case .localhost:
-			return Text.environments.localHost
 		case .dev:
-			return Text.environments.development
+			return AppText.environments.development
 		case .production:
-			return Text.environments.production
+			return AppText.environments.production
 		}
 	}
-	
-	var endpoint: String {
-		switch self {
-		case .localhost:
-			return "http://127.0.0.1:8080/"
-		case .dev:
-			return "http://127.0.0.1:12808/134b7159-53b3-4eac-b8fc-cc557769bfa4/"
-		case .production:
-			return "https://rest.parro.com/rest/v1/"
-		}
-	}
+    
+    var next: Environment {
+        return self == .dev ? .production : .dev
+    }
 }
 
+extension Environment {
+    
+    func loadGoogleFile() {
+        switch self {
+        case .production:
+            let filePath = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist")
+            guard let fileopts = FirebaseOptions(contentsOfFile: filePath!) else {
+                assert(false, "Couldn't load config file")
+                return
+            }
+            FirebaseApp.configure(options: fileopts)
+        case .dev:
+            let filePath = Bundle.main.path(forResource: "GoogleService-Info-Test", ofType: "plist")
+            guard let fileopts = FirebaseOptions(contentsOfFile: filePath!) else {
+                assert(false, "Couldn't load config file")
+                return
+            }
+            FirebaseApp.configure(options: fileopts)
+        }
+        GIDSignIn.sharedInstance().clientID = FirebaseApp.app()?.options.clientID
+        GIDSignIn.sharedInstance().delegate = UIApplication.shared.delegate as? GIDSignInDelegate
+    }
+}

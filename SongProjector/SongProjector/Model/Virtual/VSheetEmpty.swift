@@ -12,22 +12,7 @@ import CoreData
 class VSheetEmpty: VSheet, SheetMetaType {
 	
 	static var type: SheetType = .SheetEmpty
-
-	
-	class func list(sortOn attributeName: String? = nil, ascending: Bool? = nil) -> [VSheetEmpty] {
-		if let attributeName = attributeName, let ascending = ascending {
-			CoreSheetEmptySheet.setSortDescriptor(attributeName: attributeName, ascending: ascending)
-		}
-		return CoreSheetEmptySheet.getEntities().map({ VSheetEmpty(sheet: $0) })
-	}
-	
-	override class func single(with id: Int64?) -> VSheetEmpty? {
-		if let id = id, let sheet = CoreSheetEmptySheet.getEntitieWith(id: id) {
-			return VSheetEmpty(sheet: sheet)
-		}
-		return nil
-	}
-	
+    
 	// MARK: - Encodable
 	
 	override public func encode(to encoder: Encoder) throws {
@@ -60,31 +45,25 @@ class VSheetEmpty: VSheet, SheetMetaType {
 		super.setPropertiesTo(entity: entity, context: context)
 	}
 	
-	override func getPropertiesFrom(entity: Entity) {
-		super.getPropertiesFrom(entity: entity)
+    override func getPropertiesFrom(entity: Entity, context: NSManagedObjectContext) {
+        super.getPropertiesFrom(entity: entity, context: context)
 	}
 	
-	convenience init(sheet: SheetEmptyEntity) {
+	convenience init(sheet: SheetEmptyEntity, context: NSManagedObjectContext) {
 		self.init()
-		getPropertiesFrom(entity: sheet)
+		getPropertiesFrom(entity: sheet, context: context)
 	}
 	
 	@discardableResult
-	override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-		
-		CoreSheetEmptySheet.managedObjectContext = context
-		if let storedEntity = CoreSheetEmptySheet.getEntitieWith(id: id) {
-			CoreSheetEmptySheet.managedObjectContext = moc
-			setPropertiesTo(entity: storedEntity, context: context)
-			return storedEntity
-		} else {
-			CoreSheetEmptySheet.managedObjectContext = context
-			let newEntity = CoreSheetEmptySheet.createEntity(fireNotification: false)
-			CoreSheetEmptySheet.managedObjectContext = moc
-			setPropertiesTo(entity: newEntity, context: context)
-			return newEntity
-		}
+    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
+        if let entity: SheetEmptyEntity = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
+            setPropertiesTo(entity: entity, context: context)
+            return entity
+        } else {
+            let entity: SheetEmptyEntity = DataFetcher().createEntity(moc: context)
+            setPropertiesTo(entity: entity, context: context)
+            return entity
+        }
+    }
 
-	}
-	
 }

@@ -10,160 +10,19 @@ import Foundation
 import CoreData
 import UIKit
 
-public class Entity: NSManagedObject, Codable, NSCopying {
+public class Entity: NSManagedObject {
 	
 	@nonobjc public class func fetchRequest() -> NSFetchRequest<Entity> {
 		return NSFetchRequest<Entity>(entityName: "Entity")
 	} 
 	
-	@NSManaged public var id: Int64
+	@NSManaged public var id: String
+    @NSManaged public var userUID: String
 	@NSManaged public var title: String?
-	@NSManaged public var createdAt: NSDate?
+	@NSManaged public var createdAt: NSDate
 	@NSManaged public var updatedAt: NSDate?
 	@NSManaged public var deleteDate: NSDate?
 	@NSManaged public var isTemp: Bool
+    @NSManaged public var rootDeleteDate: NSDate?
 
-	
-	enum CodingKeys: String, CodingKey
-	{
-		case id
-		case title
-		case createdAt
-		case updatedAt
-		case deleteDate = "deletedAt"
-	}
-		
-	@objc
-	override init(entity: NSEntityDescription, insertInto context: NSManagedObjectContext?) {
-		super.init(entity: entity, insertInto: context)
-	}
-	
-	
-	
-	
-	// MARK: - Init
-	
-	public func initialization(decoder: Decoder) throws {
-		let container = try decoder.container(keyedBy: CodingKeys.self)
-		
-		self.id = try container.decode(Int64.self, forKey: .id)
-		self.title = try container.decodeIfPresent(String.self, forKey: .title)
-		
-		createdAt = try decodeDate(container: container, forKey: .createdAt) ?? NSDate()
-		updatedAt = try decodeDate(container: container, forKey: .updatedAt) ?? NSDate()
-		deleteDate = try decodeDate(container: container, forKey: .deleteDate)
-
-	}
-	
-	required public convenience init(from decoder: Decoder) throws {
-
-		let managedObjectContext = mocBackground
-		guard let entity = NSEntityDescription.entity(forEntityName: "Entity", in: managedObjectContext) else {
-				fatalError("failed at Entity")
-		}
-		
-		self.init(entity: entity, insertInto: managedObjectContext)
-		
-		let container = try decoder.container(keyedBy: CodingKeys.self)
-
-		self.id = try container.decode(Int64.self, forKey: .id)
-		self.title = try container.decodeIfPresent(String.self, forKey: .title)
-		
-		createdAt = try decodeDate(container: container, forKey: .createdAt) ?? NSDate()
-		updatedAt = try decodeDate(container: container, forKey: .updatedAt) ?? NSDate()
-		deleteDate = try decodeDate(container: container, forKey: .deleteDate)
-		isTemp = false
-	}
-	
-	
-	
-	// MARK: - Encodable
-	
-	public func encode(to encoder: Encoder) throws {
-		var container = encoder.container(keyedBy: CodingKeys.self)
-		try container.encodeIfPresent(id, forKey: .id)
-		try container.encode(title, forKey: .title)
-		if let createdAt = createdAt {
-			let createdAtString = GlobalDateFormatter.localToUTC(date: createdAt as Date)
-			try container.encode(createdAtString, forKey: .createdAt)
-		}
-		if let updatedAt = updatedAt {
-			let updatedAtString = GlobalDateFormatter.localToUTC(date: updatedAt as Date)
-			try container.encode(updatedAtString, forKey: .createdAt)
-		}
-		if let deleteDate = deleteDate {
-			let deleteDateString = GlobalDateFormatter.localToUTC(date: deleteDate as Date)
-			try container.encode(deleteDateString, forKey: .deleteDate)
-		}
-	}
-	
-	
-	public func copy(with zone: NSZone? = nil) -> Any {
-		let entity = Entity()
-		for key in self.entity.propertiesByName.keys {
-			let value: Any? = self.value(forKey: key)
-			entity.setValue(value, forKey: key)
-		}
-		deleteDate = Date() as NSDate
-		isTemp = true
-		return entity
-	}
-	
-}
-
-public extension CodingUserInfoKey {
-	// Helper property to retrieve the Core Data managed object context
-	static let managedObjectContext = CodingUserInfoKey(rawValue: "managedObjectContext")
-}
-
-internal extension Entity {
-	func decodeDate<T:CodingKey>(container: KeyedDecodingContainer<T>, forKey: T) throws -> NSDate? {
-		let dateString = try container.decodeIfPresent(String.self, forKey: forKey)
-		if let date = dateString, let localizedDate = GlobalDateFormatter.UTCToLocal(date: date) {
-			return localizedDate as NSDate
-		} else {
-			return nil
-		}
-	}
-}
-
-
-extension Entity {
-
-	static func getEntities<T>(decodeNew: (() throws -> [T]), completion: @escaping (([T], Error?) -> Void)) where T: Entity {
-		let manager = CoreDataManager<T>()
-		manager.managedObjectContext = mocBackground
-		let old: [T] = manager.getEntities()
-		let insertedObjects = mocBackground.insertedObjects.compactMap({ $0 as? T })
-		var toKeep: [T] = []
-		var new: [T]?
-		do {
-			new = try decodeNew()
-		}
-		catch {
-			print("error \(error)")
-		}
-		var deletableEntities: [Entity] = []
-		
-		new?.forEach({
-			if let index = insertedObjects.firstIndex(entity: $0) {
-				toKeep.append(insertedObjects[index])
-				deletableEntities.append($0)
-			} else if let index = old.firstIndex(entity: $0) {
-				toKeep.append($0)
-				deletableEntities.append(old[index])
-			} else {
-				toKeep.append($0)
-			}
-		})
-		
-		Entity.delete(entities: deletableEntities, save: false, isBackground: true, completion: ({ error in
-			if let error = error {
-				completion([], error)
-			} else {
-				completion(toKeep, nil)
-			}
-		}))
-		
-	}
 }

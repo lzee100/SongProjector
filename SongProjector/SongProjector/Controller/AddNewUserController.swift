@@ -37,11 +37,11 @@ class AddNewUserController: ChurchBeamViewController {
 		
 		generateInviteCode()
 		inviteCodeLabel.text = inviteCode
-		UserSubmitter.addObserver(self)
+//		UserSubmitter.addObserver(self)
     }
 	
-	override func handleRequestFinish(requesterId: String, result: AnyObject?) {
-		if UserSubmitter.requesterId == requesterId {
+	override func handleRequestFinish(requesterId: String, result: Any?) {
+		if UserSubmitter.id == requesterId {
 			Queues.main.async {
 				self.dismiss(animated: true)
 			}
@@ -70,10 +70,7 @@ class AddNewUserController: ChurchBeamViewController {
 	
 	@IBAction func didPressSend(_ sender: UIBarButtonItem) {
 		let user = VUser()
-		let roleId = VRole.list().first?.id
 		user.title = userNameTextField.text
-		user.inviteToken = inviteCode
-		user.roleId = roleId ?? 0
 		UserSubmitter.submit([user], requestMethod: .post)
 	}
 	

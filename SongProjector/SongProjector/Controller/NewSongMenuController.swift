@@ -42,9 +42,9 @@ class NewSongMenuController: UITableViewController {
 		
 		switch Menu.for(indexPath) {
 		case .newSongController:
-			cell.setup(title: Text.NewSong.title, icon: Cells.bulletOpen)
+			cell.setup(title: AppText.NewSong.title)
 		case .customSheetController:
-			cell.setup(title: Text.CustomSheets.title, icon: Cells.bulletOpen)
+			cell.setup(title: AppText.CustomSheets.title)
 		}
 		return cell
 	}
@@ -76,7 +76,7 @@ class NewSongMenuController: UITableViewController {
 	
 	private func setup() {
 		tableView.register(cell: Cells.basicCellid)
-		title = Text.Songs.menuTitle
+		title = AppText.Songs.menuTitle
 		tableView.isScrollEnabled = false
 	}
 	

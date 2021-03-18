@@ -12,22 +12,25 @@ import UIKit
 
 class VTheme: VEntity {
 	
-	class func list(sortOn attributeName: String? = nil, ascending: Bool? = nil) -> [VTheme] {
-		if UserDefaults.standard.object(forKey: secretKey) == nil {
-			CoreTheme.predicates.append("isUniversal", equals: 0)
-		}
-		if let attributeName = attributeName, let ascending = ascending {
-			CoreTheme.setSortDescriptor(attributeName: attributeName, ascending: ascending)
-		}
-		return CoreTheme.getEntities().map({ VTheme(theme: $0) })
-	}
-	
-	class func single(with id: Int64?) -> VTheme? {
-		if let id = id, let theme = CoreTheme.getEntitieWith(id: id) {
-			return VTheme(theme: theme)
-		}
-		return nil
-	}
+//	class func list(sortOn attributeName: String? = nil, ascending: Bool? = nil) -> [VTheme] {
+//        guard Thread.isMainThread else {
+//            fatalError()
+//        }
+//		if let attributeName = attributeName, let ascending = ascending {
+//			CoreTheme.setSortDescriptor(attributeName: attributeName, ascending: ascending)
+//		}
+//		return CoreTheme.getEntities().map({ VTheme(theme: $0) })
+//	}
+//
+//	class func single(with id: String?) -> VTheme? {
+//        guard Thread.isMainThread else {
+//            fatalError()
+//        }
+//		if let id = id, let theme = CoreTheme.getEntitieWith(id: id) {
+//			return VTheme(theme: theme)
+//		}
+//		return nil
+//	}
 	
 	var allHaveTitle: Bool = false
 	var backgroundColor: String? = nil
@@ -36,7 +39,6 @@ class VTheme: VEntity {
 	var hasEmptySheet: Bool = false
 	var imagePath: String? = nil
 	var imagePathThumbnail: String? = nil
-	var isBackgroundImageDeleted: Bool = false
 	var isEmptySheetFirst: Bool = false
 	var isHidden: Bool = false
 	var isContentBold: Bool = false
@@ -48,25 +50,54 @@ class VTheme: VEntity {
 	var contentAlignmentNumber: Int16 = 0
 	var contentBorderColorHex: String? = nil
 	var contentBorderSize: Float = 0
-	var contentFontName: String? = nil
-	var contentTextColorHex: String? = nil
-	var contentTextSize: Float = 0
+	var contentFontName: String? = "Avenir"
+	var contentTextColorHex: String? = "000000"
+	var contentTextSize: Float = 9
 	var position: Int16 = 0
 	var titleAlignmentNumber: Int16 = 0
 	var titleBackgroundColor: String? = nil
 	var titleBorderColorHex: String? = nil
 	var titleBorderSize: Float = 0
-	var titleFontName: String? = nil
-	var titleTextColorHex: String? = nil
-	var titleTextSize: Float = 0
+	var titleFontName: String? = "Avenir"
+	var titleTextColorHex: String? = "000000"
+	var titleTextSize: Float = 11
 	var imagePathAWS: String? = nil
 	var isUniversal: Bool = false
+    var isDeletable: Bool = true
+    
+    var tempSelectedImage: UIImage? {
+        didSet {
+            tempSelectedImageThumbNail = tempSelectedImage?.resized(withPercentage: 0.5)
+        }
+    }
+    var tempSelectedImageThumbNail: UIImage?
+    var isTempSelectedImageDeleted = false
+    var tempLocalImageName: String?
 
+    
 	var hasClusters: [VCluster] = []
 	var hasSheets: [VSheet] = []
+    
+    var hasNewRemoteImage: Bool {
+        if let imagePathAWS = imagePathAWS {
+            if
+                let imagePath = imagePath,
+                let url = URL(string: imagePath),
+                let remoteURL = URL(string: imagePathAWS),
+                url.lastPathComponent == remoteURL.lastPathComponent
+            {
+                return false
+            } else {
+                return true
+            }
+        } else {
+            return false
+        }
+    }
 	
 	enum CodingKeysTheme:String,CodingKey
 	{
+        case id
 		case allHaveTitle
 		case backgroundColor
 		case backgroundTransparancyNumber = "backgroundTransparancy"
@@ -98,6 +129,7 @@ class VTheme: VEntity {
 		case titleTextSize
 		case imagePathAWS
 		case isUniversal
+        case isDeletable
 	}
 	
 	public override func initialization(decoder: Decoder) throws {
@@ -110,6 +142,7 @@ class VTheme: VEntity {
 	
 	override public func encode(to encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeysTheme.self)
+        try container.encode(id, forKey: .id)
 		try container.encode(Int(truncating: NSNumber(value: allHaveTitle)), forKey: .allHaveTitle)
 		try container.encode(backgroundColor, forKey: .backgroundColor)
 		try container.encode(backgroundTransparancyNumber.description, forKey: .backgroundTransparancyNumber)
@@ -138,8 +171,8 @@ class VTheme: VEntity {
 		try container.encode(titleTextColorHex, forKey: .titleTextColorHex)
 		try container.encode(titleTextSize, forKey: .titleTextSize)
 		try container.encode(imagePathAWS, forKey: .imagePathAWS)
-		try container.encode(isUniversal, forKey: .isUniversal)
-		
+        try container.encode(Int(truncating: NSNumber(value: isDeletable)), forKey: .isDeletable)
+        
 		try super.encode(to: encoder)
 	}
 	
@@ -152,7 +185,7 @@ class VTheme: VEntity {
 		self.init()
 
 		let container = try decoder.container(keyedBy: CodingKeysTheme.self)
-		isBackgroundImageDeleted = false
+		isTempSelectedImageDeleted = false
 		allHaveTitle = try Bool(truncating: (container.decodeIfPresent(Int.self, forKey: .allHaveTitle) ?? 0) as NSNumber)
 		backgroundColor = try container.decodeIfPresent(String.self, forKey: .backgroundColor)
 		let transparencyString = try container.decodeIfPresent(String.self, forKey: .backgroundTransparancyNumber) ?? ""
@@ -183,7 +216,9 @@ class VTheme: VEntity {
 		titleTextSize = try container.decodeIfPresent(Float.self, forKey: .titleTextSize) ?? 14
 		imagePathAWS = try container.decodeIfPresent(String.self, forKey: .imagePathAWS)
 		isUniversal = try Bool(truncating: (container.decodeIfPresent(Int.self, forKey: .isUniversal) ?? 0) as NSNumber)
-		
+        isDeletable = try Bool(truncating: (container.decodeIfPresent(Int.self, forKey: .isDeletable) ?? 0) as NSNumber)
+
+        
 		try super.initialization(decoder: decoder)
 
 	}
@@ -198,7 +233,7 @@ class VTheme: VEntity {
 		copy.hasEmptySheet = self.hasEmptySheet
 		copy.imagePath = self.imagePath
 		copy.imagePathThumbnail = self.imagePathThumbnail
-		copy.isBackgroundImageDeleted = self.isBackgroundImageDeleted
+		copy.isTempSelectedImageDeleted = self.isTempSelectedImageDeleted
 		copy.isEmptySheetFirst = self.isEmptySheetFirst
 		copy.isHidden = self.isHidden
 		copy.isContentBold = self.isContentBold
@@ -225,7 +260,8 @@ class VTheme: VEntity {
 		copy.hasClusters = self.hasClusters
 		copy.hasSheets = self.hasSheets
 		copy.isUniversal = self.isUniversal
-		
+        copy.isDeletable = self.isDeletable
+
 		return copy
 	}
 	
@@ -245,7 +281,7 @@ class VTheme: VEntity {
 				theme.imagePath = nil
 				theme.imagePathThumbnail = nil
 			}
-			theme.isBackgroundImageDeleted = self.isBackgroundImageDeleted
+			theme.isTempSelectedImageDeleted = self.isTempSelectedImageDeleted
 			theme.isEmptySheetFirst = self.isEmptySheetFirst
 			theme.isHidden = self.isHidden
 			theme.isContentBold = self.isContentBold
@@ -270,12 +306,13 @@ class VTheme: VEntity {
 			theme.titleTextSize = self.titleTextSize
 			theme.imagePathAWS = self.imagePathAWS
 			theme.isUniversal = self.isUniversal
+            theme.isDeletable = self.isDeletable
 						
 		}
 	}
 	
-	override func getPropertiesFrom(entity: Entity) {
-		super.getPropertiesFrom(entity: entity)
+    override func getPropertiesFrom(entity: Entity, context: NSManagedObjectContext) {
+        super.getPropertiesFrom(entity: entity, context: context)
 		
 		if let theme = entity as? Theme {
 			allHaveTitle = theme.allHaveTitle
@@ -285,7 +322,7 @@ class VTheme: VEntity {
 			hasEmptySheet = theme.hasEmptySheet
 			imagePath = theme.imagePath
 			imagePathThumbnail = theme.imagePathThumbnail
-			isBackgroundImageDeleted = theme.isBackgroundImageDeleted
+			isTempSelectedImageDeleted = theme.isTempSelectedImageDeleted
 			isEmptySheetFirst = theme.isEmptySheetFirst
 			isHidden = theme.isHidden
 			isContentBold = theme.isContentBold
@@ -310,30 +347,26 @@ class VTheme: VEntity {
 			titleTextSize = theme.titleTextSize
 			imagePathAWS = theme.imagePathAWS
 			isUniversal = theme.isUniversal
+            isDeletable = theme.isDeletable
+            tempSelectedImage = nil
 		}
 	}
 	
-	convenience init(theme: Theme) {
+	convenience init(theme: Theme, context: NSManagedObjectContext) {
 		self.init()
-		getPropertiesFrom(entity: theme)
+		getPropertiesFrom(entity: theme, context: context)
 	}
 	
-	override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-		
-		CoreTheme.managedObjectContext = context
-		if let storedEntity = CoreTheme.getEntitieWith(id: id) {
-			CoreTheme.managedObjectContext = moc
-			setPropertiesTo(entity: storedEntity, context: context)
-			return storedEntity
-		} else {
-			CoreTheme.managedObjectContext = context
-			let newEntity = CoreTheme.createEntityNOTsave()
-			CoreTheme.managedObjectContext = moc
-			setPropertiesTo(entity: newEntity, context: context)
-			return newEntity
-		}
-
-	}
+    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
+        if let entity: Theme = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
+            setPropertiesTo(entity: entity, context: context)
+            return entity
+        } else {
+            let entity: Theme = DataFetcher().createEntity(moc: context)
+            setPropertiesTo(entity: entity, context: context)
+            return entity
+        }
+    }
 }
 
 
@@ -350,7 +383,7 @@ extension VTheme {
 		hasEmptySheet = from.hasEmptySheet
 		imagePath = from.imagePath
 		imagePathThumbnail = from.imagePathThumbnail
-		isBackgroundImageDeleted = from.isBackgroundImageDeleted
+		isTempSelectedImageDeleted = from.isTempSelectedImageDeleted
 		isEmptySheetFirst = from.isEmptySheetFirst
 		isContentBold = from.isContentBold
 		isContentItalic = from.isContentItalic
@@ -378,40 +411,36 @@ extension VTheme {
 
 }
 
-
 extension VTheme {
-	var uploadImagesObjecs: [UploadObject] {
-		let imagePaths = [imagePath]
-		return imagePaths.compactMap({ URL(string: $0) }).compactMap({ UploadObject(localURL: $0) })
-	}
-	
-	var downloadImagesObjects: [DownloadObject] {
-		var imagePaths = [imagePathAWS]
-		if imagePath != nil {
-			imagePaths = []
-		}
-		return imagePaths.compactMap({ URL(string: $0) }).compactMap({ DownloadObject(remoteURL: $0) })
-	}
-	
-	func setUploadValues(_ uploadObjects: [UploadObject]) {
-		for upload in uploadObjects {
-			if let imagePath = imagePath {
-				if imagePath == upload.localURL.absoluteString {
-					imagePathAWS = upload.remoteURL?.absoluteString
-				}
-			}
-		}
-	}
-	
-	func setDownloadValues(_ downloadObjects: [DownloadObject]) {
-		for download in downloadObjects {
-			if let imagePathAWS = imagePathAWS {
-				if imagePathAWS == download.remoteURL.absoluteString {
-					self.imagePath = download.localURL?.absoluteString
-					imagePathThumbnail = download.localThumbURL?.absoluteString
-				}
-			}
-		}
-	}
-	
+    
+    var uploadObjecs: [UploadObject] {
+        let themesPaths = [self].compactMap({ $0.tempLocalImageName })
+        return themesPaths.compactMap({ UploadObject(fileName: $0) })
+    }
+    
+    var downloadObjects: [DownloadObject] {
+        let themesPaths = [self].filter({ $0.hasNewRemoteImage }).compactMap({ $0.imagePathAWS })
+        return themesPaths.compactMap({ URL(string: $0) }).compactMap({ DownloadObject(remoteURL: $0) })
+    }
+    
+    func setUploadValues(_ uploadObjects: [UploadObject]) {
+        for upload in uploadObjects.compactMap({ $0 as UploadObject }) {
+            if tempLocalImageName == upload.fileName {
+                imagePathAWS = upload.fileName
+            }
+        }
+    }
+    
+    func setDownloadValues(_ downloadObjects: [DownloadObject]) {
+        for download in downloadObjects.compactMap({ $0 as DownloadObject }) {
+            if imagePathAWS == download.remoteURL.absoluteString {
+                do {
+                    try setBackgroundImage(image: download.image, imageName: download.filename)
+                } catch {
+                    print(error)
+                }
+            }
+        }
+    }
+    
 }

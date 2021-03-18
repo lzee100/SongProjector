@@ -31,10 +31,7 @@ class TagSelectionController: ChurchBeamViewController, UITableViewDelegate, UIT
 	var section: Int = 0
 	var selectedTags: [VTag] = []
 	var delegate: TagSelectionControllerDelegate?
-	override var requesterId: String {
-		return "TagSelectionController"
-	}
-	override var requesters: [RequesterType] {
+	override var requesters: [RequesterBase] {
 		return [TagFetcher]
 	}
 	
@@ -43,13 +40,17 @@ class TagSelectionController: ChurchBeamViewController, UITableViewDelegate, UIT
 	
 	override func viewDidLoad() {
         super.viewDidLoad()
-		cancelButton.title = Text.Actions.cancel
-		doneButton.title = Text.Actions.done
+        tableView.register(header: BasicHeaderView.identifier)
+		cancelButton.title = AppText.Actions.cancel
+		doneButton.title = AppText.Actions.done
+        cancelButton.tintColor = themeHighlighted
+        doneButton.tintColor = themeHighlighted
 		tableView.rowHeight = 60
     }
 	
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
+        update()
 		tableView.register(cell: BasicCell.identifier)
 		TagFetcher.fetch()
 	}
@@ -64,29 +65,44 @@ class TagSelectionController: ChurchBeamViewController, UITableViewDelegate, UIT
 	
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCell(withIdentifier: BasicCell.identifier) as! BasicCell
-		cell.setup(title: tags[indexPath.row].title, icon: Cells.bulletOpen, iconSelected: Cells.bulletFilled, textColor: themeWhiteBlackTextColor, hasPianoOnly: false)
-		cell.selectedCell = selectedTags.contains(tags[indexPath.row])
+		cell.setup(title: tags[indexPath.row].title, textColor: .blackColor)
+        cell.selectedCell = selectedTags.contains(where: { $0.id == tags[indexPath.row].id })
 		return cell
 	}
 	
 	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		if let index = selectedTags.firstIndex(of: tags[indexPath.row]) {
+        if let index = selectedTags.firstIndex(where: { $0.id == tags[indexPath.row].id }) {
 			selectedTags.remove(at: index)
 		} else {
 			selectedTags.append(tags[indexPath.row])
 		}
 		tableView.reloadRows(at: [indexPath], with: .fade)
 	}
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        tableView.style(cell, forRowAt: indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let view = tableView.basicHeaderView
+        view?.descriptionLabel.text = nil
+        return view
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 20
+    }
 	
-	
+    override func update() {
+        let tags: [Tag] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "position", ascending: true))
+        self.tags = tags.map({ VTag(tag: $0, context: moc) })
+        self.tableView.reloadData()
+    }
 	
 	// MARK: - Requester Functions
 
-	override func handleRequestFinish(requesterId: String, result: AnyObject?) {
-		Queues.main.async {
-			self.tags = VTag.list(sortOn: "position", ascending: true)
-			self.tableView.reloadData()
-		}
+	override func handleRequestFinish(requesterId: String, result: Any?) {
+        update()
 	}
 	
 	
