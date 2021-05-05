@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionReusableView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="SongServiceHeaderCollectionReusableView" id="U6b-Vx-4bR" customClass="SongServiceHeaderCollectionReusableView" customModule="ChurchBeam" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="272"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nSh-k3-CKq">
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="272"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Gk5-Rm-i1B">
+                            <rect key="frame" x="10" y="10" width="54.5" height="27.5"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="23"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qYC-9r-m6w" customClass="ActionButton" customModule="ChurchBeam" customModuleProvider="target">
+                            <rect key="frame" x="0.0" y="0.0" width="320" height="272"/>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    <constraints>
+                        <constraint firstItem="Gk5-Rm-i1B" firstAttribute="top" secondItem="nSh-k3-CKq" secondAttribute="top" constant="10" id="0D3-g4-IAg"/>
+                        <constraint firstItem="Gk5-Rm-i1B" firstAttribute="leading" secondItem="nSh-k3-CKq" secondAttribute="leading" constant="10" id="Bx8-Ap-TBf"/>
+                        <constraint firstItem="qYC-9r-m6w" firstAttribute="top" secondItem="nSh-k3-CKq" secondAttribute="top" id="CK4-fT-Uoy"/>
+                        <constraint firstAttribute="trailing" secondItem="qYC-9r-m6w" secondAttribute="trailing" id="R8d-Yy-spe"/>
+                        <constraint firstItem="qYC-9r-m6w" firstAttribute="leading" secondItem="nSh-k3-CKq" secondAttribute="leading" id="SKQ-4v-Kmp"/>
+                        <constraint firstAttribute="bottom" secondItem="qYC-9r-m6w" secondAttribute="bottom" id="qsq-w4-3x0"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="VXr-Tz-HHm"/>
+            <constraints>
+                <constraint firstItem="nSh-k3-CKq" firstAttribute="top" secondItem="U6b-Vx-4bR" secondAttribute="top" id="WpX-mo-N1B"/>
+                <constraint firstItem="VXr-Tz-HHm" firstAttribute="trailing" secondItem="nSh-k3-CKq" secondAttribute="trailing" id="gNW-8O-wsT"/>
+                <constraint firstItem="nSh-k3-CKq" firstAttribute="leading" secondItem="VXr-Tz-HHm" secondAttribute="leading" id="m21-yF-LkM"/>
+                <constraint firstAttribute="bottom" secondItem="nSh-k3-CKq" secondAttribute="bottom" id="nge-Eq-Wj9"/>
+            </constraints>
+            <connections>
+                <outlet property="actionButton" destination="qYC-9r-m6w" id="UbA-y9-IIR"/>
+                <outlet property="sectionBackgroundView" destination="nSh-k3-CKq" id="2FT-Ae-ewl"/>
+                <outlet property="sectionLabel" destination="Gk5-Rm-i1B" id="pKe-Js-6A6"/>
+            </connections>
+            <point key="canvasLocation" x="137.68115942028987" y="81.026785714285708"/>
+        </collectionReusableView>
+    </objects>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

@@ -206,7 +206,7 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
 		}
 		let isSelected = section == songService.selectedSection
 		view.setup(title: song.cluster.title, isSelected: isSelected, hasPianoSolo: song.cluster.hasPianoSolo)
-        let isPlaying = SoundPlayer.isPianoOnlyPlaying && SoundPlayer.isPlaying && SoundPlayer.song == song.cluster
+        let isPlaying = SoundPlayer.isPianoOnlyPlaying && SoundPlayer.isPlaying && SoundPlayer.song?.id == song.cluster.id
         view.setPianoAction(isPlaying: isPlaying)
 		return view
 	}
@@ -589,24 +589,13 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
 	
 	func externalDisplayDidChange(_ notification: Notification) {
 		updateSheetDisplayersRatios()
-		if let selectedSheet = songService.selectedSheet {
+        if let selectedSheet = songService.selectedSheet, songService.selectedSong != nil, externalDisplayWindow != nil {
 			display(sheet: selectedSheet)
 		}
 	}
 	
 	func databaseDidChange( _ notification: Notification) {
-		songService.selectedSection = nil
-		songService.selectedSheet = nil
-        
-		if songService.songs.count > 0 {
-            let songs: [VCluster] = songService.songs.compactMap({ $0.cluster.id }).compactMap({
-                if let cluster: Cluster = DataFetcher().getEntity(moc: moc, predicates: [.get(id: $0)]) {
-                    return VCluster(cluster: cluster, context: moc)
-                }
-                return nil
-            })
-            songService.songs = songs.map({ SongObject(cluster: $0) })
-		}
+        songService = SongService(delegate: self)
 	}
 	
 	func updateSheetDisplayersRatios() {
@@ -647,7 +636,6 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
 		view.layoutSubviews()
 		
 	}
-	
 	
 	func display(sheet: VSheet) {
 		for subview in sheetDisplayer.subviews {

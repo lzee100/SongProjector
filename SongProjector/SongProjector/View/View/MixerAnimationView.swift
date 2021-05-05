@@ -47,7 +47,7 @@ class MixerAnimationView: UIView {
     var isPlaying: Bool {
         return timer != nil
     }
-    var mixerColor: UIColor = .whiteColor
+    var mixerColor: UIColor = .clear
 	
 	
 	// MARK: - UIView Functions
@@ -74,6 +74,7 @@ class MixerAnimationView: UIView {
 	// MARK: - Public Functions
 
 	func play() {
+        bars.forEach({ $0.backgroundColor = mixerColor })
 		timer = Timer.scheduledTimer(withTimeInterval: 0.7, repeats: true, block: { _ in
 			self.barConstraints.forEach({
 				let height = self.getRandomHeight(current: $0.constant)
@@ -110,6 +111,7 @@ class MixerAnimationView: UIView {
 	
 	private func getRandomHeight(current: CGFloat) -> CGFloat {
 		let min = self.bounds.height * 0.3
+        guard min > 0 else { return 0 }
 		var height = CGFloat.random(in: 0..<maxHeight - min)
 		while height == current {
 			height = CGFloat.random(in: 0..<maxHeight - min)

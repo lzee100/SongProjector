@@ -314,7 +314,7 @@ class SongService {
 		
 		if let time = time, time > 0 {
 			
-			if let song = selectedSong?.cluster, song.hasLocalMusic, !SoundPlayer.isPlaying {
+            if let song = selectedSong?.cluster, song.hasLocalMusic, song.id != SoundPlayer.song?.id {
 				SoundPlayer.play(song: song)
 				isPlaying = true
                 countDownValue = SongService.countDownMax

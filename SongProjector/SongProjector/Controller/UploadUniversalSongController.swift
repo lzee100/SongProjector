@@ -180,9 +180,7 @@ class UploadUniversalSongController: ChurchBeamViewController, UITableViewDelega
                 }
             }
             cell.pickerView(cell.picker, didSelectRow: 0, inComponent: 0)
-        } else if let cell = cell as? SongsUploadSheetCell {
-			cell.setup(cluster, sheet: cluster.hasSheets[indexPath.row], sheetPosition: indexPath.row, delegate: self)
-		} else if let cell = cell as? SoundPickerCell {
+        } else if let cell = cell as? SoundPickerCell {
 			let sound = sounds[indexPath.row]
 			cell.setup(sound, delegate: self)
 		}
@@ -211,6 +209,10 @@ class UploadUniversalSongController: ChurchBeamViewController, UITableViewDelega
 		if let cell = cell as? SoundPickerCell {
 			cell.instrumentPicker.selectRow(indexPath.row, inComponent: 0, animated: false)
 		}
+        if let cell = cell as? SongsUploadSheetCell {
+            cell.layoutIfNeeded()
+            cell.setup(cluster, sheet: cluster.hasSheets[indexPath.row], sheetPosition: indexPath.row, scaleFactor: getScaleFactor(width: cell.sheetViewContainer.bounds.width), delegate: self)
+        }
         tableView.style(cell, forRowAt: indexPath)
 	}
     
@@ -368,6 +370,8 @@ class UploadUniversalSongController: ChurchBeamViewController, UITableViewDelega
 			let vc: CustomSheetsController? = nav.unwrap()
 			vc?.cluster = self.cluster
 			vc?.navigationItem.leftBarButtonItem = UIBarButtonItem(title: AppText.Actions.done, style: .plain, target: self, action: #selector(self.didPressDone))
+            vc?.navigationItem.leftBarButtonItem?.tintColor = themeHighlighted
+            vc?.hasSaveOption = false
 			self.present(nav, animated: true)
 
 		})
@@ -439,6 +443,16 @@ class UploadUniversalSongController: ChurchBeamViewController, UITableViewDelega
 		presentedViewController?.dismiss(animated: true)
 		tableView.reloadData()
 	}
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        
+        coordinator.animate { _ in
+            self.tableView.reloadData()
+        } completion: { _ in
+            
+        }
+
+    }
 	
 }
 

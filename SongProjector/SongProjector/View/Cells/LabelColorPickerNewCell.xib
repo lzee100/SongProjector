@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="KGk-i7-Jjw" customClass="LabelColorPickerNewCell" customModule="ChurchBeam" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0Ox-JK-qAK">
+                        <rect key="frame" x="240" y="12" width="20" height="20"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="20" id="66y-Bv-ZNb"/>
+                            <constraint firstAttribute="height" constant="20" id="ZKU-xt-N4d"/>
+                        </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="boolean" keyPath="ignoresInvertColors" value="YES"/>
+                        </userDefinedRuntimeAttributes>
+                    </view>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qmy-a0-ROj">
+                        <rect key="frame" x="30" y="11.5" width="202" height="21"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wug-1i-jmY" customClass="ActionButton" customModule="ChurchBeam" customModuleProvider="target">
+                        <rect key="frame" x="260" y="2" width="40" height="40"/>
+                        <constraints>
+                            <constraint firstAttribute="width" secondItem="wug-1i-jmY" secondAttribute="height" id="QQc-NY-RY5"/>
+                            <constraint firstAttribute="width" constant="40" id="wds-GX-hXq"/>
+                        </constraints>
+                        <color key="tintColor" red="0.92941176469999998" green="0.30196078430000001" blue="0.46666666670000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <state key="normal" image="Trash">
+                            <color key="titleColor" red="0.92941176469999998" green="0.30196078430000001" blue="0.46666666670000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        </state>
+                        <connections>
+                            <action selector="didPressDelete:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="qpd-sm-RxR"/>
+                        </connections>
+                    </button>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="wug-1i-jmY" firstAttribute="leading" secondItem="0Ox-JK-qAK" secondAttribute="trailing" id="0FY-i8-D2S"/>
+                    <constraint firstAttribute="trailing" secondItem="wug-1i-jmY" secondAttribute="trailing" constant="20" id="0Ul-Ic-iAp"/>
+                    <constraint firstItem="qmy-a0-ROj" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="30" id="ERp-Mo-joY"/>
+                    <constraint firstItem="wug-1i-jmY" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="PhE-rR-J8U"/>
+                    <constraint firstItem="0Ox-JK-qAK" firstAttribute="leading" secondItem="qmy-a0-ROj" secondAttribute="trailing" constant="8" id="XU1-VF-Exc"/>
+                    <constraint firstItem="0Ox-JK-qAK" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="ZYB-aK-x3U"/>
+                    <constraint firstItem="qmy-a0-ROj" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="i4p-kO-7we"/>
+                </constraints>
+            </tableViewCellContentView>
+            <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <connections>
+                <outlet property="colorPreviewView" destination="0Ox-JK-qAK" id="Gs9-Mi-L5B"/>
+                <outlet property="deleteButton" destination="wug-1i-jmY" id="tnN-vH-MwP"/>
+                <outlet property="deleteButtonRightConstraint" destination="0Ul-Ic-iAp" id="IBw-nE-S1S"/>
+                <outlet property="deleteButtonWidthConstraint" destination="wds-GX-hXq" id="5Pc-rC-q3p"/>
+                <outlet property="descriptionTitle" destination="qmy-a0-ROj" id="9Cc-JW-v6q"/>
+            </connections>
+            <point key="canvasLocation" x="139" y="153"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="Trash" width="20" height="20"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

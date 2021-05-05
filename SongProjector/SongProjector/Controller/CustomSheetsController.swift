@@ -66,13 +66,19 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 		}
 	}
 	var isBibleStudySheetGenerator = false
-    
+    var hasSaveOption = true
     
 	// MARK: Private properties
     private var itemSize = CGSize.zero
 	private var longPressGesture: UILongPressGestureRecognizer!
 	
-	
+    deinit {
+        print("")
+        print("")
+        print("deinit custom sheets")
+        print("")
+        print("")
+    }
 	
 	// MARK - UIView functions
     
@@ -100,6 +106,11 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 		super.viewWillAppear(animated)
 		update()
 	}
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+    }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let controller = segue.destination.unwrap() as? SaveNewSongTitleTimeVC {
@@ -278,13 +289,15 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	
 	
 	
-	// MARK: - Submit Observer Functions
+	// MARK: - Submit Observer Functionse t6b6v
 	
 	override func handleRequestFinish(requesterId: String, result: Any?) {
 		Queues.main.async {
             NotificationCenter.default.post(name: .dataBaseDidChange, object: nil)
 			self.delegate?.didCloseCustomSheet()
             self.dismiss(animated: true)
+            ClusterSubmitter.removeObserver(self)
+            UniversalClusterSubmitter.removeObserver(self)
 		}
 	}
 	
@@ -368,23 +381,27 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	
 	private func setup() {
 		
+        collectionViewThemes.register(cell: Cells.themeCellCollection)
+        collectionView.register(cell: SheetCollectionCell.identitier)
+
         save.title = AppText.Actions.save
 		cancel.title = AppText.Actions.cancel
         cancel.tintColor = .orange
         save.tintColor = .orange
         themesBackgroundView.backgroundColor = .whiteColor
+        if !hasSaveOption {
+            navigationItem.rightBarButtonItems = navigationItem.rightBarButtonItems?.filter({ $0 != save })
+        }
         
 		navigationController?.title = AppText.CustomSheets.title
 		title = AppText.CustomSheets.title
         
 		hideKeyboardWhenTappedAround()
-		
+
 		longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.handleLongGesture(gesture:)))
 		longPressGesture.minimumPressDuration = 1
 		collectionView.addGestureRecognizer(longPressGesture)
-		
-        collectionViewThemes.register(cell: Cells.themeCellCollection)
-        collectionView.register(cell: SheetCollectionCell.identitier)
+
         var bottomEdge: CGFloat = 20
         if #available(iOS 11.0, *) {
             let window = UIApplication.shared.windows[0]
@@ -395,13 +412,13 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
         predicates.append("isHidden", notEquals: true)
         let checkthemes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: predicates)
         self.themes = checkthemes.map({ VTheme(theme: $0, context: moc) })
-        
+
         if let cluster = cluster {
             selectedTheme = cluster.hasTheme(moc: moc)
         } else {
             cluster = VCluster()
         }
-        
+
         updateBorderConstraints()
         setRightBarButtonItem()
 	}

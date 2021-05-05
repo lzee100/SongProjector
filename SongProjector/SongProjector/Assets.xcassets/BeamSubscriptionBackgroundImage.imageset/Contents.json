@@ -1,0 +1,19 @@
+{
+  "images" : [
+    {
+      "idiom" : "universal"
+    },
+    {
+      "filename" : "pexels-cottonbro-4646234.jpg",
+      "idiom" : "iphone"
+    },
+    {
+      "filename" : "pexels-cottonbro-4646233.jpg",
+      "idiom" : "ipad"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

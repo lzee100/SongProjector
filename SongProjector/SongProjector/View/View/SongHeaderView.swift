@@ -83,6 +83,7 @@ class SongHeaderView: UITableViewHeaderFooterView {
 	}
 	
 	func update() {
+        mixerView.mixerColor = .white
         titleLabel.textColor = isSelected ? .white : .blackColor
         sectionLabelBackgroundView.backgroundColor = isSelected ? .softBlueGrey : .grey0
         actionContainerView.backgroundColor = isSelected ? .white : .softBlueGrey

@@ -48,6 +48,7 @@ class LyricsViewController: UIViewController {
 		let placeholder = lyricsPlaceholder
         placeholder.isHidden = !text.isEmpty
         title = isBibleTextGenerator ? AppText.Lyrics.titleBibleText : AppText.Lyrics.titleLyrics
+        lyricsTextView.keyboardDismissMode = .interactive
     }
     
     override func viewWillDisappear(_ animated: Bool) {

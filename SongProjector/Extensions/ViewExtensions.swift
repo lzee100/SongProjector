@@ -69,5 +69,13 @@ extension UIView {
 			}
 		}
 	}
+    
+    func anchorToSuperView() {
+        guard let superView = superview else { return }
+        topAnchor.constraint(equalTo: superView.topAnchor).isActive = true
+        leadingAnchor.constraint(equalTo: superView.leadingAnchor).isActive = true
+        trailingAnchor.constraint(equalTo: superView.trailingAnchor).isActive = true
+        bottomAnchor.constraint(equalTo: superView.bottomAnchor).isActive = true
+    }
 	
 }

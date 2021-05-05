@@ -70,6 +70,7 @@ class SoundPlay: NSObject, AVAssetDownloadDelegate {
         }
         isPlaying = false
         isPianoOnlyPlaying = false
+        song = nil
 	}
 	
 	func playerFor(instrumentType: InstrumentType) -> InstrumentPlayer? {

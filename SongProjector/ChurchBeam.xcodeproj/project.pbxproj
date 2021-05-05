@@ -68,7 +68,6 @@
 		E31F0B6D20F4F3D100C22FD1 /* SheetPastors.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31F0B6C20F4F3D100C22FD1 /* SheetPastors.swift */; };
 		E31F0B6F20F4F3DD00C22FD1 /* SheetPastors.xib in Resources */ = {isa = PBXBuildFile; fileRef = E31F0B6E20F4F3DD00C22FD1 /* SheetPastors.xib */; };
 		E31F0B7120F5029500C22FD1 /* Pio-Sebastiaan-en-Marilou.jpg in Resources */ = {isa = PBXBuildFile; fileRef = E31F0B7020F5029500C22FD1 /* Pio-Sebastiaan-en-Marilou.jpg */; };
-		E31F0B7320F50A6E00C22FD1 /* Liedjes - wallpaper 16-9.png in Resources */ = {isa = PBXBuildFile; fileRef = E31F0B7220F50A6D00C22FD1 /* Liedjes - wallpaper 16-9.png */; };
 		E31F0B7520F5D1E800C22FD1 /* SheetPastorsExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31F0B7420F5D1E800C22FD1 /* SheetPastorsExtensions.swift */; };
 		E31F87BD1FE7035D00D5D4BA /* AppText.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31F87BC1FE7035D00D5D4BA /* AppText.swift */; };
 		E326E9071FFECD0E00FEAC9C /* SheetCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E326E9051FFECD0E00FEAC9C /* SheetCollectionCell.swift */; };
@@ -206,6 +205,7 @@
 		E3896A3721E3F156008CB5A5 /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3896A3621E3F156008CB5A5 /* Operation.swift */; };
 		E3896A3921E3F17C008CB5A5 /* HTTPError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3896A3821E3F17C008CB5A5 /* HTTPError.swift */; };
 		E3896A3E21E3F56D008CB5A5 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3896A3D21E3F56D008CB5A5 /* CloudKit.framework */; };
+		E38DF49A262F53E00057D8D9 /* DeviceOrientationExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38DF499262F53E00057D8D9 /* DeviceOrientationExtensions.swift */; };
 		E390864D22105EA300320421 /* DataExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E390864C22105EA300320421 /* DataExtensions.swift */; };
 		E393B7652008D20B0073D0A9 /* SheetEmpty.xib in Resources */ = {isa = PBXBuildFile; fileRef = E393B7642008D20B0073D0A9 /* SheetEmpty.xib */; };
 		E393B7672008D25F0073D0A9 /* SheetEmpty.swift in Sources */ = {isa = PBXBuildFile; fileRef = E393B7662008D25F0073D0A9 /* SheetEmpty.swift */; };
@@ -387,7 +387,6 @@
 		E31F0B6C20F4F3D100C22FD1 /* SheetPastors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetPastors.swift; sourceTree = "<group>"; };
 		E31F0B6E20F4F3DD00C22FD1 /* SheetPastors.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SheetPastors.xib; sourceTree = "<group>"; };
 		E31F0B7020F5029500C22FD1 /* Pio-Sebastiaan-en-Marilou.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "Pio-Sebastiaan-en-Marilou.jpg"; sourceTree = "<group>"; };
-		E31F0B7220F50A6D00C22FD1 /* Liedjes - wallpaper 16-9.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Liedjes - wallpaper 16-9.png"; path = "../../kerk plaatjes/Liedjes - wallpaper 16-9.png"; sourceTree = "<group>"; };
 		E31F0B7420F5D1E800C22FD1 /* SheetPastorsExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetPastorsExtensions.swift; sourceTree = "<group>"; };
 		E31F87BC1FE7035D00D5D4BA /* AppText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppText.swift; sourceTree = "<group>"; };
 		E326E9051FFECD0E00FEAC9C /* SheetCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetCollectionCell.swift; sourceTree = "<group>"; };
@@ -528,6 +527,7 @@
 		E3896A3821E3F17C008CB5A5 /* HTTPError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPError.swift; sourceTree = "<group>"; };
 		E3896A3C21E3F56A008CB5A5 /* SongProjector.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SongProjector.entitlements; sourceTree = "<group>"; };
 		E3896A3D21E3F56D008CB5A5 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
+		E38DF499262F53E00057D8D9 /* DeviceOrientationExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceOrientationExtensions.swift; sourceTree = "<group>"; };
 		E390864C22105EA300320421 /* DataExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataExtensions.swift; sourceTree = "<group>"; };
 		E393B7642008D20B0073D0A9 /* SheetEmpty.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SheetEmpty.xib; sourceTree = "<group>"; };
 		E393B7662008D25F0073D0A9 /* SheetEmpty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetEmpty.swift; sourceTree = "<group>"; };
@@ -702,7 +702,6 @@
 			isa = PBXGroup;
 			children = (
 				E3896A3C21E3F56A008CB5A5 /* SongProjector.entitlements */,
-				E31F0B7220F50A6D00C22FD1 /* Liedjes - wallpaper 16-9.png */,
 				E31F0B7020F5029500C22FD1 /* Pio-Sebastiaan-en-Marilou.jpg */,
 				E33268BD2022FCD2002CDA7C /* SoundPlayer.swift */,
 				E3C2AD2120275AE200ACFFE7 /* InstrumentPlayer.swift */,
@@ -836,6 +835,7 @@
 				E387536F24842CC20050B425 /* QueryDocumentSnapshotExtensions.swift */,
 				E3B1EAC024B4948400304A2D /* UICollectionViewExtensions.swift */,
 				E3C63DE42540C734006AB94B /* DoubleExtensions.swift */,
+				E38DF499262F53E00057D8D9 /* DeviceOrientationExtensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1238,7 +1238,6 @@
 				E393B7652008D20B0073D0A9 /* SheetEmpty.xib in Resources */,
 				E31171361FE59DA3008D9D51 /* Main.storyboard in Resources */,
 				E309DCF41FF48F0800C3D135 /* LabelSwitchCell.xib in Resources */,
-				E31F0B7320F50A6E00C22FD1 /* Liedjes - wallpaper 16-9.png in Resources */,
 				E311148422048DF8007C7A61 /* LoadingView.xib in Resources */,
 				E37938ED21271EC90091698D /* PickerCell.xib in Resources */,
 				E3BDB3E32554B37900D564BE /* FeatureCell.xib in Resources */,
@@ -1554,6 +1553,7 @@
 				E33B418224BF958000DE4F4E /* SongServicePlayDate.swift in Sources */,
 				E39D29F020308F4E00C1C0D9 /* BibleStudyController.swift in Sources */,
 				E35E7CE623B771A70071DCC8 /* VCluster.swift in Sources */,
+				E38DF49A262F53E00057D8D9 /* DeviceOrientationExtensions.swift in Sources */,
 				E3D927511FEC3036006EDE75 /* NewOrEditTagController.swift in Sources */,
 				E31171551FE5A071008D9D51 /* UIFontExtensions.swift in Sources */,
 				E3355D6F1FEDA645004C03AE /* TextViewExtensions.swift in Sources */,
@@ -1760,7 +1760,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = SongProjector/SongProjector.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 22;
 				DEVELOPMENT_TEAM = 4RH34LGMLA;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = SongProjector/Info.plist;
@@ -1782,7 +1782,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = SongProjector/SongProjector.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 22;
 				DEVELOPMENT_TEAM = 4RH34LGMLA;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = SongProjector/Info.plist;

@@ -389,7 +389,7 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
             predicates.append(format: "rootDeleteDate == nil")
             predicates.append(NSPredicate(format: "deleteDate == nil"))
         }
-//
+        
 //        let user = VUser.first(moc: moc)
 //        if let user = VUser.first(moc: moc), !user.hasActiveSongContract {
 //            var songPreds: [NSPredicate] = []
@@ -586,12 +586,27 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
         if user.hasActiveSongContract || user.hasActiveBeamContract {
             performSegue(withIdentifier: "customSheetsController", sender: nil)
         } else {
-            let songs: [Cluster] = DataFetcher().getEntities(moc: moc)
+            
+            var predicates: [NSPredicate] = []
+            
+            if let user = VUser.first(moc: moc), !user.hasActiveSongContract {
+                var songPreds: [NSPredicate] = []
+                if !user.hasActiveSongContract {
+                    songPreds.append(NSPredicate(format: "instrumentIds == nil"))
+                    songPreds.append(NSPredicate(format: "instrumentIds == %@", ""))
+                    let comp = NSCompoundPredicate(orPredicateWithSubpredicates: songPreds)
+                    predicates.append(and: [comp])
+                }
+            }
+            
+            let songs: [Cluster] = DataFetcher().getEntities(moc: moc, predicates: predicates, sort: nil)
+
             if songs.count > 10 {
                 SubscriptionsSettings.showSubscriptionsViewController(presentingViewController: self)
             } else {
-                performSegue(withIdentifier: "customSheetsController", sender: nil)
+                performSegue(withIdentifier: "customSheetsControllerSegue", sender: nil)
             }
+            
         }
     }
     

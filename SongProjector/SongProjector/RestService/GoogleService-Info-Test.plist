@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>389251522464-rq6fspgsmhhl8imptjha771hre3a63bh.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.389251522464-rq6fspgsmhhl8imptjha771hre3a63bh</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDFNglGUqesOSflmeS2VC1d5PfSbrTbspk</string>
+	<key>GCM_SENDER_ID</key>
+	<string>389251522464</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.iozee.ChurchBeam</string>
+	<key>PROJECT_ID</key>
+	<string>churchbeamtest</string>
+	<key>STORAGE_BUCKET</key>
+	<string>churchbeamtest.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:389251522464:ios:a0e2780b0c3b1b62624ec5</string>
+	<key>DATABASE_URL</key>
+	<string>https://churchbeamtest.firebaseio.com</string>
+</dict>
+</plist>

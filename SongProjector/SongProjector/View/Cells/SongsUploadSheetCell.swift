@@ -33,10 +33,16 @@ class SongsUploadSheetCell: ChurchBeamCell, UITextFieldDelegate {
         timeTextField.keyboardType = .numberPad
     }
 	
-	func setup(_ cluster: VCluster, sheet: VSheet, sheetPosition: Int, delegate: SongsUploadSheetCellDelegate) {
+    func setup(_ cluster: VCluster, sheet: VSheet, sheetPosition: Int, scaleFactor: CGFloat, delegate: SongsUploadSheetCellDelegate) {
 		timeTextField.addTarget(self, action: #selector(textFieldDidChange), for: UIControl.Event.editingChanged)
-		let view = SheetView.createWith(frame: sheetViewContainer.bounds, cluster: cluster, sheet: sheet, theme: sheet.hasTheme ?? cluster.hasTheme(moc: moc), scaleFactor: 1, toExternalDisplay: false)
+		let view = SheetView.createWith(frame: sheetViewContainer.bounds, cluster: cluster, sheet: sheet, theme: sheet.hasTheme ?? cluster.hasTheme(moc: moc), scaleFactor: scaleFactor, toExternalDisplay: false)
 		sheetViewContainer.addSubview(view)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.topAnchor.constraint(equalTo: sheetViewContainer.topAnchor).isActive = true
+        view.leadingAnchor.constraint(equalTo: sheetViewContainer.leadingAnchor).isActive = true
+        view.trailingAnchor.constraint(equalTo: sheetViewContainer.trailingAnchor).isActive = true
+        view.bottomAnchor.constraint(equalTo: sheetViewContainer.bottomAnchor).isActive = true
+        
 		self.delegate = delegate
 		if sheet.time != 0 {
 			timeTextField.text = "\(sheet.time)"

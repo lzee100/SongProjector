@@ -16,7 +16,7 @@ class SheetCollectionCell: UICollectionViewCell {
 	static let identitier: String = "SheetCollectionCell"
 	
 	var isDeleteEnabled: Bool = false
-	var didDeleteSheet: ((VSheet) -> Void)?
+    var didDeleteSheet: ((VSheet) -> Void)?
 	var sheet: VSheet!
 	
 	override func prepareForReuse() {
@@ -24,6 +24,9 @@ class SheetCollectionCell: UICollectionViewCell {
 			if subView.tag == 7 {
 				subView.removeFromSuperview()
 			}
+            if subView.tag == 2 {
+                subView.removeFromSuperview()
+            }
 		}
 	}
 	
@@ -41,6 +44,17 @@ class SheetCollectionCell: UICollectionViewCell {
 		sendSubviewToBack(view)
         self.clipsToBounds = false
 	}
+    
+    func styleDark() {
+        let view = UIView(frame: bounds)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .black
+        view.alpha = 0.5
+        view.tag = 2
+        addSubview(view)
+        view.anchorToSuperView()
+        setNeedsLayout()
+    }
 	
 	private func update() {
         deleteIcon.tintColor = .red1

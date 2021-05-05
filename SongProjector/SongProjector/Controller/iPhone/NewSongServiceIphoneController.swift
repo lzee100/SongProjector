@@ -155,21 +155,7 @@ class NewSongServiceIphoneController: ChurchBeamViewController, UIGestureRecogni
 	
     override func update() {
         super.update()
-        let share: UIBarButtonItem?
-        let hasContent = clusterModel.sectionedClusterOrComment.flatMap({ $0 }).count > 0 || clusterModel.clusters.count > 0
-        if hasContent {
-            share = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareSongServicePressed(_:)))
-            share?.tintColor = themeHighlighted
-        } else {
-            share = nil
-        }
-        
-        let type = clusterModel.songServiceSettings == nil ? UIBarButtonItem.SystemItem.add : UIBarButtonItem.SystemItem.cancel
-        let addOrCancel = UIBarButtonItem(barButtonSystemItem: type, target: self, action: #selector(addPressed(_:)))
-        addOrCancel.tag = clusterModel.songServiceSettings == nil ? 0 : 1
-        addOrCancel.tintColor = themeHighlighted
-        navigationItem.rightBarButtonItems = [addOrCancel, share].compactMap({ $0 })
-
+        updateBarButtons()
 		tableView.reloadData()
         tableView.layoutIfNeeded()
         tableView.clipsToBounds = true
@@ -197,7 +183,7 @@ class NewSongServiceIphoneController: ChurchBeamViewController, UIGestureRecogni
 		}
 	}
 	
-    private func createRandomSongService() {
+    @objc private func createRandomSongService() {
         let pSettings: [SongServiceSettings] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "updatedAt", ascending: false))
         guard let settings = pSettings.first else {
             return
@@ -285,6 +271,94 @@ class NewSongServiceIphoneController: ChurchBeamViewController, UIGestureRecogni
     private func removeObservers() {
         [ClusterFetcher, SongServiceSettingsFetcher].compactMap({ $0 as? RequesterBase }).forEach({ $0.removeObserver(self) })
     }
+    
+    private func updateBarButtons() {
+        let share: UIBarButtonItem?
+        let hasContent = clusterModel.sectionedClusterOrComment.flatMap({ $0 }).count > 0 || clusterModel.clusters.count > 0
+        if hasContent {
+            share = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareSongServicePressed(_:)))
+            share?.tintColor = themeHighlighted
+        } else {
+            share = nil
+        }
+        let generate: UIBarButtonItem?
+        let songServiceSettings: [SongServiceSettings] = DataFetcher().getEntities(moc: moc)
+        if !hasContent, songServiceSettings.count > 0 {
+            generate = UIBarButtonItem(image: UIImage(named: "MagicWand"), landscapeImagePhone: UIImage(named: "MagicWand"), style: .plain, target: self, action: #selector(generateSongService))
+            generate?.tintColor = themeHighlighted
+        } else {
+            generate = nil
+        }
+        
+        let type = clusterModel.songServiceSettings == nil ? UIBarButtonItem.SystemItem.add : UIBarButtonItem.SystemItem.cancel
+        let addOrCancel = UIBarButtonItem(barButtonSystemItem: type, target: self, action: #selector(addPressed(_:)))
+        addOrCancel.tag = clusterModel.songServiceSettings == nil ? 0 : 1
+        addOrCancel.tintColor = themeHighlighted
+        navigationItem.rightBarButtonItems = [addOrCancel, share, generate].compactMap({ $0 })
+
+    }
+    
+    @objc private func generateSongService(barbutton: UIBarButtonItem) {
+        if let songService: SongServiceSettings = DataFetcher().getEntity(moc: moc) {
+            set(VSongServiceSettings(entity: songService, context: moc))
+        }
+    }
+    
+    private func generateShareInfo(withLyrics: Bool) -> String {
+        
+        let formatter = DateFormatter()
+        formatter.locale =  (Locale.current.regionCode?.lowercased().contains("nl") ?? true) ? Locale(identifier: "nl_NL") : Locale.current
+        formatter.dateFormat = "EEEE"
+        let fullDay = formatter.string(from: Date())
+        formatter.dateFormat = "d MMMM"
+        let dateString = formatter.string(from: Date())
+        let morningEvening = Date().hour < 12 ? AppText.NewSongService.morning : AppText.NewSongService.evening
+        
+        let fullDateString = fullDay + morningEvening + " " + dateString
+        
+        var message = AppText.NewSongService.shareSongServiceText(date: fullDateString)
+        
+        if clusterModel.clusters.count > 0 {
+            message.append("\n\n")
+            message += clusterModel.clusters.filter({ $0.cluster?.time == 0 }).compactMap({
+                                                                                           
+                var text = [($0.cluster?.title ?? "No title") + "\n---------------------------"]
+                if withLyrics {
+                    if let lyrics = $0.cluster?.hasSheets.compactMap({ sheet in (sheet as? VSheetTitleContent)?.content }).joined(separator: "\n\n") {
+                        text.append(lyrics)
+                    }
+                }
+                return text.compactMap({ $0 }).joined(separator: "\n")
+            }).joined(separator: "\n\n\n")
+        } else if let songserviceSettings = clusterModel.songServiceSettings, clusterModel.sectionedClusterOrComment.count > 0 {
+            
+            message.append("\n\n")
+            
+            for (index, coc) in clusterModel.sectionedClusterOrComment.enumerated() {
+                if index > 0 {
+                    message.append("\n\n")
+                }
+                let sectionTitle = "---------------------------\n\((songserviceSettings.sections[index].title ?? ""))\n---------------------------\n"
+                let sectionTitles = songserviceSettings.sections.compactMap({ $0.title })
+                let songs: [(String, String?)] = coc.map({
+                    
+                    let title = ($0.cluster?.title ?? "No title") + "\n---------------------------"
+                    let lyrics: String?
+                    if withLyrics {
+                        lyrics = $0.cluster?.hasSheets.compactMap({ sheet in (sheet as? VSheetTitleContent)?.content }).joined(separator: "\n\n")
+                    } else {
+                        lyrics = nil
+                    }
+                    return (title, lyrics)
+                })
+                
+                let allInfo = songs.filter({ titleLyrics in !sectionTitles.contains(where: { $0 == titleLyrics.0 }) }).map({ [$0.0, $0.1].compactMap({ $0 }).joined(separator: "\n") }).joined(separator: "\n\n\n")
+                message.append([sectionTitle, allInfo].joined(separator: "\n"))
+            }
+            
+        }
+        return message
+    }
 	
 	@IBAction func addPressed(_ sender: UIBarButtonItem) {
         if self.navigationItem.rightBarButtonItem?.tag == 0 || clusterModel.clusterToChange != nil {
@@ -306,43 +380,26 @@ class NewSongServiceIphoneController: ChurchBeamViewController, UIGestureRecogni
 	
     @IBAction func shareSongServicePressed(_ sender: UIBarButtonItem) {
         
+        let hasSections = clusterModel.clusters.count == 0
+        let actionOnlyTitles = hasSections ? AppText.NewSongService.shareOptionTitlesWithSections : AppText.NewSongService.shareOptionTitles
+        let actionLyrics = hasSections ? AppText.NewSongService.shareOptionLyricsWithSections : AppText.NewSongService.shareOptionLyrics
         
-        
-        let formatter = DateFormatter()
-        formatter.locale =  (Locale.current.regionCode?.lowercased().contains("nl") ?? true) ? Locale(identifier: "nl_NL") : Locale.current
-        formatter.dateFormat = "EEEE"
-        let fullDay = formatter.string(from: Date())
-        formatter.dateFormat = "d MMMM"
-        let dateString = formatter.string(from: Date())
-        let morningEvening = Date().hour < 12 ? AppText.NewSongService.morning : AppText.NewSongService.evening
-        
-        let fullDateString = fullDay + morningEvening + " " + dateString
-        
-        var message = AppText.NewSongService.shareSongServiceText(date: fullDateString)
-        
-        if clusterModel.clusters.count > 0 {
-            message.append("\n\n")
-            message += clusterModel.clusters.filter({ $0.cluster?.time == 0 }).compactMap({ $0.cluster?.title }).map({ $0 }).joined(separator: "\n")
-        } else if let songserviceSettings = clusterModel.songServiceSettings, clusterModel.sectionedClusterOrComment.count > 0 {
-            
-            message.append("\n\n")
-            
-            for (index, coc) in clusterModel.sectionedClusterOrComment.enumerated() {
-                if index > 0 {
-                    message.append("\n\n")
-                }
-                let sectionTitle = " -- " + (songserviceSettings.sections[index].title ?? "") + " -- "
-                let sectionTitles = songserviceSettings.sections.compactMap({ $0.title })
-                let songs = coc.compactMap({ $0.cluster?.title }).filter({ title in !sectionTitles.contains(where: { $0 == title }) }).joined(separator: "\n")
-                message.append([sectionTitle, songs].joined(separator: "\n"))
-            }
-            
-        }
-        
-        let activityViewController = UIActivityViewController(activityItems: [message], applicationActivities: nil)
-        activityViewController.popoverPresentationController?.sourceView = self.view
-
-        self.present(activityViewController, animated: true, completion: nil)
+        let alertController = UIAlertController(title: nil, message: AppText.NewSongService.shareOptionsTitle, preferredStyle: .actionSheet)
+        alertController.addAction(UIAlertAction(title: actionOnlyTitles, style: .default, handler: { _ in
+            let message = self.generateShareInfo(withLyrics: false)
+            let activityViewController = UIActivityViewController(activityItems: [message], applicationActivities: nil)
+            activityViewController.popoverPresentationController?.barButtonItem = sender
+            self.present(activityViewController, animated: true, completion: nil)
+        }))
+        alertController.addAction(UIAlertAction(title: actionLyrics, style: .default, handler: { _ in
+            let message = self.generateShareInfo(withLyrics: true)
+            let activityViewController = UIActivityViewController(activityItems: [message], applicationActivities: nil)
+            activityViewController.popoverPresentationController?.barButtonItem = sender
+            self.present(activityViewController, animated: true, completion: nil)
+        }))
+        alertController.addAction(UIAlertAction(title: AppText.Actions.cancel, style: .cancel, handler: nil))
+        alertController.popoverPresentationController?.barButtonItem = sender
+        present(alertController, animated: true)
     }
 	
 	@IBAction func donePressed(_ sender: UIBarButtonItem) {
@@ -452,6 +509,7 @@ extension NewSongServiceIphoneController: UITableViewDelegate {
                 tableView.reloadData()
             }
         }
+        updateBarButtons()
     }
 
     func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
