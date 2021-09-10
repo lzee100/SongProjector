@@ -145,6 +145,9 @@ class AppText: NSObject {
         static let shareOptionTitlesWithSections = "Alleen de secties en titels"
         static let shareOptionLyrics = "Titels en tekst"
         static let shareOptionLyricsWithSections = "Secties, titels en tekst"
+        static let shareSingFrom = "Zingen vanaf: "
+
+        
 	}
 	
 	struct Songs {

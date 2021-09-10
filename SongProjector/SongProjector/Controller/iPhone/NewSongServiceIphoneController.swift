@@ -28,6 +28,9 @@ class NewSongServiceIphoneController: ChurchBeamViewController, UIGestureRecogni
 
 	var delegate: SongsControllerDelegate?
 	var clusterModel: TempClustersModel!
+    override var requesters: [RequesterBase] {
+        return [SongServiceSettingsFetcher]
+    }
 	override var canBecomeFirstResponder: Bool {
 		return true
 	}
@@ -39,6 +42,11 @@ class NewSongServiceIphoneController: ChurchBeamViewController, UIGestureRecogni
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        SongServiceSettingsFetcher.fetch()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -92,6 +100,7 @@ class NewSongServiceIphoneController: ChurchBeamViewController, UIGestureRecogni
         }
         if requester.id == SongServiceSettingsFetcher.id {
             songserviceFetched = true
+            updateBarButtons()
         }
         if clustersFetched && songserviceFetched {
             let settings: [SongServiceSettings] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "updatedAt", ascending: false))
@@ -322,7 +331,15 @@ class NewSongServiceIphoneController: ChurchBeamViewController, UIGestureRecogni
             message.append("\n\n")
             message += clusterModel.clusters.filter({ $0.cluster?.time == 0 }).compactMap({
                                                                                            
-                var text = [($0.cluster?.title ?? "No title") + "\n---------------------------"]
+                var text = [($0.cluster?.title ?? "No title")]
+                let startTime: String
+                if let st = $0.cluster?.startTime.stringValue, $0.cluster?.hasRemoteMusic ?? false {
+                    startTime = "\(AppText.NewSongService.shareSingFrom + st)"
+                } else {
+                    startTime = ""
+                }
+                text += [startTime, "\n---------------------------"]
+                
                 if withLyrics {
                     if let lyrics = $0.cluster?.hasSheets.compactMap({ sheet in (sheet as? VSheetTitleContent)?.content }).joined(separator: "\n\n") {
                         text.append(lyrics)
@@ -342,7 +359,16 @@ class NewSongServiceIphoneController: ChurchBeamViewController, UIGestureRecogni
                 let sectionTitles = songserviceSettings.sections.compactMap({ $0.title })
                 let songs: [(String, String?)] = coc.map({
                     
-                    let title = ($0.cluster?.title ?? "No title") + "\n---------------------------"
+                    var title = ($0.cluster?.title ?? "No title")
+                    let startTime: String
+                    if let st = $0.cluster?.startTime.stringValue, $0.cluster?.hasRemoteMusic ?? false {
+                        startTime = "\n\(AppText.NewSongService.shareSingFrom + st)"
+                    } else {
+                        startTime = ""
+                    }
+                    title += startTime
+                    title += "\n---------------------------"
+
                     let lyrics: String?
                     if withLyrics {
                         lyrics = $0.cluster?.hasSheets.compactMap({ sheet in (sheet as? VSheetTitleContent)?.content }).joined(separator: "\n\n")

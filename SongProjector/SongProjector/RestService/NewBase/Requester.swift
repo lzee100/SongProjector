@@ -141,7 +141,7 @@ class Requester<T>: NSObject, RequesterBase where T: VEntity {
     }
     
     func executeRequest() {
-        guard Reachability.isConnectedToNetwork() else {
+        guard Reachability.isReachable else {
             requestFailed(error: .notConnectedToNetwork)
             return
         }

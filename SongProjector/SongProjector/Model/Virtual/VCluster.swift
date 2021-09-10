@@ -9,6 +9,7 @@
 import Foundation
 import CoreData
 import UIKit
+import FirebaseFirestore
 
 public class VCluster: VEntity {
     
@@ -420,14 +421,15 @@ extension VCluster {
 
 extension VCluster {
     
-    
     func setLastShownAt() {
-        lastShownAt = Date()
+        let lsa = Date()
+        lastShownAt = lsa
         getManagedObject(context: moc)
         do {
             try moc.save()
         } catch {}
-        ClusterSubmitter.dontUploadFiles = true
-        ClusterSubmitter.submit([self], requestMethod: .put)
+        
+        Firestore.firestore().collection("clusters").document(self.id).updateData(["lastShownAt" : lsa.intValue])
+        
     }
 }

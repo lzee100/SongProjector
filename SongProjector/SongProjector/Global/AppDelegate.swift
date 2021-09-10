@@ -113,16 +113,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if UserDefaults.standard.integer(forKey: "config.environment") != 0 {
             ChurchBeamConfiguration.environment.loadGoogleFile()
         } else {
-//            ChurchBeamConfiguration.environment = .production
-//            ChurchBeamConfiguration.environment.loadGoogleFile()
-
-            switch AppConfiguration.mode {
-            case .TestFlight, .AppStore:
-                ChurchBeamConfiguration.environment = .production
-            case .Debug:
-                ChurchBeamConfiguration.environment = .dev
-            }
+            ChurchBeamConfiguration.environment = .production
             ChurchBeamConfiguration.environment.loadGoogleFile()
+
+//            switch AppConfiguration.mode {
+//            case .TestFlight, .AppStore:
+//                ChurchBeamConfiguration.environment = .production
+//            case .Debug:
+//                ChurchBeamConfiguration.environment = .dev
+//            }
+//            ChurchBeamConfiguration.environment.loadGoogleFile()
         }
         
         setupAirPlay()

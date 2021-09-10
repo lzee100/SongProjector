@@ -49,6 +49,12 @@ class LyricsViewController: UIViewController {
         placeholder.isHidden = !text.isEmpty
         title = isBibleTextGenerator ? AppText.Lyrics.titleBibleText : AppText.Lyrics.titleLyrics
         lyricsTextView.keyboardDismissMode = .interactive
+        
+        if isBibleTextGenerator, let item = navigationItem.rightBarButtonItem {
+            let clearButton = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(clearPressed))
+            clearButton.tintColor = themeHighlighted
+            navigationItem.rightBarButtonItems = [item, clearButton]
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -78,6 +84,10 @@ class LyricsViewController: UIViewController {
             ])
             return placeholder
         }
+    }
+    
+    @objc private func clearPressed() {
+        lyricsTextView.text = nil
     }
     
 	@IBAction func cancelPressed(_ sender: UIBarButtonItem) {
