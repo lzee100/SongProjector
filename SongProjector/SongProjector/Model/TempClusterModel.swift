@@ -32,7 +32,13 @@ class TempClustersModel {
         func checkDate(date: Date) -> Bool {
             let toSunday: [Weekday] = [.thursday, .friday, .saturday, .sunday]
             let toWednesday: [Weekday] = [.monday, .tuesday, .wednesday]
-            if toWednesday.contains(date.dayOfWeek) && toWednesday.contains(Date().dayOfWeek) {
+            if date.dayOfWeek == .sunday {
+                if date.hour < 12 && Date().hour > 14 {
+                    return false
+                } else {
+                    return true
+                }
+            } else if toWednesday.contains(date.dayOfWeek) && toWednesday.contains(Date().dayOfWeek) {
                 return true
             } else if toSunday.contains(date.dayOfWeek) && toSunday.contains(Date().dayOfWeek) {
                 return true

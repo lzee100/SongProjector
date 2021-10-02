@@ -37,6 +37,10 @@ class MixerView: UIView {
 		super.init(coder: aDecoder)
 		customInit()
 	}
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
 	
 	func customInit() {
 		Bundle.main.loadNibNamed("MixerView", owner: self, options: [:])
@@ -58,37 +62,67 @@ class MixerView: UIView {
         guitarControl.tintColor = .softBlueGreyBright
         bassGuitarControl.tintColor = .softBlueGreyBright
         drumsControl.tintColor = .softBlueGreyBright
-        
-        pianoControl.value = SoundPlayer.playerFor(instrumentType: .piano)?.volume ?? 1
-        guitarControl.value = SoundPlayer.playerFor(instrumentType: .guitar)?.volume ?? 1
-        bassGuitarControl.value = SoundPlayer.playerFor(instrumentType: .bassGuitar)?.volume ?? 1
-        drumsControl.value = SoundPlayer.playerFor(instrumentType: .drums)?.volume ?? 1
-		
+        		
 		pianoControl.addTarget(self, action: #selector(pianoSliderChanged), for: .valueChanged)
 		guitarControl.addTarget(self, action: #selector(guitarSliderChanged), for: .valueChanged)
 		bassGuitarControl.addTarget(self, action: #selector(bassGuitarSliderChanged), for: .valueChanged)
 		drumsControl.addTarget(self, action: #selector(drumsSliderChanged), for: .valueChanged)
+        
+        updateVolumeSliders()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(volumeDidChange(notification:)), name: NSNotification.Name(rawValue: "AVSystemController_SystemVolumeDidChangeNotification"), object: nil)
+
 		
 	}
 	
 	@objc func pianoSliderChanged() {
-        Queues.main.async {
-            SoundPlayer.playerFor(instrumentType: .piano)?.setVolume(self.pianoControl.value, fadeDuration: 0)
-        }
+        set(volume: pianoControl.value, forType: .piano)
 	}
 	
 	@objc func guitarSliderChanged() {
-		SoundPlayer.playerFor(instrumentType: .guitar)?.setVolume(guitarControl.value, fadeDuration: 0)
+        set(volume: guitarControl.value, forType: .guitar)
 	}
 	
 	@objc func bassGuitarSliderChanged() {
-		SoundPlayer.playerFor(instrumentType: .bassGuitar)?.setVolume(bassGuitarControl.value, fadeDuration: 0)
+        set(volume: bassGuitarControl.value, forType: .bassGuitar)
 	}
 	
 	@objc func drumsSliderChanged() {
-		SoundPlayer.playerFor(instrumentType: .drums)?.setVolume(drumsControl.value, fadeDuration: 0)
+        set(volume: drumsControl.value, forType: .drums)
 	}
 	
+    private func set(volume: Float, forType: InstrumentType) {
+        SoundPlayer.playerFor(instrumentType: forType)?.setVolume(volume, fadeDuration: 0)
+        VolumeManager.set(volume: volume, instrumentType: forType)
+    }
+    
+    private func updateVolumeSliders() {
+        print(SoundPlayer.playerFor(instrumentType: .piano)?.volume ?? 1)
+        pianoControl.slider.value = SoundPlayer.playerFor(instrumentType: .piano)?.volume ?? 1
+        guitarControl.slider.value = SoundPlayer.playerFor(instrumentType: .guitar)?.volume ?? 1
+        bassGuitarControl.slider.value = SoundPlayer.playerFor(instrumentType: .bassGuitar)?.volume ?? 1
+        drumsControl.slider.value = SoundPlayer.playerFor(instrumentType: .drums)?.volume ?? 1
+    }
+    
+    @objc private func volumeDidChange(notification: NSNotification) {
+        SoundPlayer.updateVolumeBasedOnGlobalVolume()
+        updateVolumeSliders()
+    }
 	
 
+}
+
+struct VolumeManager {
+    
+    
+    static func set(volume: Float, instrumentType: InstrumentType) {
+        UserDefaults.standard.setValue("1", forKey: instrumentType.rawValue)
+        UserDefaults.standard.setValue(volume, forKey: instrumentType.rawValue)
+    }
+    
+    static func getVolumeFor(instrumentType: InstrumentType) -> Float? {
+        guard UserDefaults.standard.string(forKey: instrumentType.rawValue) != nil else { return nil }
+        return UserDefaults.standard.float(forKey: instrumentType.rawValue)
+    }
+    
 }

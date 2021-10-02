@@ -30,6 +30,19 @@ class SoundPlay: NSObject, AVAssetDownloadDelegate {
 	
     private var players: [InstrumentPlayer] = []
     
+    override init() {
+        super.init()
+        do {
+            UIApplication.shared.beginReceivingRemoteControlEvents()
+            let audioSession = AVAudioSession.sharedInstance()
+            try audioSession.setCategory(.playback, mode: .moviePlayback, policy: .longFormAudio, options: [.mixWithOthers, .allowAirPlay, .allowBluetooth])
+//            NotificationCenter.default.addObserver(self, selector: #selector(volumeDidChange(notification:)), name: NSNotification.Name(rawValue: "AVSystemController_SystemVolumeDidChangeNotification"), object: nil)
+            
+        } catch {
+            print(error)
+        }
+    }
+    
 	func play(song: VCluster, pianoSolo: Bool = false) {
 		stop()
 		isPianoOnlyPlaying = pianoSolo
@@ -52,7 +65,12 @@ class SoundPlay: NSObject, AVAssetDownloadDelegate {
                     }
                     player.volume = 0
                     player.play()
-                    player.setVolume(1, fadeDuration: 2)
+                    let vol = AVAudioSession.sharedInstance().outputVolume
+                    var volume: Float = 0.5
+                    if let instrumentType = player.instrumentType, let volumeInstrument = VolumeManager.getVolumeFor(instrumentType: instrumentType) {
+                        volume = volumeInstrument
+                    }
+                    player.setVolume(min(vol,volume), fadeDuration: 2)
                 }
             }
 			isPlaying = true
@@ -76,18 +94,24 @@ class SoundPlay: NSObject, AVAssetDownloadDelegate {
 	func playerFor(instrumentType: InstrumentType) -> InstrumentPlayer? {
 		return players.first(where: { $0.instrumentType == instrumentType })
 	}
-	
-	private func loadAudio(pianoSolo: Bool) {
-		
-		do {
-            UIApplication.shared.beginReceivingRemoteControlEvents()
-			let audioSession = AVAudioSession.sharedInstance()
-            try audioSession.setCategory(.playback, mode: .moviePlayback, policy: .longFormAudio, options: [.mixWithOthers, .allowAirPlay, .allowBluetooth])
-            
-		} catch {
-			print(error)
-		}
-		
+    
+    
+    func updateVolumeBasedOnGlobalVolume() {
+        for player in self.players {
+            let vol = AVAudioSession.sharedInstance().outputVolume
+            var volume: Float = 0.5
+            if let instrumentType = player.instrumentType, let volumeInstrument = VolumeManager.getVolumeFor(instrumentType: instrumentType) {
+                volume = volumeInstrument
+            }
+            player.setVolume(min(vol,volume), fadeDuration: 2)
+        }
+    }
+//    private func volumeDidChange(notification: NSNotification) {
+//        let volume = notification.userInfo!["AVSystemController_AudioVolumeNotificationParameter"] as! Float
+//    }
+    
+    private func loadAudio(pianoSolo: Bool) {
+        
 		if let song = song {
 			
 			isLooping = song.hasInstruments.filter({ $0.isLoop == true }).count > 0 || song.hasInstruments.contains(where: { $0.type == .pianoSolo })
