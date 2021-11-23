@@ -84,7 +84,7 @@ public class VEntity: NSObject, Codable {
             deleteDate = Date(timeIntervalSince1970: TimeInterval(deletedAtInt) / 1000) as NSDate
         }
         if let rootdeleteDateInt = try container.decodeIfPresent(Int.self, forKey: .rootDeleteDate) {
-            rootDeleteDate = Date(timeIntervalSince1970: TimeInterval(rootdeleteDateInt))
+            rootDeleteDate = Date(timeIntervalSince1970: TimeInterval(rootdeleteDateInt / 1000))
         }
 	}
 	

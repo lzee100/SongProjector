@@ -12,6 +12,15 @@ class MoreSplitViewController: UISplitViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .white
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = navigationController?.navigationBar.standardAppearance
+
+        navigationController?.navigationBar.isTranslucent = false
+        view.backgroundColor = themeWhiteBlackBackground
+
 
     }
 

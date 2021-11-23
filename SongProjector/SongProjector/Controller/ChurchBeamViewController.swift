@@ -37,8 +37,14 @@ class ChurchBeamViewController: UIViewController, RequesterObserver1 {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .whiteColor
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = navigationController?.navigationBar.standardAppearance
+
         navigationController?.navigationBar.isTranslucent = false
-//        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor : UIColor.white]
         view.backgroundColor = themeWhiteBlackBackground
     }
     

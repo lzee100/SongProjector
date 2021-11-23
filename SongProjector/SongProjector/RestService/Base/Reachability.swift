@@ -34,3 +34,30 @@ public class Rchability {
         }
     }
 }
+
+
+class CheckInternet {
+    
+    typealias HasInternet = Bool
+    
+    static func checkInternet() async -> HasInternet {
+        
+        guard let url = URL(string: "https://www.google.nl") else { return false }
+        let config = URLSessionConfiguration.default
+        config.timeoutIntervalForRequest = 2
+        let session = URLSession(configuration: config)
+        
+        do {
+            let (_, response) = try await session.data(for: URLRequest(url: url), delegate: nil)
+            if let statusCode = (response as? HTTPURLResponse)?.statusCode {
+                return (200..<300).contains(statusCode)
+            } else {
+                return false
+            }
+        } catch {
+            return false
+        }
+        
+    }
+    
+}

@@ -15,8 +15,10 @@ import UIKit
 import Firebase
 import GoogleSignIn
 import FirebaseAuth
+import Network
 
 let ApplicationIdentifier = "ApplicationIdentifier"
+var hasInternet = true
 
 var canUsePhotos: Bool {
     
@@ -100,9 +102,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let user: User? = DataFetcher().getEntity(moc: moc, predicates: [.skipDeleted])
         return user != nil
     }
-    
+    let monitor = NWPathMonitor()
+
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-                
         UINavigationBar.appearance(whenContainedInInstancesOf: [UISplitViewController.self]).tintColor = themeHighlighted
         let userDefaults = UserDefaults.standard
         if userDefaults.object(forKey: ApplicationIdentifier) == nil {
@@ -124,9 +126,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //            }
 //            ChurchBeamConfiguration.environment.loadGoogleFile()
         }
+        FirebaseConfiguration.shared.setLoggerLevel(.min)
+
+        monitor.pathUpdateHandler = { path in
+            if path.status == .satisfied {
+                Task {
+                    let hasI = await CheckInternet.checkInternet()
+                    hasInternet = hasI
+                }
+            } else {
+                hasInternet = false
+            }
+            
+        }
+        let queue = DispatchQueue(label: "Monitor")
+        monitor.start(queue: queue)
         
         setupAirPlay()
-        
+
         UNUserNotificationCenter.current().delegate = self
         
         NotificationCenter.default.addObserver(forName: .checkAuthentication, object: nil, queue: .main) { (_) in
@@ -138,7 +155,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
 //        let manager = IAPManager(delegate: nil, sharedSecret: "0269d507736f44638d69284ad77f2ba7")
 //        manager.refreshSubscriptionsStatus()
-        
+//        fixLastShowAt()
         return true
     }
     
@@ -274,4 +291,55 @@ extension AppDelegate: GIDSignInDelegate {
         }
     }
     
+    func fixLastShowAt() {
+        let mocBackground = newMOCBackground
+        var clusters: [Cluster] = DataFetcher().getEntities(moc: mocBackground)
+        guard clusters.contains(where: { $0.lastShownAt?.date.isAfter(Date()) ?? false }) else { return }
+
+        func update(cluster: Cluster) {
+            print("started")
+            cluster.updateLastShownAt(moc: mocBackground) {
+                print("finished")
+                clusters.removeFirst()
+                checkCluster()
+            }
+        }
+
+        func checkCluster() {
+            if let cluster = clusters.first {
+                update(cluster: cluster)
+            } else {
+                let clusters: [Cluster] = DataFetcher().getEntities(moc: mocBackground)
+                let future = clusters.filter({ $0.lastShownAt?.date.isAfter(Date()) ?? false })
+                future.forEach({ $0.lastShownAt = nil })
+                do {
+                    try moc.save()
+                } catch {
+                }
+                
+            }
+        }
+        
+        checkCluster()
+        
+        
+    }
+    
+}
+
+extension Cluster {
+    
+    func updateLastShownAt(moc: NSManagedObjectContext, completion: @escaping (() -> Void)) {
+        Firestore.firestore().collection("clusters").document(self.id).getDocument { [weak self] snapshot, error in
+            let cluster: VCluster? = try? snapshot?.decoded()
+            self?.lastShownAt = cluster?.lastShownAt as NSDate?
+            do {
+                try moc.save()
+                completion()
+            } catch {
+                completion()
+            }
+        }
+    }
+
 }

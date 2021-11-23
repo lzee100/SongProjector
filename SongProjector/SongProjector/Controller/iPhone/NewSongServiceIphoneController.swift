@@ -204,7 +204,7 @@ class NewSongServiceIphoneController: ChurchBeamViewController, UIGestureRecogni
         var sectionedClusterOrComments: [[ClusterOrComment]] = []
         for (position, section) in (clusterModel.songServiceSettings?.sections ?? []).enumerated() {
             sectionedClusterOrComments.append([])
-            for songNumber in 1...section.numberOfSongs {
+            for songNumber in 1...section.numberOfSongs.intValue {
                 let allSelectedClusters = sectionedClusterOrComments.flatMap({ $0 }).compactMap({ $0.cluster })
                 let candidateSongs = allClusters.filter({ !allSelectedClusters.contains(entity: $0) }).filter({ cluster in
                     var contains = false
@@ -217,7 +217,10 @@ class NewSongServiceIphoneController: ChurchBeamViewController, UIGestureRecogni
                     return contains
                 }).sorted(by: { ($0.lastShownAt ?? Date().dateByAddingYears(-1)) < ($1.lastShownAt ?? Date().dateByAddingYears(-1)) })
                 if candidateSongs.count > 0 {
-                    let random = section.numberOfSongs - songNumber > 0 ? Int.random(in: 0..<Int(section.numberOfSongs - songNumber)) : 0
+                    let value = (section.numberOfSongs.intValue - songNumber) + min(candidateSongs.count - (section.numberOfSongs.intValue - songNumber), 4)
+                    let maxValue = value >= candidateSongs.count ? 0 : value
+//                    let random = section.numberOfSongs - songNumber > 0 ? Int.random(in: 0..<Int(section.numberOfSongs - songNumber)) : 0
+                    let random = maxValue > 0 ? Int.random(in: 0..<maxValue) : 0
                     if let sameNameAsSection = candidateSongs.first(where: { $0.title == section.title }) {
                         sectionedClusterOrComments[position].append(ClusterOrComment(cluster: sameNameAsSection))
                     } else {

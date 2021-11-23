@@ -277,7 +277,9 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
                     }
                 }) { (completed) in
                     Queues.main.async {
-                        collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                        if collectionView.numberOfItems(inSection: indexPath.section) != 0 {
+                            collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                        }
                     }
                     collectionView.visibleSupplementaryViews(ofKind: UICollectionView.elementKindSectionHeader).compactMap({ $0 as? SongServiceHeaderCollectionReusableView }).forEach({ $0.setSelected(isSelected: false) })
                     if let selectedSongId = self.songService.selectedSong?.cluster.id {
@@ -448,7 +450,7 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 			subview.removeFromSuperview()
 		}
         
-        if let selectedSong = songService.selectedSong, let section = songService.songs.firstIndex(of: selectedSong), let selectedSheet = songService.selectedSheet, let row = selectedSong.sheets.firstIndex(of: selectedSheet) {
+        if let selectedSong = songService.selectedSong, let section = songService.songs.firstIndex(of: selectedSong), let selectedSheet = songService.selectedSheet, let row = selectedSong.sheets.firstIndex(of: selectedSheet), songCollectionView.numberOfItems(inSection: section) > 0 {
             songCollectionView.scrollToItem(at: IndexPath(row: row, section: section), at: .centeredHorizontally, animated: true)
         }
 		

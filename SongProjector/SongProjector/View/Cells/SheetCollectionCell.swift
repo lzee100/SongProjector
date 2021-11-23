@@ -59,6 +59,7 @@ class SheetCollectionCell: UICollectionViewCell {
 	private func update() {
         deleteIcon.tintColor = .red1
 		deleteIcon.isHidden = !isDeleteEnabled
+        deleteButton.isHidden = !isDeleteEnabled
 	}
 	
 	@IBAction func deleteButtonPressed(_ sender: UIButton) {

@@ -159,7 +159,7 @@ public class VCluster: VEntity {
         time = try container.decodeIfPresent(Double.self, forKey: .time) ?? 0
         themeId = try container.decode(String.self, forKey: .themeId)
         if let lastShownAtInt = try container.decodeIfPresent(Int.self, forKey: .lastShownAt) {
-            lastShownAt = Date(timeIntervalSince1970: TimeInterval(lastShownAtInt))
+            lastShownAt = Date(timeIntervalSince1970: TimeInterval(lastShownAtInt / 1000))
         }
         church = try container.decodeIfPresent(String.self, forKey: .church)
         let startTimeString = try container.decodeIfPresent(String.self, forKey: .startTime)
@@ -432,4 +432,5 @@ extension VCluster {
         Firestore.firestore().collection("clusters").document(self.id).updateData(["lastShownAt" : lsa.intValue])
         
     }
+    
 }

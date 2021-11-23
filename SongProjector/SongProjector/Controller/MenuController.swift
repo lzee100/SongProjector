@@ -101,7 +101,21 @@ class MenuController: UITabBarController {
 	}
     
 	private func setup() {
-		
+        
+        let appearance = tabBar.standardAppearance
+        appearance.configureWithDefaultBackground()
+        appearance.shadowImage = nil
+        appearance.shadowColor = nil
+        
+        appearance.backgroundColor = .systemBackground
+        
+        setTabBarItemColors(appearance.stackedLayoutAppearance)
+        setTabBarItemColors(appearance.inlineLayoutAppearance)
+        setTabBarItemColors(appearance.compactInlineLayoutAppearance)
+
+        tabBar.scrollEdgeAppearance = appearance
+        tabBar.standardAppearance = appearance
+        
 		tabBar.barTintColor = UIColor(hex: "#2E2C2C")
         
         switch ChurchBeamConfiguration.environment {
@@ -247,5 +261,10 @@ class MenuController: UITabBarController {
 	private func dismiss() {
 		dismiss(animated: true)
 	}
+    
+    private func setTabBarItemColors(_ itemAppearance: UITabBarItemAppearance) {
+        itemAppearance.normal.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.clear]
+        itemAppearance.selected.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.clear]
+    }
 
 }

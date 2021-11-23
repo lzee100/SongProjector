@@ -116,7 +116,8 @@ extension Environment {
                 assert(false, "Couldn't load config file")
                 return
             }
-            FirebaseApp.configure(options: fileopts)
+//            FirebaseApp.configure(options: fileopts)
+            FirebaseApp.configure()
         case .dev:
             let filePath = Bundle.main.path(forResource: "GoogleService-Info-Test", ofType: "plist")
             guard let fileopts = FirebaseOptions(contentsOfFile: filePath!) else {

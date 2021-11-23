@@ -22,6 +22,7 @@ class SplashScreen: ChurchBeamViewController {
     
     
     var introNav: UIViewController? = nil
+    var viewDidAppearIsCalled = false
         
     override var shouldRemoveObserversOnDissappear: Bool {
         return false
@@ -49,10 +50,12 @@ class SplashScreen: ChurchBeamViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        viewDidAppearIsCalled = true
         checkAccountStatus()
     }
     
     @objc func checkAccountStatus(){
+        guard viewDidAppearIsCalled else { return }
         let center = UNUserNotificationCenter.current()
         center.requestAuthorization(options: [.alert, .sound])
         { (_,_) in
@@ -121,6 +124,6 @@ extension Date {
     }
     
     var intValue: Int64 {
-        return Int64((self.timeIntervalSince1970 * 1000.0).rounded())
+        return Int64((self.timeIntervalSince1970 * 1000.0).rounded()) // in miliseconds
     }
 }

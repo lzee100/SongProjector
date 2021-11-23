@@ -47,6 +47,9 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
+//        let numbers = [0]
+//        numbers[4]
+
     }
     
     override func viewWillAppear(_ animated: Bool) {

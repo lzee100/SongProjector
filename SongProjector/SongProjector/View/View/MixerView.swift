@@ -27,7 +27,7 @@ class MixerView: UIView {
 	var volumeViewCenterConstraint: NSLayoutConstraint?
 	var volumeViewWidthConstraint: NSLayoutConstraint?
 	var volumeViewHeightContraint: NSLayoutConstraint?
-	
+    	
 	override init(frame: CGRect) {
 		super.init(frame: frame)
 		customInit()
@@ -114,14 +114,15 @@ class MixerView: UIView {
 
 struct VolumeManager {
     
+    private static let instrument = "instrument"
     
     static func set(volume: Float, instrumentType: InstrumentType) {
-        UserDefaults.standard.setValue("1", forKey: instrumentType.rawValue)
+        UserDefaults.standard.setValue("1", forKey: instrumentType.rawValue + instrument)
         UserDefaults.standard.setValue(volume, forKey: instrumentType.rawValue)
     }
     
     static func getVolumeFor(instrumentType: InstrumentType) -> Float? {
-        guard UserDefaults.standard.string(forKey: instrumentType.rawValue) != nil else { return nil }
+        guard UserDefaults.standard.string(forKey: instrumentType.rawValue + instrument) != nil else { return nil }
         return UserDefaults.standard.float(forKey: instrumentType.rawValue)
     }
     

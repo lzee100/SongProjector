@@ -53,6 +53,7 @@ class SheetTitleContent: SheetView {
 	override func update() {
 		timeLabel.text = ""
         contentTextView.noPadding()
+        contentTextView.isScrollEnabled = false
 		if let scaleFactor = scaleFactor {
 			
 			titleLeftConstraint.constant = titleLeftConstraint.constant * scaleFactor
@@ -60,7 +61,7 @@ class SheetTitleContent: SheetView {
             titleRightConstraint.constant = titleRightConstraint.constant * scaleFactor
 			timeRightConstraint.constant = timeRightConstraint.constant * scaleFactor
 			contentLeftConstraint.constant = contentLeftConstraint.constant * scaleFactor
-			contentBottomConstraint.constant = contentBottomConstraint.constant * scaleFactor
+			contentBottomConstraint.constant = (contentBottomConstraint.constant * scaleFactor) - 1
 			contentRightConstraint.constant = contentRightConstraint.constant * scaleFactor
 			contentTopToTitle.constant = contentTopToTitle.constant * scaleFactor
 

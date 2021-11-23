@@ -61,6 +61,12 @@
             ReferencedContainer = "container:ChurchBeam.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <CommandLineArguments>
+         <CommandLineArgument
+            argument = " -FIRDebugDisabled"
+            isEnabled = "YES">
+         </CommandLineArgument>
+      </CommandLineArguments>
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "CG_CONTEXT_SHOW_BACKTRACE"

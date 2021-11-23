@@ -19,18 +19,20 @@
 	<key>STORAGE_BUCKET</key>
 	<string>churchbeam-7a169.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
-	<false></false>
+	<false/>
 	<key>IS_ANALYTICS_ENABLED</key>
-	<false></false>
+	<false/>
 	<key>IS_APPINVITE_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>IS_GCM_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>IS_SIGNIN_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>GOOGLE_APP_ID</key>
 	<string>1:280588048480:ios:015b08b6291e1e62c3cb05</string>
 	<key>DATABASE_URL</key>
 	<string>https://churchbeam-7a169.firebaseio.com</string>
+	<key>GOOGLE_ANALYTICS_REGISTRATION_WITH_AD_NETWORK_ENABLED</key>
+	<false/>
 </dict>
 </plist>

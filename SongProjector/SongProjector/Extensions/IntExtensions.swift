@@ -27,4 +27,7 @@ extension Int16 {
     var stringValue: String {
         return "\(self)"
     }
+    var intValue: Int {
+        return Int(self)
+    }
 }

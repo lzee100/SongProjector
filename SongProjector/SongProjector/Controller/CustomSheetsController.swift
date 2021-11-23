@@ -71,14 +71,7 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	// MARK: Private properties
     private var itemSize = CGSize.zero
 	private var longPressGesture: UILongPressGestureRecognizer!
-	
-    deinit {
-        print("")
-        print("")
-        print("deinit custom sheets")
-        print("")
-        print("")
-    }
+	private var generateEmptySheetsBibleStudy = true
 	
 	// MARK - UIView functions
     
@@ -171,13 +164,14 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 			
 		} else {
             let isBibleStudy = (sheets[indexPath.row] as? VSheetTitleContent)?.isBibleVers ?? false
+            let isSong = cluster?.isTypeSong ?? false
 			let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Cells.sheetCollectionCell, for: indexPath) as! SheetCollectionCell
 			cell.setupWith(
 				cluster: cluster,
 				sheet: sheets[indexPath.row],
 				theme: sheets[indexPath.row].hasTheme ?? selectedTheme,
                 didDeleteSheet: isBibleStudy ? nil : didDeleteSheet(sheet:),
-                isDeleteEnabled: !isBibleStudy,
+                isDeleteEnabled: !isBibleStudy && !isSong,
                 scaleFactor: getScaleFactor(width: itemSize.width))
 			return cell
 		}
@@ -565,18 +559,6 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
         
         newSheets.sort{ $0.position < $1.position }
         
-        if let sheets = newSheets as? [VSheetTitleContent] {
-            var tempNewSheets: [VSheetTitleContent] = []
-            for tempSheet in sheets {
-                let sheet = VSheetTitleContent()
-                sheet.title = tempSheet.title
-                sheet.content = tempSheet.content
-                sheet.position = tempSheet.position
-                sheet.isBibleVers = true
-                tempNewSheets.append(sheet)
-            }
-            newSheets = tempNewSheets
-        }
         sheets = newSheets
         cluster?.hasSheets = newSheets
         isEdited = true
@@ -669,21 +651,24 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
             textWithoutTitle.removeSubrange(range)
         }
         let sheetHeight = UIDevice.current.userInterfaceIdiom == .pad ? getSizeWith(height: collectionView.frame.height).height : getSizeWith(height: nil, width: collectionView.frame.width).height
-        let topBottomMargin: CGFloat = (40 + 10)
+        let topBottomMargin: CGFloat = 3 * 10 * getScaleFactor(width: itemSize.width) // superview top to title top, title bottom to tv top, tv bottom to superview bottom
         let textViewHeight = sheetHeight - topBottomMargin
         var words = textWithoutTitle.words
         var currentSheetText: [String] = []
         var sheetTexts: [String ] = []
-        var sheets: [VSheetTitleContent] = []
+        var sheets: [VSheet] = []
         
         let width: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? getSizeWith(height: collectionView.frame.height).width : getSizeWith(height: nil, width: collectionView.frame.width).width
         let scaleFactor = getScaleFactor(width: width)
         let attributes = selectedTheme.getLyricsAttributes(scaleFactor)
         let font = (attributes[.font] as? UIFont) ?? UIFont.normal
+        let textViewPaddings: CGFloat = 2 * 10 * scaleFactor
         
-        var isLessThanHeightTextView: Bool {
-            let nextSheetText = (currentSheetText + [String(words.first ?? "")] + ["\n" + title]).joined(separator: " ")
-            return nextSheetText.height(withConstrainedWidth: width, font: font) < textViewHeight
+        func isLessThanHeightTextViewFor(sheetNumber: Int) -> Bool {
+            let subTitle = sheetNumber == 0 ? "" : "\n" + title
+            let title = sheetNumber == 0 ? title + "\n" : ""
+            let nextSheetText = ([title] + currentSheetText + [String(words.first ?? "")] + [subTitle]).joined(separator: " ")
+            return nextSheetText.height(withConstrainedWidth: width - textViewPaddings, font: font) < textViewHeight
         }
         
         repeat {
@@ -693,7 +678,7 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
                     currentSheetText.append(String(word))
                     words.removeFirst()
                 }
-            } while isLessThanHeightTextView && words.count > 0
+            } while isLessThanHeightTextViewFor(sheetNumber: sheetTexts.count) && words.count > 0
             
             if sheetTexts.count == 0 {
                 sheetTexts.append(title + "\n" + currentSheetText.joined(separator: " "))
@@ -710,9 +695,14 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
             newSheet.title = title
             newSheet.content = sheetText
             newSheet.position = position
+            newSheet.isBibleVers = true
             sheets.append(newSheet)
             position += 1
         }
+        let sheet = VSheetEmpty()
+        sheet.position = position
+        sheets.append(sheet)
+        position += 1
         
         return sheets
     }

@@ -55,7 +55,7 @@ public class VSongServicePlayDate: VEntity {
         self.init()
         let container = try decoder.container(keyedBy: CodingKeys.self)
         if let playDateInt = try container.decodeIfPresent(Int.self, forKey: .playDate) {
-            playDate = Date(timeIntervalSince1970: TimeInterval(playDateInt))
+            playDate = Date(timeIntervalSince1970: TimeInterval(playDateInt / 1000))
         }
         appInstallId = try container.decodeIfPresent(String.self, forKey: .appInstallid)
         try super.initialization(decoder: decoder)

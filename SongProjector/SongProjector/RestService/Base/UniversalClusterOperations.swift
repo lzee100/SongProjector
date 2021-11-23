@@ -26,9 +26,14 @@ class UniversalClusterOperations {
     }
     
     static func fetch() {
-        RequestManager.add(operations: operations)
+        if hasInternet {
+            Queues.main.async {
+                RequestManager.add(operations: operations)
+            }
+        } else {
+            UniversalClusterFetcher.observers.forEach({ $0.requesterDidFinish(requester: UniversalClusterFetcher, result: .failed(.notConnectedToNetwork), isPartial: false) })
+        }
     }
-    
 }
 
 

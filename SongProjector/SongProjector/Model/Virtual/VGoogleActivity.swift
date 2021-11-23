@@ -49,9 +49,9 @@ class VGoogleActivity: VEntity {
 		
 		let container = try decoder.container(keyedBy: CodingKeysGoogleActivity.self)
         let endDateInt = try container.decodeIfPresent(Int64.self, forKey: .endDate) ?? Date().intValue
-        endDate = Date(timeIntervalSince1970: TimeInterval(endDateInt)) as NSDate
+        endDate = Date(timeIntervalSince1970: TimeInterval(endDateInt / 1000)) as NSDate
         let startDateInt = try container.decodeIfPresent(Int64.self, forKey: .startDate) ?? Date().intValue
-        startDate = Date(timeIntervalSince1970: TimeInterval(startDateInt)) as NSDate
+        startDate = Date(timeIntervalSince1970: TimeInterval(startDateInt / 1000)) as NSDate
 
 		eventDescription = try container.decodeIfPresent(String.self, forKey: .eventDescription)
 
