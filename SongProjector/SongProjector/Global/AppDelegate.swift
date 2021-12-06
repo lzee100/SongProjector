@@ -103,6 +103,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return user != nil
     }
     let monitor = NWPathMonitor()
+    let queue = DispatchQueue(label: "Monitor")
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         UINavigationBar.appearance(whenContainedInInstancesOf: [UISplitViewController.self]).tintColor = themeHighlighted
@@ -111,7 +112,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let UUID = NSUUID().uuidString
             userDefaults.set(UUID, forKey: ApplicationIdentifier)
         }
-        
+        let intvalue = Date().intValue
         if UserDefaults.standard.integer(forKey: "config.environment") != 0 {
             ChurchBeamConfiguration.environment.loadGoogleFile()
         } else {
@@ -127,20 +128,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //            ChurchBeamConfiguration.environment.loadGoogleFile()
         }
         FirebaseConfiguration.shared.setLoggerLevel(.min)
-
-        monitor.pathUpdateHandler = { path in
-            if path.status == .satisfied {
-                Task {
-                    let hasI = await CheckInternet.checkInternet()
-                    hasInternet = hasI
-                }
-            } else {
-                hasInternet = false
-            }
-            
-        }
-        let queue = DispatchQueue(label: "Monitor")
-        monitor.start(queue: queue)
         
         setupAirPlay()
 
@@ -167,9 +154,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+        monitor.cancel()
     }
     
     func applicationWillEnterForeground(_ application: UIApplication) {
+        monitor.pathUpdateHandler = { path in
+            if path.status == .satisfied {
+                Task {
+                    let hasI = await CheckInternet.checkInternet()
+                    hasInternet = hasI
+                }
+            } else {
+                hasInternet = false
+            }
+            
+        }
+        monitor.start(queue: queue)
+
         // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
     }
     
@@ -238,6 +239,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             NotificationCenter.default.post(name: .authenticated, object: nil)
         } else {
             UserDefaults.standard.removeObject(forKey: secretKey)
+            UserDefaults.standard.removeObject(forKey: UniversalClusterOperationsPerformed)
             let entities: [Entity] = DataFetcher().getEntities(moc: moc)
             entities.forEach({ moc.delete($0) })
             do {

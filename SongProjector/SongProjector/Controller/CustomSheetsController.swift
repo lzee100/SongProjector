@@ -9,7 +9,7 @@
 import UIKit
 
 protocol CustomSheetsControllerDelegate {
-	func didCloseCustomSheet()
+    func didCloseCustomSheet()
 }
 
 class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIGestureRecognizerDelegate, NewOrEditIphoneControllerDelegate, LyricsControllerDelegate {
@@ -354,6 +354,7 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
                 }
                 ClusterSubmitter.submit([cluster], requestMethod: method)
             } else {
+                cluster.hasSheetPastors = cluster.hasSheets.contains(where: { $0 is VSheetPastors })
                 if cluster.hasSheets.filter({ $0.hasTheme?.tempSelectedImage != nil }).count > 0 {
                     showProgress(requester: UniversalClusterSubmitter)
                 } else {
@@ -619,24 +620,33 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	}
     
     private func getBibleStudyTextFromSheets() -> String {
-        var titleContentSheets = sheets.compactMap({ $0 as? VSheetTitleContent })
+        var titleContentSheets = sheets
         titleContentSheets = titleContentSheets.filter({ $0.hasTheme == nil })
         
         var totalString = ""
-        let titles = titleContentSheets.compactMap({ $0.title }).unique
+        var currentTitle = ""
+        var currentScripture = ""
         
-        for title in titles {
+        repeat {
+            let sheet = titleContentSheets.first
             
-            var fullContent = titleContentSheets.filter({ $0.title == title }).compactMap({ $0.content }).joined(separator: " ")
-            
-            fullContent = fullContent.replacingOccurrences(of: "\n\(title)", with: "")
-            var addSpace = false
-            if titles.last != title {
-                addSpace = true
+            if let sheet = sheet as? VSheetTitleContent {
+                currentTitle = sheet.title ?? ""
+                currentScripture = [currentScripture, sheet.content ?? ""].joined(separator: " ").trimmingCharacters(in: .whitespaces)
+            } else if sheet is VSheetEmpty {
+                currentScripture = currentScripture.replacingOccurrences(of: "\n\(currentTitle)", with: "")
+                var addSpace = false
+                if titleContentSheets.filter({ $0 is VSheetEmpty }).count > 1 {
+                    addSpace = true
+                }
+                totalString += currentScripture
+                totalString += addSpace ? "\n\n" : ""
+                currentScripture = ""
             }
-            totalString += fullContent
-            totalString += addSpace ? "\n\n" : ""
-        }
+            titleContentSheets.remove(at: 0)
+            
+        } while titleContentSheets.count > 0
+        
         return totalString
     }
     

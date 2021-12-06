@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17511" systemVersion="19H15" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19206" systemVersion="20F71" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Admin" representedClassName="Admin" parentEntity="Entity" syncable="YES" codeGenerationType="class"/>
     <entity name="Book" representedClassName=".Book" parentEntity="Entity" syncable="YES" codeGenerationType="class">
         <attribute name="name" attributeType="String"/>
@@ -13,6 +13,7 @@
     <entity name="Church" representedClassName=".Church" parentEntity="Entity" syncable="YES"/>
     <entity name="Cluster" representedClassName=".Cluster" parentEntity="Entity" syncable="YES">
         <attribute name="church" optional="YES" attributeType="String"/>
+        <attribute name="hasSheetPastors" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="instrumentIds" optional="YES" attributeType="String"/>
         <attribute name="isLoop" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="lastShownAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -157,7 +158,7 @@
         <element name="Book" positionX="0" positionY="0" width="128" height="73"/>
         <element name="Chapter" positionX="0" positionY="0" width="128" height="88"/>
         <element name="Church" positionX="0" positionY="0" width="128" height="43"/>
-        <element name="Cluster" positionX="0" positionY="0" width="128" height="208"/>
+        <element name="Cluster" positionX="0" positionY="0" width="128" height="209"/>
         <element name="Entity" positionX="0" positionY="0" width="128" height="163"/>
         <element name="GoogleActivity" positionX="0" positionY="0" width="128" height="103"/>
         <element name="Instrument" positionX="0" positionY="0" width="128" height="103"/>

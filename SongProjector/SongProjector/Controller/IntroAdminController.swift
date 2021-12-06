@@ -202,10 +202,11 @@ class IntroAdminController: PageController, UITableViewDataSource, UITableViewDe
     }
     
     override func handleRequestFinish(requesterId: String, result: Any?) {
-        AdminFetcher.fetch()
         if requesterId == AdminFetcher.id {
             NotificationCenter.default.post(name: .newUserCompletion, object: nil)
             AdminFetcher.removeObserver(self)
+        } else {
+            AdminFetcher.fetch()
         }
     }
     

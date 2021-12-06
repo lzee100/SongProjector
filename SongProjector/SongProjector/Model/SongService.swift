@@ -30,6 +30,7 @@ class SongService {
 	var selectedSection: Int?
 	var selectedSong: SongObject? {
 		didSet {
+            self.stopPlay()
 			if selectedSong != nil {
 				selectedSheet = selectedSong?.sheets.first
                 if !isForPreviewUniversalSongEditing {
@@ -45,8 +46,6 @@ class SongService {
                         SongServicePlayDateSubmitter.submit([playDateEntity], requestMethod: .post)
                     }
                 }
-			} else {
-				self.stopPlay()
 			}
 		}
 	}
@@ -54,7 +53,7 @@ class SongService {
 	var selectedSheet: VSheet? {
 		didSet {
 			if let sheet = selectedSheet {
-				let newSong = songs.first(where: { $0.sheets.contains(sheet) })
+                let newSong = songs.first(where: { $0.sheets.contains(where: { $0.id == sheet.id }) })
 				if newSong != selectedSong {
 					selectedSong = newSong
 				}

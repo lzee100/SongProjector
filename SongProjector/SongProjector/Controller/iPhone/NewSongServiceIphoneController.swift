@@ -14,9 +14,7 @@ class NewSongServiceIphoneController: ChurchBeamViewController, UIGestureRecogni
 
 	@IBOutlet var done: UIBarButtonItem!
     @IBOutlet var tableView: UITableView!
-    
-    
-    
+        
 	// MARK: - Private Properties
     
 	private var clustersFetched = false
@@ -44,11 +42,6 @@ class NewSongServiceIphoneController: ChurchBeamViewController, UIGestureRecogni
         setup()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        SongServiceSettingsFetcher.fetch()
-    }
-    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         let songServiceSetting: SongServiceSettings? = DataFetcher().getEntities(moc: moc).first
@@ -69,50 +62,11 @@ class NewSongServiceIphoneController: ChurchBeamViewController, UIGestureRecogni
         }
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        removeObservers()
-    }
-	
 	override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
         if(event?.subtype == UIEvent.EventSubtype.motionShake) {
-            [ClusterFetcher, SongServiceSettingsFetcher].compactMap({ $0 as? RequesterBase }).forEach({ $0.addObserver(self) })
-            let settings: [SongServiceSettings] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "updatedAt", ascending: false))
-            if !clustersFetched {
-                showLoader()
-                ClusterFetcher.fetch()
-            } else if !songserviceFetched {
-                showLoader()
-                SongServiceSettingsFetcher.fetch()
-            } else if let settings = settings.first {
-                UserDefaults.standard.setValue(Date(), forKey: "lastGeneratedSongService")
-                Queues.main.async {
-                    self.set(VSongServiceSettings(entity: settings, context: moc))
-                }
-            }
+            fetchSongserviceSettingsAndDisplay()
         }
 	}
-    
-    override func requesterDidFinish(requester: RequesterBase, result: RequestResult, isPartial: Bool) {
-        if requester.id == ClusterFetcher.id {
-            clustersFetched = true
-            SongServiceSettingsFetcher.fetch()
-        }
-        if requester.id == SongServiceSettingsFetcher.id {
-            songserviceFetched = true
-            updateBarButtons()
-        }
-        if clustersFetched && songserviceFetched {
-            let settings: [SongServiceSettings] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "updatedAt", ascending: false))
-            if let settings = settings.first {
-                Queues.main.async {
-                    self.set(VSongServiceSettings(songserviceSettings: settings, context: moc))
-                }
-            }
-        }
-        super.requesterDidFinish(requester: requester, result: result, isPartial: isPartial)
-    }
-	
 	
     
 	// MARK: - Custom Functions
@@ -126,12 +80,13 @@ class NewSongServiceIphoneController: ChurchBeamViewController, UIGestureRecogni
 	// MARK: - Requester Functions
 	
 	override func handleRequestFinish(requesterId: String, result: Any?) {
-		DispatchQueue.main.async {
-            if requesterId == SongServiceSettingsFetcher.id {
-                self.hideLoader()
-            }
-			self.update()
-		}
+        songserviceFetched = true
+        updateBarButtons()
+        let settings: [SongServiceSettings] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "updatedAt", ascending: false))
+        if let settings = settings.first {
+            self.set(VSongServiceSettings(songserviceSettings: settings, context: moc))
+        }
+        self.update()
 	}
 	
 	
@@ -192,6 +147,18 @@ class NewSongServiceIphoneController: ChurchBeamViewController, UIGestureRecogni
 		}
 	}
 	
+    private func fetchSongserviceSettingsAndDisplay() {
+        if !songserviceFetched {
+            showLoader()
+            SongServiceSettingsFetcher.fetch()
+        } else if let settings = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "updatedAt", ascending: false)).first {
+            UserDefaults.standard.setValue(Date(), forKey: "lastGeneratedSongService")
+            Queues.main.async {
+                self.set(VSongServiceSettings(entity: settings, context: moc))
+            }
+        }
+    }
+    
     @objc private func createRandomSongService() {
         let pSettings: [SongServiceSettings] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "updatedAt", ascending: false))
         guard let settings = pSettings.first else {
@@ -280,10 +247,6 @@ class NewSongServiceIphoneController: ChurchBeamViewController, UIGestureRecogni
 		}
 	}
     
-    private func removeObservers() {
-        [ClusterFetcher, SongServiceSettingsFetcher].compactMap({ $0 as? RequesterBase }).forEach({ $0.removeObserver(self) })
-    }
-    
     private func updateBarButtons() {
         let share: UIBarButtonItem?
         let hasContent = clusterModel.sectionedClusterOrComment.flatMap({ $0 }).count > 0 || clusterModel.clusters.count > 0
@@ -311,9 +274,7 @@ class NewSongServiceIphoneController: ChurchBeamViewController, UIGestureRecogni
     }
     
     @objc private func generateSongService(barbutton: UIBarButtonItem) {
-        if let songService: SongServiceSettings = DataFetcher().getEntity(moc: moc) {
-            set(VSongServiceSettings(entity: songService, context: moc))
-        }
+        fetchSongserviceSettingsAndDisplay()
     }
     
     private func generateShareInfo(withLyrics: Bool) -> String {
@@ -395,7 +356,7 @@ class NewSongServiceIphoneController: ChurchBeamViewController, UIGestureRecogni
             let vc = (nav.unwrap() as? SongsController)
 			vc?.delegate = self
 			vc?.tempClusterModel = clusterModel
-            removeObservers()
+            SongServiceSettingsFetcher.removeObserver(self)
             present(nav, animated: true)
 		} else {
             self.navigationItem.rightBarButtonItem?.tintColor = themeHighlighted
@@ -444,6 +405,7 @@ class NewSongServiceIphoneController: ChurchBeamViewController, UIGestureRecogni
             }))
             present(controller, animated: true)
         } else {
+            clusterModel.refresh()
             clusterModel.save()
             delegate?.finishedSelection(clusterModel)
             self.dismiss(animated: true)

@@ -82,11 +82,12 @@ class Requester<T>: NSObject, RequesterBase where T: VEntity {
         case succes(result: [T])
     }
     
-    private let fetchCount = 4
+    let fetchCount = 20
+    let lastUpdatedAtKey = "updatedAt"
+    let createdAtKey = "createdAt"
+
     private let db = Firestore.firestore()
-    private let userIdKey = "userUID"
-    private let lastUpdatedAtKey = "updatedAt"
-    private let createdAtKey = "createdAt"
+    let userIdKey = "userUID"
     private var listener: ListenerRegistration?
     private var document: DocumentReference?
     
@@ -117,10 +118,10 @@ class Requester<T>: NSObject, RequesterBase where T: VEntity {
     
     func fetch() {
         guard !isRequesting else {
-            observers.forEach({ $0.requesterDidFinish(requester: self, result: .success([]), isPartial: false) })
             print("not requesting \(id)")
             return
         }
+        isRequesting = true
         Queues.main.async {
             self.observers.forEach({ $0.requesterDidStart() })
         }
@@ -168,6 +169,14 @@ class Requester<T>: NSObject, RequesterBase where T: VEntity {
     func removeObserver(_ controller: RequesterObserver1) {
         if let index = observers.firstIndex(where: {  $0 === controller }) {
             observers.remove(at: index)
+        }
+    }
+    
+    func addFetchingParamsFor(userId: String, context: NSManagedObjectContext, collection: inout Query) {
+        if let lastUpdatedAt = self.getLastUpdatedAt(moc: context) {
+            collection = self.db.collection(self.path).whereField(self.userIdKey, isEqualTo: userId).order(by: self.lastUpdatedAtKey, descending: false).whereField(self.lastUpdatedAtKey, isGreaterThan: lastUpdatedAt.intValue).limit(to: self.fetchCount)
+        } else {
+            collection = self.db.collection(self.path).whereField(self.userIdKey, isEqualTo: userId).order(by: self.lastUpdatedAtKey, descending: false).limit(to: self.fetchCount)
         }
     }
     
@@ -269,21 +278,8 @@ class Requester<T>: NSObject, RequesterBase where T: VEntity {
         let backgroundContext = newMOCBackground
         backgroundContext.perform {
             if let userId = Auth.auth().currentUser?.uid {
-                let collection: Query
-                if self.fetchUniversal {
-                    let dateInt: Int64 = self.getLastUpdatedAt(moc: backgroundContext)?.intValue ?? 1
-                    collection = self.db.collection(self.path).order(by: self.lastUpdatedAtKey, descending: false).whereField(self.lastUpdatedAtKey, isGreaterThan: dateInt).limit(to: self.fetchCount)
-                    let church: Church? = DataFetcher().getEntity(moc: moc)
-                    if self is UiversalClusterFetcher, let churchName = church?.title {
-                        collection.whereField("church", isEqualTo: churchName)
-                    }
-                } else {
-                    if let lastUpdatedAt = self.getLastUpdatedAt(moc: backgroundContext) {
-                        collection = self.db.collection(self.path).whereField(self.userIdKey, isEqualTo: userId).order(by: self.lastUpdatedAtKey, descending: false).whereField(self.lastUpdatedAtKey, isGreaterThan: lastUpdatedAt.intValue).limit(to: self.fetchCount)
-                    } else {
-                        collection = self.db.collection(self.path).whereField(self.userIdKey, isEqualTo: userId).order(by: self.lastUpdatedAtKey, descending: false).limit(to: self.fetchCount)
-                    }
-                }
+                var collection: Query = Firestore.firestore().collection(self.path)
+                self.addFetchingParamsFor(userId: userId, context: backgroundContext, collection: &collection)
                 collection.getDocuments(source: .server) { (snapshot, error) in
                     if let error = error {
                         self.requestFailed(error: .errorOnFireBase(requester: self.id, error: error))
@@ -363,11 +359,19 @@ class Requester<T>: NSObject, RequesterBase where T: VEntity {
         if (self is UiversalClusterFetcher) {
             NotificationCenter.default.post(name: .universalClusterSubmitterDidFinish, object: nil)
         }
+        func handleObservers() {
+            let observers = self.observers.filter({ $0 is SingleRequestOperation })
+            if observers.count > 0 {
+                observers.forEach({ $0.requesterDidFinish(requester: self, result: .success(result), isPartial: false) })
+            } else {
+                self.observers.forEach({ $0.requesterDidFinish(requester: self, result: .success(result), isPartial: false) })
+            }
+        }
         if Thread.isMainThread {
-            self.observers.forEach({ $0.requesterDidFinish(requester: self, result: .success(result), isPartial: false) })
+            handleObservers()
         } else {
             Queues.main.async {
-                self.observers.forEach({ $0.requesterDidFinish(requester: self, result: .success(result), isPartial: false) })
+                handleObservers()
             }
         }
     }

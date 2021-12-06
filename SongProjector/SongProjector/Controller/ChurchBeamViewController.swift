@@ -71,6 +71,7 @@ class ChurchBeamViewController: UIViewController, RequesterObserver1 {
     }
     
     func showLoader() {
+        guard self.view.subviews.first(where: { $0 is LoadingView }) == nil else { return }
         Queues.main.async {
             self.view.layoutIfNeeded()
             let loadingView = LoadingView(frame: self.view.bounds)
@@ -80,7 +81,7 @@ class ChurchBeamViewController: UIViewController, RequesterObserver1 {
             self.view.addSubview(loadingView)
             self.view.bringSubviewToFront(loadingView)
             UIView.animate(withDuration: 0.1, animations: {
-                loadingView.alpha = 0.1
+                loadingView.alpha = 0.3
             })
         }
     }

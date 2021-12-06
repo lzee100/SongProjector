@@ -72,6 +72,7 @@ class SplashScreen: ChurchBeamViewController {
     @objc override func update() {
         if isRegistered {
             func after() {
+                guard self.presentedViewController == nil else { return }
                 introNav = nil
                 if Thread.isMainThread {
                     self.performSegue(withIdentifier: "showApp", sender: nil)

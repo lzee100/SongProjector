@@ -20,6 +20,10 @@ class SngServiceSettingsFetcher: Requester<VSongServiceSettings> {
         return "songservicesettings"
     }
     
+    override var dependencies: [RequesterBase] {
+        [ClusterFetcher]
+    }
+    
     override func getLastUpdatedAt(moc: NSManagedObjectContext) -> Date? {
         let songServiceSettings: SongServiceSettings? = DataFetcher().getLastUpdated(moc: moc)
         return songServiceSettings?.updatedAt as Date?

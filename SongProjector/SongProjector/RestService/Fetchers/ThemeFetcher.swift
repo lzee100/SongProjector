@@ -26,7 +26,6 @@ class TemeFetcher: Requester<VTheme> {
     }
     
     override func additionalProcessing(_ context: NSManagedObjectContext, _ entities: [VTheme], completion: @escaping ((Requester<VTheme>.AdditionalProcessResult) -> Void)) {
-        
         let downloadObjects = entities.flatMap({ $0.downloadObjects }).unique { (lhs, rhs) -> Bool in
             return lhs.remoteURL == rhs.remoteURL
         }
@@ -35,7 +34,8 @@ class TemeFetcher: Requester<VTheme> {
         downloadManager.start(progress: { (progress) in
         }) { (result) in
             switch result {
-            case .failed(error: let error): completion(.failed(error: .failedDownloadingMedia(requester: self.id, error: error)))
+            case .failed(error: let error):
+                completion(.failed(error: .failedDownloadingMedia(requester: self.id, error: error)))
             case .success:
                 entities.forEach({
                     $0.setDownloadValues(downloadObjects)

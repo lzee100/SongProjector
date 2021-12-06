@@ -284,6 +284,7 @@
 		E3E78B822519401100AF9284 /* ClusterOrComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3E78B812519401100AF9284 /* ClusterOrComment.swift */; };
 		E3E78B842519409F00AF9284 /* TempClusterModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3E78B832519409F00AF9284 /* TempClusterModel.swift */; };
 		E3E78B922520825E00AF9284 /* SheetTypesMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3E78B912520825E00AF9284 /* SheetTypesMenu.swift */; };
+		E3EC4E12275EAA0B00D39A59 /* Localization.strings in Resources */ = {isa = PBXBuildFile; fileRef = E3EC4E14275EAA0B00D39A59 /* Localization.strings */; };
 		E3EED5002494E21E00AE47BC /* UniversalClusterUpdatedAtSubmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3EED4FF2494E21E00AE47BC /* UniversalClusterUpdatedAtSubmitter.swift */; };
 		E3F201D6201E04FC002FF06E /* FetcherTimeInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F201D5201E04FC002FF06E /* FetcherTimeInterval.swift */; };
 		E3F201D8201E0685002FF06E /* SheetActivitiesView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3F201D7201E0685002FF06E /* SheetActivitiesView.xib */; };
@@ -609,6 +610,10 @@
 		E3E78B812519401100AF9284 /* ClusterOrComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClusterOrComment.swift; sourceTree = "<group>"; };
 		E3E78B832519409F00AF9284 /* TempClusterModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempClusterModel.swift; sourceTree = "<group>"; };
 		E3E78B912520825E00AF9284 /* SheetTypesMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetTypesMenu.swift; sourceTree = "<group>"; };
+		E3EC4E13275EAA0B00D39A59 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localization.strings; sourceTree = "<group>"; };
+		E3EC4E15275EAAFD00D39A59 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Main.strings; sourceTree = "<group>"; };
+		E3EC4E16275EAAFE00D39A59 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		E3EC4E17275EAAFE00D39A59 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Localization.strings; sourceTree = "<group>"; };
 		E3EED4FF2494E21E00AE47BC /* UniversalClusterUpdatedAtSubmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalClusterUpdatedAtSubmitter.swift; sourceTree = "<group>"; };
 		E3F201D5201E04FC002FF06E /* FetcherTimeInterval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetcherTimeInterval.swift; sourceTree = "<group>"; };
 		E3F201D7201E0685002FF06E /* SheetActivitiesView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SheetActivitiesView.xib; sourceTree = "<group>"; };
@@ -846,6 +851,7 @@
 		E31171571FE5A09A008D9D51 /* Global */ = {
 			isa = PBXGroup;
 			children = (
+				E3EC4E14275EAA0B00D39A59 /* Localization.strings */,
 				E3896A3421E3F0E3008CB5A5 /* AccountStore.swift */,
 				E31171301FE59DA3008D9D51 /* AppDelegate.swift */,
 				E3D12AB22019BFEB00BD060C /* BridgingHeader.h */,
@@ -1195,6 +1201,7 @@
 			knownRegions = (
 				en,
 				Base,
+				nl,
 			);
 			mainGroup = E31171241FE59DA3008D9D51;
 			productRefGroup = E311712E1FE59DA3008D9D51 /* Products */;
@@ -1223,6 +1230,7 @@
 				E3635A09217CAEC5002758D5 /* MixerAnimationView.xib in Resources */,
 				E384E07B23CF18190017B73F /* SongsUploadSheetCell.xib in Resources */,
 				E3F201E2201E2011002FF06E /* ActivityHeader.xib in Resources */,
+				E3EC4E12275EAA0B00D39A59 /* Localization.strings in Resources */,
 				E3C63DD5253E1DE5006AB94B /* MenuCell.xib in Resources */,
 				E33746AB24A89DC900F44852 /* Colors.xcassets in Resources */,
 				E38347671FFA5099008AE69D /* SheetTitleContent.xib in Resources */,
@@ -1627,6 +1635,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				E31171351FE59DA3008D9D51 /* Base */,
+				E3EC4E15275EAAFD00D39A59 /* nl */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -1635,8 +1644,18 @@
 			isa = PBXVariantGroup;
 			children = (
 				E311713D1FE59DA3008D9D51 /* Base */,
+				E3EC4E16275EAAFE00D39A59 /* nl */,
 			);
 			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		E3EC4E14275EAA0B00D39A59 /* Localization.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E3EC4E13275EAA0B00D39A59 /* en */,
+				E3EC4E17275EAAFE00D39A59 /* nl */,
+			);
+			name = Localization.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -1646,6 +1665,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -1707,6 +1727,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -1764,14 +1785,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = SongProjector/SongProjector.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 27;
+				CURRENT_PROJECT_VERSION = 4;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 4RH34LGMLA;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = SongProjector/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 0.1;
+				MARKETING_VERSION = 0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.iozee.ChurchBeam;
 				PRODUCT_MODULE_NAME = ChurchBeam;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1787,13 +1808,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = SongProjector/SongProjector.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 27;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = 4RH34LGMLA;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = SongProjector/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 0.1;
+				MARKETING_VERSION = 0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.iozee.ChurchBeam;
 				PRODUCT_MODULE_NAME = ChurchBeam;
 				PRODUCT_NAME = "$(TARGET_NAME)";

@@ -1,0 +1,186 @@
+
+/* Class = "UIBarButtonItem"; title = "Item"; ObjectID = "0Ng-MM-ae2"; */
+"0Ng-MM-ae2.title" = "Item";
+
+/* Class = "UIBarButtonItem"; title = "Item"; ObjectID = "0a7-2Y-aWp"; */
+"0a7-2Y-aWp.title" = "Item";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "0kI-uG-bd4"; */
+"0kI-uG-bd4.text" = "Label";
+
+/* Class = "UIButton"; normalTitle = "Button"; ObjectID = "1P8-8h-gUJ"; */
+"1P8-8h-gUJ.normalTitle" = "Button";
+
+/* Class = "UITextView"; text = "Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda."; ObjectID = "1dL-pC-TrU"; */
+"1dL-pC-TrU.text" = "Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.";
+
+/* Class = "UILabel"; text = "0 %"; ObjectID = "1y9-ih-h84"; */
+"1y9-ih-h84.text" = "0 %";
+
+/* Class = "UILabel"; text = "0 %"; ObjectID = "2k9-m5-c44"; */
+"2k9-m5-c44.text" = "0 %";
+
+/* Class = "UITextView"; text = "Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda."; ObjectID = "3Pc-nw-iDc"; */
+"3Pc-nw-iDc.text" = "Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "3pr-Ev-tbH"; */
+"3pr-Ev-tbH.text" = "Label";
+
+/* Class = "UINavigationItem"; title = "Root View Controller"; ObjectID = "5Me-Ci-sjf"; */
+"5Me-Ci-sjf.title" = "Root View Controller";
+
+/* Class = "UIBarButtonItem"; title = "Item"; ObjectID = "8hu-ag-Py5"; */
+"8hu-ag-Py5.title" = "Item";
+
+/* Class = "UILabel"; text = "Code"; ObjectID = "9BF-qf-dkE"; */
+"9BF-qf-dkE.text" = "Code";
+
+/* Class = "UIBarButtonItem"; title = "Save"; ObjectID = "Adn-F4-8Ne"; */
+"Adn-F4-8Ne.title" = "Save";
+
+/* Class = "UIBarButtonItem"; title = "Item"; ObjectID = "BSM-9y-Ai6"; */
+"BSM-9y-Ai6.title" = "Item";
+
+/* Class = "UIBarButtonItem"; title = "Item"; ObjectID = "CBm-O3-rzt"; */
+"CBm-O3-rzt.title" = "Item";
+
+/* Class = "UIBarButtonItem"; title = "Item"; ObjectID = "ENd-hL-eZX"; */
+"ENd-hL-eZX.title" = "Item";
+
+/* Class = "UIBarButtonItem"; title = "Item"; ObjectID = "GPc-Dc-ZB2"; */
+"GPc-Dc-ZB2.title" = "Item";
+
+/* Class = "UIBarButtonItem"; title = "Item"; ObjectID = "JQT-uw-G6j"; */
+"JQT-uw-G6j.title" = "Item";
+
+/* Class = "UIButton"; normalTitle = "Button"; ObjectID = "MGq-uv-rS4"; */
+"MGq-uv-rS4.normalTitle" = "Button";
+
+/* Class = "UIBarButtonItem"; title = "Item"; ObjectID = "N0y-p4-MMc"; */
+"N0y-p4-MMc.title" = "Item";
+
+/* Class = "UIViewController"; title = "SongsController"; ObjectID = "NyT-Qk-CRU"; */
+"NyT-Qk-CRU.title" = "SongsController";
+
+/* Class = "UIBarButtonItem"; title = "Item"; ObjectID = "OQt-fR-t7D"; */
+"OQt-fR-t7D.title" = "Item";
+
+/* Class = "UIBarButtonItem"; title = "Item"; ObjectID = "QMG-Na-hup"; */
+"QMG-Na-hup.title" = "Item";
+
+/* Class = "UITextView"; text = "Genesis 1:4-8"; ObjectID = "Qis-fI-Hue"; */
+"Qis-fI-Hue.text" = "Genesis 1:4-8";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "Qke-XW-Cdq"; */
+"Qke-XW-Cdq.text" = "Label";
+
+/* Class = "UILabel"; text = "DKT5J20-DKG5J44-4LCC234"; ObjectID = "R0T-ry-lAM"; */
+"R0T-ry-lAM.text" = "DKT5J20-DKG5J44-4LCC234";
+
+/* Class = "UITabBarItem"; title = "Item"; ObjectID = "R1i-Je-gKp"; */
+"R1i-Je-gKp.title" = "Item";
+
+/* Class = "UITextField"; placeholder = "Gebruikersnaam"; ObjectID = "Rje-6S-bzZ"; */
+"Rje-6S-bzZ.placeholder" = "Gebruikersnaam";
+
+/* Class = "UILabel"; text = "Het toevoegen van een nieuwe gebruiker gaat heel simpel: voer een gebruikersnaam in voor herkenning van de gebruikers voor jouw organisatie en een emailadres. De nieuwe gebruiker ontvangt een email met de koppelcode om het deel te nemen. Elke nieuwe gebruiker kost 3 euro per maand en kan altijd weer opgezegd worden."; ObjectID = "Rm8-cy-2lA"; */
+"Rm8-cy-2lA.text" = "Het toevoegen van een nieuwe gebruiker gaat heel simpel: voer een gebruikersnaam in voor herkenning van de gebruikers voor jouw organisatie en een emailadres. De nieuwe gebruiker ontvangt een email met de koppelcode om het deel te nemen. Elke nieuwe gebruiker kost 3 euro per maand en kan altijd weer opgezegd worden.";
+
+/* Class = "UIViewController"; title = "ThemesController"; ObjectID = "SJN-a4-7Pv"; */
+"SJN-a4-7Pv.title" = "ThemesController";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "SRc-3h-00J"; */
+"SRc-3h-00J.text" = "Label";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "Tdj-Ph-CDE"; */
+"Tdj-Ph-CDE.text" = "Label";
+
+/* Class = "UIViewController"; title = "Zangdienst tags"; ObjectID = "UhF-yd-J1p"; */
+"UhF-yd-J1p.title" = "Zangdienst tags";
+
+/* Class = "UITabBarItem"; title = "Item"; ObjectID = "VSH-mP-tvJ"; */
+"VSH-mP-tvJ.title" = "Item";
+
+/* Class = "UIBarButtonItem"; title = "Item"; ObjectID = "WOC-Ju-8Nc"; */
+"WOC-Ju-8Nc.title" = "Item";
+
+/* Class = "UIButton"; normalTitle = "Verstuur code"; ObjectID = "Wdn-By-If7"; */
+"Wdn-By-If7.normalTitle" = "Verstuur code";
+
+/* Class = "UIViewController"; title = "SongServiceController"; ObjectID = "Yak-wD-RHo"; */
+"Yak-wD-RHo.title" = "SongServiceController";
+
+/* Class = "UIBarButtonItem"; title = "Item"; ObjectID = "Z5R-Kp-Mca"; */
+"Z5R-Kp-Mca.title" = "Item";
+
+/* Class = "UIBarButtonItem"; title = "Item"; ObjectID = "cnJ-8h-jiX"; */
+"cnJ-8h-jiX.title" = "Item";
+
+/* Class = "UILabel"; text = "Abonneer Song"; ObjectID = "dfm-nU-dHd"; */
+"dfm-nU-dHd.text" = "Abonneer Song";
+
+/* Class = "UINavigationItem"; title = "Gebruikers"; ObjectID = "dru-xc-wIz"; */
+"dru-xc-wIz.title" = "Gebruikers";
+
+/* Class = "UIButton"; normalTitle = "Button"; ObjectID = "e0F-nL-JLm"; */
+"e0F-nL-JLm.normalTitle" = "Button";
+
+/* Class = "UINavigationItem"; title = "Zangdienst secties"; ObjectID = "ey4-qr-nIV"; */
+"ey4-qr-nIV.title" = "Zangdienst secties";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "gRI-08-Omn"; */
+"gRI-08-Omn.text" = "Label";
+
+/* Class = "UITabBarItem"; title = "Item"; ObjectID = "gwn-Xh-180"; */
+"gwn-Xh-180.title" = "Item";
+
+/* Class = "UILabel"; text = "Naam"; ObjectID = "gxH-9P-iyq"; */
+"gxH-9P-iyq.text" = "Naam";
+
+/* Class = "UILabel"; text = "Song"; ObjectID = "hmT-7w-gDB"; */
+"hmT-7w-gDB.text" = "Song";
+
+/* Class = "UITabBarItem"; title = "Item"; ObjectID = "k2z-ld-gf1"; */
+"k2z-ld-gf1.title" = "Item";
+
+/* Class = "UIBarButtonItem"; title = "Item"; ObjectID = "lra-Fk-u4M"; */
+"lra-Fk-u4M.title" = "Item";
+
+/* Class = "UINavigationItem"; title = "Tags"; ObjectID = "mOr-T4-0eJ"; */
+"mOr-T4-0eJ.title" = "Tags";
+
+/* Class = "UIButton"; normalTitle = "Button"; ObjectID = "r8F-et-fen"; */
+"r8F-et-fen.normalTitle" = "Button";
+
+/* Class = "UIBarButtonItem"; title = "Item"; ObjectID = "r9v-uG-1b9"; */
+"r9v-uG-1b9.title" = "Item";
+
+/* Class = "UITextField"; placeholder = "E-mailadres voor koppelcode"; ObjectID = "rl0-4V-1Sf"; */
+"rl0-4V-1Sf.placeholder" = "E-mailadres voor koppelcode";
+
+/* Class = "UIBarButtonItem"; title = "Cancel"; ObjectID = "sV9-ex-Bcf"; */
+"sV9-ex-Bcf.title" = "Cancel";
+
+/* Class = "UILabel"; text = "23-01-19 tot 12-11-19"; ObjectID = "th5-HT-4TB"; */
+"th5-HT-4TB.text" = "23-01-19 tot 12-11-19";
+
+/* Class = "UISegmentedControl"; wmQ-od-hOj.segmentTitles[0] = "Bijbelversen"; ObjectID = "wmQ-od-hOj"; */
+"wmQ-od-hOj.segmentTitles[0]" = "Bijbelversen";
+
+/* Class = "UISegmentedControl"; wmQ-od-hOj.segmentTitles[1] = "Controle"; ObjectID = "wmQ-od-hOj"; */
+"wmQ-od-hOj.segmentTitles[1]" = "Controle";
+
+/* Class = "UISegmentedControl"; wmQ-od-hOj.segmentTitles[2] = "Dia's"; ObjectID = "wmQ-od-hOj"; */
+"wmQ-od-hOj.segmentTitles[2]" = "Dia's";
+
+/* Class = "UINavigationController"; title = "SongServiceController"; ObjectID = "x5G-91-9BE"; */
+"x5G-91-9BE.title" = "SongServiceController";
+
+/* Class = "UINavigationItem"; title = "Beheer zangdienst"; ObjectID = "y80-Wb-xfa"; */
+"y80-Wb-xfa.title" = "Beheer zangdienst";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "ych-LQ-JaN"; */
+"ych-LQ-JaN.text" = "Label";
+
+/* Class = "UILabel"; text = "Om de activiteiten op te halen uit je kerk agenda is het nodig om in te loggen bij Google kalender. Klik hieronder om (opnieuw) in te loggen bij google."; ObjectID = "z4l-R8-djk"; */
+"z4l-R8-djk.text" = "Om de activiteiten op te halen uit je kerk agenda is het nodig om in te loggen bij Google kalender. Klik hieronder om (opnieuw) in te loggen bij google.";

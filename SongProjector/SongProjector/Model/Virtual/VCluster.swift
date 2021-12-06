@@ -44,6 +44,7 @@ public class VCluster: VEntity {
     var sheetIds: [String] = []
     var church: String?
     var startTime: Double = 0.0
+    var hasSheetPastors = false
 
     var deletedSheetsImageURLs: [String] = []
     
@@ -111,6 +112,7 @@ public class VCluster: VEntity {
         case church
         case rootDeleteDate
         case startTime
+        case hasSheetPastors
     }
     
     
@@ -139,6 +141,7 @@ public class VCluster: VEntity {
         try container.encode(church, forKey: .church)
         try container.encode(tagIds.joined(separator: ","), forKey: .tagids)
         try container.encode(String(startTime), forKey: .startTime)
+        try container.encode(Int(truncating: NSNumber(value: hasSheetPastors)), forKey: .hasSheetPastors)
 
         try super.encode(to: encoder)
         
@@ -189,6 +192,7 @@ public class VCluster: VEntity {
         
         hasInstruments = try container.decodeIfPresent([VInstrument].self, forKey: .hasInstruments) ?? []
         instrumentIds = hasInstruments.compactMap({ $0.id }).joined(separator: ",")
+        hasSheetPastors = try Bool(truncating: (container.decodeIfPresent(Int16.self, forKey: .hasSheetPastors) ?? 0) as NSNumber)
         
         try super.initialization(decoder: decoder)
         
@@ -222,7 +226,8 @@ public class VCluster: VEntity {
             instrumentIds = cluster.instrumentIds ?? ""
             church = cluster.church
             startTime = cluster.startTime
-
+            hasSheetPastors = cluster.hasSheetPastors
+            
             func getSheets(sheets: [Sheet]) -> [VSheet] {
                 return sheets.map({
                     if let sheet = $0 as? SheetTitleContentEntity {
@@ -262,6 +267,7 @@ public class VCluster: VEntity {
             cluster.church = church
             cluster.startTime = startTime
             cluster.lastShownAt = lastShownAt as NSDate?
+            cluster.hasSheetPastors = hasSheetPastors
             let instruments = hasInstruments.compactMap({ $0.getManagedObject(context: context) })
             cluster.instrumentIds = instruments.map({ $0.id }).joined(separator: ",")
             let sheets = hasSheets.map({ $0.getManagedObject(context: context) })

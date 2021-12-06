@@ -423,6 +423,7 @@ class UploadUniversalSongController: ChurchBeamViewController, UITableViewDelega
 					self.cluster.hasInstruments = []
 				}
                 self.cluster.church = church.id
+                self.cluster.hasSheetPastors = self.cluster.hasSheets.contains(where: { $0 is VSheetPastors })
                 self.showProgress(requester: UniversalClusterSubmitter)
 				UniversalClusterSubmitter.submit([self.cluster], requestMethod: .post)
 			})

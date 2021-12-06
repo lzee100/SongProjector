@@ -8,6 +8,11 @@
 
 import Foundation
 import CoreData
+import FirebaseFirestore
+import FirebaseFirestoreSwift
+import Firebase
+
+let fetchPastors = true
 
 // base guitar
 // https://firebasestorage.googleapis.com/v0/b/churchbeam-7a169.appspot.com/o/development%2Faudio%2FDF9349F6-A247-44A1-BBB4-3AF0831A8FDD.m4a?alt=media&token=b7b8b548-c9d5-46b4-bc89-5fe88daf0849
@@ -104,6 +109,19 @@ class UiversalClusterFetcher: Requester<VCluster> {
         return [church].compactMap({ $0 }).map({ VChurch(church: $0, context: context) }).first
     }
     
+    override func addFetchingParamsFor(userId: String, context: NSManagedObjectContext, collection: inout Query) {
+        let dateInt: Int64 = self.getLastUpdatedAt(moc: context)?.intValue ?? 1
+        var newCollection = Firestore.firestore().collection(self.path).order(by: self.lastUpdatedAtKey, descending: false).whereField(self.lastUpdatedAtKey, isGreaterThan: dateInt).limit(to: self.fetchCount)
+        let church: Church? = DataFetcher().getEntity(moc: moc)
+        if let churchId = church?.id {
+            newCollection = newCollection.whereField("church", isEqualTo: churchId)
+        }
+        if !fetchPastors {
+            newCollection = newCollection.whereField("hasSheetPastors", isEqualTo: 0)
+        }
+        collection = newCollection
+    }
+    
     override func additionalProcessing(_ context: NSManagedObjectContext, _ entities: [VCluster], completion: @escaping ((Requester<VCluster>.AdditionalProcessResult) -> Void)) {
         
         // fetch all universal clusters, if > 0, save locally and get updatedAt else add to array
@@ -119,7 +137,7 @@ class UiversalClusterFetcher: Requester<VCluster> {
         }
         
         guard let churchName = self.getChurch(moc: context)?.title else {
-            completion(.failed(error: .hasNoThemeForUniversalCluster(requester: self.id)))
+            completion(.failed(error: .hasNoChurchForUniversalCluster(requester: self.id)))
             return
         }
         

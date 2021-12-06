@@ -8,7 +8,17 @@
 
 import Foundation
 
+let UniversalClusterOperationsPerformed = "UniversalClusterOperationsPerformed"
 class UniversalClusterOperations {
+    
+    static var didPerformAllOperations: Bool {
+        set {
+            UserDefaults.standard.set(true, forKey: UniversalClusterOperationsPerformed)
+        }
+        get {
+            return UserDefaults.standard.bool(forKey: UniversalClusterOperationsPerformed)
+        }
+    }
     
     static var operations: [Foundation.Operation] {
         func churchDidFail() -> RequestError? {
@@ -25,10 +35,24 @@ class UniversalClusterOperations {
         return [uniFetcher, uuaFetcher, clusterFetcher, themeSubmitter, tagSubmitter, themeFetcher, tagFetcher, churchFetcher]
     }
     
+    static var optimizedOperations: [Foundation.Operation] {
+        func mainDidFail() -> RequestError? {
+            return nil
+        }
+        let clusterFetcher = ClusterFetcherOperation(didFail: mainDidFail)
+        let uuaFetcher = FetchUUAOperation(didFail: clusterFetcher.operationDidFail)
+        let uniFetcher = UniversalClusterFetcherOperation(didFail: uuaFetcher.operationDidFail)
+        return [uniFetcher, uuaFetcher, clusterFetcher]
+    }
+    
     static func fetch() {
         if hasInternet {
             Queues.main.async {
-                RequestManager.add(operations: operations)
+                if UniversalClusterOperations.didPerformAllOperations {
+                    RequestManager.add(operations: optimizedOperations)
+                } else {
+                    RequestManager.add(operations: operations)
+                }
             }
         } else {
             UniversalClusterFetcher.observers.forEach({ $0.requesterDidFinish(requester: UniversalClusterFetcher, result: .failed(.notConnectedToNetwork), isPartial: false) })
@@ -273,6 +297,7 @@ class UniversalClusterOperation: AsynchronousOperation, RequesterObserver1  {
             if !isPartial {
                 didFinish()
             }
+            UniversalClusterOperations.didPerformAllOperations = true
         case .failed(let error):
             self.error = error
             didFail()

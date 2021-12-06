@@ -140,6 +140,7 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        UniversalClusterFetcher.initialFetch()
         SongServicePlayDateFetcher.fetch()
     }
 
@@ -263,6 +264,9 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
                         self.songService.selectedSong = SongObject(cluster: cluster)
                         let inserted = self.refreshCollectionViewListItems()
                         self.songCollectionView.insertItems(at: inserted.indexPaths)
+                        if inserted.section + 1 < self.songCollectionView.numberOfSections {
+                            self.songCollectionView.reloadSections(IndexSet([inserted.section + 1]))
+                        }
                     } else {
                         let endIndex = self.collectionViewItems.filter({ !$0.isSection }).count
                         var currentIndex = 0
@@ -283,7 +287,8 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
                     }
                     collectionView.visibleSupplementaryViews(ofKind: UICollectionView.elementKindSectionHeader).compactMap({ $0 as? SongServiceHeaderCollectionReusableView }).forEach({ $0.setSelected(isSelected: false) })
                     if let selectedSongId = self.songService.selectedSong?.cluster.id {
-                        collectionView.visibleSupplementaryViews(ofKind: UICollectionView.elementKindSectionHeader).compactMap({ $0 as? SongServiceHeaderCollectionReusableView }).first(where: { ($0.data as? VCluster)?.id == selectedSongId })?.setSelected(isSelected: true)
+                        let selectedHeader = collectionView.visibleSupplementaryViews(ofKind: UICollectionView.elementKindSectionHeader).compactMap({ $0 as? SongServiceHeaderCollectionReusableView }).first(where: { ($0.data as? VCluster)?.id == selectedSongId })
+                        selectedHeader?.setSelected(isSelected: true)
                     }
                 }
             }
@@ -291,6 +296,13 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
             
         }
         return headerView
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let song = songService.selectedSong?.cluster else { return }
+        guard song.time == 0 && !song.isTypeSong else { return }
+        songService.selectedSheet = song.hasSheets[indexPath.row]
+        collectionView.reloadData()
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -431,7 +443,6 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
     
     override func update() {
         super.update()
-        UniversalClusterFetcher.initialFetch()
     }
 	
 	private func update(scroll: Bool = false) {
@@ -705,7 +716,7 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 	
 	func externalDisplayDidChange(_ notification: Notification) {
 		updateSheetDisplayersRatios()
-        if let selectedSheet = songService.selectedSheet, songService.selectedSong != nil, externalDisplayWindow != nil {
+        if let selectedSheet = songService.selectedSheet, songService.selectedSong != nil {
 			display(sheet: selectedSheet)
 		}
 	}
@@ -750,42 +761,6 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 	
 	func swipeAutomatically() {
 		respondToSwipeGesture(self.leftSwipe, automatically: true)
-	}
-	
-	private func startPlay() {
-		isPlaying = true
-		
-		// is cluster has time (advertisement)
-		if let time = songService.selectedSong?.cluster.time {
-			DispatchQueue.main.asyncAfter(deadline: .now() + time, execute: {
-				if self.isPlaying {
-					self.respondToSwipeGesture(self.leftSwipe)
-					
-					// keep doing while isPlaying is true
-					if self.isPlaying {
-						self.startPlay()
-					}
-				}
-			})
-		}
-		
-			// else if sheet has time (mp3 song)
-		else if let time = songService.selectedSheet?.time, time > 0 {
-			DispatchQueue.main.asyncAfter(deadline: .now() + time, execute: {
-				if self.isPlaying {
-					self.respondToSwipeGesture(self.leftSwipe)
-					
-					// keep doing while isPlaying is true
-					if self.isPlaying {
-						self.startPlay()
-					}
-				}
-			})
-		}
-	}
-	
-	private func stopPlay() {
-		isPlaying = false
 	}
     
     @objc private func rotated() {

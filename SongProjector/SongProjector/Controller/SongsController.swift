@@ -25,9 +25,8 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
     private var searchController: UISearchController!
     private var tags: [VTag] = []
     private var selectedTags: [VTag] = []
-    private var clusters: [VCluster] = []
     private var selectedCluster: VCluster?
-    private var filteredClusters: [VCluster] = []
+    private var filteredClusters: [Cluster] = []
     private var downloadingSongs: [MusicDownloadManager] = []
     private var playingCluster: VCluster?
     
@@ -47,9 +46,9 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
-//        let numbers = [0]
-//        numbers[4]
-
+        //        let numbers = [0]
+        //        numbers[4]
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -66,12 +65,10 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
         searchController.searchBar.placeholder = AppText.Songs.SearchSongPlaceholder
         searchController.definesPresentationContext = false
         if #available(iOS 11.0, *) {
-          navigationItem.hidesSearchBarWhenScrolling = false
-      }
-
-        navigationItem.searchController = searchController
+            navigationItem.hidesSearchBarWhenScrolling = false
+        }
         
-        update()
+        navigationItem.searchController = searchController
         
         if SubscriptionsSettings.hasLimitedAccess {
             SubscriptionsSettings.showSubscriptionsViewController(presentingViewController: self)
@@ -112,7 +109,7 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
         let cell = tableView.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath)
         
         if let cell = cell as? BasicCell {
-            let cluster = filteredClusters[indexPath.row]
+            let cluster = filteredClusters[indexPath.row].vEntity
             cell.setup(data: cluster, title: cluster.title)
             let hasUnsectionedClusters = tempClusterModel?.clusters.count ?? 0 != 0
             var clusters = hasUnsectionedClusters ? tempClusterModel?.clusters : tempClusterModel?.sectionedClusterOrComment.flatMap({ $0 })
@@ -158,7 +155,7 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
-        let song = filteredClusters[indexPath.row]
+        let song = filteredClusters[indexPath.row].vEntity
         var actions: [UIContextualAction] = []
         
         if selectedTags.contains(where: { $0.title == AppText.Tags.deletedClusters }) {
@@ -170,7 +167,7 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
             deleteAction.title = AppText.Actions.restore
             deleteAction.backgroundColor = .green1
             actions.append(deleteAction)
-
+            
         } else {
             // delete song
             let deleteAction = UIContextualAction(style: .normal, title: nil) { (_, _, completionHandler) in
@@ -208,9 +205,9 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        selectedCluster = filteredClusters[indexPath.row]
+        selectedCluster = filteredClusters[indexPath.row].vEntity
         if let delegate = delegate {
-            let currentCorC = ClusterOrComment(cluster: filteredClusters[indexPath.row])
+            let currentCorC = ClusterOrComment(cluster: filteredClusters[indexPath.row].vEntity)
             if let model = tempClusterModel, let clusterToChange = model.clusterToChange {
                 if !model.sectionedClusterOrComment.flatMap({ $0 }).contains(where: { $0.id == currentCorC.id }) && !model.clusters.contains(where: { $0.id == currentCorC.id }) {
                     model.change(old: clusterToChange, for: currentCorC)
@@ -225,11 +222,11 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
                     tempClusterModel?.append(currentCorC)
                 }
             }
-                // if not able to delete, then append
-            else if tempClusterModel?.contains(ClusterOrComment(cluster: filteredClusters[indexPath.row])) ?? false {
-                tempClusterModel?.delete(ClusterOrComment(cluster: filteredClusters[indexPath.row]))
+            // if not able to delete, then append
+            else if tempClusterModel?.contains(ClusterOrComment(cluster: filteredClusters[indexPath.row].vEntity)) ?? false {
+                tempClusterModel?.delete(ClusterOrComment(cluster: filteredClusters[indexPath.row].vEntity))
             } else {
-                tempClusterModel?.append(ClusterOrComment(cluster: filteredClusters[indexPath.row]))
+                tempClusterModel?.append(ClusterOrComment(cluster: filteredClusters[indexPath.row].vEntity))
             }
             tableView.reloadRows(at: [indexPath], with: .automatic)
         } else {
@@ -293,7 +290,7 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
         } else {
             self.selectedTags.append(tags[indexPath.row])
         }
-        update()
+        setFilteredClusters()
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -303,32 +300,21 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
     }
     
     func updateSearchResults(for searchController: UISearchController) {
-        if let text = searchController.searchBar.text?.lowercased(), !text.isEmpty {
-            filteredClusters = clusters.filter {
-                if let title = $0.title?.lowercased() {
-                    return title.lowercased().contains(text)
-                } else {
-                    return false
-                }
-            }
-        } else {
-            filteredClusters = clusters
-        }
-        self.tableView.reloadData()
+        setFilteredClusters()
     }
     
     override func handleRequestFinish(requesterId: String, result: Any?) {
         Queues.main.async {
             if requesterId == ClusterSubmitter.id, let updatedCluster = (result as? [VCluster])?.first, let index = self.filteredClusters.firstIndex(where: { $0.id == updatedCluster.id }) {
                 if ClusterSubmitter.requestMethod == .delete {
-                    self.tempClusterModel?.delete(ClusterOrComment(cluster: self.filteredClusters[index]))
-                    self.setFilteredClusters()
+                    self.tempClusterModel?.delete(ClusterOrComment(cluster: self.filteredClusters[index].vEntity))
+                    self.setFilteredClusters(reloadData: false)
                     self.tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
                     Queues.main.asyncAfter(deadline: .now() + 0.4) {
                         self.tableView.reloadData()
                     }
                 } else if ClusterSubmitter.requestMethod == .put {
-                    self.setFilteredClusters()
+                    self.setFilteredClusters(reloadData: false)
                     self.tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
                     Queues.main.asyncAfter(deadline: .now() + 0.4) {
                         self.tableView.reloadData()
@@ -356,7 +342,7 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
         
         tableView.register(cell: Cells.basicCellid)
         collectionView.register(UINib(nibName: Cells.themeCellCollection, bundle: nil), forCellWithReuseIdentifier: Cells.themeCellCollection)
-                
+        
         hideKeyboardWhenTappedAround()
         
         title = AppText.Songs.title
@@ -369,6 +355,7 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
         }
         navigationController?.navigationBar.backgroundColor = .whiteColor
         tableView.keyboardDismissMode = .interactive
+        tableView.backgroundColor = .clear
         NotificationCenter.default.addObserver(forName: .autoRenewableSubscriptionDidChange, object: nil, queue: .main) { (_) in
             self.update()
         }
@@ -376,101 +363,79 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
     
     override func update() {
         setFilteredClusters()
-        tableView.reloadData()
-        collectionView.reloadData()
     }
     
-    private func setFilteredClusters() {
+    private func setFilteredClusters(reloadData: Bool = true) {
+        
+        let searchString = self.searchController.searchBar.text?.lowercased() ?? ""
+        
+        var tagsResult: [VTag] = []
+        var indexToScrollTo: IndexPath? = nil
         var predicates: [NSPredicate] = []
-        if selectedTags.contains(where: { $0.title == AppText.Tags.deletedClusters }) {
+        
+        //        let user = VUser.first(moc: moc)
+        //        if let user = VUser.first(moc: moc), !user.hasActiveSongContract {
+        //            var songPreds: [NSPredicate] = []
+        //            if !user.hasActiveSongContract {
+        //                songPreds.append(NSPredicate(format: "instrumentIds == nil"))
+        //                songPreds.append(NSPredicate(format: "instrumentIds == %@", ""))
+        //                let comp = NSCompoundPredicate(orPredicateWithSubpredicates: songPreds)
+        //                predicates.append(and: [comp])
+        //            }
+        //        }
+                
+        var deletedPredicate: [NSPredicate] = []
+        if self.selectedTags.contains(where: { $0.title == AppText.Tags.deletedClusters }) {
             if uploadSecret != nil {
-                predicates.append(format: "rootDeleteDate != nil")
+                deletedPredicate.append(format: "rootDeleteDate != nil")
             } else {
-                predicates.append(NSPredicate(format: "deleteDate != nil"))
+                deletedPredicate.append(NSPredicate(format: "deleteDate != nil"))
             }
         } else {
-            predicates.append(format: "rootDeleteDate == nil")
-            predicates.append(NSPredicate(format: "deleteDate == nil"))
+            predicates += [.skipDeleted, .skipRootDeleted]
+        }
+        if selectedTags.count > 0 {
+            let selectedTagsWithoutDeleted = self.selectedTags.filter({ $0.title != AppText.Tags.deletedClusters })
+            let selectedTagsPred = NSCompoundPredicate(orPredicateWithSubpredicates: selectedTagsWithoutDeleted.map({ NSPredicate(format:"tagIds CONTAINS %@", $0.id) }) + deletedPredicate)
+            predicates.append(selectedTagsPred)
         }
         
-//        let user = VUser.first(moc: moc)
-//        if let user = VUser.first(moc: moc), !user.hasActiveSongContract {
-//            var songPreds: [NSPredicate] = []
-//            if !user.hasActiveSongContract {
-//                songPreds.append(NSPredicate(format: "instrumentIds == nil"))
-//                songPreds.append(NSPredicate(format: "instrumentIds == %@", ""))
-//                let comp = NSCompoundPredicate(orPredicateWithSubpredicates: songPreds)
-//                predicates.append(and: [comp])
-//            }
-//        }
+        if let manditoryTagIds = self.manditoryTagIds, manditoryTagIds.count > 0 {
+            let manditoryTagIdsPred = NSCompoundPredicate(orPredicateWithSubpredicates: self.manditoryTagIds?.map({ NSPredicate(format:"tagIds CONTAINS %@", $0) }) ?? [])
+            predicates.append(manditoryTagIdsPred)
+        }
+        if searchString != "" {
+            predicates.append(NSPredicate(format: "title contains[c] %@", searchString))
+        }
+        let pClustersFiltered: [Cluster] = DataFetcher().getEntities(moc: moc, predicates: predicates, sort: NSSortDescriptor(key: "title", ascending: true))
+        pClustersFiltered.forEach({ moc.refresh($0, mergeChanges: false) })
         
-        let pClusters: [Cluster] = DataFetcher().getEntities(moc: moc, predicates: predicates, sort: NSSortDescriptor(key: "title", ascending: true))
-        clusters = pClusters.map({ VCluster(cluster: $0, context: moc) })
-        
-//        if SubscriptionsSettings.hasLimitedAccess {
-//            if let user = VUser.first(moc: moc) {
-//                if !user.hasActiveSongContract {
-//                    clusters = clusters.filter({ !$0.hasRemoteMusic })
-//                }
-//                if !user.hasActiveBeamContract && !user.hasActiveSongContract {
-//                    clusters = clusters.suffix(10)
-//                }
-//            }
-//        }
+        let tagIdsPredicates = self.manditoryTagIds?.map({ NSPredicate(format:"tagIds CONTAINS %@", $0) }) ?? []
+        predicates = tagIdsPredicates + [.skipDeleted]
         
         let pTags: [Tag] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "position", ascending: true))
-        tags = pTags.compactMap({ VTag(tag: $0, context: moc) })
-        if let deletedTag = selectedTags.first(where: { $0.title == AppText.Tags.deletedClusters }) {
-            tags.append(deletedTag)
+        tagsResult = pTags.compactMap({ VTag(tag: $0, context: moc) })
+        if let deletedTag = self.selectedTags.first(where: { $0.title == AppText.Tags.deletedClusters }) {
+            tagsResult.append(deletedTag)
         } else {
             let deletedClustersTag = VTag()
             deletedClustersTag.title = AppText.Tags.deletedClusters
-            tags.append(deletedClustersTag)
+            tagsResult.append(deletedClustersTag)
         }
         
-        if let manditoryTagIds = manditoryTagIds {
-            filteredClusters = clusters.filter({ cluster in
-                manditoryTagIds.contains(where: { (manditoryTagId) -> Bool in
-                    cluster.tagIds.contains(manditoryTagId)
-                })
-            })
-            if let index = tags.firstIndex(where: { $0.id == manditoryTagIds.first }) {
-                collectionView.scrollToItem(at: IndexPath(row: index, section: 0), at: .centeredHorizontally, animated: false)
-            }
-        } else {
-            if let searchString = searchController.searchBar.text?.lowercased(), searchString != "" {
-                filterOnTags()
-                filteredClusters = clusters.filter {
-                    if let title = $0.title {
-                        return title.lowercased().contains(searchString)
-                    } else {
-                        return false
-                    }
-                }
-            } else if selectedTags.count != 0 {
-                filterOnTags()
-                filteredClusters = clusters
-            }  else {
-                filteredClusters = clusters
-            }
+        if let manditoryTagIds = self.manditoryTagIds, let index = tagsResult.firstIndex(where: { $0.id == manditoryTagIds.first }) {
+            indexToScrollTo = IndexPath(row: index, section: 0)
         }
-    }
-    
-    private func filterOnTags() {
-        if selectedTags.count == 0 {
-            return
+        
+        self.filteredClusters = pClustersFiltered
+        self.tags = tagsResult
+        if reloadData {
+            self.tableView.reloadData()
+            self.collectionView.reloadData()
         }
-        if selectedTags.count == 1 && selectedTags.first?.title == AppText.Tags.deletedClusters {
-            return
+        if let index = indexToScrollTo {
+            self.collectionView.scrollToItem(at: index, at: .centeredHorizontally, animated: false)
         }
-        clusters = clusters.filter({ cluster in
-            if selectedTags.contains(where: { (tag) -> Bool in
-                return cluster.tagIds.contains(where: { tag.id == $0 })
-            }) {
-                return true
-            }
-            return false
-        })
     }
     
     private func deleteMusic(indexPath: IndexPath, song: VCluster) {
@@ -500,9 +465,12 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
         alert.addAction(UIAlertAction(title: AppText.Actions.cancel, style: .cancel))
         alert.addAction(UIAlertAction(title: AppText.Actions.delete, style: .destructive, handler: { _ in
             if uploadSecret == nil {
-                ClusterSubmitter.submit([self.filteredClusters[indexPath.row]], requestMethod: .delete)
+                self.filteredClusters[indexPath.row].deleteDate = NSDate()
+                ClusterSubmitter.submit([self.filteredClusters[indexPath.row].vEntity], requestMethod: .delete)
             } else {
-                UniversalClusterSubmitter.submit([self.filteredClusters[indexPath.row]], requestMethod: .delete)
+                self.filteredClusters[indexPath.row].deleteDate = NSDate()
+                self.filteredClusters[indexPath.row].rootDeleteDate = NSDate()
+                UniversalClusterSubmitter.submit([self.filteredClusters[indexPath.row].vEntity], requestMethod: .delete)
             }
         }))
         self.present(alert, animated: true)
@@ -514,9 +482,12 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
         alert.addAction(UIAlertAction(title: AppText.Actions.cancel, style: .cancel))
         alert.addAction(UIAlertAction(title: AppText.Actions.restore, style: .default, handler: { _ in
             if uploadSecret == nil {
+                self.filteredClusters.first(where: { $0.id == song.id })?.deleteDate = nil
                 song.deleteDate = nil
                 ClusterSubmitter.submit([song], requestMethod: .put)
             } else {
+                self.filteredClusters.first(where: { $0.id == song.id })?.deleteDate = nil
+                self.filteredClusters.first(where: { $0.id == song.id })?.rootDeleteDate = nil
                 song.rootDeleteDate = nil
                 UniversalClusterSubmitter.submit([song], requestMethod: .put)
             }
@@ -603,7 +574,7 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
             }
             
             let songs: [Cluster] = DataFetcher().getEntities(moc: moc, predicates: predicates, sort: nil)
-
+            
             if songs.count > 10 {
                 SubscriptionsSettings.showSubscriptionsViewController(presentingViewController: self)
             } else {
@@ -613,4 +584,11 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
         }
     }
     
+}
+
+private extension Cluster {
+    
+    var vEntity: VCluster {
+        return VCluster(cluster: self, context: self.managedObjectContext ?? moc)
+    }
 }

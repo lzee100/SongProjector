@@ -187,7 +187,7 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
 		let song = songService.songs[section]
 		let firstClusters = model?.sectionedClusterOrComment.compactMap({ $0.first?.cluster })
 		let hasHeader = firstClusters?.contains(entity: songService.songs[section].cluster) ?? false
-		
+        
         guard let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: SongHeaderView.identifier) as? SongHeaderView else { return nil }
         
         view.style()
@@ -266,7 +266,7 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
 		navigationController?.title = AppText.SongService.title
 		title = AppText.SongService.title
 		mixerHeightConstraint.constant = 0
-		
+        tableView.estimatedRowHeight = 0
 		new.title = AppText.Actions.add
         new.tintColor = themeHighlighted
         swipeUpDownImageView.tintColor = .softBlueGrey
@@ -356,7 +356,7 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
 			}
 		}
     }
-    
+        
     private func didSelectSection(section: Int) {
         guard canPlay else {
             let alert = UIAlertController(title: nil, message: AppText.SongService.warnCannotPlay, preferredStyle: .alert)
@@ -365,10 +365,134 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
             return
         }
         SoundPlayer.stop()
+        let action: TableViewAction?
+        let previousSong = songService.selectedSong
         songService.selectedSong = songService.selectedSection == section ? nil : songService.songs[section]
         songService.selectedSection = songService.selectedSection == section ? nil : section
         
-        update()
+        if let previousSong = previousSong, let nextSong = songService.selectedSong {
+            action = .deleteAndInsert(previous: previousSong, next: nextSong)
+        } else if let nextSong = songService.selectedSong {
+            action = .insert(songObject: nextSong)
+        } else if songService.selectedSong == nil, let previousSong = previousSong {
+            action = .delete(songObject: previousSong)
+        } else {
+            action = nil
+        }
+        if let action = action {
+            handleTableViewAction(action)
+        }
+        if songService.selectedSong == nil {
+            shutDownDisplayer()
+        }
+    }
+    
+    enum TableViewAction {
+        case insert(songObject: SongObject)
+        case delete(songObject: SongObject)
+        case deleteAndInsert(previous: SongObject, next: SongObject)
+    }
+    
+    private func handleTableViewAction(_ action: TableViewAction) {
+        switch action {
+        case .deleteAndInsert(previous: let previousSong, next: let nextSong):
+            
+            var deletedSection: Int? = nil
+            var deletedIndexPaths: [IndexPath]? = nil
+            var insertedSection: Int? = nil
+            var insertedIndexPaths: [IndexPath]? = nil
+            
+            if let section = songService.songs.firstIndex(where: { $0.cluster.id == previousSong.cluster.id }) {
+                deletedSection = section
+                let rows = tableView.numberOfRows(inSection: section)
+                guard rows > 1 else { return }
+                deletedIndexPaths = []
+                for row in 0..<rows {
+                    deletedIndexPaths!.append(IndexPath(row: row, section: section))
+                }
+            }
+            if let section = songService.songs.firstIndex(where: { $0.cluster.id == nextSong.cluster.id }) {
+                insertedSection = section
+                let rows = nextSong.cluster.hasSheets.count
+                guard rows > 1 else {
+                    self.tableView.scrollToRow(at: IndexPath(row: NSNotFound, section: section), at: .top, animated: true)
+                    if let view = tableView.headerView(forSection: section) as? SongHeaderView {
+                        view.setup(title: view.titleLabel.text, isSelected: true, hasPianoSolo: view.actionButton.isEnabled)
+                    }
+                    return
+                }
+                insertedIndexPaths = []
+                for row in 0..<rows {
+                    insertedIndexPaths!.append(IndexPath(row: row, section: section))
+                }
+            }
+            
+            tableView.performBatchUpdates {
+                if let deletedSection = deletedSection {
+                    if let view = tableView.headerView(forSection: deletedSection) as? SongHeaderView {
+                        view.setup(title: view.titleLabel.text, isSelected: false, hasPianoSolo: view.actionButton.isEnabled)
+                    }
+                }
+                if let deletedIndexPaths = deletedIndexPaths {
+                    tableView.deleteRows(at: deletedIndexPaths, with: .none)
+                }
+                if let insertedSection = insertedSection {
+                    if let view = tableView.headerView(forSection: insertedSection) as? SongHeaderView {
+                        view.setup(title: view.titleLabel.text, isSelected: true, hasPianoSolo: view.actionButton.isEnabled)
+                    }
+                }
+                if let insertedIndexPaths = insertedIndexPaths {
+                    tableView.insertRows(at: insertedIndexPaths, with: .none)
+                }
+            } completion: { finished in
+                guard finished, let insertedSection = insertedSection, let indexPath = insertedIndexPaths?.first, self.tableView?.numberOfRows(inSection: insertedSection) ?? 0 > 0 else { return }
+                self.tableView.scrollToRow(at: indexPath, at: .top, animated: true)
+            }
+            
+        case .insert(songObject: let songObject):
+            if let section = songService.songs.firstIndex(where: { $0.cluster.id == songObject.cluster.id }) {
+                let rows = songObject.cluster.hasSheets.count
+                guard rows > 1 else {
+                    self.tableView.scrollToRow(at: IndexPath(row: NSNotFound, section: section), at: .top, animated: true)
+                    if let view = tableView.headerView(forSection: section) as? SongHeaderView {
+                        view.setup(title: view.titleLabel.text, isSelected: true, hasPianoSolo: view.actionButton.isEnabled)
+                    }
+                    return
+                }
+                var indexPaths: [IndexPath] = []
+                for row in 0..<rows {
+                    indexPaths.append(IndexPath(row: row, section: section))
+                }
+                tableView.performBatchUpdates {
+                    tableView.insertRows(at: indexPaths, with: .top)
+                } completion: { finished in
+                    guard finished, self.tableView.numberOfRows(inSection: section) > 0 else { return }
+                    self.tableView.scrollToRow(at: indexPaths.first!, at: .top, animated: true)
+                }
+                if let view = tableView.headerView(forSection: section) as? SongHeaderView {
+                    view.setup(title: view.titleLabel.text, isSelected: true, hasPianoSolo: view.actionButton.isEnabled)
+                }
+            }
+        case .delete(songObject: let songObject):
+            if let section = songService.songs.firstIndex(where: { $0.cluster.id == songObject.cluster.id }) {
+                let rows = tableView.numberOfRows(inSection: section)
+                guard rows > 1 else {
+                    if let view = tableView.headerView(forSection: section) as? SongHeaderView {
+                        view.setup(title: view.titleLabel.text, isSelected: false, hasPianoSolo: view.actionButton.isEnabled)
+                    }
+                    return
+                }
+                var indexPaths: [IndexPath] = []
+                for row in 0..<rows {
+                    indexPaths.append(IndexPath(row: row, section: section))
+                }
+                tableView.deleteRows(at: indexPaths, with: .top)
+                if let view = tableView.headerView(forSection: section) as? SongHeaderView {
+                    view.setup(title: view.titleLabel.text, isSelected: false, hasPianoSolo: view.actionButton.isEnabled)
+                }
+
+            }
+        }
     }
 	
 	private func didSelectPianoInSection(section: Int) {

@@ -25,6 +25,7 @@ public class Cluster: Entity {
     @NSManaged public var church: String?
     @NSManaged public var startTime: Double
     @NSManaged public var sheetIds: String
+    @NSManaged public var hasSheetPastors: Bool
 	@NSManaged var tagIds: String
     
     func hasTheme(moc: NSManagedObjectContext) -> Theme? {

@@ -29,18 +29,25 @@ class TempClustersModel {
 
     static func load() -> TempClustersModel? {
         
-        func checkDate(date: Date) -> Bool {
-            let toSunday: [Weekday] = [.thursday, .friday, .saturday, .sunday]
-            let toWednesday: [Weekday] = [.monday, .tuesday, .wednesday]
-            if date.dayOfWeek == .sunday {
-                if date.hour < 12 && Date().hour > 14 {
-                    return false
-                } else {
-                    return true
-                }
-            } else if toWednesday.contains(date.dayOfWeek) && toWednesday.contains(Date().dayOfWeek) {
+        func needsReset(date: Date) -> Bool {
+            
+            func getLastSunday() -> Date {
+                var date = Date().dayOfWeek == .sunday ? Date().dateByAddingDays(-1) : Date()
+                repeat {
+                    date = date.dateByAddingDays(-1)
+                } while date.dayOfWeek != .sunday
+                return date.dateMidnight
+            }
+            
+            let toSunday: [Weekday] = [.thursday, .friday, .saturday]
+            
+            if date.isBefore(getLastSunday()) {
                 return true
-            } else if toSunday.contains(date.dayOfWeek) && toSunday.contains(Date().dayOfWeek) {
+            } else if (toSunday.contains(date.dayOfWeek) || (date.dayOfWeek == .sunday && date.hour < 12)) && Date().dayOfWeek == .sunday && Date().hour >= 12 {
+                return true
+            } else if date.dayOfWeek == .sunday && Date().dayOfWeek == .sunday && (Date().hour >= 20 && date.hour < 20) {
+                return true
+            } else if date.dayOfWeek == .sunday && date.hour >= 20 && toSunday.contains(Date().dayOfWeek) {
                 return true
             } else {
                 return false
@@ -48,7 +55,7 @@ class TempClustersModel {
         }
         
         let defaults = UserDefaults.standard
-        guard let saveDate = defaults.object(forKey: Constants.saveDate) as? Date, checkDate(date: saveDate) else {
+        guard let saveDate = defaults.object(forKey: Constants.saveDate) as? Date, !needsReset(date: saveDate) else {
             TempClustersModel.resetSavedValues()
             return nil
         }

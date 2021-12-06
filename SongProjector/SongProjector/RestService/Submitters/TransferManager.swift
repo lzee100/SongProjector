@@ -15,6 +15,7 @@ protocol TransferManagerDelegate {
 }
 
 class TransferManager: NSObject {
+    private var continueAfterFailure = true
     var delegate: TransferManagerDelegate?
     
     var downloadObjects: [DownloadObject] {
@@ -48,13 +49,21 @@ class TransferManager: NSObject {
                 self.delegate?.uploadDidProgress(progress: self.progress)
             }) { (result) in
                 self.delegate?.didComplete(result: result)
-                switch result {
-                case .failed(error: _): completion(result)
-                case .success:
+                if self.continueAfterFailure {
                     if let submitter = self.singleTransferManagers.filter({ $0.readyToUpload }).first {
                         startTransfer(submitter)
                     } else {
                         completion(.success)
+                    }
+                } else {
+                    switch result {
+                    case .failed(error: _): completion(result)
+                    case .success:
+                        if let submitter = self.singleTransferManagers.filter({ $0.readyToUpload }).first {
+                            startTransfer(submitter)
+                        } else {
+                            completion(.success)
+                        }
                     }
                 }
             }

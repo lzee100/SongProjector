@@ -83,7 +83,8 @@ struct DataFetcher<T: Entity> {
         
         var entities: [T] = []
         let request = NSFetchRequest<T>(entityName: entityName)
-        request.returnsObjectsAsFaults = false
+//        request.returnsObjectsAsFaults = false
+        request.shouldRefreshRefetchedObjects = true
         request.predicate = NSCompoundPredicate(type: .and, subpredicates: predicates)
         
         if let sortDiscriptor = sort {

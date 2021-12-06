@@ -27,8 +27,8 @@ class AppText: NSObject {
 	}
 	
 	struct Actions {
-		static let cancel = "Annuleer"
-		static let close = "Sluit"
+		static let cancel = NSLocalizedString("actions.cancel", comment: "")
+		static let close = NSLocalizedString("actions.close", comment: "")
 		static let done = "Klaar"
         static let delete = "Verwijder"
 		static let new = "Nieuw"
