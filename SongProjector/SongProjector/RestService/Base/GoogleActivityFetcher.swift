@@ -44,7 +44,7 @@ class GoogleActivityFetch: NSObject {
 
 	override init() {
 		super.init()
-		GIDSignIn.sharedInstance().scopes = ["https://www.googleapis.com/auth/calendar.readonly"]
+        GIDSignIn.sharedInstance().scopes = ["https://www.googleapis.com/auth/calendar.events.public.readonly"]
 	}
 
 
@@ -52,8 +52,8 @@ class GoogleActivityFetch: NSObject {
 	func fetch(force: Bool) {
         GIDSignIn.sharedInstance()?.restorePreviousSignIn()
 		if GIDSignIn.sharedInstance().currentUser != nil {
-			GIDSignIn.sharedInstance().scopes = ["https://www.googleapis.com/auth/calendar.readonly", "https://www.googleapis.com/auth/calendar.events.readonly"]
-			fetchEvents()
+            GIDSignIn.sharedInstance().scopes = ["https://www.googleapis.com/auth/calendar.events.public.readonly"]
+		fetchEvents()
         } else {
             if numberOfTries == 1 {
                 NotificationCenter.default.post(name: .googleCalendarNotAuthenticated, object: nil)

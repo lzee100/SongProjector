@@ -33,8 +33,8 @@
 "Actions-upload" = "Upload";
 "Actions-restore" = "Restore";
 
-"Intro-hello" = "Hello";
-"Intro-helloContent" = "Welcome to Churchbeam. This app supports the entire song service in your church.";
+"Intro-introHalloTitle" = "Hello";
+"Intro-introHalloContent" = "Welcome to Churchbeam. This app supports the entire song service in your church.";
 "Intro-featureIntro" = "For %@ per month you get unlimited access to:";
 
 "Intro-featuresSong1" = "unlimited songs";
@@ -108,7 +108,7 @@
 "Songs-description" = "Search all songs or collections";
 "Songs-SearchSongPlaceholder" = "Search collections";
 "Songs-deleteTitle" = "Delete %@";
-"Songs-deleteBody" = "Are you sure you want to delete %@? You can get deleted songs back under the tab \"Deleted songs\".";
+"Songs-deleteBody" = "Are you sure you want to delete %@? You can get deleted items back under the tab \"Deleted items\".";
 "Songs-deleteMusicTitle" = "Delete music";
 "Songs-deleteMusicBody" = "Are you sure you want to delete the music from %@? You can get deleted music back by clicking the download button of this song.";
 "Songs-errorNoUserFound" = "We were unable to confirm your identity. Log in again under settings.";

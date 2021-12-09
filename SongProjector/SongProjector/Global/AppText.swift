@@ -84,17 +84,28 @@ class AppText: NSObject {
         static let calendarIdFindId = NSLocalizedString("Intro-calendarIdFindId", comment: "")
         
         static let thisIsYourAdminCode = NSLocalizedString("Intro-thisIsYourAdminCode", comment: "")
-        static let adminEnterCode = NSLocalizedString("Intro-adminEnterCode", comment: "") + AppText.Actions.done
-
+        static var adminEnterCode: String {
+            return String(format: NSLocalizedString("Intro-adminEnterCode", comment: ""), AppText.Actions.done)
+        }
         static let adminCodeWrong = NSLocalizedString("Intro-adminCodeWrong", comment: "")
         static let couldNotFindUser = NSLocalizedString("Intro-couldNotFindUser", comment: "")
         
         static let seeExample = NSLocalizedString("Intro-seeExample", comment: "")
-        static let explainCalendarId = NSLocalizedString("Intro-explainCalendarId", comment: "") + " \(seeExample)"
-        static let hoverForDots = NSLocalizedString("Intro-hoverForDots", comment: "") + " \(seeExample)"
-        static let goToSettingsAndSharing = NSLocalizedString("Intro-goToSettingsAndSharing", comment: "") + " \(seeExample)"
-        static let goToIntegrate = NSLocalizedString("Intro-goToIntegrate", comment: "") + " \(seeExample)"
-        static let topShowsCalendarId = NSLocalizedString("Intro-topShowsCalendarId", comment: "") + " \(seeExample)"
+        static var explainCalendarId: String {
+            return String(format: NSLocalizedString("Intro-explainCalendarId", comment: ""), seeExample)
+        }
+        static var hoverForDots: String {
+            return String(format: NSLocalizedString("Intro-hoverForDots", comment: ""), seeExample)
+        }
+        static var goToSettingsAndSharing: String {
+            return String(format: NSLocalizedString("Intro-goToSettingsAndSharing", comment: ""), seeExample)
+        }
+        static var goToIntegrate: String {
+            return String(format: NSLocalizedString("Intro-goToIntegrate", comment: ""), seeExample)
+        }
+        static var topShowsCalendarId: String {
+            return String(format: NSLocalizedString("Intro-topShowsCalendarId", comment: ""), seeExample)
+        }
         static let titleFindCalendarId = NSLocalizedString("Intro-titleFindCalendarId", comment: "")
         static func errorLoginApple(error: Error) -> String {
             return NSLocalizedString("Intro-errorLoginApple", comment: "") + " \(error.localizedDescription)"

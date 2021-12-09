@@ -35,7 +35,7 @@
 
 "Intro-introHalloTitle" = "Hallo";
 "Intro-introHalloContent" = "Welkom bij Churchbeam. Deze app ondersteund de gehele voordienst in jouw kerk.";
-"Intro-featureIntro" = "Voor %d per maand krijg je onbeperkt toegang tot:";
+"Intro-featureIntro" = "Voor %@ per maand krijg je onbeperkt toegang tot:";
 
 "Intro-featuresSong1" = "Onbeperkt aantal liedjes";
 "Intro-featuresSong2" = "thema's en tags opslaan";
@@ -62,18 +62,18 @@
 "Intro-calendarIdFindId" = "Abonneer";
 "Intro-subscribe" = "Hoe vind ik die?";
 "Intro-thisIsYourAdminCode" = "Dit is jouw Admin code. Bewaar deze goed. Deze is voor het toegang krijgen van je admin account wanneer je de app opnieuw wil gaan installeren.";
-"Intro-adminEnterCode" = "Wil je inloggen als admin, voer dan je admin code hieronder in. Anders klik op %d";
+"Intro-adminEnterCode" = "Wil je inloggen als admin, voer dan je admin code hieronder in. Anders klik op %@";
 "Intro-adminCodeWrong" = "De ingevoerde code is niet juist.";
 "Intro-couldNotFindUser" = "Kon geen gebruiker vinden. Installeer de app opnieuw en probeer het nogmaals.";
 "Intro-seeExample" = "(Zie voorbeeld hieronder).";
 
-"Intro-explainCalendarId" = "Om je kerkactiviteiten automatisch weer te geven wil deze app verbinding maken met jouw agenda. Daarvoor is een agenda id nodig. Om deze te vinden moet je de volgende stappen doorlopen. Ga in een webbrowser naar calendar.google.com om je agenda te zien. Log eventueel eerst in met je kerk gmail account. Aan de linkerkant vind je jouw agenda's. %d";
-"Intro-hoverForDots" = "Hou de muis op de agenda die je wilt delen zodat er een optie (3 stippeltjes) icoontje aan de rechterkant verschijnt. Klik hierop. %d";
-"Intro-goToSettingsAndSharing" = "Klik daarna op Instellingen en Delen. %d";
-"Intro-goToIntegrate" = "In het menu aan de linker kant klik op Agenda integreren. %d";
-"Intro-topShowsCalendarId" = "Bovenaan dit artikel staat jouw Agenda-ID. %d";
+"Intro-explainCalendarId" = "Om je kerkactiviteiten automatisch weer te geven wil deze app verbinding maken met jouw agenda. Daarvoor is een agenda id nodig. Om deze te vinden moet je de volgende stappen doorlopen. Ga in een webbrowser naar calendar.google.com om je agenda te zien. Log eventueel eerst in met je kerk gmail account. Aan de linkerkant vind je jouw agenda's. %@";
+"Intro-hoverForDots" = "Hou de muis op de agenda die je wilt delen zodat er een optie (3 stippeltjes) icoontje aan de rechterkant verschijnt. Klik hierop. %@";
+"Intro-goToSettingsAndSharing" = "Klik daarna op Instellingen en Delen. %@";
+"Intro-goToIntegrate" = "In het menu aan de linker kant klik op Agenda integreren. %@";
+"Intro-topShowsCalendarId" = "Bovenaan dit artikel staat jouw Agenda-ID. %@";
 "Intro-titleFindCalendarId" = "Vind Agenda-ID";
-"Intro-errorLoginApple" = "Er ging iets mis bij het inloggen met Apple: %d";
+"Intro-errorLoginApple" = "Er ging iets mis bij het inloggen met Apple: %@";
 
 "SongService-title" = "Zangdienst";
 "SongService-titleTableClusters" = "Liedjes";
@@ -85,9 +85,9 @@
 "NewSongService-songsDescription" = "Zoek en selecteer hieronder de liedjes voor de zangdienst";
 "NewSongService-noSelectedSongs" = "Geen liedjes geselecteerd";
 "NewSongService-notEnoughSongsForTagSection" = "Niet genoeg liedjes in deze categorie.";
-"NewSongService-notEnoughSongsForTagSectionAlertBody" = "Er zijn niet genoeg liedjes voor elke categorie. Maak liedjes aan voor de categorie die nu geen liedjes heeft. Klik op %d om af te sluiten zonder gekozen liedjes of op %d om hier te blijven.";
+"NewSongService-notEnoughSongsForTagSectionAlertBody" = "Er zijn niet genoeg liedjes voor elke categorie. Maak liedjes aan voor de categorie die nu geen liedjes heeft. Klik op %@ om af te sluiten zonder gekozen liedjes of op %@ om hier te blijven.";
 
-"NewSongService-shareSongServiceText" = "Zangdienst %d";
+"NewSongService-shareSongServiceText" = "Zangdienst %@";
 "NewSongService-morning" = "morgen";
 "NewSongService-evening" = "avond";
 
@@ -109,10 +109,10 @@
 "Songs-title" = "Collecties";
 "Songs-description" = "Doorzoek hier alle liedjes of collecties";
 "Songs-SearchSongPlaceholder" = "Zoek collecties";
-"Songs-deleteTitle" = "Verwijder %d";
-"Songs-deleteBody" = "Weet je zeker dat je %d wilt verwijderen? Verwijderde liedjes kan je eventueel weer terug terug krijgen onder het tabje \"Verwijderde liedjes\".";
+"Songs-deleteTitle" = "Verwijder %@";
+"Songs-deleteBody" = "Weet je zeker dat je %@ wilt verwijderen? Verwijderde items kan je eventueel weer terug terug krijgen onder het tabje \"Verwijderde items\".";
 "Songs-deleteMusicTitle" = "Verwijder muziek";
-"Songs-deleteMusicBody" = "Weet je zeker dat je de muziek van %d wilt verwijderen? Verwijderde muziek kan je eventueel weer terug terug krijgen door op de downloadknop te klikken van dit liedje.";
+"Songs-deleteMusicBody" = "Weet je zeker dat je de muziek van %@ wilt verwijderen? Verwijderde muziek kan je eventueel weer terug terug krijgen door op de downloadknop te klikken van dit liedje.";
 "Songs-errorNoUserFound" = "We konden je identiteit niet bevestigen. Log opnieuw in onder instellingen.";
 
 "NewSong-title" = "Titel";
@@ -308,25 +308,25 @@
 "SingInGoogleController-title" = "Inloggen Agenda";
 "SingInGoogleController-infoText" = "Om de activiteiten op te halen uit je kerk agenda is het nodig om in te loggen bij Google agenda. Klik hieronder om (opnieuw) in te loggen bij Google.";
 
-"RequesterErrors-failedSavingImageLocallyBeforeSubmit" = "Kon media niet op apparaat opslaan voor %d: %d";
-"RequesterErrors-failedDownloadingMedia" = "Kon media niet downloaden voor %d: %d";
-"RequesterErrors-failedUploadingMedia" = "Kon media niet uploaden voor %d: %d";
-"RequesterErrors-wrongMethodForSubmitting" = "Onjuiste methode voor indienen van request voor %d";
-"RequesterErrors-unAuthorizedNoUser" = "Niet geauthoriseerd om dit te doen. Kon geen gebruiker vinden voor %d";
-"RequesterErrors-allreadyHasAnUser" = "Fout: er is al een gebruiker voor %d";
-"RequesterErrors-hasNoThemeForUniversalCluster" = "Er is geen thema gevonden voor universeel liedje voor %d";
-"RequesterErrors-hasNoChurchForUniversalCluster" = "Er is geen kerk gevonden voor universeel liedje voor %d";
-"RequesterErrors-failedFetchingSavingCoreData" = "Fout in opslaan data voor %d, error: %d";
-"RequesterErrors-failedDecoding" = "Fout in decoden data: %d";
-"RequesterErrors-failedEncoding" = "Fout in encoden data: %d";
-"RequesterErrors-errorOnFireBase" = "Fout op google cloud voor %d, error: %d";
-"RequesterErrors-errorSavingTempImage" = "Fout in het lokaal opslaan van image voor versturen; %d, error: %d";
+"RequesterErrors-failedSavingImageLocallyBeforeSubmit" = "Kon media niet op apparaat opslaan voor %@: %@";
+"RequesterErrors-failedDownloadingMedia" = "Kon media niet downloaden voor %@: %@";
+"RequesterErrors-failedUploadingMedia" = "Kon media niet uploaden voor %@: %@";
+"RequesterErrors-wrongMethodForSubmitting" = "Onjuiste methode voor indienen van request voor %@";
+"RequesterErrors-unAuthorizedNoUser" = "Niet geauthoriseerd om dit te doen. Kon geen gebruiker vinden voor %@";
+"RequesterErrors-allreadyHasAnUser" = "Fout: er is al een gebruiker voor %@";
+"RequesterErrors-hasNoThemeForUniversalCluster" = "Er is geen thema gevonden voor universeel liedje voor %@";
+"RequesterErrors-hasNoChurchForUniversalCluster" = "Er is geen kerk gevonden voor universeel liedje voor %@";
+"RequesterErrors-failedFetchingSavingCoreData" = "Fout in opslaan data voor %@, error: %@";
+"RequesterErrors-failedDecoding" = "Fout in decoden data: %@";
+"RequesterErrors-failedEncoding" = "Fout in encoden data: %@";
+"RequesterErrors-errorOnFireBase" = "Fout op google cloud voor %@, error: %@";
+"RequesterErrors-errorSavingTempImage" = "Fout in het lokaal opslaan van image voor versturen; %@, error: %@";
 "RequesterErrors-notConnectedToNetwork" = "Geen verbinding met internet";
-"RequesterErrors-unknown" = "Onbekende fout voor %d, error: %d";
+"RequesterErrors-unknown" = "Onbekende fout voor %@, error: %@";
 
 "IAPErrors-paymentNotAllowed" = "Je hebt geen toestemming om betalingen te doen";
 "IAPErrors-busyPurchasing" = "Er is al een transactie gaande.";
-"IAPErrors-unableToReadReceipt" = "Kon transactie niet lezen: %d";
-"IAPErrors-unableToGetReceipt" = "Kon transactie niet ophalen: %d";
-"IAPErrors-unableToPurchage" = "Fout in het verwerken van je aanschaf: %d";
-"IAPErrors-unableToReachStore" = "Fout in de data van de appstore: %d";
+"IAPErrors-unableToReadReceipt" = "Kon transactie niet lezen: %@";
+"IAPErrors-unableToGetReceipt" = "Kon transactie niet ophalen: %@";
+"IAPErrors-unableToPurchage" = "Fout in het verwerken van je aanschaf: %@";
+"IAPErrors-unableToReachStore" = "Fout in de data van de appstore: %@";

@@ -33,7 +33,8 @@ class IntroPageController22: PageController {
         super.viewDidLoad()
         
         GIDSignIn.sharedInstance()?.presentingViewController = self
-        GIDSignIn.sharedInstance()?.scopes = ["https://www.googleapis.com/auth/calendar.readonly", "https://www.googleapis.com/auth/calendar.events.readonly"]
+//        GIDSignIn.sharedInstance()?.scopes = ["https://www.googleapis.com/auth/calendar.readonly", "https://www.googleapis.com/auth/calendar.events.readonly"]
+        GIDSignIn.sharedInstance()?.scopes = ["https://www.googleapis.com/auth/calendar.events.public.readonly"]
         descriptionTextView.font = .xNormal
         descriptionTextView.textColor = .blackColor
         descriptionTextView.text = AppText.Intro.loginWithChurchGoogle
