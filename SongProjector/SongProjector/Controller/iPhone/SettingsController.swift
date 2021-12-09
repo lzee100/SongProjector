@@ -28,8 +28,8 @@ class SettingsController: ChurchBeamViewController, UITableViewDelegate, UITable
 		var title: String {
 			switch self {
 //			case .songService: return AppText.Settings.SectionSongServiceSettings
-			case .googleAccount: return AppText.Settings.SectionGmailAccount
-            case .googleCalendarId: return AppText.Settings.SectionCalendarId
+			case .googleAccount: return AppText.Settings.sectionGmailAccount
+            case .googleCalendarId: return AppText.Settings.sectionCalendarId
 
 			}
 		}
@@ -80,8 +80,8 @@ class SettingsController: ChurchBeamViewController, UITableViewDelegate, UITable
 			}
         case .googleCalendarId:
             let cell = tableView.dequeueReusableCell(withIdentifier: LabelTextFieldCell.identifier) as! LabelTextFieldCell
-            cell.id = AppText.Settings.CalendarIdPlaceHolder
-            cell.setup(description: "ID", placeholder: AppText.Settings.CalendarIdPlaceHolder, delegate: self)
+            cell.id = AppText.Settings.calendarIdPlaceHolder
+            cell.setup(description: "ID", placeholder: AppText.Settings.calendarIdPlaceHolder, delegate: self)
             let user: User? = DataFetcher().getEntity(moc: moc)
             cell.textField.text = user?.googleCalendarId
             return cell
@@ -120,7 +120,7 @@ class SettingsController: ChurchBeamViewController, UITableViewDelegate, UITable
         if section == Section.allCases.count - 1 {
             let view = tableView.basicFooterView
             let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
-            view?.setup(description: AppText.Settings.Appversion + (appVersion ?? ""))
+            view?.setup(description: AppText.Settings.appversion + (appVersion ?? ""))
             view?.descriptionLabel.textAlignment = .center
             return view
         }
@@ -200,7 +200,7 @@ class SettingsController: ChurchBeamViewController, UITableViewDelegate, UITable
 	// MARK: LabelTextFieldCellDelegate Functions
 	
 	func textFieldDidChange(cell: LabelTextFieldCell, text: String?) {
-        if cell.id == AppText.Settings.CalendarIdPlaceHolder {
+        if cell.id == AppText.Settings.calendarIdPlaceHolder {
             let user: User? = DataFetcher().getEntity(moc: moc, predicates: [.skipDeleted])
             let vUser = [user].compactMap({ $0 }).map({ VUser(user: $0, context: moc) }).first
             if let user = vUser {

@@ -244,7 +244,7 @@ class NewSongIphoneController: ChurchBeamViewController, UICollectionViewDataSou
 			let rangeRemove = start..<range.upperBound
 			
 			let sheetcontent = String(contentToDevide[rangeSheet])
-			var sheetTitle: String = AppText.NewSong.NoTitleForSheet
+			var sheetTitle: String = AppText.NewSong.noTitleForSheet
 			
 			// get title
 			if let rangeTitle = contentToDevide.range(of: "\n") {

@@ -1,0 +1,332 @@
+/* 
+  Localizable.strings
+  ChurchBeam
+
+  Created by Leo van der Zee on 06/12/2021.
+  Copyright © 2021 iozee. All rights reserved.
+*/
+
+"Environments-localHost" = "Localhost";
+"Environments-development" = "Ontwikkel";
+"Environments-production" = "Productie";
+
+"Generic-from" = "van";
+"Generic-to" = "tot";
+"Generic-vandaag" = "Vandaag";
+"Generic-morgen" = "Morgen";
+"Generic-errorGeneratingDataForImage" = "Kon geen data genereren van de foto";
+
+"Actions-cancel" = "Annuleer";
+"Actions-close" = "Sluit";
+"Actions-done" = "Klaar";
+"Actions-delete" = "Verwijder";
+"Actions-new" = "Nieuw";
+"Actions-add" = "Voeg toe";
+"Actions-next" = "Volgende";
+"Actions-save" = "Sla op";
+"Actions-ok" = "Ok";
+"Actions-change" = "Wijzig";
+"Actions-continue" = "Doorgaan";
+"Actions-send" = "Verstuur";
+"Actions-selectImage" = "Selecteer afbeelding";
+"Actions-import" = "Importeer";
+"Actions-upload" = "Upload";
+"Actions-restore" = "Herstel";
+
+"Intro-introHalloTitle" = "Hallo";
+"Intro-introHalloContent" = "Welkom bij Churchbeam. Deze app ondersteund de gehele voordienst in jouw kerk.";
+"Intro-featureIntro" = "Voor %d per maand krijg je onbeperkt toegang tot:";
+
+"Intro-featuresSong1" = "Onbeperkt aantal liedjes";
+"Intro-featuresSong2" = "thema's en tags opslaan";
+"Intro-featuresSong3" = "Automatische generatie van dia's voor bijbelteksten";
+"Intro-featuresSong4" = "Automatisch genererende diensten";
+"Intro-featuresSong5" = "Automatisch downloaden van liedjes met tekst en muziek";
+"Intro-featuresSong6" = "Instrumenten individueel mengbaar";
+"Intro-featuresSong7" = "Google agenda integratie";
+
+"Intro-featuresBeam1" = "Onbeperkt aantal liedjes";
+"Intro-featuresBeam2" = "thema's en tags opslaan";
+"Intro-featuresBeam3" = "Automatische generatie van dia's voor bijbelteksten";
+"Intro-featuresBeam4" = "Automatisch genererende diensten";
+"Intro-featuresBeam5" = "Google agenda integratie";
+
+"Intro-cancelMonthly" = "(Maandelijks opzegbaar)";
+"Intro-subscribe" = "Abonneer";
+"Intro-googleSignIn" = "Login";
+"Intro-googleSignInDescription" = "Bij deze app kan je inloggen met je google account. Heb je al een account aangemaakt bij Churchbeam?";
+"Intro-newAccountOnGoogleAccount" = "Klik op onderstaande knop om een nieuw account aan te maken op basis van je Google account.";
+"Intro-loginWithChurchGoogle" = "Churchbeam zou gebruik kunnen maken van je Google agenda om jouw kerkactiviteiten automatisch te tonen voordat of nadat de dienst begint. Om die reden is het handig om in te loggen met het Google account van je kerk (of die eerst aan te maken bij Google). Je kan ook inloggen met je Apple account, in dat geval moet je nog apart inloggen met je Google account om je kerk activiteiten op te halen uit je Google agenda.";
+
+"Intro-calendarIdExplain" = "Voer hieronder je Google agenda id in. ChurchBeam kan dan automatisch je kerkactiviteiten tonen in een slider.";
+"Intro-calendarIdFindId" = "Abonneer";
+"Intro-subscribe" = "Hoe vind ik die?";
+"Intro-thisIsYourAdminCode" = "Dit is jouw Admin code. Bewaar deze goed. Deze is voor het toegang krijgen van je admin account wanneer je de app opnieuw wil gaan installeren.";
+"Intro-adminEnterCode" = "Wil je inloggen als admin, voer dan je admin code hieronder in. Anders klik op %d";
+"Intro-adminCodeWrong" = "De ingevoerde code is niet juist.";
+"Intro-couldNotFindUser" = "Kon geen gebruiker vinden. Installeer de app opnieuw en probeer het nogmaals.";
+"Intro-seeExample" = "(Zie voorbeeld hieronder).";
+
+"Intro-explainCalendarId" = "Om je kerkactiviteiten automatisch weer te geven wil deze app verbinding maken met jouw agenda. Daarvoor is een agenda id nodig. Om deze te vinden moet je de volgende stappen doorlopen. Ga in een webbrowser naar calendar.google.com om je agenda te zien. Log eventueel eerst in met je kerk gmail account. Aan de linkerkant vind je jouw agenda's. %d";
+"Intro-hoverForDots" = "Hou de muis op de agenda die je wilt delen zodat er een optie (3 stippeltjes) icoontje aan de rechterkant verschijnt. Klik hierop. %d";
+"Intro-goToSettingsAndSharing" = "Klik daarna op Instellingen en Delen. %d";
+"Intro-goToIntegrate" = "In het menu aan de linker kant klik op Agenda integreren. %d";
+"Intro-topShowsCalendarId" = "Bovenaan dit artikel staat jouw Agenda-ID. %d";
+"Intro-titleFindCalendarId" = "Vind Agenda-ID";
+"Intro-errorLoginApple" = "Er ging iets mis bij het inloggen met Apple: %d";
+
+"SongService-title" = "Zangdienst";
+"SongService-titleTableClusters" = "Liedjes";
+"SongService-titleTableSheets" = "Dia's";
+"SongService-warnCannotPlay" = "Het lijkt erop dat een andere gebruiker de zangdienst gestart is met dit account. Er kunnen geen twee zangdiensten tegelijk actief zijn. Je kan de zangdienst eventueel starten vanaf het admin account.";
+
+"NewSongService-title" = "Nieuwe zangdienst";
+"NewSongService-selectedSongsDescription" = "Hieronder staan de geselecteerde liedjes voor de zangdienst";
+"NewSongService-songsDescription" = "Zoek en selecteer hieronder de liedjes voor de zangdienst";
+"NewSongService-noSelectedSongs" = "Geen liedjes geselecteerd";
+"NewSongService-notEnoughSongsForTagSection" = "Niet genoeg liedjes in deze categorie.";
+"NewSongService-notEnoughSongsForTagSectionAlertBody" = "Er zijn niet genoeg liedjes voor elke categorie. Maak liedjes aan voor de categorie die nu geen liedjes heeft. Klik op %d om af te sluiten zonder gekozen liedjes of op %d om hier te blijven.";
+
+"NewSongService-shareSongServiceText" = "Zangdienst %d";
+"NewSongService-morning" = "morgen";
+"NewSongService-evening" = "avond";
+
+"NewSongService-popupGenerateSongServiceTitle" = "Genereer (zang)dienst automatisch";
+"NewSongService-popupGenerateSongServiceDescription" = "Genereer (zang)dienst automatisch";
+"NewSongService-popupGenerateSongServiceTitle" = "Je kan automatisch je (zang)dienst laten genereren door je telefoon te schudden op dit scherm. Hiervoor moet je eerst een dienst volgorde maken. Dit werkt als volgt:\n\nMaak eerst tags aan. Ga hiervoor naar het \"Meer\" tabje en maak tags aan. Tags gebruik je om presentaties (zangdienstliedjes en meer) te taggen.\n\nGa naar \"Zangdienst instellingen\" onder het tabje \"Meer\". Maak jouw zangdienst volgorde aan. Hierbij stel je in uit welke secties jouw dienst bestaat, zoals bijvoorbeeld snelle liedjes, aanbiddingsliedjes, collecte liedjes of liedjes bij een oproep of einde van de dienst, gebedsverlangens of bijbelteksten bij de preek enz. Oftewel alles waar jij dia's bij wil hebben. Onder deze secties vallen dan een of meerdere tags. Jouw liedjes kan je taggen waardoor deze automatisch in deze sectie geplaats zullen worden. Dus een presentatie heeft tags en tags vallen onder een sectie van jouw dienst.\n\nNadat je de volgorde hebt bepaald moet je de presentaties (zangdienstliedjes) tags onder het tabje \"Collecties\". Geef je presentaties een of meerdere tags en bij het schudden van je mobiel op dit scherm maakt de app een (zang)dienst aan jouw secties en pakt hij automatisch de liedjes die bij de tags van de desbetreffende sectie horen.\n\nProbeer het nu!";
+"NewSongService-dontShowAgain" = "Toon niet meer";
+"NewSongService-showMeLater" = "Toon later";
+"NewSongService-swipeToDeleteHint" = "Verwijder door naar links te swipen";
+"NewSongService-shakeToGenerate" = "Schud je iPhone om een zangdienst te genereren";
+"NewSongService-shareOptionsTitle" = "Wat wil je van de zangdienst delen";
+
+"NewSongService-shareOptionTitles" = "Alleen de titels";
+"NewSongService-shareOptionTitlesWithSections" = "Alleen de secties en titels";
+"NewSongService-shareOptionLyrics" = "Titels en tekst";
+"NewSongService-shareOptionLyricsWithSections" = "Secties, titels en tekst";
+"NewSongService-shareSingFrom" = "Zingen vanaf: ";
+
+"Songs-title" = "Collecties";
+"Songs-description" = "Doorzoek hier alle liedjes of collecties";
+"Songs-SearchSongPlaceholder" = "Zoek collecties";
+"Songs-deleteTitle" = "Verwijder %d";
+"Songs-deleteBody" = "Weet je zeker dat je %d wilt verwijderen? Verwijderde liedjes kan je eventueel weer terug terug krijgen onder het tabje \"Verwijderde liedjes\".";
+"Songs-deleteMusicTitle" = "Verwijder muziek";
+"Songs-deleteMusicBody" = "Weet je zeker dat je de muziek van %d wilt verwijderen? Verwijderde muziek kan je eventueel weer terug terug krijgen door op de downloadknop te klikken van dit liedje.";
+"Songs-errorNoUserFound" = "We konden je identiteit niet bevestigen. Log opnieuw in onder instellingen.";
+
+"NewSong-title" = "Titel";
+"NewSong-songTitle" = "Titel";
+"NewSong-headerTheme" = "Selecteer hier het thema";
+"NewSong-headerLyrics" = "Voer hier de tekst van het liedje in";
+"NewSong-noTitleForSheet" = "Geen titel gevonden";
+"NewSong-sheet" = "Dia ";
+"NewSong-searchThemePlaceHolder" = "Zoek thema";
+"NewSong-errorTitleNoTheme" = "Fout";
+"NewSong-erorrMessageNoTheme" = "Selecteer een thema";
+"NewSong-segmentTitleText" = "Tekst";
+"NewSong-segmentTitleSheets" = "Dia's";
+"NewSong-generateSheetsButton" = "Genereer dia's";
+"NewSong-titlePlaceholder" = "Voer hier een titel in";
+"NewSong-addSheet" = "Voeg dia toe";
+"NewSong-changeLyrics" = "Wijzig zangtekst";
+"NewSong-newLyrics" = "Nieuwe zangtekst";
+"NewSong-changeTitleTime" = "Wijzig titel & tijdsduur";
+
+"Lyrics-titleBibleText" = "Voer bijbelteksten in";
+"Lyrics-titleLyrics" = "Voer tekst in";
+"Lyrics-placeholderBibleText" = "Genesis 1:1-16\nIn het begin maakte God de hemelen en de aarde. 2De aarde was woest en leeg en over de watermassa lag een diepe duisternis. Maar de Geest van God zweefde boven de watermassa.\n\nJohannes 3:16\nWant God heeft zoveel liefde voor de wereld dat Hij zijn enige Zoon heeft gegeven, zodat ieder die in Hem gelooft, niet verloren gaat maar eeuwig leven heeft.";
+"Lyrics-placeholderLyrics" = "Schrijf of plak hier de tekst van het liedje";
+
+"Themes-title" = "Thema's";
+"Themes-searchBarPlaceholderText" = "Zoek thema's";
+
+"Tags-title" = "Tags";
+"Tags-placeholder" = "Zoek tags";
+"Tags-newTag" = "Nieuwe tag";
+"Tags-name" = "Naam";
+"Tags-deletedClusters" = "Verwijderde items";
+
+
+"CustomSheets-title" = "Wijzig dia's";
+"CustomSheets-namePlaceHolder" = "Voer titel in (voor zoeken)";
+"CustomSheets-errorTitle" = "Fout";
+"CustomSheets-errorNoName" = "Geen titel ingevoerd";
+"CustomSheets-segmentInput" = "Invoeren";
+"CustomSheets-segmentCheck" = "Controle";
+"CustomSheets-segmentSheets" = "Dia's";
+"CustomSheets-segmentChange" = "Aanpassen";
+"CustomSheets-descriptionName" = "Groepnaam";
+"CustomSheets-descriptionTime" = "Dia's afspelen om de x seconden";
+"CustomSheets-descriptionTimeAdd" = "0: is niet automatisch afspelen";
+"CustomSheets-tableViewHeaderGeneral" = "Algemeen";
+"CustomSheets-tableViewHeaderSheets" = "Dia's";
+"CustomSheets-titleMenu" = "Dia's toevoegen";
+"CustomSheets-errorSelectTheme" = "Selecteer een thema";
+"CustomSheets-errorLoseOtherSheets" = "Je hebt andere sheets tussen de bijbelteksten staan. Deze gaan verloren wanneer je de bijbelteksten aanpast en opnieuw laat genereren";
+"CustomSheets-universalSongEditErrorTitle" = "Kon tekst niet aanpassen";
+"CustomSheets-universalSongEditErrorMessage" = "Dit liedje heeft muziek en heeft een weergave tijdsduur bij elke dia. Het aanpassen van het AANTAL dia's zorgt ervoor dat de tijden niet meer kloppen. Je wijzigingen zijn ongedaan gemaakt.";
+
+"SongServiceManagement-title" = "Beheer zangdienst";
+"SongServiceManagement-numberOfSections" = "Aantal secties";
+"SongServiceManagement-section" = "Sectie";
+"SongServiceManagement-nameSection" = "Naam sectie";
+"SongServiceManagement-addTags" = "Voeg tags toe";
+"SongServiceManagement-name" = "Naam";
+"SongServiceManagement-numberOfSongs" = "Aantal liedjes: ";
+
+"Settings-title" = "Instellingen";
+"Settings-descriptionGoogleSub" = "Login om activiteiten op te halen";
+"Settings-descriptionCalendarId" = "Google agenda ID";
+"Settings-descriptionInstructions" = "Handleiding";
+"Settings-instructions" = "Voor het implementeren van Google agenda activiteiten in de app is het nodig om de volgende stappen te doorlopen: \n\nTen eerste is de ID van de agenda nodig. Een handleiding hiervoor kan je vinden op Google door te zoeken op 'Finding Your Google Calendar ID'. De ID moet vervolgens ingevuld worden voordat de activiteiten van die agenda opgehaald kunnen worden. \n\n Ga vervolgens naar https://console.developers.google.com/apis/api/calendar/overview. Login met het account waarvoor je ook de activiteiten in de app wilt tonen. Ga naar Dashboard en klik vervolgens op 'Api's en services inschakelen'. Zoek naar \"Google Calendar API\". Klik daarop en klik daarna op Inschakelen. \n\n Het kan een aantal minuten duren voordat de agenda beschikbaar is voor de app.";
+"Settings-descriptionGoogle" = "Google account";
+"Settings-errorTitleGoogleAuth" = "Fout in authenticatie";
+"Settings-googleSignOutButton" = "Uitloggen";
+"Settings-sheetTimeOffsetError" = "De ingevoerde waarde kan niet gebruikt worden.";
+"Settings-sheetTimeOffset" = "Correctie van de tijd waarop de sheets verplaatsen.";
+"Settings-sheetTimeOffsetPlaceholder" = "Seconden als 0.34 of 2";
+"Settings-sectionSongServiceSettings" = "Zangdienst instellingen";
+"Settings-sectionGmailAccount" = "Gmail account";
+"Settings-sectionCalendarId" = "Google agenda ID";
+"Settings-calendarIdPlaceHolder" = "Google agenda id";
+"Settings-appversion" = "Versie: ";
+
+"NewTheme-title" = "Nieuw thema";
+"NewTheme-descriptionTitle" = "Naam nieuw thema";
+"NewTheme-descriptionTitlePlaceholder" = "Naam";
+"NewTheme-descriptionAsTheme" = "Gelijk aan thema";
+"NewTheme-descriptionTitleBackgroundColor" = "Achtergrond kleur";
+"NewTheme-pageDescription" = "Voeg een nieuw thema toe";
+"NewTheme-descriptionBackgroundColor" = "Kleur achtergrond";
+"NewTheme-descriptionHasEmptySheet" = "Toon lege dia";
+"NewTheme-descriptionHasEmptySheetDetail" = "Aan het einde of begin van een lied een lege dia tonen met ingestelde achtergrond";
+"NewTheme-descriptionAllTitle" = "Titel op elke dia";
+"NewTheme-descriptionPositionEmptySheet" = "Toon lege dia aan begin\n(uit is aan het einde tonen)";
+"NewTheme-descriptionLastBeamerResolution" = "Laast bekende beamer resolutie:\n";
+"NewTheme-descriptionBackgroundTransparency" = "Transparantie achtergrond";
+"NewTheme-descriptionDisplayTime" = "Weergave tijd";
+"NewTheme-descriptionDarkBlurTitleBackground" = "Blur achtergrond";
+"NewTheme-descriptionAlignment" = "Uitlijning";
+"NewTheme-errorTitle" = "Fout";
+"NewTheme-errorMessage" = "Naam nieuwe thema mag niet leeg zijn";
+"NewTheme-alignLeft" = "Links";
+"NewTheme-alignCenter" = "Midden";
+"NewTheme-alignRight" = "Rechts";
+"NewTheme-sampleTitle" = "Titel";
+"NewTheme-sampleLyrics" = "Lorem Ipsum is slechts een proeftekst uit het drukkerij- en zetterijwezen. Lorem Ipsum is de standaard proeftekst in deze bedrijfstak sinds de 16e eeuw.";
+"NewTheme-sectionGeneral" = "Algemeen";
+"NewTheme-sectionInput" = "Invoer";
+"NewTheme-sectionTitle" = "Titel";
+"NewTheme-sectionLyrics" = "Inhoud";
+"NewTheme-sectionBackground" = "Achtergrond";
+
+"NewTheme-fontFamilyDescription" = "Lettertype";
+"NewTheme-fontSizeDescription" = "Grootte lettertype";
+"NewTheme-borderSizeDescription" = "Dikte rand";
+"NewTheme-borderColor" = "Kleur rand";
+"NewTheme-textColor" = "Kleur lettertype";
+"NewTheme-underlined" = "Onderstreept";
+"NewTheme-bold" = "Vet";
+"NewTheme-italic" = "Cursief";
+"NewTheme-backgroundImage" = "Achtergrond afbeelding";
+"NewTheme-buttonBackgroundImagePick" = "Kies afbeelding";
+"NewTheme-buttonBackgroundImageChange" = "Wijzig afbeelding";
+
+"Sheet-emptySheetTitle" = "Lege dia";
+
+"SheetsMenu-sectionSongs" = "Liedjes";
+"SheetsMenu-sectionOther" = "Andere dia's";
+"SheetsMenu-sectionBibleStudy" = "Bijbelstudie";
+"SheetsMenu-lyrics" = "Tekst liedje";
+"SheetsMenu-sheetTitleText" = "Dia titel met tekst";
+"SheetsMenu-sheetTitleImage" = "Dia: titel met foto";
+"SheetsMenu-sheetPastors" = "Dia gebed personen";
+"SheetsMenu-sheetSplit" = "Dia 2 segmenten";
+"SheetsMenu-sheetEmpty" = "Lege dia";
+"SheetsMenu-bibleStudyGen" = "Bijbelstudie dia generator";
+"SheetsMenu-sheetActivity" = "Google activiteiten dia";
+
+"SheetPickerMenu-pickSong" = "Nieuw lied";
+"SheetPickerMenu-pickCustom" = "Aangepaste dia's";
+"SheetPickerMenu-whichSheet" = "Welke type dia(s) wil je aanmaken?";
+
+"More-title" = "Meer";
+
+"Google-title" = "Google agenda";
+
+"BibleStudy-title" = "Bijbelstudie";
+
+"NewSheetTitleImage-title" = "Foto opties";
+"NewSheetTitleImage-descriptionTitle" = "Titel";
+"NewSheetTitleImage-descriptionTextLeft" = "Tekst links";
+"NewSheetTitleImage-descriptionTextRight" = "Tekst rechts";
+"NewSheetTitleImage-descriptionContent" = "Tekst";
+"NewSheetTitleImage-descriptionImage" = "Foto";
+"NewSheetTitleImage-descriptionImageHasBorder" = "Foto heeft rand";
+"NewSheetTitleImage-descriptionImageBorderSize" = "Dikte rand";
+"NewSheetTitleImage-descriptionImageBorderColor" = "Kleur rand";
+"NewSheetTitleImage-descriptionImageContentMode" = "Positionering foto";
+"NewSheetTitleImage-placeholderContent" = "tekst";
+
+"NewPastorsSheet-title" = "Pastor John and Jessie Doe";
+"NewPastorsSheet-content" = "Mexico city";
+"NewPastorsSheet-photoDescription" = "Kies een vierkante foto waarbij de gezichten in het midden zijn.";
+
+"ActivitySheet-titleThisWeek" = "Deze week";
+"ActivitySheet-titleNextWeek" = "Komende week";
+"ActivitySheet-titleUpcomingTime" = "Komende tijd";
+"ActivitySheet-descriptionNoActivities" = "Geen activiteiten gepland";
+"ActivitySheet-previewDescription" = "Activiteitomschrijving uit de google agenda";
+"ActivitySheet-dayActivity" = "Hele dag";
+
+"Import-title" = "Importeer bijbel";
+"Import-description" = "Voeg hieronder de bijbeltest toe die je wilt importeren";
+
+"UploadUniversalSong-previewButtonTitle" = "Voorbeeld";
+"UploadUniversalSong-title" = "Upload universal liedje";
+"UploadUniversalSong-selecteerSheet" = "Creeer/bewerk dia's";
+"UploadUniversalSong-showPreview" = "Toon preview";
+"UploadUniversalSong-noSheets" = " (Nog geen sheets)";
+"UploadUniversalSong-titlePlaceholder" = "Niet voor zangdienst liedje";
+"UploadUniversalSong-noThemeWarning" = "Geen thema beschikbaar. Maak eerst een theme aan.";
+"UploadUniversalSong-new" = "Nieuw";
+"UploadUniversalSong-selectChurch" = "Selecteer kerk";
+"UploadUniversalSong-startTime" = "Start tijd";
+"UploadUniversalSong-defaultTheme" = "Basis thema";
+"UploadUniversalSong-shareSheetTimes" = "Deel sheettijden";
+
+"AboutController-title" = "Contactinformatie";
+"AboutController-sectionAbout" = "Over de ontwikkelaar";
+"AboutController-infoText" = "Hey, mijn naam is Leo van der Zee. Voor een aantal jaren heb ik naast mijn baan deze app ontwikkeld. Mijn visie is om de diensten van kleine kerken te verbeteren zodat zij:\n- grotere mate van aanbidding kunnen ervaren zodat er een vergroting van het werk van God in het hart zal plaatsvinden.\n- een betere aansluiting bij de verwachtingen die bezoekers hebben van vandaag de dag\n- een vergroting van de betrokkenheid van de kerk krijgen\n- meer ruimte voor de voorganger krijgt zodat hij met mensen bezig kan zijn\n\nHopelijk helpt de app jou en de kerk verder.";
+"AboutController-sectionStartContact" = "Neem contact op";
+"AboutController-contactInfo" = "Mocht je vragen of problemen hebben, neem dan gerust contact op.";
+"AboutController-contact" = "Contact";
+"AboutController-errorNoMail" = "Je hebt geen mail account op je telefoon ingesteld. Stel een mail account in onder settings.";
+
+
+"SingInGoogleController-title" = "Inloggen Agenda";
+"SingInGoogleController-infoText" = "Om de activiteiten op te halen uit je kerk agenda is het nodig om in te loggen bij Google agenda. Klik hieronder om (opnieuw) in te loggen bij Google.";
+
+"RequesterErrors-failedSavingImageLocallyBeforeSubmit" = "Kon media niet op apparaat opslaan voor %d: %d";
+"RequesterErrors-failedDownloadingMedia" = "Kon media niet downloaden voor %d: %d";
+"RequesterErrors-failedUploadingMedia" = "Kon media niet uploaden voor %d: %d";
+"RequesterErrors-wrongMethodForSubmitting" = "Onjuiste methode voor indienen van request voor %d";
+"RequesterErrors-unAuthorizedNoUser" = "Niet geauthoriseerd om dit te doen. Kon geen gebruiker vinden voor %d";
+"RequesterErrors-allreadyHasAnUser" = "Fout: er is al een gebruiker voor %d";
+"RequesterErrors-hasNoThemeForUniversalCluster" = "Er is geen thema gevonden voor universeel liedje voor %d";
+"RequesterErrors-hasNoChurchForUniversalCluster" = "Er is geen kerk gevonden voor universeel liedje voor %d";
+"RequesterErrors-failedFetchingSavingCoreData" = "Fout in opslaan data voor %d, error: %d";
+"RequesterErrors-failedDecoding" = "Fout in decoden data: %d";
+"RequesterErrors-failedEncoding" = "Fout in encoden data: %d";
+"RequesterErrors-errorOnFireBase" = "Fout op google cloud voor %d, error: %d";
+"RequesterErrors-errorSavingTempImage" = "Fout in het lokaal opslaan van image voor versturen; %d, error: %d";
+"RequesterErrors-notConnectedToNetwork" = "Geen verbinding met internet";
+"RequesterErrors-unknown" = "Onbekende fout voor %d, error: %d";
+
+"IAPErrors-paymentNotAllowed" = "Je hebt geen toestemming om betalingen te doen";
+"IAPErrors-busyPurchasing" = "Er is al een transactie gaande.";
+"IAPErrors-unableToReadReceipt" = "Kon transactie niet lezen: %d";
+"IAPErrors-unableToGetReceipt" = "Kon transactie niet ophalen: %d";
+"IAPErrors-unableToPurchage" = "Fout in het verwerken van je aanschaf: %d";
+"IAPErrors-unableToReachStore" = "Fout in de data van de appstore: %d";

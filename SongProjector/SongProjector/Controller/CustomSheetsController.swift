@@ -493,7 +493,7 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 			let rangeRemove = start..<range.upperBound
 			
 			let sheetLyrics = String(contentToDevide[rangeSheet])
-			var sheetTitle: String = AppText.NewSong.NoTitleForSheet
+			var sheetTitle: String = AppText.NewSong.noTitleForSheet
 			
 			// get title
 			if let rangeTitle = contentToDevide.range(of: "\n") {
@@ -620,6 +620,7 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
 	}
     
     private func getBibleStudyTextFromSheets() -> String {
+        guard sheets.count > 0 else { return "" }
         var titleContentSheets = sheets
         titleContentSheets = titleContentSheets.filter({ $0.hasTheme == nil })
         
@@ -829,6 +830,7 @@ extension CustomSheetsController: SheetPickerMenuControllerDelegate {
         presentedViewController?.dismiss(animated: false)
         switch option {
         case .lyrics:
+            isBibleStudySheetGenerator = false
             Queues.main.async {
                 self.performSegue(withIdentifier: "ChangeLyricsSegue", sender: self)
             }

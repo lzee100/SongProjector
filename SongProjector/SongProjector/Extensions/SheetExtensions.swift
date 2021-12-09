@@ -91,7 +91,7 @@ enum SheetAttribute {
 	
 	var additionalDescription: String? {
 		switch self {
-		case .SheetPastorImage: return AppText.newPastorsSheet.photoDescription
+		case .SheetPastorImage: return AppText.NewPastorsSheet.photoDescription
 		default:
 			return nil
 		}

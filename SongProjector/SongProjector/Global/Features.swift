@@ -23,7 +23,6 @@ enum Feature : String {
 	case themes = "Themes"
 	case tags = "Tags"
 	case songServiceManagement = "SongServiceManagement"
-	case users = "Users"
 	case settings = "Settings"
 	case uploadUniversalSong = "UploadUniversalSong"
     case about = "About"
@@ -50,8 +49,6 @@ enum Feature : String {
 			return AppText.Themes.title
 		case .tags:
 			return AppText.Tags.title
-		case .users:
-			return AppText.Users.title
 		case .songServiceManagement:
 			return AppText.SongServiceManagement.title
 		case .settings:
@@ -68,7 +65,7 @@ enum Feature : String {
 		switch self {
 		case .songService, .more:
 			return UIDevice.current.userInterfaceIdiom == .pad ? Storyboard.Ipad : Storyboard.MainStoryboard
-        case .themes, .tags, .songs, .bibleStudy, .users, .songServiceManagement, .uploadUniversalSong, .settings, .about:
+        case .themes, .tags, .songs, .bibleStudy, .songServiceManagement, .uploadUniversalSong, .settings, .about:
 			return Storyboard.MainStoryboard
 		}
 	}
@@ -87,7 +84,7 @@ enum Feature : String {
 		switch self {
         case .songService, .songs, .more, .themes, .settings, .tags, .about:
 			return true
-        case .users, .bibleStudy, .songServiceManagement, .uploadUniversalSong:
+        case .bibleStudy, .songServiceManagement, .uploadUniversalSong:
 			return false
 		}
 	}
@@ -119,8 +116,6 @@ enum Feature : String {
 			return (UIImage(named: "Theme")!, UIImage(named: "Theme")!, UIImage(named: "Theme")!)
 		case .tags:
 			return (#imageLiteral(resourceName: "Tags"), #imageLiteral(resourceName: "Tags"), #imageLiteral(resourceName: "Tags"))
-		case .users:
-			return (#imageLiteral(resourceName: "More"), #imageLiteral(resourceName: "More"), #imageLiteral(resourceName: "More"))
 		case .songServiceManagement:
 			return (UIImage(named: "SongServiceSettings")!, UIImage(named: "SongServiceSettings")!, UIImage(named: "SongServiceSettings")!)
 		case .settings:

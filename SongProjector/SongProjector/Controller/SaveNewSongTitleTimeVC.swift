@@ -243,7 +243,7 @@ extension SaveNewSongTitleTimeVC: UITableViewDelegate {
         switch Section.all[section] {
         case .song:
             let view = tableView.basicHeaderView
-            view?.descriptionLabel.text = AppText.NewSong.SongTitle
+            view?.descriptionLabel.text = AppText.NewSong.songTitle
             return view
         case .custom:
             return nil

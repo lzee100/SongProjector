@@ -1,0 +1,330 @@
+/* 
+  Localizable.strings
+  ChurchBeam
+
+  Created by Leo van der Zee on 06/12/2021.
+  Copyright © 2021 iozee. All rights reserved.
+*/
+
+"Environments-localHost" = "Localhost";
+"Environments-development" = "Development";
+"Environments-production" = "Production";
+
+"Generic-from" = "from";
+"Generic-to" = "to";
+"Generic-vandaag" = "today";
+"Generic-morgen" = "tomorow";
+"Generic-errorGeneratingDataForImage" = "Unable to generate data from image";
+
+"Actions-cancel" = "Cancel";
+"Actions-close" = "Close";
+"Actions-done" = "Done";
+"Actions-delete" = "Delete";
+"Actions-new" = "New";
+"Actions-add" = "Add";
+"Actions-next" = "Next";
+"Actions-save" = "Save";
+"Actions-ok" = "Ok";
+"Actions-change" = "Change";
+"Actions-continue" = "Continue";
+"Actions-send" = "Send";
+"Actions-selectImage" = "Select image";
+"Actions-import" = "Import";
+"Actions-upload" = "Upload";
+"Actions-restore" = "Restore";
+
+"Intro-hello" = "Hello";
+"Intro-helloContent" = "Welcome to Churchbeam. This app supports the entire song service in your church.";
+"Intro-featureIntro" = "For %@ per month you get unlimited access to:";
+
+"Intro-featuresSong1" = "unlimited songs";
+"Intro-featuresSong2" = "save themes and tags";
+"Intro-featuresSong3" = "Automatic generation of slides for bible verses";
+"Intro-featuresSong4" = "Auto-generating song services";
+"Intro-featuresSong5" = "Automatically download songs with lyrics and music";
+"Intro-featuresSong6" = "Instruments individually mixable";
+"Intro-featuresSong7" = "Google agenda integration";
+
+"Intro-featuresBeam1" = "unlimited songs";
+"Intro-featuresBeam2" = "save themes and tags";
+"Intro-featuresBeam3" = "Automatic generation of slides for bible verses";
+"Intro-featuresBeam4" = "Auto-generating song services";
+"Intro-featuresBeam5" = "Google agenda integration";
+
+"Intro-cancelMonthly" = "(Monthly terminable)";
+"Intro-subscribe" = "Subscribe";
+"Intro-googleSignIn" = "Sign-in";
+"Intro-googleSignInDescription" = "You can log in with your google account. Did you already create an account at Churchbeam?";
+"Intro-newAccountOnGoogleAccount" = "Click on the button below to create a new account based on your Google account.";
+"Intro-loginWithChurchGoogle" = "Churchbeam could use your Google calendar to automatically display your church activities before or after the service starts. For that reason, it is useful to log in with your church's Google account (or to create it at Google first). You can also log in with your Apple account, in which case you still have to log in separately with your Google account to retrieve your church activities from your Google calendar.";
+
+"Intro-calendarIdExplain" = "Enter your Google calendar ID below. ChurchBeam can then automatically show your church activities in a slider.";
+"Intro-calendarIdFindId" = "Where do I find this?";
+"Intro-thisIsYourAdminCode" = "This is your admin code. Keep it safe. This is for accessing your admin account when you want to install the app again.";
+"Intro-adminEnterCode" = "If you want to log in as admin, enter your admin code below. Otherwise click %@";
+"Intro-adminCodeWrong" = "The code entered is not correct.";
+"Intro-couldNotFindUser" = "Could not find a user. Reinstall the app and try again.";
+"Intro-seeExample" = "(See example below).";
+
+"Intro-explainCalendarId" = "To automatically display your church activities, this app wants to connect to your calendar. This requires a calendar ID. To find it you have to go through the following steps. To see your calendar, visit calendar.google.com in a web browser. Log in with your church gmail account first. On the left you will find your agendas. %@";
+"Intro-hoverForDots" = "Hold the mouse over the calendar you want to share so that an option (3 dots) icon appears on the right. Click on this. %@";
+"Intro-goToSettingsAndSharing" = "Then click Settings and Sharing. %@";
+"Intro-goToIntegrate" = "In the menu on the left click on Integrate Calendar. %@";
+"Intro-topShowsCalendarId" = "At the top of this article is your Calendar-ID. %@";
+"Intro-titleFindCalendarId" = "Find Calendar-ID";
+"Intro-errorLoginApple" = "Something went wrong logging in with Apple: %@";
+
+"SongService-title" = "Song service";
+"SongService-titleTableClusters" = "Songs";
+"SongService-titleTableSheets" = "Sheets";
+"SongService-warnCannotPlay" = "It seems that another user started the song service with this account. Two song services cannot be active at the same time. You can start the song service from the admin account.";
+
+"NewSongService-title" = "New song service";
+"NewSongService-selectedSongsDescription" = "Below are the selected songs for the song service";
+"NewSongService-songsDescription" = "Search and select the songs for the song service below";
+"NewSongService-noSelectedSongs" = "No songs selected";
+"NewSongService-notEnoughSongsForTagSection" = "Not enough songs in this category.";
+"NewSongService-notEnoughSongsForTagSectionAlertBody" = "There are not enough songs for each category. Create songs for the category that currently has no songs. Click %@ to exit without selected songs or %@ to stay here.";
+
+"NewSongService-shareSongServiceText" = "Song service %@";
+"NewSongService-morning" = "morning";
+"NewSongService-evening" = "evening";
+
+"NewSongService-popupGenerateSongServiceTitle" = "Generate (song) service automatically";
+"NewSongService-popupGenerateSongServiceDescription" = "You can automatically generate your (song) service by shaking your phone on this screen. For this you first have to create a service structure. This works as follows:\n\nFirst create labels. To do this, go to the \"More\" tab and create labels. Labels are used to label collection (song service numbers and more).\n\nGo to \"Song Service Settings\" under the \"More\" tab. Create your service structure. Here you set which sections your service consists of, such as quick songs, worship songs, collection songs or songs at a call or end of the service, prayer requests or Bible texts with the sermon, etc. In other words, everything you want to have slides with. One or more labels then fall under these sections. You can tag your songs so that they will automatically be placed in this section. So a collection has labels and labels fall under a section of your service.\n\nAfter you have determined the order you need to label the collections (song service songs) under the \"Collections\" tab. Give your collections one or more labels and when you shake your mobile on this screen the app makes a (song) service with your sections and automatically takes the songs that belong to the labels of the relevant section.\n\nTry it now !";
+"NewSongService-dontShowAgain" = "Don't show again";
+"NewSongService-showMeLater" = "Show later";
+"NewSongService-swipeToDeleteHint" = "Delete by swiping left";
+"NewSongService-shakeToGenerate" = "Shake your device to generate a service";
+"NewSongService-shareOptionsTitle" = "What would you like to share?";
+
+"NewSongService-shareOptionTitles" = "Only the titles";
+"NewSongService-shareOptionTitlesWithSections" = "Only the sections and titles";
+"NewSongService-shareOptionLyrics" = "Titles and text";
+"NewSongService-shareOptionLyricsWithSections" = "Sections, titles and text";
+"NewSongService-shareSingFrom" = "Singing starts at: ";
+
+"Songs-title" = "Collections";
+"Songs-description" = "Search all songs or collections";
+"Songs-SearchSongPlaceholder" = "Search collections";
+"Songs-deleteTitle" = "Delete %@";
+"Songs-deleteBody" = "Are you sure you want to delete %@? You can get deleted songs back under the tab \"Deleted songs\".";
+"Songs-deleteMusicTitle" = "Delete music";
+"Songs-deleteMusicBody" = "Are you sure you want to delete the music from %@? You can get deleted music back by clicking the download button of this song.";
+"Songs-errorNoUserFound" = "We were unable to confirm your identity. Log in again under settings.";
+
+"NewSong-title" = "Title";
+"NewSong-songTitle" = "Title";
+"NewSong-headerTheme" = "Select the theme here";
+"NewSong-headerLyrics" = "Enter text for the song here";
+"NewSong-noTitleForSheet" = "No title found";
+"NewSong-sheet" = "Sheet ";
+"NewSong-searchThemePlaceHolder" = "Search theme";
+"NewSong-errorTitleNoTheme" = "Error";
+"NewSong-erorrMessageNoTheme" = "Select a theme";
+"NewSong-segmentTitleText" = "Text";
+"NewSong-segmentTitleSheets" = "Sheets";
+"NewSong-generateSheetsButton" = "Generate sheets";
+"NewSong-titlePlaceholder" = "Enter a title here";
+"NewSong-addSheet" = "Add sheet";
+"NewSong-changeLyrics" = "Change song service";
+"NewSong-newLyrics" = "New song service";
+"NewSong-changeTitleTime" = "Change title & length of time";
+
+"Lyrics-titleBibleText" = "Enter scriptures";
+"Lyrics-titleLyrics" = "Enter text";
+"Lyrics-placeholderBibleText" = "Genesis 1:1-16\nIn the beginning God created the heavens and the earth. 2The earth was without form, and void; and darkness was on the face of the deep. And the Spirit of God was hovering over the face of the waters.\n\nJohn 3:16\nFor God so loved the world that He gave His only begotten Son, that whoever believes in Him should not perish but have everlasting life.";
+"Lyrics-placeholderLyrics" = "Write or paste the lyrics of the song here";
+
+"Themes-title" = "Themes";
+"Themes-searchBarPlaceholderText" = "Search themes";
+
+"Tags-title" = "Tags";
+"Tags-placeholder" = "Search tags";
+"Tags-newTag" = "New tag";
+"Tags-name" = "Name";
+"Tags-deletedClusters" = "Deleted items";
+
+
+"CustomSheets-title" = "Change sheets";
+"CustomSheets-namePlaceHolder" = "Enter title (for searching)";
+"CustomSheets-errorTitle" = "Error";
+"CustomSheets-errorNoName" = "No title entered";
+"CustomSheets-segmentInput" = "Input";
+"CustomSheets-segmentCheck" = "Check";
+"CustomSheets-segmentSheets" = "Sheets";
+"CustomSheets-segmentChange" = "Change";
+"CustomSheets-descriptionName" = "Group name";
+"CustomSheets-descriptionTime" = "Play sheets every x seconds";
+"CustomSheets-descriptionTimeAdd" = "0: don't play automatically";
+"CustomSheets-tableViewHeaderGeneral" = "General";
+"CustomSheets-tableViewHeaderSheets" = "Sheets";
+"CustomSheets-titleMenu" = "Adding sheets";
+"CustomSheets-errorSelectTheme" = "Select a theme";
+"CustomSheets-errorLoseOtherSheets" = "You have other sheets between the bible texts. These are lost when you modify the bible texts and have them regenerated";
+"CustomSheets-universalSongEditErrorTitle" = "Couldn't edit text";
+"CustomSheets-universalSongEditErrorMessage" = "This track has music and has a playback time with each slide. Adjusting the NUMBER of slides causes the times to be incorrect. Your changes have been undone.";
+
+"SongServiceManagement-title" = "Manage song service";
+"SongServiceManagement-numberOfSections" = "Number of sections";
+"SongServiceManagement-section" = "Section";
+"SongServiceManagement-nameSection" = "Name section";
+"SongServiceManagement-addTags" = "Add tags";
+"SongServiceManagement-name" = "Name";
+"SongServiceManagement-numberOfSongs" = "Number of songs: ";
+
+"Settings-title" = "Settings";
+"Settings-descriptionGoogleSub" = "Login to retrieve activities";
+"Settings-descriptionCalendarId" = "Google calendar ID";
+"Settings-descriptionInstructions" = "Manual";
+"Settings-instructions" = "To implement Google calendar activities in the app it is necessary to go through the following steps: \n\nFirst, the ID of the calendar is needed. You can find a manual for this on Google by searching for 'Finding Your Google Calendar ID'. The ID must then be entered before the activities of that agenda can be retrieved. \n\n Then go to https://console.developers.google.com/apis/api/calendar/overview. Login with the account for which you also want to show the activities in the app. Go to Dashboard and then click on 'Enable APIs and Services'. Search for \"Google Calendar API\". Click that and then click Enable. \n\n It may take a few minutes for the calendar to be available to the app.";
+"Settings-descriptionGoogle" = "Google account";
+"Settings-errorTitleGoogleAuth" = "Error at authentication";
+"Settings-googleSignOutButton" = "Log-out";
+"Settings-sheetTimeOffsetError" = "The entered value cannot be used.";
+"Settings-sheetTimeOffset" = "Correction of the time when the sheets move.";
+"Settings-sheetTimeOffsetPlaceholder" = "Seconds like 0.34 of 2";
+"Settings-sectionSongServiceSettings" = "Song service settings";
+"Settings-sectionGmailAccount" = "Gmail account";
+"Settings-sectionCalendarId" = "Google calendar ID";
+"Settings-calendarIdPlaceHolder" = "Google calendar id";
+"Settings-appversion" = "Version: ";
+
+"NewTheme-title" = "New theme";
+"NewTheme-descriptionTitle" = "Name new theme";
+"NewTheme-descriptionTitlePlaceholder" = "Name";
+"NewTheme-descriptionAsTheme" = "As theme";
+"NewTheme-descriptionTitleBackgroundColor" = "Background color";
+"NewTheme-pageDescription" = "Add new theme";
+"NewTheme-descriptionBackgroundColor" = "Background color";
+"NewTheme-descriptionHasEmptySheet" = "Show empty sheet";
+"NewTheme-descriptionHasEmptySheetDetail" = "At the end or beginning of a song, show an empty slide with the theme background";
+"NewTheme-descriptionAllTitle" = "Title on every page";
+"NewTheme-descriptionPositionEmptySheet" = "Show empty slide at the beginning\n(off is show at the end)";
+"NewTheme-descriptionLastBeamerResolution" = "Last know beamer resolution:\n";
+"NewTheme-descriptionBackgroundTransparency" = "Transparancy background";
+"NewTheme-descriptionDisplayTime" = "Show time";
+"NewTheme-descriptionDarkBlurTitleBackground" = "Blur background";
+"NewTheme-descriptionAlignment" = "Alignment";
+"NewTheme-errorTitle" = "Error";
+"NewTheme-errorMessage" = "Name new theme cannot be empty";
+"NewTheme-alignLeft" = "Left";
+"NewTheme-alignCenter" = "Centered";
+"NewTheme-alignRight" = "Right";
+"NewTheme-sampleTitle" = "Title";
+"NewTheme-sampleLyrics" = "Lorem Ipsum is just a sample text from the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text since the 16th century.";
+"NewTheme-sectionGeneral" = "General";
+"NewTheme-sectionInput" = "Input";
+"NewTheme-sectionTitle" = "Title";
+"NewTheme-sectionLyrics" = "Lyrics";
+"NewTheme-sectionBackground" = "Background";
+
+"NewTheme-fontFamilyDescription" = "Font family";
+"NewTheme-fontSizeDescription" = "Font size";
+"NewTheme-borderSizeDescription" = "Border size";
+"NewTheme-borderColor" = "Border color";
+"NewTheme-textColor" = "Text color";
+"NewTheme-underlined" = "Underlined";
+"NewTheme-bold" = "Bold";
+"NewTheme-italic" = "Italic";
+"NewTheme-backgroundImage" = "Background image";
+"NewTheme-buttonBackgroundImagePick" = "Choose image";
+"NewTheme-buttonBackgroundImageChange" = "Change image";
+
+"Sheet-emptySheetTitle" = "Empty sheet";
+
+"SheetsMenu-sectionSongs" = "Songs";
+"SheetsMenu-sectionOther" = "Other sheets";
+"SheetsMenu-sectionBibleStudy" = "Bible study";
+"SheetsMenu-lyrics" = "Lyrics";
+"SheetsMenu-sheetTitleText" = "Sheet with title and text";
+"SheetsMenu-sheetTitleImage" = "Sheet with title and image";
+"SheetsMenu-sheetPastors" = "Sheet prayer";
+"SheetsMenu-sheetSplit" = "Sheet canon (split)";
+"SheetsMenu-sheetEmpty" = "Empty sheet";
+"SheetsMenu-bibleStudyGen" = "Bible study sheet generator";
+"SheetsMenu-sheetActivity" = "Google activity sheet";
+
+"SheetPickerMenu-pickSong" = "New song";
+"SheetPickerMenu-pickCustom" = "Custom sheets";
+"SheetPickerMenu-whichSheet" = "Which sheet would you like to create?";
+
+"More-title" = "More";
+
+"Google-title" = "Google calendar";
+
+"BibleStudy-title" = "Bible study";
+
+"NewSheetTitleImage-title" = "Image options";
+"NewSheetTitleImage-descriptionTitle" = "Title";
+"NewSheetTitleImage-descriptionTextLeft" = "Text left";
+"NewSheetTitleImage-descriptionTextRight" = "Text right";
+"NewSheetTitleImage-descriptionContent" = "Text";
+"NewSheetTitleImage-descriptionImage" = "Image";
+"NewSheetTitleImage-descriptionImageHasBorder" = "Image has border ";
+"NewSheetTitleImage-descriptionImageBorderSize" = "Border size";
+"NewSheetTitleImage-descriptionImageBorderColor" = "Border color";
+"NewSheetTitleImage-descriptionImageContentMode" = "Image position";
+"NewSheetTitleImage-placeholderContent" = "Text";
+
+"NewPastorsSheet-title" = "Pastor John and Jessie Doe";
+"NewPastorsSheet-content" = "Mexico city";
+"NewPastorsSheet-photoDescription" = "Choose a square photo where the faces are in the middle.";
+
+"ActivitySheet-titleThisWeek" = "This week";
+"ActivitySheet-titleNextWeek" = "Upcoming week";
+"ActivitySheet-titleUpcomingTime" = "Upcoming time";
+"ActivitySheet-descriptionNoActivities" = "No activities scheduled";
+"ActivitySheet-previewDescription" = "Activity description from google calendar";
+"ActivitySheet-dayActivity" = "Entire day";
+
+"Import-title" = "Import bible";
+"Import-description" = "Add the bible test you want to import below";
+
+"UploadUniversalSong-previewButtonTitle" = "Preview";
+"UploadUniversalSong-title" = "Upload universal song";
+"UploadUniversalSong-selecteerSheet" = "Create/edit sheets";
+"UploadUniversalSong-showPreview" = "Show preview";
+"UploadUniversalSong-noSheets" = " (No sheets yet)";
+"UploadUniversalSong-titlePlaceholder" = "Not for song service song";
+"UploadUniversalSong-noThemeWarning" = "No theme available. Create a theme first.";
+"UploadUniversalSong-new" = "New";
+"UploadUniversalSong-selectChurch" = "Select a church";
+"UploadUniversalSong-startTime" = "Start time";
+"UploadUniversalSong-defaultTheme" = "Basic theme";
+"UploadUniversalSong-shareSheetTimes" = "Share sheet times";
+
+"AboutController-title" = "Contact info";
+"AboutController-sectionAbout" = "About the developer";
+"AboutController-infoText" = "Hey, my name is Leo van der Zee. For a number of years I developed this app next to my job. My vision is to improve the services of small churches so that they can:\n- experience a greater degree of worship so that there will be a magnification of the work of God in the heart.\n- better match the expectations visitors have of today\n- increasing the involvement of the church\n- giving the pastor more space to engage with people\n\nHopefully the app will help you and the church further.";
+"AboutController-sectionStartContact" = "Contact me";
+"AboutController-contactInfo" = "If you have any questions or problems, please feel free to contact us.";
+"AboutController-contact" = "Contact me";
+"AboutController-errorNoMail" = "You have not set up an email account on your phone. Set up an email account under iPhone settings.";
+
+
+"SingInGoogleController-title" = "Sign-in calendar";
+"SingInGoogleController-infoText" = "To retrieve the activities from your church calendar, you need to log in to Google calendar. Click below to sign in (again) at Google.";
+
+"RequesterErrors-failedSavingImageLocallyBeforeSubmit" = "Could not save media to device for %@: %@";
+"RequesterErrors-failedDownloadingMedia" = "Could not download media for %@: %@";
+"RequesterErrors-failedUploadingMedia" = "Could not upload media for %@: %@";
+"RequesterErrors-wrongMethodForSubmitting" = "Incorrect method for submitting request for %@";
+"RequesterErrors-unAuthorizedNoUser" = "Not authorized to do this. Couldn't find a user for %@";
+"RequesterErrors-allreadyHasAnUser" = "Error: There is already a user for %@";
+"RequesterErrors-hasNoThemeForUniversalCluster" = "No theme found for universal song for %@";
+"RequesterErrors-hasNoChurchForUniversalCluster" = "No church found for universal song for %@";
+"RequesterErrors-failedFetchingSavingCoreData" = "Error while saving data for %@, error: %@";
+"RequesterErrors-failedDecoding" = "Error while decoding data: %@";
+"RequesterErrors-failedEncoding" = "Error while encoding data: %@";
+"RequesterErrors-errorOnFireBase" = "Error at Google cloud for %@, error: %@";
+"RequesterErrors-errorSavingTempImage" = "Error in saving image locally before sending; %@, error: %@";
+"RequesterErrors-notConnectedToNetwork" = "No connection to the internet";
+"RequesterErrors-unknown" = "Unknown error for %@, error: %@";
+
+"IAPErrors-paymentNotAllowed" = "You are not authorized to make payments";
+"IAPErrors-busyPurchasing" = "There is already a transaction in progress.";
+"IAPErrors-unableToReadReceipt" = "Could not read transaction: %@";
+"IAPErrors-unableToGetReceipt" = "Could not retrieve transaction: %@";
+"IAPErrors-unableToPurchage" = "Error processing your purchase: %@";
+"IAPErrors-unableToReachStore" = "Error in app store data: %@";

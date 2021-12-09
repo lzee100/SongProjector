@@ -37,8 +37,8 @@ class SheetTest: UIViewController {
 		theme.titleAlignmentNumber = 1
 		theme.contentAlignmentNumber = 1
 		
-		sheet.title = AppText.newPastorsSheet.title
-		sheet.content = AppText.newPastorsSheet.content
+		sheet.title = AppText.NewPastorsSheet.title
+		sheet.content = AppText.NewPastorsSheet.content
 
 		let view = SheetPastors.createWith(frame: previewView.bounds, cluster: nil, sheet: sheet, theme: theme, isPreview: false, toExternalDisplay: true)
 

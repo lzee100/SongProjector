@@ -49,10 +49,6 @@ class ThemesIphoneController: ChurchBeamViewController, UIGestureRecognizerDeleg
         
     }
     
-    func hasNewTheme() {
-        update()
-    }
-    
     func didCreate(sheet: VSheet) {
     }
     

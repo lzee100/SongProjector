@@ -50,8 +50,8 @@ class IntroGoogleSigninController: ChurchBeamViewController, UITableViewDelegate
 		view.backgroundColor = themeWhiteBlackBackground
 		titleLabel.textColor = .blackColor
 		descriptionLabel.textColor = .blackColor
-		titleLabel.text = AppText.Intro.GoogleSignIn
-		descriptionLabel.text = AppText.Intro.GoogleSignInDescription
+		titleLabel.text = AppText.Intro.googleSignIn
+		descriptionLabel.text = AppText.Intro.googleSignInDescription
 		tableView.register(cell: GoogleCell.identifier)
 	}
 	
@@ -70,9 +70,9 @@ class IntroGoogleSigninController: ChurchBeamViewController, UITableViewDelegate
 		let cell = tableView.dequeueReusableCell(withIdentifier: row.identifier)!
 		if let cell = cell as? IntroGoogleSigninCell {
 			if row == .SignInGoogle {
-				cell.descriptionLabel.text = AppText.Intro.ClickOnButtonToLogin
+				cell.descriptionLabel.text = AppText.Intro.clickOnButtonToLogin
 			} else {
-				cell.descriptionLabel.text = AppText.Intro.NewAccountOnGoogleAccount
+				cell.descriptionLabel.text = AppText.Intro.newAccountOnGoogleAccount
 			}
 		}
 		return cell

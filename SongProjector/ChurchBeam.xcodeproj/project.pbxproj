@@ -79,8 +79,6 @@
 		E32DB8E02230283A00277C45 /* ContractLedger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32DB8DF2230283A00277C45 /* ContractLedger.swift */; };
 		E32DB8E2223460D800277C45 /* IntroStartingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32DB8E1223460D800277C45 /* IntroStartingController.swift */; };
 		E32DB8E4223468D500277C45 /* InviteCodeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32DB8E3223468D500277C45 /* InviteCodeController.swift */; };
-		E32DB8E622347AF000277C45 /* UsersController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32DB8E522347AF000277C45 /* UsersController.swift */; };
-		E32DB8E82235B90E00277C45 /* AddNewUserController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32DB8E72235B90E00277C45 /* AddNewUserController.swift */; };
 		E330A036253118DD0014DB44 /* BasicHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E330A035253118DD0014DB44 /* BasicHeaderView.swift */; };
 		E330A039253119180014DB44 /* BasicHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E330A038253119170014DB44 /* BasicHeaderView.xib */; };
 		E3314B6620077DD100F470C0 /* SheetExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3314B6520077DD100F470C0 /* SheetExtensions.swift */; };
@@ -284,7 +282,7 @@
 		E3E78B822519401100AF9284 /* ClusterOrComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3E78B812519401100AF9284 /* ClusterOrComment.swift */; };
 		E3E78B842519409F00AF9284 /* TempClusterModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3E78B832519409F00AF9284 /* TempClusterModel.swift */; };
 		E3E78B922520825E00AF9284 /* SheetTypesMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3E78B912520825E00AF9284 /* SheetTypesMenu.swift */; };
-		E3EC4E12275EAA0B00D39A59 /* Localization.strings in Resources */ = {isa = PBXBuildFile; fileRef = E3EC4E14275EAA0B00D39A59 /* Localization.strings */; };
+		E3EC4E1E275EAFC500D39A59 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = E3EC4E20275EAFC500D39A59 /* Localizable.strings */; };
 		E3EED5002494E21E00AE47BC /* UniversalClusterUpdatedAtSubmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3EED4FF2494E21E00AE47BC /* UniversalClusterUpdatedAtSubmitter.swift */; };
 		E3F201D6201E04FC002FF06E /* FetcherTimeInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F201D5201E04FC002FF06E /* FetcherTimeInterval.swift */; };
 		E3F201D8201E0685002FF06E /* SheetActivitiesView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3F201D7201E0685002FF06E /* SheetActivitiesView.xib */; };
@@ -400,8 +398,6 @@
 		E32DB8DF2230283A00277C45 /* ContractLedger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContractLedger.swift; sourceTree = "<group>"; };
 		E32DB8E1223460D800277C45 /* IntroStartingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroStartingController.swift; sourceTree = "<group>"; };
 		E32DB8E3223468D500277C45 /* InviteCodeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteCodeController.swift; sourceTree = "<group>"; };
-		E32DB8E522347AF000277C45 /* UsersController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersController.swift; sourceTree = "<group>"; };
-		E32DB8E72235B90E00277C45 /* AddNewUserController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewUserController.swift; sourceTree = "<group>"; };
 		E330A035253118DD0014DB44 /* BasicHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicHeaderView.swift; sourceTree = "<group>"; };
 		E330A038253119170014DB44 /* BasicHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BasicHeaderView.xib; sourceTree = "<group>"; };
 		E3314B6520077DD100F470C0 /* SheetExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetExtensions.swift; sourceTree = "<group>"; };
@@ -610,10 +606,10 @@
 		E3E78B812519401100AF9284 /* ClusterOrComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClusterOrComment.swift; sourceTree = "<group>"; };
 		E3E78B832519409F00AF9284 /* TempClusterModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempClusterModel.swift; sourceTree = "<group>"; };
 		E3E78B912520825E00AF9284 /* SheetTypesMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetTypesMenu.swift; sourceTree = "<group>"; };
-		E3EC4E13275EAA0B00D39A59 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localization.strings; sourceTree = "<group>"; };
-		E3EC4E15275EAAFD00D39A59 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Main.strings; sourceTree = "<group>"; };
-		E3EC4E16275EAAFE00D39A59 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
-		E3EC4E17275EAAFE00D39A59 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Localization.strings; sourceTree = "<group>"; };
+		E3EC4E1C275EAF7B00D39A59 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Main.strings; sourceTree = "<group>"; };
+		E3EC4E1D275EAF7C00D39A59 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		E3EC4E1F275EAFC500D39A59 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Localizable.strings; sourceTree = "<group>"; };
+		E3EC4E21275EAFFB00D39A59 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		E3EED4FF2494E21E00AE47BC /* UniversalClusterUpdatedAtSubmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalClusterUpdatedAtSubmitter.swift; sourceTree = "<group>"; };
 		E3F201D5201E04FC002FF06E /* FetcherTimeInterval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetcherTimeInterval.swift; sourceTree = "<group>"; };
 		E3F201D7201E0685002FF06E /* SheetActivitiesView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SheetActivitiesView.xib; sourceTree = "<group>"; };
@@ -707,6 +703,7 @@
 		E311712F1FE59DA3008D9D51 /* SongProjector */ = {
 			isa = PBXGroup;
 			children = (
+				E3EC4E20275EAFC500D39A59 /* Localizable.strings */,
 				E3896A3C21E3F56A008CB5A5 /* SongProjector.entitlements */,
 				E31F0B7020F5029500C22FD1 /* Pio-Sebastiaan-en-Marilou.jpg */,
 				E33268BD2022FCD2002CDA7C /* SoundPlayer.swift */,
@@ -791,8 +788,6 @@
 				E35B63C2221A8F22006C50AB /* IntroGoogleSigninController.swift */,
 				E32DB8E1223460D800277C45 /* IntroStartingController.swift */,
 				E32DB8E3223468D500277C45 /* InviteCodeController.swift */,
-				E32DB8E522347AF000277C45 /* UsersController.swift */,
-				E32DB8E72235B90E00277C45 /* AddNewUserController.swift */,
 				E30B8EC622497C2600F121D9 /* TagsController.swift */,
 				E30B8ECD224BD80800F121D9 /* WizzardSectionsController.swift */,
 				E30B8ECF224BD82E00F121D9 /* WizzardSectionTagsController.swift */,
@@ -851,7 +846,6 @@
 		E31171571FE5A09A008D9D51 /* Global */ = {
 			isa = PBXGroup;
 			children = (
-				E3EC4E14275EAA0B00D39A59 /* Localization.strings */,
 				E3896A3421E3F0E3008CB5A5 /* AccountStore.swift */,
 				E31171301FE59DA3008D9D51 /* AppDelegate.swift */,
 				E3D12AB22019BFEB00BD060C /* BridgingHeader.h */,
@@ -1230,7 +1224,6 @@
 				E3635A09217CAEC5002758D5 /* MixerAnimationView.xib in Resources */,
 				E384E07B23CF18190017B73F /* SongsUploadSheetCell.xib in Resources */,
 				E3F201E2201E2011002FF06E /* ActivityHeader.xib in Resources */,
-				E3EC4E12275EAA0B00D39A59 /* Localization.strings in Resources */,
 				E3C63DD5253E1DE5006AB94B /* MenuCell.xib in Resources */,
 				E33746AB24A89DC900F44852 /* Colors.xcassets in Resources */,
 				E38347671FFA5099008AE69D /* SheetTitleContent.xib in Resources */,
@@ -1254,6 +1247,7 @@
 				E3BDB3E32554B37900D564BE /* FeatureCell.xib in Resources */,
 				E3F421A51FFE457500C332B0 /* LabelDoubleSwitchCell.xib in Resources */,
 				E3D583CC23EC2035007584D7 /* BasicBaseCell.xib in Resources */,
+				E3EC4E1E275EAFC500D39A59 /* Localizable.strings in Resources */,
 				E311717A1FE5A1A0008D9D51 /* AddButtonCell.xib in Resources */,
 				E384E07523CEF09A0017B73F /* GoogleSignedInCell.xib in Resources */,
 				E31F0B7120F5029500C22FD1 /* Pio-Sebastiaan-en-Marilou.jpg in Resources */,
@@ -1415,7 +1409,6 @@
 				E3FD4D98249272A200DFD176 /* ColorPickerViewController.swift in Sources */,
 				E36E76DA21EF5338002E20EF /* IntExtensions.swift in Sources */,
 				E399EA87202F574600E8CE0E /* NewSongMenuController.swift in Sources */,
-				E32DB8E82235B90E00277C45 /* AddNewUserController.swift in Sources */,
 				E309DCFA1FF4954100C3D135 /* ThemeExtensions.swift in Sources */,
 				E3CB815122F82AAE00F1C240 /* Device.swift in Sources */,
 				E3B1EAC124B4948400304A2D /* UICollectionViewExtensions.swift in Sources */,
@@ -1622,7 +1615,6 @@
 				E344A0B624F67514005588CE /* CountDownView.swift in Sources */,
 				E38347691FFA512D008AE69D /* SheetTitleContent.swift in Sources */,
 				E3BC6BBA1FFEBECA0039E0CA /* HeaderView.swift in Sources */,
-				E32DB8E622347AF000277C45 /* UsersController.swift in Sources */,
 				E30B8ECE224BD80800F121D9 /* WizzardSectionsController.swift in Sources */,
 				E3896A3221E3F04B008CB5A5 /* GlobalDateFormatter.swift in Sources */,
 			);
@@ -1635,7 +1627,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				E31171351FE59DA3008D9D51 /* Base */,
-				E3EC4E15275EAAFD00D39A59 /* nl */,
+				E3EC4E1C275EAF7B00D39A59 /* nl */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -1644,18 +1636,18 @@
 			isa = PBXVariantGroup;
 			children = (
 				E311713D1FE59DA3008D9D51 /* Base */,
-				E3EC4E16275EAAFE00D39A59 /* nl */,
+				E3EC4E1D275EAF7C00D39A59 /* nl */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
-		E3EC4E14275EAA0B00D39A59 /* Localization.strings */ = {
+		E3EC4E20275EAFC500D39A59 /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				E3EC4E13275EAA0B00D39A59 /* en */,
-				E3EC4E17275EAAFE00D39A59 /* nl */,
+				E3EC4E1F275EAFC500D39A59 /* nl */,
+				E3EC4E21275EAFFB00D39A59 /* en */,
 			);
-			name = Localization.strings;
+			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -1785,7 +1777,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = SongProjector/SongProjector.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 4RH34LGMLA;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -1808,7 +1800,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = SongProjector/SongProjector.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = 4RH34LGMLA;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = SongProjector/Info.plist;

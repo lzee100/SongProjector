@@ -17,8 +17,8 @@ class IntroPageController1: PageController {
 	
 	override func viewDidLoad() {
         super.viewDidLoad()
-		titleLabel.text = AppText.Intro.IntroHalloTitle
-		ContentLabel.text = AppText.Intro.IntroHalloContent
+		titleLabel.text = AppText.Intro.introHalloTitle
+		ContentLabel.text = AppText.Intro.introHalloContent
 		titleLabel.textColor = .whiteColor
 		ContentLabel.textColor = .whiteColor
 		view.backgroundColor = .blackColor
