@@ -25,7 +25,7 @@
 "Actions-next" = "Next";
 "Actions-save" = "Save";
 "Actions-ok" = "Ok";
-"Actions-change" = "Change";
+"Actions-edit" = "Edit";
 "Actions-continue" = "Continue";
 "Actions-send" = "Send";
 "Actions-selectImage" = "Select image";
@@ -107,6 +107,7 @@
 "Songs-title" = "Collections";
 "Songs-description" = "Search all songs or collections";
 "Songs-SearchSongPlaceholder" = "Search collections";
+"Songs-NewTag" = "New";
 "Songs-deleteTitle" = "Delete %@";
 "Songs-deleteBody" = "Are you sure you want to delete %@? You can get deleted items back under the tab \"Deleted items\".";
 "Songs-deleteMusicTitle" = "Delete music";
@@ -211,8 +212,8 @@
 "NewTheme-alignLeft" = "Left";
 "NewTheme-alignCenter" = "Centered";
 "NewTheme-alignRight" = "Right";
-"NewTheme-sampleTitle" = "Title";
-"NewTheme-sampleLyrics" = "Lorem Ipsum is just a sample text from the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text since the 16th century.";
+"NewTheme-sampleTitle" = "Genesis 1:1-16";
+"NewTheme-sampleLyrics" = "In the beginning God created the heavens and the earth. 2The earth was without form, and void; and darkness was on the face of the deep. And the Spirit of God was hovering over the face of the waters.";
 "NewTheme-sectionGeneral" = "General";
 "NewTheme-sectionInput" = "Input";
 "NewTheme-sectionTitle" = "Title";

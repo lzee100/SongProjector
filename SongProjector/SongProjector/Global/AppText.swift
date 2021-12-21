@@ -155,6 +155,7 @@ class AppText: NSObject {
 		static let title = NSLocalizedString("Songs-title", comment: "")
 		static let description = NSLocalizedString("Songs-description", comment: "")
 		static let SearchSongPlaceholder = NSLocalizedString("Songs-SearchSongPlaceholder", comment: "")
+        static let NewTag = NSLocalizedString("Songs-NewTag", comment: "")
 		static let menuTitle = NSLocalizedString("Songs-menuTitle", comment: "")
         static func deleteTitle(songName: String) -> String {
             return String(format: NSLocalizedString("Songs-deleteTitle", comment: ""), songName)

@@ -25,7 +25,7 @@
 "Actions-next" = "Volgende";
 "Actions-save" = "Sla op";
 "Actions-ok" = "Ok";
-"Actions-change" = "Wijzig";
+"Actions-edit" = "Wijzig";
 "Actions-continue" = "Doorgaan";
 "Actions-send" = "Verstuur";
 "Actions-selectImage" = "Selecteer afbeelding";
@@ -109,6 +109,7 @@
 "Songs-title" = "Collecties";
 "Songs-description" = "Doorzoek hier alle liedjes of collecties";
 "Songs-SearchSongPlaceholder" = "Zoek collecties";
+"Songs-NewTag" = "Nieuw";
 "Songs-deleteTitle" = "Verwijder %@";
 "Songs-deleteBody" = "Weet je zeker dat je %@ wilt verwijderen? Verwijderde items kan je eventueel weer terug terug krijgen onder het tabje \"Verwijderde items\".";
 "Songs-deleteMusicTitle" = "Verwijder muziek";
@@ -213,8 +214,8 @@
 "NewTheme-alignLeft" = "Links";
 "NewTheme-alignCenter" = "Midden";
 "NewTheme-alignRight" = "Rechts";
-"NewTheme-sampleTitle" = "Titel";
-"NewTheme-sampleLyrics" = "Lorem Ipsum is slechts een proeftekst uit het drukkerij- en zetterijwezen. Lorem Ipsum is de standaard proeftekst in deze bedrijfstak sinds de 16e eeuw.";
+"NewTheme-sampleTitle" = "Genesis 1:1-16";
+"NewTheme-sampleLyrics" = "In het begin maakte God de hemelen en de aarde. 2De aarde was woest en leeg en over de watermassa lag een diepe duisternis. Maar de Geest van God zweefde boven de watermassa.";
 "NewTheme-sectionGeneral" = "Algemeen";
 "NewTheme-sectionInput" = "Invoer";
 "NewTheme-sectionTitle" = "Titel";

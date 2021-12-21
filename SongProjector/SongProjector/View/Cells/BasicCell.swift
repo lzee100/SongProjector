@@ -69,7 +69,7 @@ class BasicCell: UITableViewCell {
     func setup(data: Any? = nil, title: String?, textColor: UIColor? = nil) {
         self.data = data
         self.customTextColor = textColor
-        self.title.text = title
+        self.title.text = title == "Nieuw" ? AppText.Songs.NewTag : title
         update()
     }
     

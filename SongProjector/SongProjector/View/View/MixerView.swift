@@ -53,10 +53,11 @@ class MixerView: UIView {
 		let volumeView = MPVolumeView(frame: airplaySliderContainer.bounds)
 		airplaySliderContainer.addSubview(volumeView)
 	
-        pianoImageView.tintColor = .blackColor
-		guitarImageView.tintColor = .blackColor
-		bassGuitarImageView.tintColor = .blackColor
-		drumsImageView.tintColor = .blackColor
+        let color: UIColor = UIDevice.current.userInterfaceIdiom == .pad ? .white : .black
+        pianoImageView.tintColor = color
+		guitarImageView.tintColor = color
+		bassGuitarImageView.tintColor = color
+		drumsImageView.tintColor = color
         
         pianoControl.tintColor = .softBlueGreyBright
         guitarControl.tintColor = .softBlueGreyBright

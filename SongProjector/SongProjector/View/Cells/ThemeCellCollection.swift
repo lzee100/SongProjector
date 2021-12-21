@@ -22,7 +22,7 @@ class ThemeCellCollection: UICollectionViewCell {
 	private var themeName: String?
 	
 	func setup(themeName: String) {
-		self.themeName = themeName
+        self.themeName = themeName == "Nieuw" ? AppText.Songs.NewTag : themeName
 		update()
 	}
 	
