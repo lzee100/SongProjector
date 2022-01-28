@@ -81,6 +81,13 @@ class TempClustersModel {
                     return nil
                 }
             })
+            var position: Int16 = 0
+            sectionedClusterOrComment.forEach { section in
+                section.forEach { coc in
+                    coc.cluster?.position = position
+                    position += 1
+                }
+            }
             return TempClustersModel(songServiceSettings: songServiceSettings, sectionedClusterIdsWithComments: sectionedClusterOrComment)
         } else if let clusterOrComments = defaults.object(forKey: Constants.clusterOrComment) as? [String] {
             return TempClustersModel(clusters:
@@ -107,6 +114,7 @@ class TempClustersModel {
     
     func refresh() {
         sectionedClusterOrComment.flatMap({ $0 }).forEach({ $0.refresh() })
+        updatePositions()
     }
     
     func contains(_ cOrC: ClusterOrComment) -> Bool {
@@ -217,9 +225,11 @@ class TempClustersModel {
         for (index, cluster) in clusters.enumerated() {
             cluster.cluster?.position = Int16(exactly: index) ?? 0
         }
-        sectionedClusterOrComment.forEach { (clusterOrComments) in
-            for (index, clusterOrComment) in clusterOrComments.enumerated() {
-                clusterOrComment.cluster?.position = Int16(exactly: index) ?? 0
+        var position: Int16 = 0
+        sectionedClusterOrComment.forEach { section in
+            section.forEach { coc in
+                coc.cluster?.position = position
+                position += 1
             }
         }
     }

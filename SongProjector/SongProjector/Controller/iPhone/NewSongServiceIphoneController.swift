@@ -199,6 +199,14 @@ class NewSongServiceIphoneController: ChurchBeamViewController, UIGestureRecogni
             }
         }
         clusterModel.sectionedClusterOrComment = sectionedClusterOrComments
+        
+        var position: Int16 = 0
+        for section in clusterModel.sectionedClusterOrComment {
+            section.forEach { coc in
+                coc.cluster?.position = position
+                position += 1
+            }
+        }
     }
 	
     private func set(_ songServiceSettings: VSongServiceSettings) {

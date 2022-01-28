@@ -186,7 +186,7 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
 	func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
 		let song = songService.songs[section]
 		let firstClusters = model?.sectionedClusterOrComment.compactMap({ $0.first?.cluster })
-		let hasHeader = firstClusters?.contains(entity: songService.songs[section].cluster) ?? false
+        let hasHeader = firstClusters?.contains(where: { $0.id == song.cluster.id }) ?? false
         
         guard let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: SongHeaderView.identifier) as? SongHeaderView else { return nil }
         
