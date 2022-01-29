@@ -891,6 +891,10 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 	private func updateAsTheme(_ theme: VTheme?) {
 		if let theme = theme {
 			self.theme.getValues(from: theme)
+            if self.sheet.type == .SheetPastors {
+                self.theme.titleAlignmentNumber = Int16(NSTextAlignment.center.rawValue)
+                self.theme.contentAlignmentNumber = Int16(NSTextAlignment.center.rawValue)
+            }
 		}
 		tableView.reloadData()
 		buildPreview(isSetup: false)
