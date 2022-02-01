@@ -148,6 +148,9 @@ class SettingsController: ChurchBeamViewController, UITableViewDelegate, UITable
 	// MARK: RequestObserver Functions
     
     override func requesterDidFinish(requester: RequesterBase, result: RequestResult, isPartial: Bool) {
+        Queues.main.async {
+            self.hideLoader()
+        }
         switch result {
         case .success(let result):
             guard (result as? [VAdmin])?.count ?? 0 > 0 else {
