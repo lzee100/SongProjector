@@ -8,9 +8,28 @@
 
 import Foundation
 import CoreData
+import FirebaseAuth
 
-public class VSheet: VEntity {
+protocol VSheet {
+    var isNew: Bool { get }
+    var isEmptySheet: Bool { get set }
+    var position: Int { get set }
+    var time: Double { get set }
+    var hasTheme: VTheme? { get set }
+    var sheetType: SheetType { get }
+}
+
+
+struct VSheetEntity {
 	
+    let id: String
+    let userUID: String
+    let title: String?
+    let createdAt: NSDate
+    let updatedAt: NSDate?
+    let deleteDate: NSDate?
+    let rootDeleteDate: Date?
+    
     var isNew: Bool {
         return updatedAt == nil
     }
@@ -19,9 +38,16 @@ public class VSheet: VEntity {
 	var time: Double = 0
 	var hasTheme: VTheme? = nil
 	
-	enum CodingKeysTheme:String,CodingKey
+	enum CodingKeysSheet:String,CodingKey
 	{
         case id
+        case title
+        case userUID
+        case createdAt
+        case updatedAt
+        case deleteDate = "deletedAt"
+        case rootDeleteDate
+        
 		case isEmptySheet
 		case position
 		case time
@@ -44,34 +70,59 @@ public class VSheet: VEntity {
 			return .SheetEmpty
 		}
 	}
+    
+    
+
+
 	
 	
 	// MARK: - Init
 	
 	// encode and decode relation to cluster
-	
-	override init() {
-		super.init()
-	}
-	
-	public override func initialization(decoder: Decoder) throws {
-		let container = try decoder.container(keyedBy: CodingKeysTheme.self)
-		isEmptySheet = try Bool(truncating: (container.decodeIfPresent(Int16.self, forKey: .isEmptySheet) ?? 0) as NSNumber)
-		position = Int(try container.decodeIfPresent(Int16.self, forKey: .position) ?? 0)
-        let sheetTimeString = try container.decodeIfPresent(String.self, forKey: .time) ?? ""
-        time = Double(sheetTimeString) ?? 0.0
-		hasTheme = try container.decodeIfPresent(VTheme.self, forKey: .hasTheme)
-		
-		try super.initialization(decoder: decoder)
-		
-	}
-	
+    
+    init(id: String = "CHURCHBEAM" + UUID().uuidString, userUID: String, title: String?, createdAt: NSDate = Date().localDate() as NSDate, updatedAt: NSDate?, deleteDate: NSDate? = nil, rootDeleteDate: Date? = nil, isEmptySheet: Bool = false, position: Int = 0, time: Double = 0, hasTheme: VTheme? = nil) {
+        self.id = id
+        self.userUID = userUID
+        self.title = title
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.deleteDate = deleteDate
+        self.rootDeleteDate = rootDeleteDate
+        
+        self.isEmptySheet = isEmptySheet
+        self.position = position
+        self.time = time
+        self.hasTheme = hasTheme
+    }
+    
 	
 	
 	// MARK: - Encodable
 	
-	override public func encode(to encoder: Encoder) throws {
-		var container = encoder.container(keyedBy: CodingKeysTheme.self)
+    public func encode(to encoder: Encoder) throws {
+		var container = encoder.container(keyedBy: CodingKeysSheet.self)
+        
+        try container.encodeIfPresent(title, forKey: .title)
+        guard let userUID = Auth.auth().currentUser?.uid else {
+            throw RequestError.unAuthorizedNoUser(requester: String(describing: self))
+        }
+        try container.encode(userUID, forKey: .userUID)
+
+       try container.encode((createdAt as Date).intValue, forKey: .createdAt)
+        if let updatedAt = updatedAt {
+//            let updatedAtString = GlobalDateFormatter.localToUTCNumber(date: updatedAt as Date)
+            try container.encode((updatedAt as Date).intValue, forKey: .updatedAt)
+        } else {
+            try container.encode((createdAt as Date).intValue, forKey: .updatedAt)
+        }
+        if let deleteDate = deleteDate {
+//            let deleteDateString = GlobalDateFormatter.localToUTCNumber(date: deleteDate as Date)
+            try container.encode((deleteDate as Date).intValue, forKey: .deleteDate)
+        }
+        if let rootDeleteDate = rootDeleteDate {
+            try container.encode(rootDeleteDate.intValue, forKey: .rootDeleteDate)
+        }
+        
 		try container.encode(Int(truncating: NSNumber(value: isEmptySheet)), forKey: .isEmptySheet)
 		try container.encode(position, forKey: .position)
         try container.encode(id, forKey: .id)
@@ -79,27 +130,46 @@ public class VSheet: VEntity {
 		if hasTheme != nil {
 			try container.encode(hasTheme, forKey: .hasTheme)
 		}
-
-		try super.encode(to: encoder)
 	}
 	
 	
 	
 	// MARK: - Decodable
 	
-	required public convenience init(from decoder: Decoder) throws {
-		
-		self.init()
-		
-		let container = try decoder.container(keyedBy: CodingKeysTheme.self)
+    public init(from decoder: Decoder) throws {
+				
+		let container = try decoder.container(keyedBy: CodingKeysSheet.self)
+        
+        id = try container.decode(String.self, forKey: .id)
+        title = try container.decodeIfPresent(String.self, forKey: .title)
+        userUID = try container.decode(String.self, forKey: .userUID)
+//        isTemp = false
+        let createdAtInt = try container.decode(Int64.self, forKey: .createdAt)
+        let updatedAtInt = try container.decodeIfPresent(Int64.self, forKey: .updatedAt)
+        let deletedAtInt = try container.decodeIfPresent(Int64.self, forKey: .deleteDate)
+        createdAt = Date(timeIntervalSince1970: TimeInterval(createdAtInt) / 1000) as NSDate
+
+        if let updatedAtInt = updatedAtInt {
+            updatedAt = Date(timeIntervalSince1970: TimeInterval(updatedAtInt) / 1000) as NSDate
+        } else {
+            updatedAt = nil
+        }
+        if let deletedAtInt = deletedAtInt {
+            deleteDate = Date(timeIntervalSince1970: TimeInterval(deletedAtInt) / 1000) as NSDate
+        } else {
+            deleteDate = nil
+        }
+        if let rootdeleteDateInt = try container.decodeIfPresent(Int.self, forKey: .rootDeleteDate) {
+            rootDeleteDate = Date(timeIntervalSince1970: TimeInterval(rootdeleteDateInt / 1000))
+        } else {
+            rootDeleteDate = nil
+        }
 		
 		isEmptySheet = try Bool(truncating: (container.decodeIfPresent(Int16.self, forKey: .isEmptySheet) ?? 0) as NSNumber)
 		position = try container.decodeIfPresent(Int.self, forKey: .position) ?? 0
         let sheetTimeString = try container.decodeIfPresent(String.self, forKey: .time) ?? ""
         time = Double(sheetTimeString) ?? 0.0
 		hasTheme = try container.decodeIfPresent(VTheme.self, forKey: .hasTheme)
-		
-		try super.initialization(decoder: decoder)
 		
 	}
 	
@@ -110,49 +180,30 @@ public class VSheet: VEntity {
 		return false
 	}
 	
-	
-	// MARK: - NSCopying
+    func getManagedObject(context: NSManagedObjectContext) -> Entity {
+        
+        func setPropertiesTo(entity: Sheet, context: NSManagedObjectContext) {
+            entity.id = id
+            entity.title = title
+            entity.userUID = userUID
+            entity.createdAt = createdAt
+            entity.updatedAt = updatedAt
+            entity.deleteDate = deleteDate
+    //        entity.isTemp = isTemp
+            entity.rootDeleteDate = rootDeleteDate as NSDate?
 
-	public override func copy(with zone: NSZone? = nil) -> Any {
-		let copy = super.copy(with: zone) as! VSheet
-		copy.isEmptySheet = isEmptySheet
-		copy.position = position
-		copy.time = time
-		copy.hasTheme = hasTheme?.copy() as? VTheme
-		return copy
-	}
-	
-    override func getPropertiesFrom(entity: Entity, context: NSManagedObjectContext) {
-        super.getPropertiesFrom(entity: entity, context: context)
-		if let sheet = entity as? Sheet {
-			isEmptySheet = sheet.isEmptySheet
-			position = Int(sheet.position)
-			time = sheet.time
-            hasTheme = sheet.hasTheme == nil ? nil : VTheme(theme: sheet.hasTheme!, context: context)
-		}
-	}
-	
-	override func setPropertiesTo(entity: Entity, context: NSManagedObjectContext) {
-		super.setPropertiesTo(entity: entity, context: context)
-		if let sheet = entity as? Sheet {
-			sheet.isEmptySheet = isEmptySheet
-			sheet.position = Int16(position)
-			sheet.time = time
-			sheet.hasTheme = hasTheme?.getManagedObject(context: context) as? Theme
-		}
-	}
-	
-	convenience init(sheet: Sheet, context: NSManagedObjectContext) {
-		self.init()
-		getPropertiesFrom(entity: sheet, context: context)
-	}
-	
-    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-        if let entity: Cluster = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
+            
+            entity.isEmptySheet = isEmptySheet
+            entity.position = Int16(position)
+            entity.time = time
+            entity.hasTheme = hasTheme?.getManagedObject(context: context)
+        }
+        
+        if let entity: Sheet = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
             setPropertiesTo(entity: entity, context: context)
             return entity
         } else {
-            let entity: Cluster = DataFetcher().createEntity(moc: context)
+            let entity: Sheet = DataFetcher().createEntity(moc: context)
             setPropertiesTo(entity: entity, context: context)
             return entity
         }

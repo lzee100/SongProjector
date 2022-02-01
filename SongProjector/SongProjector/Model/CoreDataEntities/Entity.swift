@@ -26,3 +26,9 @@ public class Entity: NSManagedObject {
     @NSManaged public var rootDeleteDate: NSDate?
 
 }
+
+extension Entity {
+    var vEntity: VEntity {
+        VEntity(id: id, userUID: userUID, title: title, createdAt: createdAt, updatedAt: updatedAt, deleteDate: deleteDate, rootDeleteDate: rootDeleteDate as Date?)
+    }
+}

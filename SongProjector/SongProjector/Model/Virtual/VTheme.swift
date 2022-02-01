@@ -9,8 +9,9 @@
 import Foundation
 import CoreData
 import UIKit
+import FirebaseAuth
 
-class VTheme: VEntity {
+struct VTheme: Codable {
 	
 //	class func list(sortOn attributeName: String? = nil, ascending: Bool? = nil) -> [VTheme] {
 //        guard Thread.isMainThread else {
@@ -31,6 +32,14 @@ class VTheme: VEntity {
 //		}
 //		return nil
 //	}
+    
+    let id: String
+    let userUID: String
+    let title: String?
+    let createdAt: NSDate
+    let updatedAt: NSDate?
+    let deleteDate: NSDate?
+    let rootDeleteDate: Date?
 	
 	var allHaveTitle: Bool = false
 	var backgroundColor: String? = nil
@@ -98,6 +107,13 @@ class VTheme: VEntity {
 	enum CodingKeysTheme:String,CodingKey
 	{
         case id
+        case userUID
+        case title
+        case createdAt
+        case updatedAt
+        case deleteDate = "deletedAt"
+        case rootDeleteDate
+        
 		case allHaveTitle
 		case backgroundColor
 		case backgroundTransparancyNumber = "backgroundTransparancy"
@@ -131,17 +147,76 @@ class VTheme: VEntity {
 		case isUniversal
         case isDeletable
 	}
-	
-	public override func initialization(decoder: Decoder) throws {
-		try super.initialization(decoder: decoder)
-	}
-	
-	
-	
+    
+    init(id: String = "CHURCHBEAM" + UUID().uuidString, userUID: String, title: String?, createdAt: NSDate = Date().localDate() as NSDate, updatedAt: NSDate?, deleteDate: NSDate? = nil, rootDeleteDate: Date? = nil, allHaveTitle: Bool = false, backgroundColor: String? = nil, backgroundTransparancyNumber: Double = 0, displayTime: Bool = false, hasEmptySheet: Bool = false, imagePath: String? = nil, imagePathThumbnail: String? = nil, isEmptySheetFirst: Bool = false, isHidden: Bool = false, isContentBold: Bool = false, isContentItalic: Bool = false, isContentUnderlined: Bool = false, isTitleBold: Bool = false, isTitleItalic: Bool = false, isTitleUnderlined: Bool = false, contentAlignmentNumber: Int16 = 0, contentBorderColorHex: String? = nil, contentBorderSize: Float = 0, contentFontName: String? = "Avenir", contentTextColorHex: String? = "000000", contentTextSize: Float = 9, position: Int16 = 0, titleAlignmentNumber: Int16 = 0, titleBackgroundColor: String? = nil, titleBorderColorHex: String? = nil, titleBorderSize: Float = 0, titleFontName: String? = "Avenir", titleTextColorHex: String? = "000000", titleTextSize: Float = 11, imagePathAWS: String? = nil, isUniversal: Bool = false, isDeletable: Bool = true) {
+        self.id = id
+        self.userUID = userUID
+        self.title = title
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.deleteDate = deleteDate
+        self.rootDeleteDate = rootDeleteDate
+
+        self.allHaveTitle = allHaveTitle
+        self.backgroundColor = backgroundColor
+        self.backgroundTransparancyNumber = backgroundTransparancyNumber
+        self.displayTime = displayTime
+        self.hasEmptySheet = hasEmptySheet
+        self.imagePath = imagePath
+        self.imagePathThumbnail = imagePathThumbnail
+        self.isEmptySheetFirst = isEmptySheetFirst
+        self.isHidden = isHidden
+        self.isContentBold = isContentBold
+        self.isContentItalic = isContentItalic
+        self.isContentUnderlined = isContentUnderlined
+        self.isTitleBold = isTitleBold
+        self.isTitleItalic = isTitleItalic
+        self.isTitleUnderlined = isTitleUnderlined
+        self.contentAlignmentNumber = contentAlignmentNumber
+        self.contentBorderColorHex = contentBorderColorHex
+        self.contentBorderSize = contentBorderSize
+        self.contentFontName = contentFontName
+        self.contentTextColorHex = contentTextColorHex
+        self.contentTextSize = contentTextSize
+        self.position = position
+        self.titleAlignmentNumber = titleAlignmentNumber
+        self.titleBackgroundColor = titleBackgroundColor
+        self.titleBorderColorHex = titleBorderColorHex
+        self.titleBorderSize = titleBorderSize
+        self.titleFontName = titleFontName
+        self.titleTextColorHex = titleTextColorHex
+        self.titleTextSize = titleTextSize
+        self.imagePathAWS = imagePathAWS
+        self.isUniversal = isUniversal
+        self.isDeletable = isDeletable
+    }
+    
 	// MARK: - Encodable
 	
-	override public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeysTheme.self)
+        
+        try container.encodeIfPresent(title, forKey: .title)
+        guard let userUID = Auth.auth().currentUser?.uid else {
+            throw RequestError.unAuthorizedNoUser(requester: String(describing: self))
+        }
+        try container.encode(userUID, forKey: .userUID)
+
+       try container.encode((createdAt as Date).intValue, forKey: .createdAt)
+        if let updatedAt = updatedAt {
+//            let updatedAtString = GlobalDateFormatter.localToUTCNumber(date: updatedAt as Date)
+            try container.encode((updatedAt as Date).intValue, forKey: .updatedAt)
+        } else {
+            try container.encode((createdAt as Date).intValue, forKey: .updatedAt)
+        }
+        if let deleteDate = deleteDate {
+//            let deleteDateString = GlobalDateFormatter.localToUTCNumber(date: deleteDate as Date)
+            try container.encode((deleteDate as Date).intValue, forKey: .deleteDate)
+        }
+        if let rootDeleteDate = rootDeleteDate {
+            try container.encode(rootDeleteDate.intValue, forKey: .rootDeleteDate)
+        }
+                
         try container.encode(id, forKey: .id)
 		try container.encode(Int(truncating: NSNumber(value: allHaveTitle)), forKey: .allHaveTitle)
 		try container.encode(backgroundColor, forKey: .backgroundColor)
@@ -173,18 +248,41 @@ class VTheme: VEntity {
 		try container.encode(imagePathAWS, forKey: .imagePathAWS)
         try container.encode(Int(truncating: NSNumber(value: isDeletable)), forKey: .isDeletable)
         
-		try super.encode(to: encoder)
 	}
 	
 	
 	
 	// MARK: - Decodable
 	
-	required public convenience init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
 		
-		self.init()
-
 		let container = try decoder.container(keyedBy: CodingKeysTheme.self)
+        
+        id = try container.decode(String.self, forKey: .id)
+        title = try container.decodeIfPresent(String.self, forKey: .title)
+        userUID = try container.decode(String.self, forKey: .userUID)
+//        isTemp = false
+        let createdAtInt = try container.decode(Int64.self, forKey: .createdAt)
+        let updatedAtInt = try container.decodeIfPresent(Int64.self, forKey: .updatedAt)
+        let deletedAtInt = try container.decodeIfPresent(Int64.self, forKey: .deleteDate)
+        createdAt = Date(timeIntervalSince1970: TimeInterval(createdAtInt) / 1000) as NSDate
+
+        if let updatedAtInt = updatedAtInt {
+            updatedAt = Date(timeIntervalSince1970: TimeInterval(updatedAtInt) / 1000) as NSDate
+        } else {
+            updatedAt = nil
+        }
+        if let deletedAtInt = deletedAtInt {
+            deleteDate = Date(timeIntervalSince1970: TimeInterval(deletedAtInt) / 1000) as NSDate
+        } else {
+            deleteDate = nil
+        }
+        if let rootdeleteDateInt = try container.decodeIfPresent(Int.self, forKey: .rootDeleteDate) {
+            rootDeleteDate = Date(timeIntervalSince1970: TimeInterval(rootdeleteDateInt / 1000))
+        } else {
+            rootDeleteDate = nil
+        }
+        
 		isTempSelectedImageDeleted = false
 		allHaveTitle = try Bool(truncating: (container.decodeIfPresent(Int.self, forKey: .allHaveTitle) ?? 0) as NSNumber)
 		backgroundColor = try container.decodeIfPresent(String.self, forKey: .backgroundColor)
@@ -217,154 +315,69 @@ class VTheme: VEntity {
 		imagePathAWS = try container.decodeIfPresent(String.self, forKey: .imagePathAWS)
 		isUniversal = try Bool(truncating: (container.decodeIfPresent(Int.self, forKey: .isUniversal) ?? 0) as NSNumber)
         isDeletable = try Bool(truncating: (container.decodeIfPresent(Int.self, forKey: .isDeletable) ?? 0) as NSNumber)
-
         
-		try super.initialization(decoder: decoder)
-
 	}
 	
-	public override func copy(with zone: NSZone? = nil) -> Any {
-		let copy = super.copy(with: zone) as! VTheme
-		
-		copy.allHaveTitle = self.allHaveTitle
-		copy.backgroundColor = self.backgroundColor
-		copy.backgroundTransparancyNumber = self.backgroundTransparancyNumber
-		copy.displayTime = self.displayTime
-		copy.hasEmptySheet = self.hasEmptySheet
-		copy.imagePath = self.imagePath
-		copy.imagePathThumbnail = self.imagePathThumbnail
-		copy.isTempSelectedImageDeleted = self.isTempSelectedImageDeleted
-		copy.isEmptySheetFirst = self.isEmptySheetFirst
-		copy.isHidden = self.isHidden
-		copy.isContentBold = self.isContentBold
-		copy.isContentItalic = self.isContentItalic
-		copy.isContentUnderlined = self.isContentUnderlined
-		copy.isTitleBold = self.isTitleBold
-		copy.isTitleItalic = self.isTitleItalic
-		copy.isTitleUnderlined = self.isTitleUnderlined
-		copy.contentAlignmentNumber = self.contentAlignmentNumber
-		copy.contentBorderColorHex = self.contentBorderColorHex
-		copy.contentBorderSize = self.contentBorderSize
-		copy.contentFontName = self.contentFontName
-		copy.contentTextColorHex = self.contentTextColorHex
-		copy.contentTextSize = self.contentTextSize
-		copy.position = self.position
-		copy.titleAlignmentNumber = self.titleAlignmentNumber
-		copy.titleBackgroundColor = self.titleBackgroundColor
-		copy.titleBorderColorHex = self.titleBorderColorHex
-		copy.titleBorderSize = self.titleBorderSize
-		copy.titleFontName = self.titleFontName
-		copy.titleTextColorHex = self.titleTextColorHex
-		copy.titleTextSize = self.titleTextSize
-		copy.imagePathAWS = self.imagePathAWS
-		copy.hasClusters = self.hasClusters
-		copy.hasSheets = self.hasSheets
-		copy.isUniversal = self.isUniversal
-        copy.isDeletable = self.isDeletable
-
-		return copy
-	}
-	
-	override func setPropertiesTo(entity: Entity, context: NSManagedObjectContext) {
-		super.setPropertiesTo(entity: entity, context: context)
-		
-		if let theme = entity as? Theme {
-			
-			theme.allHaveTitle = self.allHaveTitle
-			theme.backgroundColor = self.backgroundColor
-			theme.backgroundTransparancyNumber = self.backgroundTransparancyNumber
-			theme.displayTime = self.displayTime
-			theme.hasEmptySheet = self.hasEmptySheet
-			theme.imagePath = self.imagePath
-			theme.imagePathThumbnail = self.imagePathThumbnail
-			if imagePathAWS == nil {
-				theme.imagePath = nil
-				theme.imagePathThumbnail = nil
-			}
-			theme.isTempSelectedImageDeleted = self.isTempSelectedImageDeleted
-			theme.isEmptySheetFirst = self.isEmptySheetFirst
-			theme.isHidden = self.isHidden
-			theme.isContentBold = self.isContentBold
-			theme.isContentItalic = self.isContentItalic
-			theme.isContentUnderlined = self.isContentUnderlined
-			theme.isTitleBold = self.isTitleBold
-			theme.isTitleItalic = self.isTitleItalic
-			theme.isTitleUnderlined = self.isTitleUnderlined
-			theme.contentAlignmentNumber = self.contentAlignmentNumber
-			theme.contentBorderColorHex = self.contentBorderColorHex
-			theme.contentBorderSize = self.contentBorderSize
-			theme.contentFontName = self.contentFontName
-			theme.contentTextColorHex = self.contentTextColorHex
-			theme.contentTextSize = self.contentTextSize
-			theme.position = self.position
-			theme.titleAlignmentNumber = self.titleAlignmentNumber
-			theme.titleBackgroundColor = self.titleBackgroundColor
-			theme.titleBorderColorHex = self.titleBorderColorHex
-			theme.titleBorderSize = self.titleBorderSize
-			theme.titleFontName = self.titleFontName
-			theme.titleTextColorHex = self.titleTextColorHex
-			theme.titleTextSize = self.titleTextSize
-			theme.imagePathAWS = self.imagePathAWS
-			theme.isUniversal = self.isUniversal
+    func getManagedObject(context: NSManagedObjectContext) -> Theme {
+        func setPropertiesTo(theme: Theme, context: NSManagedObjectContext) {
+            
+            theme.id = id
+            theme.title = title
+            theme.userUID = userUID
+            theme.createdAt = createdAt
+            theme.updatedAt = updatedAt
+            theme.deleteDate = deleteDate
+            //        entity.isTemp = isTemp
+            theme.rootDeleteDate = rootDeleteDate as NSDate?
+            
+            
+            theme.allHaveTitle = self.allHaveTitle
+            theme.backgroundColor = self.backgroundColor
+            theme.backgroundTransparancyNumber = self.backgroundTransparancyNumber
+            theme.displayTime = self.displayTime
+            theme.hasEmptySheet = self.hasEmptySheet
+            theme.imagePath = self.imagePath
+            theme.imagePathThumbnail = self.imagePathThumbnail
+            if imagePathAWS == nil {
+                theme.imagePath = nil
+                theme.imagePathThumbnail = nil
+            }
+            theme.isTempSelectedImageDeleted = self.isTempSelectedImageDeleted
+            theme.isEmptySheetFirst = self.isEmptySheetFirst
+            theme.isHidden = self.isHidden
+            theme.isContentBold = self.isContentBold
+            theme.isContentItalic = self.isContentItalic
+            theme.isContentUnderlined = self.isContentUnderlined
+            theme.isTitleBold = self.isTitleBold
+            theme.isTitleItalic = self.isTitleItalic
+            theme.isTitleUnderlined = self.isTitleUnderlined
+            theme.contentAlignmentNumber = self.contentAlignmentNumber
+            theme.contentBorderColorHex = self.contentBorderColorHex
+            theme.contentBorderSize = self.contentBorderSize
+            theme.contentFontName = self.contentFontName
+            theme.contentTextColorHex = self.contentTextColorHex
+            theme.contentTextSize = self.contentTextSize
+            theme.position = self.position
+            theme.titleAlignmentNumber = self.titleAlignmentNumber
+            theme.titleBackgroundColor = self.titleBackgroundColor
+            theme.titleBorderColorHex = self.titleBorderColorHex
+            theme.titleBorderSize = self.titleBorderSize
+            theme.titleFontName = self.titleFontName
+            theme.titleTextColorHex = self.titleTextColorHex
+            theme.titleTextSize = self.titleTextSize
+            theme.imagePathAWS = self.imagePathAWS
+            theme.isUniversal = self.isUniversal
             theme.isDeletable = self.isDeletable
-						
-		}
-	}
-	
-    override func getPropertiesFrom(entity: Entity, context: NSManagedObjectContext) {
-        super.getPropertiesFrom(entity: entity, context: context)
-		
-		if let theme = entity as? Theme {
-			allHaveTitle = theme.allHaveTitle
-			backgroundColor = theme.backgroundColor
-			backgroundTransparancyNumber = theme.backgroundTransparancyNumber
-			displayTime = theme.displayTime
-			hasEmptySheet = theme.hasEmptySheet
-			imagePath = theme.imagePath
-			imagePathThumbnail = theme.imagePathThumbnail
-			isTempSelectedImageDeleted = theme.isTempSelectedImageDeleted
-			isEmptySheetFirst = theme.isEmptySheetFirst
-			isHidden = theme.isHidden
-			isContentBold = theme.isContentBold
-			isContentItalic = theme.isContentItalic
-			isContentUnderlined = theme.isContentUnderlined
-			isTitleBold = theme.isTitleBold
-			isTitleItalic = theme.isTitleItalic
-			isTitleUnderlined = theme.isTitleUnderlined
-			contentAlignmentNumber = theme.contentAlignmentNumber
-			contentBorderColorHex = theme.contentBorderColorHex
-			contentBorderSize = theme.contentBorderSize
-			contentFontName = theme.contentFontName
-			contentTextColorHex = theme.contentTextColorHex
-			contentTextSize = theme.contentTextSize
-			position = theme.position
-			titleAlignmentNumber = theme.titleAlignmentNumber
-			titleBackgroundColor = theme.titleBackgroundColor
-			titleBorderColorHex = theme.titleBorderColorHex
-			titleBorderSize = theme.titleBorderSize
-			titleFontName = theme.titleFontName
-			titleTextColorHex = theme.titleTextColorHex
-			titleTextSize = theme.titleTextSize
-			imagePathAWS = theme.imagePathAWS
-			isUniversal = theme.isUniversal
-            isDeletable = theme.isDeletable
-            tempSelectedImage = nil
-		}
-	}
-	
-	convenience init(theme: Theme, context: NSManagedObjectContext) {
-		self.init()
-		getPropertiesFrom(entity: theme, context: context)
-	}
-	
-    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-        if let entity: Theme = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
-            setPropertiesTo(entity: entity, context: context)
-            return entity
+            
+        }
+
+        if let theme: Theme = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
+            setPropertiesTo(theme: theme, context: context)
+            return theme
         } else {
-            let entity: Theme = DataFetcher().createEntity(moc: context)
-            setPropertiesTo(entity: entity, context: context)
-            return entity
+            let theme: Theme = DataFetcher().createEntity(moc: context)
+            setPropertiesTo(theme: theme, context: context)
+            return theme
         }
     }
 }
@@ -375,39 +388,18 @@ extension VTheme {
 	
 	// theme as other theme
 	/// entity (Base) properties  will not be overridden
-	func getValues(from: VTheme) {
-		allHaveTitle = from.allHaveTitle
-		backgroundColor = from.backgroundColor
-		backgroundTransparancyNumber = from.backgroundTransparancyNumber
-		displayTime = from.displayTime
-		hasEmptySheet = from.hasEmptySheet
-		imagePath = from.imagePath
-		imagePathThumbnail = from.imagePathThumbnail
-		isTempSelectedImageDeleted = from.isTempSelectedImageDeleted
-		isEmptySheetFirst = from.isEmptySheetFirst
-		isContentBold = from.isContentBold
-		isContentItalic = from.isContentItalic
-		isContentUnderlined = from.isContentUnderlined
-		isTitleBold = from.isTitleBold
-		isTitleItalic = from.isTitleItalic
-		isTitleUnderlined = from.isTitleUnderlined
-		contentAlignmentNumber = from.contentAlignmentNumber
-		contentBorderColorHex = from.contentBorderColorHex
-		contentBorderSize = from.contentBorderSize
-		contentFontName = from.contentFontName
-		contentTextColorHex = from.contentTextColorHex
-		contentTextSize = from.contentTextSize
-		position = from.position
-		titleAlignmentNumber = from.titleAlignmentNumber
-		titleBackgroundColor = from.titleBackgroundColor
-		titleBorderColorHex = from.titleBorderColorHex
-		titleBorderSize = from.titleBorderSize
-		titleFontName = from.titleFontName
-		titleTextColorHex = from.titleTextColorHex
-		titleTextSize = from.titleTextSize
-		imagePathAWS = from.imagePathAWS
-		isUniversal = from.isUniversal
+	func getValues(from: VTheme) -> VTheme {
+        
+        VTheme(id: self.id, userUID: from.id, title: from.title, createdAt: from.createdAt, updatedAt: from.updatedAt, deleteDate: from.deleteDate, rootDeleteDate: from.rootDeleteDate, allHaveTitle: from.allHaveTitle, backgroundColor: from.backgroundColor, backgroundTransparancyNumber: from.backgroundTransparancyNumber, displayTime: from.displayTime, hasEmptySheet: from.hasEmptySheet, imagePath: from.imagePath, imagePathThumbnail: from.imagePathThumbnail, isEmptySheetFirst: from.isEmptySheetFirst, isHidden: from.isHidden, isContentBold: from.isContentBold, isContentItalic: from.isContentItalic, isContentUnderlined: from.isContentUnderlined, isTitleBold: from.isTitleBold, isTitleItalic: from.isTitleItalic, isTitleUnderlined: from.isTitleUnderlined, contentAlignmentNumber: from.contentAlignmentNumber, contentBorderColorHex: from.contentBorderColorHex, contentBorderSize: from.contentBorderSize, contentFontName: from.contentFontName, contentTextColorHex: from.contentTextColorHex, contentTextSize: from.contentTextSize, position: from.position, titleAlignmentNumber: from.titleAlignmentNumber, titleBackgroundColor: from.titleBackgroundColor, titleBorderColorHex: from.titleBorderColorHex, titleBorderSize: from.titleBorderSize, titleFontName: from.titleFontName, titleTextColorHex: from.titleTextColorHex, titleTextSize: from.titleTextSize, imagePathAWS: from.imagePathAWS, isUniversal: isUniversal, isDeletable: isDeletable)
 	}
+    
+    mutating func updateTempLocalImageName(name: String?) {
+        tempLocalImageName = name
+    }
+    
+    mutating func updateImagePathAWS(path: String?) {
+        imagePathAWS = path
+    }
 
 }
 
@@ -423,10 +415,10 @@ extension VTheme {
         return themesPaths.compactMap({ URL(string: $0) }).compactMap({ DownloadObject(remoteURL: $0) })
     }
     
-    func setUploadValues(_ uploadObjects: [UploadObject]) {
+    mutating func setUploadValues(_ uploadObjects: [UploadObject]) {
         for upload in uploadObjects.compactMap({ $0 as UploadObject }) {
             if tempLocalImageName == upload.fileName {
-                imagePathAWS = upload.fileName
+                updateImagePathAWS(path: upload.fileName)
             }
         }
     }

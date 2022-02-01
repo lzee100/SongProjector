@@ -11,16 +11,15 @@ import CoreData
 import UIKit
 import FirebaseAuth
 
-public class VEntity: NSObject, Codable {
+public struct VEntity: Codable {
 	
-    var id: String = "CHURCHBEAM" + UUID().uuidString
-    var userUID: String = ""
-	var title: String? = nil
-    var createdAt: NSDate = Date().localDate() as NSDate
-    var updatedAt: NSDate? = nil
-	var deleteDate: NSDate? = nil
-	var isTemp: Bool = false
-    var rootDeleteDate: Date? = nil
+    let id: String
+    let userUID: String
+    let title: String?
+    let createdAt: NSDate
+    let updatedAt: NSDate?
+    let deleteDate: NSDate?
+    let rootDeleteDate: Date?
 
 	
 	enum CodingKeys: String, CodingKey
@@ -35,43 +34,27 @@ public class VEntity: NSObject, Codable {
 	}
 	
     
+    init(id: String = "CHURCHBEAM" + UUID().uuidString, userUID: String, title: String?, createdAt: NSDate = Date().localDate() as NSDate, updatedAt: NSDate?, deleteDate: NSDate? = nil, rootDeleteDate: Date? = nil) {
+        self.id = id
+        self.userUID = userUID
+        self.title = title
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.deleteDate = deleteDate
+        self.rootDeleteDate = rootDeleteDate
+    }
+    
 	
 	// MARK: - Decodable
 	
-	public func initialization(decoder: Decoder) throws {
-		
-		let container = try decoder.container(keyedBy: CodingKeys.self)
+    public init(from decoder: Decoder) throws {
         
-		id  = try container.decode(String.self, forKey: .id)
-		title = try container.decodeIfPresent(String.self, forKey: .title)
-        userUID = try container.decode(String.self, forKey: .userUID)
-        
-        let createdAtInt = try container.decode(Int64.self, forKey: .createdAt)
-        let updatedAtInt = try container.decodeIfPresent(Int64.self, forKey: .updatedAt)
-        let deletedAtInt = try container.decodeIfPresent(Int64.self, forKey: .deleteDate)
-        createdAt = Date(timeIntervalSince1970: TimeInterval(createdAtInt) / 1000) as NSDate
-
-        if let updatedAtInt = updatedAtInt {
-            updatedAt = Date(timeIntervalSince1970: TimeInterval(updatedAtInt) / 1000) as NSDate
-        }
-        if let deletedAtInt = deletedAtInt {
-            deleteDate = Date(timeIntervalSince1970: TimeInterval(deletedAtInt) / 1000) as NSDate
-        }
-        if let rootdeleteDateInt = try container.decodeIfPresent(Int.self, forKey: .rootDeleteDate) {
-            rootDeleteDate = Date(timeIntervalSince1970: TimeInterval(rootdeleteDateInt))
-        }
-	}
-	
-	required public convenience init(from decoder: Decoder) throws {
-
-		self.init()
-		
 		let container = try decoder.container(keyedBy: CodingKeys.self)
 
 		id = try container.decode(String.self, forKey: .id)
 		title = try container.decodeIfPresent(String.self, forKey: .title)
         userUID = try container.decode(String.self, forKey: .userUID)
-		isTemp = false
+//		isTemp = false
         let createdAtInt = try container.decode(Int64.self, forKey: .createdAt)
         let updatedAtInt = try container.decodeIfPresent(Int64.self, forKey: .updatedAt)
         let deletedAtInt = try container.decodeIfPresent(Int64.self, forKey: .deleteDate)
@@ -79,12 +62,18 @@ public class VEntity: NSObject, Codable {
 
         if let updatedAtInt = updatedAtInt {
             updatedAt = Date(timeIntervalSince1970: TimeInterval(updatedAtInt) / 1000) as NSDate
+        } else {
+            updatedAt = nil
         }
         if let deletedAtInt = deletedAtInt {
             deleteDate = Date(timeIntervalSince1970: TimeInterval(deletedAtInt) / 1000) as NSDate
+        } else {
+            deleteDate = nil
         }
         if let rootdeleteDateInt = try container.decodeIfPresent(Int.self, forKey: .rootDeleteDate) {
             rootDeleteDate = Date(timeIntervalSince1970: TimeInterval(rootdeleteDateInt / 1000))
+        } else {
+            rootDeleteDate = nil
         }
 	}
 	
@@ -116,53 +105,24 @@ public class VEntity: NSObject, Codable {
         }
 	}
 	
-	
-	
-	// MARK: - Copying
-	
-	public func copy(with zone: NSZone? = nil) -> Any {
-		let copy = VEntity()
-        copy.id = UUID().uuidString
-		copy.title = title
-        copy.userUID = userUID
-		copy.createdAt = createdAt
-		copy.updatedAt = updatedAt
-		copy.deleteDate = Date() as NSDate
-		copy.isTemp = true
-        copy.rootDeleteDate = rootDeleteDate
-		return copy
-	}
-	
-	
-    func getPropertiesFrom(entity: Entity, context: NSManagedObjectContext) {
-		id = entity.id
-		title = entity.title
-        userUID = entity.userUID
-		createdAt = entity.createdAt
-		updatedAt = entity.updatedAt
-		deleteDate = entity.deleteDate
-		isTemp = entity.isTemp
-        rootDeleteDate = entity.rootDeleteDate as Date?
-	}
-	
-	func setPropertiesTo(entity: Entity, context: NSManagedObjectContext) {
-		entity.id = id
-		entity.title = title
-        entity.userUID = userUID
-		entity.createdAt = createdAt
-		entity.updatedAt = updatedAt
-		entity.deleteDate = deleteDate
-		entity.isTemp = isTemp
-        entity.rootDeleteDate = rootDeleteDate as NSDate?
-	}
-	
-    convenience init(entity: Entity, context: NSManagedObjectContext) {
-		self.init()
-		getPropertiesFrom(entity: entity, context: context)
-	}
+//    convenience init(entity: Entity, context: NSManagedObjectContext) {
+//		self.init()
+//		getPropertiesFrom(entity: entity, context: context)
+//	}
 
 	@discardableResult
 	func getManagedObject(context: NSManagedObjectContext) -> Entity {
+        
+        func setPropertiesTo(entity: Entity, context: NSManagedObjectContext) {
+            entity.id = id
+            entity.title = title
+            entity.userUID = userUID
+            entity.creatheetedAt = createdAt
+            entity.updatedAt = updatedAt
+            entity.deleteDate = deleteDate
+    //        entity.isTemp = isTemp
+            entity.rootDeleteDate = rootDeleteDate as NSDate?
+        }
 		
         if let entity: Entity = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
             setPropertiesTo(entity: entity, context: context)

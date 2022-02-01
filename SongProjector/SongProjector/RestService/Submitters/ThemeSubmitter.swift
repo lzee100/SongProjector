@@ -21,11 +21,11 @@ class TemeSubmitter: Requester<VTheme> {
     }
     
     override func prepareForSubmit(body: [VTheme], completion: @escaping ((Requester<VTheme>.AdditionalProcessResult) -> Void)) {
-        
+        var body = body
         var deletableFiles: [StorageReference] = []
         
         do {
-            try body.forEach { theme in
+            for (index, theme) in body.enumerated() {
                 if theme.isTempSelectedImageDeleted || self.requestMethod == .delete {
                     if let name = theme.imagePathAWS {
                         let uploadFile = Storage.storage().reference().child("images").child(name)
@@ -36,7 +36,7 @@ class TemeSubmitter: Requester<VTheme> {
                         let uploadFile = Storage.storage().reference().child("images").child(name)
                         deletableFiles.append(uploadFile)
                     }
-                    theme.tempLocalImageName = try image.saveTemp()
+                    body[index].tempLocalImageName = try image.saveTemp()
                 }
             }
         } catch {
@@ -61,7 +61,7 @@ class TemeSubmitter: Requester<VTheme> {
                 self.deleteLocalImages(body: body)
                 
                 var failed = false
-                for theme in body {
+                for (index, theme) in body.enumerated() {
                     do {
                         if let image = theme.tempSelectedImage {
                             try theme.setBackgroundImage(image: image, imageName: theme.imagePath)
@@ -71,7 +71,7 @@ class TemeSubmitter: Requester<VTheme> {
                         completion(.failed(error: .failedSavingLocalImage(requester: self.id, error: error)))
                         break
                     }
-                    theme.setUploadValues(uploadObjects)
+                    body[index].setUploadValues(uploadObjects)
                 }
                 if !failed {
                     deletableFiles.forEach({ $0.delete(completion: nil) })

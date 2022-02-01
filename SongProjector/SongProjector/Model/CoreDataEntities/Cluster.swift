@@ -54,3 +54,39 @@ public class Cluster: Entity {
     }
     
 }
+
+extension Cluster {
+    
+    var vCluster: VCluster? {
+        guard let context = self.managedObjectContext else { return nil }
+        var arraySheetIds: [String] {
+            self.sheetIds.split(separator: ",").compactMap({ String($0) })
+        }
+        
+        func getSheets(sheets: [Sheet]) -> [VSheet] {
+            return sheets.map({
+                if let sheet = $0 as? SheetTitleContentEntity {
+                    return VSheetTitleContent(entity: sheet, context: context) as VSheet
+                } else if let sheet = $0 as? SheetTitleImageEntity {
+                    return VSheetTitleImage(entity: sheet, context: context) as VSheet
+                } else if let sheet = $0 as? SheetSplitEntity {
+                    return VSheetSplit(entity: sheet, context: context) as VSheet
+                } else if let sheet = $0 as? SheetPastorsEntity {
+                    return VSheetPastors(entity: sheet, context: context) as VSheet
+                } else if let sheet = $0 as? SheetEmptyEntity {
+                    return VSheetEmpty(entity: sheet, context: context) as VSheet
+                } else if let sheet = $0 as? SheetActivitiesEntity {
+                    return VSheetActivities(entity: sheet, context: context) as VSheet
+                } else {
+                    return VSheet(entity: $0, context: context)
+                }
+            })
+        }
+        
+        let hasSheets = getSheets(sheets: hasSheets(moc: context)).sorted(by: { $0.position < $1.position })
+        hasInstruments = cluster.hasInstruments(moc: context).compactMap({ VInstrument(instrument: $0, context: context) })
+        tagIds = cluster.splitTagIds
+        
+        return VCluster(id: id, userUID: userUID, title: title, createdAt: createdAt, updatedAt: updatedAt, deleteDate: deleteDate, rootDeleteDate: rootDeleteDate as Date?, root: root, isLoop: isLoop, position: position, time: time, themeId: themeId, lastShownAt: lastShownAt as Date?, instrumentIds: instrumentIds ?? "", sheetIds: arraySheetIds, church: church, startTime: startTime, hasSheetPastors: hasSheetPastors, hasSheets: [VSheet], hasInstruments: [VInstrument])
+    }
+}

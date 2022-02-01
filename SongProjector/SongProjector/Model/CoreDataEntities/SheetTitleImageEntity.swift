@@ -30,3 +30,14 @@ public class SheetTitleImageEntity: Sheet {
 	@NSManaged public var imagePathAWS: String?
 	
 }
+
+extension SheetTitleImageEntity {
+    
+    var vSheetTitleImage: VSheetTitleImage {
+        var theme: VTheme? {
+            
+        }
+        
+        return VSheetTitleImage(id: id, userUID: userUID, title: title, createdAt: createdAt, updatedAt: updatedAt, deleteDate: deleteDate, rootDeleteDate: rootDeleteDate, isEmptySheet: isEmptySheet, position: position, time: time, hasTheme: <#T##VTheme?#>, content: <#T##String?#>, hasTitle: <#T##Bool#>, imageBorderColor: <#T##String?#>, imageBorderSize: <#T##Int16#>, imageContentMode: <#T##Int16#>, imageHasBorder: <#T##Bool#>, imagePath: <#T##String?#>, thumbnailPath: <#T##String?#>, imagePathAWS: <#T##String?#>)
+    }
+}

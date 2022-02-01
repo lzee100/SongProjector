@@ -10,8 +10,9 @@ import Foundation
 import CoreData
 import UIKit
 import FirebaseFirestore
+import FirebaseAuth
 
-public class VCluster: VEntity {
+struct VCluster: Codable {
     
 //    class func list(sortOn attributeName: String? = nil, ascending: Bool? = nil, skipDeleted: Bool) -> [VCluster] {
 //        guard Thread.isMainThread else {
@@ -33,6 +34,13 @@ public class VCluster: VEntity {
 //        }
 //        return nil
 //    }
+    let id: String
+    let userUID: String
+    let title: String?
+    let createdAt: NSDate
+    let updatedAt: NSDate?
+    let deleteDate: NSDate?
+    let rootDeleteDate: Date?
     
     var root: String? = nil
     var isLoop: Bool = false
@@ -48,23 +56,16 @@ public class VCluster: VEntity {
 
     var deletedSheetsImageURLs: [String] = []
     
-    var hasInstruments: [VInstrument] = [] {
-        didSet {
-            instrumentIds = hasInstruments.compactMap({ $0.id }).joined(separator: ",")
-        }
-    }
+    private(set) var hasInstruments: [VInstrument] = []
     
-    var hasSheets: [VSheet] = [] {
-        didSet {
-            sheetIds = hasSheets.compactMap({ $0.id })
-        }
-    }
+    private(set) var hasSheets: [VSheet] = []
+    
     
     var tagIds: [String] = []
     
     func hasTheme(moc: NSManagedObjectContext) -> VTheme? {
         let theme: Theme? = DataFetcher().getEntity(moc: moc, predicates: [.get(id: themeId)])
-        return [theme].compactMap({ $0 }).map({ VTheme(entity: $0, context: moc) }).first
+        return [theme].compactMap({ $0?.vTheme }).first
     }
     
     func hasTags(moc: NSManagedObjectContext) -> [Tag] {
@@ -99,6 +100,14 @@ public class VCluster: VEntity {
     
     enum CodingKeysCluster:String,CodingKey
     {
+        case id
+        case userUID
+        case title
+        case createdAt
+        case updatedAt
+        case deleteDate = "deletedAt"
+        case rootDeleteDate
+        
         case root
         case isLoop
         case position
@@ -110,24 +119,69 @@ public class VCluster: VEntity {
         case tagids = "tagids"
         case lastShownAt
         case church
-        case rootDeleteDate
         case startTime
         case hasSheetPastors
     }
     
+    mutating func setInstruments(instruments: [VInstrument]) {
+        hasInstruments = instruments
+        instrumentIds = hasInstruments.compactMap({ $0.id }).joined(separator: ",")
+    }
     
-    // MARK: - Init
+    mutating func setSheets(sheets: [VSheet]) {
+        sheetIds = sheets.compactMap({ $0.id })
+        self.hasSheets = sheets
+    }
     
-    public override func initialization(decoder: Decoder) throws {
-        
+    init(id: String = "CHURCHBEAM" + UUID().uuidString, userUID: String, title: String?, createdAt: NSDate = Date().localDate() as NSDate, updatedAt: NSDate?, deleteDate: NSDate? = nil, rootDeleteDate: Date? = nil, root: String? = nil, isLoop: Bool = false, position: Int16 = 0, time: Double = 0, themeId: String = UUID().uuidString, lastShownAt: Date? = nil, instrumentIds: String = "", sheetIds: [String] = [], church: String?, startTime: Double = 0.0, hasSheetPastors: Bool = false, hasSheets: [VSheet] = [], hasInstruments: [VInstrument] = []) {
+        self.id = id
+        self.userUID = userUID
+        self.title = title
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.deleteDate = deleteDate
+        self.rootDeleteDate = rootDeleteDate
+        self.root = root
+        self.isLoop = isLoop
+        self.position = position
+        self.time = time
+        self.themeId = themeId
+        self.lastShownAt = lastShownAt
+        self.instrumentIds = instrumentIds
+        self.sheetIds = sheetIds
+        self.church = church
+        self.startTime = startTime
+        self.hasSheetPastors = hasSheetPastors
     }
     
     
     
     // MARK: - Encodable
     
-    override public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeysCluster.self)
+        
+        try container.encodeIfPresent(title, forKey: .title)
+        guard let userUID = Auth.auth().currentUser?.uid else {
+            throw RequestError.unAuthorizedNoUser(requester: String(describing: self))
+        }
+        try container.encode(userUID, forKey: .userUID)
+
+       try container.encode((createdAt as Date).intValue, forKey: .createdAt)
+        if let updatedAt = updatedAt {
+//            let updatedAtString = GlobalDateFormatter.localToUTCNumber(date: updatedAt as Date)
+            try container.encode((updatedAt as Date).intValue, forKey: .updatedAt)
+        } else {
+            try container.encode((createdAt as Date).intValue, forKey: .updatedAt)
+        }
+        if let deleteDate = deleteDate {
+//            let deleteDateString = GlobalDateFormatter.localToUTCNumber(date: deleteDate as Date)
+            try container.encode((deleteDate as Date).intValue, forKey: .deleteDate)
+        }
+        if let rootDeleteDate = rootDeleteDate {
+            try container.encode(rootDeleteDate.intValue, forKey: .rootDeleteDate)
+        }
+        
         try container.encode(root, forKey: .root)
         try container.encode(Int(truncating: NSNumber(value: isLoop)), forKey: .isLoop)
         try container.encode(position, forKey: .position)
@@ -142,8 +196,6 @@ public class VCluster: VEntity {
         try container.encode(tagIds.joined(separator: ","), forKey: .tagids)
         try container.encode(String(startTime), forKey: .startTime)
         try container.encode(Int(truncating: NSNumber(value: hasSheetPastors)), forKey: .hasSheetPastors)
-
-        try super.encode(to: encoder)
         
     }
     
@@ -151,11 +203,35 @@ public class VCluster: VEntity {
     
     // MARK: - Decodable
     
-    required public convenience init(from decoder: Decoder) throws {
-        
-        self.init()
-        
+    public init(from decoder: Decoder) throws {
+                
         let container = try decoder.container(keyedBy: CodingKeysCluster.self)
+        
+        id = try container.decode(String.self, forKey: .id)
+        title = try container.decodeIfPresent(String.self, forKey: .title)
+        userUID = try container.decode(String.self, forKey: .userUID)
+//        isTemp = false
+        let createdAtInt = try container.decode(Int64.self, forKey: .createdAt)
+        let updatedAtInt = try container.decodeIfPresent(Int64.self, forKey: .updatedAt)
+        let deletedAtInt = try container.decodeIfPresent(Int64.self, forKey: .deleteDate)
+        createdAt = Date(timeIntervalSince1970: TimeInterval(createdAtInt) / 1000) as NSDate
+
+        if let updatedAtInt = updatedAtInt {
+            updatedAt = Date(timeIntervalSince1970: TimeInterval(updatedAtInt) / 1000) as NSDate
+        } else {
+            updatedAt = nil
+        }
+        if let deletedAtInt = deletedAtInt {
+            deleteDate = Date(timeIntervalSince1970: TimeInterval(deletedAtInt) / 1000) as NSDate
+        } else {
+            deleteDate = nil
+        }
+        if let rootdeleteDateInt = try container.decodeIfPresent(Int.self, forKey: .rootDeleteDate) {
+            rootDeleteDate = Date(timeIntervalSince1970: TimeInterval(rootdeleteDateInt / 1000))
+        } else {
+            rootDeleteDate = nil
+        }
+        
         root = try container.decodeIfPresent(String.self, forKey: .root)
         isLoop = try Bool(truncating: (container.decodeIfPresent(Int16.self, forKey: .isLoop) ?? 0) as NSNumber)
         position = try container.decodeIfPresent(Int16.self, forKey: .position) ?? 0
@@ -190,107 +266,47 @@ public class VCluster: VEntity {
         hasSheets = sheetUnsorted.sorted(by: { $0.position < $1.position })
         sheetIds = hasSheets.compactMap({ $0.id })
         
-        hasInstruments = try container.decodeIfPresent([VInstrument].self, forKey: .hasInstruments) ?? []
+        let instruments = try container.decodeIfPresent([VInstrument].self, forKey: .hasInstruments) ?? []
         instrumentIds = hasInstruments.compactMap({ $0.id }).joined(separator: ",")
         hasSheetPastors = try Bool(truncating: (container.decodeIfPresent(Int16.self, forKey: .hasSheetPastors) ?? 0) as NSNumber)
         
-        try super.initialization(decoder: decoder)
-        
-    }
-    
-    public override func copy(with zone: NSZone? = nil) -> Any {
-        let copy = super.copy(with: zone) as? Cluster
-        copy?.isLoop = isLoop
-        copy?.position = position
-        copy?.time = time
-        copy?.themeId = themeId
-        copy?.root = root
-        copy?.instrumentIds = instrumentIds
-        copy?.tagIds = tagIds.joined(separator: ",")
-        copy?.lastShownAt = lastShownAt as NSDate?
-        copy?.church = church
-
-        return copy!
-    }
-    
-    override func getPropertiesFrom(entity: Entity, context: NSManagedObjectContext) {
-        super.getPropertiesFrom(entity: entity, context: context)
-        if let cluster = entity as? Cluster {
-            
-            root = cluster.root
-            isLoop = cluster.isLoop
-            position = Int16(cluster.position)
-            time = cluster.time
-            themeId = cluster.themeId
-            lastShownAt = cluster.lastShownAt as Date?
-            instrumentIds = cluster.instrumentIds ?? ""
-            church = cluster.church
-            startTime = cluster.startTime
-            hasSheetPastors = cluster.hasSheetPastors
-            
-            func getSheets(sheets: [Sheet]) -> [VSheet] {
-                return sheets.map({
-                    if let sheet = $0 as? SheetTitleContentEntity {
-                        return VSheetTitleContent(entity: sheet, context: context) as VSheet
-                    } else if let sheet = $0 as? SheetTitleImageEntity {
-                        return VSheetTitleImage(entity: sheet, context: context) as VSheet
-                    } else if let sheet = $0 as? SheetSplitEntity {
-                        return VSheetSplit(entity: sheet, context: context) as VSheet
-                    } else if let sheet = $0 as? SheetPastorsEntity {
-                        return VSheetPastors(entity: sheet, context: context) as VSheet
-                    } else if let sheet = $0 as? SheetEmptyEntity {
-                        return VSheetEmpty(entity: sheet, context: context) as VSheet
-                    } else if let sheet = $0 as? SheetActivitiesEntity {
-                        return VSheetActivities(entity: sheet, context: context) as VSheet
-                    } else {
-                        return VSheet(entity: $0, context: context)
-                    }
-                })
-            }
-            
-            sheetIds = cluster.sheetIds.split(separator: ",").compactMap({ String($0) })
-            hasSheets = getSheets(sheets: cluster.hasSheets(moc: context)).sorted(by: { $0.position < $1.position })
-            hasInstruments = cluster.hasInstruments(moc: context).compactMap({ VInstrument(instrument: $0, context: context) })
-            tagIds = cluster.splitTagIds
-            
-        }
-    }
-    
-    override func setPropertiesTo(entity: Entity, context: NSManagedObjectContext) {
-        super.setPropertiesTo(entity: entity, context: context)
-        if let cluster = entity as? Cluster {
-            cluster.root = root
-            cluster.isLoop = isLoop
-            cluster.position = Int16(position)
-            cluster.time = time
-            cluster.themeId = themeId
-            cluster.church = church
-            cluster.startTime = startTime
-            cluster.lastShownAt = lastShownAt as NSDate?
-            cluster.hasSheetPastors = hasSheetPastors
-            let instruments = hasInstruments.compactMap({ $0.getManagedObject(context: context) })
-            cluster.instrumentIds = instruments.map({ $0.id }).joined(separator: ",")
-            let sheets = hasSheets.map({ $0.getManagedObject(context: context) })
-            cluster.sheetIds = sheets.compactMap({ $0.id }).joined(separator: ",")
-            let tags = hasTags(moc: context)
-            cluster.tagIds = tags.compactMap({ $0.id }).joined(separator: ",")
-        }
-    }
-    
-    convenience init(cluster: Cluster, context: NSManagedObjectContext) {
-        self.init()
-        getPropertiesFrom(entity: cluster, context: context)
     }
     
     @discardableResult
-    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-        if let entity: Cluster = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
-            setPropertiesTo(entity: entity, context: context)
-            return entity
+    func getManagedObject(context: NSManagedObjectContext) -> Cluster {
+        func setPropertiesTo(cluster: Cluster, context: NSManagedObjectContext) {
+                cluster.id = id
+                cluster.title = title
+                cluster.userUID = userUID
+                cluster.createdAt = createdAt
+                cluster.updatedAt = updatedAt
+                cluster.deleteDate = deleteDate
+                cluster.rootDeleteDate = rootDeleteDate as NSDate?
+
+                cluster.root = root
+                cluster.isLoop = isLoop
+                cluster.position = Int16(position)
+                cluster.time = time
+                cluster.themeId = themeId
+                cluster.church = church
+                cluster.startTime = startTime
+                cluster.lastShownAt = lastShownAt as NSDate?
+                cluster.hasSheetPastors = hasSheetPastors
+                let instruments = hasInstruments.compactMap({ $0.getManagedObject(context: context) })
+                cluster.instrumentIds = instruments.map({ $0.id }).joined(separator: ",")
+                let sheets = hasSheets.map({ $0.getManagedObject(context: context) })
+                cluster.sheetIds = sheets.compactMap({ $0.id }).joined(separator: ",")
+                let tags = hasTags(moc: context)
+                cluster.tagIds = tags.compactMap({ $0.id }).joined(separator: ",")
+        }
+
+        if let cluster: Cluster = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
+            setPropertiesTo(cluster: cluster, context: context)
+            return cluster
         } else {
-            let entity: Cluster = DataFetcher().createEntity(moc: context)
-            setPropertiesTo(entity: entity, context: context)
-            return entity
+            let cluster: Cluster = DataFetcher().createEntity(moc: context)
+            setPropertiesTo(cluster: cluster, context: context)
+            return cluster
         }
     }
 
@@ -427,7 +443,7 @@ extension VCluster {
 
 extension VCluster {
     
-    func setLastShownAt() {
+    mutating func setLastShownAt() {
         let lsa = Date()
         lastShownAt = lsa
         getManagedObject(context: moc)
