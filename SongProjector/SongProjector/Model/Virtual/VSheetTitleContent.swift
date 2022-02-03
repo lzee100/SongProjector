@@ -117,7 +117,6 @@ struct VSheetTitleContent: VSheet, SheetMetaType {
         
 		try container.encode(content, forKey: .content)
         try container.encode(isBibleVers, forKey: .isBibleVers)
-		try super.encode(to: encoder)
 	}
 	
 	
@@ -181,7 +180,7 @@ struct VSheetTitleContent: VSheet, SheetMetaType {
                 sheet.isEmptySheet = isEmptySheet
                 sheet.position = Int16(position)
                 sheet.time = time
-                sheet.hasTheme = hasTheme?.getManagedObject(context: context)
+                sheet.hasTheme = hasTheme?.getManagedObject(context: context) as? Theme
                 
                 sheet.content = content
                 sheet.isBibleVers = isBibleVers

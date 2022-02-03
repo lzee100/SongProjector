@@ -11,7 +11,7 @@ import CoreData
 import UIKit
 import FirebaseAuth
 
-struct VTheme: Codable {
+struct VTheme: VEntityType, Codable {
 	
 //	class func list(sortOn attributeName: String? = nil, ascending: Bool? = nil) -> [VTheme] {
 //        guard Thread.isMainThread else {
@@ -318,7 +318,7 @@ struct VTheme: Codable {
         
 	}
 	
-    func getManagedObject(context: NSManagedObjectContext) -> Theme {
+    func getManagedObject(context: NSManagedObjectContext) -> Entity {
         func setPropertiesTo(theme: Theme, context: NSManagedObjectContext) {
             
             theme.id = id

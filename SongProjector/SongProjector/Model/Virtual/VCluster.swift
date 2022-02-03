@@ -12,7 +12,8 @@ import UIKit
 import FirebaseFirestore
 import FirebaseAuth
 
-struct VCluster: Codable {
+struct VCluster: VEntityType, Codable {
+    
     
 //    class func list(sortOn attributeName: String? = nil, ascending: Bool? = nil, skipDeleted: Bool) -> [VCluster] {
 //        guard Thread.isMainThread else {
@@ -273,7 +274,7 @@ struct VCluster: Codable {
     }
     
     @discardableResult
-    func getManagedObject(context: NSManagedObjectContext) -> Cluster {
+    func getManagedObject(context: NSManagedObjectContext) -> Entity {
         func setPropertiesTo(cluster: Cluster, context: NSManagedObjectContext) {
                 cluster.id = id
                 cluster.title = title

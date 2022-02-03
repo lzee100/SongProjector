@@ -31,7 +31,7 @@ struct VSheetTitleImage: VSheet, SheetMetaType {
     var time: Double = 0
     var hasTheme: VTheme? = nil
     var sheetType: SheetType {
-        return .SheetTitleContent
+        return .SheetTitleImage
     }
 
 	var content: String? = nil
@@ -237,7 +237,7 @@ struct VSheetTitleImage: VSheet, SheetMetaType {
                 sheet.isEmptySheet = isEmptySheet
                 sheet.position = Int16(position)
                 sheet.time = time
-                sheet.hasTheme = hasTheme?.getManagedObject(context: context)
+                sheet.hasTheme = hasTheme?.getManagedObject(context: context) as? Theme
                 
                 sheet.content = content
                 sheet.hasTitle = hasTitle

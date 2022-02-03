@@ -10,7 +10,7 @@ import Foundation
 import CoreData
 import FirebaseAuth
 
-protocol VSheet {
+protocol VSheet: VEntityType {
     var isNew: Bool { get }
     var isEmptySheet: Bool { get set }
     var position: Int { get set }
@@ -54,27 +54,8 @@ struct VSheetEntity {
 		case hasCluster = "cluster"
 		case hasTheme = "theme"
 	}
-	
-	var type: SheetType {
-		if self is VSheetTitleContent {
-			return .SheetTitleContent
-		} else if self is VSheetTitleImage {
-			return .SheetTitleImage
-		} else if self is VSheetSplit {
-			return .SheetSplit
-		} else if self is VSheetPastors {
-			return .SheetPastors
-		} else if self is VSheetActivities {
-			return .SheetActivities
-		} else {
-			return .SheetEmpty
-		}
-	}
     
     
-
-
-	
 	
 	// MARK: - Init
 	

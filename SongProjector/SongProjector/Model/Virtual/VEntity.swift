@@ -11,7 +11,19 @@ import CoreData
 import UIKit
 import FirebaseAuth
 
-public struct VEntity: Codable {
+protocol VEntityType {
+    var id: String { get }
+    var userUID: String { get }
+    var title: String? { get }
+    var createdAt: NSDate { get }
+    var updatedAt: NSDate? { get }
+    var deleteDate: NSDate? { get }
+    var rootDeleteDate: Date? { get }
+
+    func getManagedObject(context: NSManagedObjectContext) -> Entity
+}
+
+public struct VEntity: VEntityType, Codable {
 	
     let id: String
     let userUID: String

@@ -34,10 +34,6 @@ public class SheetTitleImageEntity: Sheet {
 extension SheetTitleImageEntity {
     
     var vSheetTitleImage: VSheetTitleImage {
-        var theme: VTheme? {
-            
-        }
-        
-        return VSheetTitleImage(id: id, userUID: userUID, title: title, createdAt: createdAt, updatedAt: updatedAt, deleteDate: deleteDate, rootDeleteDate: rootDeleteDate, isEmptySheet: isEmptySheet, position: position, time: time, hasTheme: <#T##VTheme?#>, content: <#T##String?#>, hasTitle: <#T##Bool#>, imageBorderColor: <#T##String?#>, imageBorderSize: <#T##Int16#>, imageContentMode: <#T##Int16#>, imageHasBorder: <#T##Bool#>, imagePath: <#T##String?#>, thumbnailPath: <#T##String?#>, imagePathAWS: <#T##String?#>)
+        return VSheetTitleImage(id: id, userUID: userUID, title: title, createdAt: createdAt, updatedAt: updatedAt, deleteDate: deleteDate, rootDeleteDate: rootDeleteDate as Date?, isEmptySheet: isEmptySheet, position: Int(position), time: time, hasTheme: hasTheme?.vTheme, content: content, hasTitle: hasTitle, imageBorderColor: imageBorderColor, imageBorderSize: imageBorderSize, imageContentMode: imageContentMode, imageHasBorder: imageHasBorder, imagePath: imagePath, thumbnailPath: thumbnailPath, imagePathAWS: imagePathAWS)
     }
 }

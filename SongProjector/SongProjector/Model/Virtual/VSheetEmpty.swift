@@ -13,10 +13,48 @@ class VSheetEmpty: VSheet, SheetMetaType {
 	
 	static var type: SheetType = .SheetEmpty
     
+    let id: String
+    let userUID: String
+    let title: String?
+    let createdAt: NSDate
+    let updatedAt: NSDate?
+    let deleteDate: NSDate?
+    let rootDeleteDate: Date?
+    
+    var isNew: Bool {
+        return updatedAt == nil
+    }
+    var isEmptySheet = false
+    var position: Int = 0
+    var time: Double = 0
+    var hasTheme: VTheme? = nil
+    var sheetType: SheetType {
+        return .SheetEmpty
+    }
+    
+    // not saving image path local
+    enum CodingKeysPastors:String,CodingKey
+    {
+        case id
+        case title
+        case userUID
+        case createdAt
+        case updatedAt
+        case deleteDate = "deletedAt"
+        case rootDeleteDate
+        
+        case isEmptySheet
+        case position
+        case time
+        case hasCluster = "cluster"
+        case hasTheme = "theme"
+        
+    }
+    
 	// MARK: - Encodable
 	
-	override public func encode(to encoder: Encoder) throws {
-		try super.encode(to: encoder)
+    public func encode(to encoder: Encoder) throws {
+        
 	}
 	
 	
