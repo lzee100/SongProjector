@@ -28,3 +28,9 @@ public class SheetPastorsEntity: Sheet {
 	
 
 }
+
+extension SheetPastorsEntity {
+    var vSheetPastors: VSheetPastors {
+        return VSheetPastors(id: id, userUID: userUID, title: title, createdAt: createdAt, updatedAt: updatedAt, deleteDate: deleteDate, rootDeleteDate: rootDeleteDate as Date?, isEmptySheet: isEmptySheet, position: Int(position), time: time, hasTheme: hasTheme?.vTheme, content: content, imagePath: imagePath, thumbnailPath: thumbnailPath, imagePathAWS: imagePathAWS, thumbnailPathAWS: thumbnailPathAWS)
+    }
+}

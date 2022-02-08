@@ -19,3 +19,10 @@ public class SheetEmptyEntity: Sheet {
 	}
     
 }
+
+extension SheetEmptyEntity {
+    
+    var vSheetEmpty: VSheetEmpty {
+        return VSheetEmpty(id: id, userUID: userUID, title: title, createdAt: createdAt, updatedAt: updatedAt, deleteDate: deleteDate, rootDeleteDate: rootDeleteDate as Date?, isEmptySheet: isEmptySheet, position: Int(position), time: time, hasTheme: hasTheme?.vTheme)
+    }
+}
