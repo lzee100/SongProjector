@@ -22,12 +22,12 @@ class SheetActivitiesView: SheetView {
     @IBOutlet var titleLeftConstraint: NSLayoutConstraint!
     @IBOutlet var titleTopConstraint: NSLayoutConstraint!
     @IBOutlet var timeLabelRightConstraint: NSLayoutConstraint!
-    @IBOutlet var activitiesTextView: UITextView!
     
     @IBOutlet var containerLeftConstraint: NSLayoutConstraint!
     @IBOutlet var containerBottomContraint: NSLayoutConstraint!
     @IBOutlet var containerTopConstraint: NSLayoutConstraint!
     @IBOutlet var containerRightConstraint: NSLayoutConstraint!
+    @IBOutlet var titleHeightConstraint: NSLayoutConstraint!
     
     private var activities: [VGoogleActivity] = []
     
@@ -66,6 +66,7 @@ class SheetActivitiesView: SheetView {
         } else {
             descriptionTitle.attributedText = NSAttributedString(string: sheet.title ?? "", attributes: sheetTheme?.getTitleAttributes(scaleFactor ?? 1))
         }
+        titleHeightConstraint.constant = descriptionTitle.attributedText?.height(containerWidth: CGFloat.greatestFiniteMagnitude) ?? 30
         
         layoutIfNeeded()
         
@@ -147,6 +148,19 @@ class SheetActivitiesView: SheetView {
             return
         }
         
+        let stackview = UIStackView(frame: .zero)
+        stackview.translatesAutoresizingMaskIntoConstraints = false
+        stackview.distribution = .fill
+        stackview.alignment = .leading
+        stackview.axis = .vertical
+        stackview.spacing = 0
+        activitiesContainerView.addSubview(stackview)
+        
+        NSLayoutConstraint.activate([
+            stackview.topAnchor.constraint(equalTo: activitiesContainerView.topAnchor),
+            stackview.leadingAnchor.constraint(equalTo: activitiesContainerView.leadingAnchor),
+            stackview.trailingAnchor.constraint(equalTo: activitiesContainerView.trailingAnchor),
+        ])
         
         let upcoming = activities.filter({ (($0.startDate as Date?)?.isAfter(nextWeekEnd) ?? false) })
         
@@ -154,72 +168,74 @@ class SheetActivitiesView: SheetView {
         let hasHeaderNextWeek = nextWeek.count > 0
         let hasHeaderUpcoming = upcoming.count > 0
         
-        let activityHeight: CGFloat = 13
-        let headerHeight: CGFloat = 15
-        
-        let maxHeight: CGFloat = activitiesContainerView.bounds.height
-        
-        var y: CGFloat = 0
-        
         if hasHeaderThisWeek {
-            
-            // build header
-            let frameHeader = CGRect(x: 0, y: y, width: activitiesContainerView.bounds.width, height: headerHeight)
-            let headerThisWeek = ActivityHeader.createWith(frame: frameHeader, theme: sheetTheme, title: AppText.ActivitySheet.titleThisWeek, scaleFactor: scaleFactor)
-            activitiesContainerView.addSubview(headerThisWeek)
-            y += headerHeight
-            
-            // build activities
-            var current = 0
-            repeat {
-                let frame = CGRect(x: 0, y: y, width: activitiesContainerView.bounds.width, height: activityHeight)
-                let activityView = ActivityView.createWith(frame: frame, theme: sheetTheme, activity: thisWeek[current], scaleFactor: scaleFactor ?? 1)
-                activitiesContainerView.addSubview(activityView)
-                current += 1
-                y += activityHeight
-            } while current < thisWeek.count && (y + activityHeight) < maxHeight
-        }
-        if hasHeaderNextWeek, (y + headerHeight + activityHeight) < maxHeight {
-            
-            // build header
-            let frameHeader = CGRect(x: 0, y: y, width: activitiesContainerView.bounds.width, height: headerHeight)
-            let headerNextWeek = ActivityHeader.createWith(frame: frameHeader, theme: sheetTheme, title: AppText.ActivitySheet.titleNextWeek, scaleFactor: scaleFactor)
-            activitiesContainerView.addSubview(headerNextWeek)
-            y += headerHeight
-            
-            // build activities
-            var current = 0
-            repeat {
-                let frame = CGRect(x: 0, y: y, width: activitiesContainerView.bounds.width, height: activityHeight)
-                let activityView = ActivityView.createWith(frame: frame, theme: sheetTheme, activity: nextWeek[current], scaleFactor: scaleFactor ?? 1)
-                activitiesContainerView.addSubview(activityView)
-                current += 1
-                y += activityHeight
-            } while current < nextWeek.count && (y + activityHeight) < maxHeight
+            buildIn(stackview: stackview, forHeader: AppText.ActivitySheet.titleThisWeek, activities: thisWeek, isFirst: true)
         }
         
-        if hasHeaderUpcoming, (y + headerHeight + activityHeight) < maxHeight {
-            
-            // build header
-            let frameHeader = CGRect(x: 0, y: y, width: activitiesContainerView.bounds.width, height: headerHeight)
-            let headerNextWeek = ActivityHeader.createWith(frame: frameHeader, theme: sheetTheme, title: AppText.ActivitySheet.titleUpcomingTime, scaleFactor: scaleFactor)
-            activitiesContainerView.addSubview(headerNextWeek)
-            y += headerHeight
-            
-            // build activities
-            var current = 0
-            repeat {
-                let frame = CGRect(x: 0, y: y, width: activitiesContainerView.bounds.width, height: activityHeight)
-                let activityView = ActivityView.createWith(frame: frame, theme: sheetTheme, activity: upcoming[current], scaleFactor: scaleFactor ?? 1)
-                activitiesContainerView.addSubview(activityView)
-                current += 1
-                y += activityHeight
-            } while current < upcoming.count && (y + activityHeight) < maxHeight
+        if stackview.bounds.height <= activitiesContainerView.bounds.height, hasHeaderNextWeek {
+            buildIn(stackview: stackview, forHeader: AppText.ActivitySheet.titleNextWeek, activities: nextWeek)
+        }
+        if stackview.bounds.height <= activitiesContainerView.bounds.height, hasHeaderUpcoming {
+            buildIn(stackview: stackview, forHeader: AppText.ActivitySheet.titleUpcomingTime, activities: upcoming)
         }
         
-        activitiesContainerView.layoutIfNeeded()
-        activitiesContainerView.layoutSubviews()
+    }
+    
+    private func buildIn(stackview: UIStackView, forHeader: String, activities: [VGoogleActivity], isFirst: Bool = false) {
         
+        if !isFirst {
+            let spacer = UIView(frame: .zero)
+            spacer.backgroundColor = .blue
+            spacer.heightAnchor.constraint(equalToConstant: 5 * (scaleFactor ?? 1)).isActive = true
+            stackview.addArrangedSubview(spacer)
+        }
+        
+        // build header
+        let header = UILabel(frame: .zero)
+        var attr = sheetTheme?.getTitleAttributes(scaleFactor ?? 1) ?? [:]
+        let font = attr[.font] as? UIFont
+        attr[.font] = UIFont(name: font?.fontName ?? "Avenir-Book", size: 8 * (scaleFactor ?? 1))
+        header.attributedText = NSAttributedString(string: forHeader, attributes: attr)
+        stackview.addArrangedSubview(header)
+        
+        // build activities
+        
+        func styleStackView(view: UIStackView) {
+            view.distribution = .fill
+            view.alignment = .leading
+            view.axis = .horizontal
+            view.spacing = 8 * (scaleFactor ?? 1)
+        }
+                    
+        var views: [UIStackView] = activities.map { activity in
+            let hStack = UIStackView(frame: .zero)
+            styleStackView(view: hStack)
+            let dateString = activity.dateString
+            let activityDescription = activity.eventDescription ?? AppText.ActivitySheet.descriptionNoActivities
+            
+            let dateLabel = UILabel(frame: .zero)
+            
+            var attributes = sheetTheme?.getLyricsAttributes(scaleFactor ?? 1) ?? [:]
+            let font = attributes[.font] as? UIFont
+            attributes[.font] = UIFont(name: font?.fontName ?? "Avenir-Book", size: 5 * (scaleFactor ?? 1))
+            dateLabel.attributedText = NSAttributedString(string: dateString, attributes: attributes)
+            let activityDescriptionLabel = UILabel(frame: .zero)
+            activityDescriptionLabel.attributedText = NSAttributedString(string: activityDescription, attributes: attributes)
+
+            hStack.addArrangedSubview(dateLabel)
+            hStack.addArrangedSubview(activityDescriptionLabel)
+            
+            return hStack
+        }
+        
+        repeat {
+            if let view = views.first {
+                stackview.addArrangedSubview(view)
+                views.removeFirst()
+            }
+            stackview.layoutIfNeeded()
+        } while views.count > 0 && (stackview.bounds.height <= activitiesContainerView.bounds.height)
+
     }
     
     override func updateOpacity() {
@@ -293,5 +309,15 @@ class SheetActivitiesView: SheetView {
         }
     }
     
+}
+
+extension VGoogleActivity {
+    var dateString: String {
+        if let date = startDate {
+            return (date as Date).toString
+        } else {
+            return AppText.ActivitySheet.dayActivity
+        }
+    }
 }
 

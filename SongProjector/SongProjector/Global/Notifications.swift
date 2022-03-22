@@ -36,5 +36,6 @@ extension NSNotification.Name {
     static let didFinishRequester = Notification.Name("didFinishRequester")
     static let universalClusterSubmitterDidFinish = Notification.Name("universalClusterSubmitterDidFinish")
     static let universalClusterSubmitterFailed = Notification.Name("universalClusterSubmitterFailed")
+    static let soundPlayerPlayedOrStopped = Notification.Name("soundPlayerPlayedOrStopped")
 
 }

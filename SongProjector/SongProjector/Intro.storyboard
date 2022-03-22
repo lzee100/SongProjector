@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="ipad12_9rounded" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17505"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -12,7 +12,7 @@
             <objects>
                 <navigationController storyboardIdentifier="IntroPageViewContainerNav" id="5PZ-q5-3kV" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="UuN-46-HQR">
-                        <rect key="frame" x="0.0" y="0.0" width="1024" height="50"/>
+                        <rect key="frame" x="0.0" y="24" width="1024" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -259,19 +259,19 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="interactive" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="0KO-YW-lNd">
-                                <rect key="frame" x="262" y="100" width="500" height="1226"/>
+                                <rect key="frame" x="262" y="124" width="500" height="1202"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="500" id="yPS-yO-wEz"/>
                                 </constraints>
                                 <view key="tableFooterView" contentMode="scaleToFill" id="JyL-eR-Do6">
-                                    <rect key="frame" x="0.0" y="606" width="500" height="44"/>
+                                    <rect key="frame" x="0.0" y="617" width="500" height="44"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </view>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="NewAdminCodeCell" rowHeight="150" id="Suk-IR-dqW" customClass="NewAdminCodeCell" customModule="ChurchBeam">
-                                        <rect key="frame" x="0.0" y="28" width="500" height="150"/>
+                                        <rect key="frame" x="0.0" y="44.5" width="500" height="150"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Suk-IR-dqW" id="Iz4-Cn-xtb">
                                             <rect key="frame" x="0.0" y="0.0" width="500" height="150"/>
@@ -367,7 +367,7 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="TextTextFieldCell" rowHeight="200" id="gXF-SX-SAQ" customClass="TextTextFieldCell" customModule="ChurchBeam" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="178" width="500" height="200"/>
+                                        <rect key="frame" x="0.0" y="194.5" width="500" height="200"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="gXF-SX-SAQ" id="BDq-Bm-09b">
                                             <rect key="frame" x="0.0" y="0.0" width="500" height="200"/>
@@ -467,7 +467,7 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="TextExplainTextFieldCell" rowHeight="200" id="z0t-BN-yaq" customClass="TextTextFieldCell" customModule="ChurchBeam" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="378" width="500" height="200"/>
+                                        <rect key="frame" x="0.0" y="394.5" width="500" height="200"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="z0t-BN-yaq" id="M6P-1m-Frg">
                                             <rect key="frame" x="0.0" y="0.0" width="500" height="200"/>
@@ -686,7 +686,7 @@
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ExplainImageViewCell" rowHeight="200" id="Vn7-v2-DwE" customClass="ExplainImageViewCell" customModule="ChurchBeam" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="28" width="704" height="200"/>
+                                        <rect key="frame" x="0.0" y="44.5" width="704" height="200"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Vn7-v2-DwE" id="MeX-mC-At7">
                                             <rect key="frame" x="0.0" y="0.0" width="704" height="200"/>

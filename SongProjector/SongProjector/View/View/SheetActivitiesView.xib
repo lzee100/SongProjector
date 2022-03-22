@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -10,7 +10,6 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SheetActivitiesView" customModule="ChurchBeam" customModuleProvider="target">
             <connections>
                 <outlet property="activitiesContainerView" destination="tgh-uL-1Nf" id="FxB-wK-9sG"/>
-                <outlet property="activitiesTextView" destination="pct-Ak-8pY" id="hlb-wo-I83"/>
                 <outlet property="backgroundImageView" destination="wus-o4-puu" id="4JM-eT-UGK"/>
                 <outlet property="backgroundView" destination="fcb-RW-NXr" id="Ch3-s8-GLy"/>
                 <outlet property="containerBottomContraint" destination="rUB-hs-daf" id="DdL-ZK-Poz"/>
@@ -22,6 +21,7 @@
                 <outlet property="timeLabel" destination="A08-xj-u5k" id="BnT-7A-ct3"/>
                 <outlet property="timeLabelRightConstraint" destination="obR-UW-Rsv" id="Mgw-DY-e2h"/>
                 <outlet property="titleBackgroundView" destination="l4d-hl-kcH" id="5dv-oq-wwc"/>
+                <outlet property="titleHeightConstraint" destination="CA6-Ot-dnv" id="vXa-9F-a1M"/>
                 <outlet property="titleLeftConstraint" destination="aBS-Z6-hVK" id="6pv-07-h6a"/>
                 <outlet property="titleTopConstraint" destination="Hpp-7O-dOK" id="ZtQ-xN-bAd"/>
             </connections>
@@ -43,6 +43,9 @@
                 </view>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="A08-xj-u5k">
                     <rect key="frame" x="620" y="10" width="0.0" height="30"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="30" id="CA6-Ot-dnv"/>
+                    </constraints>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
@@ -58,24 +61,9 @@
                 </label>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tgh-uL-1Nf">
                     <rect key="frame" x="20" y="40" width="600" height="300"/>
-                    <subviews>
-                        <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="pct-Ak-8pY">
-                            <rect key="frame" x="0.0" y="0.0" width="600" height="300"/>
-                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
-                            <color key="textColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                            <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                        </textView>
-                    </subviews>
-                    <constraints>
-                        <constraint firstAttribute="trailing" secondItem="pct-Ak-8pY" secondAttribute="trailing" id="Izj-Lj-3sN"/>
-                        <constraint firstAttribute="bottom" secondItem="pct-Ak-8pY" secondAttribute="bottom" id="iQx-LK-wJc"/>
-                        <constraint firstItem="pct-Ak-8pY" firstAttribute="top" secondItem="tgh-uL-1Nf" secondAttribute="top" id="mue-Vh-eed"/>
-                        <constraint firstItem="pct-Ak-8pY" firstAttribute="leading" secondItem="tgh-uL-1Nf" secondAttribute="leading" id="qmF-am-iQG"/>
-                    </constraints>
                 </view>
             </subviews>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
                 <constraint firstItem="A08-xj-u5k" firstAttribute="leading" secondItem="Jgi-dr-BgJ" secondAttribute="trailing" constant="10" id="8W5-Ho-LlC"/>
@@ -102,7 +90,6 @@
                 <constraint firstItem="l4d-hl-kcH" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="xL3-qF-ca6"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <point key="canvasLocation" x="139" y="154"/>
         </view>
     </objects>

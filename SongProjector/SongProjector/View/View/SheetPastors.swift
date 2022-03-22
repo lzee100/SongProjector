@@ -70,6 +70,7 @@ class SheetPastors: SheetView {
 	}
 	
 	override func layoutSubviews() {
+        super.layoutSubviews()
 		setup()
 	}
 	

@@ -44,6 +44,7 @@ class SoundPlay: NSObject, AVAssetDownloadDelegate {
     }
     
 	func play(song: VCluster, pianoSolo: Bool = false) {
+        try? AVAudioSession.sharedInstance().setActive(true)
 		stop()
 		isPianoOnlyPlaying = pianoSolo
 		players = []
@@ -65,19 +66,21 @@ class SoundPlay: NSObject, AVAssetDownloadDelegate {
                     }
                     player.volume = 0
                     player.play()
-                    let vol = AVAudioSession.sharedInstance().outputVolume
-                    var volume: Float = 0.5
+                    let systemVolume = AVAudioSession.sharedInstance().outputVolume
+                    var instrumentVolume: Float = 0.5
                     if let instrumentType = player.instrumentType, let volumeInstrument = VolumeManager.getVolumeFor(instrumentType: instrumentType) {
-                        volume = volumeInstrument
+                        instrumentVolume = volumeInstrument
                     }
-                    player.setVolume(min(vol,volume), fadeDuration: 2)
+                    player.setVolume(systemVolume * instrumentVolume, fadeDuration: 2)
                 }
             }
 			isPlaying = true
+            NotificationCenter.default.post(name: .soundPlayerPlayedOrStopped, object: nil)
 		}
 	}
 	
 	func stop() {
+        try? AVAudioSession.sharedInstance().setActive(false)
         timer?.invalidate()
         timer = nil
         for player in players {
@@ -89,6 +92,7 @@ class SoundPlay: NSObject, AVAssetDownloadDelegate {
         isPlaying = false
         isPianoOnlyPlaying = false
         song = nil
+        NotificationCenter.default.post(name: .soundPlayerPlayedOrStopped, object: nil)
 	}
 	
 	func playerFor(instrumentType: InstrumentType) -> InstrumentPlayer? {
@@ -96,14 +100,17 @@ class SoundPlay: NSObject, AVAssetDownloadDelegate {
 	}
     
     
-    func updateVolumeBasedOnGlobalVolume() {
+    func updateVolumeBasedOnGlobalVolume(systemVolume: Float = AVAudioSession.sharedInstance().outputVolume) {
         for player in self.players {
-            let vol = AVAudioSession.sharedInstance().outputVolume
-            var volume: Float = 0.5
+            var instrumentVolume: Float = 1
             if let instrumentType = player.instrumentType, let volumeInstrument = VolumeManager.getVolumeFor(instrumentType: instrumentType) {
-                volume = volumeInstrument
+                instrumentVolume = volumeInstrument
             }
-            player.setVolume(min(vol,volume), fadeDuration: 2)
+            guard systemVolume > 0 else {
+                player.setVolume(0, fadeDuration: 2)
+                return
+            }
+            player.setVolume(systemVolume * instrumentVolume, fadeDuration: 2)
         }
     }
 //    private func volumeDidChange(notification: NSNotification) {

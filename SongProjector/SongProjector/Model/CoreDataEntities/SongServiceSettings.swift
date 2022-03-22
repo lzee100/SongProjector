@@ -36,7 +36,7 @@ extension VSongServiceSettings {
 			return false
 		}
 		for section in sections {
-			if section.title == nil || section.hasTags(moc: moc).count == 0 {
+            if section.title == nil || section.hasTags(moc: moc).count == 0 || section.numberOfSongs == 0 {
 				valid = false
 				break
 			}

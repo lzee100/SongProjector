@@ -123,7 +123,7 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
     private var canPlay: Bool = true
     
     override var requesters: [RequesterBase] {
-        return [SongServicePlayDateFetcher]
+        return [UniversalClusterFetcher, SongServicePlayDateFetcher]
     }
 
 	
@@ -141,6 +141,7 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         UniversalClusterFetcher.initialFetch()
+        GoogleActivityFetcher.fetch(force: true)
         SongServicePlayDateFetcher.fetch()
     }
 
@@ -629,34 +630,31 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 
 			if let sheet = songService.selectedSheet, let nextSheet = songService.nextSheet(select: false) {
                 let currentSheetView = SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.selectedSong?.cluster, sheet: sheet, theme: songService.selectedTheme, scaleFactor: getScaleFactor(width: sheetDisplayer.bounds.width), toExternalDisplay: true)
-				
-				let nextSheetView = SheetView.createWith(frame: sheetDisplayerNext.bounds, cluster: songService.getSongForNextSheet()?.cluster, sheet: nextSheet, theme: songService.nextTheme, scaleFactor: nextPreviousScaleFactor)
-				
-				let imageCurrentSheet = currentSheetView.asImage()
-				let currentImageView = UIImageView(frame: sheetDisplayer.frame)
-				currentImageView.image = imageCurrentSheet
-				
-				let imageNext = nextSheetView.asImage()
-				let nextImageView = UIImageView(frame: sheetDisplayerNext.frame)
-				nextImageView.image = imageNext
-				
-				view.addSubview(currentImageView)
-				view.addSubview(nextImageView)
-				
+                
+				let nextSheetView = SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.getSongForNextSheet()?.cluster, sheet: nextSheet, theme: songService.nextTheme, scaleFactor: getScaleFactor(width: sheetDisplayer.bounds.width))
+                nextSheetView.frame = sheetDisplayer.frame
+                nextSheetView.center = sheetDisplayerNext.center
+                nextSheetView.transform = CGAffineTransform(scaleX: sheetDisplayerNext.bounds.width / sheetDisplayer.bounds.width, y: sheetDisplayerNext.bounds.height / sheetDisplayer.bounds.height)
+
+                view.addSubview(currentSheetView)
+                view.addSubview(nextSheetView)
+                
 				sheetDisplayer.isHidden = true
 				sheetDisplayerNext.isHidden = true
 				
 				UIView.animate(withDuration: 0.3, animations: {
-					currentImageView.frame = self.sheetDisplayerPrevious.frame
-					
-					nextImageView.frame = self.sheetDisplayer.frame
+                    currentSheetView.transform = CGAffineTransform(scaleX: self.sheetDisplayerPrevious.bounds.width / self.sheetDisplayer.bounds.width, y: self.sheetDisplayerPrevious.bounds.height / self.sheetDisplayer.bounds.height)
+                    currentSheetView.center = self.sheetDisplayerPrevious.center
+                    nextSheetView.transform = .identity
+                    nextSheetView.center = self.sheetDisplayer.center
+
 					
 				}, completion: { (bool) in
+                    self.view.subviews.filter({ $0.tag == 222 }).first?.removeFromSuperview()
 					self.sheetDisplayer.isHidden = false
 					self.sheetDisplayerPrevious.isHidden = false
-					
-					currentImageView.removeFromSuperview()
-					nextImageView.removeFromSuperview()
+                    currentSheetView.removeFromSuperview()
+                    nextSheetView.removeFromSuperview()
 					completion()
 				})
 			}
@@ -665,37 +663,32 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 			
 			if let sheet = songService.selectedSheet, let previousSheet = songService.previousSheet(select: false) {
 				
-//				sheetDisplayerNext.isHidden = position == numberOfSheets ? true : false
-//				sheetDisplayerPrevious.isHidden = position == 0 ? true : false
-
                 let currentSheetView = SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.selectedSong?.cluster, sheet: sheet, theme: songService.selectedTheme, scaleFactor: getScaleFactor(width: sheetDisplayer.bounds.width),  toExternalDisplay: true)
-				
-				let previousSheetView = SheetView.createWith(frame: sheetDisplayerPrevious.bounds, cluster: songService.getSongForPreviousSheet()?.cluster, sheet: previousSheet, theme: songService.previousTheme, scaleFactor: nextPreviousScaleFactor)
-				
-				let imageCurrentSheet = currentSheetView.asImage()
-				let currentImageView = UIImageView(frame: sheetDisplayer.frame)
-				currentImageView.image = imageCurrentSheet
-				
-				let previousImage = previousSheetView.asImage()
-				let previousImageView = UIImageView(frame: sheetDisplayerPrevious.frame)
-				previousImageView.image = previousImage
-				
-				view.addSubview(currentImageView)
-				view.addSubview(previousImageView)
+                currentSheetView.center = sheetDisplayer.center
+                
+				let previousSheetView = SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.getSongForPreviousSheet()?.cluster, sheet: previousSheet, theme: songService.previousTheme, scaleFactor: getScaleFactor(width: sheetDisplayer.bounds.width))
+                previousSheetView.transform = CGAffineTransform(scaleX: sheetDisplayerPrevious.bounds.width / sheetDisplayer.bounds.width, y: sheetDisplayerPrevious.bounds.height / sheetDisplayer.bounds.height)
+                previousSheetView.center = sheetDisplayerPrevious.center
+
+                view.addSubview(currentSheetView)
+                view.addSubview(previousSheetView)
+
 				sheetDisplayer.isHidden = true
 				sheetDisplayerPrevious.isHidden = true
 				sheetDisplayerNext.isHidden = songService.nextSheet(select: false) == nil
 				
 				UIView.animate(withDuration: 0.3, animations: {
 					
-					previousImageView.frame = self.sheetDisplayer.frame
-					currentImageView.frame = self.sheetDisplayerNext.frame
-					
+                    currentSheetView.transform = CGAffineTransform(scaleX: self.sheetDisplayerNext.bounds.width / self.sheetDisplayer.bounds.width, y: self.sheetDisplayerNext.bounds.height / self.sheetDisplayer.bounds.height)
+                    currentSheetView.center = self.sheetDisplayerNext.center
+                    previousSheetView.transform = .identity
+                    previousSheetView.center = self.sheetDisplayer.center
+
 				}, completion: { (bool) in
 					self.sheetDisplayer.isHidden = false
 					self.sheetDisplayerPrevious.isHidden = false
-					previousImageView.removeFromSuperview()
-					currentImageView.removeFromSuperview()
+                    currentSheetView.removeFromSuperview()
+                    previousSheetView.removeFromSuperview()
 					completion()
 				})
 			}

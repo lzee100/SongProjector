@@ -204,6 +204,7 @@ class WizzardSectionTagsController: ChurchBeamViewController, UITableViewDataSou
 		if let section = Int(cell.id) {
 			songServiceObject.sections[section].numberOfSongs = Int16(value)
 		}
+        navigationItem.rightBarButtonItem?.isEnabled = songServiceObject.isValid
 	}
 	
 //	@objc func adjustForKeyboard(notification: Notification) {
