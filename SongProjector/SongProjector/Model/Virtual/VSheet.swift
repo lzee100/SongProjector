@@ -20,7 +20,7 @@ protocol VSheet: VEntityType {
 }
 
 
-struct VSheetEntity {
+struct VSheetEntity: VEntityType, Codable {
 	
     let id: String
     let userUID: String

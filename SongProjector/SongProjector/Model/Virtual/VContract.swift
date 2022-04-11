@@ -9,7 +9,15 @@
 import Foundation
 import CoreData
 
-class VContract: VEntity {
+struct VContract: VEntityType, Codable {
+    
+    let id: String
+    let userUID: String
+    let title: String?
+    let createdAt: NSDate
+    let updatedAt: NSDate?
+    let deleteDate: NSDate?
+    let rootDeleteDate: Date?
 		
 	var name: String = ""
 	var buttonContent: String = ""
@@ -17,7 +25,14 @@ class VContract: VEntity {
 	
 	enum CodingKeysContract: String, CodingKey
 	{
-		case id
+        case id
+        case title
+        case userUID
+        case createdAt
+        case updatedAt
+        case deleteDate = "deletedAt"
+        case rootDeleteDate
+        
 		case name
 		case button
 		case hasContractFeatures = "features"
@@ -28,7 +43,33 @@ class VContract: VEntity {
 	
 	override func encode(to encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeysContract.self)
-		try container.encode(id, forKey: .id)
+        
+        try container.encode(id, forKey: .id)
+        try container.encode(userUID, forKey: .userUID)
+        try container.encode((createdAt as Date).intValue, forKey: .createdAt)
+        if let updatedAt = updatedAt {
+            //            let updatedAtString = GlobalDateFormatter.localToUTCNumber(date: updatedAt as Date)
+            try container.encode((updatedAt as Date).intValue, forKey: .updatedAt)
+        } else {
+            try container.encode((createdAt as Date).intValue, forKey: .updatedAt)
+        }
+        if let deleteDate = deleteDate {
+            //            let deleteDateString = GlobalDateFormatter.localToUTCNumber(date: deleteDate as Date)
+            try container.encode((deleteDate as Date).intValue, forKey: .deleteDate)
+        }
+        if let rootDeleteDate = rootDeleteDate {
+            try container.encode(rootDeleteDate.intValue, forKey: .rootDeleteDate)
+        }
+        
+        try container.encode(eventDescription, forKey: .eventDescription)
+        
+        if let startDate = startDate {
+            try container.encode((startDate as Date).intValue, forKey: .startDate)
+        }
+        if let endDate = endDate {
+            try container.encode((endDate as Date).intValue, forKey: .endDate)
+        }
+        
 		try container.encode(name, forKey: .name)
 		try container.encode(buttonContent, forKey: .button)
 	}
@@ -42,7 +83,33 @@ class VContract: VEntity {
 		self.init()
 		
 		let container = try decoder.container(keyedBy: CodingKeysContract.self)
-		id = try container.decode(String.self, forKey: .id)
+        
+        
+        id = try container.decode(String.self, forKey: .id)
+        title = try container.decodeIfPresent(String.self, forKey: .title)
+        userUID = try container.decode(String.self, forKey: .userUID)
+        let createdAtInt = try container.decode(Int64.self, forKey: .createdAt)
+        let updatedAtInt = try container.decodeIfPresent(Int64.self, forKey: .updatedAt)
+        let deletedAtInt = try container.decodeIfPresent(Int64.self, forKey: .deleteDate)
+        createdAt = Date(timeIntervalSince1970: TimeInterval(createdAtInt) / 1000) as NSDate
+        
+        if let updatedAtInt = updatedAtInt {
+            updatedAt = Date(timeIntervalSince1970: TimeInterval(updatedAtInt) / 1000) as NSDate
+        } else {
+            updatedAt = nil
+        }
+        if let deletedAtInt = deletedAtInt {
+            deleteDate = Date(timeIntervalSince1970: TimeInterval(deletedAtInt) / 1000) as NSDate
+        } else {
+            deleteDate = nil
+        }
+        if let rootdeleteDateInt = try container.decodeIfPresent(Int.self, forKey: .rootDeleteDate) {
+            rootDeleteDate = Date(timeIntervalSince1970: TimeInterval(rootdeleteDateInt / 1000))
+        } else {
+            rootDeleteDate = nil
+        }
+        
+        
 		name = try container.decode(String.self, forKey: .name)
 		buttonContent = try container.decode(String.self, forKey: .button)
 	}

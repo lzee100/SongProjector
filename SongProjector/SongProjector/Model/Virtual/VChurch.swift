@@ -12,8 +12,26 @@ import Foundation
 import CoreData
 
 public class VChurch: VEntity {
+    
+    let id: String
+    let userUID: String
+    let title: String?
+    let createdAt: NSDate
+    let updatedAt: NSDate?
+    let deleteDate: NSDate?
+    let rootDeleteDate: Date?
         
     // MARK: - Encodable
+    
+    enum CodingKeyChurch: String, CodingKey {
+        case id
+        case title
+        case userUID
+        case createdAt
+        case updatedAt
+        case deleteDate = "deletedAt"
+        case rootDeleteDate
+    }
     
     override public func encode(to encoder: Encoder) throws {
         try super.encode(to: encoder)

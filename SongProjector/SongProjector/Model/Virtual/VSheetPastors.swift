@@ -12,7 +12,7 @@ import CoreData
 import FirebaseAuth
 
 
-struct VSheetPastors: VSheet, SheetMetaType {
+struct VSheetPastors: VSheet, SheetMetaType, Codable {
     
     static var type: SheetType = .SheetPastors
     

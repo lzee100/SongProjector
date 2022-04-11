@@ -10,7 +10,7 @@ import Foundation
 import CoreData
 import FirebaseAuth
 
-class VSheetEmpty: VSheet, SheetMetaType {
+struct VSheetEmpty: VSheet, SheetMetaType, Codable {
 	
 	static var type: SheetType = .SheetEmpty
     
@@ -76,26 +76,7 @@ class VSheetEmpty: VSheet, SheetMetaType {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeysPastors.self)
         
-        try container.encodeIfPresent(title, forKey: .title)
-        guard let userUID = Auth.auth().currentUser?.uid else {
-            throw RequestError.unAuthorizedNoUser(requester: String(describing: self))
-        }
-        try container.encode(userUID, forKey: .userUID)
-
-       try container.encode((createdAt as Date).intValue, forKey: .createdAt)
-        if let updatedAt = updatedAt {
-//            let updatedAtString = GlobalDateFormatter.localToUTCNumber(date: updatedAt as Date)
-            try container.encode((updatedAt as Date).intValue, forKey: .updatedAt)
-        } else {
-            try container.encode((createdAt as Date).intValue, forKey: .updatedAt)
-        }
-        if let deleteDate = deleteDate {
-//            let deleteDateString = GlobalDateFormatter.localToUTCNumber(date: deleteDate as Date)
-            try container.encode((deleteDate as Date).intValue, forKey: .deleteDate)
-        }
-        if let rootDeleteDate = rootDeleteDate {
-            try container.encode(rootDeleteDate.intValue, forKey: .rootDeleteDate)
-        }
+        
         
         try container.encode(Int(truncating: NSNumber(value: isEmptySheet)), forKey: .isEmptySheet)
         try container.encode(position, forKey: .position)
@@ -111,14 +92,13 @@ class VSheetEmpty: VSheet, SheetMetaType {
     
     // MARK: - Decodable
     
-    required public init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         
         let container = try decoder.container(keyedBy: CodingKeysPastors.self)
         
         id = try container.decode(String.self, forKey: .id)
         title = try container.decodeIfPresent(String.self, forKey: .title)
         userUID = try container.decode(String.self, forKey: .userUID)
-//        isTemp = false
         let createdAtInt = try container.decode(Int64.self, forKey: .createdAt)
         let updatedAtInt = try container.decodeIfPresent(Int64.self, forKey: .updatedAt)
         let deletedAtInt = try container.decodeIfPresent(Int64.self, forKey: .deleteDate)

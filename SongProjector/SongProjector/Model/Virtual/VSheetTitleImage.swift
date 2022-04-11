@@ -11,7 +11,7 @@ import UIKit
 import CoreData
 import FirebaseAuth
 
-struct VSheetTitleImage: VSheet, SheetMetaType {
+struct VSheetTitleImage: VSheet, SheetMetaType, Codable {
 	
 	static var type: SheetType = .SheetTitleImage
     

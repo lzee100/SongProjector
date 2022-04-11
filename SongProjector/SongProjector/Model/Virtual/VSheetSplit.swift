@@ -8,10 +8,30 @@
 
 import Foundation
 import CoreData
+import FirebaseAuth
 
-class VSheetSplit: VSheet, SheetMetaType {
+struct VSheetSplit: VSheet, SheetMetaType, Codable {
 	
 	static let type: SheetType = .SheetSplit
+    
+    let id: String
+    let userUID: String
+    let title: String?
+    let createdAt: NSDate
+    let updatedAt: NSDate?
+    let deleteDate: NSDate?
+    let rootDeleteDate: Date?
+    
+    var isNew: Bool {
+        return updatedAt == nil
+    }
+    var isEmptySheet = false
+    var position: Int = 0
+    var time: Double = 0
+    var hasTheme: VTheme? = nil
+    var sheetType: SheetType {
+        return .SheetEmpty
+    }
 	
 	var textLeft: String?
 	var textRight: String?
@@ -19,6 +39,20 @@ class VSheetSplit: VSheet, SheetMetaType {
 	
 	enum CodingKeysSheetSplit:String,CodingKey
 	{
+        case id
+        case title
+        case userUID
+        case createdAt
+        case updatedAt
+        case deleteDate = "deletedAt"
+        case rootDeleteDate
+        
+        case isEmptySheet
+        case position
+        case time
+        case hasCluster = "cluster"
+        case hasTheme = "theme"
+        
 		case textLeft = "contentLeft"
 		case textRight = "contentRight"
 	}
@@ -27,63 +61,110 @@ class VSheetSplit: VSheet, SheetMetaType {
 	
 	// MARK: - Encodable
 
-	override public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeysSheetSplit.self)
+        
+        try container.encodeIfPresent(title, forKey: .title)
+        guard let userUID = Auth.auth().currentUser?.uid else {
+            throw RequestError.unAuthorizedNoUser(requester: String(describing: self))
+        }
+        try container.encode(userUID, forKey: .userUID)
+
+       try container.encode((createdAt as Date).intValue, forKey: .createdAt)
+        if let updatedAt = updatedAt {
+//            let updatedAtString = GlobalDateFormatter.localToUTCNumber(date: updatedAt as Date)
+            try container.encode((updatedAt as Date).intValue, forKey: .updatedAt)
+        } else {
+            try container.encode((createdAt as Date).intValue, forKey: .updatedAt)
+        }
+        if let deleteDate = deleteDate {
+//            let deleteDateString = GlobalDateFormatter.localToUTCNumber(date: deleteDate as Date)
+            try container.encode((deleteDate as Date).intValue, forKey: .deleteDate)
+        }
+        if let rootDeleteDate = rootDeleteDate {
+            try container.encode(rootDeleteDate.intValue, forKey: .rootDeleteDate)
+        }
+        
+        try container.encode(Int(truncating: NSNumber(value: isEmptySheet)), forKey: .isEmptySheet)
+        try container.encode(position, forKey: .position)
+        try container.encode(id, forKey: .id)
+        try container.encode(time.stringValue, forKey: .time)
+        if hasTheme != nil {
+            try container.encode(hasTheme, forKey: .hasTheme)
+        }
+        
 		try container.encode(textLeft, forKey: .textLeft)
 		try container.encode(textRight, forKey: .textRight)
-		try super.encode(to: encoder)
 	}
 	
 	
 	
 	// MARK: - Decodable
 	
-	required public convenience init(from decoder: Decoder) throws {
-		
-		self.init()
-		
+    public init(from decoder: Decoder) throws {
+				
 		let container = try decoder.container(keyedBy: CodingKeysSheetSplit.self)
+        
+        id = try container.decode(String.self, forKey: .id)
+        title = try container.decodeIfPresent(String.self, forKey: .title)
+        userUID = try container.decode(String.self, forKey: .userUID)
+        let createdAtInt = try container.decode(Int64.self, forKey: .createdAt)
+        let updatedAtInt = try container.decodeIfPresent(Int64.self, forKey: .updatedAt)
+        let deletedAtInt = try container.decodeIfPresent(Int64.self, forKey: .deleteDate)
+        createdAt = Date(timeIntervalSince1970: TimeInterval(createdAtInt) / 1000) as NSDate
+
+        if let updatedAtInt = updatedAtInt {
+            updatedAt = Date(timeIntervalSince1970: TimeInterval(updatedAtInt) / 1000) as NSDate
+        } else {
+            updatedAt = nil
+        }
+        if let deletedAtInt = deletedAtInt {
+            deleteDate = Date(timeIntervalSince1970: TimeInterval(deletedAtInt) / 1000) as NSDate
+        } else {
+            deleteDate = nil
+        }
+        if let rootdeleteDateInt = try container.decodeIfPresent(Int.self, forKey: .rootDeleteDate) {
+            rootDeleteDate = Date(timeIntervalSince1970: TimeInterval(rootdeleteDateInt / 1000))
+        } else {
+            rootDeleteDate = nil
+        }
+        
+        isEmptySheet = try Bool(truncating: (container.decodeIfPresent(Int16.self, forKey: .isEmptySheet) ?? 0) as NSNumber)
+        position = try container.decodeIfPresent(Int.self, forKey: .position) ?? 0
+        let sheetTimeString = try container.decodeIfPresent(String.self, forKey: .time) ?? ""
+        time = Double(sheetTimeString) ?? 0.0
+        hasTheme = try container.decodeIfPresent(VTheme.self, forKey: .hasTheme)
+        
 		textLeft = try container.decodeIfPresent(String.self, forKey: .textLeft)
 		textRight = try container.decodeIfPresent(String.self, forKey: .textRight)
 		
-		try super.initialization(decoder: decoder)
-		
 	}
 	
-	
-	
-	// MARK: - NSCopying
-	
-	public override func copy(with zone: NSZone? = nil) -> Any {
-		let copy = super.copy(with: zone) as! VSheetSplit
-		copy.textLeft = textLeft
-		copy.textRight = textRight
-		return copy
-	}
-	
-
-	override func setPropertiesTo(entity: Entity, context: NSManagedObjectContext) {
-		super.setPropertiesTo(entity: entity, context: context)
-		if let sheet = entity as? SheetSplitEntity {
-			sheet.textLeft = self.textLeft
-			sheet.textRight = self.textRight
-		}
-	}
-	
-    override func getPropertiesFrom(entity: Entity, context: NSManagedObjectContext) {
-        super.getPropertiesFrom(entity: entity, context: context)
-		if let sheet = entity as? SheetSplitEntity {
-			self.textLeft = sheet.textLeft
-			self.textRight = sheet.textRight
-		}
-	}
-	
-	convenience init(sheet: SheetSplitEntity, context: NSManagedObjectContext) {
-		self.init()
-		getPropertiesFrom(entity: sheet, context: context)
-	}
-	
-    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
+    func getManagedObject(context: NSManagedObjectContext) -> Entity {
+        
+        func setPropertiesTo(entity: Entity, context: NSManagedObjectContext) {
+            if let sheet = entity as? SheetSplitEntity {
+                
+                sheet.id = id
+                sheet.title = title
+                sheet.userUID = userUID
+                sheet.createdAt = createdAt
+                sheet.updatedAt = updatedAt
+                sheet.deleteDate = deleteDate
+        //        entity.isTemp = isTemp
+                sheet.rootDeleteDate = rootDeleteDate as NSDate?
+                
+                sheet.isEmptySheet = isEmptySheet
+                sheet.position = Int16(position)
+                sheet.time = time
+                sheet.hasTheme = hasTheme?.getManagedObject(context: context) as? Theme
+                
+                sheet.textLeft = self.textLeft
+                sheet.textRight = self.textRight
+                
+            }
+        }
+        
         if let entity: SheetSplitEntity = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
             setPropertiesTo(entity: entity, context: context)
             return entity

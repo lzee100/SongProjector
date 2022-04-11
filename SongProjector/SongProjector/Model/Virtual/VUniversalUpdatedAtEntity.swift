@@ -11,10 +11,26 @@ import CoreData
 
 public class VUniversalUpdatedAt: VEntity {
     
+    let id: String
+    let userUID: String
+    let title: String?
+    let createdAt: NSDate
+    let updatedAt: NSDate?
+    let deleteDate: NSDate?
+    let rootDeleteDate: Date?
+    
     var universalUpdatedAt: Date?
 
 
     enum CodingKeysUniversalUpdatedAtEntity: String, CodingKey {
+        case id
+        case title
+        case userUID
+        case createdAt
+        case updatedAt
+        case deleteDate = "deletedAt"
+        case rootDeleteDate
+        
         case universalUpdatedAt
     }
         

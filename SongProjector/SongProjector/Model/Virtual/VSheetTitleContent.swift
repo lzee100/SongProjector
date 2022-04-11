@@ -10,7 +10,7 @@ import Foundation
 import CoreData
 import FirebaseAuth
 
-struct VSheetTitleContent: VSheet, SheetMetaType {
+struct VSheetTitleContent: VSheet, SheetMetaType, Codable {
 	
 	static var type: SheetType = .SheetTitleContent
     

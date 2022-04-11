@@ -129,7 +129,7 @@ public struct VEntity: VEntityType, Codable {
             entity.id = id
             entity.title = title
             entity.userUID = userUID
-            entity.creatheetedAt = createdAt
+            entity.createdAt = createdAt
             entity.updatedAt = updatedAt
             entity.deleteDate = deleteDate
     //        entity.isTemp = isTemp
