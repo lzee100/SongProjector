@@ -192,6 +192,8 @@
 "Settings-sectionCalendarId" = "Google agenda ID";
 "Settings-calendarIdPlaceHolder" = "Google agenda id";
 "Settings-appversion" = "Versie: ";
+"Settings-sectionAppSettings" = "App instellingen";
+"Settings-resetMutes" = "Reset opgeslagen mutes voor instrument";
 
 "NewTheme-title" = "Nieuw thema";
 "NewTheme-descriptionTitle" = "Naam nieuw thema";

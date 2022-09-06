@@ -42,4 +42,15 @@ enum InstrumentType : String {
 			self = .unKnown
 		}
 	}
+    
+    var position: Int {
+        switch self {
+        case .piano: return 0
+        case .guitar: return 1
+        case .bassGuitar: return 2
+        case .drums: return 3
+        case .pianoSolo: return 4
+        case .unKnown: return 5
+        }
+    }
 }

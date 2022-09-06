@@ -71,7 +71,15 @@ class SoundPlay: NSObject, AVAssetDownloadDelegate {
                     if let instrumentType = player.instrumentType, let volumeInstrument = VolumeManager.getVolumeFor(instrumentType: instrumentType) {
                         instrumentVolume = volumeInstrument
                     }
-                    player.setVolume(systemVolume * instrumentVolume, fadeDuration: 2)
+                    var isMuted = false
+                    if let instrument = song.hasInstruments.first(where: { $0.type == player.instrumentType }) {
+                        isMuted = VolumeManager.isMutedFor(instrument: instrument)
+                    }
+                    if isMuted {
+                        player.setVolume(0, fadeDuration: 2)
+                    } else {
+                        player.setVolume(systemVolume * instrumentVolume, fadeDuration: 2)
+                    }
                 }
             }
 			isPlaying = true
@@ -95,10 +103,24 @@ class SoundPlay: NSObject, AVAssetDownloadDelegate {
         NotificationCenter.default.post(name: .soundPlayerPlayedOrStopped, object: nil)
 	}
 	
-	func playerFor(instrumentType: InstrumentType) -> InstrumentPlayer? {
+	private func playerFor(instrumentType: InstrumentType) -> InstrumentPlayer? {
 		return players.first(where: { $0.instrumentType == instrumentType })
 	}
     
+    func setVolumeFor(_ type: InstrumentType, volume: Float, saveValue: Bool = true) {
+        SoundPlayer.playerFor(instrumentType: type)?.setVolume(volume, fadeDuration: 0)
+        if saveValue {
+            VolumeManager.set(volume: volume, instrumentType: type)
+        }
+    }
+    
+    func getVolumeFor(_ type: InstrumentType) -> Float? {
+        SoundPlayer.playerFor(instrumentType: type)?.volume
+    }
+    
+    func containsInstrument(_ instrument: VInstrument) -> Bool {
+        return song?.hasInstruments.contains(entity: instrument) ?? false
+    }
     
     func updateVolumeBasedOnGlobalVolume(systemVolume: Float = AVAudioSession.sharedInstance().outputVolume) {
         for player in self.players {

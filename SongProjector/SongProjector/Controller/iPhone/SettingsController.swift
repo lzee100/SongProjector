@@ -20,6 +20,7 @@ class SettingsController: ChurchBeamViewController, UITableViewDelegate, UITable
 //		case songService = 0
 		case googleAccount = 0
         case googleCalendarId = 1
+        case appsettings = 2
 				
 		static func `for`(_ section: Int) -> Section {
             return Section.allCases[section]
@@ -30,7 +31,7 @@ class SettingsController: ChurchBeamViewController, UITableViewDelegate, UITable
 //			case .songService: return AppText.Settings.SectionSongServiceSettings
 			case .googleAccount: return AppText.Settings.sectionGmailAccount
             case .googleCalendarId: return AppText.Settings.sectionCalendarId
-
+            case .appsettings: return AppText.Settings.sectionAppSettings
 			}
 		}
 	}
@@ -85,13 +86,17 @@ class SettingsController: ChurchBeamViewController, UITableViewDelegate, UITable
             let user: User? = DataFetcher().getEntity(moc: moc)
             cell.textField.text = user?.googleCalendarId
             return cell
+        case .appsettings:
+            let cell = tableView.dequeueReusableCell(withIdentifier: AddButtonCell.identifier) as! AddButtonCell
+            cell.apply(title: AppText.Settings.ResetMutes)
+            return cell
 		}
 	}
 	
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 		switch Section.for(indexPath.section) {
 //        case .songService, .googleCalendarId:
-        case .googleCalendarId:
+        case .googleCalendarId, .appsettings:
             return UITableView.automaticDimension
 		case .googleAccount:
 			return GIDSignIn.sharedInstance()?.currentUser != nil ? GoogleSignedInCell.preferredHeight : GoogleCell.preferredHeight
@@ -129,6 +134,16 @@ class SettingsController: ChurchBeamViewController, UITableViewDelegate, UITable
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return section == Section.allCases.count - 1 ? 100 : CGFloat.leastNonzeroMagnitude
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if tableView.cellForRow(at: indexPath) is AddButtonCell {
+            showLoader()
+            VolumeManager.resetMutes { [weak self] in
+                self?.hideLoader()
+                NotificationCenter.default.post(name: .didResetInstrumentMutes, object: nil)
+            }
+        }
     }
 	
     override var canBecomeFirstResponder: Bool {
@@ -225,7 +240,7 @@ class SettingsController: ChurchBeamViewController, UITableViewDelegate, UITable
 	}
 
 	private func setup() {
-		tableView.register(cells: [LabelTextFieldCell.identifier, GoogleSignedInCell.identifier, Cells.GoogleCell])
+		tableView.register(cells: [LabelTextFieldCell.identifier, GoogleSignedInCell.identifier, Cells.GoogleCell, AddButtonCell.identifier])
         tableView.registerBasicHeaderView()
         tableView.registerTextFooterView()
 		tableView.reloadData()

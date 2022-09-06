@@ -70,12 +70,12 @@ extension UIView {
 		}
 	}
     
-    func anchorToSuperView() {
+    func anchorToSuperView(insets: UIEdgeInsets = .zero) {
         guard let superView = superview else { return }
-        topAnchor.constraint(equalTo: superView.topAnchor).isActive = true
-        leadingAnchor.constraint(equalTo: superView.leadingAnchor).isActive = true
-        trailingAnchor.constraint(equalTo: superView.trailingAnchor).isActive = true
-        bottomAnchor.constraint(equalTo: superView.bottomAnchor).isActive = true
+        topAnchor.constraint(equalTo: superView.topAnchor, constant: insets.top).isActive = true
+        leadingAnchor.constraint(equalTo: superView.leadingAnchor, constant: insets.left).isActive = true
+        trailingAnchor.constraint(equalTo: superView.trailingAnchor, constant: -insets.right).isActive = true
+        bottomAnchor.constraint(equalTo: superView.bottomAnchor, constant: -insets.bottom).isActive = true
     }
 	
 }

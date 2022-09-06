@@ -250,7 +250,7 @@ public class VCluster: VEntity {
             
             sheetIds = cluster.sheetIds.split(separator: ",").compactMap({ String($0) })
             hasSheets = getSheets(sheets: cluster.hasSheets(moc: context)).sorted(by: { $0.position < $1.position })
-            hasInstruments = cluster.hasInstruments(moc: context).compactMap({ VInstrument(instrument: $0, context: context) })
+            hasInstruments = cluster.hasInstruments(moc: context).compactMap({ VInstrument(instrument: $0, context: context) }).sorted(by: { $0.type?.position ?? 0 < $1.type?.position ?? 0 })
             tagIds = cluster.splitTagIds
             
         }

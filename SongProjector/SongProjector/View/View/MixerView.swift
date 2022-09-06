@@ -43,7 +43,6 @@ class MixerView: UIView {
     
     deinit {
         NotificationCenter.default.removeObserver(self)
-        try? AVAudioSession.sharedInstance().setActive(false)
     }
     
     func customInit() {
@@ -108,14 +107,13 @@ class MixerView: UIView {
     }
     
     private func set(volume: Float, forType: InstrumentType) {
-        SoundPlayer.playerFor(instrumentType: forType)?.setVolume(volume, fadeDuration: 0)
-        VolumeManager.set(volume: volume, instrumentType: forType)
+        SoundPlayer.setVolumeFor(forType, volume: volume)
     }
     
     private func updateVolumeSliders() {
         
         if let savedVolume = VolumeManager.getVolumeFor(instrumentType: .piano) {
-            if SoundPlayer.playerFor(instrumentType: .piano)?.volume ?? 0 == 0 {
+            if SoundPlayer.getVolumeFor(.piano) ?? 0 == 0 {
                 pianoControl.slider.value = savedVolume
             } else {
                 pianoControl.slider.value = savedVolume * AVAudioSession.sharedInstance().outputVolume
@@ -125,7 +123,7 @@ class MixerView: UIView {
         }
         
         if let savedVolume = VolumeManager.getVolumeFor(instrumentType: .guitar) {
-            if SoundPlayer.playerFor(instrumentType: .guitar)?.volume ?? 0 == 0 {
+            if SoundPlayer.getVolumeFor(.guitar) ?? 0 == 0 {
                 guitarControl.slider.value = savedVolume
             } else {
                 guitarControl.slider.value = savedVolume * AVAudioSession.sharedInstance().outputVolume
@@ -135,7 +133,7 @@ class MixerView: UIView {
         }
         
         if let savedVolume = VolumeManager.getVolumeFor(instrumentType: .bassGuitar) {
-            if SoundPlayer.playerFor(instrumentType: .bassGuitar)?.volume ?? 0 == 0 {
+            if SoundPlayer.getVolumeFor(.bassGuitar) ?? 0 == 0 {
                 bassGuitarControl.slider.value = savedVolume
             } else {
                 bassGuitarControl.slider.value = savedVolume * AVAudioSession.sharedInstance().outputVolume
@@ -145,7 +143,7 @@ class MixerView: UIView {
         }
         
         if let savedVolume = VolumeManager.getVolumeFor(instrumentType: .drums) {
-            if SoundPlayer.playerFor(instrumentType: .drums)?.volume ?? 0 == 0 {
+            if SoundPlayer.getVolumeFor(.drums) ?? 0 == 0 {
                 drumsControl.slider.value = savedVolume
             } else {
                 drumsControl.slider.value = savedVolume * AVAudioSession.sharedInstance().outputVolume
@@ -170,6 +168,27 @@ struct VolumeManager {
     static func getVolumeFor(instrumentType: InstrumentType) -> Float? {
         guard UserDefaults.standard.string(forKey: instrumentType.rawValue + instrument) != nil else { return nil }
         return UserDefaults.standard.float(forKey: instrumentType.rawValue)
+    }
+    
+    static func setMuteFor(instrument: VInstrument, isMuted: Bool) {
+        UserDefaults.standard.setValue(isMuted, forKey: self.instrument + instrument.id)
+    }
+    
+    static func isMutedFor(instrument: VInstrument) -> Bool {
+        UserDefaults.standard.bool(forKey: self.instrument + instrument.id)
+    }
+    
+    static func resetMutes(completion: @escaping (() -> Void)) {
+        DispatchQueue.global(qos: .userInitiated).async {
+            let moc = newMOCBackground
+            let instruments = DataFetcher<Cluster>().getEntities(moc: moc).flatMap({ $0.hasInstruments(moc: moc) })
+            instruments.forEach { instrument in
+                UserDefaults.standard.removeObject(forKey: self.instrument + instrument.id)
+            }
+            DispatchQueue.main.async {
+                completion()
+            }
+        }
     }
     
 }

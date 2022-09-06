@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B37F43E228C669D7007970DD /* InstrumentsButtonsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37F43E128C669D7007970DD /* InstrumentsButtonsView.swift */; };
+		B37F43E428C66EF4007970DD /* InstrumentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37F43E328C66EF4007970DD /* InstrumentView.swift */; };
+		B37F43E628C673BF007970DD /* EdgeInsetsExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37F43E528C673BF007970DD /* EdgeInsetsExtension.swift */; };
 		B38C18E827B331A0006DA1A7 /* NSAttributedStringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38C18E727B331A0006DA1A7 /* NSAttributedStringExtensions.swift */; };
 		E305BB9123CF6D8500A753A2 /* SoundPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E305BB8F23CF6D8500A753A2 /* SoundPickerCell.swift */; };
 		E305BB9223CF6D8500A753A2 /* SoundPickerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E305BB9023CF6D8500A753A2 /* SoundPickerCell.xib */; };
@@ -325,6 +328,9 @@
 		346D1C5C5532C9E10C448104 /* Pods-SongProjector.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SongProjector.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SongProjector/Pods-SongProjector.debug.xcconfig"; sourceTree = "<group>"; };
 		8300EFE78A26AC2834037C54 /* Pods-SongProjector.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SongProjector.release.xcconfig"; path = "Pods/Target Support Files/Pods-SongProjector/Pods-SongProjector.release.xcconfig"; sourceTree = "<group>"; };
 		95070415C3C6BD5B7639F73A /* Pods_SongProjector.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SongProjector.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B37F43E128C669D7007970DD /* InstrumentsButtonsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstrumentsButtonsView.swift; sourceTree = "<group>"; };
+		B37F43E328C66EF4007970DD /* InstrumentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstrumentView.swift; sourceTree = "<group>"; };
+		B37F43E528C673BF007970DD /* EdgeInsetsExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeInsetsExtension.swift; sourceTree = "<group>"; };
 		B38C18E727B331A0006DA1A7 /* NSAttributedStringExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSAttributedStringExtensions.swift; sourceTree = "<group>"; };
 		E305BB8F23CF6D8500A753A2 /* SoundPickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundPickerCell.swift; sourceTree = "<group>"; };
 		E305BB9023CF6D8500A753A2 /* SoundPickerCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SoundPickerCell.xib; sourceTree = "<group>"; };
@@ -842,6 +848,7 @@
 				E38DF499262F53E00057D8D9 /* DeviceOrientationExtensions.swift */,
 				E30BDD712707B0D60049D6A8 /* FloatExtensions.swift */,
 				B38C18E727B331A0006DA1A7 /* NSAttributedStringExtensions.swift */,
+				B37F43E528C673BF007970DD /* EdgeInsetsExtension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1123,6 +1130,8 @@
 				E33BE3F325631A4200DEAD54 /* CheckView.swift */,
 				E336816F2565C7DC0006F043 /* TextFooterView.swift */,
 				E33681722565D6C20006F043 /* ErrorAnimationView.swift */,
+				B37F43E128C669D7007970DD /* InstrumentsButtonsView.swift */,
+				B37F43E328C66EF4007970DD /* InstrumentView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -1434,6 +1443,7 @@
 				E336819E25672E550006F043 /* UniversalClusterOperations.swift in Sources */,
 				E3F4A15824BCC4E3004E6B08 /* VSongServicePlayDate.swift in Sources */,
 				E35E7CFC23BA33E00071DCC8 /* VOrganization.swift in Sources */,
+				B37F43E428C66EF4007970DD /* InstrumentView.swift in Sources */,
 				E3F99646201209F100634C5E /* LabelNumberPickerCell.swift in Sources */,
 				E33681702565C7DC0006F043 /* TextFooterView.swift in Sources */,
 				E393B76B2008D40A0073D0A9 /* SheetTitleImage.swift in Sources */,
@@ -1449,6 +1459,7 @@
 				E30B8EC9224A192C00F121D9 /* Tag.swift in Sources */,
 				E3896A3921E3F17C008CB5A5 /* HTTPError.swift in Sources */,
 				E3F8C9D4201690FC00C94292 /* BibleStudyIphoneController.swift in Sources */,
+				B37F43E228C669D7007970DD /* InstrumentsButtonsView.swift in Sources */,
 				E311A44820725B72007BB6CB /* ImportBibleController.swift in Sources */,
 				E31171791FE5A1A0008D9D51 /* AddButtonCell.swift in Sources */,
 				E345C48B254F6F780031DCF1 /* SubscriptionOfferController.swift in Sources */,
@@ -1569,6 +1580,7 @@
 				E3B494C723BEAB2500DB2A7F /* VContract.swift in Sources */,
 				E345C488254F61E10031DCF1 /* SubscriptionsSettings.swift in Sources */,
 				E3FA3DF8200DE8570038C97B /* LabelTextViewCell.swift in Sources */,
+				B37F43E628C673BF007970DD /* EdgeInsetsExtension.swift in Sources */,
 				E384E07723CF159F0017B73F /* UploadUniversalSongController.swift in Sources */,
 				E35E7CE823B7730F0071DCC8 /* VSheet.swift in Sources */,
 				E3CF0BDA248BA52D0032007E /* SongServiceSettingsSubmitter.swift in Sources */,
@@ -1781,7 +1793,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = SongProjector/SongProjector.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 12;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 4RH34LGMLA;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -1804,7 +1816,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = SongProjector/SongProjector.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 12;
 				DEVELOPMENT_TEAM = 4RH34LGMLA;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = SongProjector/Info.plist;

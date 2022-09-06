@@ -25,6 +25,7 @@ extension UIColor {
     static var grey1: UIColor { return UIColor(named: "F2F2F2")! }
     static var grey2: UIColor { return UIColor(named: "DAD9D7")! }
     static var grey3: UIColor { return UIColor(named: "AFADAC")! }
+    static var grey4: UIColor { return UIColor(named: "919191")! }
    
     static var softBlueGreyDark: UIColor { return UIColor(named: "727F85")! }
     static var softBlueGrey: UIColor { return UIColor(named: "BFD4DF")! }

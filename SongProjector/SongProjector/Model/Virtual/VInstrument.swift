@@ -8,6 +8,7 @@
 
 import Foundation
 import CoreData
+import UIKit
 
 class VInstrument: VEntity {
 	
@@ -114,4 +115,18 @@ class VInstrument: VEntity {
         }
 	}
 	
+}
+
+extension VInstrument {
+    var image: UIImage? {
+        guard let type = type else {
+            return nil
+        }
+        switch type {
+        case .guitar, .piano, .drums: return UIImage(named: type.rawValue.capitalized)
+        case .bassGuitar: return UIImage(named: "BassGuitar")
+        case .pianoSolo: return UIImage(named: "Piano")
+        case .unKnown: return nil
+        }
+    }
 }

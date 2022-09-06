@@ -28,14 +28,22 @@ class SongServiceHeaderCollectionReusableView: UICollectionReusableView {
     private var buttonWidthAnchor = NSLayoutConstraint()
     private var labelBottomConstraint = NSLayoutConstraint()
     private var labelTrailingConstraint = NSLayoutConstraint()
+    private var instrumentButtonsView: InstrumentsButtonsView?
     
-    var data: AnyObject?
+    var data: AnyObject? {
+        didSet {
+            if let cluster = data as? VCluster, cluster.hasLocalMusic  {
+                setInstruments(cluster.hasInstruments)
+            }
+        }
+    }
     var isPlaying = false
     
     override func prepareForReuse() {
         super.prepareForReuse()
         pianoButton.isHidden = true
         setSelected(isSelected: false)
+        instrumentButtonsView?.removeFromSuperview()
     }
     
     override func layoutSubviews() {
@@ -81,6 +89,19 @@ class SongServiceHeaderCollectionReusableView: UICollectionReusableView {
     func setup(title: String, action: @escaping ActionButton.Action) {
         sectionLabel.text = title
         actionButton.add(action: action)
+    }
+    
+    func setInstruments(_ instruments: [VInstrument]) {
+        guard !instruments.contains(where: { $0.type == .pianoSolo }) else { return }
+        let instrumentButtonsView = InstrumentsButtonsView(instruments: instruments)
+        instrumentButtonsView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(instrumentButtonsView)
+        bringSubviewToFront(instrumentButtonsView)
+        instrumentButtonsView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 2).isActive = true
+        instrumentButtonsView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 2).isActive = true
+        instrumentButtonsView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 2).isActive = true
+        instrumentButtonsView.heightAnchor.constraint(equalToConstant: bounds.height / 3).isActive = true
+        self.instrumentButtonsView = instrumentButtonsView
     }
     
     func updatePianoButtonConstraints() {

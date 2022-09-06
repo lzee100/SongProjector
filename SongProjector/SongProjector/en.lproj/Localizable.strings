@@ -190,6 +190,8 @@
 "Settings-sectionCalendarId" = "Google calendar ID";
 "Settings-calendarIdPlaceHolder" = "Google calendar id";
 "Settings-appversion" = "Version: ";
+"Settings-sectionAppSettings" = "App settings";
+"Settings-resetMutes" = "Reset saved mutes for instruments";
 
 "NewTheme-title" = "New theme";
 "NewTheme-descriptionTitle" = "Name new theme";
