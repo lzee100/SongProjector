@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="20037" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="ipad12_9rounded" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -41,16 +41,24 @@
                                     <segue destination="Dlx-jL-UV6" kind="embed" id="x8H-Zu-neK"/>
                                 </connections>
                             </containerView>
+                            <pageControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="aXC-cp-ns0">
+                                <rect key="frame" x="454" y="1220" width="116" height="26"/>
+                            </pageControl>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="aXC-cp-ns0" firstAttribute="centerX" secondItem="vaI-Zx-jwX" secondAttribute="centerX" id="2Rq-UK-FBb"/>
                             <constraint firstItem="j7e-8D-Qav" firstAttribute="top" secondItem="vaI-Zx-jwX" secondAttribute="top" id="5mM-Lv-Hzc"/>
+                            <constraint firstItem="rAd-Lg-NYg" firstAttribute="top" secondItem="aXC-cp-ns0" secondAttribute="bottom" constant="100" id="Xfu-ZP-tnW"/>
                             <constraint firstItem="j7e-8D-Qav" firstAttribute="leading" secondItem="vaI-Zx-jwX" secondAttribute="leading" id="aTI-pV-nrZ"/>
                             <constraint firstAttribute="trailing" secondItem="j7e-8D-Qav" secondAttribute="trailing" id="ukG-BJ-3l6"/>
                             <constraint firstAttribute="bottom" secondItem="j7e-8D-Qav" secondAttribute="bottom" id="yqb-aE-WR3"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="ckE-Yq-v2K"/>
+                    <connections>
+                        <outlet property="pageControl" destination="aXC-cp-ns0" id="sGF-9f-dd7"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FYa-6G-Fmx" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

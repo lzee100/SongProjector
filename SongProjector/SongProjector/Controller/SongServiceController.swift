@@ -194,26 +194,11 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SongServiceHeaderCollectionReusableView.identifier, for: indexPath) as! SongServiceHeaderCollectionReusableView
+        let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SongServiceHeaderCollectionReusableViewOne.identifier, for: indexPath) as! SongServiceHeaderCollectionReusableViewOne
         switch collectionViewItems.filter({ $0.isSection })[indexPath.section] {
         case .sectionedCluster(_, cluster: let cluster):
             headerView.data = cluster
-            headerView.sectionBackgroundView.backgroundColor = cluster.id == songService.selectedSong?.cluster.id ? .softBlueGrey : .grey1
-            headerView.pianoButton.add {
-                self.shutDownDisplayer()
-                
-                if SoundPlayer.song?.id == cluster.id && SoundPlayer.isPianoOnlyPlaying {
-                    self.songService.selectedSong = nil
-                    self.songService.selectedSection = nil
-                    SoundPlayer.stop()
-                } else {
-                    self.songService.selectedSong = nil
-                    self.songService.selectedSection = nil
-
-                    SoundPlayer.play(song: cluster, pianoSolo: true)
-                }
-                self.update(scroll: false)
-            }
+            headerView.updateSelected(isSongPlaying: (cluster.id == songService.selectedSong?.cluster.id) && SoundPlayer.isPlaying && !SoundPlayer.isPianoOnlyPlaying)
             if SoundPlayer.song?.id == cluster.id, SoundPlayer.isPianoOnlyPlaying {
                 headerView.startPlay()
             } else {
@@ -222,9 +207,8 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
             if cluster.hasPianoSolo {
                 headerView.showPianoOption()
             }
-            headerView.updatePianoButtonConstraints()
-            headerView.setup(title: cluster.title ?? "Geen naam voor nummer") {
-                
+            headerView.setup(title: cluster.title ?? "Geen naam voor nummer", sectionAction: { [weak self] in
+                guard let self = self else { return }
                 guard self.canPlay else {
                     let alert = UIAlertController(title: nil, message: AppText.SongService.warnCannotPlay, preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: AppText.Actions.ok, style: .default, handler: nil))
@@ -240,12 +224,14 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
                         default: return false
                         }
                     }) {
-                        if let view = self.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, at: IndexPath(row: 0, section: index)) as? SongServiceHeaderCollectionReusableView {
+                        if let view = self.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, at: IndexPath(row: 0, section: index)) as? SongServiceHeaderCollectionReusableViewOne {
                             view.stopPlaying()
                         }
                     }
                     SoundPlayer.stop()
                 }
+//                self.songService.selectedSong = self.songService.selectedSong == nil ? SongObject(cluster: cluster) : nil
+//                collectionView.reloadData()
                 collectionView.performBatchUpdates({
                     if self.songService.selectedSong == nil || (self.songService.selectedSong != nil && self.songService.selectedSong?.cluster.id != cluster.id) {
                         if let selectedClusterId = self.songService.selectedSong?.cluster.id, selectedClusterId != cluster.id {
@@ -264,6 +250,8 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
                         }
                         self.songService.selectedSong = SongObject(cluster: cluster)
                         let inserted = self.refreshCollectionViewListItems()
+                        self.songCollectionView.deleteSections(IndexSet([inserted.section]))
+                        self.songCollectionView.insertSections(IndexSet([inserted.section]))
                         self.songCollectionView.insertItems(at: inserted.indexPaths)
                         if inserted.section + 1 < self.songCollectionView.numberOfSections {
                             self.songCollectionView.reloadSections(IndexSet([inserted.section + 1]))
@@ -286,17 +274,48 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
                             collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
                         }
                     }
-                    collectionView.visibleSupplementaryViews(ofKind: UICollectionView.elementKindSectionHeader).compactMap({ $0 as? SongServiceHeaderCollectionReusableView }).forEach({ $0.setSelected(isSelected: false) })
+                    collectionView.visibleSupplementaryViews(ofKind: UICollectionView.elementKindSectionHeader).compactMap({ $0 as? SongServiceHeaderCollectionReusableViewOne }).forEach({ $0.updateSelected(isSongPlaying: false) })
                     if let selectedSongId = self.songService.selectedSong?.cluster.id {
-                        let selectedHeader = collectionView.visibleSupplementaryViews(ofKind: UICollectionView.elementKindSectionHeader).compactMap({ $0 as? SongServiceHeaderCollectionReusableView }).first(where: { ($0.data as? VCluster)?.id == selectedSongId })
-                        selectedHeader?.setSelected(isSelected: true)
+                        let selectedHeader = collectionView.visibleSupplementaryViews(ofKind: UICollectionView.elementKindSectionHeader).compactMap({ $0 as? SongServiceHeaderCollectionReusableViewOne }).first(where: { ($0.data as? VCluster)?.id == selectedSongId })
+                        selectedHeader?.updateSelected(isSongPlaying: SoundPlayer.isPlaying && !SoundPlayer.isPianoOnlyPlaying)
                     }
                 }
+            }) { [weak self] in
+                guard let self = self else { return }
+                self.shutDownDisplayer()
+
+                if SoundPlayer.song?.id == cluster.id && SoundPlayer.isPianoOnlyPlaying {
+                    self.songService.selectedSong = nil
+                    self.songService.selectedSection = nil
+                    SoundPlayer.stop()
+                } else {
+                    self.songService.selectedSong = nil
+                    self.songService.selectedSection = nil
+
+                    SoundPlayer.play(song: cluster, pianoSolo: true)
+                }
+                self.update(scroll: false)
             }
         default: break
-            
+
         }
         return headerView
+    }
+    
+    private func didSelectSection(cluster: VCluster) {
+        self.shutDownDisplayer()
+        
+        if SoundPlayer.song?.id == cluster.id && SoundPlayer.isPianoOnlyPlaying {
+            self.songService.selectedSong = nil
+            self.songService.selectedSection = nil
+            SoundPlayer.stop()
+        } else {
+            self.songService.selectedSong = nil
+            self.songService.selectedSection = nil
+
+            SoundPlayer.play(song: cluster, pianoSolo: true)
+        }
+        self.update(scroll: false)
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -407,7 +426,7 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 		title = AppText.SongService.title
         songCollectionView.backgroundColor = UIColor(hex: "000000")
         moveUpDownSection.backgroundColor = UIColor(hex: "000000")
-        songCollectionView.registerHeader(reusableView: SongServiceHeaderCollectionReusableView.identifier)
+        songCollectionView.register(SongServiceHeaderCollectionReusableViewOne.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SongServiceHeaderCollectionReusableViewOne.identifier)
         songCollectionView.register(cell: SheetCollectionCell.identitier)
         
         let layout = UICollectionViewFlowLayout()
@@ -794,7 +813,6 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
         coordinator.animate(alongsideTransition: { (_) in
             self.rotated()
         }) { (_) in
-            self.songCollectionView.reloadData()
         }
     }
         

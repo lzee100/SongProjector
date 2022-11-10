@@ -12,7 +12,8 @@ import UIKit
 
 class IntroPageViewContainer: ChurchBeamViewController, UIPageViewControllerDelegate, UIPageViewControllerDataSource {
 	
-	
+    @IBOutlet weak var pageControl: UIPageControl!
+    
 	static let identifier = "IntroPageViewContainer"
 	
 	var currentIndex: Int = 0
@@ -69,7 +70,7 @@ class IntroPageViewContainer: ChurchBeamViewController, UIPageViewControllerDele
 	}
 	
 	func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-		if currentIndex == (self.pageControllers.count - 1) || currentIndex == 1 {
+		if currentIndex == (pageControllers.count - 1) || currentIndex == 1 {
 			return nil
 		}
 		return pageControllers[currentIndex + 1]
@@ -79,14 +80,16 @@ class IntroPageViewContainer: ChurchBeamViewController, UIPageViewControllerDele
 		guard let nextVC = pendingViewControllers.first as? PageController, let index = pageControllers.firstIndex(of: nextVC) else {
 			return
 		}
-		self.nextIndex = index
+		nextIndex = index
+        pageControl.currentPage = index
 	}
 	
 	func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
-		if (completed && self.nextIndex != nil) {
-			self.currentIndex = self.nextIndex!
+		if (completed && nextIndex != nil) {
+			currentIndex = nextIndex!
 		}
-		self.nextIndex = nil
+        pageControl.currentPage = currentIndex
+		nextIndex = nil
 	}
 	
 	

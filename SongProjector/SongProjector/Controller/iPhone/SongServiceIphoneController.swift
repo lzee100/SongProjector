@@ -191,13 +191,6 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
         
         guard let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: SongHeaderView.identifier) as? SongHeaderView else { return nil }
         
-        view.style()
-        view.sectionButton.add {
-            self.didSelectSection(section: section)
-        }
-        view.actionButton.add {
-            self.didSelectPianoInSection(section: section)
-        }
 		if let model = model, let songServiceSetting = model.songServiceSettings, hasHeader {
 			if let index = model.sectionedClusterOrComment.firstIndex(where: { sectionClusterOrComment in
 				sectionClusterOrComment.compactMap({ $0.cluster }).contains(entity: song.cluster)
@@ -206,16 +199,20 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
 			}
 		}
 		let isSelected = section == songService.selectedSection
-		view.setup(title: song.cluster.title, isSelected: isSelected, hasPianoSolo: song.cluster.hasPianoSolo)
+        view.setup(title: song.cluster.title, isSelected: isSelected, hasPianoSolo: song.cluster.hasPianoSolo) { [weak self] in
+            self?.didSelectSection(section: section)
+        } pianoButtonAction: { [weak self] in
+            self?.didSelectPianoInSection(section: section)
+        }
+
         let isPlaying = SoundPlayer.isPianoOnlyPlaying && SoundPlayer.isPlaying && SoundPlayer.song?.id == song.cluster.id
         view.setPianoAction(isPlaying: isPlaying)
+        view.set(cluster: song.cluster)
 		return view
 	}
 	
 	func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-		let firstClusters = model?.sectionedClusterOrComment.compactMap({ $0.first?.cluster })
-		let hasHeader = firstClusters?.contains(entity: songService.songs[section].cluster) ?? false
-        return SongHeaderView.preferredHeight(hasSection: hasHeader)
+        return UITableView.automaticDimension
 	}
 	
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -268,6 +265,7 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
 		title = AppText.SongService.title
 		mixerHeightConstraint.constant = 0
         tableView.estimatedRowHeight = 0
+        tableView.estimatedSectionHeaderHeight = 60
 		new.title = AppText.Actions.add
         new.tintColor = themeHighlighted
         swipeUpDownImageView.tintColor = .softBlueGrey
@@ -327,7 +325,7 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
 		sheetDisplaySwipeView.addGestureRecognizer(rightSwipe)
 		
 		tableView.register(cell: Cells.basicCellid)
-        tableView.register(header: SongHeaderView.identifier)
+        tableView.register(SongHeaderView.self, forHeaderFooterViewReuseIdentifier: SongHeaderView.identifier)
 		updateSheetDisplayersRatios()
 		sheetDisplayerInitialFrame = sheetDisplayer.bounds
 		sheetDisplayerSwipeViewInitialHeight = sheetDisplaySwipeViewCustomHeightConstraint?.constant ?? sheetDisplaySwipeView.bounds.height
@@ -418,7 +416,11 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
                 guard rows > 1 else {
                     self.tableView.scrollToRow(at: IndexPath(row: NSNotFound, section: section), at: .top, animated: true)
                     if let view = tableView.headerView(forSection: section) as? SongHeaderView {
-                        view.setup(title: view.titleLabel.text, isSelected: true, hasPianoSolo: view.actionButton.isEnabled)
+                        view.setup(title: view.sectionTitle, isSelected: true, hasPianoSolo: view.isPianoOnlyEnabled) { [weak self] in
+                            self?.didSelectSection(section: section)
+                        } pianoButtonAction: { [weak self] in
+                            self?.didSelectPianoInSection(section: section)
+                        }
                     }
                     return
                 }
@@ -431,7 +433,11 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
             tableView.performBatchUpdates {
                 if let deletedSection = deletedSection {
                     if let view = tableView.headerView(forSection: deletedSection) as? SongHeaderView {
-                        view.setup(title: view.titleLabel.text, isSelected: false, hasPianoSolo: view.actionButton.isEnabled)
+                        view.setup(title: view.sectionTitle, isSelected: false, hasPianoSolo: view.isPianoOnlyEnabled) { [weak self] in
+                            self?.didSelectSection(section: deletedSection)
+                        } pianoButtonAction: { [weak self] in
+                            self?.didSelectPianoInSection(section: deletedSection)
+                        }
                     }
                 }
                 if let deletedIndexPaths = deletedIndexPaths {
@@ -439,7 +445,11 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
                 }
                 if let insertedSection = insertedSection {
                     if let view = tableView.headerView(forSection: insertedSection) as? SongHeaderView {
-                        view.setup(title: view.titleLabel.text, isSelected: true, hasPianoSolo: view.actionButton.isEnabled)
+                        view.setup(title: view.sectionTitle, isSelected: true, hasPianoSolo: view.isPianoOnlyEnabled) { [weak self] in
+                            self?.didSelectSection(section: insertedSection)
+                        } pianoButtonAction: { [weak self] in
+                            self?.didSelectPianoInSection(section: insertedSection)
+                        }
                     }
                 }
                 if let insertedIndexPaths = insertedIndexPaths {
@@ -456,7 +466,11 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
                 guard rows > 1 else {
                     self.tableView.scrollToRow(at: IndexPath(row: NSNotFound, section: section), at: .top, animated: true)
                     if let view = tableView.headerView(forSection: section) as? SongHeaderView {
-                        view.setup(title: view.titleLabel.text, isSelected: true, hasPianoSolo: view.actionButton.isEnabled)
+                        view.setup(title: view.sectionTitle, isSelected: true, hasPianoSolo: view.isPianoOnlyEnabled) { [weak self] in
+                            self?.didSelectSection(section: section)
+                        } pianoButtonAction: { [weak self] in
+                            self?.didSelectPianoInSection(section: section)
+                        }
                     }
                     return
                 }
@@ -471,7 +485,11 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
                     self.tableView.scrollToRow(at: indexPaths.first!, at: .top, animated: true)
                 }
                 if let view = tableView.headerView(forSection: section) as? SongHeaderView {
-                    view.setup(title: view.titleLabel.text, isSelected: true, hasPianoSolo: view.actionButton.isEnabled)
+                    view.setup(title: view.sectionTitle, isSelected: true, hasPianoSolo: view.isPianoOnlyEnabled) { [weak self] in
+                        self?.didSelectSection(section: section)
+                    } pianoButtonAction: { [weak self] in
+                        self?.didSelectPianoInSection(section: section)
+                    }
                 }
             }
         case .delete(songObject: let songObject):
@@ -479,7 +497,11 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
                 let rows = tableView.numberOfRows(inSection: section)
                 guard rows > 1 else {
                     if let view = tableView.headerView(forSection: section) as? SongHeaderView {
-                        view.setup(title: view.titleLabel.text, isSelected: false, hasPianoSolo: view.actionButton.isEnabled)
+                        view.setup(title: view.sectionTitle, isSelected: false, hasPianoSolo: view.isPianoOnlyEnabled) { [weak self] in
+                            self?.didSelectSection(section: section)
+                        } pianoButtonAction: { [weak self] in
+                            self?.didSelectPianoInSection(section: section)
+                        }
                     }
                     return
                 }
@@ -489,7 +511,11 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
                 }
                 tableView.deleteRows(at: indexPaths, with: .top)
                 if let view = tableView.headerView(forSection: section) as? SongHeaderView {
-                    view.setup(title: view.titleLabel.text, isSelected: false, hasPianoSolo: view.actionButton.isEnabled)
+                    view.setup(title: view.sectionTitle, isSelected: false, hasPianoSolo: view.isPianoOnlyEnabled) { [weak self] in
+                        self?.didSelectSection(section: section)
+                    } pianoButtonAction: { [weak self] in
+                        self?.didSelectPianoInSection(section: section)
+                    }
                 }
 
             }

@@ -37,22 +37,28 @@ class InstrumentView: ActionButton {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.isUserInteractionEnabled = false
         })
-        instrumentIV.anchorToSuperView(insets: .init(cgFloat: 10))
         backgroundView.anchorToSuperView(insets: .init(cgFloat: 2))
 
         containerView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
         containerView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         containerView.heightAnchor.constraint(equalTo: containerView.widthAnchor).isActive = true
         containerView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        containerView.topAnchor.constraint(equalTo: topAnchor).isActive = true
         
         selectionView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
         selectionView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
         selectionView.heightAnchor.constraint(equalToConstant: 3).isActive = true
-        selectionView.bottomAnchor.constraint(equalTo: backgroundView.bottomAnchor).isActive = true
+        selectionView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
         
+        instrumentIV.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+        instrumentIV.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        instrumentIV.widthAnchor.constraint(equalTo: instrumentIV.heightAnchor).isActive = true
+        instrumentIV.widthAnchor.constraint(equalTo: heightAnchor, multiplier: 0.5).isActive = true
+
         updateInstrumentView()
         
-        add {
+        add { [weak self] in
+            guard let self = self else { return }
             let newValue = !VolumeManager.isMutedFor(instrument: instrument)
             VolumeManager.setMuteFor(instrument: instrument, isMuted: newValue)
             if let type = instrument.type {

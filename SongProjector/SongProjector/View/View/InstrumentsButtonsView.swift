@@ -10,12 +10,18 @@ import UIKit
 
 class InstrumentsButtonsView: UIStackView {
     
-    let instrumentViews: [InstrumentView]
-    
     init(instruments: [VInstrument]) {
-        instrumentViews = instruments.map { InstrumentView(instrument: $0) }
         super.init(frame: .zero)
-        instrumentViews.forEach({ addArrangedSubview($0) })
+        instruments.forEach { addArrangedSubview(InstrumentView(instrument: $0)) }
+        axis = .horizontal
+        spacing = 2
+        distribution = .fillEqually
+    }
+    
+    func apply(instruments: [VInstrument]) {
+        subviews.forEach { removeArrangedSubview($0) }
+        subviews.forEach { $0.removeFromSuperview() }
+        instruments.forEach { addArrangedSubview(InstrumentView(instrument: $0)) }
         axis = .horizontal
         spacing = 2
         distribution = .fillEqually

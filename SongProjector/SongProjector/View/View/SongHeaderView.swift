@@ -8,119 +8,71 @@
 
 import UIKit
 
-
 class SongHeaderView: UITableViewHeaderFooterView {
     
     static let identifier = "SongHeaderView"
     
-    static func preferredHeight(hasSection: Bool) -> CGFloat {
-        let sectionHeight: CGFloat = 40 + 10
-        let basic: CGFloat = 16 + 25 + 10 + (hasSection ? 0 : 8)
-        return hasSection ? (sectionHeight + basic) : basic
+    private let songServiceHeaderView = SongServiceHeaderView(frame: .zero)
+    var isPianoOnlyEnabled = false
+    var sectionTitle: String? {
+        songServiceHeaderView.sectionText
     }
-
-    @IBOutlet var sectionLabelBackgroundView: UIView!
-    @IBOutlet var sectionLabel: UILabel!
-    @IBOutlet var titleLabel: UILabel!
-    @IBOutlet var sectionButton: ActionButton!
-    @IBOutlet var actionContainerView: UIView!
-    @IBOutlet var pianoImageView: UIImageView!
-    @IBOutlet var mixerView: MixerAnimationView!
-    @IBOutlet var actionButton: ActionButton!
-    
-    @IBOutlet var sectionLabelHeightConstraint: NSLayoutConstraint!
-    @IBOutlet var sectionLabelTopConstraint: NSLayoutConstraint!
-    @IBOutlet var titleLabelToSuperViewConstraint: NSLayoutConstraint!
-    @IBOutlet var titleLabelToActionViewConstraint: NSLayoutConstraint!
-    @IBOutlet var titleLabelTopToSectionLabelConstraint: NSLayoutConstraint!
-
-    enum RightConstraint {
-        case superView
-        case actionContainer
+    var sectionHeaderText: String? {
+        songServiceHeaderView.sectionHeaderText
     }
-    
-	private var isSelected = false
-    
-    var hasHeader = false
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        sectionLabel.isHidden = true
-        hasHeader = false
+        songServiceHeaderView.reset()
     }
     
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
+        setup()
     }
     
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
+        fatalError("init(coder:) has not been implemented")
     }
     
-    func style() {
-        sectionLabelBackgroundView.backgroundColor = .grey0
-        sectionLabel.font = .xxNormalBold
-        titleLabel.font = .normalBold
-        actionContainerView.backgroundColor = .softBlueGrey
-        actionContainerView.layer.cornerRadius = 4
-        actionContainerView.clipsToBounds = true
-        pianoImageView.tintColor = .whiteColor
-        sectionLabel.isHidden = true
-        sectionLabel.textColor = .blackColor
-        sectionLabelHeightConstraint.constant = 0
-        sectionLabelTopConstraint.constant = 0
-        titleLabelTopToSectionLabelConstraint.constant = 18
+    func setup(title: String?, isSelected: Bool = false, hasPianoSolo: Bool, sectionAction: @escaping ActionButton.Action, pianoButtonAction: @escaping ActionButton.Action) {
+        if hasPianoSolo {
+            songServiceHeaderView.showPianoOption()
+            if isSelected {
+                songServiceHeaderView.stopPlaying()
+            }
+        }
+        isPianoOnlyEnabled = hasPianoSolo
+        songServiceHeaderView.setup(title: title ?? "", sectionAction: sectionAction, pianoButtonAction: pianoButtonAction)
+        songServiceHeaderView.updateSelected(isSongPlaying: isSelected)
     }
-	
-	func setup(title: String?, isSelected: Bool = false, hasPianoSolo: Bool) {
-		self.isSelected = isSelected
-		self.titleLabel.text = title
-		self.actionButton.isEnabled = hasPianoSolo
-		self.actionContainerView.isHidden = !hasPianoSolo
-		self.pianoImageView.isHidden = !hasPianoSolo
-        setTitleRightConstraint(to: hasPianoSolo ? .actionContainer : .superView)        
-		update()
-	}
-	
-	func update() {
-        mixerView.mixerColor = .white
-        titleLabel.textColor = isSelected ? .white : .blackColor
-        sectionLabelBackgroundView.backgroundColor = isSelected ? .softBlueGrey : .grey0
-        actionContainerView.backgroundColor = isSelected ? .white : .softBlueGrey
-        self.pianoImageView.tintColor = isSelected ? .black : .white
-	}
-	
+    
+    func set(sectionHeader: String) {
+        songServiceHeaderView.setHeader(title: sectionHeader)
+    }
+    
+    func set(cluster: VCluster) {
+        if cluster.hasLocalMusic {
+            songServiceHeaderView.setInstruments(cluster.hasInstruments)
+        }
+    }
+    
     func setPianoAction(isPlaying: Bool) {
         if isPlaying {
-            pianoImageView.isHidden = true
-            mixerView.isHidden = false
-            mixerView.play()
+            songServiceHeaderView.startPlay()
         } else {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
-                self?.pianoImageView.isHidden = false
-                self?.mixerView.isHidden = true
-            }
-            mixerView.stop()
+            songServiceHeaderView.stopPlaying()
         }
     }
-    
-    private func setTitleRightConstraint(to: RightConstraint) {
-        titleLabelToSuperViewConstraint.priority = UILayoutPriority(rawValue: 250)
-        titleLabelToActionViewConstraint.priority = UILayoutPriority(rawValue: 250)
-        
-        switch to {
-        case .superView: titleLabelToSuperViewConstraint.priority = UILayoutPriority(rawValue: 999)
-        case .actionContainer: titleLabelToActionViewConstraint.priority = UILayoutPriority(rawValue: 999)
-        }
+
+    private func setup() {
+        contentView.addSubview(songServiceHeaderView)
+        songServiceHeaderView.translatesAutoresizingMaskIntoConstraints = false
+        songServiceHeaderView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
+        songServiceHeaderView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
+        songServiceHeaderView.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
+        songServiceHeaderView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
     }
-	
-	func set(sectionHeader: String) {
-        hasHeader = true
-        sectionLabelTopConstraint.constant = 10
-        sectionLabelHeightConstraint.constant = 30
-        titleLabelTopToSectionLabelConstraint.constant = 10
-		sectionLabel.isHidden = false
-		sectionLabel.text = sectionHeader
-	}
-	
+
+
 }
