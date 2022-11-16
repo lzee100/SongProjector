@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B3125F082921A359009E8E56 /* PianoSoloButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3125F072921A359009E8E56 /* PianoSoloButtonView.swift */; };
+		B3125F0A2921A8A5009E8E56 /* SongServiceSectionHeaderTitleStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3125F092921A8A5009E8E56 /* SongServiceSectionHeaderTitleStackView.swift */; };
 		B37F43E228C669D7007970DD /* InstrumentsButtonsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37F43E128C669D7007970DD /* InstrumentsButtonsView.swift */; };
 		B37F43E428C66EF4007970DD /* InstrumentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37F43E328C66EF4007970DD /* InstrumentView.swift */; };
 		B37F43E628C673BF007970DD /* EdgeInsetsExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37F43E528C673BF007970DD /* EdgeInsetsExtension.swift */; };
@@ -328,6 +330,8 @@
 		346D1C5C5532C9E10C448104 /* Pods-SongProjector.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SongProjector.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SongProjector/Pods-SongProjector.debug.xcconfig"; sourceTree = "<group>"; };
 		8300EFE78A26AC2834037C54 /* Pods-SongProjector.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SongProjector.release.xcconfig"; path = "Pods/Target Support Files/Pods-SongProjector/Pods-SongProjector.release.xcconfig"; sourceTree = "<group>"; };
 		95070415C3C6BD5B7639F73A /* Pods_SongProjector.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SongProjector.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3125F072921A359009E8E56 /* PianoSoloButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PianoSoloButtonView.swift; sourceTree = "<group>"; };
+		B3125F092921A8A5009E8E56 /* SongServiceSectionHeaderTitleStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongServiceSectionHeaderTitleStackView.swift; sourceTree = "<group>"; };
 		B37F43E128C669D7007970DD /* InstrumentsButtonsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstrumentsButtonsView.swift; sourceTree = "<group>"; };
 		B37F43E328C66EF4007970DD /* InstrumentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstrumentView.swift; sourceTree = "<group>"; };
 		B37F43E528C673BF007970DD /* EdgeInsetsExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeInsetsExtension.swift; sourceTree = "<group>"; };
@@ -1132,6 +1136,8 @@
 				E33681722565D6C20006F043 /* ErrorAnimationView.swift */,
 				B37F43E128C669D7007970DD /* InstrumentsButtonsView.swift */,
 				B37F43E328C66EF4007970DD /* InstrumentView.swift */,
+				B3125F072921A359009E8E56 /* PianoSoloButtonView.swift */,
+				B3125F092921A8A5009E8E56 /* SongServiceSectionHeaderTitleStackView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -1489,6 +1495,7 @@
 				E33746B724AA6C9F00F44852 /* IntroAdminController.swift in Sources */,
 				E3CF0BD8248BA3F70032007E /* SongServiceSettingsFetcher.swift in Sources */,
 				E35E7CEC23BA1C990071DCC8 /* VInstrument.swift in Sources */,
+				B3125F0A2921A8A5009E8E56 /* SongServiceSectionHeaderTitleStackView.swift in Sources */,
 				E31171671FE5A0E7008D9D51 /* MoreController.swift in Sources */,
 				E35E7CF623BA31200071DCC8 /* VSheetActivities.swift in Sources */,
 				E3501498248596AC0082741A /* IntroPageController22.swift in Sources */,
@@ -1617,6 +1624,7 @@
 				E309DD021FF5127400C3D135 /* LabelNumberCell.swift in Sources */,
 				E3847EFA248ED020002D4BED /* AdminFetcher.swift in Sources */,
 				E31171681FE5A0E7008D9D51 /* SongsController.swift in Sources */,
+				B3125F082921A359009E8E56 /* PianoSoloButtonView.swift in Sources */,
 				E31171751FE5A1A0008D9D51 /* BasicCell.swift in Sources */,
 				E31171561FE5A071008D9D51 /* NSManagedObjectExtension.swift in Sources */,
 				E35E7CF023BA2ECA0071DCC8 /* VSheetPastors.swift in Sources */,

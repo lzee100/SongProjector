@@ -198,16 +198,11 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
         switch collectionViewItems.filter({ $0.isSection })[indexPath.section] {
         case .sectionedCluster(_, cluster: let cluster):
             headerView.data = cluster
-            headerView.updateSelected(isSongPlaying: (cluster.id == songService.selectedSong?.cluster.id) && SoundPlayer.isPlaying && !SoundPlayer.isPianoOnlyPlaying)
-            if SoundPlayer.song?.id == cluster.id, SoundPlayer.isPianoOnlyPlaying {
-                headerView.startPlay()
-            } else {
-                headerView.stopPlaying()
-            }
-            if cluster.hasPianoSolo {
-                headerView.showPianoOption()
-            }
-            headerView.setup(title: cluster.title ?? "Geen naam voor nummer", sectionAction: { [weak self] in
+           
+            let isSelected = (SoundPlayer.song?.id == cluster.id && !SoundPlayer.isPianoOnlyPlaying) || songService.selectedSong?.cluster.id == cluster.id
+            let isPianoSoloPlaying = SoundPlayer.song?.id == cluster.id && SoundPlayer.isPianoOnlyPlaying
+           
+            headerView.buildHeader(sectionTitle: nil, title: cluster.title, cluster: cluster, isSelected: isSelected, onSectionClick: {             [weak self] in
                 guard let self = self else { return }
                 guard self.canPlay else {
                     let alert = UIAlertController(title: nil, message: AppText.SongService.warnCannotPlay, preferredStyle: .alert)
@@ -225,7 +220,7 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
                         }
                     }) {
                         if let view = self.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, at: IndexPath(row: 0, section: index)) as? SongServiceHeaderCollectionReusableViewOne {
-                            view.stopPlaying()
+                            view.updateHeader(isSelected: false)
                         }
                     }
                     SoundPlayer.stop()
@@ -274,13 +269,14 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
                             collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
                         }
                     }
-                    collectionView.visibleSupplementaryViews(ofKind: UICollectionView.elementKindSectionHeader).compactMap({ $0 as? SongServiceHeaderCollectionReusableViewOne }).forEach({ $0.updateSelected(isSongPlaying: false) })
+                    collectionView.visibleSupplementaryViews(ofKind: UICollectionView.elementKindSectionHeader).compactMap({ $0 as? SongServiceHeaderCollectionReusableViewOne }).forEach({ $0.updateHeader(isSelected: false) })
                     if let selectedSongId = self.songService.selectedSong?.cluster.id {
                         let selectedHeader = collectionView.visibleSupplementaryViews(ofKind: UICollectionView.elementKindSectionHeader).compactMap({ $0 as? SongServiceHeaderCollectionReusableViewOne }).first(where: { ($0.data as? VCluster)?.id == selectedSongId })
-                        selectedHeader?.updateSelected(isSongPlaying: SoundPlayer.isPlaying && !SoundPlayer.isPianoOnlyPlaying)
+                        selectedHeader?.updateHeader(isSelected: (SoundPlayer.isPlaying && !SoundPlayer.isPianoOnlyPlaying) || self.songService.selectedSong?.cluster.id == cluster.id)
                     }
                 }
-            }) { [weak self] in
+                
+            }, onPianoSoloClick: { [weak self] in
                 guard let self = self else { return }
                 self.shutDownDisplayer()
 
@@ -295,7 +291,9 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
                     SoundPlayer.play(song: cluster, pianoSolo: true)
                 }
                 self.update(scroll: false)
-            }
+                
+            }, isPianoSoloPlaying: isPianoSoloPlaying)
+           
         default: break
 
         }
@@ -331,7 +329,7 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         if view.bounds.height > view.bounds.width {
-            return CGSize(width: collectionView.bounds.width, height: 100)
+            return CGSize(width: collectionView.bounds.width, height: 80)
         }
         return CGSize(width: collectionView.bounds.height, height: collectionView.bounds.height)
     }

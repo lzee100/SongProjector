@@ -75,13 +75,13 @@ class MixerAnimationView: UIView {
 
 	func play() {
         bars.forEach({ $0.backgroundColor = mixerColor })
-		timer = Timer.scheduledTimer(withTimeInterval: 0.7, repeats: true, block: { _ in
-			self.barConstraints.forEach({
-				let height = self.getRandomHeight(current: $0.constant)
-				$0.constant = height
+		timer = Timer.scheduledTimer(withTimeInterval: 0.7, repeats: true, block: { [weak self] _ in
+            self?.barConstraints.forEach({
+				let height = self?.getRandomHeight(current: $0.constant)
+				$0.constant = height ?? 0
 			})
-			UIView.animate(withDuration: 0.7, animations: {
-				self.layoutIfNeeded()
+			UIView.animate(withDuration: 0.7, animations: { [weak self]  in
+				self?.layoutIfNeeded()
 			})
 		})
 	}
@@ -92,8 +92,8 @@ class MixerAnimationView: UIView {
 		self.barConstraints.forEach({
 			$0.constant = maxHeight
 		})
-		UIView.animate(withDuration: 1, animations: {
-			self.layoutIfNeeded()
+		UIView.animate(withDuration: 1, animations: { [weak self] in
+			self?.layoutIfNeeded()
 		})
 	}
 	
