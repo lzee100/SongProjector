@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol PopUpViewControllerDelegate: class {
+protocol PopUpViewControllerDelegate: AnyObject {
 	func didPerformAction(controller: PopUpViewController, action: PopUpViewControllerAction, store: AnyObject?, isCheckBoxSelected: Bool?)
 }
 

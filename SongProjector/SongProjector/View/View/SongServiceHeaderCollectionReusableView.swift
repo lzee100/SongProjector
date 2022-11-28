@@ -12,9 +12,7 @@ class SongServiceHeaderView: UIStackView {
 
     private let backgroundView = UIView(frame: .zero)
     private let sectionAndTitleView: SongServiceSectionHeaderTitleStackView
-    private lazy var pianosoloButton: PianoSoloButtonView = {
-        PianoSoloButtonView(iconInsets: UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5), equalizerInsets: UIEdgeInsets(top: 5, left: 5, bottom: 0, right: 5), action: pianoSoloAction, isPianoSoloPlaying: isPianoSoloPlaying)
-    }()
+    private let pianosoloButton: PianoSoloButtonView
     private let instrumentButtonsView: InstrumentsButtonsViewContainer
     
     private lazy var verticalInstrumentButtonsViewContainer: UIStackView = {
@@ -32,7 +30,8 @@ class SongServiceHeaderView: UIStackView {
         let container = UIView(frame: .zero)
         [container, instrumentButtonsView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         container.addSubview(instrumentButtonsView)
-        instrumentButtonsView.anchorTo(container, insets: UIEdgeInsets(top: sectionAndTitleView.getHeightForTitleFont() + 15, left: 0, bottom: 0, right: 0))
+        let titleHeight = sectionAndTitleView.getHeightForTitleFont()
+        instrumentButtonsView.anchorTo(container, insets: UIEdgeInsets(top: titleHeight == 0 ? -1 : titleHeight + 15, left: 0, bottom: 0, right: 0))
         return container
     }()
     
@@ -42,10 +41,11 @@ class SongServiceHeaderView: UIStackView {
     private let cluster: VCluster
     private let pianoSoloAction: ActionButton.Action
     private let isPianoSoloPlaying: Bool
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        layer.cornerRadius = 5
+    private var onSectionClick: ActionButton.Action? = nil
+    private var isSelected: Bool {
+        didSet {
+            updateHeader(isSelected: isSelected)
+        }
     }
 
     init(sectionTitle: String?, title: String?, cluster: VCluster, isSelected: Bool, onSectionClick: @escaping ActionButton.Action, onPianoSoloClick: @escaping ActionButton.Action, isPianoSoloPlaying: Bool) {
@@ -53,14 +53,17 @@ class SongServiceHeaderView: UIStackView {
         self.pianoSoloAction = onPianoSoloClick
         let rightInset: CGFloat = UIDevice.current.orientation.isPortrait ? 10 : -2
         let leftInset: CGFloat = UIDevice.current.orientation.isPortrait ? 0 : -2
-        let sectionTitleInsets: UIEdgeInsets = UIDevice.current.userInterfaceIdiom == .pad ? .zero : UIEdgeInsets(top: 15, left: 30, bottom: 15, right: 20)
-        sectionAndTitleView = SongServiceSectionHeaderTitleStackView(sectionTitle: sectionTitle, title: title, action: onSectionClick, insets: sectionTitleInsets)
+        let sectionTitleInsets: UIEdgeInsets = UIDevice.current.userInterfaceIdiom == .pad && UIDevice.current.orientation.isLandscape ? .zero : UIEdgeInsets(top: 15, left: 30, bottom: 15, right: 20)
+        sectionAndTitleView = SongServiceSectionHeaderTitleStackView(sectionTitle: sectionTitle, title: title, insets: sectionTitleInsets)
         instrumentButtonsView = InstrumentsButtonsViewContainer(insets: UIEdgeInsets(top: 0, left: leftInset, bottom: 0, right: rightInset), instruments: cluster.hasInstruments)
         self.isPianoSoloPlaying = isPianoSoloPlaying
+        self.onSectionClick = onSectionClick
+        self.isSelected = isSelected
+        pianosoloButton = PianoSoloButtonView(iconInsets: UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5), equalizerInsets: UIEdgeInsets(top: 5, left: 5, bottom: 0, right: 5), action: pianoSoloAction, isPianoSoloPlaying: isPianoSoloPlaying)
         super.init(frame: .zero)
-        updateHeader(isSelected: isSelected)
+        sectionAndTitleView.action = didClickSection
         let hasPianoSolo = cluster.hasPianoSolo && cluster.hasLocalMusic
-        pianosoloButton.isHidden = !hasPianoSolo || UIDevice.current.userInterfaceIdiom != .pad
+        pianosoloButton.isHidden = !hasPianoSolo || UIDevice.current.orientation.isPortrait
         let hasInstruments = cluster.hasLocalMusic && !cluster.hasPianoSolo
         instrumentButtonsView.isHidden = !hasInstruments
         sectionTitleSpacerInstrumentsButtonsView.isHidden = sectionTitle == nil
@@ -69,7 +72,7 @@ class SongServiceHeaderView: UIStackView {
             addArrangedSubview(view)
         }
         
-        if UIDevice.current.userInterfaceIdiom != .pad, hasPianoSolo {
+        if UIDevice.current.orientation.isPortrait, hasPianoSolo {
             addSubview(pianosoloButton)
             pianosoloButton.translatesAutoresizingMaskIntoConstraints = false
             pianosoloButton.topAnchor.constraint(equalTo: sectionAndTitleView.titleLabel.topAnchor).isActive = true
@@ -83,19 +86,12 @@ class SongServiceHeaderView: UIStackView {
         }
         
         if !instrumentButtonsView.isHidden {
-            if sectionTitle == nil {
+            if UIDevice.current.userInterfaceIdiom == .pad {
                 addArrangedSubview(instrumentButtonsView)
             } else {
                 addArrangedSubview(vertDemo)
             }
         }
-
-        //        if sectionTitle != nil {
-//            sectionTitleSpacerInstrumentsButtonsView.translatesAutoresizingMaskIntoConstraints = false
-//            verticalInstrumentButtonsViewContainer.addArrangedSubview(sectionTitleSpacerInstrumentsButtonsView)
-//            sectionTitleSpacerInstrumentsButtonsView.heightAnchor.constraint(equalToConstant: sectionAndTitleView.getHeightForTitleFont()).isActive = true
-//        }
-//        verticalInstrumentButtonsViewContainer.addArrangedSubview(instrumentButtonsView)
         setup()
     }
     
@@ -109,15 +105,15 @@ class SongServiceHeaderView: UIStackView {
         sectionAndTitleView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
         pianosoloButton.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         pianosoloButton.setContentCompressionResistancePriority(.defaultHigh, for: .vertical)
-        verticalInstrumentButtonsViewContainer.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        verticalInstrumentButtonsViewContainer.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
+        instrumentButtonsView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        instrumentButtonsView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
         
         sectionAndTitleView.setContentHuggingPriority(UILayoutPriority(100), for: .horizontal)
         pianosoloButton.setContentHuggingPriority(UILayoutPriority(800), for: .horizontal)
-        verticalInstrumentButtonsViewContainer.setContentHuggingPriority(UILayoutPriority(900), for: .horizontal)
+        instrumentButtonsView.setContentHuggingPriority(UILayoutPriority(900), for: .horizontal)
         sectionAndTitleView.setContentHuggingPriority(UILayoutPriority(100), for: .vertical)
         pianosoloButton.setContentHuggingPriority(UILayoutPriority(800), for: .vertical)
-        verticalInstrumentButtonsViewContainer.setContentHuggingPriority(UILayoutPriority(900), for: .vertical)
+        instrumentButtonsView.setContentHuggingPriority(UILayoutPriority(900), for: .vertical)
         
         axis = isPortrait ? .horizontal : .vertical
         distribution = .fill
@@ -125,9 +121,9 @@ class SongServiceHeaderView: UIStackView {
         spacing = 10
         
         addSubview(backgroundView)
-        backgroundView.layer.cornerRadius = 8
         sendSubviewToBack(backgroundView)
         backgroundView.translatesAutoresizingMaskIntoConstraints = false
+        updateHeader(isSelected: isSelected)
         if !sectionAndTitleView.isHidden {
             backgroundView.topAnchor.constraint(equalTo: sectionAndTitleView.titleLabel.topAnchor, constant: -10).isActive = true
             backgroundView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
@@ -141,6 +137,12 @@ class SongServiceHeaderView: UIStackView {
     func updateHeader(isSelected: Bool) {
         backgroundView.backgroundColor = isSelected ? .softBlueGrey : .grey1
         pianosoloButton.isColorInverted(isSelected)
+    }
+    
+    private func didClickSection() {
+        isSelected = !isSelected
+        pianosoloButton.stopPlay()
+        onSectionClick?()
     }
 }
 
@@ -402,6 +404,10 @@ class SongServiceHeaderCollectionReusableViewOne: UICollectionReusableView {
     private var songServiceHeaderView: SongServiceHeaderView?
     
     var data: AnyObject?
+    
+    deinit {
+        print("deinit")
+    }
     
     override func prepareForReuse() {
         super.prepareForReuse()

@@ -12,6 +12,9 @@
 		B37F43E228C669D7007970DD /* InstrumentsButtonsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37F43E128C669D7007970DD /* InstrumentsButtonsView.swift */; };
 		B37F43E428C66EF4007970DD /* InstrumentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37F43E328C66EF4007970DD /* InstrumentView.swift */; };
 		B37F43E628C673BF007970DD /* EdgeInsetsExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37F43E528C673BF007970DD /* EdgeInsetsExtension.swift */; };
+		B38A1D102925880500565BDA /* SongServiceDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38A1D0F2925880500565BDA /* SongServiceDataSource.swift */; };
+		B38A1D122926EA1400565BDA /* SongServiceCollectionViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38A1D112926EA1400565BDA /* SongServiceCollectionViewDataSource.swift */; };
+		B38A1D14292AE71300565BDA /* CollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38A1D13292AE71300565BDA /* CollectionExtensions.swift */; };
 		B38C18E827B331A0006DA1A7 /* NSAttributedStringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38C18E727B331A0006DA1A7 /* NSAttributedStringExtensions.swift */; };
 		E305BB9123CF6D8500A753A2 /* SoundPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E305BB8F23CF6D8500A753A2 /* SoundPickerCell.swift */; };
 		E305BB9223CF6D8500A753A2 /* SoundPickerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E305BB9023CF6D8500A753A2 /* SoundPickerCell.xib */; };
@@ -335,6 +338,9 @@
 		B37F43E128C669D7007970DD /* InstrumentsButtonsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstrumentsButtonsView.swift; sourceTree = "<group>"; };
 		B37F43E328C66EF4007970DD /* InstrumentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstrumentView.swift; sourceTree = "<group>"; };
 		B37F43E528C673BF007970DD /* EdgeInsetsExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeInsetsExtension.swift; sourceTree = "<group>"; };
+		B38A1D0F2925880500565BDA /* SongServiceDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongServiceDataSource.swift; sourceTree = "<group>"; };
+		B38A1D112926EA1400565BDA /* SongServiceCollectionViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongServiceCollectionViewDataSource.swift; sourceTree = "<group>"; };
+		B38A1D13292AE71300565BDA /* CollectionExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionExtensions.swift; sourceTree = "<group>"; };
 		B38C18E727B331A0006DA1A7 /* NSAttributedStringExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSAttributedStringExtensions.swift; sourceTree = "<group>"; };
 		E305BB8F23CF6D8500A753A2 /* SoundPickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundPickerCell.swift; sourceTree = "<group>"; };
 		E305BB9023CF6D8500A753A2 /* SoundPickerCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SoundPickerCell.xib; sourceTree = "<group>"; };
@@ -694,6 +700,15 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		B38A1D0E292587EA00565BDA /* Datasources */ = {
+			isa = PBXGroup;
+			children = (
+				B38A1D0F2925880500565BDA /* SongServiceDataSource.swift */,
+				B38A1D112926EA1400565BDA /* SongServiceCollectionViewDataSource.swift */,
+			);
+			path = Datasources;
+			sourceTree = "<group>";
+		};
 		E31171241FE59DA3008D9D51 = {
 			isa = PBXGroup;
 			children = (
@@ -742,6 +757,7 @@
 		E31171451FE59E98008D9D51 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				B38A1D0E292587EA00565BDA /* Datasources */,
 				E35E7CE223B76B280071DCC8 /* Virtual */,
 				E32A02B6211715B300C78410 /* SongService.swift */,
 				E3896A2D21E3F04B008CB5A5 /* CoreDataEntities */,
@@ -853,6 +869,7 @@
 				E30BDD712707B0D60049D6A8 /* FloatExtensions.swift */,
 				B38C18E727B331A0006DA1A7 /* NSAttributedStringExtensions.swift */,
 				B37F43E528C673BF007970DD /* EdgeInsetsExtension.swift */,
+				B38A1D13292AE71300565BDA /* CollectionExtensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1459,6 +1476,7 @@
 				E3875373248432550050B425 /* RequestManager.swift in Sources */,
 				E35E7CF423BA30540071DCC8 /* VSheetSplit.swift in Sources */,
 				E34B306A25B63AFA009BFE58 /* UploadUniTimesController.swift in Sources */,
+				B38A1D102925880500565BDA /* SongServiceDataSource.swift in Sources */,
 				E31F0B7520F5D1E800C22FD1 /* SheetPastorsExtensions.swift in Sources */,
 				E399EA89202F73D700E8CE0E /* CustomSheetsController.swift in Sources */,
 				E3B1EABE24B4937500304A2D /* SongServiceHeaderCollectionReusableView.swift in Sources */,
@@ -1607,12 +1625,14 @@
 				E3896A2C21E3F011008CB5A5 /* HTTPURLResponse.swift in Sources */,
 				E35099EF20DCD152005CA984 /* LyricsViewController.swift in Sources */,
 				E3F201D6201E04FC002FF06E /* FetcherTimeInterval.swift in Sources */,
+				B38A1D122926EA1400565BDA /* SongServiceCollectionViewDataSource.swift in Sources */,
 				E31171641FE5A0E7008D9D51 /* MenuController.swift in Sources */,
 				E37137BE205EBB8300DF86F1 /* LabelSliderCell.swift in Sources */,
 				E393B7672008D25F0073D0A9 /* SheetEmpty.swift in Sources */,
 				E3896A3721E3F156008CB5A5 /* Operation.swift in Sources */,
 				E3C63DCB253CAFF7006AB94B /* SerialOperationManager.swift in Sources */,
 				E33BE3F425631A4200DEAD54 /* CheckView.swift in Sources */,
+				B38A1D14292AE71300565BDA /* CollectionExtensions.swift in Sources */,
 				E334B10B21ED03B40088CD48 /* SheetActivities.swift in Sources */,
 				E35B63C3221A8F22006C50AB /* IntroGoogleSigninController.swift in Sources */,
 				E3D1CEE71FF6930600F9D7D9 /* LabelPickerCell.swift in Sources */,
@@ -1801,7 +1821,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = SongProjector/SongProjector.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 14;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 4RH34LGMLA;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -1824,7 +1844,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = SongProjector/SongProjector.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = 4RH34LGMLA;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = SongProjector/Info.plist;

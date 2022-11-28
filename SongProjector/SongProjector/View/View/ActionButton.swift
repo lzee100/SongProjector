@@ -14,7 +14,7 @@ class ActionButton: UIButton {
     typealias Action = (() -> Void)
     
     private var action: Action? = nil
-        
+    
     func add(action: @escaping Action) {
         self.action = action
         addTarget(self, action: #selector(performAction), for: .touchUpInside)

@@ -20,8 +20,8 @@ class InstrumentsButtonsView: UIStackView {
     }
     
     func apply(instruments: [VInstrument]) {
-        subviews.forEach { removeArrangedSubview($0) }
         subviews.forEach { $0.removeFromSuperview() }
+        subviews.forEach { removeArrangedSubview($0) }
         instruments.forEach { addArrangedSubview(InstrumentView(instrument: $0)) }
         axis = .horizontal
         spacing = 2

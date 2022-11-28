@@ -69,16 +69,15 @@ class InstrumentsButtonsViewContainer: UIView {
     
     private func applyConstraintsToInstrumentButtonsView() {
         instrumentButtonsView.removeConstraints(instrumentButtonsView.constraints)
-//        instrumentButtonsView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
         instrumentButtonsView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         instrumentButtonsView.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: insets.top).isActive = true
         instrumentButtonsView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: insets.left).isActive = true
         instrumentButtonsView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -insets.right).isActive = true
-//        if UIDevice.current.orientation.isLandscape {
-//            instrumentButtonsView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -insets.bottom).isActive = true
-//        } else {
-//            instrumentButtonsView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -insets.bottom).isActive = true
-//        }
+        if UIDevice.current.orientation.isLandscape {
+            instrumentButtonsView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -insets.bottom).isActive = true
+        } else {
+            instrumentButtonsView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -insets.bottom).isActive = true
+        }
     }
     
 }
@@ -119,8 +118,7 @@ class PreviewSongServiceSectionHeaderTitleStackView: UIStackView {
     }()
 
     lazy var label: SongServiceSectionHeaderTitleStackView = {
-        let header = SongServiceSectionHeaderTitleStackView(sectionTitle: nil, title: "Title and", action: {
-        }, insets: .zero)
+        let header = SongServiceSectionHeaderTitleStackView(sectionTitle: nil, title: "Title and", insets: .zero)
         header.setContentHuggingPriority(.defaultLow, for: .horizontal)
         return header
     }()
@@ -162,11 +160,16 @@ class SongServiceSectionHeaderTitleStackView: UIStackView {
 
     private let actionButton = ActionButton(frame: .zero)
     private let sectionTitleLabel = UILabel()
-    private let action: ActionButton.Action
+    var action: ActionButton.Action? {
+        didSet {
+            if let action = action {
+                actionButton.add(action: action)
+            }
+        }
+    }
     let titleLabel = UILabel()
 
-    init(sectionTitle: String?, title: String?, action: @escaping ActionButton.Action, insets: UIEdgeInsets) {
-        self.action = action
+    init(sectionTitle: String?, title: String?, insets: UIEdgeInsets) {
         super.init(frame: .zero)
         isLayoutMarginsRelativeArrangement = true
         directionalLayoutMargins = NSDirectionalEdgeInsets(top: insets.top, leading: insets.left, bottom: insets.bottom, trailing: insets.right)
@@ -193,7 +196,6 @@ class SongServiceSectionHeaderTitleStackView: UIStackView {
         }
         sectionTitleLabel.font = .xxNormalBold
         sectionTitleLabel.numberOfLines = 1
-        actionButton.add(action: action)
         actionButton.setContentHuggingPriority(UILayoutPriority(100), for: .horizontal)
         actionButton.setContentHuggingPriority(UILayoutPriority(100), for: .vertical)
         titleLabel.textAlignment = UIDevice.current.orientation.isLandscape ? .center : .left
@@ -215,7 +217,7 @@ class SongServiceSectionHeaderTitleStackView: UIStackView {
     }
     
     func getHeightForTitleFont() -> CGFloat {
-        sectionTitleLabel.font.lineHeight
+        sectionTitleLabel.text?.isBlanc ?? true ? 0 : sectionTitleLabel.font.lineHeight
     }
 }
 

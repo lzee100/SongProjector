@@ -12,7 +12,8 @@ import UIKit
 class PianoSoloButtonView: ActionButton {
     
     private let iconImageView = UIImageView(image: UIImage(named: "Piano"))
-    private let equalizerAnimationView = MixerAnimationView(frame: .zero, mixerColor: .white)
+//    private let equalizerAnimationView = MixerAnimationView(frame: .zero, mixerColor: .white)
+    private let soundAnimationView = MixerAnimationViewNew(frame: .zero)
     private let iconInsets: UIEdgeInsets
     private let equalizerInsets: UIEdgeInsets
     
@@ -32,15 +33,19 @@ class PianoSoloButtonView: ActionButton {
     }
     
     func startPlay() {
-        equalizerAnimationView.play()
-        equalizerAnimationView.isHidden = false
+        soundAnimationView.startPlay()
+        soundAnimationView.isHidden = false
+//        equalizerAnimationView.play()
+//        equalizerAnimationView.isHidden = false
         iconImageView.isHidden = true
     }
     
     func stopPlay() {
-        equalizerAnimationView.stop()
+        soundAnimationView.stopPlay()
+        soundAnimationView.isHidden = true
+//        equalizerAnimationView.stop()
         iconImageView.isHidden = false
-        equalizerAnimationView.isHidden = true
+//        equalizerAnimationView.isHidden = true
     }
     
     func isColorInverted(_ isInverted: Bool) {
@@ -50,8 +55,9 @@ class PianoSoloButtonView: ActionButton {
     
     private func setup() {
         isColorInverted(false)
-        [equalizerAnimationView, iconImageView].forEach { view in
+        [soundAnimationView, iconImageView].forEach { view in
             view.isHidden = true
+            view.isUserInteractionEnabled = false
             view.translatesAutoresizingMaskIntoConstraints = false
             addSubview(view)
         }
@@ -72,13 +78,22 @@ class PianoSoloButtonView: ActionButton {
     }
     
     private func setConstraintsEqualizerAnimationView() {
-        equalizerAnimationView.widthAnchor.constraint(equalTo: equalizerAnimationView.heightAnchor).isActive = true
-        equalizerAnimationView.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        equalizerAnimationView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
-        equalizerAnimationView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        equalizerAnimationView.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: equalizerInsets.top).isActive = true
-        equalizerAnimationView.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: equalizerInsets.left).isActive = true
-        equalizerAnimationView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -equalizerInsets.right).isActive = true
-        equalizerAnimationView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -equalizerInsets.bottom).isActive = true
+//        equalizerAnimationView.widthAnchor.constraint(equalTo: equalizerAnimationView.heightAnchor).isActive = true
+//        equalizerAnimationView.heightAnchor.constraint(equalToConstant: 30).isActive = true
+//        equalizerAnimationView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+//        equalizerAnimationView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+//        equalizerAnimationView.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: equalizerInsets.top).isActive = true
+//        equalizerAnimationView.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: equalizerInsets.left).isActive = true
+//        equalizerAnimationView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -equalizerInsets.right).isActive = true
+//        equalizerAnimationView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -equalizerInsets.bottom).isActive = true
+
+        soundAnimationView.widthAnchor.constraint(equalTo: soundAnimationView.heightAnchor).isActive = true
+        soundAnimationView.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        soundAnimationView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+        soundAnimationView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        soundAnimationView.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: equalizerInsets.top).isActive = true
+        soundAnimationView.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: equalizerInsets.left).isActive = true
+        soundAnimationView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -equalizerInsets.right).isActive = true
+        soundAnimationView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -equalizerInsets.bottom).isActive = true
     }
 }

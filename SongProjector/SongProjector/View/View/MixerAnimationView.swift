@@ -8,6 +8,51 @@
 
 import UIKit
 
+class MixerAnimationViewNew: UIView {
+    
+    let iconImageView = UIImageView()
+    var timer: Timer?
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func setup() {
+        iconImageView.image = UIImage(named: "Speaker")
+        iconImageView.tintColor = .white
+        addSubview(iconImageView)
+        iconImageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        iconImageView.heightAnchor.constraint(equalToConstant: 25).isActive = true
+        iconImageView.widthAnchor.constraint(equalToConstant: 25).isActive = true
+        iconImageView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+        iconImageView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+    }
+    
+    func startPlay() {
+        timer = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(animate), userInfo: nil, repeats: true)
+    }
+    
+    func stopPlay() {
+        timer?.invalidate()
+        timer = nil
+    }
+    
+    @objc private func animate() {
+        self.iconImageView.transform = CGAffineTransform(scaleX: 1.6, y: 1.6)
+        UIView.animate(withDuration: 0.7, delay: 0, usingSpringWithDamping: 0.4, initialSpringVelocity: 0.4, options: []) { [weak self] in
+            guard let self = self else { return }
+            self.iconImageView.transform = .identity
+        } completion: { _ in }
+    }
+}
+
+
 class MixerAnimationView: UIView {
 	
 	@IBOutlet var mixerAnimationView: UIView!
