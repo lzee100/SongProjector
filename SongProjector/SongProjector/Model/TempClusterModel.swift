@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 class TempClustersModel {
     
@@ -24,7 +25,6 @@ class TempClustersModel {
     var hasNoSongs: Bool {
         return (songServiceSettings != nil && sectionedClusterOrComment.count == 0) || (clusters.count == 0 && songServiceSettings == nil)
     }
-    var errorIndexPath: IndexPath?
     private let defaults = UserDefaults.standard
 
     static func load() -> TempClustersModel? {
@@ -213,6 +213,32 @@ class TempClustersModel {
             defaults.setValue(clusters.map({ $0.id ?? Constants.comment }), forKey: Constants.clusterOrComment)
             defaults.setValue(Date(), forKey: Constants.saveDate)
         }
+    }
+    
+    func updateSnapshotFromModel(_ snapshot: inout NSDiffableDataSourceSnapshot<SongObject, VSheet>) {
+        var songs: [SongObject] = []
+
+        let clusters = clusters.compactMap({ $0.cluster })
+        if clusters.count != 0 {
+            songs = clusters.map({ SongObject(cluster: $0, headerTitle: nil) })
+        } else {
+            sectionedClusterOrComment.enumerated().forEach({ value in
+                    let songsInSection = value.element
+                    let sectionIndex = value.offset
+                    songsInSection.compactMap { $0.cluster }.enumerated().forEach { clusterAndPosition in
+                        let cluster = clusterAndPosition.element
+                        if clusterAndPosition.offset == 0 {
+                            let sectionHeader = songServiceSettings?.sections[sectionIndex].title
+                            songs.append(SongObject(cluster: cluster, headerTitle: sectionHeader))
+                        } else {
+                            songs.append(SongObject(cluster: cluster, headerTitle: nil))
+                        }
+                    }
+                })
+        }
+        
+        snapshot.appendSections(songs)
+
     }
     
     static func resetSavedValues() {

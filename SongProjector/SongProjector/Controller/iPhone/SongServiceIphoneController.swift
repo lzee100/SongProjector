@@ -11,7 +11,7 @@ import QuartzCore
 import MediaPlayer
 import GoogleSignIn
 
-class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, SongsControllerDelegate {
+class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate, UIGestureRecognizerDelegate, SongsControllerDelegate {
     
 	
 	@IBOutlet var new: UIBarButtonItem!
@@ -91,6 +91,25 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
 	private var model: TempClustersModel?
     private var canPlay: Bool = true
     
+    private lazy var dataSource: SongServiceDataSource = {
+        SongServiceDataSource(tableView: tableView) { tableView, indexPath, model in
+            let cell = tableView.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath)
+            if let cell = cell as? BasicCell {
+                let title: String?
+                if let sheet = model as? VSheetTitleContent {
+                    title = model.isEmptySheet ? AppText.Sheet.emptySheetTitle : sheet.title
+                } else {
+                    title = model.title
+                }
+                cell.setup(title: title)
+                cell.isInnerCell = true
+                cell.selectionColor = .softBlueGrey
+                cell.selectedCell = self.songService.selectedSheet?.id == model.id
+            }
+            return cell
+        }
+    }()
+    
     override var requesters: [RequesterBase] {
         return [UniversalClusterFetcher, SongServicePlayDateFetcher]
     }
@@ -102,6 +121,7 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		setup()
+        
 	}
     
     override func viewWillAppear(_ animated: Bool) {
@@ -127,50 +147,6 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
 	
 	// MARK: UITableViewDelegate Functions
 	
-	func numberOfSections(in tableView: UITableView) -> Int {
-		return songService.songs.count
-	}
-	
-	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		if songService.songs.count == 0 {
-			// return No songs selected cell
-			return 1
-			// return only 1 cell if song has but 1 sheet
-		} else {
-			if songService.selectedSection == section {
-				return songService.songs[section].sheets.count == 1 ? 0 : songService.songs[section].sheets.count
-			} else {
-				return 0
-			}
-		}
-	}
-	
-	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		let cell = tableView.dequeueReusableCell(withIdentifier: Cells.basicCellid, for: indexPath)
-		
-		let currentSheet = songService.songs[indexPath.section].sheets[indexPath.row]
-		
-		if let cell = cell as? BasicCell {
-			if songService.songs.count == 0 {
-				cell.setup(title: AppText.NewSongService.noSelectedSongs)
-				cell.selectedCell = false
-				return cell
-			}
-			let title: String?
-			if let sheet = currentSheet as? VSheetTitleContent {
-				title = sheet.isEmptySheet ? AppText.Sheet.emptySheetTitle : sheet.title
-			} else {
-				title = currentSheet.title
-			}
-			cell.setup(title: title)
-			cell.isInnerCell = true
-            cell.selectionColor = .softBlueGrey
-			cell.selectedCell = songService.selectedSheet?.id == currentSheet.id
-			
-		}
-		return cell
-	}
-	
 	func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 		return 60
 	}
@@ -180,35 +156,25 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
 			return
 		}
 		let currentSheet = songService.songs[indexPath.section].sheets[indexPath.row]
-		songService.selectedSheet = songService.selectedSheet == currentSheet ? nil : currentSheet
+        songService.selectedSheet = songService.selectedSheet?.id == currentSheet.id ? nil : currentSheet
 		update()
 	}
 	
 	func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-		let song = songService.songs[section]
-		let firstClusters = model?.sectionedClusterOrComment.compactMap({ $0.first?.cluster })
-        let hasHeader = firstClusters?.contains(where: { $0.id == song.cluster.id }) ?? false
+        guard
+            let song = dataSource.sectionIdentifier(for: section),
+            let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: SongHeaderView.identifier) as? SongHeaderView else { return nil }
         
-        guard let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: SongHeaderView.identifier) as? SongHeaderView else { return nil }
-        
-		if let model = model, let songServiceSetting = model.songServiceSettings, hasHeader {
-			if let index = model.sectionedClusterOrComment.firstIndex(where: { sectionClusterOrComment in
-				sectionClusterOrComment.compactMap({ $0.cluster }).contains(entity: song.cluster)
-			}) {
-				view.set(sectionHeader: songServiceSetting.sections[index].title ?? "")
-			}
-		}
-		let isSelected = section == songService.selectedSection
-        view.setup(title: song.cluster.title, isSelected: isSelected, hasPianoSolo: song.cluster.hasPianoSolo) { [weak self] in
-            self?.didSelectSection(section: section)
-        } pianoButtonAction: { [weak self] in
-            self?.didSelectPianoInSection(section: section)
-        }
-
+        let isSelected = songService.selectedSong?.cluster.id == song.cluster.id
         let isPlaying = SoundPlayer.isPianoOnlyPlaying && SoundPlayer.isPlaying && SoundPlayer.song?.id == song.cluster.id
-        view.setPianoAction(isPlaying: isPlaying)
-        view.set(cluster: song.cluster)
-		return view
+
+        view.buildHeader(sectionTitle: song.headerTitle, title: song.cluster.title, cluster: song.cluster, isSelected: isSelected, onSectionClick: { [weak self] in
+            self?.didSelectSection(section: section)
+        }, onPianoSoloClick: { [weak self] in
+            self?.didSelectPianoInSection(section: section)
+        }, isPianoSoloPlaying: isPlaying)
+
+        return view
 	}
 	
 	func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -227,17 +193,13 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
 	// MARK: NewSongServiceDelegate Functions
 	
 	func finishedSelection(_ model: TempClustersModel) {
-		self.model = model
-		let clusters = model.clusters.compactMap({ $0.cluster })
-		if clusters.count != 0 {
-			self.songService.songs = clusters.map({ SongObject(cluster: $0) })
-		} else {
-			self.songService.songs = model
-				.sectionedClusterOrComment
-				.flatMap({ $0 })
-				.compactMap({ $0.cluster })
-				.map({ SongObject(cluster: $0) })
-		}
+        var snapshot = SongServiceDataSource.snapshot()
+        snapshot.deleteSections(songService.songs)
+        
+        model.updateSnapshotFromModel(&snapshot)
+        songService.songs = snapshot.sectionIdentifiers
+        dataSource.apply(snapshot)
+        
         if self.songService.songs.count > 0 {
             SongServicePlayDateFetcher.fetch()
         }
@@ -326,12 +288,13 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
 		
 		tableView.register(cell: Cells.basicCellid)
         tableView.register(SongHeaderView.self, forHeaderFooterViewReuseIdentifier: SongHeaderView.identifier)
+        dataSource.apply(NSDiffableDataSourceSnapshot<SongObject, VSheet>())
 		updateSheetDisplayersRatios()
 		sheetDisplayerInitialFrame = sheetDisplayer.bounds
 		sheetDisplayerSwipeViewInitialHeight = sheetDisplaySwipeViewCustomHeightConstraint?.constant ?? sheetDisplaySwipeView.bounds.height
 		
 		if let previewCluster = previewCluster {
-			songService.songs = [SongObject(cluster: previewCluster)]
+            songService.songs = [SongObject(cluster: previewCluster, headerTitle: nil)]
 			navigationItem.leftBarButtonItem = UIBarButtonItem(title: AppText.Actions.cancel, style: .plain, target: self, action: #selector(close))
 		}
         
@@ -363,162 +326,21 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
             self.present(alert, animated: true)
             return
         }
-        SoundPlayer.stop()
-        let action: TableViewAction?
-        let previousSong = songService.selectedSong
-        songService.selectedSong = songService.selectedSection == section ? nil : songService.songs[section]
-        songService.selectedSection = songService.selectedSection == section ? nil : section
         
-        if let previousSong = previousSong, let nextSong = songService.selectedSong {
-            action = .deleteAndInsert(previous: previousSong, next: nextSong)
-        } else if let nextSong = songService.selectedSong {
-            action = .insert(songObject: nextSong)
-        } else if songService.selectedSong == nil, let previousSong = previousSong {
-            action = .delete(songObject: previousSong)
-        } else {
-            action = nil
+        SoundPlayer.stop()
+        
+        let previousSelectedSong = songService.selectedSong
+        
+        var snapShot = songService.didSelect(.song(songService.songs[section]))
+        if let previousSelectedSong = previousSelectedSong, let selectedSong = songService.selectedSong, previousSelectedSong.cluster.id != selectedSong.cluster.id {
+            snapShot.reloadSections([previousSelectedSong])
         }
-        if let action = action {
-            handleTableViewAction(action)
-        }
-        if songService.selectedSong == nil {
-            shutDownDisplayer()
-        }
-    }
-    
-    enum TableViewAction {
-        case insert(songObject: SongObject)
-        case delete(songObject: SongObject)
-        case deleteAndInsert(previous: SongObject, next: SongObject)
-    }
-    
-    private func handleTableViewAction(_ action: TableViewAction) {
-        switch action {
-        case .deleteAndInsert(previous: let previousSong, next: let nextSong):
-            
-            var deletedSection: Int? = nil
-            var deletedIndexPaths: [IndexPath]? = nil
-            var insertedSection: Int? = nil
-            var insertedIndexPaths: [IndexPath]? = nil
-            
-            if let section = songService.songs.firstIndex(where: { $0.cluster.id == previousSong.cluster.id }) {
-                deletedSection = section
-                let rows = tableView.numberOfRows(inSection: section)
-                guard rows > 1 else { return }
-                deletedIndexPaths = []
-                for row in 0..<rows {
-                    deletedIndexPaths!.append(IndexPath(row: row, section: section))
-                }
-            }
-            if let section = songService.songs.firstIndex(where: { $0.cluster.id == nextSong.cluster.id }) {
-                insertedSection = section
-                let rows = nextSong.cluster.hasSheets.count
-                guard rows > 1 else {
-                    self.tableView.scrollToRow(at: IndexPath(row: NSNotFound, section: section), at: .top, animated: true)
-                    if let view = tableView.headerView(forSection: section) as? SongHeaderView {
-                        view.setup(title: view.sectionTitle, isSelected: true, hasPianoSolo: view.isPianoOnlyEnabled) { [weak self] in
-                            self?.didSelectSection(section: section)
-                        } pianoButtonAction: { [weak self] in
-                            self?.didSelectPianoInSection(section: section)
-                        }
-                    }
-                    return
-                }
-                insertedIndexPaths = []
-                for row in 0..<rows {
-                    insertedIndexPaths!.append(IndexPath(row: row, section: section))
-                }
-            }
-            
-            tableView.performBatchUpdates {
-                if let deletedSection = deletedSection {
-                    if let view = tableView.headerView(forSection: deletedSection) as? SongHeaderView {
-                        view.setup(title: view.sectionTitle, isSelected: false, hasPianoSolo: view.isPianoOnlyEnabled) { [weak self] in
-                            self?.didSelectSection(section: deletedSection)
-                        } pianoButtonAction: { [weak self] in
-                            self?.didSelectPianoInSection(section: deletedSection)
-                        }
-                    }
-                }
-                if let deletedIndexPaths = deletedIndexPaths {
-                    tableView.deleteRows(at: deletedIndexPaths, with: .none)
-                }
-                if let insertedSection = insertedSection {
-                    if let view = tableView.headerView(forSection: insertedSection) as? SongHeaderView {
-                        view.setup(title: view.sectionTitle, isSelected: true, hasPianoSolo: view.isPianoOnlyEnabled) { [weak self] in
-                            self?.didSelectSection(section: insertedSection)
-                        } pianoButtonAction: { [weak self] in
-                            self?.didSelectPianoInSection(section: insertedSection)
-                        }
-                    }
-                }
-                if let insertedIndexPaths = insertedIndexPaths {
-                    tableView.insertRows(at: insertedIndexPaths, with: .none)
-                }
-            } completion: { finished in
-                guard finished, let insertedSection = insertedSection, let indexPath = insertedIndexPaths?.first, self.tableView?.numberOfRows(inSection: insertedSection) ?? 0 > 0 else { return }
-                self.tableView.scrollToRow(at: indexPath, at: .top, animated: true)
-            }
-            
-        case .insert(songObject: let songObject):
-            if let section = songService.songs.firstIndex(where: { $0.cluster.id == songObject.cluster.id }) {
-                let rows = songObject.cluster.hasSheets.count
-                guard rows > 1 else {
-                    self.tableView.scrollToRow(at: IndexPath(row: NSNotFound, section: section), at: .top, animated: true)
-                    if let view = tableView.headerView(forSection: section) as? SongHeaderView {
-                        view.setup(title: view.sectionTitle, isSelected: true, hasPianoSolo: view.isPianoOnlyEnabled) { [weak self] in
-                            self?.didSelectSection(section: section)
-                        } pianoButtonAction: { [weak self] in
-                            self?.didSelectPianoInSection(section: section)
-                        }
-                    }
-                    return
-                }
-                var indexPaths: [IndexPath] = []
-                for row in 0..<rows {
-                    indexPaths.append(IndexPath(row: row, section: section))
-                }
-                tableView.performBatchUpdates {
-                    tableView.insertRows(at: indexPaths, with: .top)
-                } completion: { finished in
-                    guard finished, self.tableView.numberOfRows(inSection: section) > 0 else { return }
-                    self.tableView.scrollToRow(at: indexPaths.first!, at: .top, animated: true)
-                }
-                if let view = tableView.headerView(forSection: section) as? SongHeaderView {
-                    view.setup(title: view.sectionTitle, isSelected: true, hasPianoSolo: view.isPianoOnlyEnabled) { [weak self] in
-                        self?.didSelectSection(section: section)
-                    } pianoButtonAction: { [weak self] in
-                        self?.didSelectPianoInSection(section: section)
-                    }
-                }
-            }
-        case .delete(songObject: let songObject):
-            if let section = songService.songs.firstIndex(where: { $0.cluster.id == songObject.cluster.id }) {
-                let rows = tableView.numberOfRows(inSection: section)
-                guard rows > 1 else {
-                    if let view = tableView.headerView(forSection: section) as? SongHeaderView {
-                        view.setup(title: view.sectionTitle, isSelected: false, hasPianoSolo: view.isPianoOnlyEnabled) { [weak self] in
-                            self?.didSelectSection(section: section)
-                        } pianoButtonAction: { [weak self] in
-                            self?.didSelectPianoInSection(section: section)
-                        }
-                    }
-                    return
-                }
-                var indexPaths: [IndexPath] = []
-                for row in 0..<rows {
-                    indexPaths.append(IndexPath(row: row, section: section))
-                }
-                tableView.deleteRows(at: indexPaths, with: .top)
-                if let view = tableView.headerView(forSection: section) as? SongHeaderView {
-                    view.setup(title: view.sectionTitle, isSelected: false, hasPianoSolo: view.isPianoOnlyEnabled) { [weak self] in
-                        self?.didSelectSection(section: section)
-                    } pianoButtonAction: { [weak self] in
-                        self?.didSelectPianoInSection(section: section)
-                    }
-                }
+        dataSource.apply(snapShot)
+        tableView.scrollToRow(at: IndexPath(row: NSNotFound, section: section), at: .top, animated: true)
 
-            }
+        if songService.selectedSong != nil {
+        } else {
+            shutDownDisplayer()
         }
     }
 	
@@ -643,6 +465,7 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
 							// old height copy to image
 							let image = sheetDisplayer.asImage()
 							let imageView = UIImageView(frame: sheetDisplayer.bounds)
+                            imageView.translatesAutoresizingMaskIntoConstraints = false
 							imageView.image = image
 							view.addSubview(imageView)
 							
@@ -681,6 +504,7 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
 							// old height copy to image
 							let image = sheetDisplayer.asImage()
 							let imageView = UIImageView(frame: sheetDisplayer.frame)
+                            imageView.translatesAutoresizingMaskIntoConstraints = false
 							imageView.image = image
 							view.addSubview(imageView)
 							sheetDisplayer.isHidden = true
@@ -709,6 +533,7 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
 							
 							let mixerView = MixerView(frame: CGRect(x: 0, y: 0, width: mixerContainerView.bounds.width, height: sheetDisplayerSwipeViewInitialHeight + 100))
 							mixerContainerView.addSubview(mixerView)
+                            mixerView.translatesAutoresizingMaskIntoConstraints = false
 							view.layoutIfNeeded()
 							
 							// move sheets up
@@ -886,7 +711,7 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
 					// current sheet, move to left
                 let currentSheetView = SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.selectedSong?.cluster, sheet: sheet, theme: songService.selectedTheme, scaleFactor: getScaleFactor(width: sheetDisplayer.bounds.width))
 					let previousSheetView = SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.getSongForPreviousSheet()?.cluster, sheet: previousSheet, theme: songService.previousTheme, scaleFactor: getScaleFactor(width: sheetDisplayer.bounds.width))
-					
+                
 					currentSheetView.frame = CGRect(
 						x: sheetDisplayer.frame.minX,
 						y: sheetDisplaySwipeView.frame.minY,
@@ -974,12 +799,10 @@ extension SongServiceIphoneController: SongServiceDelegate {
             countDownView.countDownLabel.text = value.stringValue
         } else {
             let countDownView = CountDownView(frame: sheetDisplayer.bounds)
+            countDownView.translatesAutoresizingMaskIntoConstraints = false
             countDownView.countDownLabel.text = value.stringValue
             sheetDisplayer.addSubview(countDownView)
-            sheetDisplayer.topAnchor.constraint(equalTo: countDownView.topAnchor).isActive =  true
-            sheetDisplayer.rightAnchor.constraint(equalTo: countDownView.rightAnchor).isActive =  true
-            sheetDisplayer.bottomAnchor.constraint(equalTo: countDownView.bottomAnchor).isActive =  true
-            sheetDisplayer.leftAnchor.constraint(equalTo: countDownView.leftAnchor).isActive =  true
+            countDownView.anchorToSuperView()
         }
     }
     

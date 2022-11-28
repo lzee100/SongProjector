@@ -32,7 +32,7 @@ enum AnimationDirection {
 
 
 
-class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UITableViewDelegate, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, SongsControllerDelegate  {
+class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UITableViewDelegate, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, SongsControllerDelegate  {
 	
 	
 	
@@ -67,6 +67,23 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 	var sheetDisplaySwipeViewCustomHeightConstraint: NSLayoutConstraint?
 	var swipeAnimationIsActive = false
     var softPianoPlayingSong: Cluster?
+    lazy var dataSource: SongServiceCollectionViewDataSource = {
+        SongServiceCollectionViewDataSource(collectionView: songCollectionView, cellProvider: { [unowned self] (collectionView, indexPath, item) -> UICollectionViewCell? in
+            
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SheetCollectionCell.identitier, for: indexPath) as! SheetCollectionCell
+            
+            cell.setupWith(cluster: self.songService.selectedSong?.cluster, sheet: item, theme: item.hasTheme ?? self.songService.selectedSong?.cluster.hasTheme(moc: moc), didDeleteSheet: nil, isDeleteEnabled: false, scaleFactor: getScaleFactor(width: self.getSheetSize().width))
+            
+            if item.id != self.songService.selectedSheet?.id {
+                cell.styleDark()
+            }
+            
+            cell.layer.cornerRadius = 10
+            cell.clipsToBounds = true
+            
+            return cell
+        })
+    }()
 	
 	// MARK: - Types
 	
@@ -75,19 +92,7 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 		case normal
 		case mixer
 	}
-    
-    private enum SongServiceListItems {
-        case sectionedCluster(section: String?, cluster: VCluster)
-        case sheet(vsheet: VSheet)
         
-        var isSection: Bool {
-            switch self {
-            case .sectionedCluster(cluster: _): return true
-            default: return false
-            }
-        }
-    }
-    
     private struct InsertAction {
         let section: Int
         let items: Int
@@ -119,7 +124,6 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 	private var model: TempClustersModel?
 	
 	private var songService: SongService!
-    private var collectionViewItems: [SongServiceListItems] = []
     private var canPlay: Bool = true
     
     override var requesters: [RequesterBase] {
@@ -159,148 +163,6 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 			controller.songService = songService
 		}
 	}
-	
-    
-    // MARK: UICollectionView Functions
-    
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        if collectionViewItems.count == 0 {
-            return 0
-        }
-        let sections = collectionViewItems.filter({ $0.isSection }).count
-        return sections == 0 ? 1 : sections
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if let index = collectionViewItems.firstIndex(where: { !$0.isSection }), max(index - 1, 0) == section {
-            return collectionViewItems.filter({ !$0.isSection }).count
-        }
-        return 0
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SheetCollectionCell.identitier, for: indexPath) as! SheetCollectionCell
-        switch collectionViewItems.filter({ !$0.isSection })[indexPath.row] {
-        case .sheet(vsheet: let sheet):
-            cell.setupWith(cluster: songService.selectedSong?.cluster, sheet: sheet, theme: sheet.hasTheme ?? songService.selectedSong?.cluster.hasTheme(moc: moc), didDeleteSheet: nil, isDeleteEnabled: false, scaleFactor: getScaleFactor(width: getSheetSize().width))
-            if sheet.id != songService.selectedSheet?.id {
-                cell.styleDark()
-            }
-            cell.layer.cornerRadius = 10
-            cell.clipsToBounds = true
-        default: break
-        }
-        return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SongServiceHeaderCollectionReusableViewOne.identifier, for: indexPath) as! SongServiceHeaderCollectionReusableViewOne
-        switch collectionViewItems.filter({ $0.isSection })[indexPath.section] {
-        case .sectionedCluster(_, cluster: let cluster):
-            headerView.data = cluster
-            headerView.updateSelected(isSongPlaying: (cluster.id == songService.selectedSong?.cluster.id) && SoundPlayer.isPlaying && !SoundPlayer.isPianoOnlyPlaying)
-            if SoundPlayer.song?.id == cluster.id, SoundPlayer.isPianoOnlyPlaying {
-                headerView.startPlay()
-            } else {
-                headerView.stopPlaying()
-            }
-            if cluster.hasPianoSolo {
-                headerView.showPianoOption()
-            }
-            headerView.setup(title: cluster.title ?? "Geen naam voor nummer", sectionAction: { [weak self] in
-                guard let self = self else { return }
-                guard self.canPlay else {
-                    let alert = UIAlertController(title: nil, message: AppText.SongService.warnCannotPlay, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: AppText.Actions.ok, style: .default, handler: nil))
-                    self.present(alert, animated: true)
-                    return
-                }
-                if SoundPlayer.isPianoOnlyPlaying {
-                    let pianoCluster = SoundPlayer.song
-                    if let index = self.collectionViewItems.filter({ $0.isSection }).firstIndex(where: {
-                        switch $0 {
-                        case .sectionedCluster(section: _, cluster: let cluster):
-                            return cluster.id == pianoCluster?.id
-                        default: return false
-                        }
-                    }) {
-                        if let view = self.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, at: IndexPath(row: 0, section: index)) as? SongServiceHeaderCollectionReusableViewOne {
-                            view.stopPlaying()
-                        }
-                    }
-                    SoundPlayer.stop()
-                }
-//                self.songService.selectedSong = self.songService.selectedSong == nil ? SongObject(cluster: cluster) : nil
-//                collectionView.reloadData()
-                collectionView.performBatchUpdates({
-                    if self.songService.selectedSong == nil || (self.songService.selectedSong != nil && self.songService.selectedSong?.cluster.id != cluster.id) {
-                        if let selectedClusterId = self.songService.selectedSong?.cluster.id, selectedClusterId != cluster.id {
-                            let sectionIndexSectioned = self.model?.sectionedClusterOrComment.flatMap({ $0 }).firstIndex(where: { $0.id == selectedClusterId })
-                            let sectionIndexUnsectioned = self.model?.clusters.firstIndex(where: { $0.id == selectedClusterId })
-                            if let sectionIndex = sectionIndexSectioned ?? sectionIndexUnsectioned  {
-                                let endIndex = self.collectionViewItems.filter({ !$0.isSection }).count
-                                var currentIndex = 0
-                                var indexPaths: [IndexPath] = []
-                                repeat {
-                                    indexPaths.append(IndexPath(row: currentIndex, section: sectionIndex))
-                                    currentIndex += 1
-                                } while currentIndex < endIndex
-                                self.songCollectionView.deleteItems(at: indexPaths)
-                            }
-                        }
-                        self.songService.selectedSong = SongObject(cluster: cluster)
-                        let inserted = self.refreshCollectionViewListItems()
-                        self.songCollectionView.deleteSections(IndexSet([inserted.section]))
-                        self.songCollectionView.insertSections(IndexSet([inserted.section]))
-                        self.songCollectionView.insertItems(at: inserted.indexPaths)
-                        if inserted.section + 1 < self.songCollectionView.numberOfSections {
-                            self.songCollectionView.reloadSections(IndexSet([inserted.section + 1]))
-                        }
-                    } else {
-                        let endIndex = self.collectionViewItems.filter({ !$0.isSection }).count
-                        var currentIndex = 0
-                        var indexPaths: [IndexPath] = []
-                        repeat {
-                            indexPaths.append(IndexPath(row: currentIndex, section: indexPath.section))
-                            currentIndex += 1
-                        } while currentIndex < endIndex
-                        self.songCollectionView.deleteItems(at: indexPaths)
-                        self.songService.selectedSheet = nil
-                        self.refreshCollectionViewListItems()
-                    }
-                }) { (completed) in
-                    Queues.main.async {
-                        if collectionView.numberOfItems(inSection: indexPath.section) != 0 {
-                            collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-                        }
-                    }
-                    collectionView.visibleSupplementaryViews(ofKind: UICollectionView.elementKindSectionHeader).compactMap({ $0 as? SongServiceHeaderCollectionReusableViewOne }).forEach({ $0.updateSelected(isSongPlaying: false) })
-                    if let selectedSongId = self.songService.selectedSong?.cluster.id {
-                        let selectedHeader = collectionView.visibleSupplementaryViews(ofKind: UICollectionView.elementKindSectionHeader).compactMap({ $0 as? SongServiceHeaderCollectionReusableViewOne }).first(where: { ($0.data as? VCluster)?.id == selectedSongId })
-                        selectedHeader?.updateSelected(isSongPlaying: SoundPlayer.isPlaying && !SoundPlayer.isPianoOnlyPlaying)
-                    }
-                }
-            }) { [weak self] in
-                guard let self = self else { return }
-                self.shutDownDisplayer()
-
-                if SoundPlayer.song?.id == cluster.id && SoundPlayer.isPianoOnlyPlaying {
-                    self.songService.selectedSong = nil
-                    self.songService.selectedSection = nil
-                    SoundPlayer.stop()
-                } else {
-                    self.songService.selectedSong = nil
-                    self.songService.selectedSection = nil
-
-                    SoundPlayer.play(song: cluster, pianoSolo: true)
-                }
-                self.update(scroll: false)
-            }
-        default: break
-
-        }
-        return headerView
-    }
     
     private func didSelectSection(cluster: VCluster) {
         self.shutDownDisplayer()
@@ -331,7 +193,7 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         if view.bounds.height > view.bounds.width {
-            return CGSize(width: collectionView.bounds.width, height: 100)
+            return CGSize(width: collectionView.bounds.width, height: 80)
         }
         return CGSize(width: collectionView.bounds.height, height: collectionView.bounds.height)
     }
@@ -381,21 +243,13 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
     
 	
 	// MARK: SongsControllerDelegate Functions
-
+    
 	func finishedSelection(_ model: TempClustersModel) {
-		self.model = model
-		let clusters = model.clusters.compactMap({ $0.cluster })
-		if clusters.count != 0 {
-			self.songService.songs = clusters.map({ SongObject(cluster: $0) })
-		} else {
-			 self.songService.songs = model.sectionedClusterOrComment
-				.flatMap({ $0 })
-				.compactMap({ $0.cluster })
-				.map({ SongObject(cluster: $0) })
-		}
-        if songService.songs.count > 0 {
-            SongServicePlayDateFetcher.fetch()
-        }
+        var snapshot = SongServiceCollectionViewDataSource.snapshot()
+        snapshot.deleteSections(dataSource.snapshot().sectionIdentifiers)
+        model.updateSnapshotFromModel(&snapshot)
+        dataSource.apply(snapshot)
+        songService.songs = snapshot.sectionIdentifiers
         self.update(scroll: true)
 	}
 	
@@ -426,7 +280,6 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 		title = AppText.SongService.title
         songCollectionView.backgroundColor = UIColor(hex: "000000")
         moveUpDownSection.backgroundColor = UIColor(hex: "000000")
-        songCollectionView.register(SongServiceHeaderCollectionReusableViewOne.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SongServiceHeaderCollectionReusableViewOne.identifier)
         songCollectionView.register(cell: SheetCollectionCell.identitier)
         
         let layout = UICollectionViewFlowLayout()
@@ -436,6 +289,45 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
         layout.minimumLineSpacing = 10
         songCollectionView.collectionViewLayout = layout
         
+        let headerRegistration = UICollectionView.SupplementaryRegistration
+        <SongServiceHeaderCollectionReusableViewOne>(elementKind: UICollectionView.elementKindSectionHeader) {
+            [weak self] (headerView, elementKind, indexPath) in
+            guard let self = self else { return }
+            let songObject = self.dataSource.snapshot().sectionIdentifiers[indexPath.section]
+
+            let isSelected = (SoundPlayer.song?.id == songObject.cluster.id && !SoundPlayer.isPianoOnlyPlaying) || self.songService.selectedSong?.cluster.id == songObject.cluster.id
+            let isPianoSoloPlaying = SoundPlayer.song?.id == songObject.cluster.id && SoundPlayer.isPianoOnlyPlaying
+
+            headerView.buildHeader(sectionTitle: nil, title: songObject.cluster.title, cluster: songObject.cluster, isSelected: isSelected, onSectionClick: { [weak self] in
+                self?.onSectionClick(indexPath: indexPath, kind: elementKind)
+            }, onPianoSoloClick: { [weak self] in
+                guard let self = self else { return }
+                self.shutDownDisplayer()
+
+                if SoundPlayer.song?.id == songObject.cluster.id && SoundPlayer.isPianoOnlyPlaying {
+                    self.songService.selectedSong = nil
+                    self.songService.selectedSection = nil
+                    SoundPlayer.stop()
+                } else {
+                    let snapshot = self.songService.didSelect(.none)
+                    self.dataSource.apply(snapshot)
+
+                    self.songService.selectedSong = nil
+                    self.songService.selectedSection = nil
+
+                    SoundPlayer.play(song: songObject.cluster, pianoSolo: true)
+                }
+                self.update(scroll: false)
+            }, isPianoSoloPlaying: isPianoSoloPlaying)
+        }
+        
+        dataSource.supplementaryViewProvider = { (collectionView, elementKind, indexPath) -> SongServiceHeaderCollectionReusableViewOne? in
+            if elementKind == UICollectionView.elementKindSectionHeader {
+                return collectionView.dequeueConfiguredReusableSupplementary(
+                    using: headerRegistration, for: indexPath)
+            }
+            return nil
+        }
         
         NotificationCenter.default.addObserver(forName: .externalDisplayDidChange, object: nil, queue: nil, using: externalDisplayDidChange)
 //        NotificationCenter.default.addObserver(self, selector: #selector(rotated), name: UIDevice.orientationDidChangeNotification, object: nil)
@@ -466,9 +358,27 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
     }
 	
 	private func update(scroll: Bool = false) {
-        refreshCollectionViewListItems()
         songCollectionView.reloadData()
 	}
+    
+    private func onSectionClick(indexPath: IndexPath, kind: String) {
+        guard self.canPlay else {
+            let alert = UIAlertController(title: nil, message: AppText.SongService.warnCannotPlay, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: AppText.Actions.ok, style: .default, handler: nil))
+            self.present(alert, animated: true)
+            return
+        }
+        dataSource.apply(songService.didSelect(.song(dataSource.snapshot().sectionIdentifiers[indexPath.section])))
+
+        let attributes = self.songCollectionView.collectionViewLayout.layoutAttributesForSupplementaryView(ofKind: kind, at: indexPath)
+        if songService.selectedSong != nil {
+            if UIDevice.current.orientation.isPortrait {
+                self.songCollectionView.setContentOffset(CGPoint(x: 0, y: attributes!.frame.origin.y - self.songCollectionView.contentInset.top), animated: true)
+            } else {
+                self.songCollectionView.setContentOffset(CGPoint(x: attributes!.frame.origin.x - self.songCollectionView.contentInset.left, y: 0), animated: true)
+            }
+        }
+    }
 	
 	private func display(sheet: VSheet) {
 		for subview in sheetDisplayer.subviews {
@@ -642,8 +552,6 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 	
 	
 	private func animateSheetsWith(_ direction : AnimationDirection, completion: @escaping () -> Void) {
-        let nextPreviousScaleFactor = getScaleFactor(width: sheetDisplayerNext.bounds.width)
-
 		switch direction {
 		case .left:
 
@@ -722,7 +630,7 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
         if songService.songs.count > 0 {
             let clusters: [Cluster] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted, .skipRootDeleted])
             let filteredClusters = clusters.filter({ cluster in songService.songs.contains(where: { song in song.cluster.id == cluster.id }) })
-            songService.songs = filteredClusters.map({ SongObject(cluster: VCluster(cluster: $0, context: moc)) })
+            songService.songs = filteredClusters.map({ SongObject(cluster: VCluster(cluster: $0, context: moc), headerTitle: nil) })
         }
 	}
 	
@@ -814,44 +722,6 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
             self.rotated()
         }) { (_) in
         }
-    }
-        
-    @discardableResult
-    private func refreshCollectionViewListItems() -> InsertAction {
-        var allValues: [SongServiceListItems] = []
-        var insertAction = InsertAction(section: 0, items: 0, none: true)
-        
-        guard model?.clusters.count ?? 0 > 0 || model?.sectionedClusterOrComment.count ?? 0 > 0 else {
-            collectionViewItems = []
-            return insertAction
-        }
-        if let model = model, let songServiceSettings = model.songServiceSettings {
-            var clusterIndex = 0
-            for (sectionIndex, section) in songServiceSettings.sections.enumerated() {
-                // append cluster
-                for cluster in model.sectionedClusterOrComment[sectionIndex] {
-                    allValues.append(.sectionedCluster(section: section.title, cluster: cluster.cluster!))
-                    // append sheets
-                    if let selectedSong = songService.selectedSong, selectedSong.cluster.id == cluster.id {
-                        allValues += selectedSong.sheets.compactMap({ SongServiceListItems.sheet(vsheet: $0) })
-                        insertAction = InsertAction(section: clusterIndex, items: selectedSong.sheets.count, none: false)
-                    }
-                    clusterIndex += 1
-                }
-            }
-        } else if let model = model {
-            for (index, cluster) in model.clusters.enumerated() {
-                // append cluster
-                allValues.append(.sectionedCluster(section: nil, cluster: cluster.cluster!))
-                // append sheets
-                if let selectedSong = songService.selectedSong, selectedSong.cluster.id == cluster.id {
-                    allValues += selectedSong.sheets.compactMap({ SongServiceListItems.sheet(vsheet: $0) })
-                    insertAction = InsertAction(section: index, items: selectedSong.sheets.count, none: false)
-                }
-            }
-        }
-        collectionViewItems = allValues
-        return insertAction
     }
 }
 

@@ -11,68 +11,23 @@ import UIKit
 class SongHeaderView: UITableViewHeaderFooterView {
     
     static let identifier = "SongHeaderView"
+    private(set) var sectionTitle: String?
+    private(set) var title: String?
     
-    private let songServiceHeaderView = SongServiceHeaderView(frame: .zero)
-    var isPianoOnlyEnabled = false
-    var sectionTitle: String? {
-        songServiceHeaderView.sectionText
-    }
-    var sectionHeaderText: String? {
-        songServiceHeaderView.sectionHeaderText
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        layer.cornerRadius = 8
     }
     
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        songServiceHeaderView.reset()
+    func buildHeader(sectionTitle: String?, title: String?, cluster: VCluster, isSelected: Bool, onSectionClick: @escaping ActionButton.Action, onPianoSoloClick: @escaping ActionButton.Action, isPianoSoloPlaying: Bool) {
+        contentView.subviews.forEach { $0.removeFromSuperview() }
+        let headerView = SongServiceHeaderView(sectionTitle: sectionTitle, title: title, cluster: cluster, isSelected: isSelected, onSectionClick: onSectionClick, onPianoSoloClick: onPianoSoloClick, isPianoSoloPlaying: isPianoSoloPlaying)
+        headerView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(headerView)
+        headerView.anchorToSuperView()
+        clipsToBounds = true
+        layer.masksToBounds = true
+        self.sectionTitle = sectionTitle
+        self.title = title
     }
-    
-    override init(reuseIdentifier: String?) {
-        super.init(reuseIdentifier: reuseIdentifier)
-        setup()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func setup(title: String?, isSelected: Bool = false, hasPianoSolo: Bool, sectionAction: @escaping ActionButton.Action, pianoButtonAction: @escaping ActionButton.Action) {
-        if hasPianoSolo {
-            songServiceHeaderView.showPianoOption()
-            if isSelected {
-                songServiceHeaderView.stopPlaying()
-            }
-        }
-        isPianoOnlyEnabled = hasPianoSolo
-        songServiceHeaderView.setup(title: title ?? "", sectionAction: sectionAction, pianoButtonAction: pianoButtonAction)
-        songServiceHeaderView.updateSelected(isSongPlaying: isSelected)
-    }
-    
-    func set(sectionHeader: String) {
-        songServiceHeaderView.setHeader(title: sectionHeader)
-    }
-    
-    func set(cluster: VCluster) {
-        if cluster.hasLocalMusic {
-            songServiceHeaderView.setInstruments(cluster.hasInstruments)
-        }
-    }
-    
-    func setPianoAction(isPlaying: Bool) {
-        if isPlaying {
-            songServiceHeaderView.startPlay()
-        } else {
-            songServiceHeaderView.stopPlaying()
-        }
-    }
-
-    private func setup() {
-        contentView.addSubview(songServiceHeaderView)
-        songServiceHeaderView.translatesAutoresizingMaskIntoConstraints = false
-        songServiceHeaderView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
-        songServiceHeaderView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
-        songServiceHeaderView.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
-        songServiceHeaderView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
-    }
-
-
 }

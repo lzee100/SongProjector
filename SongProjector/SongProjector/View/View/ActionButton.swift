@@ -19,7 +19,6 @@ class ActionButton: UIButton {
         self.action = action
         addTarget(self, action: #selector(performAction), for: .touchUpInside)
     }
-
     
     @objc private func performAction() {
         action?()

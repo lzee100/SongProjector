@@ -36,16 +36,7 @@ class SongService {
                 if !isForPreviewUniversalSongEditing {
                     selectedSong?.cluster.setLastShownAt()
                 }
-                if let appInstallId = UserDefaults.standard.object(forKey: ApplicationIdentifier) as? String {
-                    DispatchQueue.main.async {
-                        let playDate: SongServicePlayDate? = DataFetcher().getEntity(moc: moc, predicates: [.skipDeleted])
-                        let playDateEntity = [playDate].compactMap({ $0 }).map({ VSongServicePlayDate(entity: $0, context: moc) }).first ?? VSongServicePlayDate()
-                        playDateEntity.appInstallId = appInstallId
-                        playDateEntity.userUID = Auth.auth().currentUser?.uid ?? ""
-                        playDateEntity.playDate = Date()
-                        SongServicePlayDateSubmitter.submit([playDateEntity], requestMethod: .post)
-                    }
-                }
+                SongServicePlayDateSubmitter.subMitPlayDate()
 			}
 		}
 	}
@@ -80,6 +71,42 @@ class SongService {
         let user: User? = DataFetcher().getEntity(moc: moc, predicates: [.skipDeleted])
         self.sheetTimeOffset = [user].compactMap({ $0 }).map({ VUser(user: $0, context: moc) }).first?.sheetTimeOffset ?? 0
 	}
+    
+    enum SelectAction {
+        case song(SongObject)
+        case none
+    }
+    
+    func didSelect(_ selectAction: SelectAction) -> NSDiffableDataSourceSnapshot<SongObject, VSheet> {
+        switch selectAction {
+        case .song(let song):
+            var snapshot = SongServiceDataSource.snapshot()
+            if let selectedSong = selectedSong {
+                snapshot.deleteItems(selectedSong.sheets)
+                if selectedSong.cluster.id == song.cluster.id {
+                    snapshot.appendSections(songs)
+                    self.selectedSong = nil
+                    selectedSheet = nil
+                } else {
+                    snapshot.appendSections(songs)
+                    snapshot.appendItems(song.sheets, toSection: song)
+                    self.selectedSong = song
+                    selectedSheet = song.sheets.first
+                }
+                snapshot.reloadSections([selectedSong])
+            } else {
+                selectedSong = song
+                selectedSheet = song.sheets.first
+                snapshot.appendSections(songs)
+                snapshot.appendItems(song.sheets, toSection: song)
+            }
+            return snapshot
+        case .none:
+            var snapshot = SongServiceDataSource.snapshot()
+            snapshot.appendSections(songs)
+            return snapshot
+        }
+    }
 	
 	@discardableResult
 	func nextSheet(select: Bool = true) -> VSheet? {
@@ -226,40 +253,23 @@ class SongService {
 	}
 	
 	func getSongForPreviousSheet() -> SongObject? {
-		if let position = selectedSheet?.position, Int(position) - 1 >= 0 {
+		if let position = selectedSheet?.position, position - 1 >= 0 {
 			return selectedSong
 		} else {
-            if let index = songs.firstIndex(where: { $0 == selectedSong }) {
-				if index - 1 >= 0 {
-					return songs[index - 1]
-				}
-				return nil
-			} else {
-				return nil
-			}
+            guard let index = songs.firstIndex(where: { $0 == selectedSong }) else { return nil }
+            return songs[safe: index - 1]
 		}
 	}
 	
 	private func getPreviousTheme() -> VTheme? {
-		if let selectedSong = selectedSong {
-			let selectedSheetPosition = Int(selectedSheet!.position)
-			if selectedSheetPosition - 1 >= 0 {
-				return selectedSong.sheets[selectedSheetPosition - 1].hasTheme ?? selectedSong.cluster.hasTheme(moc: moc)
-			} else {
-                guard let index = songs.firstIndex(where: { $0 == selectedSong }) else {
-					return nil
-				}
-				
-				if index - 1 < 0 {
-					return nil
-				}
-				
-				return songs[index - 1].sheets.first?.hasTheme ?? songs[index - 1].cluster.hasTheme(moc: moc)
-				
-			}
-		} else {
-			return nil
-		}
+        guard let selectedSong = selectedSong, let index = songs.firstIndex(where: { $0 == selectedSong }) else {
+            return nil
+        }
+
+        if let position = selectedSheet?.position, position - 1 >= 0 {
+            return selectedSong.sheets[safe: position - 1]?.hasTheme ?? selectedSong.cluster.hasTheme(moc: moc)
+        }
+        return songs[safe: index - 1]?.sheets.first?.hasTheme ?? songs[index - 1].cluster.hasTheme(moc: moc)
 	}
 	
 	private func getNextTheme() -> VTheme? {
@@ -370,10 +380,11 @@ class SongService {
 
 
 
-class SongObject: Comparable {
+class SongObject: Hashable {
 	
-	var cluster: VCluster { didSet { addEmptySheet() }}
-	var sheets: [VSheet] = []
+    private(set) var headerTitle: String?
+	private(set) var cluster: VCluster { didSet { addEmptySheet() }}
+	private(set) var sheets: [VSheet] = []
 	
 	private func addEmptySheet() {
 		if cluster.hasTheme(moc: moc)?.hasEmptySheet ?? false {
@@ -409,7 +420,8 @@ class SongObject: Comparable {
 		return cluster.hasTheme(moc: moc)
 	}
 	
-	init(cluster: VCluster) {
+    init(cluster: VCluster, headerTitle: String?) {
+        self.headerTitle = headerTitle
 		self.cluster = cluster
 		addEmptySheet()
 	}
@@ -421,5 +433,9 @@ class SongObject: Comparable {
 	static func < (lhs: SongObject, rhs: SongObject) -> Bool {
 		return lhs.cluster.position < rhs.cluster.position
 	}
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(cluster)
+    }
 	
 }
