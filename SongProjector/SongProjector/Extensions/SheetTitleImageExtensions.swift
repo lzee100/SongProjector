@@ -39,8 +39,8 @@ extension VSheetTitleImage {
 
 extension SheetTitleImageEntity {
 	
-	func set(image: UIImage?) throws {
-		let savedImage = try UIImage.set(image: image, imageName: self.imagePath, thumbNailName: self.thumbnailPath)
+	func set(image: UIImage?, imageName: String? = nil) throws {
+		let savedImage = try UIImage.set(image: image, imageName: imageName ?? self.imagePath, thumbNailName: self.thumbnailPath)
 		self.imagePath = savedImage.imagePath
 		self.thumbnailPath = savedImage.thumbPath
 	}

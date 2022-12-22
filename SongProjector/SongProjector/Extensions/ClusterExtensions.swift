@@ -52,3 +52,48 @@ extension Cluster {
 	}
 	
 }
+
+extension Cluster {
+    
+    func setDownloadValues(_ downloadObjects: [DownloadObject], context: NSManagedObjectContext) {
+        
+        let sheetThemes = hasSheets(moc: context).compactMap { $0.hasTheme }
+        let pastorsSheets = hasSheets(moc: context).compactMap({ $0 as? SheetPastorsEntity })
+        let titleImageSheets = hasSheets(moc: context).compactMap({ $0 as? SheetTitleImageEntity })
+        
+        for download in downloadObjects {
+            sheetThemes.forEach { theme in
+                if theme.imagePathAWS == download.remoteURL.absoluteString {
+                    do {
+                        try theme.setBackgroundImage(image: download.image, imageName: download.filename)
+                    } catch {
+                        print(error)
+                    }
+                }
+            }
+            pastorsSheets.forEach { pastorSheet in
+                if pastorSheet.imagePathAWS == download.remoteURL.absoluteString {
+                    do {
+                        try pastorSheet.set(image: download.image, imageName: download.filename)
+                    } catch {
+                        print(error)
+                    }
+                }
+            }
+            titleImageSheets.forEach { titleImageSheet in
+                if titleImageSheet.imagePathAWS == download.remoteURL.absoluteString {
+                    do {
+                        try titleImageSheet.set(image: download.image, imageName: download.filename)
+                    } catch {
+                        print(error)
+                    }
+                }
+            }
+            hasInstruments(moc: context).forEach { instrument in
+                if instrument.resourcePathAWS == download.remoteURL.absoluteString {
+                    instrument.resourcePath = download.localURL?.absoluteString
+                }
+            }
+        }
+    }
+}

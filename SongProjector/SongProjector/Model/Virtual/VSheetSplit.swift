@@ -9,7 +9,7 @@
 import Foundation
 import CoreData
 
-class VSheetSplit: VSheet, SheetMetaType {
+class VSheetSplit: VSheet, VSheetMetaType {
 	
 	static let type: SheetType = .SheetSplit
 	

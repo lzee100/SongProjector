@@ -9,7 +9,11 @@
 import Foundation
 import CoreData
 
-public class VSheetTitleContent: VSheet, SheetMetaType {
+protocol VSheetMetaType: Codable {
+    static var type: SheetType { get }
+}
+
+public class VSheetTitleContent: VSheet, VSheetMetaType {
 	
 	static var type: SheetType = .SheetTitleContent
     

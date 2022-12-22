@@ -10,7 +10,7 @@ import UIKit
 import FlexColorPicker
 
 
-class LabelColorPickerNewCell: ChurchBeamCell, ThemeImplementation {
+class LabelColorPickerNewCell: ChurchBeamCell, ThemeImplementation, CreateEditThemeSheetCellProtocol {
     
     @IBOutlet var descriptionTitle: UILabel!
     @IBOutlet var colorPreviewView: UIView!

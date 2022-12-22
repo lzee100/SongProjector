@@ -12,7 +12,7 @@ protocol LabelNumerCellDelegate {
 	func numberChangedForCell(cell: LabelNumberCell)
 }
 
-class LabelNumberCell: ChurchBeamCell, ThemeImplementation, SheetImplementation {
+class LabelNumberCell: ChurchBeamCell, ThemeImplementation, SheetImplementation, CreateEditThemeSheetCellProtocol {
 	
 	@IBOutlet var minus: UIButton!
 	@IBOutlet var plus: UIButton!
@@ -32,7 +32,9 @@ class LabelNumberCell: ChurchBeamCell, ThemeImplementation, SheetImplementation 
     var sheetAttribute: SheetAttribute?
 	var themeAttribute: ThemeAttribute?
 	var valueDidChange: ((ChurchBeamCell) -> Void)?
-	
+    var newDelegate: CreateEditThemeSheetCellDelegate?
+	var cell: NewOrEditIphoneController.Cell?
+    
 	static let identifier = "LabelNumberCell"
     
     override func prepareForReuse() {
@@ -65,6 +67,25 @@ class LabelNumberCell: ChurchBeamCell, ThemeImplementation, SheetImplementation 
 		view.valueLabel.text = String(initialValue)
 		return view
 	}
+    
+    func configure(cell: NewOrEditIphoneController.Cell, delegate: CreateEditThemeSheetCellDelegate) {
+        self.newDelegate = delegate
+        switch cell {
+        case .titleFontSize(let size):
+            setup(minLimit: 5, maxLimit: 60, positive: true)
+            valueLabel.text = String(abs(size))
+        case .lyricsFontSize(let size):
+            setup(minLimit: 5, maxLimit: 60, positive: true)
+            valueLabel.text = String(abs(size))
+        case .titleBorderSize(let size):
+            setup(minLimit: 0, maxLimit: -15, positive: false)
+            valueLabel.text = String(abs(size))
+        case .lyricsBorderSize(let size):
+            setup(minLimit: 0, maxLimit: -15, positive: false)
+            valueLabel.text = String(abs(size))
+        default: break
+        }
+    }
 	
 	func setup(initialValue: Int? = nil, minLimit: Int = 5, maxLimit: Int = 60, positive: Bool = true) {
 		if let initialValue = initialValue {
@@ -169,6 +190,20 @@ class LabelNumberCell: ChurchBeamCell, ThemeImplementation, SheetImplementation 
 					self.applyCellValueToTheme()
 					valueDidChange?(self)
 					delegate?.numberChangedForCell(cell: self)
+                    
+                    var themeDraftProperty: CreateEditThemeSheetViewController.CreateEditThemeSheetCellUpdateValue? {
+                        switch cell {
+                        case .titleFontSize: return .theme(.titleTextSize(Float(value)))
+                        case .lyricsFontSize: return .theme(.contentTextSize(Float(value)))
+                        case .titleBorderSize: return .theme(.titleBorderSize(Float(value)))
+                        case .lyricsBorderSize: return .theme(.contentBorderSize(Float(value)))
+                        default: return nil
+                        }
+                    }
+                    if let cell = cell, let themeDraftProperty = themeDraftProperty {
+                        newDelegate?.handle(cell: cell, value: themeDraftProperty)
+                    }
+                    
 				}
 			} else {
 				if value < 0 {
@@ -177,6 +212,19 @@ class LabelNumberCell: ChurchBeamCell, ThemeImplementation, SheetImplementation 
 					self.applyCellValueToTheme()
 					valueDidChange?(self)
 					delegate?.numberChangedForCell(cell: self)
+                    
+                    var themeDraftProperty: CreateEditThemeSheetViewController.CreateEditThemeSheetCellUpdateValue? {
+                        switch cell {
+                        case .titleFontSize: return .theme(.titleTextSize(Float(value)))
+                        case .lyricsFontSize: return .theme(.contentTextSize(Float(value)))
+                        case .titleBorderSize: return .theme(.titleBorderSize(Float(value)))
+                        case .lyricsBorderSize: return .theme(.contentBorderSize(Float(value)))
+                        default: return nil
+                        }
+                    }
+                    if let cell = cell, let themeDraftProperty = themeDraftProperty {
+                        newDelegate?.handle(cell: cell, value: themeDraftProperty)
+                    }
 				}
 			}
 	}
@@ -196,6 +244,19 @@ class LabelNumberCell: ChurchBeamCell, ThemeImplementation, SheetImplementation 
 		self.applyCellValueToTheme()
 		valueDidChange?(self)
 		delegate?.numberChangedForCell(cell: self)
+        
+        var themeDraftProperty: CreateEditThemeSheetViewController.CreateEditThemeSheetCellUpdateValue? {
+            switch cell {
+            case .titleFontSize: return .theme(.titleTextSize(Float(value)))
+            case .lyricsFontSize: return .theme(.contentTextSize(Float(value)))
+            case .titleBorderSize: return .theme(.titleBorderSize(Float(value)))
+            case .lyricsBorderSize: return .theme(.contentBorderSize(Float(value)))
+            default: return nil
+            }
+        }
+        if let cell = cell, let themeDraftProperty = themeDraftProperty {
+            newDelegate?.handle(cell: cell, value: themeDraftProperty)
+        }
 	}
 	
 }
