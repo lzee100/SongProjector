@@ -296,6 +296,10 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
 		if let previewCluster = previewCluster {
             songService.songs = [SongObject(cluster: previewCluster, headerTitle: nil)]
 			navigationItem.leftBarButtonItem = UIBarButtonItem(title: AppText.Actions.cancel, style: .plain, target: self, action: #selector(close))
+            var snapshot = SongServiceDataSource.snapshot()
+            snapshot.appendSections(songService.songs)
+            songService.songs = snapshot.sectionIdentifiers
+            dataSource.apply(snapshot)
 		}
         
 		update()
@@ -791,18 +795,20 @@ extension SongServiceIphoneController: SongServiceDelegate {
     
     func countDown(value: Int) {
         guard value > 0 else {
-            sheetDisplayer.subviews.compactMap({ $0 as? CountDownView }).forEach({ $0.removeFromSuperview() })
+            view.subviews.compactMap({ $0 as? CountDownView }).forEach({ $0.removeFromSuperview() })
             return
         }
         
-        if let countDownView = sheetDisplayer.subviews.compactMap({ $0 as? CountDownView }).first {
+        if let countDownView = view.subviews.compactMap({ $0 as? CountDownView }).first {
             countDownView.countDownLabel.text = value.stringValue
+            view.bringSubviewToFront(countDownView)
         } else {
             let countDownView = CountDownView(frame: sheetDisplayer.bounds)
             countDownView.translatesAutoresizingMaskIntoConstraints = false
             countDownView.countDownLabel.text = value.stringValue
-            sheetDisplayer.addSubview(countDownView)
-            countDownView.anchorToSuperView()
+            view.addSubview(countDownView)
+            view.bringSubviewToFront(countDownView)
+            countDownView.anchorTo(sheetDisplayer)
         }
     }
     

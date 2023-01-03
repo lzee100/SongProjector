@@ -729,20 +729,19 @@ extension SongServiceController: SongServiceDelegate {
     
     func countDown(value: Int) {
         guard value > 0 else {
-            sheetDisplayer.subviews.compactMap({ $0 as? CountDownView }).forEach({ $0.removeFromSuperview() })
+            view.subviews.compactMap({ $0 as? CountDownView }).forEach({ $0.removeFromSuperview() })
             return
         }
         
-        if let countDownView = sheetDisplayer.subviews.compactMap({ $0 as? CountDownView }).first {
+        if let countDownView = view.subviews.compactMap({ $0 as? CountDownView }).first {
             countDownView.countDownLabel.text = value.stringValue
+            view.bringSubviewToFront(countDownView)
         } else {
             let countDownView = CountDownView(frame: sheetDisplayer.bounds)
             countDownView.countDownLabel.text = value.stringValue
-            sheetDisplayer.addSubview(countDownView)
-            sheetDisplayer.topAnchor.constraint(equalTo: countDownView.topAnchor).isActive =  true
-            sheetDisplayer.rightAnchor.constraint(equalTo: countDownView.rightAnchor).isActive =  true
-            sheetDisplayer.bottomAnchor.constraint(equalTo: countDownView.bottomAnchor).isActive =  true
-            sheetDisplayer.leftAnchor.constraint(equalTo: countDownView.leftAnchor).isActive =  true
+            view.addSubview(countDownView)
+            view.bringSubviewToFront(countDownView)
+            countDownView.anchorTo(sheetDisplayer)
         }
     }
     
