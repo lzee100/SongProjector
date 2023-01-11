@@ -10,19 +10,20 @@ import UIKit
 
 class LabelSwitchCell: ChurchBeamCell, ThemeImplementation, SheetImplementation {
 	
-	
+    static let identifier = "LabelSwitchCell"
+
 	@IBOutlet var descriptionLabel: UILabel!
 	@IBOutlet var `switch`: UISwitch!
-	
-	
+    
 	var id = ""
 	var sheetTheme: VTheme?
 	var themeAttribute: ThemeAttribute?
 	var sheet: VSheet?
 	var sheetAttribute: SheetAttribute?
 	var valueDidChange: ((ChurchBeamCell) -> Void)?
-    
-	static let identifier = "LabelSwitchCell"
+        
+    private var cell: NewOrEditIphoneController.Cell?
+    private var newDelegate: CreateEditThemeSheetCellDelegate?
     
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -127,7 +128,42 @@ class LabelSwitchCell: ChurchBeamCell, ThemeImplementation, SheetImplementation 
 //		self.switch.onTintColor = switchBackgroundColor
 		applyCellValueToTheme()
 		valueDidChange?(self)
+        switch cell {
+        case .hasEmptySheet: newDelegate?.handle(cell: .hasEmptySheet(sender.isOn))
+        case .hasEmptySheetBeginning: newDelegate?.handle(cell: .hasEmptySheetBeginning(sender.isOn))
+        case .allHaveTitle: newDelegate?.handle(cell: .allHaveTitle(sender.isOn))
+        case .displayTime: newDelegate?.handle(cell: .displayTime(sender.isOn))
+        case .titleBold: newDelegate?.handle(cell: .titleBold(sender.isOn))
+        case .titleItalic: newDelegate?.handle(cell: .titleItalic(sender.isOn))
+        case .titleUnderlined: newDelegate?.handle(cell: .titleUnderlined(sender.isOn))
+        case .lyricsBold: newDelegate?.handle(cell: .lyricsBold(sender.isOn))
+        case .lyricsItalic: newDelegate?.handle(cell: .lyricsItalic(sender.isOn))
+        case .lyricsUnderlined: newDelegate?.handle(cell: .lyricsUnderlined(sender.isOn))
+        case .hasBorder: newDelegate?.handle(cell: .hasBorder(sender.isOn))
+        default: break
+        }
 	}
-	
-	
+}
+
+extension LabelSwitchCell: CreateEditThemeSheetCellProtocol {
+    
+    func configure(cell: NewOrEditIphoneController.Cell, delegate: CreateEditThemeSheetCellDelegate) {
+        self.cell = cell
+        newDelegate = delegate
+        descriptionLabel.text = cell.description
+        switch cell {
+        case .hasEmptySheet(let value): `switch`.isOn = value
+        case .hasEmptySheetBeginning(let value): `switch`.isOn = value
+        case .displayTime(let value): `switch`.isOn = value
+        case .titleBold(let value): `switch`.isOn = value
+        case .titleItalic(let value): `switch`.isOn = value
+        case .titleUnderlined(let value): `switch`.isOn = value
+        case .lyricsBold(let value): `switch`.isOn = value
+        case .lyricsItalic(let value): `switch`.isOn = value
+        case .lyricsUnderlined(let value): `switch`.isOn = value
+        case .hasBorder(let value): `switch`.isOn = value
+        default: break
+        }
+    }
+
 }

@@ -14,16 +14,11 @@ protocol CreateEditThemeSheetCellProtocol {
 }
 
 protocol CreateEditThemeSheetCellDelegate {
-    func handle(cell: NewOrEditIphoneController.Cell, value: CreateEditThemeSheetViewController.CreateEditThemeSheetCellUpdateValue)
+    func handle(cell: NewOrEditIphoneController.Cell)
 }
 
 class CreateEditThemeSheetViewController: ChurchBeamViewController, UITableViewDelegate, UITableViewDataSource, CreateEditThemeViewModelDelegate {
-    
-    enum CreateEditThemeSheetCellUpdateValue {
-        case theme(ThemeDraft.UpdateProperties)
-        case sheet(SheetDraft.UpdateProperties)
-    }
-    
+        
     enum NewOrEditThemeAndSheetMode {
         case theme(CreateEditThemeSheetViewModelProtocol)
         case sheet(CreateEditThemeSheetViewModelProtocol)
@@ -70,7 +65,12 @@ class CreateEditThemeSheetViewController: ChurchBeamViewController, UITableViewD
         let cellType = mode.createEditThemeSheetViewModelProtocol.getRowsFor(section: section)[indexPath.row]
         let cell: UITableViewCell! = tableView.dequeueReusableCell(withIdentifier: cellType.cellIdentifier)
         (cell as? CreateEditThemeSheetCellProtocol)?.configure(cell: cellType, delegate: mode.createEditThemeSheetViewModelProtocol)
-        
+        if var cell = cell as? DynamicHeightCell {
+            cell.isActive = activeIndexPath?.row == indexPath.row && activeIndexPath?.section == indexPath.section
+        }
+        if let cell = cell as? LabelPhotoPickerCell {
+            cell.sender = self
+        }
         return cell
     }
     
@@ -104,7 +104,7 @@ class CreateEditThemeSheetViewController: ChurchBeamViewController, UITableViewD
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         activeIndexPath = activeIndexPath == indexPath ? nil : indexPath
-        if let cell = tableView.cellForRow(at: indexPath), cell is DynamicHeightCell {
+        if let cell = tableView.cellForRow(at: indexPath) {
             if activeIndexPath != nil {
                 self.reloadDataWithScrollTo(cell)
             } else {
@@ -115,7 +115,7 @@ class CreateEditThemeSheetViewController: ChurchBeamViewController, UITableViewD
             let colorPickerController = UIColorPickerViewController()
             colorPickerController.selectedColor = cell.selectedColor ?? .whiteColor
             cell.tag = 1
-            colorPickerController.delegate = self
+            colorPickerController.delegate = cell
             self.present(colorPickerController, animated: true)
         }
     }
@@ -169,16 +169,18 @@ class CreateEditThemeSheetViewController: ChurchBeamViewController, UITableViewD
     
     private func setup() {
         
-        self.view.addSubview(previewView)
-        self.view.addSubview(tableView)
-        previewView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        [previewView, tableView].forEach {
+            view.addSubview($0)
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
+        previewView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         previewView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         previewView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         previewView.bottomAnchor.constraint(equalTo: tableView.topAnchor).isActive = true
         tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        tableView.bottomAnchor.constraint(equalTo: view.topAnchor).isActive = true
-
+        tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        
         tableView.delegate = self
         tableView.dataSource = self
         tableView.estimatedSectionHeaderHeight = HeaderView.height
@@ -187,6 +189,9 @@ class CreateEditThemeSheetViewController: ChurchBeamViewController, UITableViewD
         save.title = AppText.Actions.save
         cancel.tintColor = themeHighlighted
         save.tintColor = themeHighlighted
+        navigationItem.title = AppText.Themes.title
+        navigationItem.leftBarButtonItem = cancel
+        navigationItem.rightBarButtonItem = save
         previewViewRatioConstraint.isActive = true
         mode.createEditThemeSheetViewModelProtocol.setDelegate(self)
         
@@ -194,22 +199,19 @@ class CreateEditThemeSheetViewController: ChurchBeamViewController, UITableViewD
         NotificationCenter.default.addObserver(forName: .externalDisplayDidChange, object: nil, queue: nil, using: externalDisplayDidChange)
         
         tableView.register(header: BasicHeaderView.identifier)
-        tableView.register(cell: Cells.labelNumberCell)
-        tableView.register(cell: LabelColorPickerNewCell.identifier)
-        tableView.register(cell: Cells.LabelPickerCell)
-        tableView.register(cell: Cells.LabelSwitchCell)
-        tableView.register(cell: Cells.labelTextFieldCell)
-        tableView.register(cell: Cells.LabelPhotoPickerCell)
-        tableView.register(cell: LabelTextViewCell.identifier)
-        tableView.register(cell: LabelSliderCell.identifier)
-        tableView.register(cell: LabelDoubleSwitchCell.identifier)
+        tableView.register(cells: [
+            Cells.labelNumberCell,
+            LabelColorPickerNewCell.identifier,
+            Cells.LabelPickerCell,
+            Cells.LabelSwitchCell,
+            Cells.labelTextFieldCell,
+            Cells.LabelPhotoPickerCell,
+            LabelTextViewCell.identifier,
+            LabelSliderCell.identifier,
+            LabelDoubleSwitchCell.identifier
+        ])
         
         refineSheetRatio()
-        
-        cancel.title = AppText.Actions.cancel
-        save.title = AppText.Actions.save
-        cancel.tintColor = themeHighlighted
-        save.tintColor = themeHighlighted
         
         hideKeyboardWhenTappedAround()
         
@@ -233,8 +235,14 @@ class CreateEditThemeSheetViewController: ChurchBeamViewController, UITableViewD
             subview.removeFromSuperview()
         }
         
-        if let sheetModel = mode.createEditThemeSheetViewModelProtocol as? CreateEditSheetViewModelProtocol {
-            let sheetCodable = sheetModel.sheetDraft.makeCodable()
+        if let (sheet, theme) = getSheetAndTheme() {
+            previewView.addSubview(SheetView.createWith(frame: previewView.bounds, cluster: nil, sheet: sheet, theme: theme, scaleFactor: getScaleFactor(width: previewView.bounds.width), toExternalDisplay: true))
+        }
+    }
+    
+    private func getSheetAndTheme() -> (SheetView.SheetCodable, ThemeCodable)? {
+        if let sheetModel = mode.createEditThemeSheetViewModelProtocol as? CreateEditSheetViewModelProtocol, let sheetCodable = try? sheetModel.sheetDraft.makeCodable() {
+            
             let sheetViewSheet: SheetView.SheetCodable?
             switch sheetCodable {
             case .sheetTitleContent(let sheet): sheetViewSheet = .sheetTitleContentCodable(sheet)
@@ -244,70 +252,111 @@ class CreateEditThemeSheetViewController: ChurchBeamViewController, UITableViewD
             case .sheetPastors(let sheet): sheetViewSheet = .sheetPastorsCodable(sheet)
             case .none: sheetViewSheet = .none
             }
-            let theme = sheetCodable.themeCodable
-            if let sheetViewSheet = sheetViewSheet {
-                previewView.addSubview(SheetView.createWith(frame: previewView.bounds, cluster: nil, sheet: sheetViewSheet, theme: theme, scaleFactor: getScaleFactor(width: previewView.bounds.width), toExternalDisplay: true))
+            
+            if let sheetViewSheet = sheetViewSheet, let theme = sheetCodable.themeCodable {
+                return (sheetViewSheet, theme)
             }
-        } else if let themeModel = mode.createEditThemeSheetViewModelProtocol as? CreateEditThemeViewModelProtocol {
+            return nil
+        } else if let themeModel = mode.createEditThemeSheetViewModelProtocol as? CreateEditThemeViewModelProtocol, let theme = try? themeModel.themeDraft.makeCodable() {
             let sheet = themeModel.sheet
-            let theme = themeModel.themeDraft.themeCodable
-            previewView.addSubview(SheetView.createWith(frame: previewView.bounds, cluster: nil, sheet: .sheetTitleContentCodable(sheet), theme: theme, scaleFactor: getScaleFactor(width: previewView.bounds.width), toExternalDisplay: true))
+            return (.sheetTitleContentCodable(sheet), theme)
         }
+        return nil
     }
     
     private func updateTransparency() {
-        if let view = previewView.subviews.first {
-            
-            if let sheet = view as? SheetView {
-                sheet.updateOpacity()
-            }
-            if let view = externalDisplayWindow?.subviews.first as? SheetView {
-                view.updateOpacity()
-            }
+        guard let (sheet, theme) = getSheetAndTheme() else {
+            return
+        }
+        if let view = previewView.subviews.first as? SheetView {
+            view.sheetCodable = sheet
+            view.sheetThemeCodable = theme
+            view.updateOpacity()
+        }
+        
+        if let view = externalDisplayWindow?.subviews.first as? SheetView {
+            view.sheetCodable = sheet
+            view.sheetThemeCodable = theme
+            view.updateOpacity()
         }
     }
     
     private func updateSheetTitle() {
+        guard let (sheet, theme) = getSheetAndTheme() else {
+            return
+        }
         if let view = previewView.subviews.first as? SheetView {
+            view.sheetCodable = sheet
+            view.sheetThemeCodable = theme
             view.updateTitle()
         }
         if let view = externalDisplayWindow?.subviews.first as? SheetView {
+            view.sheetCodable = sheet
+            view.sheetThemeCodable = theme
             view.updateTitle()
         }
     }
     
     private func updateSheetContent() {
+        guard let (sheet, theme) = getSheetAndTheme() else {
+            return
+        }
         if let view = previewView.subviews.first as? SheetView {
+            view.sheetCodable = sheet
+            view.sheetThemeCodable = theme
             view.updateContent()
         }
         if let view = externalDisplayWindow?.subviews.first as? SheetView {
+            view.sheetCodable = sheet
+            view.sheetThemeCodable = theme
             view.updateContent()
         }
     }
         
     private func updateBackgroundImage() {
+        guard let (sheet, theme) = getSheetAndTheme() else {
+            return
+        }
         if let view = previewView.subviews.first as? SheetView {
+            view.sheetCodable = sheet
+            view.sheetThemeCodable = theme
             view.updateBackgroundImage()
         }
         if let view = externalDisplayWindow?.subviews.first as? SheetView {
+            view.sheetCodable = sheet
+            view.sheetThemeCodable = theme
             view.updateBackgroundImage()
         }
     }
     
     private func updateSheetImage() {
-        if let view = previewView.subviews.first, let sheet = view as? SheetView {
-            sheet.updateSheetImage()
+        guard let (sheet, theme) = getSheetAndTheme() else {
+            return
+        }
+        if let view = previewView.subviews.first as? SheetView {
+            view.sheetCodable = sheet
+            view.sheetThemeCodable = theme
+            view.updateSheetImage()
         }
         if let view = externalDisplayWindow?.subviews.first as? SheetView {
+            view.sheetCodable = sheet
+            view.sheetThemeCodable = theme
             view.updateSheetImage()
         }
     }
     
     private func updateBackgroundColor() {
+        guard let (sheet, theme) = getSheetAndTheme() else {
+            return
+        }
         if let view = previewView.subviews.first as? SheetView {
+            view.sheetCodable = sheet
+            view.sheetThemeCodable = theme
             view.updateBackgroundColor()
         }
         if let view = externalDisplayWindow?.subviews.first as? SheetView {
+            view.sheetCodable = sheet
+            view.sheetThemeCodable = theme
             view.updateBackgroundColor()
         }
     }
@@ -358,16 +407,44 @@ class CreateEditThemeSheetViewController: ChurchBeamViewController, UITableViewD
     }
     
     @objc func didPressCancelDraft() {
-        
+        self.dismiss(animated: true)
     }
     
     @objc func didPressSaveDraft() {
-        
+        switch mode {
+        case .theme(let viewModel):
+            if let viewModel = viewModel as? CreateEditThemeViewModel {
+                let requestMethod: RequestMethod
+                let themeDraft: ThemeDraft
+                switch viewModel.mode {
+                case .new(let draft):
+                    requestMethod = .post
+                    themeDraft = draft
+                case .edit(let draft):
+                    requestMethod = .put
+                    themeDraft = draft
+                }
+                
+                ThemeCodableSubmitter(requestMethod: requestMethod, body: [themeDraft], observer: self).perform { [weak self] result in
+                    guard let self = self else { return }
+                    self.hideLoader()
+                    switch result {
+                    case .success:
+                        ((self.presentingViewController as? MenuController)?.selectedViewController as? UINavigationController)?.topViewController?.viewWillAppear(false)
+                        self.dismiss(animated: true)
+                    case .failure(let error):
+                        self.show(message: error.localizedDescription)
+                    }
+                }
+
+            }
+            
+        case .sheet(let viewModel):
+            if let viewModel = viewModel as? CreateEditSheetViewModelProtocol {
+                let sheetCodable = try? viewModel.sheetDraft.makeCodable()
+            }
+        }
     }
 
 
-}
-
-extension CreateEditThemeSheetViewController: UIColorPickerViewControllerDelegate {
-    
 }

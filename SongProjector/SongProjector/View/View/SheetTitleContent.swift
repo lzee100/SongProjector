@@ -30,20 +30,22 @@ class SheetTitleContent: SheetView {
 	@IBOutlet var contentTopToTitle: NSLayoutConstraint!
 	
 	var songTitle: String? {
-        if let sheetThemeCodable = sheetThemeCodable {
-            if (sheetThemeCodable.allHaveTitle || position == 0) {
-                return cluster?.title ?? sheet.title ?? sheetThemeCodable.title
+        switch sheetCodable {
+        case .sheetTitleContentCodable(let sheetCodable):
+            if (sheetThemeCodable?.allHaveTitle ?? false || position == 0) {
+                return cluster?.title ?? sheetCodable.title ?? sheetThemeCodable?.title
             } else {
                 return nil
             }
-        } else {
+        default:
             if ((sheetTheme?.allHaveTitle ?? true) || position == 0) {
-                return cluster?.title ?? sheet.title ?? sheetTheme?.title
+                return cluster?.title ?? sheet?.title ?? sheetTheme?.title
             } else {
                 return nil
             }
         }
 	}
+    
     var content: String? {
         switch sheetCodable {
         case .sheetTitleContentCodable(let sheetCodable):
@@ -172,15 +174,12 @@ class SheetTitleContent: SheetView {
     override func updateBackgroundImage() {
         if let sheetThemeCodable = sheetThemeCodable {
             let image = isForExternalDispay ? sheetThemeCodable.tempSelectedImage ?? sheetThemeCodable.backgroundImage : sheetThemeCodable.tempSelectedImageThumbnail ?? sheetThemeCodable.thumbnail
-            let alpha = sheetThemeCodable.backgroundTransparancy
             if let backgroundImage = image {
                 backgroundImageView.isHidden = false
                 backgroundImageView.contentMode = .scaleAspectFill
                 backgroundImageView.image = backgroundImage
                 backgroundImageView.clipsToBounds = true
-                if let backgroundTransparency = sheetTheme?.backgroundTransparancy {
-                    backgroundImageView.alpha = CGFloat(backgroundTransparency)
-                }
+                backgroundImageView.alpha = CGFloat(sheetThemeCodable.backgroundTransparancy)
             } else {
                 backgroundImageView.isHidden = true
             }
@@ -258,7 +257,6 @@ class SheetTitleContent: SheetView {
 		}
 		
 		if let theme = sheetTheme, let scaleFactor = scaleFactor { // is custom sheet
-			
 			timeLabel.attributedText = NSAttributedString(string: test, attributes: theme.getTitleAttributes(scaleFactor))
 
 		} else {

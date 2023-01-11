@@ -13,7 +13,7 @@ import FirebaseAuth
 
 protocol EntityCodableType: ManagedObjectCodable {
     var id: String { get set }
-    var userUID: String { get }
+    var userUID: String { get set }
     var title: String? { get }
     var createdAt: Date { get }
     var updatedAt: Date? { get set }

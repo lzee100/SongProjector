@@ -28,6 +28,9 @@ class LabelTextFieldCell: ChurchBeamCell, ThemeImplementation, SheetImplementati
 	var sheetAttribute: SheetAttribute?
 	var valueDidChange: ((ChurchBeamCell) -> Void)?
 	var getModificationMode: (() -> ModificationMode)?
+    
+    private var cell: NewOrEditIphoneController.Cell?
+    private var newDelegate: CreateEditThemeSheetCellDelegate?
 	
 	static let identifier = "LabelTextFieldCell"
 	
@@ -141,6 +144,22 @@ class LabelTextFieldCell: ChurchBeamCell, ThemeImplementation, SheetImplementati
 		applyCellValueToTheme()
 		valueDidChange?(self)
 		delegate?.textFieldDidChange(cell: self, text: textField.text)
+        newDelegate?.handle(cell: .title(textField.text))
 	}
     
+}
+
+extension LabelTextFieldCell: CreateEditThemeSheetCellProtocol {
+    
+    func configure(cell: NewOrEditIphoneController.Cell, delegate: CreateEditThemeSheetCellDelegate) {
+        self.cell = cell
+        newDelegate = delegate
+        descriptionTitle.text = cell.description
+        switch cell {
+        case .title(let value):
+            textField.text = value
+        default: break
+        }
+    }
+
 }

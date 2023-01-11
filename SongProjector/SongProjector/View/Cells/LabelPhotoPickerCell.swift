@@ -43,6 +43,9 @@ class LabelPhotoPickerCell: ChurchBeamCell, ThemeImplementation, SheetImplementa
 	var preferredHeight: CGFloat {
 		return isActive ? 162 : 60
 	}
+    
+    private var cell: NewOrEditIphoneController.Cell?
+    private var newDelegate: CreateEditThemeSheetCellDelegate?
 	
 	override func prepareForReuse() {
 		sheetAttribute = nil
@@ -95,8 +98,8 @@ class LabelPhotoPickerCell: ChurchBeamCell, ThemeImplementation, SheetImplementa
 	
 	func setImage(image: UIImage?) {
 		button.setTitle(image == nil ? AppText.NewTheme.buttonBackgroundImagePick : AppText.NewTheme.buttonBackgroundImageChange, for: .normal)
-		imageThumbnail.image = image
-		pickedImage = image
+        setThumbImage(image)
+        pickedImage = image
         deleteButton.isEnabled = image != nil
         deleteButtonWidthConstraint.constant = image == nil ? 0 : 40
         deleteButtonRightConstraint.constant = image == nil ? 30 : 20
@@ -194,12 +197,11 @@ class LabelPhotoPickerCell: ChurchBeamCell, ThemeImplementation, SheetImplementa
 	
 	func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
 		if let pickedImage = info[.originalImage] as? UIImage {
+            let url = info[.imageURL] as? URL
+            let imageName = url?.lastPathComponent
+            UIImage.deleteTempFile(imageName: imageName, thumbNailName: nil)
 			DispatchQueue.main.async {
-				let scaledImage = pickedImage.resizeImage(self.imageThumbnail.frame.size.width, opaque: false)
-				self.imageThumbnail.image = scaledImage
-				self.imageThumbnail.contentMode = .scaleAspectFill
-				self.imageThumbnail.clipsToBounds = true
-				self.setNeedsDisplay()
+                self.setThumbImage(pickedImage)
 				
 				self.pickedImage = pickedImage
 				do {
@@ -211,9 +213,30 @@ class LabelPhotoPickerCell: ChurchBeamCell, ThemeImplementation, SheetImplementa
 				if let sender = self.sender {
 					sender.dismiss(animated: true)
 				}
+                self.handleImageSelection(pickedImage, imageName: imageName)
 			}
 		}
 	}
+    
+    private func setThumbImage(_ image: UIImage?) {
+        let scaledImage = image?.resizeImage(self.imageThumbnail.frame.size.width, opaque: false)
+        self.imageThumbnail.image = scaledImage
+        self.imageThumbnail.contentMode = .scaleAspectFill
+        self.imageThumbnail.clipsToBounds = true
+        self.setNeedsDisplay()
+    }
+    
+    private func handleImageSelection(_ image: UIImage, imageName: String?) {
+        switch cell {
+        case .backgroundImage:
+            newDelegate?.handle(cell: .backgroundImage(image: image, imageName: imageName))
+        case .image:
+            newDelegate?.handle(cell: .image(image: image, imageName: imageName))
+        case .pastorImage:
+            newDelegate?.handle(cell: .pastorImage(image: image, imageName: imageName))
+        default: break
+        }
+    }
 	
 	@IBAction func changeImage(_ sender: UIButton) {
         guard !SubscriptionsSettings.hasLimitedAccess else {
@@ -243,3 +266,21 @@ class LabelPhotoPickerCell: ChurchBeamCell, ThemeImplementation, SheetImplementa
 	
 }
 
+extension LabelPhotoPickerCell: CreateEditThemeSheetCellProtocol {
+    
+    func configure(cell: NewOrEditIphoneController.Cell, delegate: CreateEditThemeSheetCellDelegate) {
+        self.cell = cell
+        newDelegate = delegate
+        descriptionTitle.text = cell.description
+        switch cell {
+        case .backgroundImage(let value, _):
+            setImage(image: value)
+        case .image(let value, _):
+            setImage(image: value)
+        case .pastorImage(let value, _):
+            setImage(image: value)
+        default: break
+        }
+    }
+
+}

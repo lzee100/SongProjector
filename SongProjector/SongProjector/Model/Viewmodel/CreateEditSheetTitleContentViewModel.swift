@@ -34,6 +34,9 @@ class CreateEditSheetTitleContentViewModel: CreateEditSheetViewModelProtocol {
     var sheetDraft: SheetDraft {
         mode.sheetDraft
     }
+    var themeDraft: ThemeDraft {
+        mode.sheetDraft.hasThemeDraft
+    }
     
     private weak var delegate: CreateEditThemeViewModelDelegate?
     private let mode: Mode
@@ -112,11 +115,9 @@ class CreateEditSheetTitleContentViewModel: CreateEditSheetViewModelProtocol {
         }
     }
     
-    func handle(cell: NewOrEditIphoneController.Cell, value: CreateEditThemeSheetViewController.CreateEditThemeSheetCellUpdateValue) {
-        switch value {
-        case .theme(let themeProperty): sheetDraft.hasThemeDraft.update(themeProperty)
-        case .sheet(let updateProperty): sheetDraft.update(updateProperty)
-        }
+    func handle(cell: NewOrEditIphoneController.Cell) {
+        sheetDraft.update(cell)
+        sheetDraft.hasThemeDraft.update(cell)
         delegate?.draftDidUpdate(cell: cell)
     }
 }

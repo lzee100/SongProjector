@@ -122,19 +122,19 @@ public struct SheetTitleContentCodable: EntityCodableType, SheetMetaType {
     }
     
     init(
-        id: String,
-        userUID: String,
-        title: String?,
-        createdAt: Date,
-        updatedAt: Date?,
-        deleteDate: Date?,
-        rootDeleteDate: Date?,
-        isEmptySheet: Bool,
-        position: Int,
-        time: Double,
-        hasTheme: ThemeCodable?,
-        content: String?,
-        isBibleVers: Bool
+        id: String = "CHURCHBEAM" + UUID().uuidString,
+        userUID: String = "",
+        title: String? = nil,
+        createdAt: Date = Date().localDate(),
+        updatedAt: Date? = nil,
+        deleteDate: Date? = nil,
+        rootDeleteDate: Date? = nil,
+        isEmptySheet: Bool = false,
+        position: Int = 0,
+        time: Double = 0,
+        hasTheme: ThemeCodable? = nil,
+        content: String? = nil,
+        isBibleVers: Bool = false
     ) {
         self.id = id
         self.userUID = userUID

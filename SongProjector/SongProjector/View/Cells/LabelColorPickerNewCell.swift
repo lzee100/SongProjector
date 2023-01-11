@@ -10,7 +10,7 @@ import UIKit
 import FlexColorPicker
 
 
-class LabelColorPickerNewCell: ChurchBeamCell, ThemeImplementation, CreateEditThemeSheetCellProtocol {
+class LabelColorPickerNewCell: ChurchBeamCell, ThemeImplementation {
     
     @IBOutlet var descriptionTitle: UILabel!
     @IBOutlet var colorPreviewView: UIView!
@@ -28,6 +28,9 @@ class LabelColorPickerNewCell: ChurchBeamCell, ThemeImplementation, CreateEditTh
             deleteButtonRightConstraint.constant = selectedColor == nil ? 30 : 20
         }
     }
+    
+    private var delegate: CreateEditThemeSheetCellDelegate?
+    private var cell: NewOrEditIphoneController.Cell?
     
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -131,6 +134,27 @@ class LabelColorPickerNewCell: ChurchBeamCell, ThemeImplementation, CreateEditTh
         valueDidChange?(self)
     }
     
+    fileprivate func updateColor(applyToCell: Bool, cell: NewOrEditIphoneController.Cell, newColor: UIColor?) {
+        switch cell {
+        case .titleTextColor(let color):
+            applyToCell ? set(value: color) : delegate?.handle(cell: .titleTextColor(newColor))
+        case .titleBorderColor(let color):
+            applyToCell ? set(value: color) : delegate?.handle(cell: .titleBorderColor(newColor))
+        case .titleBackgroundColor(let color):
+            applyToCell ? set(value: color) : delegate?.handle(cell: .titleBackgroundColor(newColor))
+        case .backgroundColor(let color):
+            applyToCell ? set(value: color) : delegate?.handle(cell: .backgroundColor(newColor))
+        case .lyricsTextColor(let color):
+            applyToCell ? set(value: color) : delegate?.handle(cell: .lyricsTextColor(newColor))
+        case .lyricsBorderColor(let color):
+            applyToCell ? set(value: color) : delegate?.handle(cell: .lyricsBorderColor(newColor))
+        case .imageBorderColor(let color):
+            applyToCell ? set(value: color) : delegate?.handle(cell: .imageBorderColor(newColor))
+        default: break
+        }
+
+    }
+    
     @IBAction func didPressDelete(_ sender: ActionButton) {
         setNewColor(nil)
     }
@@ -142,12 +166,25 @@ class LabelColorPickerNewCell: ChurchBeamCell, ThemeImplementation, CreateEditTh
     
 }
 
-extension LabelColorPickerNewCell: ColorPickerDelegate {
+extension LabelColorPickerNewCell: UIColorPickerViewControllerDelegate {
     
-    func colorPicker(_ colorPicker: ColorPickerController, confirmedColor: UIColor, usingControl: ColorControl) {
+    func colorPickerViewController(_ viewController: UIColorPickerViewController, didSelect color: UIColor, continuously: Bool) {
+        guard let cell = cell else {
+            return
+        }
+        set(value: color)
+        updateColor(applyToCell: false, cell: cell, newColor: color)
     }
     
-    func colorPicker(_ colorPicker: ColorPickerController, selectedColor: UIColor, usingControl: ColorControl) {
-    }
+}
+
+extension LabelColorPickerNewCell: CreateEditThemeSheetCellProtocol {
     
+    func configure(cell: NewOrEditIphoneController.Cell, delegate: CreateEditThemeSheetCellDelegate) {
+        self.cell = cell
+        self.delegate = delegate
+        descriptionTitle.text = cell.description
+        updateColor(applyToCell: true, cell: cell, newColor: nil)
+    }
+
 }

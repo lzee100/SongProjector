@@ -120,10 +120,7 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
                     fetcher.startRequest()
             })
         }
-        
-//        for int in 1...10 {
-        startFetching(countValue: 1.0)
-//        }
+
     }
 	
 	override func viewDidAppear(_ animated: Bool) {

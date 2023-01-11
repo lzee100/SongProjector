@@ -12,13 +12,18 @@ protocol LabelNumerCellDelegate {
 	func numberChangedForCell(cell: LabelNumberCell)
 }
 
-class LabelNumberCell: ChurchBeamCell, ThemeImplementation, SheetImplementation, CreateEditThemeSheetCellProtocol {
+class LabelNumberCell: ChurchBeamCell, ThemeImplementation, SheetImplementation {
 	
 	@IBOutlet var minus: UIButton!
 	@IBOutlet var plus: UIButton!
 	
 	@IBOutlet var descriptionTitle: UILabel!
 	@IBOutlet var valueLabel: UILabel!
+    
+    enum UpdateMode {
+        case toCell
+        case newValue(value: Int)
+    }
 	
 	var id: String = ""
 	var positive = true
@@ -67,25 +72,6 @@ class LabelNumberCell: ChurchBeamCell, ThemeImplementation, SheetImplementation,
 		view.valueLabel.text = String(initialValue)
 		return view
 	}
-    
-    func configure(cell: NewOrEditIphoneController.Cell, delegate: CreateEditThemeSheetCellDelegate) {
-        self.newDelegate = delegate
-        switch cell {
-        case .titleFontSize(let size):
-            setup(minLimit: 5, maxLimit: 60, positive: true)
-            valueLabel.text = String(abs(size))
-        case .lyricsFontSize(let size):
-            setup(minLimit: 5, maxLimit: 60, positive: true)
-            valueLabel.text = String(abs(size))
-        case .titleBorderSize(let size):
-            setup(minLimit: 0, maxLimit: -15, positive: false)
-            valueLabel.text = String(abs(size))
-        case .lyricsBorderSize(let size):
-            setup(minLimit: 0, maxLimit: -15, positive: false)
-            valueLabel.text = String(abs(size))
-        default: break
-        }
-    }
 	
 	func setup(initialValue: Int? = nil, minLimit: Int = 5, maxLimit: Int = 60, positive: Bool = true) {
 		if let initialValue = initialValue {
@@ -181,29 +167,65 @@ class LabelNumberCell: ChurchBeamCell, ThemeImplementation, SheetImplementation,
 			setValue(value: value)
 		}
 	}
+    
+    private func updateNumber(_ value: Int) {
+        self.value = value
+        self.valueLabel.text = String(value)
+    }
+    
+    fileprivate func updateValue(mode: UpdateMode, cell: NewOrEditIphoneController.Cell) {
+        switch cell {
+        case .titleBorderSize(let value):
+            switch mode {
+            case .toCell:
+                updateNumber(Int(value))
+            case .newValue(value: let value):
+                newDelegate?.handle(cell: .titleBorderSize(Float(value)))
+            }
+        case .titleFontSize(let value):
+            switch mode {
+            case .toCell:
+                updateNumber(Int(value))
+            case .newValue(value: let value):
+                newDelegate?.handle(cell: .titleFontSize(Float(value)))
+            }
+        case .lyricsFontSize(let value):
+            switch mode {
+            case .toCell:
+                updateNumber(Int(value))
+            case .newValue(value: let value):
+                newDelegate?.handle(cell: .lyricsFontSize(Float(value)))
+            }
+        case .lyricsBorderSize(let value):
+            switch mode {
+            case .toCell:
+                updateNumber(Int(value))
+            case .newValue(value: let value):
+                newDelegate?.handle(cell: .lyricsBorderSize(Float(value)))
+            }
+        case .imageBorderSize(let value):
+            switch mode {
+            case .toCell:
+                updateNumber(Int(value))
+            case .newValue(value: let value):
+                newDelegate?.handle(cell: .imageBorderSize(value))
+            }
+        default: break
+        }
+    }
 	
 	@IBAction func minusPressed(_ sender: UIButton) {
 			if positive {
 				if value > minLimit {
 					value -= 1
-					self.valueLabel.text = String(value)
+					updateNumber(value)
 					self.applyCellValueToTheme()
 					valueDidChange?(self)
 					delegate?.numberChangedForCell(cell: self)
                     
-                    var themeDraftProperty: CreateEditThemeSheetViewController.CreateEditThemeSheetCellUpdateValue? {
-                        switch cell {
-                        case .titleFontSize: return .theme(.titleTextSize(Float(value)))
-                        case .lyricsFontSize: return .theme(.contentTextSize(Float(value)))
-                        case .titleBorderSize: return .theme(.titleBorderSize(Float(value)))
-                        case .lyricsBorderSize: return .theme(.contentBorderSize(Float(value)))
-                        default: return nil
-                        }
+                    if let cell = cell {
+                        updateValue(mode: .newValue(value: value), cell: cell)
                     }
-                    if let cell = cell, let themeDraftProperty = themeDraftProperty {
-                        newDelegate?.handle(cell: cell, value: themeDraftProperty)
-                    }
-                    
 				}
 			} else {
 				if value < 0 {
@@ -213,17 +235,8 @@ class LabelNumberCell: ChurchBeamCell, ThemeImplementation, SheetImplementation,
 					valueDidChange?(self)
 					delegate?.numberChangedForCell(cell: self)
                     
-                    var themeDraftProperty: CreateEditThemeSheetViewController.CreateEditThemeSheetCellUpdateValue? {
-                        switch cell {
-                        case .titleFontSize: return .theme(.titleTextSize(Float(value)))
-                        case .lyricsFontSize: return .theme(.contentTextSize(Float(value)))
-                        case .titleBorderSize: return .theme(.titleBorderSize(Float(value)))
-                        case .lyricsBorderSize: return .theme(.contentBorderSize(Float(value)))
-                        default: return nil
-                        }
-                    }
-                    if let cell = cell, let themeDraftProperty = themeDraftProperty {
-                        newDelegate?.handle(cell: cell, value: themeDraftProperty)
+                    if let cell = cell {
+                        updateValue(mode: .newValue(value: value), cell: cell)
                     }
 				}
 			}
@@ -245,18 +258,27 @@ class LabelNumberCell: ChurchBeamCell, ThemeImplementation, SheetImplementation,
 		valueDidChange?(self)
 		delegate?.numberChangedForCell(cell: self)
         
-        var themeDraftProperty: CreateEditThemeSheetViewController.CreateEditThemeSheetCellUpdateValue? {
-            switch cell {
-            case .titleFontSize: return .theme(.titleTextSize(Float(value)))
-            case .lyricsFontSize: return .theme(.contentTextSize(Float(value)))
-            case .titleBorderSize: return .theme(.titleBorderSize(Float(value)))
-            case .lyricsBorderSize: return .theme(.contentBorderSize(Float(value)))
-            default: return nil
-            }
-        }
-        if let cell = cell, let themeDraftProperty = themeDraftProperty {
-            newDelegate?.handle(cell: cell, value: themeDraftProperty)
+        if let cell = cell {
+            updateValue(mode: .newValue(value: value), cell: cell)
         }
 	}
 	
+}
+
+extension LabelNumberCell: CreateEditThemeSheetCellProtocol {
+    
+    func configure(cell: NewOrEditIphoneController.Cell, delegate: CreateEditThemeSheetCellDelegate) {
+        self.cell = cell
+        self.newDelegate = delegate
+        descriptionTitle.text = cell.description
+        
+        updateValue(mode: .toCell, cell: cell)
+        switch cell {
+        case .titleFontSize, .lyricsFontSize:
+            setup(minLimit: 5, maxLimit: 60, positive: true)
+        case .titleBorderSize, .lyricsBorderSize:
+            setup(minLimit: 0, maxLimit: -15, positive: false)
+        default: break
+        }
+    }
 }

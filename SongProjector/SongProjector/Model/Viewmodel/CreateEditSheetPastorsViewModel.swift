@@ -112,11 +112,9 @@ class CreateEditSheetPastorsViewModel: CreateEditThemeSheetViewModelProtocol {
         }
     }
     
-    func handle(cell: NewOrEditIphoneController.Cell, value: CreateEditThemeSheetViewController.CreateEditThemeSheetCellUpdateValue) {
-        switch value {
-        case .theme(let themeProperty): sheetDraft.hasThemeDraft.update(themeProperty)
-        case .sheet(let updateProperty): sheetDraft.update(updateProperty)
-        }
+    func handle(cell: NewOrEditIphoneController.Cell) {
+        sheetDraft.update(cell)
+        sheetDraft.hasThemeDraft.update(cell)
         delegate?.draftDidUpdate(cell: cell)
     }
     

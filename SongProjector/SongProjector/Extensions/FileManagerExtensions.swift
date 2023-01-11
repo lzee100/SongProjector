@@ -81,7 +81,7 @@ extension FileManager {
         guard let fileName = fileName else {
             throw FileManagerError.noFileName
         }
-        let tempDirURL = FileManager.default.temporaryDirectory.appendingPathComponent("churchbeam").appendingPathComponent(fileName, isDirectory: false)
+        let tempDirURL = FileManager.default.temporaryDirectory.appendingPathComponent(fileName, isDirectory: false)
         do {
             try FileManager.default.removeItem(at: tempDirURL)
         } catch {}
@@ -90,9 +90,8 @@ extension FileManager {
     }
     
     static func getTempURLFor(name: String) -> URL {
-        return FileManager.default.temporaryDirectory.appendingPathComponent("churchbeam").appendingPathComponent(name, isDirectory: false)
+        return FileManager.default.temporaryDirectory.appendingPathComponent(name, isDirectory: false)
     }
-
 	
 	static func createDirectory() throws {
 		let documentsDirectory = NSURL(fileURLWithPath: NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0])

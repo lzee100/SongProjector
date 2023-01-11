@@ -21,7 +21,11 @@ class SheetView: UIView {
     }
 	
 	open var position: Int {
-		return Int(sheet.position)
+        switch sheetCodable {
+        case .sheetTitleContentCodable(let sheetCodable):
+            return sheetCodable.position
+        default: return Int(sheet.position)
+        }
 	}
 	open var scaleFactor: CGFloat?
 	open var isForExternalDispay: Bool = false

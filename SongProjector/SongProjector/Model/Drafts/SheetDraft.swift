@@ -105,7 +105,8 @@ class SheetDraft {
     private(set) var textRight: String? = nil
     private(set) var imageSelectionAction: ImageSelectionAction = .none
     private(set) var hasThemeDraft: ThemeDraft
-    
+    private(set) var tempSavedImageName: String?
+
     var sheetImage: UIImage? {
         UIImage.get(imagePath: self.imagePath)
     }
@@ -222,33 +223,23 @@ class SheetDraft {
         hasThemeDraft = (sheetPastors.hasTheme != nil) ? ThemeDraft(theme: sheetPastors.hasTheme) : ThemeDraft(theme: .makeDefault())
     }
     
-    func update(_ property: UpdateProperties) {
-        switch property {
-        case .id(let value): id = value
-        case .userUID(let value): userUID = value
+    func update(_ cell: NewOrEditIphoneController.Cell) {
+        switch cell {
         case .title(let value): title = value
-        case .createdAt(let value): createdAt = value
-        case .updatedAt(let value): updatedAt = value
-        case .deleteDate(let value): deleteDate = value
-        case .isTemp(let value): isTemp = value
-        case .rootDeleteDate(let value): rootDeleteDate = value
-        case .isEmptySheet(let value): isEmptySheet = value
-        case .position(let value): position = value
-        case .time(let value): time = value
-        case .hasTheme(let value): hasTheme = value
         case .content(let value): content = value
-        case .isBibleVers(let value): isBibleVers = value
-        case .hasTitle(let value): hasTitle = value
-        case .imageBorderColor(let value): imageBorderColor = value
-        case .imageBorderSize(let value): imageBorderSize = value
-        case .imageContentMode(let value): imageContentMode = value
-        case .imageHasBorder(let value): imageHasBorder = value
-        case .imagePath(let value): imagePath = value
-        case .thumbnailPath(let value): thumbnailPath = value
-        case .imagePathAWS(let value): imagePathAWS = value
-        case .textLeft(let value): textLeft = value
-        case .textRight(let value): textRight = value
-        case .imageSelectionAction(let action): self.imageSelectionAction = action
+        case .contentLeft(let value): textLeft = value
+        case .contentRight(let value): textRight = value
+        case .asTheme(let value): hasTheme = value.first
+        
+        case .image(let image, let imageName):
+            updateImageSelection(image: image, imageName: imageName)
+        case .pastorImage(let image, let imageName):
+            updateImageSelection(image: image, imageName: imageName)
+        case .hasBorder(let value): imageHasBorder = value
+        case .imageBorderSize(let value): imageBorderSize = Int16(value)
+        case .imageBorderColor(let value): imageBorderColor = value?.hexCode
+        case .contentMode(let value): imageContentMode = Int16(value)
+        default: break
         }
     }
     
@@ -260,7 +251,15 @@ class SheetDraft {
         }
     }
     
-    func makeCodable() -> CodableOutput {
+    func setImageSelectionAction(_ action: ImageSelectionAction, imageName: String?) {
+        if let tempSavedImageName = tempSavedImageName {
+            UIImage.deleteTempFile(imageName: tempSavedImageName, thumbNailName: nil)
+        }
+        tempSavedImageName = imageName
+        self.imageSelectionAction = action
+    }
+    
+    func makeCodable() throws -> CodableOutput {
         switch sheetType {
         case .SheetTitleContent:
             return .sheetTitleContent(SheetTitleContentCodable(
@@ -274,7 +273,7 @@ class SheetDraft {
                 isEmptySheet: isEmptySheet,
                 position: position,
                 time: time,
-                hasTheme: hasThemeDraft.themeCodable,
+                hasTheme: try hasThemeDraft.makeCodable(),
                 content: content,
                 isBibleVers: isBibleVers
             ))
@@ -291,7 +290,7 @@ class SheetDraft {
                 isEmptySheet: isEmptySheet,
                 position: position,
                 time: time,
-                hasTheme: hasThemeDraft.themeCodable,
+                hasTheme: try hasThemeDraft.makeCodable(),
                 content: content,
                 hasTitle: hasTitle,
                 imageBorderColor: imageBorderColor,
@@ -315,7 +314,7 @@ class SheetDraft {
                 isEmptySheet: isEmptySheet,
                 position: position,
                 time: time,
-                hasTheme: hasThemeDraft.themeCodable
+                hasTheme: try hasThemeDraft.makeCodable()
             ))
         case .SheetSplit:
             return .sheetSplit(SheetSplitCodable(
@@ -330,7 +329,7 @@ class SheetDraft {
                 isEmptySheet: isEmptySheet,
                 position: position,
                 time: time,
-                hasTheme: hasThemeDraft.themeCodable,
+                hasTheme: try hasThemeDraft.makeCodable(),
                 textLeft: textLeft,
                 textRight: textRight
             ))
@@ -347,7 +346,7 @@ class SheetDraft {
                 isEmptySheet: isEmptySheet,
                 position: position,
                 time: time,
-                hasTheme: hasThemeDraft.themeCodable,
+                hasTheme: try hasThemeDraft.makeCodable(),
                 content: content,
                 imagePath: imagePath,
                 thumbnailPath: thumbnailPath,
@@ -357,4 +356,15 @@ class SheetDraft {
             return .none
         }
     }
+    
+    private func updateImageSelection(image: UIImage?, imageName: String?) {
+        if let image = image {
+            setImageSelectionAction(.image(image), imageName: imageName)
+        } else if imageSelectionAction.image != nil {
+            setImageSelectionAction(.none, imageName: nil)
+        } else {
+            setImageSelectionAction(.delete, imageName: nil)
+        }
+    }
+    
 }

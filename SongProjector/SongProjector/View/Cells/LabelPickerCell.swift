@@ -46,6 +46,11 @@ class LabelPickerCell: ChurchBeamCell, ThemeImplementation, DynamicHeightCell, S
 	var sheetTheme: VTheme?
 	var themeAttribute: ThemeAttribute?
 	var valueDidChange: ((ChurchBeamCell) -> Void)?
+    
+    private var cell: NewOrEditIphoneController.Cell?
+    private var newDelegate: CreateEditThemeSheetCellDelegate?
+    private var themes: [ThemeCodable] = []
+    private var fontFamilyValues: [(String, String)] = []
 	
 	static let identifier = "LabelPickerCell"
     
@@ -81,7 +86,7 @@ class LabelPickerCell: ChurchBeamCell, ThemeImplementation, DynamicHeightCell, S
 		view.pickerValues = pickerValues
 		return view
 	}
-		
+    
 	func setValue(value: String? = nil, id: String? = nil) {
         if let value = value, let index = pickerValues.firstIndex(where: { (item) -> Bool in item.1 == value }) {
 			pickerView(picker, didSelectRow: index, inComponent: 0)
@@ -195,42 +200,91 @@ class LabelPickerCell: ChurchBeamCell, ThemeImplementation, DynamicHeightCell, S
 		applyCellValueToTheme()
 		valueDidChange?(self)
 		delegate?.didSelect(item: value, cell: self)
+        
+        handleSelection(row: row)
 	}
 	
 	
-	
+    private func handleSelection(row: Int) {
+        switch cell {
+        case .asTheme:
+            newDelegate?.handle(cell: .asTheme([themes[row]]))
+        case .titleFontFamily:
+            newDelegate?.handle(cell: .titleFontFamily(fontFamilyValues[row].1))
+        case .lyricsFontFamily:
+            newDelegate?.handle(cell: .lyricsFontFamily(fontFamilyValues[row].1))
+        case .titleAlignment:
+            newDelegate?.handle(cell: .titleAlignment(row))
+        case .lyricsAlignment:
+            newDelegate?.handle(cell: .lyricsAlignment(row))
+        case .contentMode:
+            newDelegate?.handle(cell: .contentMode(row))
+        default: break
+        }
+    }
 	
 	private func setupAsTheme() {
         var predicates: [NSPredicate] = [.skipDeleted]
         predicates.append("isHidden", notEquals: true)
         predicates.append("isUniversal", equals: false)
-        let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: predicates, sort: NSSortDescriptor(key: "title", ascending: true))
+        themes = DataFetcher().getEntities(moc: moc, predicates: predicates, sort: NSSortDescriptor(key: "title", ascending: true)).compactMap { ThemeCodable(managedObject: $0, context: moc) }
         pickerValues = themes.map({ ($0.id, $0.title ?? "") })
 	}
 	
-	private func setupFonts() {
-		let fontFamilyValues = UIFont.familyNames.map{ ("0", $0) }.sorted { $0.1 < $1.1 }
+    private func setupFonts(existingValue: String? = nil) {
+        fontFamilyValues = UIFont.familyNames.map{ ("0", $0) }.sorted { $0.1 < $1.1 }
 		pickerValues = fontFamilyValues
+        if let index = fontFamilyValues.firstIndex(where: { $0.1 == existingValue }) {
+            picker.selectRow(index, inComponent: 0, animated: false)
+            fontLabel.text = existingValue
+        }
 	}
 	
-	private func setupImageAspect() {
+	private func setupImageAspect(initialValue: Int = 0) {
 		var modeValues: [(String, String)] = []
 		for (index, mode) in dutchContentMode().enumerated() {
 			modeValues.append(("\(index)", mode))
 		}
 		pickerValues = modeValues
 		set(value: dutchContentMode()[2])
+        fontLabel.text = pickerValues[initialValue].1
 	}
 	
-	private func setupFontAlignment() {
+    private func setupFontAlignment(initialValue: Int = 0) {
 		pickerValues = [("0", AppText.NewTheme.alignLeft), ("1", AppText.NewTheme.alignCenter), ("2", AppText.NewTheme.alignRight)]
 		set(value: AppText.NewTheme.alignLeft)
+        fontLabel.text = pickerValues[initialValue].1
 	}
 	
-	private func dutchContentMode() -> [String] {
+    private func dutchContentMode() -> [String] {
 		
 		return ["vul, maar verlies verhouding", "vul maar behoud verhouding", "vul alles", "vullen", "midden", "boven", "onder", "links", "rechts", "links boven", "rechts boven", "links onder", "rechts onder"]
 		
 	}
 	
+}
+
+extension LabelPickerCell: CreateEditThemeSheetCellProtocol {
+    
+    func configure(cell: NewOrEditIphoneController.Cell, delegate: CreateEditThemeSheetCellDelegate) {
+        self.cell = cell
+        newDelegate = delegate
+        descriptionTitel.text = cell.description
+        switch cell {
+        case .asTheme:
+            setupAsTheme()
+        case .titleFontFamily(let value):
+            setupFonts(existingValue: value)
+        case .lyricsFontFamily(let value):
+            setupFonts(existingValue: value)
+        case .titleAlignment(let value):
+            setupFontAlignment(initialValue: value)
+        case .lyricsAlignment(let value):
+            setupFontAlignment(initialValue: value)
+        case .contentMode(let value):
+            setupImageAspect(initialValue: value)
+        default: break
+        }
+    }
+
 }

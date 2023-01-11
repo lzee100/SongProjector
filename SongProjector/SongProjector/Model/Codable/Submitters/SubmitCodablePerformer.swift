@@ -18,7 +18,6 @@ struct SubmitCodablePerformer<T: EntityCodableType> {
     private let requesterInfo: RequesterInfo
     private let body: [T]
     private let requestMethod: RequestMethod
-    public var bla: (() -> Void)?
     private let db = Firestore.firestore()
 
     init(body: [T], requestMethod: RequestMethod, requesterInfo: RequesterInfo) {
@@ -34,8 +33,10 @@ struct SubmitCodablePerformer<T: EntityCodableType> {
             
             func submitDocument(document: T) {
                 
-                var modifiedDocument = updateDocumentDeleteDateUpdatedAtDate(document)
                 do {
+                    
+                    var modifiedDocument = try updateDocumentDeleteDateUpdatedAtDate(document)
+                    
                     let data = try JSONEncoder().encode(document)
                     guard let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any] else {
                         completion(.failure(CodableError.encoding))
@@ -49,7 +50,7 @@ struct SubmitCodablePerformer<T: EntityCodableType> {
                             }
                         } else {
                             modifiedDocument.id = self.db.collection(self.requesterInfo.path).document(document.id).documentID
-                            submittedDocuments.append(document)
+                            submittedDocuments.append(modifiedDocument)
                             workload.removeFirst()
                             if let document = workload.first {
                                 submitDocument(document: document)
@@ -95,7 +96,7 @@ struct SubmitCodablePerformer<T: EntityCodableType> {
         }
     }
     
-    private func updateDocumentDeleteDateUpdatedAtDate(_ document: T) -> T {
+    private func updateDocumentDeleteDateUpdatedAtDate(_ document: T) throws -> T {
         var modifiedDocument = document
         if case .delete = self.requestMethod {
             if uploadSecret != nil {
@@ -105,6 +106,12 @@ struct SubmitCodablePerformer<T: EntityCodableType> {
             }
         }
         modifiedDocument.updatedAt = Date()
+
+        guard let userUID = Auth.auth().currentUser?.uid else {
+            throw RequestError.unAuthorizedNoUser(requester: String(describing: self))
+        }
+        modifiedDocument.userUID = userUID
+
         return modifiedDocument
     }
 }

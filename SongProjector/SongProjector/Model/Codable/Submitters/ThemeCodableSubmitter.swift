@@ -15,7 +15,6 @@ struct ThemeCodableSubmitter: CodableFetcherType {
     private let requestMethod: RequestMethod
     private let body: [ThemeDraft]
     private let observer: RequesterObserver1?
-
     
     init(requestMethod: RequestMethod, body: [ThemeDraft], observer: RequesterObserver1) {
         self.requestMethod = requestMethod
@@ -44,7 +43,7 @@ struct ThemeCodableSubmitter: CodableFetcherType {
         }) { (result) in
             switch result {
             case .failed(error: let error):
-                body.compactMap({ $0.tempSavedImageName }).forEach { try? FileManager.deleteFile(name: $0) }
+                body.compactMap({ $0.tempSavedImageName }).forEach { UIImage.deleteTempFile(imageName: $0, thumbNailName: nil) }
                 completion(.failure(CodableError.uploadingImage(error: error)))
             case .success:
                 
@@ -55,6 +54,7 @@ struct ThemeCodableSubmitter: CodableFetcherType {
                     do {
                         if let image = theme.imageSelectionAction.image {
                             try theme.setBackgroundImage(image: image, imageName: theme.imagePath)
+                            UIImage.deleteTempFile(imageName: theme.tempSavedImageName, thumbNailName: nil)
                         }
                     } catch let error {
                         failed = true
@@ -65,20 +65,33 @@ struct ThemeCodableSubmitter: CodableFetcherType {
                 }
                 if !failed {
                     deletableFiles.forEach({ $0.delete(completion: nil) })
-                    completion(.success(body.map { $0.themeCodable }))
+                    do {
+                        completion(.success( try body.map { try $0.makeCodable() }))
+                    } catch {
+                        completion(.failure(error))
+                    }
                 }
             }
         }
     }
     
     func perform(completion: @escaping ((Result<[EntityCodableType], Error>) -> Void)) {
-        
-        var submitter = SubmitCodablePerformer<ThemeCodable>(body: body.map { $0.themeCodable }, requestMethod: .put, requesterInfo: ThemeRequesterInfo())
-        
-        submitter.performSubmit { result in
+        observer?.requesterDidStart()
+        prepareForSubmit { result in
             switch result {
-            case .success(let result): completion(.success(result))
-            case .failure(let error): completion(.failure(error))
+            case .success(let themes):
+                let submitter = SubmitCodablePerformer<ThemeCodable>(body: (themes as? [ThemeCodable] ?? []), requestMethod: requestMethod, requesterInfo: ThemeRequesterInfo())
+                
+                submitter.performSubmit { result in
+                    switch result {
+                    case .success(let result):
+                        completion(.success(result))
+                    case .failure(let error):
+                        completion(.failure(error))
+                    }
+                }
+            case .failure(let error):
+                completion(.failure(error))
             }
         }
     }

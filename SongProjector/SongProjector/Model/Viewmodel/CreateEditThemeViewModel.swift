@@ -58,7 +58,7 @@ class CreateEditThemeViewModel: CreateEditThemeViewModelProtocol {
     let sheet: SheetTitleContentCodable
     weak var delegate: CreateEditThemeViewModelDelegate?
     
-    private let mode: Mode
+    let mode: Mode
     private let sections: [NewOrEditIphoneController.Section] = [.input, .general, .title, .content]
     private var inputRows: [NewOrEditIphoneController.Cell] {
         [.title(themeDraft.title ?? AppText.NewTheme.sampleTitle)]
@@ -128,11 +128,8 @@ class CreateEditThemeViewModel: CreateEditThemeViewModelProtocol {
         }
     }
     
-    func handle(cell: NewOrEditIphoneController.Cell, value: CreateEditThemeSheetViewController.CreateEditThemeSheetCellUpdateValue) {
-        switch value {
-        case .theme(let updateProperty): themeDraft.update(updateProperty)
-        case .sheet(_): break
-        }
+    func handle(cell: NewOrEditIphoneController.Cell) {
+        themeDraft.update(cell)
         delegate?.draftDidUpdate(cell: cell)
     }
     

@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class CreateEditSheetEmptyViewModel: CreateEditThemeSheetViewModelProtocol {
+class CreateEditSheetEmptyViewModel: CreateEditThemeSheetViewModelProtocol {    
     
     enum Mode {
         case new(SheetDraft)
@@ -24,7 +24,7 @@ class CreateEditSheetEmptyViewModel: CreateEditThemeSheetViewModelProtocol {
     }
     
     var displayTime: Bool {
-        mode.sheetDraft.hasThemeDraft?.displayTime ?? false
+        mode.sheetDraft.hasThemeDraft.displayTime
     }
     
     private weak var delegate: CreateEditThemeViewModelDelegate?
@@ -83,11 +83,9 @@ class CreateEditSheetEmptyViewModel: CreateEditThemeSheetViewModelProtocol {
         }
     }
     
-    func handle(cell: NewOrEditIphoneController.Cell, value: CreateEditThemeSheetViewController.CreateEditThemeSheetCellUpdateValue) {
-        switch value {
-        case .theme(let themeProperty): sheetDraft.hasThemeDraft.update(themeProperty)
-        case .sheet(let updateProperty): sheetDraft.update(updateProperty)
-        }
+    func handle(cell: NewOrEditIphoneController.Cell) {
+        sheetDraft.update(cell)
+        sheetDraft.hasThemeDraft.update(cell)
         delegate?.draftDidUpdate(cell: cell)
     }
     

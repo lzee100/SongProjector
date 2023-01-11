@@ -87,7 +87,7 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
         case hasEmptySheetBeginning(Bool)
         case allHaveTitle(Bool)
         case backgroundColor(UIColor?)
-        case backgroundImage(UIImage?)
+        case backgroundImage(image: UIImage?, imageName: String?)
         case backgroundTransparancy(Double)
         case displayTime(Bool)
                 
@@ -112,8 +112,8 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
         case lyricsItalic(Bool)
         case lyricsUnderlined(Bool)
 
-        case image(UIImage?)
-        case pastorImage(UIImage?)
+        case image(image: UIImage?, imageName: String?)
+        case pastorImage(image: UIImage?, imageName: String?)
         case hasBorder(Bool)
         case imageBorderSize(Int)
         case imageBorderColor(UIColor?)
@@ -165,6 +165,52 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
             default: return false
             }
         }
+        
+        var description: String {
+            switch self {
+            case .asTheme: return AppText.NewTheme.descriptionAsTheme
+            case .title: return AppText.NewTheme.descriptionTitle
+            case .allHaveTitle: return AppText.NewTheme.descriptionAllTitle
+            case .displayTime: return AppText.NewTheme.descriptionDisplayTime
+            case .hasEmptySheet: return AppText.NewTheme.descriptionHasEmptySheet
+            case .hasEmptySheetBeginning: return AppText.NewTheme.descriptionPositionEmptySheet
+            case .lyricsBold: return AppText.NewTheme.bold
+            case .lyricsItalic: return AppText.NewTheme.italic
+            case .lyricsUnderlined: return AppText.NewTheme.underlined
+            case .titleBold: return AppText.NewTheme.bold
+            case .titleItalic: return AppText.NewTheme.italic
+            case .titleUnderlined: return AppText.NewTheme.underlined
+                
+            case .backgroundColor: return AppText.NewTheme.descriptionBackgroundColor
+            case .backgroundImage: return AppText.NewTheme.backgroundImage
+            case .backgroundTransparancy: return AppText.NewTheme.descriptionBackgroundTransparency
+            case .lyricsAlignment: return AppText.NewTheme.descriptionAlignment
+            case .lyricsBorderColor: return AppText.NewTheme.borderColor
+            case .lyricsBorderSize: return AppText.NewTheme.borderSizeDescription
+            case .lyricsFontFamily: return AppText.NewTheme.fontFamilyDescription
+            case .lyricsTextColor: return AppText.NewTheme.textColor
+            case .lyricsFontSize: return AppText.NewTheme.fontSizeDescription
+                
+            case .titleAlignment: return AppText.NewTheme.descriptionAlignment
+            case .titleBackgroundColor: return AppText.NewTheme.descriptionBackgroundColor
+            case .titleBorderColor: return AppText.NewTheme.borderColor
+            case .titleFontSize: return AppText.NewTheme.fontSizeDescription
+            case .titleFontFamily: return AppText.NewTheme.fontFamilyDescription
+            case .titleTextColor: return AppText.NewTheme.textColor
+            case .titleBorderSize: return AppText.NewTheme.borderSizeDescription
+                
+            case .content: return AppText.NewSheetTitleImage.descriptionContent
+            case .contentLeft: return AppText.NewSheetTitleImage.descriptionTextLeft
+            case .contentRight: return AppText.NewSheetTitleImage.descriptionTextRight
+            case .image: return AppText.NewSheetTitleImage.descriptionImage
+            case .pastorImage: return AppText.NewPastorsSheet.photoDescription
+            case .hasBorder: return AppText.NewSheetTitleImage.descriptionImageHasBorder
+            case .imageBorderSize: return AppText.NewSheetTitleImage.descriptionImageBorderSize
+            case .imageBorderColor: return AppText.NewSheetTitleImage.descriptionImageBorderColor
+            case .contentMode: return AppText.NewSheetTitleImage.descriptionImageContentMode
+            }
+        }
+
     }
     
     

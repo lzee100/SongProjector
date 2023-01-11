@@ -131,13 +131,26 @@ class ThemesIphoneController: ChurchBeamViewController, UIGestureRecognizerDeleg
     }
     
     @IBAction func addThemePressed(_ sender: UIBarButtonItem) {
-        Queues.main.async {
-            let controller = self.storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
-            controller.modificationMode = .newTheme
-            controller.delegate = self
-            let nav = UINavigationController(rootViewController: controller)
-            self.present(nav, animated: true)
-        }
+        let draft = ThemeDraft()
+        draft.title = AppText.NewTheme.sampleTitle
+        draft.backgroundTransparancy = 100
+        let controller = CreateEditThemeSheetViewController(
+            mode: .theme(
+                CreateEditThemeViewModel(
+                    mode: .new(draft),
+                    sheet: SheetTitleContentCodable(title: AppText.NewTheme.sampleTitle, content: AppText.NewTheme.sampleLyrics)
+                )
+            )
+        )
+        
+        self.present(UINavigationController(rootViewController: controller), animated: true)
+//        Queues.main.async {
+//            let controller = self.storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
+//            controller.modificationMode = .newTheme
+//            controller.delegate = self
+//            let nav = UINavigationController(rootViewController: controller)
+//            self.present(nav, animated: true)
+//        }
     }
 }
 
