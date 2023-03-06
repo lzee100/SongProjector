@@ -391,15 +391,15 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 			subview.removeFromSuperview()
 		}
         
+        sheetDisplayer.addSubview(SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.selectedSong?.cluster, sheet: sheet, theme: songService.selectedTheme, scaleFactor: getScaleFactor(width: sheetDisplayer.bounds.width), toExternalDisplay: true))
+        sheetDisplayer.isHidden = false
+        
         if let selectedSong = songService.selectedSong, let section = songService.songs.firstIndex(of: selectedSong), let selectedSheet = songService.selectedSheet, let row = selectedSong.sheets.firstIndex(of: selectedSheet), songCollectionView.numberOfItems(inSection: section) > 0 {
             songCollectionView.scrollToItem(at: IndexPath(row: row, section: section), at: .centeredHorizontally, animated: true)
         }
 		
         let nextPreviousScaleFactor: CGFloat = getScaleFactor(width: sheetDisplayerNext.bounds.width)
-		
-        sheetDisplayer.addSubview(SheetView.createWith(frame: sheetDisplayer.bounds, cluster: songService.selectedSong?.cluster, sheet: sheet, theme: songService.selectedTheme, scaleFactor: getScaleFactor(width: sheetDisplayer.bounds.width), toExternalDisplay: true))
-		sheetDisplayer.isHidden = false
-		
+				
 		if let sheetNext = songService.nextSheet(select: false) {
 			sheetDisplayerNext.isHidden = false
 			sheetDisplayerNext.addSubview(SheetView.createWith(frame: sheetDisplayerNext.bounds, cluster: songService.getSongForNextSheet()?.cluster, sheet: sheetNext, theme: songService.nextTheme, scaleFactor: nextPreviousScaleFactor))
@@ -738,6 +738,7 @@ extension SongServiceController: SongServiceDelegate {
             view.bringSubviewToFront(countDownView)
         } else {
             let countDownView = CountDownView(frame: sheetDisplayer.bounds)
+            countDownView.translatesAutoresizingMaskIntoConstraints = false
             countDownView.countDownLabel.text = value.stringValue
             view.addSubview(countDownView)
             view.bringSubviewToFront(countDownView)
@@ -746,6 +747,9 @@ extension SongServiceController: SongServiceDelegate {
     }
     
     func swipeLeft() {
+        let dateformatter = DateFormatter()
+        dateformatter.dateFormat = "HH:mm:ss.SSS"
+        print("Leo Songservice: \(dateformatter.string(from: Date()))")
         swipeAutomatically()
     }
     

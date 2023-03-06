@@ -242,10 +242,11 @@ class SongService {
 			return selectedSong
 		} else {
             if let index = songs.firstIndex(where: { $0 == selectedSong }) {
-				if index + 1 < songs.count {
-					return songs[index + 1]
-				}
-				return nil
+                if let song = songs[safe: index + 1] {
+                    return song
+                } else {
+                    return nil
+                }
 			} else {
 				return songs.first
 			}
@@ -269,13 +270,11 @@ class SongService {
         if let position = selectedSheet?.position, position - 1 >= 0 {
             return selectedSong.sheets[safe: position - 1]?.hasTheme ?? selectedSong.cluster.hasTheme(moc: moc)
         }
-        return songs[safe: index - 1]?.sheets.first?.hasTheme ?? songs[index - 1].cluster.hasTheme(moc: moc)
+        return songs[safe: index - 1]?.sheets.first?.hasTheme ?? songs[safe: index - 1]?.cluster.hasTheme(moc: moc)
 	}
 	
 	private func getNextTheme() -> VTheme? {
-//		if isAnimating {
-//			return selectedTheme
-//		}
+
 		if let selectedSong = selectedSong {
 			
 			let selectedSheetPosition = Int(selectedSheet!.position)
@@ -324,7 +323,7 @@ class SongService {
 		if let time = time, time > 0 {
 			
             if let song = selectedSong?.cluster, song.hasLocalMusic, song.id != SoundPlayer.song?.id {
-				SoundPlayer.play(song: song)
+				SoundPlayer.play(song: song, triggerNextSheet: swipeAutomatically)
 				isPlaying = true
                 countDownValue = SongService.countDownMax
                 if song.startTime > 0 {
@@ -340,9 +339,16 @@ class SongService {
 				isAnimating = true
 			}
 			playerTimer.invalidate()
-			playerTimer = Timer.scheduledTimer(timeInterval: time + sheetTimeOffset, target: self, selector: #selector(swipeAutomatically), userInfo: nil, repeats: true)
+//			playerTimer = Timer.scheduledTimer(timeInterval: time + sheetTimeOffset, target: self, selector: #selector(swipeAutomatically), userInfo: nil, repeats: true)
+            printDate()
 		}
 	}
+    
+    @objc private func printDate() {
+        let dateformatter = DateFormatter()
+        dateformatter.dateFormat = "HH:mm:ss.SSS"
+        print("Leo Songservice: \(dateformatter.string(from: Date()))")
+    }
     
     @objc private func triggerCountDown() {
         delegate?.countDown(value: countDownValue)

@@ -109,6 +109,7 @@ class SheetView: UIView {
 			externalDisplay.addSubview(view)
 		}
 		view.update()
+        printDate()
 	}
 	
 	private func getViewFor(sheet: VSheet, frame: CGRect) -> SheetView {
@@ -158,5 +159,11 @@ class SheetView: UIView {
 	
 	func updateTime(isOn: Bool) {
 	}
+    
+    @objc private func printDate() {
+        let dateformatter = DateFormatter()
+        dateformatter.dateFormat = "HH:mm:ss.SSS"
+        print("Leo Beamer: \(dateformatter.string(from: Date()))")
+    }
 	
 }
