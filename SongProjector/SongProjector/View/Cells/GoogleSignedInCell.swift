@@ -44,7 +44,7 @@ class GoogleSignedInCell: ChurchBeamCell {
 	@objc func signOut() {
 		signOutButton.removeFromSuperview()
 		signOutContainerView.addSubview(signInButton)
-		GIDSignIn.sharedInstance().signOut()
+		GIDSignIn.sharedInstance.signOut()
 	}
 	
 	func setup(delegate: GoogleSignedInCellDelegate, sender: UIViewController) {
@@ -62,7 +62,7 @@ class GoogleSignedInCell: ChurchBeamCell {
         }
         
 		self.sender = sender
-		GIDSignIn.sharedInstance()?.presentingViewController = sender
+        GIDSignIn.sharedInstance.signIn(withPresenting: sender)
 	}
 	
 	
@@ -106,7 +106,7 @@ class GoogleSignedInCell: ChurchBeamCell {
         } catch {
             print(error)
         }
-        GIDSignIn.sharedInstance()?.signOut()
+        GIDSignIn.sharedInstance.signOut()
         NotificationCenter.default.post(name: .checkAuthentication, object: nil)
     }
 	

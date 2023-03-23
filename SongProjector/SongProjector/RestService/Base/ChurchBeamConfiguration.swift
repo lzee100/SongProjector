@@ -126,7 +126,7 @@ extension Environment {
             }
             FirebaseApp.configure(options: fileopts)
         }
-        GIDSignIn.sharedInstance().clientID = FirebaseApp.app()?.options.clientID
-        GIDSignIn.sharedInstance().delegate = UIApplication.shared.delegate as? GIDSignInDelegate
+        guard let id = FirebaseApp.app()?.options.clientID else { return }
+        GIDSignIn.sharedInstance.configuration = GIDConfiguration(clientID: id)
     }
 }

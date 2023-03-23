@@ -143,6 +143,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        let manager = IAPManager(delegate: nil, sharedSecret: "0269d507736f44638d69284ad77f2ba7")
 //        manager.refreshSubscriptionsStatus()
 //        fixLastShowAt()
+        
+        GIDSignIn.sharedInstance.restorePreviousSignIn { [weak self] user, error in
+            self?.checkAuthentication()
+        }
         return true
     }
     
@@ -183,8 +187,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any])
-        -> Bool {
-            return GIDSignIn.sharedInstance().handle(url)
+    -> Bool {
+        var handled: Bool
+        
+        handled = GIDSignIn.sharedInstance.handle(url)
+        if handled {
+            return true
+        }
+        return false
     }
     
     private func setupAirPlay() {
@@ -266,32 +276,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 }
 
 
-extension AppDelegate: GIDSignInDelegate {
-    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
-        Queues.main.async {
-            if let error = error {
-                print("error signing in")
-                print(error)
-                return
-            }
-            
-            guard let authentication = user.authentication else { return }
-            let credential = GoogleAuthProvider.credential(withIDToken: authentication.idToken,
-                                                           accessToken: authentication.accessToken)
-            
-            if let email = Auth.auth().currentUser?.email {
-                UserDefaults.standard.set(email, forKey: GoogleMail)
-            }
-            self.checkAuthentication()
-            NotificationCenter.default.post(name: .authenticatedGoogle, object: credential)
-        }
-    }
-    
-    func sign(_ signIn: GIDSignIn!, didDisconnectWith user: GIDGoogleUser!, withError error: Error!) {
-        Queues.main.async {
-            self.checkAuthentication()
-        }
-    }
+extension AppDelegate {
     
     func fixLastShowAt() {
         let mocBackground = newMOCBackground

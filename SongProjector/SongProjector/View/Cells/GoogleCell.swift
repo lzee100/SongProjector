@@ -20,7 +20,7 @@ let GoogleIdToken = "googleIdToken"
 let GoogleUsername = "GoogleUsername"
 
 
-class GoogleCell: UITableViewCell, GIDSignInDelegate {
+class GoogleCell: UITableViewCell {
 		
 	@IBOutlet var instructionButton: UIButton!
 	@IBOutlet var googleSignInOutContainer: UIView!
@@ -45,7 +45,7 @@ class GoogleCell: UITableViewCell, GIDSignInDelegate {
 	
 	func setup(delegate: GoogleCellDelegate, sender: UIViewController) {
         
-        let isSignedIn = Auth.auth().currentUser != nil || GIDSignIn.sharedInstance()?.currentUser != nil
+        let isSignedIn = Auth.auth().currentUser != nil || GIDSignIn.sharedInstance.currentUser != nil
         
         signOutButton.isUserInteractionEnabled = isSignedIn
         signOutContainerView.isHidden = !isSignedIn
@@ -53,8 +53,7 @@ class GoogleCell: UITableViewCell, GIDSignInDelegate {
         if !isSignedIn {
             googleSignInOutContainer.addSubview(signInButton)
             signInButton.frame = googleSignInOutContainer.bounds
-            GIDSignIn.sharedInstance()?.presentingViewController = sender
-            
+            GIDSignIn.sharedInstance.signIn(withPresenting: sender)
             self.sender = sender
             instructionButton.setTitle(AppText.Settings.descriptionInstructions, for: .normal)
             instructionButton.tintColor = themeHighlighted
@@ -79,8 +78,8 @@ class GoogleCell: UITableViewCell, GIDSignInDelegate {
 	}
 	
 	func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
-		if error == nil {
-			delegate?.didSuccesfullyLogin(googleIdToken: user.authentication.idToken, userName: user.profile.email)
+		if error == nil, let token = user.idToken?.tokenString, let email = user.profile?.email {
+            delegate?.didSuccesfullyLogin(googleIdToken: token, userName: email)
             GoogleActivityFetcher.fetch(force: true)
 		}
 	}
@@ -103,7 +102,7 @@ class GoogleCell: UITableViewCell, GIDSignInDelegate {
         } catch {
             print(error)
         }
-        GIDSignIn.sharedInstance()?.signOut()
+        GIDSignIn.sharedInstance.signOut()
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {

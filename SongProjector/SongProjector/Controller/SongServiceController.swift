@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import SwiftUI
 
 extension UIImage {
 	
@@ -253,7 +254,11 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
         self.update(scroll: true)
 	}
 	
-	
+    @objc func startSwiftUI() {
+        let controller = UIHostingController(rootView: SongServiceViewUI(songService: makeSongService()))
+        controller.modalPresentationStyle = .fullScreen
+        present(controller, animated: true)
+    }
 	
 	// MARK: - Private Functions
 	
@@ -281,6 +286,11 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
         songCollectionView.backgroundColor = UIColor(hex: "000000")
         moveUpDownSection.backgroundColor = UIColor(hex: "000000")
         songCollectionView.register(cell: SheetCollectionCell.identitier)
+        
+        if #available(iOS 16.0, *) {
+            let swiftUIInterfaceButton = UIBarButtonItem(title: "SwiftUI", style: .plain, target: self, action: #selector(startSwiftUI))
+            navigationItem.leftBarButtonItem = swiftUIInterfaceButton
+        }
         
         let layout = UICollectionViewFlowLayout()
         layout.sectionHeadersPinToVisibleBounds = true

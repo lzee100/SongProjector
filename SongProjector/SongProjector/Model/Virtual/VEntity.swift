@@ -11,9 +11,9 @@ import CoreData
 import UIKit
 import FirebaseAuth
 
-public class VEntity: NSObject, Codable {
+public class VEntity: NSObject, Identifiable, Codable {
 	
-    var id: String = "CHURCHBEAM" + UUID().uuidString
+    public var id: String = "CHURCHBEAM" + UUID().uuidString
     var userUID: String = ""
 	var title: String? = nil
     var createdAt: NSDate = Date().localDate() as NSDate

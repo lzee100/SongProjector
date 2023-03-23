@@ -22,7 +22,8 @@ class AppText: NSObject {
 		static let to = NSLocalizedString("Generic-to", comment: "")
         static let vandaag = NSLocalizedString("Generic-vandaag", comment: "")
         static let morgen = NSLocalizedString("Generic-morgen", comment: "")
-        
+        static let loginError = NSLocalizedString("Generic-loginError", comment: "")
+
         static let errorGeneratingDataForImage = NSLocalizedString("Generic-errorGeneratingDataForImage", comment: "")
 	}
 	

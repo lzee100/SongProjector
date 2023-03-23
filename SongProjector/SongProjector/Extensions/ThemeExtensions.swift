@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import CoreData
+import SwiftUI
 
 enum ThemeAttribute {
 	case asTheme
@@ -95,6 +96,13 @@ extension VTheme {
 			}
 		}
 	}
+    
+    var backgroundColorTitleAsColor: Color? {
+        get {
+            guard let hex = titleBackgroundColor else { return nil }
+            return Color(hex: hex)
+        }
+    }
 	
 	var backgroundColorTitle: UIColor? {
 		get {
@@ -108,6 +116,13 @@ extension VTheme {
 		}
 	}
 	
+    var backgroundColorAsColor: Color? {
+        get {
+            guard let hex = backgroundColor else { return nil }
+            return Color(hex: hex)
+        }
+    }
+    
 	var sheetBackgroundColor: UIColor? {
 		get {
 			guard let hex = backgroundColor else { return nil }
@@ -161,10 +176,18 @@ extension VTheme {
 		self.imagePath = savedImage.imagePath
 		self.imagePathThumbnail = savedImage.thumbPath
 	}
-	
-	private(set) var backgroundImage: UIImage? {
+    
+    private(set) var backgroundImage: UIImage? {
+        get {
+            UIImage.get(imagePath: self.imagePath)
+        }
+        set {
+        }
+    }
+    
+	private(set) var backgroundImageAsImage: Image? {
 		get {
-			UIImage.get(imagePath: self.imagePath)
+			UIImage.getImage(imagePath: self.imagePath)
 		}
 		set {
 		}
@@ -177,7 +200,15 @@ extension VTheme {
 		set {
 		}
 	}
-	
+    
+    private(set) var thumbnailAsImage: Image? {
+        get {
+            UIImage.getImage(imagePath: self.imagePathThumbnail)
+        }
+        set {
+        }
+    }
+
 	func getTitleAttributes(_ scaleFactor: CGFloat = 1) -> [NSAttributedString.Key: Any] {
 		var attributes : [NSAttributedString.Key: Any] = [:]
 		if let fontFamily = self.titleFontName {

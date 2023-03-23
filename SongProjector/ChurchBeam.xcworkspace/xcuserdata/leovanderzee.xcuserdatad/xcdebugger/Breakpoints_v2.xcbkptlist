@@ -18,6 +18,38 @@
             endingLineNumber = "266"
             landmarkName = "requesterDidFinish(requester:result:isPartial:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "93E5F417-4100-4F21-A6DE-651B85346CE1 - 9016f844be6257b0"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ChurchBeam.IAPManager.requesterDidFinish(requester: ChurchBeam.RequesterBase, result: ChurchBeam.RequestResult, isPartial: Swift.Bool) -&gt; ()"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/RestService/IAPManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "266"
+                  endingLineNumber = "266"
+                  offsetFromSymbolStart = "804">
+               </Location>
+               <Location
+                  uuid = "93E5F417-4100-4F21-A6DE-651B85346CE1 - 9016f844be6257b0"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ChurchBeam.IAPManager.requesterDidFinish(requester: ChurchBeam.RequesterBase, result: ChurchBeam.RequestResult, isPartial: Swift.Bool) -&gt; ()"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/RestService/IAPManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "266"
+                  endingLineNumber = "266"
+                  offsetFromSymbolStart = "1024">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -72,22 +104,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "6EF0F672-F673-4833-A45D-2DFEFA6EF53D"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SongProjector/Controller/SongServiceController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "243"
-            endingLineNumber = "243"
-            landmarkName = "collectionView(_:viewForSupplementaryElementOfKind:at:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "68B6ED8E-512A-40AC-823D-C3013DA178D2"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
@@ -115,6 +131,64 @@
             endingLineNumber = "272"
             landmarkName = "collectionView(_:cellForItemAt:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "9EEEBC02-47CE-44E3-9571-25343715874F - ae11402c75b619b5"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ChurchBeam.SongsController.collectionView(_: __C.UICollectionView, cellForItemAt: Foundation.IndexPath) -&gt; __C.UICollectionViewCell"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Controller/SongsController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "272"
+                  endingLineNumber = "272"
+                  offsetFromSymbolStart = "1440">
+               </Location>
+               <Location
+                  uuid = "9EEEBC02-47CE-44E3-9571-25343715874F - ae11402c75b619b5"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ChurchBeam.SongsController.collectionView(_: __C.UICollectionView, cellForItemAt: Foundation.IndexPath) -&gt; __C.UICollectionViewCell"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Controller/SongsController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "272"
+                  endingLineNumber = "272"
+                  offsetFromSymbolStart = "1548">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.SymbolicBreakpoint">
+         <BreakpointContent
+            uuid = "1430A770-5086-4BAD-B892-F668E6940A50"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            symbolName = ""
+            moduleName = "">
+            <Locations>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.SymbolicBreakpoint">
+         <BreakpointContent
+            uuid = "7BE43382-B8FC-4921-BA03-013A86F523BB"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            symbolName = ""
+            moduleName = "">
+            <Locations>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

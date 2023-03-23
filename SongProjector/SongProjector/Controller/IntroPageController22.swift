@@ -8,16 +8,17 @@
 
 import UIKit
 import GoogleSignIn
+import GoogleSignInSwift
 import Firebase
 import FirebaseAuth
 import AuthenticationServices
 import CryptoKit
+import SwiftUI
 
 // https://firebase.google.com/docs/auth/ios/apple?authuser=2
 
 class IntroPageController22: PageController {
    
-    
     @IBOutlet var descriptionTextView: UITextView!
     @IBOutlet var loginStackView: UIStackView!
     @IBOutlet var containerViewHeightConstraint: NSLayoutConstraint!
@@ -32,20 +33,18 @@ class IntroPageController22: PageController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        GIDSignIn.sharedInstance()?.presentingViewController = self
 //        GIDSignIn.sharedInstance()?.scopes = ["https://www.googleapis.com/auth/calendar.readonly", "https://www.googleapis.com/auth/calendar.events.readonly"]
-        GIDSignIn.sharedInstance()?.scopes = ["https://www.googleapis.com/auth/calendar.events.public.readonly"]
         descriptionTextView.font = .xNormal
         descriptionTextView.textColor = .blackColor
         descriptionTextView.text = AppText.Intro.loginWithChurchGoogle
         descriptionTextView.noPadding()
         
-        let googleLogin = GIDSignInButton(frame: .zero)
-        googleLogin.translatesAutoresizingMaskIntoConstraints = false
+        let googleLogin = UIHostingController(rootView: GoogleSignInButton(action: didTapLoginWithGoogle)).view
+        googleLogin?.translatesAutoresizingMaskIntoConstraints = false
         
         let appleLogin = ASAuthorizationAppleIDButton()
         appleLogin.addTarget(self, action: #selector(handleAuthorizationAppleIDButtonPress), for: .touchUpInside)
-        [googleLogin, appleLogin].forEach({ loginStackView.addArrangedSubview($0) })
+        [googleLogin, appleLogin].compactMap{ $0 }.forEach({ loginStackView.addArrangedSubview($0) })
         view.layoutIfNeeded()
         let textHeight = descriptionTextView.text.height(withConstrainedWidth: descriptionTextView.bounds.width, font: descriptionTextView.font!) + 10
         let buttons = CGFloat(120)
@@ -105,6 +104,25 @@ class IntroPageController22: PageController {
         authorizationController.performRequests()
     }
 
+    private func didTapLoginWithGoogle() {
+        GIDSignIn.sharedInstance.signIn(withPresenting: self, hint: nil, additionalScopes: ["https://www.googleapis.com/auth/calendar.events.public.readonly"]) { [weak self] signInResult, error in
+            
+            guard signInResult != nil else {
+              let controller = UIAlertController(title: AppText.Generic.loginError, message: error?.localizedDescription, preferredStyle: .alert)
+              controller.addAction(UIAlertAction(title: AppText.Actions.ok, style: .default))
+              self?.present(controller, animated: true)
+            return
+          }
+            guard let token = signInResult?.user.idToken?.tokenString, let accessToken = signInResult?.user.accessToken else { return }
+            let credential = GoogleAuthProvider.credential(withIDToken: token, accessToken: accessToken.tokenString)
+            
+            if let email = Auth.auth().currentUser?.email {
+                UserDefaults.standard.set(email, forKey: GoogleMail)
+            }
+            NotificationCenter.default.post(Notification(name: .checkAuthentication))
+            NotificationCenter.default.post(name: .authenticatedGoogle, object: credential)
+        }
+    }
     
     private func signInToFirebase(credential: AuthCredential) {
         Auth.auth().signIn(with: credential) { (authResult, error) in

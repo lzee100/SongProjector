@@ -15,6 +15,7 @@
 "Generic-vandaag" = "today";
 "Generic-morgen" = "tomorow";
 "Generic-errorGeneratingDataForImage" = "Unable to generate data from image";
+"Generic-loginError" = "Something went wrong when login";
 
 "Actions-cancel" = "Cancel";
 "Actions-close" = "Close";

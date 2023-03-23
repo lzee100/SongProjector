@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 48;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -83,6 +83,26 @@
 		E326E9071FFECD0E00FEAC9C /* SheetCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E326E9051FFECD0E00FEAC9C /* SheetCollectionCell.swift */; };
 		E326E9081FFECD0E00FEAC9C /* SheetCollectionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E326E9061FFECD0E00FEAC9C /* SheetCollectionCell.xib */; };
 		E32A02B7211715B300C78410 /* SongService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32A02B6211715B300C78410 /* SongService.swift */; };
+		E32B87FC29C1352200DFF9D8 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = E32B87FB29C1352200DFF9D8 /* FirebaseAnalytics */; };
+		E32B87FE29C1352200DFF9D8 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = E32B87FD29C1352200DFF9D8 /* FirebaseAuth */; };
+		E32B880029C1352200DFF9D8 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = E32B87FF29C1352200DFF9D8 /* FirebaseCrashlytics */; };
+		E32B880229C1352200DFF9D8 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = E32B880129C1352200DFF9D8 /* FirebaseFirestore */; };
+		E32B880429C1352200DFF9D8 /* FirebaseFirestoreSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E32B880329C1352200DFF9D8 /* FirebaseFirestoreSwift */; };
+		E32B880629C1352200DFF9D8 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = E32B880529C1352200DFF9D8 /* FirebaseStorage */; };
+		E32B880929C1389600DFF9D8 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = E32B880829C1389600DFF9D8 /* GoogleSignIn */; };
+		E32B880B29C1389600DFF9D8 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E32B880A29C1389600DFF9D8 /* GoogleSignInSwift */; };
+		E32B880D29C21E0200DFF9D8 /* SongServiceViewUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B880C29C21E0200DFF9D8 /* SongServiceViewUI.swift */; };
+		E32B881129C2212300DFF9D8 /* TitleContentViewUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B881029C2212300DFF9D8 /* TitleContentViewUI.swift */; };
+		E32B881329C3263600DFF9D8 /* ColorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B881229C3263600DFF9D8 /* ColorExtensions.swift */; };
+		E32B881529C478F800DFF9D8 /* BeamerViewUI2.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B881429C478F800DFF9D8 /* BeamerViewUI2.swift */; };
+		E32B881729C483DA00DFF9D8 /* SheetScrollViewUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B881629C483DA00DFF9D8 /* SheetScrollViewUI.swift */; };
+		E32B881929C87E2400DFF9D8 /* DeviceOrientationModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B881829C87E2400DFF9D8 /* DeviceOrientationModifier.swift */; };
+		E32B881D29C885D500DFF9D8 /* SongServiceSectionViewUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B881C29C885D500DFF9D8 /* SongServiceSectionViewUI.swift */; };
+		E32B881F29C89CB600DFF9D8 /* StickyViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B881E29C89CB600DFF9D8 /* StickyViewModifier.swift */; };
+		E32B882129C8FD0E00DFF9D8 /* InstrumentsViewUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B882029C8FD0E00DFF9D8 /* InstrumentsViewUI.swift */; };
+		E32B882329C9009400DFF9D8 /* InstrumentViewUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B882229C9009400DFF9D8 /* InstrumentViewUI.swift */; };
+		E32B882529C91EA700DFF9D8 /* PianoSoloViewUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B882429C91EA700DFF9D8 /* PianoSoloViewUI.swift */; };
+		E32B882929CB3F3B00DFF9D8 /* SwiftUITestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B882829CB3F3B00DFF9D8 /* SwiftUITestView.swift */; };
 		E32D4D6520017E0100ED81A7 /* EditSongIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32D4D6420017E0100ED81A7 /* EditSongIphoneController.swift */; };
 		E32DB8DC2221E29600277C45 /* Contract.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32DB8DB2221E29600277C45 /* Contract.swift */; };
 		E32DB8E02230283A00277C45 /* ContractLedger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32DB8DF2230283A00277C45 /* ContractLedger.swift */; };
@@ -411,6 +431,18 @@
 		E326E9051FFECD0E00FEAC9C /* SheetCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetCollectionCell.swift; sourceTree = "<group>"; };
 		E326E9061FFECD0E00FEAC9C /* SheetCollectionCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SheetCollectionCell.xib; sourceTree = "<group>"; };
 		E32A02B6211715B300C78410 /* SongService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongService.swift; sourceTree = "<group>"; };
+		E32B880C29C21E0200DFF9D8 /* SongServiceViewUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongServiceViewUI.swift; sourceTree = "<group>"; };
+		E32B881029C2212300DFF9D8 /* TitleContentViewUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleContentViewUI.swift; sourceTree = "<group>"; };
+		E32B881229C3263600DFF9D8 /* ColorExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtensions.swift; sourceTree = "<group>"; };
+		E32B881429C478F800DFF9D8 /* BeamerViewUI2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeamerViewUI2.swift; sourceTree = "<group>"; };
+		E32B881629C483DA00DFF9D8 /* SheetScrollViewUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetScrollViewUI.swift; sourceTree = "<group>"; };
+		E32B881829C87E2400DFF9D8 /* DeviceOrientationModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceOrientationModifier.swift; sourceTree = "<group>"; };
+		E32B881C29C885D500DFF9D8 /* SongServiceSectionViewUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongServiceSectionViewUI.swift; sourceTree = "<group>"; };
+		E32B881E29C89CB600DFF9D8 /* StickyViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickyViewModifier.swift; sourceTree = "<group>"; };
+		E32B882029C8FD0E00DFF9D8 /* InstrumentsViewUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstrumentsViewUI.swift; sourceTree = "<group>"; };
+		E32B882229C9009400DFF9D8 /* InstrumentViewUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstrumentViewUI.swift; sourceTree = "<group>"; };
+		E32B882429C91EA700DFF9D8 /* PianoSoloViewUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PianoSoloViewUI.swift; sourceTree = "<group>"; };
+		E32B882829CB3F3B00DFF9D8 /* SwiftUITestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUITestView.swift; sourceTree = "<group>"; };
 		E32D4D6420017E0100ED81A7 /* EditSongIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSongIphoneController.swift; sourceTree = "<group>"; };
 		E32DB8DB2221E29600277C45 /* Contract.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contract.swift; sourceTree = "<group>"; };
 		E32DB8DF2230283A00277C45 /* ContractLedger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContractLedger.swift; sourceTree = "<group>"; };
@@ -670,8 +702,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				E33D6F952547526A00493C47 /* StoreKit.framework in Frameworks */,
+				E32B87FE29C1352200DFF9D8 /* FirebaseAuth in Frameworks */,
+				E32B880629C1352200DFF9D8 /* FirebaseStorage in Frameworks */,
 				E7226C9E497B8BF49AA031B2 /* Pods_SongProjector.framework in Frameworks */,
+				E32B880029C1352200DFF9D8 /* FirebaseCrashlytics in Frameworks */,
+				E32B880929C1389600DFF9D8 /* GoogleSignIn in Frameworks */,
+				E32B87FC29C1352200DFF9D8 /* FirebaseAnalytics in Frameworks */,
 				E3896A3E21E3F56D008CB5A5 /* CloudKit.framework in Frameworks */,
+				E32B880229C1352200DFF9D8 /* FirebaseFirestore in Frameworks */,
+				E32B880429C1352200DFF9D8 /* FirebaseFirestoreSwift in Frameworks */,
+				E32B880B29C1389600DFF9D8 /* GoogleSignInSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -775,6 +815,17 @@
 				E3BC6BB81FFEBEA80039E0CA /* View */,
 				E311716C1FE5A162008D9D51 /* Cells */,
 				E311717D1FE5A5F5008D9D51 /* StoryboardiPad.storyboard */,
+				E32B880C29C21E0200DFF9D8 /* SongServiceViewUI.swift */,
+				E32B881629C483DA00DFF9D8 /* SheetScrollViewUI.swift */,
+				E32B881429C478F800DFF9D8 /* BeamerViewUI2.swift */,
+				E32B881029C2212300DFF9D8 /* TitleContentViewUI.swift */,
+				E32B881C29C885D500DFF9D8 /* SongServiceSectionViewUI.swift */,
+				E32B882429C91EA700DFF9D8 /* PianoSoloViewUI.swift */,
+				E32B882029C8FD0E00DFF9D8 /* InstrumentsViewUI.swift */,
+				E32B882229C9009400DFF9D8 /* InstrumentViewUI.swift */,
+				E32B882829CB3F3B00DFF9D8 /* SwiftUITestView.swift */,
+				E32B881E29C89CB600DFF9D8 /* StickyViewModifier.swift */,
+				E32B881829C87E2400DFF9D8 /* DeviceOrientationModifier.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -870,6 +921,7 @@
 				B38C18E727B331A0006DA1A7 /* NSAttributedStringExtensions.swift */,
 				B37F43E528C673BF007970DD /* EdgeInsetsExtension.swift */,
 				B38A1D13292AE71300565BDA /* CollectionExtensions.swift */,
+				E32B881229C3263600DFF9D8 /* ColorExtensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1185,13 +1237,22 @@
 				E311712A1FE59DA3008D9D51 /* Frameworks */,
 				E311712B1FE59DA3008D9D51 /* Resources */,
 				A1D6DF58A5DD76A980375230 /* [CP] Embed Pods Frameworks */,
-				D9C89D994473F36604D78A92 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = SongProjector;
+			packageProductDependencies = (
+				E32B87FB29C1352200DFF9D8 /* FirebaseAnalytics */,
+				E32B87FD29C1352200DFF9D8 /* FirebaseAuth */,
+				E32B87FF29C1352200DFF9D8 /* FirebaseCrashlytics */,
+				E32B880129C1352200DFF9D8 /* FirebaseFirestore */,
+				E32B880329C1352200DFF9D8 /* FirebaseFirestoreSwift */,
+				E32B880529C1352200DFF9D8 /* FirebaseStorage */,
+				E32B880829C1389600DFF9D8 /* GoogleSignIn */,
+				E32B880A29C1389600DFF9D8 /* GoogleSignInSwift */,
+			);
 			productName = SongProjector;
 			productReference = E311712D1FE59DA3008D9D51 /* SongProjector.app */;
 			productType = "com.apple.product-type.application";
@@ -1233,6 +1294,10 @@
 				nl,
 			);
 			mainGroup = E31171241FE59DA3008D9D51;
+			packageReferences = (
+				E32B87FA29C1352200DFF9D8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				E32B880729C1389600DFF9D8 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+			);
 			productRefGroup = E311712E1FE59DA3008D9D51 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -1333,63 +1398,25 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-SongProjector/Pods-SongProjector-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/AppAuth/AppAuth.framework",
-				"${BUILT_PRODUCTS_DIR}/BoringSSL-GRPC/openssl_grpc.framework",
 				"${BUILT_PRODUCTS_DIR}/FlexColorPicker/FlexColorPicker.framework",
-				"${BUILT_PRODUCTS_DIR}/GTMAppAuth/GTMAppAuth.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMOAuth2/GTMOAuth2.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleAPIClientForREST/GoogleAPIClientForREST.framework",
-				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
-				"${BUILT_PRODUCTS_DIR}/PromisesObjC/FBLPromises.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftKeychainWrapper/SwiftKeychainWrapper.framework",
 				"${BUILT_PRODUCTS_DIR}/VerticalSlider/VerticalSlider.framework",
-				"${BUILT_PRODUCTS_DIR}/abseil/absl.framework",
-				"${BUILT_PRODUCTS_DIR}/gRPC-C++/grpcpp.framework",
-				"${BUILT_PRODUCTS_DIR}/gRPC-Core/grpc.framework",
-				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
-				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AppAuth.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/openssl_grpc.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FlexColorPicker.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMAppAuth.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMOAuth2.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleAPIClientForREST.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBLPromises.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftKeychainWrapper.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/VerticalSlider.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/absl.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/grpcpp.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/grpc.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SongProjector/Pods-SongProjector-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		D9C89D994473F36604D78A92 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SongProjector/Pods-SongProjector-resources.sh",
-				"${PODS_ROOT}/GoogleSignIn/Resources/GoogleSignIn.bundle",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleSignIn.bundle",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SongProjector/Pods-SongProjector-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -1440,6 +1467,7 @@
 				E334B10D21ED045C0088CD48 /* GoogleActivity.swift in Sources */,
 				E37A49262218C42E003BD945 /* Organization.swift in Sources */,
 				E3B494C523BEA7C200DB2A7F /* VUser.swift in Sources */,
+				E32B882129C8FD0E00DFF9D8 /* InstrumentsViewUI.swift in Sources */,
 				E3D9C29020D6F4E8006EDFE3 /* SongServiceContainerViewController.swift in Sources */,
 				E3FD4D98249272A200DFD176 /* ColorPickerViewController.swift in Sources */,
 				E36E76DA21EF5338002E20EF /* IntExtensions.swift in Sources */,
@@ -1452,6 +1480,7 @@
 				E3CB814F22F829B400F1C240 /* PopUpViewController.swift in Sources */,
 				E3D0F21324B225D200508A89 /* SignInCalendarController.swift in Sources */,
 				E3896A3121E3F04B008CB5A5 /* Entity.swift in Sources */,
+				E32B881929C87E2400DFF9D8 /* DeviceOrientationModifier.swift in Sources */,
 				E3E78B922520825E00AF9284 /* SheetTypesMenu.swift in Sources */,
 				E3C13F1024C772CB00BE3C35 /* CalendarIdExplainController.swift in Sources */,
 				E39B6A102216236A002B53B1 /* IntroPageViewContainer.swift in Sources */,
@@ -1506,6 +1535,7 @@
 				E31171541FE5A071008D9D51 /* UIColorExtension.swift in Sources */,
 				E35E7CEA23B773F50071DCC8 /* VSheetTitleContent.swift in Sources */,
 				E3BBB55D25459CAD00F18DCC /* IAPManager.swift in Sources */,
+				E32B881129C2212300DFF9D8 /* TitleContentViewUI.swift in Sources */,
 				E35E7D0423BA50DD0071DCC8 /* VSongServiceSection.swift in Sources */,
 				E311717B1FE5A1A0008D9D51 /* ThemeCellCollection.swift in Sources */,
 				E39B6A122216B140002B53B1 /* PageController.swift in Sources */,
@@ -1516,6 +1546,7 @@
 				B3125F0A2921A8A5009E8E56 /* SongServiceSectionHeaderTitleStackView.swift in Sources */,
 				E31171671FE5A0E7008D9D51 /* MoreController.swift in Sources */,
 				E35E7CF623BA31200071DCC8 /* VSheetActivities.swift in Sources */,
+				E32B882929CB3F3B00DFF9D8 /* SwiftUITestView.swift in Sources */,
 				E3501498248596AC0082741A /* IntroPageController22.swift in Sources */,
 				E334B10721ED031C0088CD48 /* SheetEmptyEntity.swift in Sources */,
 				E35A1A6925616EAE008CF6A3 /* FileDeleter.swift in Sources */,
@@ -1563,10 +1594,12 @@
 				E35E7CFE23BA34E20071DCC8 /* VContractLedger.swift in Sources */,
 				E3A19734200947AB0044DB1B /* SheetTitleImageExtensions.swift in Sources */,
 				E35E7CFA23BA33060071DCC8 /* VRole.swift in Sources */,
+				E32B881729C483DA00DFF9D8 /* SheetScrollViewUI.swift in Sources */,
 				E31F0B6D20F4F3D100C22FD1 /* SheetPastors.swift in Sources */,
 				E3314B6620077DD100F470C0 /* SheetExtensions.swift in Sources */,
 				E3EED5002494E21E00AE47BC /* UniversalClusterUpdatedAtSubmitter.swift in Sources */,
 				E3CB6850200634A600F007B2 /* LoadingIndicator.swift in Sources */,
+				E32B880D29C21E0200DFF9D8 /* SongServiceViewUI.swift in Sources */,
 				E3F201DE201E0CC9002FF06E /* ActivityView.swift in Sources */,
 				E32D4D6520017E0100ED81A7 /* EditSongIphoneController.swift in Sources */,
 				E334FD6D20CF9E2E00FC1FAE /* SongHeaderView.swift in Sources */,
@@ -1588,23 +1621,27 @@
 				E35E7D0223BA50620071DCC8 /* VSongServiceSettings.swift in Sources */,
 				E35E7CE123B76AE70071DCC8 /* VEntity.swift in Sources */,
 				E3F9964A201285CD00634C5E /* AddButtonCollectionCell.swift in Sources */,
+				E32B881529C478F800DFF9D8 /* BeamerViewUI2.swift in Sources */,
 				E334B10521ED02F60088CD48 /* SheetPastorsEntity.swift in Sources */,
 				E36E76D821EF51DA002E20EF /* ChurchBeamViewController.swift in Sources */,
 				E3812DEA201C992300F10B2C /* GoogleCell.swift in Sources */,
 				E3D927571FECF622006EDE75 /* ViewExtensions.swift in Sources */,
 				E3CB684E2003900D00F007B2 /* AppTheme.swift in Sources */,
 				E3C2AD2220275AE200ACFFE7 /* InstrumentPlayer.swift in Sources */,
+				E32B881F29C89CB600DFF9D8 /* StickyViewModifier.swift in Sources */,
 				E33B418224BF958000DE4F4E /* SongServicePlayDate.swift in Sources */,
 				E39D29F020308F4E00C1C0D9 /* BibleStudyController.swift in Sources */,
 				E35E7CE623B771A70071DCC8 /* VCluster.swift in Sources */,
 				E38DF49A262F53E00057D8D9 /* DeviceOrientationExtensions.swift in Sources */,
 				E3D927511FEC3036006EDE75 /* NewOrEditTagController.swift in Sources */,
+				E32B882529C91EA700DFF9D8 /* PianoSoloViewUI.swift in Sources */,
 				E31171551FE5A071008D9D51 /* UIFontExtensions.swift in Sources */,
 				E30BDD722707B0D60049D6A8 /* FloatExtensions.swift in Sources */,
 				E3355D6F1FEDA645004C03AE /* TextViewExtensions.swift in Sources */,
 				E3B494C723BEAB2500DB2A7F /* VContract.swift in Sources */,
 				E345C488254F61E10031DCF1 /* SubscriptionsSettings.swift in Sources */,
 				E3FA3DF8200DE8570038C97B /* LabelTextViewCell.swift in Sources */,
+				E32B881329C3263600DFF9D8 /* ColorExtensions.swift in Sources */,
 				B37F43E628C673BF007970DD /* EdgeInsetsExtension.swift in Sources */,
 				E384E07723CF159F0017B73F /* UploadUniversalSongController.swift in Sources */,
 				E35E7CE823B7730F0071DCC8 /* VSheet.swift in Sources */,
@@ -1643,12 +1680,14 @@
 				E30B30EC24CF8E7400C8E9A4 /* DefaultPopUpController.swift in Sources */,
 				E309DD021FF5127400C3D135 /* LabelNumberCell.swift in Sources */,
 				E3847EFA248ED020002D4BED /* AdminFetcher.swift in Sources */,
+				E32B881D29C885D500DFF9D8 /* SongServiceSectionViewUI.swift in Sources */,
 				E31171681FE5A0E7008D9D51 /* SongsController.swift in Sources */,
 				B3125F082921A359009E8E56 /* PianoSoloButtonView.swift in Sources */,
 				E31171751FE5A1A0008D9D51 /* BasicCell.swift in Sources */,
 				E31171561FE5A071008D9D51 /* NSManagedObjectExtension.swift in Sources */,
 				E35E7CF023BA2ECA0071DCC8 /* VSheetPastors.swift in Sources */,
 				E34ED29D2008D63700534C72 /* SheetSplit.swift in Sources */,
+				E32B882329C9009400DFF9D8 /* InstrumentViewUI.swift in Sources */,
 				E334B10921ED03840088CD48 /* SheetSplitEntity.swift in Sources */,
 				E334B0FF21ED02190088CD48 /* Sheet.swift in Sources */,
 				E33746AD24A89EEF00F44852 /* AppColors.swift in Sources */,
@@ -1735,6 +1774,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXCLUDED_ARCHS = "";
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -1797,6 +1837,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXCLUDED_ARCHS = "";
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -1809,7 +1850,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -1827,7 +1869,10 @@
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = SongProjector/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				MARKETING_VERSION = 0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.iozee.ChurchBeam;
 				PRODUCT_MODULE_NAME = ChurchBeam;
@@ -1849,8 +1894,12 @@
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = SongProjector/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				MARKETING_VERSION = 0.2;
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.iozee.ChurchBeam;
 				PRODUCT_MODULE_NAME = ChurchBeam;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1881,6 +1930,68 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		E32B87FA29C1352200DFF9D8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.0;
+			};
+		};
+		E32B880729C1389600DFF9D8 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E32B87FB29C1352200DFF9D8 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E32B87FA29C1352200DFF9D8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		E32B87FD29C1352200DFF9D8 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E32B87FA29C1352200DFF9D8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		E32B87FF29C1352200DFF9D8 /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E32B87FA29C1352200DFF9D8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCrashlytics;
+		};
+		E32B880129C1352200DFF9D8 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E32B87FA29C1352200DFF9D8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		E32B880329C1352200DFF9D8 /* FirebaseFirestoreSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E32B87FA29C1352200DFF9D8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestoreSwift;
+		};
+		E32B880529C1352200DFF9D8 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E32B87FA29C1352200DFF9D8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+		E32B880829C1389600DFF9D8 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E32B880729C1389600DFF9D8 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		E32B880A29C1389600DFF9D8 /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E32B880729C1389600DFF9D8 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		E31171371FE59DA3008D9D51 /* SongProjector.xcdatamodeld */ = {

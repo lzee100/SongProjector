@@ -70,7 +70,7 @@ class SettingsController: ChurchBeamViewController, UITableViewDelegate, UITable
 //			cell.delegate = self
 //			return cell
 		case .googleAccount:
-            if GIDSignIn.sharedInstance()?.currentUser != nil || Auth.auth().currentUser != nil {
+            if GIDSignIn.sharedInstance.currentUser != nil || Auth.auth().currentUser != nil {
 				let cell = tableView.dequeueReusableCell(withIdentifier: GoogleSignedInCell.identifier) as! GoogleSignedInCell
 				cell.setup(delegate: self, sender: self)
 				return cell
@@ -99,7 +99,7 @@ class SettingsController: ChurchBeamViewController, UITableViewDelegate, UITable
         case .googleCalendarId, .appsettings:
             return UITableView.automaticDimension
 		case .googleAccount:
-			return GIDSignIn.sharedInstance()?.currentUser != nil ? GoogleSignedInCell.preferredHeight : GoogleCell.preferredHeight
+			return GIDSignIn.sharedInstance.currentUser != nil ? GoogleSignedInCell.preferredHeight : GoogleCell.preferredHeight
 		}
 	}
 	
@@ -177,7 +177,7 @@ class SettingsController: ChurchBeamViewController, UITableViewDelegate, UITable
                 let alert = UIAlertController(title: nil, message: "Wil je van omgeving wisselen? \(ChurchBeamConfiguration.environment.name)", preferredStyle: .actionSheet)
                 alert.addAction(UIAlertAction(title: "Wissel naar: \(ChurchBeamConfiguration.environment.next)", style: .default, handler: { (_) in
                     ChurchBeamConfiguration.environment = ChurchBeamConfiguration.environment.next
-                    GIDSignIn.sharedInstance().signOut()
+                    GIDSignIn.sharedInstance.signOut()
                     Queues.background.asyncAfter(deadline: .now() + 1) {
                         fatalError("Wissel van omgeving")
                     }

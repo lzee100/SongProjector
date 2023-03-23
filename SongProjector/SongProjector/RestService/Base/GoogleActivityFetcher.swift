@@ -9,7 +9,6 @@
 
 import Foundation
 import GoogleAPIClientForREST
-import GoogleSignIn
 import FirebaseAuth
 
 let GoogleActivityFetcher = GoogleActivityFetch()
@@ -24,42 +23,42 @@ class GoogleActivityFetch: NSObject {
 //	var loginDelegate: GoogleFetcherLoginDelegate?
     private var numberOfTries = 0
 	
-	fileprivate lazy var calendarService: GTLRCalendarService? = {
-		let service = GTLRCalendarService()
-		// Have the service object set tickets to fetch consecutive pages
-		// of the feed so we do not need to manually fetch them
-		service.shouldFetchNextPages = true
-		// Have the service object set tickets to retry temporary error conditions
-		// automatically
-		service.isRetryEnabled = true
-		service.maxRetryInterval = 15
-
-		guard let currentUser = GIDSignIn.sharedInstance().currentUser,
-			let authentication = currentUser.authentication else {
-				return nil
-		}
-		service.authorizer = authentication.fetcherAuthorizer()
-		return service
-	}()
+//	fileprivate lazy var calendarService: GTLRCalendarService? = {
+//		let service = GTLRCalendarService()
+//		// Have the service object set tickets to fetch consecutive pages
+//		// of the feed so we do not need to manually fetch them
+//		service.shouldFetchNextPages = true
+//		// Have the service object set tickets to retry temporary error conditions
+//		// automatically
+//		service.isRetryEnabled = true
+//		service.maxRetryInterval = 15
+//
+//		guard let currentUser = GIDSignIn.sharedInstance().currentUser,
+//			let authentication = currentUser.authentication else {
+//				return nil
+//		}
+//		service.authorizer = authentication.fetcherAuthorizer()
+//		return service
+//	}()
 
 	override init() {
 		super.init()
-        GIDSignIn.sharedInstance().scopes = ["https://www.googleapis.com/auth/calendar.events.public.readonly"]
+//        GIDSignIn.sharedInstance().scopes = ["https://www.googleapis.com/auth/calendar.events.public.readonly"]
 	}
 
 
 
 	func fetch(force: Bool) {
-        GIDSignIn.sharedInstance()?.restorePreviousSignIn()
-		if GIDSignIn.sharedInstance().currentUser != nil {
-            GIDSignIn.sharedInstance().scopes = ["https://www.googleapis.com/auth/calendar.events.public.readonly"]
-		fetchEvents()
-        } else {
-            if numberOfTries == 1 {
-                NotificationCenter.default.post(name: .googleCalendarNotAuthenticated, object: nil)
-            }
-            numberOfTries += 1
-        }
+//        GIDSignIn.sharedInstance()?.restorePreviousSignIn()
+//		if GIDSignIn.sharedInstance().currentUser != nil {
+//            GIDSignIn.sharedInstance().scopes = ["https://www.googleapis.com/auth/calendar.events.public.readonly"]
+//		fetchEvents()
+//        } else {
+//            if numberOfTries == 1 {
+//                NotificationCenter.default.post(name: .googleCalendarNotAuthenticated, object: nil)
+//            }
+//            numberOfTries += 1
+//        }
 	}
     
 	func fetchEvents() {
@@ -71,10 +70,10 @@ class GoogleActivityFetch: NSObject {
 		query.timeMax = GTLRDateTime(date: Date().addingTimeInterval(.days(21)))
 		query.singleEvents = true
 		query.orderBy = kGTLRCalendarOrderByStartTime
-		calendarService?.executeQuery(
-			query,
-			delegate: self,
-			didFinish: #selector(mapResultForTicket(ticket:finishedWithObject:error:)))
+//		calendarService?.executeQuery(
+//			query,
+//			delegate: self,
+//			didFinish: #selector(mapResultForTicket(ticket:finishedWithObject:error:)))
 	}
 
 

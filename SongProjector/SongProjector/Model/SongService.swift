@@ -8,6 +8,7 @@
 
 import Foundation
 import FirebaseAuth
+import UIKit
 
 var isForPreviewUniversalSongEditing = false
 
@@ -33,10 +34,12 @@ class SongService {
             self.stopPlay()
 			if selectedSong != nil {
 				selectedSheet = selectedSong?.sheets.first
+                #if (!DEBUG)
                 if !isForPreviewUniversalSongEditing {
                     selectedSong?.cluster.setLastShownAt()
                 }
                 SongServicePlayDateSubmitter.subMitPlayDate()
+                #endif  
 			}
 		}
 	}
@@ -380,7 +383,7 @@ class SongService {
 
 
 
-class SongObject: Hashable {
+class SongObject: Hashable, Identifiable {
 	
     private(set) var headerTitle: String?
 	private(set) var cluster: VCluster { didSet { addEmptySheet() }}

@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import SwiftUI
 
 extension UIImage {
     
@@ -247,7 +248,21 @@ extension UIImage {
 		}
 	}
     
-    
+    static func getImage(imagePath: String?) -> Image? {
+        if let imagePath = imagePath {
+            let url = FileManager.getURLfor(name: imagePath)
+            do {
+                let data = try Data(contentsOf: url)
+                guard let image = UIImage(data: data) else { return nil }
+                return Image(uiImage: image)
+            } catch {
+                return nil
+            }
+        } else {
+            return nil
+        }
+    }
+
     
     
     
