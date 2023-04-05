@@ -295,5 +295,3 @@ extension Array {
         return list
     }
 }
-
-

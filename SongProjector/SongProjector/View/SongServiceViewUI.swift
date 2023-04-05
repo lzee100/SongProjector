@@ -11,25 +11,30 @@ import UIKit
 
 struct SongServiceViewUI: View {
     
-    @State var songService: SongService
+    @StateObject var songService: SongService
     @State private var alignment: Sticky.Alignment = .horizontal
     @SwiftUI.Environment(\.horizontalSizeClass) var horizontalSizeClass
-
+    
     var body: some View {
         GeometryReader { ruler in
             VStack(alignment: .center, spacing: 0) {
-                BeamerViewUI2(selectedCluster: makeCluster())
+                //                BeamerViewUI2(selectedSong: $songService.selectedSong, selectedSheet: $songService.selectedSheet)
+                //                    .padding(EdgeInsets(top: 10, leading: 50, bottom: 50, trailing: 50))
+                //                    .aspectRatio(externalDisplayWindowRatioHeightWidth, contentMode: .fit)
+                //                    .background(.black)
+                BeamerPreviewUI(selectedSong: $songService.selectedSong, selectedSheet: $songService.selectedSheet)
                     .padding(EdgeInsets(top: 10, leading: 50, bottom: 50, trailing: 50))
                     .aspectRatio(externalDisplayWindowRatioHeightWidth, contentMode: .fit)
-                    .background(.black)
-                SheetScrollViewUI(songService: songService, isSelectable: true)
-                    .frame(
-                        width: isCompactOrVertical(ruler: ruler) ? (ruler.size.width * 0.7) : .infinity,
-                        height: isCompactOrVertical(ruler: ruler) ? .infinity : 200
-                    )
+                SheetScrollViewUI(
+                    selectedSong: $songService.selectedSong,
+                    selectedSheet: $songService.selectedSheet,
+                    isSelectable: true
+                )
+                .frame(maxWidth: isCompactOrVertical(ruler: ruler) ? (ruler.size.width * 0.7) : .infinity, maxHeight: isCompactOrVertical(ruler: ruler) ? .infinity : 200)
             }
             .background(.black)
             .edgesIgnoringSafeArea(.all)
+            .environmentObject(songService)
         }
     }
     
@@ -39,9 +44,9 @@ struct SongServiceViewUI: View {
 }
 
 struct SongServiceUI_Previews: PreviewProvider {
-    
+    @State static var songService = makeSongService()
     static var previews: some View {
-        SongServiceViewUI(songService: makeSongService())
+        SongServiceViewUI(songService: songService)
             .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch) (4th generation)"))
             .previewInterfaceOrientation(.portrait)
     }
@@ -64,15 +69,22 @@ func makeCluster() -> VCluster {
     return demoCluster
 }
 
-func makeSongService() -> SongService {
+func makeSongService(_ hasSelectedSheet: Bool = false) -> SongService {
     let songService = SongService(delegate: nil)
     
     let selectedCluster = VCluster()
     selectedCluster.title = "Test Title 1"
-    let demoSheet = VSheetTitleContent()
-    demoSheet.title = "Test title Leo"
-    demoSheet.content = "Test content Leo"
-    selectedCluster.hasSheets = [demoSheet]
+    
+    var sheets: [VSheetTitleContent] = []
+    
+    for index in 0..<2 {
+        let sheet = VSheetTitleContent()
+        sheet.title = "sheet \(index)"
+        sheet.content = "sheet content \(index)"
+        sheets.append(sheet)
+    }
+    
+    selectedCluster.hasSheets = sheets
     let pianoSolo = VInstrument()
     pianoSolo.typeString = "pianoSolo"
     pianoSolo.resourcePath = "asd"
@@ -87,13 +99,21 @@ func makeSongService() -> SongService {
     anotherCluster.hasInstruments = makeDemoInstruments()
     
     let anotherCluster3 = VCluster()
-    anotherCluster3.title = "Test Title 2"
-    let demoSheet3 = VSheetTitleContent()
-    demoSheet3.title = "Test title Leo"
-    demoSheet3.content = "Test content Leo"
-    anotherCluster3.hasSheets = [demoSheet3]
-    anotherCluster3.hasInstruments = makeDemoInstruments()
+    anotherCluster3.title = "Test Title 3"
+    sheets = []
+    for index in 0..<5 {
+        let sheet = VSheetTitleContent()
+        sheet.title = "sheet \(index)"
+        sheet.content = "sheet content \(index)"
+        sheet.hasTheme = VTheme()
+        sheet.hasTheme?.isHidden = true
+        sheets.append(sheet)
+    }
+    anotherCluster3.hasSheets = sheets
     
     songService.songs = [selectedCluster, anotherCluster, anotherCluster3].map { SongObject(cluster: $0, headerTitle: "") }
+    if hasSelectedSheet {
+        songService.selectedSong = songService.songs.last
+    }
     return songService
 }

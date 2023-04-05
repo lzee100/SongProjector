@@ -94,7 +94,7 @@
 		E32B880D29C21E0200DFF9D8 /* SongServiceViewUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B880C29C21E0200DFF9D8 /* SongServiceViewUI.swift */; };
 		E32B881129C2212300DFF9D8 /* TitleContentViewUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B881029C2212300DFF9D8 /* TitleContentViewUI.swift */; };
 		E32B881329C3263600DFF9D8 /* ColorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B881229C3263600DFF9D8 /* ColorExtensions.swift */; };
-		E32B881529C478F800DFF9D8 /* BeamerViewUI2.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B881429C478F800DFF9D8 /* BeamerViewUI2.swift */; };
+		E32B881529C478F800DFF9D8 /* BeamerPreviewUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B881429C478F800DFF9D8 /* BeamerPreviewUI.swift */; };
 		E32B881729C483DA00DFF9D8 /* SheetScrollViewUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B881629C483DA00DFF9D8 /* SheetScrollViewUI.swift */; };
 		E32B881929C87E2400DFF9D8 /* DeviceOrientationModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B881829C87E2400DFF9D8 /* DeviceOrientationModifier.swift */; };
 		E32B881D29C885D500DFF9D8 /* SongServiceSectionViewUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B881C29C885D500DFF9D8 /* SongServiceSectionViewUI.swift */; };
@@ -103,6 +103,9 @@
 		E32B882329C9009400DFF9D8 /* InstrumentViewUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B882229C9009400DFF9D8 /* InstrumentViewUI.swift */; };
 		E32B882529C91EA700DFF9D8 /* PianoSoloViewUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B882429C91EA700DFF9D8 /* PianoSoloViewUI.swift */; };
 		E32B882929CB3F3B00DFF9D8 /* SwiftUITestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B882829CB3F3B00DFF9D8 /* SwiftUITestView.swift */; };
+		E32B882C29CDA1EF00DFF9D8 /* SheetDisplayerPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B882B29CDA1EF00DFF9D8 /* SheetDisplayerPageView.swift */; };
+		E32B882E29CDA24400DFF9D8 /* PageViewContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B882D29CDA24400DFF9D8 /* PageViewContentView.swift */; };
+		E32B883029CDA2C500DFF9D8 /* OffsetPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B882F29CDA2C500DFF9D8 /* OffsetPageView.swift */; };
 		E32D4D6520017E0100ED81A7 /* EditSongIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32D4D6420017E0100ED81A7 /* EditSongIphoneController.swift */; };
 		E32DB8DC2221E29600277C45 /* Contract.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32DB8DB2221E29600277C45 /* Contract.swift */; };
 		E32DB8E02230283A00277C45 /* ContractLedger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32DB8DF2230283A00277C45 /* ContractLedger.swift */; };
@@ -434,7 +437,7 @@
 		E32B880C29C21E0200DFF9D8 /* SongServiceViewUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongServiceViewUI.swift; sourceTree = "<group>"; };
 		E32B881029C2212300DFF9D8 /* TitleContentViewUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleContentViewUI.swift; sourceTree = "<group>"; };
 		E32B881229C3263600DFF9D8 /* ColorExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtensions.swift; sourceTree = "<group>"; };
-		E32B881429C478F800DFF9D8 /* BeamerViewUI2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeamerViewUI2.swift; sourceTree = "<group>"; };
+		E32B881429C478F800DFF9D8 /* BeamerPreviewUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeamerPreviewUI.swift; sourceTree = "<group>"; };
 		E32B881629C483DA00DFF9D8 /* SheetScrollViewUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetScrollViewUI.swift; sourceTree = "<group>"; };
 		E32B881829C87E2400DFF9D8 /* DeviceOrientationModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceOrientationModifier.swift; sourceTree = "<group>"; };
 		E32B881C29C885D500DFF9D8 /* SongServiceSectionViewUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongServiceSectionViewUI.swift; sourceTree = "<group>"; };
@@ -443,6 +446,9 @@
 		E32B882229C9009400DFF9D8 /* InstrumentViewUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstrumentViewUI.swift; sourceTree = "<group>"; };
 		E32B882429C91EA700DFF9D8 /* PianoSoloViewUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PianoSoloViewUI.swift; sourceTree = "<group>"; };
 		E32B882829CB3F3B00DFF9D8 /* SwiftUITestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUITestView.swift; sourceTree = "<group>"; };
+		E32B882B29CDA1EF00DFF9D8 /* SheetDisplayerPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetDisplayerPageView.swift; sourceTree = "<group>"; };
+		E32B882D29CDA24400DFF9D8 /* PageViewContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageViewContentView.swift; sourceTree = "<group>"; };
+		E32B882F29CDA2C500DFF9D8 /* OffsetPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OffsetPageView.swift; sourceTree = "<group>"; };
 		E32D4D6420017E0100ED81A7 /* EditSongIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSongIphoneController.swift; sourceTree = "<group>"; };
 		E32DB8DB2221E29600277C45 /* Contract.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contract.swift; sourceTree = "<group>"; };
 		E32DB8DF2230283A00277C45 /* ContractLedger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContractLedger.swift; sourceTree = "<group>"; };
@@ -770,6 +776,7 @@
 		E311712F1FE59DA3008D9D51 /* SongProjector */ = {
 			isa = PBXGroup;
 			children = (
+				E32B882A29CDA1BE00DFF9D8 /* PageView */,
 				E3EC4E20275EAFC500D39A59 /* Localizable.strings */,
 				E3896A3C21E3F56A008CB5A5 /* SongProjector.entitlements */,
 				E31F0B7020F5029500C22FD1 /* Pio-Sebastiaan-en-Marilou.jpg */,
@@ -817,7 +824,7 @@
 				E311717D1FE5A5F5008D9D51 /* StoryboardiPad.storyboard */,
 				E32B880C29C21E0200DFF9D8 /* SongServiceViewUI.swift */,
 				E32B881629C483DA00DFF9D8 /* SheetScrollViewUI.swift */,
-				E32B881429C478F800DFF9D8 /* BeamerViewUI2.swift */,
+				E32B881429C478F800DFF9D8 /* BeamerPreviewUI.swift */,
 				E32B881029C2212300DFF9D8 /* TitleContentViewUI.swift */,
 				E32B881C29C885D500DFF9D8 /* SongServiceSectionViewUI.swift */,
 				E32B882429C91EA700DFF9D8 /* PianoSoloViewUI.swift */,
@@ -1010,6 +1017,16 @@
 				E3BDB3E12554B37900D564BE /* FeatureCell.xib */,
 			);
 			path = Cells;
+			sourceTree = "<group>";
+		};
+		E32B882A29CDA1BE00DFF9D8 /* PageView */ = {
+			isa = PBXGroup;
+			children = (
+				E32B882B29CDA1EF00DFF9D8 /* SheetDisplayerPageView.swift */,
+				E32B882F29CDA2C500DFF9D8 /* OffsetPageView.swift */,
+				E32B882D29CDA24400DFF9D8 /* PageViewContentView.swift */,
+			);
+			path = PageView;
 			sourceTree = "<group>";
 		};
 		E35E7CE223B76B280071DCC8 /* Virtual */ = {
@@ -1491,6 +1508,7 @@
 				E3CF0BDE248CD8D50032007E /* ClusterFetcher.swift in Sources */,
 				E31171511FE5A071008D9D51 /* UITableViewExtensions.swift in Sources */,
 				E3BDB3E22554B37900D564BE /* FeatureCell.swift in Sources */,
+				E32B883029CDA2C500DFF9D8 /* OffsetPageView.swift in Sources */,
 				E30B8EC722497C2600F121D9 /* TagsController.swift in Sources */,
 				E336819E25672E550006F043 /* UniversalClusterOperations.swift in Sources */,
 				E3F4A15824BCC4E3004E6B08 /* VSongServicePlayDate.swift in Sources */,
@@ -1588,6 +1606,7 @@
 				E33681732565D6C20006F043 /* ErrorAnimationView.swift in Sources */,
 				E311A44A2072733A007BB6CB /* LoadingBibleController.swift in Sources */,
 				E399EA8B203074DD00E8CE0E /* BibleStudyGeneratorController.swift in Sources */,
+				E32B882E29CDA24400DFF9D8 /* PageViewContentView.swift in Sources */,
 				E3847EFE248ED3EC002D4BED /* UniversalClusterSubmitter.swift in Sources */,
 				E334B10121ED02870088CD48 /* SheetTitleContentEntity.swift in Sources */,
 				E30B30EA24CF82A900C8E9A4 /* PopUpManager.swift in Sources */,
@@ -1621,7 +1640,8 @@
 				E35E7D0223BA50620071DCC8 /* VSongServiceSettings.swift in Sources */,
 				E35E7CE123B76AE70071DCC8 /* VEntity.swift in Sources */,
 				E3F9964A201285CD00634C5E /* AddButtonCollectionCell.swift in Sources */,
-				E32B881529C478F800DFF9D8 /* BeamerViewUI2.swift in Sources */,
+				E32B882C29CDA1EF00DFF9D8 /* SheetDisplayerPageView.swift in Sources */,
+				E32B881529C478F800DFF9D8 /* BeamerPreviewUI.swift in Sources */,
 				E334B10521ED02F60088CD48 /* SheetPastorsEntity.swift in Sources */,
 				E36E76D821EF51DA002E20EF /* ChurchBeamViewController.swift in Sources */,
 				E3812DEA201C992300F10B2C /* GoogleCell.swift in Sources */,

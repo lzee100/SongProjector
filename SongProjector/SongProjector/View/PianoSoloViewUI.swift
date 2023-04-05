@@ -10,6 +10,7 @@ import SwiftUI
 
 struct PianoSoloViewUI: View {
     
+    @Binding var selectedSong: SongObject?
     @State var isAnimating = false
     @State var isPlaying = false
     @SwiftUI.Environment(\.horizontalSizeClass) var horizontalSizeClass
@@ -29,6 +30,11 @@ struct PianoSoloViewUI: View {
         .onTapGesture {
             isPlaying.toggle()
             isAnimating.toggle()
+            if isPlaying, selectedSong != nil {
+                withAnimation {
+                    selectedSong = nil
+                }
+            }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
                 isAnimating.toggle()
             })
@@ -101,8 +107,11 @@ struct PianoSoloViewUI: View {
 }
 
 struct PianoSoloViewUI_Previews: PreviewProvider {
+    
+    @State static var selectedSong: SongObject? = nil
+    
     static var previews: some View {
-        PianoSoloViewUI(isPlaying: false)
+        PianoSoloViewUI(selectedSong: $selectedSong, isPlaying: false)
             .previewLayout(.sizeThatFits)
             .previewInterfaceOrientation(.portrait)
     }

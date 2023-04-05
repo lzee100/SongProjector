@@ -10,6 +10,7 @@ import Foundation
 import CoreData
 import UIKit
 import FirebaseAuth
+import SwiftUI
 
 public class VEntity: NSObject, Identifiable, Codable {
 	

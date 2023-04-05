@@ -19,7 +19,7 @@ protocol SongServiceDelegate {
     func shutDownBeamer()
 }
 
-class SongService {
+class SongService: ObservableObject {
 	
     private static let countDownMax = 3
 	private var playerTimer = Timer()
@@ -29,7 +29,10 @@ class SongService {
     private let sheetTimeOffset: Double
 	var songs: [SongObject] = [] { didSet { songs.sort{ $0.cluster.position < $1.cluster.position } }}
 	var selectedSection: Int?
-	var selectedSong: SongObject? {
+    var selectedSongIndex: Int? {
+        return songs.firstIndex(where: { $0.cluster.id == selectedSong?.cluster.id })
+    }
+	@Published var selectedSong: SongObject? {
 		didSet {
             self.stopPlay()
 			if selectedSong != nil {
@@ -44,7 +47,7 @@ class SongService {
 		}
 	}
 	
-	var selectedSheet: VSheet? {
+    @Published var selectedSheet: VSheet? {
 		didSet {
 			if let sheet = selectedSheet {
                 let newSong = songs.first(where: { $0.sheets.contains(where: { $0.id == sheet.id }) })

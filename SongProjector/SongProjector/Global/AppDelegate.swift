@@ -116,7 +116,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if UserDefaults.standard.integer(forKey: "config.environment") != 0 {
             ChurchBeamConfiguration.environment.loadGoogleFile()
         } else {
-            ChurchBeamConfiguration.environment = .production
+            ChurchBeamConfiguration.environment = .dev
             ChurchBeamConfiguration.environment.loadGoogleFile()
 
 //            switch AppConfiguration.mode {

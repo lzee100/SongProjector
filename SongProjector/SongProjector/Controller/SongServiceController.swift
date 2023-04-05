@@ -117,8 +117,6 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 	
 	private var isAnimatingUpDown = false
 	private var displayMode: displayModeTypes = .normal
-	private var sheetDisplayerInitialFrame: CGRect = CGRect(x: 0, y: 0, width: 0, height: 0)
-	private var sheetDisplayerSwipeViewInitialHeight: CGFloat = 0
 	private var isPlaying = false
 	private var leftSwipe = UISwipeGestureRecognizer()
 	private var isMixerVisible = false
@@ -244,7 +242,6 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
     
 	
 	// MARK: SongsControllerDelegate Functions
-    
 	func finishedSelection(_ model: TempClustersModel) {
         var snapshot = SongServiceCollectionViewDataSource.snapshot()
         snapshot.deleteSections(dataSource.snapshot().sectionIdentifiers)
@@ -255,9 +252,28 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 	}
 	
     @objc func startSwiftUI() {
-        let controller = UIHostingController(rootView: SongServiceViewUI(songService: makeSongService()))
+
+        var predicates: [NSPredicate] = []
+        predicates += [.skipDeleted, .skipRootDeleted]
+        
+//        predicates.append(NSPredicate(format: "not instrumentIds = nil"))
+        
+        let pClustersFiltered: [Cluster] = DataFetcher().getEntities(moc: moc, predicates: predicates, sort: NSSortDescriptor(key: "title", ascending: true))
+
+        let songObjects = pClustersFiltered.map { VCluster(cluster: $0, context: moc) }.map { SongObject(cluster: $0, headerTitle: nil) }
+        let songServiceUI = SongService(delegate: nil)
+        songServiceUI.songs = Array(songObjects.prefix(6))
+        let controller = UIHostingController(rootView: SongServiceViewUI(songService: songServiceUI))
         controller.modalPresentationStyle = .fullScreen
         present(controller, animated: true)
+        let beamerController = UIHostingController(rootView: BeamerPreviewUI(selectedSong: $songServiceUI.selectedSong, selectedSheet: self.$songServiceUI.selectedSheet))
+        if let externalDisplay = externalDisplayWindow {
+            for subview in externalDisplay.subviews {
+                subview.removeFromSuperview()
+            }
+            externalDisplay.addSubview(beamerController.view)
+        }
+
     }
 	
 	// MARK: - Private Functions

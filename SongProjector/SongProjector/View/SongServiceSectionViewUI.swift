@@ -12,12 +12,13 @@ import UIKit
 struct SongServiceSectionViewUI: View {
     
     var superViewSize: CGSize
+    @Binding var selectedSong: SongObject?
     var song: SongObject
     @SwiftUI.Environment(\.horizontalSizeClass) var horizontalSizeClass
 
     var body: some View {
         Group {
-            if superViewSize.width < superViewSize.height || horizontalSizeClass == .compact {
+            if isCompactOrVertical(viewSize: superViewSize) {
                 contentPortrait
             } else {
                 contentLandscape
@@ -36,7 +37,7 @@ struct SongServiceSectionViewUI: View {
             }
             Spacer()
             if song.cluster.hasPianoSolo {
-                PianoSoloViewUI()
+                PianoSoloViewUI(selectedSong: $selectedSong)
                     .padding()
                     .frame(maxWidth: 200, minHeight: 0, maxHeight: 100)
             } else {
@@ -52,7 +53,7 @@ struct SongServiceSectionViewUI: View {
                 titleView
                 Spacer()
                 if song.cluster.hasPianoSolo {
-                    PianoSoloViewUI()
+                    PianoSoloViewUI(selectedSong: $selectedSong)
                         .frame(height: isCompactOrVertical(viewSize: ruler.size) ? ruler.size.height * 0.9 : ruler.size.height * 0.25)
                 } else {
                     instrumentsView
@@ -80,8 +81,9 @@ struct SongServiceSectionViewUI: View {
 }
 
 struct SongServiceSectionViewUI_Previews: PreviewProvider {
+    @State static var selectedSong: SongObject? = nil
     static var previews: some View {
-        SongServiceSectionViewUI(superViewSize: superViewSizePortrait, song: makeSongService().songs.first!)
+        SongServiceSectionViewUI(superViewSize: superViewSizePortrait, selectedSong: $selectedSong, song: makeSongService().songs.first!)
             .previewLayout(.sizeThatFits)
             .previewInterfaceOrientation(.portrait)
     }

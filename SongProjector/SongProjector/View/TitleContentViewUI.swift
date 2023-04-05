@@ -11,33 +11,38 @@ import SwiftUI
 struct TitleContentViewUI: View {
     
     let position: Int
+    var isForExternalDisplay = false
     let scaleFactor: CGFloat
-    let sheet: VSheetTitleContent
+    @Binding var selectedSheet: VSheet?
+    let sheet: VSheet
     let sheetTheme: VTheme
+    let showSelectionCover: Bool
     
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 0) {
             Text(getTitleAttributedString())
                 .padding(EdgeInsets(
                     top: getScaledValue(10),
                     leading: getScaledValue(10),
-                    bottom: getScaledValue(10),
+                    bottom: getScaledValue(5),
                     trailing: getScaledValue(10))
                 )
-                .frame(maxWidth: .infinity, minHeight: getScaledValue(70), alignment: .leading)
-                .setTitleBackgroundColor(sheetTheme: sheetTheme, position: position)
+                .frame(maxWidth: .infinity, alignment: .leading)
+//                .setTitleBackgroundColor(sheetTheme: sheetTheme, position: position)
+                .background(.pink.opacity(0.1))
            
             Text(getContentAttributedString())
                 .padding(EdgeInsets(
-                    top: getScaledValue(10),
+                    top: getScaledValue(5),
                     leading: getScaledValue(10),
                     bottom: getScaledValue(10),
                     trailing: getScaledValue(10)
                 ))
                 .frame(maxWidth: .infinity, alignment: .topLeading)
+                .background(.green.opacity(0.1))
             Spacer()
         }
-        .setBackgroundImage(sheetTheme: sheetTheme, scaleFactor: scaleFactor) { view, image in
+        .setBackgroundImage(sheetTheme: sheetTheme, isForExternalDisplay: isForExternalDisplay) { view, image in
             view.background(
                 image
                     .resizable()
@@ -52,6 +57,13 @@ struct TitleContentViewUI: View {
         .aspectRatio(16 / 9, contentMode: .fill)
         .border(.pink)
         .cornerRadius(10)
+        .overlay {
+            if selectedSheet?.id != sheet.id, showSelectionCover {
+                Rectangle()
+                    .fill(.black.opacity(0.2))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+        }
     }
     
     private func getTitleAttributedString() -> AttributedString {
@@ -60,7 +72,7 @@ struct TitleContentViewUI: View {
     }
     
     private func getContentAttributedString() -> AttributedString {
-        let nsAttrString = NSAttributedString(string: sheet.content ?? "", attributes: sheetTheme.getLyricsAttributes(scaleFactor))
+        let nsAttrString = NSAttributedString(string: (sheet as? VSheetTitleContent)?.content ?? "", attributes: sheetTheme.getLyricsAttributes(scaleFactor))
         return AttributedString(nsAttrString)
     }
     
@@ -71,8 +83,20 @@ struct TitleContentViewUI: View {
 }
 
 struct TitleContentViewUI_Previews: PreviewProvider {
+    
+    @State static var songService = makeSongService(true)
+
     static var previews: some View {
-        TitleContentViewUI(position: 0, scaleFactor: 1, sheet: makeCluster().hasSheets.first as! VSheetTitleContent, sheetTheme: VTheme()).previewInterfaceOrientation(.landscapeLeft).previewLayout(.sizeThatFits)
+        TitleContentViewUI(
+            position: 0,
+            scaleFactor: 1,
+            selectedSheet: $songService.selectedSheet,
+            sheet: songService.selectedSheet!,
+            sheetTheme: VTheme(),
+            showSelectionCover: true
+        )
+        .previewInterfaceOrientation(.landscapeLeft)
+        .previewLayout(.sizeThatFits)
     }
 }
 
@@ -111,8 +135,8 @@ fileprivate extension View {
 }
 
 fileprivate extension View {
-    @ViewBuilder func setBackgroundImage<Content: View>(sheetTheme: VTheme, scaleFactor: CGFloat, transform: (Self, Image) -> Content) -> some View {
-        if let image = scaleFactor > 1.0 ? sheetTheme.backgroundImageAsImage : sheetTheme.thumbnailAsImage {
+    @ViewBuilder func setBackgroundImage<Content: View>(sheetTheme: VTheme, isForExternalDisplay: Bool, transform: (Self, Image) -> Content) -> some View {
+        if let image = isForExternalDisplay ? sheetTheme.backgroundImageAsImage : sheetTheme.thumbnailAsImage {
             transform(self, image)
         } else {
             self
