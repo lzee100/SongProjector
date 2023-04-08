@@ -32,6 +32,24 @@ class SongService: ObservableObject {
     var selectedSongIndex: Int? {
         return songs.firstIndex(where: { $0.cluster.id == selectedSong?.cluster.id })
     }
+    var songsClusteredPerSection: [[SongObject]] {
+        var sectionedSongObjects: [[SongObject]] = []
+        var remainingSongs = songs
+        repeat {
+            var songsForSection = [SongObject]()
+            if let firstRemainingSong = remainingSongs.first {
+                songsForSection.append(firstRemainingSong)
+                remainingSongs.remove(at: 0)
+                let firstIndex = remainingSongs.firstIndex(where: { $0.headerTitle != nil })
+                if let firstIndex = firstIndex {
+                    songsForSection.append(contentsOf: remainingSongs[0...firstIndex])
+                    sectionedSongObjects.append(songsForSection)
+                }
+            }
+        } while remainingSongs.count != 0
+        return sectionedSongObjects
+    }
+    
 	@Published var selectedSong: SongObject? {
 		didSet {
             self.stopPlay()
@@ -376,7 +394,17 @@ class SongService: ObservableObject {
 		isPlaying = false
 		isAnimating = false
 	}
-	
+    
+    func getSheetIndexWithSongIndexAddedIfNeeded(_ currentIndex: Int) -> Int {
+        print("sheet \(currentIndex + (selectedSongIndex ?? 0))")
+        return currentIndex + (selectedSongIndex ?? 0)
+    }
+    
+    func getSongIndexWithSheetIndexAddedIfNeeded(_ currentIndex: Int) -> Int {
+        let addedIndex = currentIndex > (selectedSongIndex ?? 0) ? (selectedSong?.cluster.hasSheets.count ?? 0) - 1 : 0
+        print("song \(currentIndex + addedIndex)")
+        return currentIndex + addedIndex
+    }
 }
 
 

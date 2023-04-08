@@ -27,11 +27,11 @@ struct SheetScrollViewUI: View {
                     ScrollView(isCompactOrVertical(viewSize: ruler.size) ? .vertical : .horizontal) {
                         if isCompactOrVertical(viewSize: ruler.size) {
                             VStack(spacing: 10) {
-                                scrollViewItems(viewSize: ruler.size)
+                                scrollViewItemsPortrait(viewSize: ruler.size)
                             }
                         } else {
                             HStack(spacing: 10) {
-                                scrollViewItems(viewSize: ruler.size)
+                                scrollViewItemsLandscape(viewSize: ruler.size)
                             }
                         }
                     }
@@ -59,30 +59,54 @@ struct SheetScrollViewUI: View {
         }
     }
     
-    @ViewBuilder func scrollViewItems(viewSize: CGSize) -> some View {
+    @ViewBuilder func scrollViewItemsLandscape(viewSize: CGSize) -> some View {
         ForEach(Array(songService.songs.enumerated()), id: \.offset) { index, songObject in
-            Section {
-                if let selectedCluster = selectedSong?.cluster,  songObject.cluster.id == selectedCluster.id {
-                    if isCompactOrVertical(viewSize: viewSize) {
-                        listViewItems(viewSize: viewSize)
-                    } else {
+            Group {
+                Section {
+                    if let selectedCluster = selectedSong?.cluster,  songObject.cluster.id == selectedCluster.id {
                         ForEach(Array(selectedCluster.hasSheets.enumerated()), id: \.offset) { sheetIndex, sheet in
                             TitleContentViewUI(position: sheetIndex, scaleFactor: getScaleFactor(width: getSizeWith(height: viewSize.height).width), selectedSheet: $selectedSheet, sheet: sheet as! VSheetTitleContent, sheetTheme: (sheet as! VSheetTitleContent).hasTheme ?? selectedSong?.cluster.hasTheme(moc: moc) ?? VTheme(), showSelectionCover: true)
                                 .id(index + sheetIndex)
                         }
                     }
+                } header: {
+                    SongServiceSectionViewUI(superViewSize: viewSize, selectedSong: $isSongSelected, song: songObject)
+                        .sticky(frames, alignment: .horizontal)
+                        .onTapGesture {
+                            isSongSelected = selectedSong?.cluster.id == songObject.cluster.id ? nil : songObject
+                        }
+                        .id(index)
                 }
-            } header: {
-                SongServiceSectionViewUI(superViewSize: viewSize, selectedSong: $isSongSelected, song: songObject)
-                    .sticky(frames, alignment: .horizontal)
-                    .onTapGesture {
-                        isSongSelected = selectedSong?.cluster.id == songObject.cluster.id ? nil : songObject
-                    }
-                    .id(index)
             }
         }
     }
     
+    @ViewBuilder func scrollViewItemsPortrait(viewSize: CGSize) -> some View {
+        ForEach(Array(songService.songsClusteredPerSection.enumerated()), id: \.index) { index, songObjectsPerSection in
+            VStack(spacing: 10) {
+//                ForEach(Array(songObjectsPerSection.enumerated()), id: \.index) { index, songObject in
+//                    VStack(spacing: 10) {
+//                        sectionedItemsFor(viewSize: viewSize, index: index, songObject: songObject)
+//                    }
+//                }
+            }
+            .portraitSectionBackgroundFor(viewSize: viewSize)
+        }
+    }
+    
+    @ViewBuilder func sectionedItemsFor(viewSize: CGSize, index: Int, songObject: SongObject) -> some View {
+        SongServiceSectionViewUI(superViewSize: viewSize, selectedSong: $isSongSelected, song: songObject)
+            .sticky(frames, alignment: .horizontal)
+            .onTapGesture {
+                isSongSelected = selectedSong?.cluster.id == songObject.cluster.id ? nil : songObject
+            }
+            .id(index)
+        
+        if let selectedCluster = selectedSong?.cluster,  songObject.cluster.id == selectedCluster.id {
+            listViewItems(viewSize: viewSize)
+        }
+    }
+        
     @ViewBuilder func listViewItems(viewSize: CGSize) -> some View {
         if let selectedCluster = selectedSong?.cluster {
             VStack(spacing: 0) {
@@ -121,6 +145,7 @@ struct SheetScrollViewUI: View {
         guard let songIndex = songService.selectedSongIndex, let selectedSheetIndex = selectedSong?.cluster.hasSheets.firstIndex(where: { $0.id == selectedSheet?.id }) else { return nil }
         return songIndex + selectedSheetIndex
     }
+    
 
 }
 
@@ -132,5 +157,32 @@ struct SheetScrollViewUI_Previews: PreviewProvider {
             .previewLayout(.sizeThatFits)
             .previewInterfaceOrientation(.portrait)
             .environmentObject(songService)
+    }
+}
+
+struct PortraitSectionBackground: ViewModifier {
+    
+    var viewSize: CGSize
+    @SwiftUI.Environment(\.horizontalSizeClass) var horizontalSizeClass
+    
+    func body(content: Content) -> some View {
+        if isCompactOrVertical(viewSize: viewSize) {
+            content
+                .padding(EdgeInsets(top: 10, leading: 10, bottom: 25, trailing: 10))
+                .background(.white.opacity(0.2))
+                .cornerRadius(10)
+        } else {
+            content
+        }
+    }
+    
+    private func isCompactOrVertical(viewSize: CGSize) -> Bool {
+        viewSize.width < viewSize.height || horizontalSizeClass == .compact
+    }
+
+}
+extension View {
+    func portraitSectionBackgroundFor(viewSize: CGSize) -> some View {
+        modifier(PortraitSectionBackground(viewSize: viewSize))
     }
 }

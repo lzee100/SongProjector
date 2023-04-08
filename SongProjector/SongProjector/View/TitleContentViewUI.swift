@@ -28,8 +28,7 @@ struct TitleContentViewUI: View {
                     trailing: getScaledValue(10))
                 )
                 .frame(maxWidth: .infinity, alignment: .leading)
-//                .setTitleBackgroundColor(sheetTheme: sheetTheme, position: position)
-                .background(.pink.opacity(0.1))
+                .setTitleBackgroundColor(sheetTheme: sheetTheme, position: position)
            
             Text(getContentAttributedString())
                 .padding(EdgeInsets(
@@ -55,12 +54,11 @@ struct TitleContentViewUI: View {
         .setBackgroundTransparancy(sheetTheme: sheetTheme)
         .ignoresSafeArea()
         .aspectRatio(16 / 9, contentMode: .fill)
-        .border(.pink)
         .cornerRadius(10)
         .overlay {
             if selectedSheet?.id != sheet.id, showSelectionCover {
                 Rectangle()
-                    .fill(.black.opacity(0.2))
+                    .fill(.black.opacity(0.3))
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }

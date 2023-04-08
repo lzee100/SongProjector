@@ -17,32 +17,33 @@ struct SongServiceSectionViewUI: View {
     @SwiftUI.Environment(\.horizontalSizeClass) var horizontalSizeClass
 
     var body: some View {
-        Group {
-            if isCompactOrVertical(viewSize: superViewSize) {
-                contentPortrait
-            } else {
-                contentLandscape
-            }
+        if isCompactOrVertical(viewSize: superViewSize) {
+            contentPortrait
+        } else {
+            contentLandscape
         }
-        .background(Color(uiColor: .softBlueGrey))
-        .aspectRatio(1.0, contentMode: .fit)
-        .cornerRadius(10)
     }
     
     @ViewBuilder var contentPortrait: some View {
-        HStack(spacing: 0) {
+        VStack(spacing: 0) {
+            sectionLabel
             HStack(spacing: 0) {
-                titleView
+                HStack(spacing: 0) {
+                    titleView
+                    Spacer()
+                }
                 Spacer()
+                if song.cluster.hasPianoSolo {
+                    PianoSoloViewUI(selectedSong: $selectedSong)
+                        .padding()
+                        .frame(maxWidth: 200, minHeight: 0, maxHeight: 100)
+                } else {
+                    instrumentsView
+                }
             }
-            Spacer()
-            if song.cluster.hasPianoSolo {
-                PianoSoloViewUI(selectedSong: $selectedSong)
-                    .padding()
-                    .frame(maxWidth: 200, minHeight: 0, maxHeight: 100)
-            } else {
-                instrumentsView
-            }
+            .background(Color(uiColor: .softBlueGrey))
+            .aspectRatio(1.0, contentMode: .fit)
+            .cornerRadius(10)
         }
     }
     
@@ -60,11 +61,30 @@ struct SongServiceSectionViewUI: View {
                 }
             }
         }
+        .background(Color(uiColor: .softBlueGrey))
+        .aspectRatio(1.0, contentMode: .fit)
+        .cornerRadius(10)
+    }
+    
+    @ViewBuilder var sectionLabel: some View {
+        if let sectionTitle = song.headerTitle {
+            HStack(spacing: 0) {
+                Text(sectionTitle)
+                    .font(.title2)
+                    .foregroundColor(.white)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
+                    .padding()
+                Spacer()
+            }
+        } else {
+            EmptyView()
+        }
     }
     
     @ViewBuilder var titleView: some View {
         Text(song.cluster.title ?? "")
-            .font(.largeTitle)
+            .font(.title)
             .foregroundColor(.white)
             .lineLimit(2)
             .padding()

@@ -18,6 +18,7 @@
 		B38C18E827B331A0006DA1A7 /* NSAttributedStringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38C18E727B331A0006DA1A7 /* NSAttributedStringExtensions.swift */; };
 		E305BB9123CF6D8500A753A2 /* SoundPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E305BB8F23CF6D8500A753A2 /* SoundPickerCell.swift */; };
 		E305BB9223CF6D8500A753A2 /* SoundPickerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E305BB9023CF6D8500A753A2 /* SoundPickerCell.xib */; };
+		E306BF9C29DDC929005DF761 /* BeamerViewUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = E306BF9B29DDC929005DF761 /* BeamerViewUI.swift */; };
 		E306D8F52323BF3900299200 /* AnimatingBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E306D8F42323BF3900299200 /* AnimatingBackgroundView.swift */; };
 		E30833F723D2A31100E5DCE6 /* FileManagerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E30833F623D2A31100E5DCE6 /* FileManagerExtensions.swift */; };
 		E309DCE61FF26CB700C3D135 /* NewSongServiceIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E309DCE51FF26CB700C3D135 /* NewSongServiceIphoneController.swift */; };
@@ -367,6 +368,7 @@
 		B38C18E727B331A0006DA1A7 /* NSAttributedStringExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSAttributedStringExtensions.swift; sourceTree = "<group>"; };
 		E305BB8F23CF6D8500A753A2 /* SoundPickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundPickerCell.swift; sourceTree = "<group>"; };
 		E305BB9023CF6D8500A753A2 /* SoundPickerCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SoundPickerCell.xib; sourceTree = "<group>"; };
+		E306BF9B29DDC929005DF761 /* BeamerViewUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeamerViewUI.swift; sourceTree = "<group>"; };
 		E306D8F42323BF3900299200 /* AnimatingBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatingBackgroundView.swift; sourceTree = "<group>"; };
 		E30833F623D2A31100E5DCE6 /* FileManagerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManagerExtensions.swift; sourceTree = "<group>"; };
 		E309DCE51FF26CB700C3D135 /* NewSongServiceIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewSongServiceIphoneController.swift; sourceTree = "<group>"; };
@@ -833,6 +835,7 @@
 				E32B882829CB3F3B00DFF9D8 /* SwiftUITestView.swift */,
 				E32B881E29C89CB600DFF9D8 /* StickyViewModifier.swift */,
 				E32B881829C87E2400DFF9D8 /* DeviceOrientationModifier.swift */,
+				E306BF9B29DDC929005DF761 /* BeamerViewUI.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -1683,6 +1686,7 @@
 				E35099EF20DCD152005CA984 /* LyricsViewController.swift in Sources */,
 				E3F201D6201E04FC002FF06E /* FetcherTimeInterval.swift in Sources */,
 				B38A1D122926EA1400565BDA /* SongServiceCollectionViewDataSource.swift in Sources */,
+				E306BF9C29DDC929005DF761 /* BeamerViewUI.swift in Sources */,
 				E31171641FE5A0E7008D9D51 /* MenuController.swift in Sources */,
 				E37137BE205EBB8300DF86F1 /* LabelSliderCell.swift in Sources */,
 				E393B7672008D25F0073D0A9 /* SheetEmpty.swift in Sources */,

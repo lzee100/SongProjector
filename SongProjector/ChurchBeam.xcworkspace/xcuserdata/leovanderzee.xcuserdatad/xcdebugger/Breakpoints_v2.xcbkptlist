@@ -130,112 +130,49 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "EDF052B8-0239-4D58-90AD-F014542D088D"
+            uuid = "0677BE5C-C323-42AF-9878-132CAC60CB69"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SongProjector/PageView/SheetDisplayerPageView.swift"
+            filePath = "SongProjector/Global/AppDelegate.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "83"
-            endingLineNumber = "83"
-            landmarkName = "selectSheetFor(_:screenWidth:)"
-            landmarkType = "7">
+            startingLineNumber = "55"
+            endingLineNumber = "55"
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "5BDC832B-1ADC-4EF9-A70D-89F4162C6A45"
+            uuid = "2571B055-3A6B-401C-8ED4-8B24EEBB7479"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SongProjector/PageView/SheetDisplayerPageView.swift"
+            filePath = "SongProjector/Global/AppDelegate.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "81"
-            endingLineNumber = "81"
-            landmarkName = "selectSheetFor(_:screenWidth:)"
-            landmarkType = "7">
+            startingLineNumber = "57"
+            endingLineNumber = "57"
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "643CB71A-DF3B-43E4-8A68-3E282EB48AC0"
+            uuid = "5A184A95-9787-46F7-8AEB-7271684FA6BF"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SongProjector/PageView/SheetDisplayerPageView.swift"
+            filePath = "SongProjector/Controller/SongServiceController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "86"
-            endingLineNumber = "86"
-            landmarkName = "selectSheetFor(_:screenWidth:)"
+            startingLineNumber = "279"
+            endingLineNumber = "279"
+            landmarkName = "startSwiftUI()"
             landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "B9F4A9FD-2E25-461D-8204-D7F70058D411"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SongProjector/PageView/SheetDisplayerPageView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "72"
-            endingLineNumber = "72"
-            landmarkName = "selectSheetFor(_:screenWidth:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "B9F4A9FD-2E25-461D-8204-D7F70058D411 - 9cb6aa39eddd1034"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ChurchBeam.SheetDisplayerPageView.selectSheetFor(_: Swift.Int, screenWidth: Swift.Int) -&gt; some"
-                  moduleName = "SongProjector"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/PageView/SheetDisplayerPageView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "72"
-                  endingLineNumber = "72"
-                  offsetFromSymbolStart = "1104">
-               </Location>
-               <Location
-                  uuid = "B9F4A9FD-2E25-461D-8204-D7F70058D411 - 9cb6aa39eddd1034"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ChurchBeam.SheetDisplayerPageView.selectSheetFor(_: Swift.Int, screenWidth: Swift.Int) -&gt; some"
-                  moduleName = "SongProjector"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/PageView/SheetDisplayerPageView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "72"
-                  endingLineNumber = "72"
-                  offsetFromSymbolStart = "1244">
-               </Location>
-               <Location
-                  uuid = "B9F4A9FD-2E25-461D-8204-D7F70058D411 - 9cb6aa39eddd1034"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ChurchBeam.SheetDisplayerPageView.selectSheetFor(_: Swift.Int, screenWidth: Swift.Int) -&gt; some"
-                  moduleName = "SongProjector"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/PageView/SheetDisplayerPageView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "72"
-                  endingLineNumber = "72"
-                  offsetFromSymbolStart = "1776">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
