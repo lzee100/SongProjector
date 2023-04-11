@@ -9,15 +9,15 @@
 import Foundation
 import CoreData
 
-public class VTag: VEntityType, Codable {
+public struct VTag: VEntityType, Codable {
     
     let id: String
-    let userUID: String
-    let title: String?
-    let createdAt: NSDate
-    let updatedAt: NSDate?
-    let deleteDate: NSDate?
-    let rootDeleteDate: Date?
+    var userUID: String
+    var title: String?
+    var createdAt: NSDate
+    var updatedAt: NSDate?
+    var deleteDate: NSDate?
+    var rootDeleteDate: Date?
 	    
 	var position: Int16 = 0
     var isDeletable = true
@@ -34,18 +34,31 @@ public class VTag: VEntityType, Codable {
         case rootDeleteDate
         
 		case position
-        case id
         case isDeletable
 	}
 		
-	
+    public init(tag: Tag) {
+        id = tag.id
+        userUID = tag.userUID
+        title = tag.title
+        createdAt = tag.createdAt
+        updatedAt = tag.updatedAt
+        deleteDate = tag.deleteDate
+        rootDeleteDate = tag.rootDeleteDate?.date
+        
+        position = tag.position
+        isDeletable = tag.isDeletable
+        hasSongServiceSections = (tag.hasSongServiceSections?.allObjects as? [SongServiceSection])?.map { VSongServiceSection(songServiceSection: $0, moc: moc) } ?? []
+    }
 	
 	// MARK: - Encodable
 	
-	override public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeysTag.self)
         
+        try container.encode(id, forKey: .id)
         try container.encode(userUID, forKey: .userUID)
+        try container.encodeIfPresent(title, forKey: .title)
         try container.encode((createdAt as Date).intValue, forKey: .createdAt)
         if let updatedAt = updatedAt {
             //            let updatedAtString = GlobalDateFormatter.localToUTCNumber(date: updatedAt as Date)
@@ -60,30 +73,17 @@ public class VTag: VEntityType, Codable {
         if let rootDeleteDate = rootDeleteDate {
             try container.encode(rootDeleteDate.intValue, forKey: .rootDeleteDate)
         }
-        
-        try container.encode(eventDescription, forKey: .eventDescription)
-        
-        if let startDate = startDate {
-            try container.encode((startDate as Date).intValue, forKey: .startDate)
-        }
-        if let endDate = endDate {
-            try container.encode((endDate as Date).intValue, forKey: .endDate)
-        }
-        
+                
 		try container.encode(position, forKey: .position)
-        try container.encode(id, forKey: .id)
         try container.encode(Int(truncating: NSNumber(value: isDeletable)), forKey: .isDeletable)
-		try super.encode(to: encoder)
 	}
 	
 	
 	
 	// MARK: - Decodable
 	
-	required public convenience init(from decoder: Decoder) throws {
-		
-		self.init()
-		
+    public init(from decoder: Decoder) throws {
+				
 		let container = try decoder.container(keyedBy: CodingKeysTag.self)
         
         id = try container.decode(String.self, forKey: .id)
@@ -112,8 +112,6 @@ public class VTag: VEntityType, Codable {
         
 		position = try container.decodeIfPresent(Int16.self, forKey: .position) ?? 0
         isDeletable = try Bool(truncating: (container.decodeIfPresent(Int.self, forKey: .isDeletable) ?? 0) as NSNumber)
-
-		try super.initialization(decoder: decoder)
 		
 	}
 	

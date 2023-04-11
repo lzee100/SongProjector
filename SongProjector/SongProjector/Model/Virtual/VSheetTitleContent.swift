@@ -15,12 +15,12 @@ struct VSheetTitleContent: VSheet, SheetMetaType, Codable {
 	static var type: SheetType = .SheetTitleContent
     
     let id: String
-    let userUID: String
-    let title: String?
-    let createdAt: NSDate
-    let updatedAt: NSDate?
-    let deleteDate: NSDate?
-    let rootDeleteDate: Date?
+    var userUID: String
+    var title: String?
+    var createdAt: NSDate
+    var updatedAt: NSDate?
+    var deleteDate: NSDate?
+    var rootDeleteDate: Date?
     
     var isNew: Bool {
         return updatedAt == nil
@@ -57,7 +57,43 @@ struct VSheetTitleContent: VSheet, SheetMetaType, Codable {
         case isBibleVers
 	}
 	
-	
+    init?() {
+        id = "CHURCHBEAM" + UUID().uuidString
+        title = nil
+        guard let userUID = Auth.auth().currentUser?.uid else {
+            return nil
+        }
+        self.userUID = userUID
+        createdAt = Date().localDate().nsDate
+        updatedAt = nil
+        deleteDate = nil
+        rootDeleteDate = nil
+
+        isEmptySheet = false
+        position = 0
+        time = 0
+        hasTheme = nil
+        
+        content = nil
+        isBibleVers = false
+    }
+    
+    init(_ entity: SheetTitleContentEntity) {
+        id = entity.id
+        userUID = entity.userUID
+        title = entity.title
+        createdAt = entity.createdAt
+        updatedAt = entity.updatedAt
+        deleteDate = entity.deleteDate
+        rootDeleteDate = entity.rootDeleteDate?.date
+        isEmptySheet = entity.isEmptySheet
+        position = entity.position.intValue
+        time = entity.time
+        hasTheme = VTheme(theme: entity.hasTheme)
+        content = entity.content
+        isBibleVers = entity.isBibleVers
+    }
+    
 	
 	// MARK: - Init
 		

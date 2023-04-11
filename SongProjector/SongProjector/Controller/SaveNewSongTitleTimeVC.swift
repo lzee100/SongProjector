@@ -55,8 +55,8 @@ class SaveNewSongTitleTimeVC: ChurchBeamViewController {
 	private var tags: [VTag] = []
 	private var selectedTags: [VTag] = []
 	
-	weak var cluster: VCluster?
-	weak var selectedTheme: VTheme?
+    var cluster: VCluster?
+    var selectedTheme: VTheme?
 	
 	override var requesters: [RequesterBase] {
 		return [TagFetcher]
@@ -97,7 +97,7 @@ class SaveNewSongTitleTimeVC: ChurchBeamViewController {
 
     override func update() {
         let pTags: [Tag] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "position", ascending: true))
-        self.tags = pTags.map({ VTag(tag: $0, context: moc) })
+        self.tags = pTags.map({ VTag(tag: $0) })
         self.tableView.reloadData()
     }
 	
@@ -140,7 +140,7 @@ class SaveNewSongTitleTimeVC: ChurchBeamViewController {
         clusterTitle = cluster?.title ?? ""
         clusterTime = cluster?.time ?? 0
         let pTags: [Tag] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "position", ascending: true))
-        let tags = pTags.map({ VTag(tag: $0, context: moc) })
+        let tags = pTags.map({ VTag(tag: $0) })
         selectedTags = tags.filter({ tag in cluster?.tagIds.contains(where: { tag.id == $0 }) ?? false })
         tableView.rowHeight = UITableView.automaticDimension
         tableView.tableFooterView = UIView()

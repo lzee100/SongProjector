@@ -15,12 +15,12 @@ struct VSheetActivities: VSheet, SheetMetaType, Codable {
 	static let type: SheetType = .SheetActivities
     
     let id: String
-    let userUID: String
-    let title: String?
-    let createdAt: NSDate
-    let updatedAt: NSDate?
-    let deleteDate: NSDate?
-    let rootDeleteDate: Date?
+    var userUID: String
+    var title: String?
+    var createdAt: NSDate
+    var updatedAt: NSDate?
+    var deleteDate: NSDate?
+    var rootDeleteDate: Date?
     
     var isNew: Bool {
         return updatedAt == nil
@@ -53,7 +53,33 @@ struct VSheetActivities: VSheet, SheetMetaType, Codable {
         case hasTheme = "theme"
         
     }
-	
+    
+    init?() {
+        id = "CHURCHBEAM" + UUID().uuidString
+        title = nil
+        guard let userUID = Auth.auth().currentUser?.uid else {
+            return nil
+        }
+        self.userUID = userUID
+        createdAt = Date().localDate().nsDate
+        updatedAt = nil
+        deleteDate = nil
+        rootDeleteDate = nil
+    }
+    
+    init(_ entity: SheetActivitiesEntity) {
+        self.id = entity.id
+        self.userUID = entity.userUID
+        self.title = entity.title
+        self.createdAt = entity.createdAt
+        self.updatedAt = entity.updatedAt
+        self.deleteDate = entity.deleteDate
+        self.rootDeleteDate = entity.rootDeleteDate?.date
+        self.isEmptySheet = entity.isEmptySheet
+        self.position = entity.position.intValue
+        self.time = entity.time
+        self.hasTheme = VTheme(theme: entity.hasTheme)
+    }
 
 	// MARK: - Encodable
 	
@@ -79,7 +105,7 @@ struct VSheetActivities: VSheet, SheetMetaType, Codable {
 //            let deleteDateString = GlobalDateFormatter.localToUTCNumber(date: deleteDate as Date)
             try container.encode((deleteDate as Date).intValue, forKey: .deleteDate)
         }
-        if let rootDeleteDate = rootDeleteDate {
+        if var rootDeleteDate = rootDeleteDate {
             try container.encode(rootDeleteDate.intValue, forKey: .rootDeleteDate)
         }
         

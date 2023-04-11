@@ -406,7 +406,7 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
         var predicates: [NSPredicate] = [.skipDeleted]
         predicates.append("isHidden", notEquals: true)
         let checkthemes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: predicates)
-        self.themes = checkthemes.map({ VTheme(theme: $0, context: moc) })
+        self.themes = checkthemes.map({ VTheme(theme: $0) })
 
         if let cluster = cluster {
             selectedTheme = cluster.hasTheme(moc: moc)

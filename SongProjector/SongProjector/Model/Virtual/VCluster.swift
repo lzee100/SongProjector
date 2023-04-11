@@ -36,12 +36,12 @@ struct VCluster: VEntityType, Codable {
 //        return nil
 //    }
     let id: String
-    let userUID: String
-    let title: String?
-    let createdAt: NSDate
-    let updatedAt: NSDate?
-    let deleteDate: NSDate?
-    let rootDeleteDate: Date?
+    var userUID: String
+    var title: String?
+    var createdAt: NSDate
+    var updatedAt: NSDate?
+    var deleteDate: NSDate?
+    var rootDeleteDate: Date?
     
     var root: String? = nil
     var isLoop: Bool = false
@@ -57,7 +57,7 @@ struct VCluster: VEntityType, Codable {
 
     var deletedSheetsImageURLs: [String] = []
     
-    private(set) var hasInstruments: [VInstrument] = []
+    var hasInstruments: [VInstrument] = []
     
     private(set) var hasSheets: [VSheet] = []
     
@@ -132,6 +132,33 @@ struct VCluster: VEntityType, Codable {
     mutating func setSheets(sheets: [VSheet]) {
         sheetIds = sheets.compactMap({ $0.id })
         self.hasSheets = sheets
+    }
+    
+    init(cluster: Cluster, context: NSManagedObjectContext) {
+        self.id = cluster.id
+        self.userUID = cluster.userUID
+        self.title = cluster.title
+        self.createdAt = cluster.createdAt
+        self.updatedAt = cluster.updatedAt
+        self.deleteDate = cluster.deleteDate
+        self.rootDeleteDate = cluster.rootDeleteDate?.date
+
+        self.root = cluster.root
+        self.isLoop = cluster.isLoop
+        self.position = cluster.position
+        self.time = cluster.time
+        self.themeId = cluster.themeId
+        self.lastShownAt = cluster.lastShownAt?.date
+        self.instrumentIds = cluster.instrumentIds ?? ""
+        self.sheetIds = cluster.sheetIds.split(separator: ",").map { String($0) }
+        self.church = cluster.church
+        self.startTime = cluster.startTime
+        self.hasSheetPastors = cluster.hasSheetPastors
+        
+        let sheets: [Sheet] = DataFetcher().getEntities(moc: moc, predicates: self.sheetIds.map { NSPredicate(format: "id == \($0)") }, predicatesCompoundType: .or)
+        self.hasSheets = sheets.vSheets.sorted(by: { $0.position < $1.position })
+        let instruments: [Instrument] = DataFetcher().getEntities(moc: moc, predicates: self.instrumentIds.split(separator: ",").map { NSPredicate(format: "id == \($0)") }, predicatesCompoundType: .or)
+        self.hasInstruments = instruments.map { VInstrument($0) }
     }
     
     init(id: String = "CHURCHBEAM" + UUID().uuidString, userUID: String, title: String?, createdAt: NSDate = Date().localDate() as NSDate, updatedAt: NSDate?, deleteDate: NSDate? = nil, rootDeleteDate: Date? = nil, root: String? = nil, isLoop: Bool = false, position: Int16 = 0, time: Double = 0, themeId: String = UUID().uuidString, lastShownAt: Date? = nil, instrumentIds: String = "", sheetIds: [String] = [], church: String?, startTime: Double = 0.0, hasSheetPastors: Bool = false, hasSheets: [VSheet] = [], hasInstruments: [VInstrument] = []) {
@@ -361,83 +388,105 @@ extension VCluster {
         return musicPaths.compactMap({ URL(string: $0) }).compactMap({ DownloadObject(remoteURL: $0) })
     }
     
-    func setUploadValues(_ uploadObjects: [UploadObject]) throws {
-        let sheetThemes = hasSheets.compactMap({ $0.hasTheme })
-        let pastorsSheets = hasSheets.compactMap({ $0 as? VSheetPastors })
-        let titleImageSheets = hasSheets.compactMap({ $0 as? VSheetTitleImage })
+    mutating func setUploadValues(_ uploadObjects: [UploadObject]) throws {
+        var updatedSheets: [VSheet] = hasSheets
+        var updatedInstruments: [VInstrument] = hasInstruments
         
         for upload in uploadObjects.compactMap({ $0 as UploadObject }) {
-            try sheetThemes.forEach { theme in
-                if theme.tempLocalImageName == upload.fileName {
-                    theme.imagePathAWS = upload.remoteURL?.absoluteString
-                    if let image = theme.tempSelectedImage {
-                        try theme.setBackgroundImage(image: image, imageName: theme.imagePath)
+            var newUpdatedSheets: [VSheet] = []
+            try updatedSheets.forEach { sheet in
+                var updatedSheet = sheet
+                var updatedTheme = sheet.hasTheme
+                if updatedTheme?.tempLocalImageName == upload.fileName {
+                    updatedTheme?.imagePathAWS = upload.remoteURL?.absoluteString
+                    if let image = updatedTheme?.tempSelectedImage {
+                        try updatedTheme?.setBackgroundImage(image: image, imageName: updatedTheme?.imagePath)
                     }
                 }
+                if var newpastorSheet = updatedSheet as? VSheetPastors {
+                    if newpastorSheet.tempLocalImageName == upload.fileName {
+                        newpastorSheet.imagePathAWS = upload.remoteURL?.absoluteString
+                    }
+                    if let image = newpastorSheet.tempSelectedImage {
+                        try newpastorSheet.set(image: image, imageName: newpastorSheet.imagePath)
+                    }
+                    updatedSheet = newpastorSheet
+                }
+                
+                if var updatedTitleImageSheet = updatedSheet as? VSheetTitleImage {
+                    if updatedTitleImageSheet.tempLocalImageName == upload.fileName {
+                        updatedTitleImageSheet.imagePathAWS = upload.remoteURL?.absoluteString
+                    }
+                    if let image = updatedTitleImageSheet.tempSelectedImage {
+                        try updatedTitleImageSheet.set(image: image, imageName: updatedTitleImageSheet.imagePath)
+                    }
+                    updatedSheet = updatedTitleImageSheet
+                }
+                newUpdatedSheets.append(updatedSheet)
             }
-            try pastorsSheets.forEach { pastorSheet in
-                if pastorSheet.tempLocalImageName == upload.fileName {
-                    pastorSheet.imagePathAWS = upload.remoteURL?.absoluteString
+            updatedSheets = newUpdatedSheets
+            
+            var newUpdatedInstruments: [VInstrument] = []
+            updatedInstruments.forEach { instrument in
+                var updatedInstrument = instrument
+                if updatedInstrument.resourcePath == upload.fileName {
+                    updatedInstrument.resourcePathAWS = upload.remoteURL?.absoluteString
                 }
-                if let image = pastorSheet.tempSelectedImage {
-                    try pastorSheet.set(image: image, imageName: pastorSheet.imagePath)
-                }
+                newUpdatedInstruments.append(updatedInstrument)
             }
-            try titleImageSheets.forEach { titleImageSheet in
-                if titleImageSheet.tempLocalImageName == upload.fileName {
-                    titleImageSheet.imagePathAWS = upload.remoteURL?.absoluteString
-                }
-                if let image = titleImageSheet.tempSelectedImage {
-                    try titleImageSheet.set(image: image, imageName: titleImageSheet.imagePath)
-                }
-            }
-            hasInstruments.forEach { instrument in
-                if instrument.resourcePath == upload.fileName {
-                    instrument.resourcePathAWS = upload.remoteURL?.absoluteString
-                }
-            }
+            updatedInstruments = newUpdatedInstruments
         }
+        hasSheets = updatedSheets
+        hasInstruments = updatedInstruments
     }
     
-    func setDownloadValues(_ downloadObjects: [DownloadObject]) {
-        let sheetThemes = hasSheets.compactMap({ $0.hasTheme })
-        let pastorsSheets = hasSheets.compactMap({ $0 as? VSheetPastors })
-        let titleImageSheets = hasSheets.compactMap({ $0 as? VSheetTitleImage })
+    mutating func setDownloadValues(_ downloadObjects: [DownloadObject]) throws {
+        var updatedSheets = hasSheets
+        var updatedInstruments: [VInstrument] = []
         
         for download in downloadObjects.compactMap({ $0 as DownloadObject }) {
-            sheetThemes.forEach { theme in
-                if theme.imagePathAWS == download.remoteURL.absoluteString {
+            var newUpdatedSheets: [VSheet] = []
+            try updatedSheets.forEach { sheet in
+                var updatedSheet = sheet
+                if updatedSheet.hasTheme?.imagePathAWS == download.remoteURL.absoluteString {
                     do {
-                        try theme.setBackgroundImage(image: download.image, imageName: download.filename)
-                    } catch {
-                        print(error)
+                        try updatedSheet.hasTheme?.setBackgroundImage(image: download.image, imageName: download.filename)
                     }
                 }
-            }
-            pastorsSheets.forEach { pastorSheet in
-                if pastorSheet.imagePathAWS == download.remoteURL.absoluteString {
-                    do {
-                        try pastorSheet.set(image: download.image, imageName: download.filename)
-                    } catch {
-                        print(error)
+                
+                if var updatedSheetPastors = updatedSheet as? VSheetPastors {
+                    if updatedSheetPastors.imagePathAWS == download.remoteURL.absoluteString {
+                        do {
+                            try updatedSheetPastors.set(image: download.image, imageName: download.filename)
+                        }
                     }
+                    updatedSheet = updatedSheetPastors
                 }
-            }
-            titleImageSheets.forEach { titleImageSheet in
-                if titleImageSheet.imagePathAWS == download.remoteURL.absoluteString {
-                    do {
-                        try titleImageSheet.set(image: download.image, imageName: download.filename)
-                    } catch {
-                        print(error)
+                
+                if var updatedSheetTitleImage = updatedSheet as? VSheetTitleImage {
+                    if updatedSheetTitleImage.imagePathAWS == download.remoteURL.absoluteString {
+                        do {
+                            try updatedSheetTitleImage.set(image: download.image, imageName: download.filename)
+                        }
                     }
+                    updatedSheet = updatedSheetTitleImage
                 }
+                newUpdatedSheets.append(updatedSheet)
             }
-            hasInstruments.forEach { instrument in
-                if instrument.resourcePathAWS == download.remoteURL.absoluteString {
-                    instrument.resourcePath = download.localURL?.absoluteString
+            updatedSheets = newUpdatedSheets
+            
+            var newUpdatedInstruments: [VInstrument] = []
+            updatedInstruments.forEach { instrument in
+                var updatedInstrument = instrument
+                if updatedInstrument.resourcePathAWS == download.remoteURL.absoluteString {
+                    updatedInstrument.resourcePath = download.localURL?.absoluteString
                 }
+                newUpdatedInstruments.append(updatedInstrument)
             }
+            updatedInstruments = newUpdatedInstruments
         }
+        hasSheets = updatedSheets
+        hasInstruments = updatedInstruments
     }
     
 }

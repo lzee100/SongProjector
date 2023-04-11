@@ -182,7 +182,7 @@ class BibleStudyIphoneController: ChurchBeamViewController, UITableViewDelegate,
     override func update() {
         moc.perform {
             let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "position", ascending: true))
-            self.themes = themes.map({ VTheme(theme: $0, context: moc) })
+            self.themes = themes.map({ VTheme(theme: $0) })
             self.collectionViewThemes.reloadData()
             self.collectionViewSheets.reloadData()
             self.isFirstTime = true

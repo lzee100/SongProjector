@@ -39,11 +39,12 @@ class SongService {
                 if let appInstallId = UserDefaults.standard.object(forKey: ApplicationIdentifier) as? String {
                     DispatchQueue.main.async {
                         let playDate: SongServicePlayDate? = DataFetcher().getEntity(moc: moc, predicates: [.skipDeleted])
-                        let playDateEntity = [playDate].compactMap({ $0 }).map({ VSongServicePlayDate(entity: $0, context: moc) }).first ?? VSongServicePlayDate()
-                        playDateEntity.appInstallId = appInstallId
-                        playDateEntity.userUID = Auth.auth().currentUser?.uid ?? ""
-                        playDateEntity.playDate = Date()
-                        SongServicePlayDateSubmitter.submit([playDateEntity], requestMethod: .post)
+                        if var playDateEntity = [playDate].compactMap({ $0 }).map({ VSongServicePlayDate(songServicePlayDate: $0) }).first ?? VSongServicePlayDate() {
+                            playDateEntity.appInstallId = appInstallId
+                            playDateEntity.userUID = Auth.auth().currentUser?.uid ?? ""
+                            playDateEntity.playDate = Date()
+                            SongServicePlayDateSubmitter.submit([playDateEntity], requestMethod: .post)
+                        }
                     }
                 }
 			}
@@ -78,7 +79,7 @@ class SongService {
     init(delegate: SongServiceDelegate?) {
         self.delegate = delegate
         let user: User? = DataFetcher().getEntity(moc: moc, predicates: [.skipDeleted])
-        self.sheetTimeOffset = [user].compactMap({ $0 }).map({ VUser(user: $0, context: moc) }).first?.sheetTimeOffset ?? 0
+        self.sheetTimeOffset = [user].compactMap({ $0 }).map({ VUser(user: $0) }).first?.sheetTimeOffset ?? 0
 	}
 	
 	@discardableResult
@@ -130,7 +131,7 @@ class SongService {
 	@discardableResult
 	func previousSheet(select: Bool = true) -> VSheet? {
 		
-		if let selectedSheet = selectedSheet, let selectedSong = songs.first(where: { $0.sheets.contains(selectedSheet) }) {
+        if let selectedSheet = selectedSheet, let selectedSong = songs.first(where: { $0.sheets.contains(entity: selectedSheet) }) {
 			let selectedSheetPosition = Int(selectedSheet.position)
 			if selectedSheetPosition - 1 >= 0 {
 				if !select {
@@ -379,8 +380,9 @@ class SongObject: Comparable {
 		if cluster.hasTheme(moc: moc)?.hasEmptySheet ?? false {
 			
 			var emptySheetsAdded: [VSheet] = []
-			
-			let emptySheet = VSheetEmpty()
+            var sheetsAddedWithPosition: [VSheet] = []
+            
+			var emptySheet = VSheetEmpty(userUID: "")
 			emptySheet.deleteDate = NSDate()
 			emptySheet.isEmptySheet = true
 			
@@ -394,11 +396,13 @@ class SongObject: Comparable {
 			
 			var position = 0
 			emptySheetsAdded.forEach {
-				$0.position = position
+                var sheet = $0
+				sheet.position = position
 				position += 1
+                sheetsAddedWithPosition.append(sheet)
 			}
 			
-			sheets = emptySheetsAdded
+			sheets = sheetsAddedWithPosition
 		} else {
 			sheets = cluster.hasSheets
 		}

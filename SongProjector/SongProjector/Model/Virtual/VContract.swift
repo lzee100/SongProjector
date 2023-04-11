@@ -12,12 +12,12 @@ import CoreData
 struct VContract: VEntityType, Codable {
     
     let id: String
-    let userUID: String
-    let title: String?
-    let createdAt: NSDate
-    let updatedAt: NSDate?
-    let deleteDate: NSDate?
-    let rootDeleteDate: Date?
+    var userUID: String
+    var title: String?
+    var createdAt: NSDate
+    var updatedAt: NSDate?
+    var deleteDate: NSDate?
+    var rootDeleteDate: Date?
 		
 	var name: String = ""
 	var buttonContent: String = ""
@@ -41,7 +41,7 @@ struct VContract: VEntityType, Codable {
 		
 	// MARK: - Encodable
 	
-	override func encode(to encoder: Encoder) throws {
+    func encode(to encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeysContract.self)
         
         try container.encode(id, forKey: .id)
@@ -61,15 +61,6 @@ struct VContract: VEntityType, Codable {
             try container.encode(rootDeleteDate.intValue, forKey: .rootDeleteDate)
         }
         
-        try container.encode(eventDescription, forKey: .eventDescription)
-        
-        if let startDate = startDate {
-            try container.encode((startDate as Date).intValue, forKey: .startDate)
-        }
-        if let endDate = endDate {
-            try container.encode((endDate as Date).intValue, forKey: .endDate)
-        }
-        
 		try container.encode(name, forKey: .name)
 		try container.encode(buttonContent, forKey: .button)
 	}
@@ -78,12 +69,10 @@ struct VContract: VEntityType, Codable {
 	
 	// MARK: - Decodable
 	
-	required public convenience init(from decoder: Decoder) throws {
-		
-		self.init()
+    
+    public init(from decoder: Decoder) throws {
 		
 		let container = try decoder.container(keyedBy: CodingKeysContract.self)
-        
         
         id = try container.decode(String.self, forKey: .id)
         title = try container.decodeIfPresent(String.self, forKey: .title)
@@ -109,33 +98,29 @@ struct VContract: VEntityType, Codable {
             rootDeleteDate = nil
         }
         
-        
 		name = try container.decode(String.self, forKey: .name)
 		buttonContent = try container.decode(String.self, forKey: .button)
 	}
 	
-	override func setPropertiesTo(entity: Entity, context: NSManagedObjectContext) {
-		super.setPropertiesTo(entity: entity, context: context)
-		if let contract = entity as? Contract {
-			contract.name = self.name
-			contract.buttonContent = self.buttonContent
-		}
-	}
-	
-    override func getPropertiesFrom(entity: Entity, context: NSManagedObjectContext) {
-        super.getPropertiesFrom(entity: entity, context: context)
-		if let contract = entity as? Contract {
-			name = contract.name
-			buttonContent = contract.buttonContent
-		}
-	}
-	
-    convenience init(contract: Contract, context: NSManagedObjectContext) {
-		self.init()
-        getPropertiesFrom(entity: contract, context: context)
-	}
-	
-    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
+    func getManagedObject(context: NSManagedObjectContext) -> Entity {
+        
+        func setPropertiesTo(entity: Entity, context: NSManagedObjectContext) {
+            
+            if let contract = entity as? Contract {
+                
+                entity.id = id
+                entity.title = title
+                entity.userUID = userUID
+                entity.createdAt = createdAt
+                entity.updatedAt = updatedAt
+                entity.deleteDate = deleteDate
+                entity.rootDeleteDate = rootDeleteDate as NSDate?
+                
+                contract.name = self.name
+                contract.buttonContent = self.buttonContent
+            }
+        }
+        
         if let entity: Contract = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
             setPropertiesTo(entity: entity, context: context)
             return entity

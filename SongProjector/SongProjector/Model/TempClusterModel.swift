@@ -69,7 +69,7 @@ class TempClustersModel {
                 TempClustersModel.resetSavedValues()
                 return nil
             }
-            let songServiceSettings = VSongServiceSettings(songserviceSettings: s, context: moc)
+            let songServiceSettings = VSongServiceSettings(songServiceSettings: s, moc: moc)
             let sectionedClusterOrComment: [[ClusterOrComment]] = clusterOrComment.map({
                 let clusterOrComments = $0.split(separator: ",").compactMap({ String($0) })
                 return clusterOrComments.compactMap { (coc) in

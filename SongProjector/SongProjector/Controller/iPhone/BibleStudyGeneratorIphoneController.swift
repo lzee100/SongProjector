@@ -140,7 +140,7 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 		tableView.keyboardDismissMode = .interactive
 		
         let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "position", ascending: true))
-        self.themes = themes.map({ VTheme(theme: $0, context: moc) })
+        self.themes = themes.map({ VTheme(theme: $0) })
 		
 		setSheetSize()
 
@@ -187,7 +187,7 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
         var predicates: [NSPredicate] = [.skipDeleted]
 		predicates.append("isHidden", equals: 0)
         let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: predicates, sort: NSSortDescriptor(key: "position", ascending: true))
-        self.themes = themes.map({ VTheme(theme: $0, context: moc) })
+        self.themes = themes.map({ VTheme(theme: $0) })
 		collectionViewThemes.reloadData()
 		collectionViewSheets.reloadData()
 		tableView.reloadData()
@@ -386,69 +386,65 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 		
 	}
 	
-	private func buildAllSheetWith(title: String, verses: [Vers], initialTextLength: Int, maxTextLenght: Int) {
-		
-		var remainderVerses = verses
-		
-		let titleSpace = 40
-		let spaceTitle = (selectedTheme?.allHaveTitle ?? false) ? 40 : 0
-		
-		if initialTextLength < (maxTextLenght - titleSpace) {
-			let sheet = VSheetTitleContent()
-			sheet.deleteDate = NSDate()
-			sheet.title = title
-			sheet.content = getTextFor(verses: verses)
-			sheet.position = position
-			position += 1
-			sheets.append(sheet)
-			remainderVerses.removeAll()
-		}
-		
-		
-		while getTextLengthFor(verses: remainderVerses) > (maxTextLenght - spaceTitle) {
-			
-			let sheet = VSheetTitleContent()
-			sheet.deleteDate = NSDate()
-			sheet.title = title
-			
-			var totalTextLenght = 0
-			var versesForThisSheet: [Vers] = []
-			while totalTextLenght < maxTextLenght, let nextVers = remainderVerses.first {
-				totalTextLenght += getTextLengthFor(verses: [nextVers])
-				versesForThisSheet.append(nextVers)
-				remainderVerses.remove(at: 0)
-			}
-			
-			sheet.content = getTextFor(verses: versesForThisSheet)
-			sheet.position = position
-			position += 1
-			sheets.append(sheet)
-			
-		}
-		
-		if remainderVerses.count > 0 {
-			let sheet = VSheetTitleContent()
-			sheet.deleteDate = NSDate()
-			sheet.title = title
-			sheet.content = getTextFor(verses: remainderVerses)
-			sheet.position = position
-			position += 1
-			sheets.append(sheet)
-			remainderVerses.removeAll()
-		}
-		
-		if addEmptySheet {
-			let sheet = VSheetTitleContent()
-			sheet.deleteDate = NSDate()
-			sheet.position = position
-			position += 1
-			sheets.append(sheet)
-			remainderVerses.removeAll()
-		}
-		
-		
-		
-	}
+    private func buildAllSheetWith(title: String, verses: [Vers], initialTextLength: Int, maxTextLenght: Int) {
+        
+        var remainderVerses = verses
+        
+        let titleSpace = 40
+        let spaceTitle = (selectedTheme?.allHaveTitle ?? false) ? 40 : 0
+        
+        if initialTextLength < (maxTextLenght - titleSpace), var sheet = VSheetTitleContent() {
+            sheet.deleteDate = NSDate()
+            sheet.title = title
+            sheet.content = getTextFor(verses: verses)
+            sheet.position = position
+            position += 1
+            sheets.append(sheet)
+            remainderVerses.removeAll()
+        }
+        
+        
+        while getTextLengthFor(verses: remainderVerses) > (maxTextLenght - spaceTitle) {
+            
+            if var sheet = VSheetTitleContent() {
+                sheet.deleteDate = NSDate()
+                sheet.title = title
+                
+                var totalTextLenght = 0
+                var versesForThisSheet: [Vers] = []
+                while totalTextLenght < maxTextLenght, let nextVers = remainderVerses.first {
+                    totalTextLenght += getTextLengthFor(verses: [nextVers])
+                    versesForThisSheet.append(nextVers)
+                    remainderVerses.remove(at: 0)
+                }
+                
+                sheet.content = getTextFor(verses: versesForThisSheet)
+                sheet.position = position
+                position += 1
+                sheets.append(sheet)
+            }
+            
+        }
+        
+        if remainderVerses.count > 0, var sheet = VSheetTitleContent() {
+            sheet.deleteDate = NSDate()
+            sheet.title = title
+            sheet.content = getTextFor(verses: remainderVerses)
+            sheet.position = position
+            position += 1
+            sheets.append(sheet)
+            remainderVerses.removeAll()
+        }
+        
+        if self.addEmptySheet, var sheet = VSheetTitleContent() {
+            sheet.deleteDate = NSDate()
+            sheet.position = position
+            position += 1
+            sheets.append(sheet)
+            remainderVerses.removeAll()
+        }
+        
+    }
 	
 	private func getTextFor(verses: [Vers]) -> String {
 		var totalString = ""

@@ -26,12 +26,12 @@ protocol VEntityType {
 public struct VEntity: VEntityType, Codable {
 	
     let id: String
-    let userUID: String
-    let title: String?
-    let createdAt: NSDate
-    let updatedAt: NSDate?
-    let deleteDate: NSDate?
-    let rootDeleteDate: Date?
+    var userUID: String
+    var title: String?
+    var createdAt: NSDate
+    var updatedAt: NSDate?
+    var deleteDate: NSDate?
+    var rootDeleteDate: Date?
 
 	
 	enum CodingKeys: String, CodingKey

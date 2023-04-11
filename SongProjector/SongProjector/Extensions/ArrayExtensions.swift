@@ -233,7 +233,7 @@ extension Array {
 	}
 	
 	@discardableResult
-	mutating func delete<T: VEntity>(entity: T) -> Bool {
+	mutating func delete<T: VEntityType>(entity: T) -> Bool {
 		if let array = self as? Array<T> {
             if let index = array.firstIndex(where: { $0.id == entity.id }){
 				self.remove(at: index)
@@ -243,7 +243,7 @@ extension Array {
 		return false
 	}
 	
-	func contains<T: VEntity>(entity: T) -> Bool {
+	func contains<T: VEntityType>(entity: T) -> Bool {
 		if let array = self as? Array<T> {
             if let _ = array.firstIndex(where: { $0.id == entity.id }){
 				return true
@@ -253,7 +253,7 @@ extension Array {
 		return false
 	}
 
-	func firstIndex<T: VEntity>(entity: T) -> Int? {
+	func firstIndex<T: VEntityType>(entity: T) -> Int? {
 		if let array = self as? Array<T> {
             if let index = array.firstIndex(where: { $0.id == entity.id }){
 				return index
@@ -296,4 +296,24 @@ extension Array {
     }
 }
 
-
+extension Array where Element: Sheet {
+    
+    var vSheets: [VSheet] {
+        var mappedSheets: [VSheet] = []
+        for item in self {
+            if let sheetTitleContent = item as? SheetTitleContentEntity {
+                mappedSheets.append(VSheetTitleContent(sheetTitleContent))
+            } else if let sheetTitleImage = item as? SheetTitleImageEntity {
+                mappedSheets.append(VSheetTitleImage(entity: sheetTitleImage))
+            } else if let sheetEmpty = item as? SheetEmptyEntity {
+                mappedSheets.append(VSheetEmpty(sheetEmpty))
+            } else if let sheetPastors = item as? SheetPastorsEntity {
+                mappedSheets.append(VSheetPastors(sheetPastors))
+            } else if let sheetActivities = item as? SheetActivitiesEntity {
+                mappedSheets.append(VSheetActivities(sheetActivities))
+            }
+        }
+        return mappedSheets
+    }
+    
+}

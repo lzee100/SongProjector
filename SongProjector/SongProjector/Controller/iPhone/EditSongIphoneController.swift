@@ -157,7 +157,7 @@ class EditSongIphoneController: ChurchBeamViewController, UICollectionViewDataSo
 	private func setup() {
         let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "position", ascending: true))
             
-        self.themes = themes.map({ VTheme(theme: $0, context: moc) })
+        self.themes = themes.map({ VTheme(theme: $0) })
 		
 		view.backgroundColor = themeWhiteBlackBackground
 		textView.backgroundColor = themeWhiteBlackBackground
@@ -309,7 +309,7 @@ class EditSongIphoneController: ChurchBeamViewController, UICollectionViewDataSo
 	private func databaseDidChange(_ notification: Notification) {
 		selectedTheme = nil
         let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "position", ascending: true))
-        self.themes = themes.map({ VTheme(theme: $0, context: moc) })
+        self.themes = themes.map({ VTheme(theme: $0) })
 		update()
 	}
 	

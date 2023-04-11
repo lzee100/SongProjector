@@ -64,7 +64,7 @@ enum RequestResult {
     }
 }
 
-protocol RequesterObserver1: class {
+protocol RequesterObserver1: AnyObject {
     func requesterDidStart()
     func requesterDidProgress(progress: CGFloat)
     func requesterDidFinish(requester: RequesterBase, result: RequestResult, isPartial: Bool)
@@ -75,7 +75,7 @@ extension RequesterObserver1 {
     func requesterDidProgress(progress: CGFloat) {}
 }
 
-class Requester<T>: NSObject, RequesterBase where T: VEntity {
+class Requester<T>: NSObject, RequesterBase where T: VEntityType {
     
     enum AdditionalProcessResult {
         case failed(error: RequestError)

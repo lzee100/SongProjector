@@ -34,12 +34,12 @@ struct VTheme: VEntityType, Codable {
 //	}
     
     let id: String
-    let userUID: String
-    let title: String?
-    let createdAt: NSDate
-    let updatedAt: NSDate?
-    let deleteDate: NSDate?
-    let rootDeleteDate: Date?
+    var userUID: String
+    var title: String?
+    var createdAt: NSDate
+    var updatedAt: NSDate?
+    var deleteDate: NSDate?
+    var rootDeleteDate: Date?
 	
 	var allHaveTitle: Bool = false
 	var backgroundColor: String? = nil
@@ -82,7 +82,6 @@ struct VTheme: VEntityType, Codable {
     var tempSelectedImageThumbNail: UIImage?
     var isTempSelectedImageDeleted = false
     var tempLocalImageName: String?
-
     
 	var hasClusters: [VCluster] = []
 	var hasSheets: [VSheet] = []
@@ -147,6 +146,48 @@ struct VTheme: VEntityType, Codable {
 		case isUniversal
         case isDeletable
 	}
+    
+    init?(theme: Theme?) {
+        guard let theme = theme else { return nil }
+        id = theme.id
+        userUID = theme.userUID
+        title = theme.title
+        createdAt = theme.createdAt
+        updatedAt = theme.updatedAt
+        deleteDate = theme.deleteDate
+        rootDeleteDate = theme.rootDeleteDate?.date
+        backgroundColor = theme.backgroundColor
+        backgroundTransparancyNumber = theme.backgroundTransparancyNumber
+        displayTime = theme.displayTime
+        hasEmptySheet = theme.hasEmptySheet
+        imagePath = theme.imagePath
+        imagePathThumbnail = theme.imagePathThumbnail
+        isEmptySheetFirst = theme.isEmptySheetFirst
+        isHidden = theme.isHidden
+        isContentBold = theme.isContentBold
+        isContentItalic = theme.isContentItalic
+        isContentUnderlined = theme.isContentUnderlined
+        isTitleBold = theme.isTitleBold
+        isTitleItalic = theme.isTitleItalic
+        isTitleUnderlined = theme.isTitleUnderlined
+        contentAlignmentNumber = theme.contentAlignmentNumber
+        contentBorderColorHex = theme.contentBorderColorHex
+        contentBorderSize = theme.contentBorderSize
+        contentFontName = theme.contentFontName
+        contentTextColorHex = theme.contentTextColorHex
+        contentTextSize = theme.contentTextSize
+        position = theme.position
+        titleAlignmentNumber = theme.titleAlignmentNumber
+        titleBackgroundColor = theme.titleBackgroundColor
+        titleBorderColorHex = theme.titleBorderColorHex
+        titleBorderSize = theme.titleBorderSize
+        titleFontName = theme.titleFontName
+        titleTextColorHex = theme.titleTextColorHex
+        titleTextSize = theme.titleTextSize
+        imagePathAWS = theme.imagePathAWS
+        isUniversal = theme.isUniversal
+        isDeletable = theme.isDeletable
+    }
     
     init(id: String = "CHURCHBEAM" + UUID().uuidString, userUID: String, title: String?, createdAt: NSDate = Date().localDate() as NSDate, updatedAt: NSDate?, deleteDate: NSDate? = nil, rootDeleteDate: Date? = nil, allHaveTitle: Bool = false, backgroundColor: String? = nil, backgroundTransparancyNumber: Double = 0, displayTime: Bool = false, hasEmptySheet: Bool = false, imagePath: String? = nil, imagePathThumbnail: String? = nil, isEmptySheetFirst: Bool = false, isHidden: Bool = false, isContentBold: Bool = false, isContentItalic: Bool = false, isContentUnderlined: Bool = false, isTitleBold: Bool = false, isTitleItalic: Bool = false, isTitleUnderlined: Bool = false, contentAlignmentNumber: Int16 = 0, contentBorderColorHex: String? = nil, contentBorderSize: Float = 0, contentFontName: String? = "Avenir", contentTextColorHex: String? = "000000", contentTextSize: Float = 9, position: Int16 = 0, titleAlignmentNumber: Int16 = 0, titleBackgroundColor: String? = nil, titleBorderColorHex: String? = nil, titleBorderSize: Float = 0, titleFontName: String? = "Avenir", titleTextColorHex: String? = "000000", titleTextSize: Float = 11, imagePathAWS: String? = nil, isUniversal: Bool = false, isDeletable: Bool = true) {
         self.id = id

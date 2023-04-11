@@ -10,15 +10,15 @@ import Foundation
 import CoreData
 import FirebaseAuth
 
-struct VInstrument, VEntityType, Codable {
+struct VInstrument: VEntityType, Codable {
     
     let id: String
-    let userUID: String
-    let title: String?
-    let createdAt: NSDate
-    let updatedAt: NSDate?
-    let deleteDate: NSDate?
-    let rootDeleteDate: Date?
+    var userUID: String
+    var title: String?
+    var createdAt: NSDate
+    var updatedAt: NSDate?
+    var deleteDate: NSDate?
+    var rootDeleteDate: Date?
 	
 	var isLoop: Bool = false
 	var resourcePath: String? = nil
@@ -45,13 +45,27 @@ struct VInstrument, VEntityType, Codable {
 		case resourcePathAWS
 	}
 	
-	
+    init(_ entity: Instrument) {
+        self.id = entity.id
+        self.userUID = entity.userUID
+        self.title = entity.title
+        self.createdAt = entity.createdAt
+        self.updatedAt = entity.updatedAt
+        self.deleteDate = entity.deleteDate
+        self.rootDeleteDate = entity.rootDeleteDate?.date
+        self.isLoop = entity.isLoop
+        self.resourcePath = entity.resourcePath
+        self.typeString = entity.typeString
+        self.resourcePathAWS = entity.resourcePathAWS
+    }
+
 	
 	// MARK: - Encodable
 	
     public func encode(to encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeysInstrument.self)
         
+        try container.encode(id, forKey: .id)
         try container.encodeIfPresent(title, forKey: .title)
         guard let userUID = Auth.auth().currentUser?.uid else {
             throw RequestError.unAuthorizedNoUser(requester: String(describing: self))

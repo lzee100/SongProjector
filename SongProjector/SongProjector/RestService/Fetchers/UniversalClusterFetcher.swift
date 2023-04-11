@@ -92,7 +92,7 @@ class UiversalClusterFetcher: Requester<VCluster> {
         var predicates: [NSPredicate] = []
         predicates.append("isDeletable", equals: "NO")
         let theme: Theme? = DataFetcher().getEntity(moc: moc, predicates: predicates)
-        return [theme].compactMap({ $0 }).map({ VTheme(theme: $0, context: moc) }).first
+        return [theme].compactMap({ $0 }).compactMap({ VTheme(theme: $0) }).first
     }
     
     private func getTag(moc: NSManagedObjectContext) -> VTag? {
@@ -100,13 +100,13 @@ class UiversalClusterFetcher: Requester<VCluster> {
         predicates.append("isDeletable", equals: "NO")
         let moc = newMOCBackground
         let tag: Tag? = DataFetcher().getEntity(moc: moc, predicates: predicates)
-        return [tag].compactMap({ $0 }).map({ VTag(tag: $0, context: moc) }).first
+        return [tag].compactMap({ $0 }).map({ VTag(tag: $0) }).first
     }
     
     private func getChurch(moc: NSManagedObjectContext) -> VChurch? {
         let context = newMOCBackground
         let church: Church? = DataFetcher().getEntity(moc: context, predicates: [.skipDeleted])
-        return [church].compactMap({ $0 }).map({ VChurch(church: $0, context: context) }).first
+        return [church].compactMap({ $0 }).map({ VChurch($0) }).first
     }
     
     override func addFetchingParamsFor(userId: String, context: NSManagedObjectContext, collection: inout Query) {
@@ -122,7 +122,7 @@ class UiversalClusterFetcher: Requester<VCluster> {
         collection = newCollection
     }
     
-    override func additionalProcessing(_ context: NSManagedObjectContext, _ entities: [VCluster], completion: @escaping ((Requester<VCluster>.AdditionalProcessResult) -> Void)) {
+    override func additionalProcessing(_ context: NSManagedObjectContext, _ entities: inout [VCluster], completion: @escaping ((Requester<VCluster>.AdditionalProcessResult) -> Void)) {
         
         // fetch all universal clusters, if > 0, save locally and get updatedAt else add to array
         if entities.count == 0 {
@@ -143,20 +143,22 @@ class UiversalClusterFetcher: Requester<VCluster> {
         
         if let date = entities.sorted(by: { (($0.updatedAt ?? NSDate()) as Date) > $1.updatedAt as Date? ?? Date() }).first?.updatedAt as Date? {
             
-            var vUniversalUpdatedAt: VUniversalUpdatedAt {
+            var vUniversalUpdatedAt: VUniversalUpdatedAt? {
                 let ua: UniversalUpdatedAtEntity? = DataFetcher().getEntity(moc: context)
                 if let universalAt = ua {
-                    let vUa = VUniversalUpdatedAt(entity: universalAt, context: context)
+                    var vUa = VUniversalUpdatedAt(universalAt)
                     vUa.universalUpdatedAt = date
                     return vUa
                 } else {
-                    let universalAt = VUniversalUpdatedAt()
-                    universalAt.universalUpdatedAt = date
+                    var universalAt = VUniversalUpdatedAt()
+                    universalAt?.universalUpdatedAt = date
                     return universalAt
                 }
             }
             
-            UniversalClusterSubmitterOperations.addUUASubmit(uua: [vUniversalUpdatedAt])
+            if let vUniversalUpdatedAt = vUniversalUpdatedAt {
+                UniversalClusterSubmitterOperations.addUUASubmit(uua: [vUniversalUpdatedAt])
+        }
 //            UniversalClusterUpdatedAtSubmitter.submit([vUniversalUpdatedAt], requestMethod: .post)
         }
         

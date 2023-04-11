@@ -75,7 +75,7 @@ extension NSPredicate {
 
 struct DataFetcher<T: Entity> {
     
-    func getEntities(moc: NSManagedObjectContext, predicates: [NSPredicate] = [], sort: NSSortDescriptor? = nil) -> [T] {
+    func getEntities(moc: NSManagedObjectContext, predicates: [NSPredicate] = [], predicatesCompoundType: NSCompoundPredicate.LogicalType = .and, sort: NSSortDescriptor? = nil) -> [T] {
         let Lock = NSRecursiveLock()
         var entityName: String {  return T.classForCoder().description().deletingPrefix("ChurchBeam.") }
         
@@ -85,7 +85,7 @@ struct DataFetcher<T: Entity> {
         let request = NSFetchRequest<T>(entityName: entityName)
 //        request.returnsObjectsAsFaults = false
         request.shouldRefreshRefetchedObjects = true
-        request.predicate = NSCompoundPredicate(type: .and, subpredicates: predicates)
+        request.predicate = NSCompoundPredicate(type: predicatesCompoundType, subpredicates: predicates)
         
         if let sortDiscriptor = sort {
             request.sortDescriptors = [sortDiscriptor]

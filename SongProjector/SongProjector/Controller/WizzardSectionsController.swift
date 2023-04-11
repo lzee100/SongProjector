@@ -41,14 +41,15 @@ class WizzardSectionsController: ChurchBeamViewController, UITableViewDelegate, 
 	
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 		if let tagsController = segue.destination.unwrap() as? WizzardSectionTagsController {
-			if let songServiceObject = songServiceObject {
+			if var songServiceObject = songServiceObject {
 				tagsController.songServiceObject = songServiceObject
 				if numberOfSections > songServiceObject.sections.count {
 					for position in songServiceObject.sections.count..<numberOfSections {
-						let section = VSongServiceSection()
-						section.position = Int16(position)
-						section.title = nil
-						songServiceObject.sections.append(section)
+                        if var section = VSongServiceSection() {
+                            section.position = Int16(position)
+                            section.title = nil
+                            songServiceObject.sections.append(section)
+                        }
 					}
 				} else if numberOfSections < songServiceObject.sections.count {
 					for _ in 1...(songServiceObject.sections.count - numberOfSections) {
@@ -57,16 +58,18 @@ class WizzardSectionsController: ChurchBeamViewController, UITableViewDelegate, 
 						}
 					}
 				}
+                self.songServiceObject = songServiceObject
 			} else {
 				var sections: [VSongServiceSection] = []
 				for position in 0..<numberOfSections {
-					let section = VSongServiceSection()
-					section.position = Int16(position)
-					section.title = nil
-					sections.append(section)
+                    if var section = VSongServiceSection() {
+                        section.position = Int16(position)
+                        section.title = nil
+                        sections.append(section)
+                    }
 				}
 				songServiceObject = VSongServiceSettings()
-				songServiceObject!.sections.append(contentsOf: sections)
+				songServiceObject?.sections.append(contentsOf: sections)
 				tagsController.songServiceObject = songServiceObject
 			}
 		}

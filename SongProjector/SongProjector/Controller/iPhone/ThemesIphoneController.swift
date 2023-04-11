@@ -97,15 +97,19 @@ class ThemesIphoneController: ChurchBeamViewController, UIGestureRecognizerDeleg
         predicates.append("isHidden", notEquals: true)
         let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: predicates, sort: NSSortDescriptor(key: "position", ascending: true))
         
-        self.themes = themes.map({ VTheme(theme: $0, context: moc) })
+        self.themes = themes.compactMap { VTheme(theme: $0) }
         filteredThemes = self.themes
         tableView.reloadData()
     }
     
     private func updatePostitions() {
+        var themes = [VTheme]()
         for (index, theme) in filteredThemes.enumerated() {
-            theme.position = Int16(index)
+            var themeModified = theme
+            themeModified.position = Int16(index)
+            themes.append(themeModified)
         }
+        self.filteredThemes = themes
     }
     
     @objc private func editTableView(_ gestureRecognizer: UIGestureRecognizer) {
@@ -182,8 +186,8 @@ extension ThemesIphoneController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            let theme = themes[indexPath.row]
-            theme.deleteDate = Date() as NSDate
+            var theme = themes[indexPath.row]
+            theme.deleteDate = Date().nsDate
             ThemeSubmitter.submit([theme], requestMethod: .delete)
         }
     }

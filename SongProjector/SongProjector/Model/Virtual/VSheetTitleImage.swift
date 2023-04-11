@@ -16,12 +16,12 @@ struct VSheetTitleImage: VSheet, SheetMetaType, Codable {
 	static var type: SheetType = .SheetTitleImage
     
     let id: String
-    let userUID: String
-    let title: String?
-    let createdAt: NSDate
-    let updatedAt: NSDate?
-    let deleteDate: NSDate?
-    let rootDeleteDate: Date?
+    var userUID: String
+    var title: String?
+    var createdAt: NSDate
+    var updatedAt: NSDate?
+    var deleteDate: NSDate?
+    var rootDeleteDate: Date?
     
     var isNew: Bool {
         return updatedAt == nil
@@ -96,6 +96,52 @@ struct VSheetTitleImage: VSheet, SheetMetaType, Codable {
 		case thumbnailPathAWS
 		case imagePathAWS
 	}
+    
+    init?() {
+        id = "CHURCHBEAM" + UUID().uuidString
+        title = nil
+        guard let userUID = Auth.auth().currentUser?.uid else {
+            return nil
+        }
+        self.userUID = userUID
+        createdAt = Date().localDate().nsDate
+        updatedAt = nil
+        deleteDate = nil
+        rootDeleteDate = nil
+        
+        isEmptySheet = false
+        position = 0
+        time = 0
+        hasTitle = true
+        imageBorderSize = 0
+        imageContentMode = 0
+        imageHasBorder = false
+    }
+    
+    
+    init(entity: SheetTitleImageEntity) {
+        self.id = entity.id
+        self.userUID = entity.userUID
+        self.title = entity.title
+        self.createdAt = entity.createdAt
+        self.updatedAt = entity.updatedAt
+        self.deleteDate = entity.deleteDate
+        self.rootDeleteDate = entity.rootDeleteDate?.date
+        self.isEmptySheet = entity.isEmptySheet
+        self.position = entity.position.intValue
+        self.time = entity.time
+        self.hasTheme = VTheme(theme: entity.hasTheme)
+        self.content = entity.content
+        self.hasTitle = entity.hasTitle
+        self.imageBorderColor = entity.imageBorderColor
+        self.imageBorderSize = entity.imageBorderSize
+        self.imageContentMode = entity.imageContentMode
+        self.imageHasBorder = entity.imageHasBorder
+        self.imagePath = entity.imagePath
+        self.thumbnailPath = entity.thumbnailPath
+        self.imagePathAWS = entity.imagePathAWS
+    }
+    
 	
     init(id: String = "CHURCHBEAM" + UUID().uuidString, userUID: String, title: String?, createdAt: NSDate = Date().localDate() as NSDate, updatedAt: NSDate?, deleteDate: NSDate? = nil, rootDeleteDate: Date? = nil, isEmptySheet: Bool = false, position: Int = 0, time: Double = 0, hasTheme: VTheme? = nil, content: String? = nil, hasTitle: Bool = true, imageBorderColor: String? = nil, imageBorderSize: Int16 = 0, imageContentMode: Int16 = 0, imageHasBorder: Bool = false, imagePath: String? = nil, thumbnailPath: String? = nil, imagePathAWS: String? = nil) {
         self.id = id

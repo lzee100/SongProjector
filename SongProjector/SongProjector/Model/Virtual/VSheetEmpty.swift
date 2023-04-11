@@ -15,12 +15,12 @@ struct VSheetEmpty: VSheet, SheetMetaType, Codable {
 	static var type: SheetType = .SheetEmpty
     
     let id: String
-    let userUID: String
-    let title: String?
-    let createdAt: NSDate
-    let updatedAt: NSDate?
-    let deleteDate: NSDate?
-    let rootDeleteDate: Date?
+    var userUID: String
+    var title: String?
+    var createdAt: NSDate
+    var updatedAt: NSDate?
+    var deleteDate: NSDate?
+    var rootDeleteDate: Date?
     
     var isNew: Bool {
         return updatedAt == nil
@@ -52,7 +52,34 @@ struct VSheetEmpty: VSheet, SheetMetaType, Codable {
         
     }
     
-    init(id: String = "CHURCHBEAM" + UUID().uuidString, userUID: String, title: String?, createdAt: NSDate = Date().localDate() as NSDate, updatedAt: NSDate?, deleteDate: NSDate? = nil, rootDeleteDate: Date? = nil, isEmptySheet: Bool = false, position: Int = 0, time: Double = 0, hasTheme: VTheme? = nil) {
+    init?() {
+        id = "CHURCHBEAM" + UUID().uuidString
+        title = nil
+        guard let userUID = Auth.auth().currentUser?.uid else {
+            return nil
+        }
+        self.userUID = userUID
+        createdAt = Date().localDate().nsDate
+        updatedAt = nil
+        deleteDate = nil
+        rootDeleteDate = nil
+    }
+    
+    init(_ entity: SheetEmptyEntity) {
+        self.id = entity.id
+        self.userUID = entity.userUID
+        self.title = entity.title
+        self.createdAt = entity.createdAt
+        self.updatedAt = entity.updatedAt
+        self.deleteDate = entity.deleteDate
+        self.rootDeleteDate = entity.rootDeleteDate?.date
+        self.isEmptySheet = entity.isEmptySheet
+        self.position = entity.position.intValue
+        self.time = entity.time
+        self.hasTheme = VTheme(theme: entity.hasTheme)
+    }
+    
+    init(id: String = "CHURCHBEAM" + UUID().uuidString, userUID: String, title: String? = nil, createdAt: NSDate = Date().localDate() as NSDate, updatedAt: NSDate? = nil, deleteDate: NSDate? = nil, rootDeleteDate: Date? = nil, isEmptySheet: Bool = false, position: Int = 0, time: Double = 0, hasTheme: VTheme? = nil) {
 
         self.id = id
         self.userUID = userUID

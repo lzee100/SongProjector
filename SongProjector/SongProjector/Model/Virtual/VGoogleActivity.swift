@@ -13,12 +13,12 @@ import FirebaseAuth
 struct VGoogleActivity: VEntityType, Codable {
     
     let id: String
-    let userUID: String
-    let title: String?
-    let createdAt: NSDate
-    let updatedAt: NSDate?
-    let deleteDate: NSDate?
-    let rootDeleteDate: Date?
+    var userUID: String
+    var title: String?
+    var createdAt: NSDate
+    var updatedAt: NSDate?
+    var deleteDate: NSDate?
+    var rootDeleteDate: Date?
 		
 	var endDate: NSDate? = nil
 	var eventDescription: String? = nil
@@ -45,9 +45,11 @@ struct VGoogleActivity: VEntityType, Codable {
     public func encode(to encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeysGoogleActivity.self)
         
+        try container.encode(id, forKey: .id)
         guard let userUID = Auth.auth().currentUser?.uid else {
             throw RequestError.unAuthorizedNoUser(requester: String(describing: self))
         }
+        try container.encodeIfPresent(title, forKey: .title)
         try container.encode(userUID, forKey: .userUID)
 
        try container.encode((createdAt as Date).intValue, forKey: .createdAt)

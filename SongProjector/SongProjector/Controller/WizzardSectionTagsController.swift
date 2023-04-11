@@ -168,7 +168,7 @@ class WizzardSectionTagsController: ChurchBeamViewController, UITableViewDataSou
 	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
 		let section = songServiceObject.sections[indexPath.section]
 		if let cell = tableView.cellForRow(at: indexPath) as? BasicCell, let tag = cell.data as? VTag, let index = section.tagIds.firstIndex(of: tag.id) {
-			section.tagIds.remove(at: index)
+            songServiceObject.sections[indexPath.section].tagIds.remove(at: index)
 		}
 		tableView.deleteRows(at: [indexPath], with: .left)
 	}
