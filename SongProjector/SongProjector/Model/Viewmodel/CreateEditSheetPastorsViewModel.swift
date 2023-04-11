@@ -44,12 +44,12 @@ class CreateEditSheetPastorsViewModel: CreateEditThemeSheetViewModelProtocol {
         let sheetCells: [NewOrEditIphoneController.Cell] = [
             .asTheme(themes.compactMap { ThemeCodable(managedObject: $0, context: moc) }),
             .backgroundColor(sheetDraft.hasThemeDraft.sheetBackgroundColor),
-            .backgroundImage(sheetDraft.hasThemeDraft.thumbnail)
+            .backgroundImage(image: sheetDraft.hasThemeDraft.thumbnail, imageName: sheetDraft.hasThemeDraft.imagePathThumbnail)
         ]
         let sheetCellsTransBackground: [NewOrEditIphoneController.Cell] = [
             .asTheme(themes.compactMap { ThemeCodable(managedObject: $0, context: moc) }),
             .backgroundColor(sheetDraft.hasThemeDraft.sheetBackgroundColor),
-            .backgroundImage(sheetDraft.hasThemeDraft.thumbnail),
+            .backgroundImage(image: sheetDraft.hasThemeDraft.thumbnail, imageName: sheetDraft.hasThemeDraft.imagePathThumbnail),
             .backgroundTransparancy(sheetDraft.hasThemeDraft.backgroundTransparancy)
         ]
         return sheetDraft.hasAnyImage() ? sheetCellsTransBackground : sheetCells
@@ -79,7 +79,7 @@ class CreateEditSheetPastorsViewModel: CreateEditThemeSheetViewModelProtocol {
         ]
     }
     private var imageRows: [NewOrEditIphoneController.Cell] {
-        [.pastorImage(sheetDraft.imageSelectionAction.image ?? sheetDraft.sheetthumbnail)]
+        [.pastorImage(image: sheetDraft.imageSelectionAction.image ?? sheetDraft.sheetthumbnail, imageName: sheetDraft.imageSelectionAction.image != nil ? nil : sheetDraft.thumbnailPath)]
     }
     
     private var sheetDraft: SheetDraft {
@@ -114,7 +114,7 @@ class CreateEditSheetPastorsViewModel: CreateEditThemeSheetViewModelProtocol {
     
     func handle(cell: NewOrEditIphoneController.Cell) {
         sheetDraft.update(cell)
-        sheetDraft.hasThemeDraft.update(cell)
+        try? sheetDraft.hasThemeDraft.update(cell)
         delegate?.draftDidUpdate(cell: cell)
     }
     

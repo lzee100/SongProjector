@@ -54,12 +54,12 @@ class CreateEditSheetTitleContentViewModel: CreateEditSheetViewModelProtocol {
         let sheetCells: [NewOrEditIphoneController.Cell] = [
             .asTheme(themes.compactMap { ThemeCodable(managedObject: $0, context: moc) }),
             .backgroundColor(sheetDraft.hasThemeDraft.sheetBackgroundColor),
-            .backgroundImage(sheetDraft.hasThemeDraft.backgroundImage)
+            .backgroundImage(image: sheetDraft.hasThemeDraft.backgroundImage, imageName: sheetDraft.hasThemeDraft.imagePath)
         ]
         let sheetCellsTransBackground: [NewOrEditIphoneController.Cell] = [
             .asTheme(themes.compactMap { ThemeCodable(managedObject: $0, context: moc) }),
             .backgroundColor(sheetDraft.hasThemeDraft.sheetBackgroundColor),
-            .backgroundImage(sheetDraft.hasThemeDraft.backgroundImage),
+            .backgroundImage(image: sheetDraft.hasThemeDraft.backgroundImage, imageName: sheetDraft.hasThemeDraft.imagePath),
             .backgroundTransparancy(sheetDraft.hasThemeDraft.backgroundTransparancy)
         ]
         return sheetDraft.hasAnyImage() ? sheetCellsTransBackground : sheetCells
@@ -117,7 +117,7 @@ class CreateEditSheetTitleContentViewModel: CreateEditSheetViewModelProtocol {
     
     func handle(cell: NewOrEditIphoneController.Cell) {
         sheetDraft.update(cell)
-        sheetDraft.hasThemeDraft.update(cell)
+        try? sheetDraft.hasThemeDraft.update(cell)
         delegate?.draftDidUpdate(cell: cell)
     }
 }

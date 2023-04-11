@@ -173,42 +173,42 @@ class LabelNumberCell: ChurchBeamCell, ThemeImplementation, SheetImplementation 
         self.valueLabel.text = String(value)
     }
     
-    fileprivate func updateValue(mode: UpdateMode, cell: NewOrEditIphoneController.Cell) {
+    fileprivate func updateValue(mode: UpdateMode, cell: NewOrEditIphoneController.Cell) throws {
         switch cell {
         case .titleBorderSize(let value):
             switch mode {
             case .toCell:
                 updateNumber(Int(value))
             case .newValue(value: let value):
-                newDelegate?.handle(cell: .titleBorderSize(Float(value)))
+                try newDelegate?.handle(cell: .titleBorderSize(Float(value)))
             }
         case .titleFontSize(let value):
             switch mode {
             case .toCell:
                 updateNumber(Int(value))
             case .newValue(value: let value):
-                newDelegate?.handle(cell: .titleFontSize(Float(value)))
+                try newDelegate?.handle(cell: .titleFontSize(Float(value)))
             }
         case .lyricsFontSize(let value):
             switch mode {
             case .toCell:
                 updateNumber(Int(value))
             case .newValue(value: let value):
-                newDelegate?.handle(cell: .lyricsFontSize(Float(value)))
+                try newDelegate?.handle(cell: .lyricsFontSize(Float(value)))
             }
         case .lyricsBorderSize(let value):
             switch mode {
             case .toCell:
                 updateNumber(Int(value))
             case .newValue(value: let value):
-                newDelegate?.handle(cell: .lyricsBorderSize(Float(value)))
+                try newDelegate?.handle(cell: .lyricsBorderSize(Float(value)))
             }
         case .imageBorderSize(let value):
             switch mode {
             case .toCell:
                 updateNumber(Int(value))
             case .newValue(value: let value):
-                newDelegate?.handle(cell: .imageBorderSize(value))
+                try newDelegate?.handle(cell: .imageBorderSize(value))
             }
         default: break
         }
@@ -224,7 +224,7 @@ class LabelNumberCell: ChurchBeamCell, ThemeImplementation, SheetImplementation 
 					delegate?.numberChangedForCell(cell: self)
                     
                     if let cell = cell {
-                        updateValue(mode: .newValue(value: value), cell: cell)
+                        try? updateValue(mode: .newValue(value: value), cell: cell)
                     }
 				}
 			} else {
@@ -236,7 +236,7 @@ class LabelNumberCell: ChurchBeamCell, ThemeImplementation, SheetImplementation 
 					delegate?.numberChangedForCell(cell: self)
                     
                     if let cell = cell {
-                        updateValue(mode: .newValue(value: value), cell: cell)
+                        try? updateValue(mode: .newValue(value: value), cell: cell)
                     }
 				}
 			}
@@ -259,7 +259,7 @@ class LabelNumberCell: ChurchBeamCell, ThemeImplementation, SheetImplementation 
 		delegate?.numberChangedForCell(cell: self)
         
         if let cell = cell {
-            updateValue(mode: .newValue(value: value), cell: cell)
+            try? updateValue(mode: .newValue(value: value), cell: cell)
         }
 	}
 	
@@ -272,7 +272,7 @@ extension LabelNumberCell: CreateEditThemeSheetCellProtocol {
         self.newDelegate = delegate
         descriptionTitle.text = cell.description
         
-        updateValue(mode: .toCell, cell: cell)
+        try? updateValue(mode: .toCell, cell: cell)
         switch cell {
         case .titleFontSize, .lyricsFontSize:
             setup(minLimit: 5, maxLimit: 60, positive: true)

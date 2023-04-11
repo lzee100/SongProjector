@@ -69,7 +69,7 @@ class CreateEditThemeViewModel: CreateEditThemeViewModelProtocol {
         if themeDraft.hasEmptySheet {
             cells.append(.hasEmptySheetBeginning(themeDraft.isEmptySheetFirst))
         }
-        cells.append(contentsOf: [.allHaveTitle(themeDraft.allHaveTitle), .backgroundColor(UIColor(hex: themeDraft.backgroundColor)), .backgroundImage(themeDraft.imageSelectionAction.image ?? themeDraft.thumbnail)])
+        cells.append(contentsOf: [.allHaveTitle(themeDraft.allHaveTitle), .backgroundColor(UIColor(hex: themeDraft.backgroundColor)), .backgroundImage(image: themeDraft.imageSelectionAction.image ?? themeDraft.thumbnail, imageName: themeDraft.imageSelectionAction.image != nil ? nil : themeDraft.imagePathThumbnail)])
         if themeDraft.hasAnyImage() {
             cells.append(.backgroundTransparancy(themeDraft.backgroundTransparancy))
         }
@@ -129,7 +129,7 @@ class CreateEditThemeViewModel: CreateEditThemeViewModelProtocol {
     }
     
     func handle(cell: NewOrEditIphoneController.Cell) {
-        themeDraft.update(cell)
+        try? themeDraft.update(cell)
         delegate?.draftDidUpdate(cell: cell)
     }
     

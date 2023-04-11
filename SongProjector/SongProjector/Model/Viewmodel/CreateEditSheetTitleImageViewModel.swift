@@ -43,12 +43,12 @@ class CreateEditSheetTitleImageViewModel: CreateEditThemeSheetViewModelProtocol 
         let sheetCells: [NewOrEditIphoneController.Cell] = [
             .asTheme(themes.compactMap { ThemeCodable(managedObject: $0, context: moc) }),
             .backgroundColor(sheetDraft.hasThemeDraft.sheetBackgroundColor),
-            .backgroundImage(sheetDraft.hasThemeDraft.thumbnail)
+            .backgroundImage(image: sheetDraft.hasThemeDraft.thumbnail, imageName: sheetDraft.hasThemeDraft.imagePathThumbnail)
         ]
         let sheetCellsTransBackground: [NewOrEditIphoneController.Cell] = [
             .asTheme(themes.compactMap { ThemeCodable(managedObject: $0, context: moc) }),
             .backgroundColor(sheetDraft.hasThemeDraft.sheetBackgroundColor),
-            .backgroundImage(sheetDraft.hasThemeDraft.thumbnail),
+            .backgroundImage(image: sheetDraft.hasThemeDraft.thumbnail, imageName: sheetDraft.hasThemeDraft.imagePathThumbnail),
             .backgroundTransparancy(sheetDraft.hasThemeDraft.backgroundTransparancy)
         ]
         return sheetDraft.hasAnyImage() ? sheetCellsTransBackground : sheetCells
@@ -80,7 +80,7 @@ class CreateEditSheetTitleImageViewModel: CreateEditThemeSheetViewModelProtocol 
     private var imageRows: [NewOrEditIphoneController.Cell] {
         if sheetDraft.imageHasBorder {
            return [
-            .image(sheetDraft.imageSelectionAction.image ?? sheetDraft.sheetthumbnail),
+            .image(image: sheetDraft.imageSelectionAction.image ?? sheetDraft.sheetthumbnail, imageName: sheetDraft.imageSelectionAction.image != nil ? nil : sheetDraft.thumbnailPath),
             .hasBorder(sheetDraft.imageHasBorder),
             .imageBorderSize(Int(sheetDraft.imageBorderSize)),
             .imageBorderColor(sheetDraft.sheetImageBorderColor),
@@ -88,7 +88,7 @@ class CreateEditSheetTitleImageViewModel: CreateEditThemeSheetViewModelProtocol 
            ]
         } else {
             return [
-                .image(sheetDraft.imageSelectionAction.image ?? sheetDraft.sheetthumbnail),
+                .image(image: sheetDraft.imageSelectionAction.image ?? sheetDraft.sheetthumbnail, imageName: sheetDraft.imageSelectionAction.image != nil ? nil : sheetDraft.thumbnailPath),
                 .hasBorder(sheetDraft.imageHasBorder),
                 .contentMode(Int(sheetDraft.imageContentMode))
             ]
@@ -127,7 +127,7 @@ class CreateEditSheetTitleImageViewModel: CreateEditThemeSheetViewModelProtocol 
     
     func handle(cell: NewOrEditIphoneController.Cell) {
         sheetDraft.update(cell)
-        sheetDraft.hasThemeDraft.update(cell)
+        try? sheetDraft.hasThemeDraft.update(cell)
         delegate?.draftDidUpdate(cell: cell)
     }
     
