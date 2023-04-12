@@ -9,7 +9,8 @@
 import Foundation
 import CoreData
 
-class VSheetActivities: VSheet, SheetMetaType {
+class VSheetActivities: VSheet, VSheetMetaType {
+    
 	static let type: SheetType = .SheetActivities
 		
 	var hasGoogleActivity: [VGoogleActivity] = []

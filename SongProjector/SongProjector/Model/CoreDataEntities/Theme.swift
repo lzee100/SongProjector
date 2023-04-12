@@ -10,10 +10,6 @@ import Foundation
 import UIKit
 import CoreData
 
-protocol bla {
-	func bla()
-}
-
 public class Theme: Entity {
 	
 //	@nonobjc public class func fetchRequest() -> NSFetchRequest<Theme> {

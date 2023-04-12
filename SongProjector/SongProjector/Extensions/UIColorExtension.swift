@@ -32,7 +32,8 @@ extension UIColor {
 	
 		// MARK: - Initialization
 		
-		convenience init?(hex: String) {
+		convenience init?(hex: String?) {
+            guard let hex = hex else { return nil }
             var cString:String = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
 
             if (cString.hasPrefix("#")) {

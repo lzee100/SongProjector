@@ -50,7 +50,7 @@ class STR {
 var moc: NSManagedObjectContext = {
 	let context = Store.persistentContainer.viewContext
 	context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
-	return Store.persistentContainer.viewContext
+	return context
 }()
 
 var newMOCBackground: NSManagedObjectContext {
@@ -75,7 +75,7 @@ extension NSPredicate {
 
 struct DataFetcher<T: Entity> {
     
-    func getEntities(moc: NSManagedObjectContext, predicates: [NSPredicate] = [], sort: NSSortDescriptor? = nil) -> [T] {
+    func getEntities(moc: NSManagedObjectContext, predicates: [NSPredicate] = [], sort: NSSortDescriptor? = nil, predicateCompoundType: NSCompoundPredicate.LogicalType = .and) -> [T] {
         let Lock = NSRecursiveLock()
         var entityName: String {  return T.classForCoder().description().deletingPrefix("ChurchBeam.") }
         
@@ -85,7 +85,7 @@ struct DataFetcher<T: Entity> {
         let request = NSFetchRequest<T>(entityName: entityName)
 //        request.returnsObjectsAsFaults = false
         request.shouldRefreshRefetchedObjects = true
-        request.predicate = NSCompoundPredicate(type: .and, subpredicates: predicates)
+        request.predicate = NSCompoundPredicate(type: predicateCompoundType, subpredicates: predicates)
         
         if let sortDiscriptor = sort {
             request.sortDescriptors = [sortDiscriptor]

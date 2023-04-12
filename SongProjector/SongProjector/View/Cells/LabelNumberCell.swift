@@ -19,6 +19,11 @@ class LabelNumberCell: ChurchBeamCell, ThemeImplementation, SheetImplementation 
 	
 	@IBOutlet var descriptionTitle: UILabel!
 	@IBOutlet var valueLabel: UILabel!
+    
+    enum UpdateMode {
+        case toCell
+        case newValue(value: Int)
+    }
 	
 	var id: String = ""
 	var positive = true
@@ -32,7 +37,9 @@ class LabelNumberCell: ChurchBeamCell, ThemeImplementation, SheetImplementation 
     var sheetAttribute: SheetAttribute?
 	var themeAttribute: ThemeAttribute?
 	var valueDidChange: ((ChurchBeamCell) -> Void)?
-	
+    var newDelegate: CreateEditThemeSheetCellDelegate?
+	var cell: NewOrEditIphoneController.Cell?
+    
 	static let identifier = "LabelNumberCell"
     
     override func prepareForReuse() {
@@ -160,15 +167,65 @@ class LabelNumberCell: ChurchBeamCell, ThemeImplementation, SheetImplementation 
 			setValue(value: value)
 		}
 	}
+    
+    private func updateNumber(_ value: Int) {
+        self.value = value
+        self.valueLabel.text = String(value)
+    }
+    
+    fileprivate func updateValue(mode: UpdateMode, cell: NewOrEditIphoneController.Cell) throws {
+        switch cell {
+        case .titleBorderSize(let value):
+            switch mode {
+            case .toCell:
+                updateNumber(Int(value))
+            case .newValue(value: let value):
+                try newDelegate?.handle(cell: .titleBorderSize(Float(value)))
+            }
+        case .titleFontSize(let value):
+            switch mode {
+            case .toCell:
+                updateNumber(Int(value))
+            case .newValue(value: let value):
+                try newDelegate?.handle(cell: .titleFontSize(Float(value)))
+            }
+        case .lyricsFontSize(let value):
+            switch mode {
+            case .toCell:
+                updateNumber(Int(value))
+            case .newValue(value: let value):
+                try newDelegate?.handle(cell: .lyricsFontSize(Float(value)))
+            }
+        case .lyricsBorderSize(let value):
+            switch mode {
+            case .toCell:
+                updateNumber(Int(value))
+            case .newValue(value: let value):
+                try newDelegate?.handle(cell: .lyricsBorderSize(Float(value)))
+            }
+        case .imageBorderSize(let value):
+            switch mode {
+            case .toCell:
+                updateNumber(Int(value))
+            case .newValue(value: let value):
+                try newDelegate?.handle(cell: .imageBorderSize(value))
+            }
+        default: break
+        }
+    }
 	
 	@IBAction func minusPressed(_ sender: UIButton) {
 			if positive {
 				if value > minLimit {
 					value -= 1
-					self.valueLabel.text = String(value)
+					updateNumber(value)
 					self.applyCellValueToTheme()
 					valueDidChange?(self)
 					delegate?.numberChangedForCell(cell: self)
+                    
+                    if let cell = cell {
+                        try? updateValue(mode: .newValue(value: value), cell: cell)
+                    }
 				}
 			} else {
 				if value < 0 {
@@ -177,6 +234,10 @@ class LabelNumberCell: ChurchBeamCell, ThemeImplementation, SheetImplementation 
 					self.applyCellValueToTheme()
 					valueDidChange?(self)
 					delegate?.numberChangedForCell(cell: self)
+                    
+                    if let cell = cell {
+                        try? updateValue(mode: .newValue(value: value), cell: cell)
+                    }
 				}
 			}
 	}
@@ -196,6 +257,28 @@ class LabelNumberCell: ChurchBeamCell, ThemeImplementation, SheetImplementation 
 		self.applyCellValueToTheme()
 		valueDidChange?(self)
 		delegate?.numberChangedForCell(cell: self)
+        
+        if let cell = cell {
+            try? updateValue(mode: .newValue(value: value), cell: cell)
+        }
 	}
 	
+}
+
+extension LabelNumberCell: CreateEditThemeSheetCellProtocol {
+    
+    func configure(cell: NewOrEditIphoneController.Cell, delegate: CreateEditThemeSheetCellDelegate) {
+        self.cell = cell
+        self.newDelegate = delegate
+        descriptionTitle.text = cell.description
+        
+        try? updateValue(mode: .toCell, cell: cell)
+        switch cell {
+        case .titleFontSize, .lyricsFontSize:
+            setup(minLimit: 5, maxLimit: 60, positive: true)
+        case .titleBorderSize, .lyricsBorderSize:
+            setup(minLimit: 0, maxLimit: -15, positive: false)
+        default: break
+        }
+    }
 }

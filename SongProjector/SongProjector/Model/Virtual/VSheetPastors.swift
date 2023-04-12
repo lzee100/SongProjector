@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 import CoreData
 
-class VSheetPastors: VSheet, SheetMetaType {
+class VSheetPastors: VSheet, VSheetMetaType {
 	
 	static var type: SheetType = .SheetPastors
 	

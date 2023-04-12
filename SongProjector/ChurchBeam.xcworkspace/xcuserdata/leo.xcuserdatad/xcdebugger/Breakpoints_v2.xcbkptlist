@@ -59,5 +59,69 @@
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2866370B-2077-46C6-97E4-7F6CB4B7303B"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SongProjector/Controller/ChurchBeamViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "67"
+            endingLineNumber = "67"
+            landmarkName = "showProgress(requester:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B81F5363-66A7-4D8E-BD56-5101A18D4864"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SongProjector/Controller/iPhone/ThemesIphoneController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "100"
+            endingLineNumber = "100"
+            landmarkName = "update()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "B81F5363-66A7-4D8E-BD56-5101A18D4864 - 2c8a5608d6f7b815"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ChurchBeam.ThemesIphoneController.update() -&gt; ()"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leo/Dropbox/Mac/Documents/SongProjector/SongProjector/SongProjector/Controller/iPhone/ThemesIphoneController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "100"
+                  endingLineNumber = "100"
+                  offsetFromSymbolStart = "618">
+               </Location>
+               <Location
+                  uuid = "B81F5363-66A7-4D8E-BD56-5101A18D4864 - 79ccb6f22a6a40e1"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (ChurchBeam.Theme) -&gt; ChurchBeam.VTheme in ChurchBeam.ThemesIphoneController.update() -&gt; ()"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leo/Dropbox/Mac/Documents/SongProjector/SongProjector/SongProjector/Controller/iPhone/ThemesIphoneController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "100"
+                  endingLineNumber = "100"
+                  offsetFromSymbolStart = "45">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

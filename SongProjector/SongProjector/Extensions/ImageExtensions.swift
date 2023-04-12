@@ -182,7 +182,7 @@ extension UIImage {
         
         let resImage = self.resizeImage(targetSize: CGSize(width: externalDisplayWindowWidth, height: externalDisplayWindowHeight))
         let tempName = try FileManager.getNameFor(fileType: .jpg)
-        let imagePath = FileManager.getURLfor(name: tempName)
+        let imagePath = FileManager.getTempURLFor(name: tempName)
         
         if let image = resImage, let data = image.jpegData(compressionQuality: 0.9) {
             try? data.write(to: imagePath)
@@ -191,8 +191,17 @@ extension UIImage {
             throw SaveImageError.couldNotGenerateData
         }
     }
+    
+    static func deleteTempFile(imageName: String?, thumbNailName: String?) {
+        if let imageName = imageName {
+            try? FileManager.default.removeItem(at: FileManager.getTempURLFor(name: imageName))
+        }
+        if let thumbNailName = thumbNailName {
+            try? FileManager.default.removeItem(at: FileManager.getTempURLFor(name: thumbNailName))
+        }
+    }
 
-	
+	@discardableResult
 	static func set(image: UIImage?, imageName: String?, thumbNailName: String?) throws -> SavedImage {
                 
         let resImage = image?.resizeImage(targetSize: CGSize(width: externalDisplayWindowWidth, height: externalDisplayWindowHeight))
@@ -224,12 +233,12 @@ extension UIImage {
 			return SavedImage(imagePath: imageName ?? defaultName, thumbPath: thumbNailName ?? defaultThumbName)
 			
 		} else {
-			if let url = try FileManager.getUrlFor(fileName: imageName) {
-				try FileManager.default.removeItem(at: url)
-			}
-			if let url = try FileManager.getUrlFor(fileName: thumbNailName) {
-				try FileManager.default.removeItem(at: url)
-			}
+            if let url = try FileManager.getUrlFor(fileName: imageName) {
+                try FileManager.default.removeItem(at: url)
+            }
+            if let url = try FileManager.getUrlFor(fileName: thumbNailName) {
+                try FileManager.default.removeItem(at: url)
+            }
 			return SavedImage(imagePath: nil, thumbPath: nil)
 		}
 	}

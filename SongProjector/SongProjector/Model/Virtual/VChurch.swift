@@ -7,8 +7,6 @@
 //
 
 import Foundation
-
-import Foundation
 import CoreData
 
 public class VChurch: VEntity {

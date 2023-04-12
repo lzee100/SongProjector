@@ -75,6 +75,145 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 			}
 		}
 	}
+    
+    enum Cell {
+        case title(String?)
+        case content(String?)
+        case contentLeft(String?)
+        case contentRight(String?)
+
+        case asTheme([ThemeCodable])
+        case hasEmptySheet(Bool)
+        case hasEmptySheetBeginning(Bool)
+        case allHaveTitle(Bool)
+        case backgroundColor(UIColor?)
+        case backgroundImage(image: UIImage?, imageName: String?)
+        case backgroundTransparancy(Double)
+        case displayTime(Bool)
+                
+        case titleFontFamily(String)
+        case titleFontSize(Float)
+        case titleBackgroundColor(UIColor?)
+        case titleAlignment(Int)
+        case titleBorderSize(Float)
+        case titleTextColor(UIColor?)
+        case titleBorderColor(UIColor?)
+        case titleBold(Bool)
+        case titleItalic(Bool)
+        case titleUnderlined(Bool)
+
+        case lyricsFontFamily(String)
+        case lyricsFontSize(Float)
+        case lyricsAlignment(Int)
+        case lyricsBorderSize(Float)
+        case lyricsTextColor(UIColor?)
+        case lyricsBorderColor(UIColor?)
+        case lyricsBold(Bool)
+        case lyricsItalic(Bool)
+        case lyricsUnderlined(Bool)
+
+        case image(image: UIImage?, imageName: String?)
+        case pastorImage(image: UIImage?, imageName: String?)
+        case hasBorder(Bool)
+        case imageBorderSize(Int)
+        case imageBorderColor(UIColor?)
+        case contentMode(Int)
+        
+        var cellIdentifier: String {
+            switch self {
+            case .title: return LabelTextFieldCell.identifier
+            case .content, .contentLeft, .contentRight: return LabelTextViewCell.identifier
+            case .asTheme: return LabelPickerCell.identifier
+            case .hasEmptySheet: return LabelSwitchCell.identifier
+            case .hasEmptySheetBeginning: return LabelSwitchCell.identifier
+            case .allHaveTitle: return LabelSwitchCell.identifier
+            case .backgroundColor: return LabelColorPickerNewCell.identifier
+            case .backgroundImage: return LabelPhotoPickerCell.identifier
+            case .backgroundTransparancy: return LabelSliderCell.identifier
+            case .displayTime: return LabelSwitchCell.identifier
+            case .titleFontFamily: return LabelPickerCell.identifier
+            case .titleFontSize: return LabelNumberCell.identifier
+            case .titleBackgroundColor: return LabelColorPickerNewCell.identifier
+            case .titleAlignment: return LabelPickerCell.identifier
+            case .titleBorderSize: return LabelNumberCell.identifier
+            case .titleTextColor: return LabelColorPickerNewCell.identifier
+            case .titleBorderColor: return LabelColorPickerNewCell.identifier
+            case .titleBold: return LabelSwitchCell.identifier
+            case .titleItalic: return LabelSwitchCell.identifier
+            case .titleUnderlined: return LabelSwitchCell.identifier
+            case .lyricsFontFamily: return LabelPickerCell.identifier
+            case .lyricsFontSize: return LabelNumberCell.identifier
+            case .lyricsAlignment: return LabelPickerCell.identifier
+            case .lyricsBorderSize: return LabelNumberCell.identifier
+            case .lyricsTextColor: return LabelColorPickerNewCell.identifier
+            case .lyricsBorderColor: return LabelColorPickerNewCell.identifier
+            case .lyricsBold: return LabelSwitchCell.identifier
+            case .lyricsItalic: return LabelSwitchCell.identifier
+            case .lyricsUnderlined: return LabelSwitchCell.identifier
+            case .image: return LabelPhotoPickerCell.identifier
+            case .pastorImage: return LabelPhotoPickerCell.identifier
+            case .hasBorder: return LabelSwitchCell.identifier
+            case .imageBorderSize: return LabelNumberCell.identifier
+            case .imageBorderColor: return LabelColorPickerNewCell.identifier
+            case .contentMode: return LabelPickerCell.identifier
+            }
+        }
+        
+        var updateDynamicHeigts: Bool {
+            switch self {
+            case .asTheme, .backgroundImage, .backgroundTransparancy, .titleFontFamily, .titleAlignment, .lyricsFontFamily, .lyricsAlignment, .image, .pastorImage, .contentMode: return true
+            default: return false
+            }
+        }
+        
+        var description: String {
+            switch self {
+            case .asTheme: return AppText.NewTheme.descriptionAsTheme
+            case .title: return AppText.NewTheme.descriptionTitle
+            case .allHaveTitle: return AppText.NewTheme.descriptionAllTitle
+            case .displayTime: return AppText.NewTheme.descriptionDisplayTime
+            case .hasEmptySheet: return AppText.NewTheme.descriptionHasEmptySheet
+            case .hasEmptySheetBeginning: return AppText.NewTheme.descriptionPositionEmptySheet
+            case .lyricsBold: return AppText.NewTheme.bold
+            case .lyricsItalic: return AppText.NewTheme.italic
+            case .lyricsUnderlined: return AppText.NewTheme.underlined
+            case .titleBold: return AppText.NewTheme.bold
+            case .titleItalic: return AppText.NewTheme.italic
+            case .titleUnderlined: return AppText.NewTheme.underlined
+                
+            case .backgroundColor: return AppText.NewTheme.descriptionBackgroundColor
+            case .backgroundImage: return AppText.NewTheme.backgroundImage
+            case .backgroundTransparancy: return AppText.NewTheme.descriptionBackgroundTransparency
+            case .lyricsAlignment: return AppText.NewTheme.descriptionAlignment
+            case .lyricsBorderColor: return AppText.NewTheme.borderColor
+            case .lyricsBorderSize: return AppText.NewTheme.borderSizeDescription
+            case .lyricsFontFamily: return AppText.NewTheme.fontFamilyDescription
+            case .lyricsTextColor: return AppText.NewTheme.textColor
+            case .lyricsFontSize: return AppText.NewTheme.fontSizeDescription
+                
+            case .titleAlignment: return AppText.NewTheme.descriptionAlignment
+            case .titleBackgroundColor: return AppText.NewTheme.descriptionBackgroundColor
+            case .titleBorderColor: return AppText.NewTheme.borderColor
+            case .titleFontSize: return AppText.NewTheme.fontSizeDescription
+            case .titleFontFamily: return AppText.NewTheme.fontFamilyDescription
+            case .titleTextColor: return AppText.NewTheme.textColor
+            case .titleBorderSize: return AppText.NewTheme.borderSizeDescription
+                
+            case .content: return AppText.NewSheetTitleImage.descriptionContent
+            case .contentLeft: return AppText.NewSheetTitleImage.descriptionTextLeft
+            case .contentRight: return AppText.NewSheetTitleImage.descriptionTextRight
+            case .image: return AppText.NewSheetTitleImage.descriptionImage
+            case .pastorImage: return AppText.NewPastorsSheet.photoDescription
+            case .hasBorder: return AppText.NewSheetTitleImage.descriptionImageHasBorder
+            case .imageBorderSize: return AppText.NewSheetTitleImage.descriptionImageBorderSize
+            case .imageBorderColor: return AppText.NewSheetTitleImage.descriptionImageBorderColor
+            case .contentMode: return AppText.NewSheetTitleImage.descriptionImageContentMode
+            }
+        }
+
+    }
+    
+    
 	
 	enum CellInput: String {
 		case title

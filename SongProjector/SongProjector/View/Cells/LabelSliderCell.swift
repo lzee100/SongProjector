@@ -14,7 +14,8 @@ protocol LabelSliderDelegate {
 
 class LabelSliderCell: ChurchBeamCell, ThemeImplementation, DynamicHeightCell {
 	
-
+    static let identifier = "LabelSliderCell"
+    
 	@IBOutlet var descriptionTitle: UILabel!
 	@IBOutlet var percentagePreview: UILabel!
 	@IBOutlet var viewBeforeSlider: UIView!
@@ -36,9 +37,10 @@ class LabelSliderCell: ChurchBeamCell, ThemeImplementation, DynamicHeightCell {
 	var textView = UITextView()
 	var customText = ""
 	var delegate: LabelSliderDelegate?
-	
-	static let identifier = "LabelSliderCell"
-	
+		
+    private var cell: NewOrEditIphoneController.Cell?
+    private var newDelegate: CreateEditThemeSheetCellDelegate?
+    
 	override func awakeFromNib() {
 		slider.minimumValue = 0
 		slider.maximumValue = 100
@@ -123,11 +125,12 @@ class LabelSliderCell: ChurchBeamCell, ThemeImplementation, DynamicHeightCell {
 	}
 	
 	@objc private func sliderValueChanged() {
+        print(slider.value)
 		set(sliderValue: slider.value)
 		applyCellValueToTheme()
 		valueDidChange?(self)
+        newDelegate?.handle(cell: .backgroundTransparancy(Double(slider.value)))
 	}
-	
 	
 	override func setSelected(_ selected: Bool, animated: Bool) {
 		
@@ -137,4 +140,19 @@ class LabelSliderCell: ChurchBeamCell, ThemeImplementation, DynamicHeightCell {
 		
 	}
 	
+}
+
+extension LabelSliderCell: CreateEditThemeSheetCellProtocol {
+    
+    func configure(cell: NewOrEditIphoneController.Cell, delegate: CreateEditThemeSheetCellDelegate) {
+        self.cell = cell
+        newDelegate = delegate
+        descriptionTitle.text = cell.description
+        switch cell {
+        case .backgroundTransparancy(let value):
+            set(sliderValue: Float(value))
+        default: break
+        }
+    }
+    
 }

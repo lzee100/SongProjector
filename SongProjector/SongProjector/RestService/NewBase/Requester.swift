@@ -64,7 +64,7 @@ enum RequestResult {
     }
 }
 
-protocol RequesterObserver1: class {
+protocol RequesterObserver1: AnyObject {
     func requesterDidStart()
     func requesterDidProgress(progress: CGFloat)
     func requesterDidFinish(requester: RequesterBase, result: RequestResult, isPartial: Bool)

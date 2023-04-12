@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 import CoreData
 
-class VSheetTitleImage: VSheet, SheetMetaType {
+class VSheetTitleImage: VSheet, VSheetMetaType {
 	
 	static var type: SheetType = .SheetTitleImage
 

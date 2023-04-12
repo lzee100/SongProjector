@@ -9,7 +9,7 @@
 import Foundation
 import CoreData
 
-class VSheetEmpty: VSheet, SheetMetaType {
+class VSheetEmpty: VSheet, VSheetMetaType {
 	
 	static var type: SheetType = .SheetEmpty
     

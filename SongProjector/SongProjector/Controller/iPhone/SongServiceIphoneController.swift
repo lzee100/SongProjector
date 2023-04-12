@@ -114,6 +114,9 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
         return [UniversalClusterFetcher, SongServicePlayDateFetcher]
     }
     
+    private lazy var fetcher = RequesterCodable(requests: [TagCodableFetcher()], completion: self.requesterObserver)
+    private var fetchers: [RequesterCodable] = []
+    
 	// MARK: - Functions
 	
 	// MARK: UIViewController Functions
@@ -126,9 +129,18 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        GoogleActivityFetcher.fetch(force: true)
-        UniversalClusterFetcher.initialFetch()
-        SongServicePlayDateFetcher.fetch()
+//        GoogleActivityFetcher.fetch(force: true)
+//        UniversalClusterFetcher.initialFetch()
+//        SongServicePlayDateFetcher.fetch()
+        
+        func startFetching(countValue: Double) {
+            DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + (0.1 * countValue), execute: {
+                let fetcher = RequesterCodable(requests: [ThemeCodableFetcher()], completion: self.requesterObserver)
+                    self.fetchers.append(fetcher)
+                    fetcher.startRequest()
+            })
+        }
+
     }
 	
 	override func viewDidAppear(_ animated: Bool) {
@@ -215,6 +227,10 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
             canPlay = playEntity.last?.allowedToPlay ?? true
         }
         update()
+    }
+    
+    func requesterObserver(result: Result<[EntityCodableType], Error>) {
+        print(result)
     }
     
     
