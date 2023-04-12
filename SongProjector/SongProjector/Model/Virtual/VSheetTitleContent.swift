@@ -13,7 +13,7 @@ protocol VSheetMetaType: Codable {
     static var type: SheetType { get }
 }
 
-public class VSheetTitleContent: VSheet, SheetMetaType, ObservableObject {
+public class VSheetTitleContent: VSheet, VSheetMetaType, ObservableObject {
     
 	
 	static var type: SheetType = .SheetTitleContent
