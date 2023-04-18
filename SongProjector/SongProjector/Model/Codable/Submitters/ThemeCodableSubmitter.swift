@@ -9,6 +9,7 @@
 import Foundation
 import CoreData
 import Firebase
+import FirebaseStorage
 
 struct ThemeCodableSubmitter: CodableFetcherType {
     
@@ -36,17 +37,17 @@ struct ThemeCodableSubmitter: CodableFetcherType {
         let uploadObjects = body.flatMap({ $0.uploadObjecs }).unique { (lhs, rhs) -> Bool in
             return lhs.fileName == rhs.fileName
         }
-        let uploadManager = TransferManager(objects: uploadObjects)
+        let uploadManager = TransferManager(transferObjects: uploadObjects)
         
-        uploadManager.start(progress: { (progress) in
+        _ = uploadManager.$progress.sink { progress in
             self.observer?.requesterDidProgress(progress: CGFloat(progress))
-        }) { (result) in
+        }
+        _ = uploadManager.$result.sink(receiveValue: { result in
             switch result {
             case .failed(error: let error):
                 body.compactMap({ $0.tempSavedImageName }).forEach { UIImage.deleteTempFile(imageName: $0, thumbNailName: nil) }
                 completion(.failure(CodableError.uploadingImage(error: error)))
-            case .success:
-                
+            case .success, .none:
                 self.deleteLocalImages()
                 
                 var failed = false
@@ -72,7 +73,7 @@ struct ThemeCodableSubmitter: CodableFetcherType {
                     }
                 }
             }
-        }
+        })
     }
     
     func perform(completion: @escaping ((Result<[EntityCodableType], Error>) -> Void)) {

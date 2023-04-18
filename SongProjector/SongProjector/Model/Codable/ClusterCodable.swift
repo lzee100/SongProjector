@@ -227,8 +227,21 @@ public struct ClusterCodable: EntityCodableType {
     }
 }
 
-extension ClusterCodable {
-    var downloadObjects: [DownloadObject] {
+
+extension ClusterCodable: FileTransferable {
+    
+    mutating func clearDataForDeletedObjects(forceDelete: Bool) {
+    }
+    
+    func getDeleteObjects(forceDelete: Bool) -> [String] {
+        []
+    }
+    
+    var uploadObjects: [TransferObject] {
+        []
+    }
+    
+    var downloadObjects: [TransferObject] {
         let sheetThemesPaths = hasSheets.getThemes(context: newMOCBackground).filter({ $0.hasNewRemoteImage }).compactMap({ $0.imagePathAWS })
         let pastorstPaths = hasSheets.compactMap({ $0 as? VSheetPastors }).filter({ $0.hasNewRemoteImage }).compactMap({ $0.imagePathAWS })
         let titleImagePaths = hasSheets.compactMap({ $0 as? VSheetTitleImage }).filter({ $0.hasNewRemoteImage }).compactMap({ $0.imagePathAWS })
@@ -241,4 +254,52 @@ extension ClusterCodable {
         
         return allPaths.compactMap({ URL(string: $0) }).compactMap({ DownloadObject(remoteURL: $0) })
     }
+    
+    var transferObjects: [TransferObject] {
+        uploadObjects + downloadObjects
+    }
+    
+    mutating func setTransferObjects(_ transferObjects: [TransferObject]) throws {
+//        let uploadObjects = transferObjects.compactMap { $0 as? UploadObject }
+//        for uploadObject in uploadObjects {
+//            if newSelectedThemeImageTempDirPath == uploadObject.fileName {
+//                imagePathAWS = uploadObject.fileName
+//            }
+//            if newSelectedSheetImageTempDirPath == uploadObject.fileName {
+//                imagePathAWS = uploadObject.fileName
+//            }
+//        }
+//        for download in downloadObjects.compactMap({ $0 as? DownloadObject }) {
+//            if imagePathAWS == download.remoteURL.absoluteString {
+//                try setBackgroundImage(image: download.image, imageName: download.filename)
+//            }
+//        }
+    }
+    
+    func setDeleteDate() -> FileTransferable {
+        var modifiedDocument = self
+        if uploadSecret != nil {
+            modifiedDocument.rootDeleteDate = Date()
+        } else {
+            modifiedDocument.deleteDate = Date()
+        }
+        return modifiedDocument
+    }
+    
+    func setUpdatedAt() -> FileTransferable {
+        var modifiedDocument = self
+        modifiedDocument.updatedAt = Date()
+        return modifiedDocument
+    }
+    
+    func setUserUID() throws -> FileTransferable {
+        var modifiedDocument = self
+        guard let userUID = Auth.auth().currentUser?.uid else {
+            throw RequestError.unAuthorizedNoUser(requester: String(describing: self))
+        }
+        modifiedDocument.userUID = userUID
+        return modifiedDocument
+    }
+
+    
 }

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 class ThemesIphoneController: ChurchBeamViewController, UIGestureRecognizerDelegate, UIPopoverPresentationControllerDelegate, NewOrEditIphoneControllerDelegate, UISearchResultsUpdating {
     
@@ -130,27 +131,26 @@ class ThemesIphoneController: ChurchBeamViewController, UIGestureRecognizerDeleg
         }
     }
     
+    var editModel: WrappedStruct<EditSheetOrThemeViewModel>? = nil
     @IBAction func addThemePressed(_ sender: UIBarButtonItem) {
-        let draft = ThemeDraft()
-        draft.title = AppText.NewTheme.sampleTitle
-        draft.backgroundTransparancy = 100
-        let controller = CreateEditThemeSheetViewController(
-            mode: .theme(
-                CreateEditThemeViewModel(
-                    mode: .new(draft),
-                    sheet: SheetTitleContentCodable(title: AppText.NewTheme.sampleTitle, content: AppText.NewTheme.sampleLyrics)
-                )
-            )
+        guard let editThemeModel = EditSheetOrThemeViewModel(editMode: .newTheme, isUniversal: false) else { return }
+        let model = WrappedStruct(withItem: editThemeModel)
+        self.editModel = model
+        let editView = EditThemeOrSheetViewUI(
+            dismiss: { dismissPresenting in
+                if dismissPresenting {
+                    self.dismiss(animated: true)
+                } else {
+                    self.presentedViewController?.dismiss(animated: true)
+                }
+        },
+            navigationTitle: AppText.NewTheme.title,
+            editSheetOrThemeModel: model,
+            submitThemeUseCaseResult: .idle
         )
-        
-        self.present(UINavigationController(rootViewController: controller), animated: true)
-//        Queues.main.async {
-//            let controller = self.storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
-//            controller.modificationMode = .newTheme
-//            controller.delegate = self
-//            let nav = UINavigationController(rootViewController: controller)
-//            self.present(nav, animated: true)
-//        }
+        let controller = UIHostingController(rootView: editView)
+        controller.modalPresentationStyle = .fullScreen
+        present(controller, animated: true)
     }
 }
 
@@ -216,12 +216,25 @@ extension ThemesIphoneController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         Queues.main.async {
             self.selectedTheme = self.filteredThemes[indexPath.row]
-            let controller = self.storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
-            controller.theme = self.selectedTheme
-            controller.modificationMode = .editTheme
-            controller.delegate = self
-            let nav = UINavigationController(rootViewController: controller)
-            self.present(nav, animated: true)
+            guard
+                let themeCodable = ThemeCodable(
+                    managedObject: self.filteredThemes[indexPath.row].getManagedObject(context: moc),
+                    context: moc
+                ),
+                let model = EditSheetOrThemeViewModel(
+                    editMode: .persistedTheme(themeCodable),
+                    isUniversal: uploadSecret != nil
+                ) else {
+                return
+            }
+            let editView = EditThemeOrSheetViewUI(dismiss: { [weak self] dismissPresenting in
+                if dismissPresenting {
+                    self?.dismiss(animated: true)
+                } else {
+                    self?.presentedViewController?.dismiss(animated: true)
+                }
+            }, navigationTitle: AppText.EditTheme.title, editSheetOrThemeModel: WrappedStruct<EditSheetOrThemeViewModel>(withItem: model))
+            self.present(UIHostingController(rootView: editView), animated: true)
         }
     }
     

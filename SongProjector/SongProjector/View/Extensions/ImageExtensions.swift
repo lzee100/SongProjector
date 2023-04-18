@@ -242,7 +242,21 @@ extension UIImage {
 			return SavedImage(imagePath: nil, thumbPath: nil)
 		}
 	}
-	
+    
+    static func getFromTempDir(imagePath: String?) -> UIImage? {
+        if let imagePath = imagePath {
+            let url = FileManager.getTempURLFor(name: imagePath)
+            do {
+                let data = try Data(contentsOf: url)
+                return UIImage(data: data)
+            } catch {
+                return nil
+            }
+        } else {
+            return nil
+        }
+    }
+
 	static func get(imagePath: String?) -> UIImage? {
 		if let imagePath = imagePath {
             let url = FileManager.getURLfor(name: imagePath)

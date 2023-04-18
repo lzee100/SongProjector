@@ -53,7 +53,7 @@ struct BeamerPreviewUI: View {
     }
     
     @ViewBuilder private func getTabView(screenSize: CGSize) -> some View {
-        ForEach(Array(songService.songs.enumerated()), id: \.offset) { index, songObject in
+        ForEach(Array(songService.songs.enumerated()), id: \.offset) { offset, songObject in
             
             if songService.selectedSong == nil {
                 
@@ -61,15 +61,13 @@ struct BeamerPreviewUI: View {
                 
             } else if songObject.cluster.id == selectedSong?.cluster.id {
                 
-                ForEach(Array(songObject.cluster.hasSheets.enumerated()), id: \.offset) { sheetIndex, sheet in
-                    TitleContentViewUI(position: 0, scaleFactor: getScaleFactor(width: screenSize.width), selectedSheet: $selectedSheet, sheet: sheet, sheetTheme: (sheet as! VSheetTitleContent).hasTheme ?? selectedSong?.cluster.hasTheme(moc: moc) ?? VTheme(), showSelectionCover: false)
-                        .tag(songService.getSheetIndexWithSongIndexAddedIfNeeded(sheetIndex))
+                ForEach(Array(songObject.cluster.hasSheets.enumerated()), id: \.offset) { sheetOffset, sheet in
+                    getTitleContentViewUI(index: songService.getSheetIndexWithSongIndexAddedIfNeeded(sheetOffset), position: 0, sheet: sheet, screenSize: screenSize, songObject: songObject)
                 }
                 
             } else if let sheet = songObject.cluster.hasSheets.first {
                 
-                TitleContentViewUI(position: 0, scaleFactor: 1, selectedSheet: $songService.selectedSheet, sheet: sheet, sheetTheme: VTheme(), showSelectionCover: false)
-                    .tag(songService.getSongIndexWithSheetIndexAddedIfNeeded(index))
+                getTitleContentViewUI(index: songService.getSongIndexWithSheetIndexAddedIfNeeded(offset), position: 0, sheet: sheet, screenSize: screenSize, songObject: songObject)
                 
             } else {
                 
@@ -77,6 +75,21 @@ struct BeamerPreviewUI: View {
                 
             }
         }
+    }
+    
+    @ViewBuilder func getTitleContentViewUI(index: Int, position: Int, sheet: VSheet, screenSize: CGSize, songObject: SongObject) -> some View {
+        TitleContentViewUI(
+            displayModel: SheetDisplayViewModel(
+                position: position,
+                selectedSheet: $songService.selectedSheet,
+                sheet: sheet,
+                sheetTheme: (sheet as? VSheetTitleContent)?.hasTheme ?? songObject.cluster.hasTheme(moc: moc) ?? VTheme(),
+                showSelectionCover: false
+            ),
+            scaleFactor: getScaleFactor(width: screenSize.width),
+            isForExternalDisplay: false
+        )
+            .tag(index)
     }
 
 }

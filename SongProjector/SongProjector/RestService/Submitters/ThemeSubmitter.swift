@@ -48,16 +48,14 @@ class TemeSubmitter: Requester<VTheme> {
         let uploadObjects = body.flatMap({ $0.uploadObjecs }).unique { (lhs, rhs) -> Bool in
             return lhs.fileName == rhs.fileName
         }
-        let uploadManager = TransferManager(objects: uploadObjects)
+        let uploadManager = TransferManager(transferObjects: uploadObjects)
         
-        uploadManager.start(progress: { (progress) in
-            self.observers.forEach({ $0.requesterDidProgress(progress: CGFloat(progress)) })
-        }) { (result) in
+        _ = uploadManager.$result.sink { result in
             switch result {
             case .failed(error: let error):
                 body.compactMap({ $0.tempLocalImageName }).forEach { try? FileManager.deleteFile(name: $0) }
                 completion(.failed(error: .failedUploadingMedia(requester: self.id, error: error)))
-            case .success:
+            case .success, .none:
                 
                 self.deleteLocalImages(body: body)
                 

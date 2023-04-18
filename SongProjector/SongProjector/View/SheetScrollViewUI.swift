@@ -65,7 +65,7 @@ struct SheetScrollViewUI: View {
                 Section {
                     if let selectedCluster = selectedSong?.cluster,  songObject.cluster.id == selectedCluster.id {
                         ForEach(Array(selectedCluster.hasSheets.enumerated()), id: \.offset) { sheetIndex, sheet in
-                            TitleContentViewUI(position: sheetIndex, scaleFactor: getScaleFactor(width: getSizeWith(height: viewSize.height).width), selectedSheet: $selectedSheet, sheet: sheet as! VSheetTitleContent, sheetTheme: (sheet as! VSheetTitleContent).hasTheme ?? selectedSong?.cluster.hasTheme(moc: moc) ?? VTheme(), showSelectionCover: true)
+                            TitleContentViewUI(displayModel: SheetDisplayViewModel(position: sheetIndex, selectedSheet: $selectedSheet, sheet: sheet, sheetTheme: (sheet as! VSheetTitleContent).hasTheme ?? selectedSong?.cluster.hasTheme(moc: moc) ?? VTheme(), showSelectionCover: true), scaleFactor: getScaleFactor(width: getSizeWith(height: viewSize.height).width), isForExternalDisplay: false)
                                 .id(index + sheetIndex)
                         }
                     }
@@ -82,7 +82,7 @@ struct SheetScrollViewUI: View {
     }
     
     @ViewBuilder func scrollViewItemsPortrait(viewSize: CGSize) -> some View {
-        ForEach(Array(songService.songsClusteredPerSection.enumerated()), id: \.index) { index, songObjectsPerSection in
+        ForEach(Array(songService.songsClusteredPerSection.enumerated()), id: \.offset) { offset, songObjectsPerSection in
             VStack(spacing: 10) {
 //                ForEach(Array(songObjectsPerSection.enumerated()), id: \.index) { index, songObject in
 //                    VStack(spacing: 10) {

@@ -13,13 +13,17 @@ import UIKit
 
 struct ThemeCodable: EntityCodableType {
     
-    static func makeDefault(isDeletable: Bool = true) -> ThemeCodable? {
+    static func makeDefault(isDeletable: Bool = true, isHidden: Bool = false) -> ThemeCodable? {
         let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "position", ascending: false))
         let position = (themes.first?.position ?? 0) + 1
         
+        #if DEBUG
+        let userId = "userid"
+        #else
         guard let userId = Auth.auth().currentUser?.uid else {
             return nil
         }
+        #endif
         
         return ThemeCodable(
             userUID: userId,
@@ -60,7 +64,13 @@ struct ThemeCodable: EntityCodableType {
             imagePathAWS: nil,
             isUniversal: false,
             isDeletable: isDeletable,
-            tempSelectedImage: nil
+            tempSelectedImage: nil,
+            newSelectedThemeImageTempDirPath: nil,
+            newSelectedSheetImageTempDirPath: nil,
+            newSelectedThemeImageThumbTempDirPath: nil,
+            newSelectedSheetImageThumbTempDirPath: nil,
+            isThemeImageDeleted: false,
+            isSheetImageDeleted: false
             )
     }
     
@@ -103,7 +113,13 @@ struct ThemeCodable: EntityCodableType {
          imagePathAWS: String?,
          isUniversal: Bool,
          isDeletable: Bool,
-         tempSelectedImage: UIImage?) {
+         tempSelectedImage: UIImage?,
+         newSelectedThemeImageTempDirPath: String?,
+         newSelectedSheetImageTempDirPath: String?,
+         newSelectedThemeImageThumbTempDirPath: String?,
+         newSelectedSheetImageThumbTempDirPath: String?,
+         isThemeImageDeleted: Bool,
+         isSheetImageDeleted: Bool) {
         self.id = id
         self.userUID = userUID
         self.title = title
@@ -144,6 +160,12 @@ struct ThemeCodable: EntityCodableType {
         self.isUniversal = isUniversal
         self.isDeletable = isDeletable
         self.tempSelectedImage = tempSelectedImage
+        self.newSelectedThemeImageTempDirPath = newSelectedThemeImageTempDirPath
+        self.newSelectedSheetImageTempDirPath = newSelectedSheetImageTempDirPath
+        self.newSelectedThemeImageThumbTempDirPath = newSelectedThemeImageThumbTempDirPath
+        self.newSelectedSheetImageThumbTempDirPath = newSelectedSheetImageThumbTempDirPath
+        self.isThemeImageDeleted = isThemeImageDeleted
+        self.isSheetImageDeleted = isSheetImageDeleted
     }
     
     init?(managedObject: NSManagedObject, context: NSManagedObjectContext) {
@@ -291,6 +313,12 @@ struct ThemeCodable: EntityCodableType {
     var tempSelectedImageThumbnail: UIImage? {
         tempSelectedImage?.resized(withPercentage: 0.5)
     }
+    var newSelectedThemeImageTempDirPath: String? = nil
+    var newSelectedSheetImageTempDirPath: String? = nil
+    var newSelectedThemeImageThumbTempDirPath: String? = nil
+    var newSelectedSheetImageThumbTempDirPath: String? = nil
+    var isThemeImageDeleted: Bool = false
+    var isSheetImageDeleted: Bool = false
     
     var hasNewRemoteImage: Bool {
         if let imagePathAWS = imagePathAWS {
@@ -459,11 +487,99 @@ struct ThemeCodable: EntityCodableType {
             rootDeleteDate = Date(timeIntervalSince1970: TimeInterval(rootdeleteDateInt))
         }
     }
+    
 }
 
-extension ThemeCodable {
-    var downloadObjects: [DownloadObject] {
-        let themesPaths = [self].filter({ $0.hasNewRemoteImage }).compactMap({ $0.imagePathAWS })
-        return themesPaths.compactMap({ URL(string: $0) }).compactMap({ DownloadObject(remoteURL: $0) })
+extension ThemeCodable: FileTransferable {
+    
+    func getDeleteObjects(forceDelete: Bool) -> [String] {
+        var fileNames: [String?] = []
+        if isThemeImageDeleted || forceDelete {
+            fileNames.append(imagePathAWS)
+        }
+        return fileNames.compactMap { $0 }
+    }
+    
+    mutating func clearDataForDeletedObjects(forceDelete: Bool) {
+        if isThemeImageDeleted || forceDelete {
+            imagePathAWS = nil
+            // remove locally saved images
+            _ = try? UIImage.set(image: nil, imageName: imagePath, thumbNailName: imagePathThumbnail)
+            imagePath = nil
+            imagePathThumbnail = nil
+        }
+    }
+    
+    var uploadObjects: [TransferObject] {
+        [newSelectedThemeImageTempDirPath, newSelectedSheetImageTempDirPath].compactMap { $0 }.compactMap { UploadObject(fileName: $0) }
+    }
+    
+    var downloadObjects: [TransferObject] {
+        [self].filter({ $0.hasNewRemoteImage }).compactMap({ URL(string: $0.imagePathAWS) }).compactMap({ DownloadObject(remoteURL: $0) })
+    }
+    
+    
+    var transferObjects: [TransferObject] {
+        uploadObjects + downloadObjects
+    }
+    
+    mutating func setTransferObjects(_ transferObjects: [TransferObject]) throws {
+        let uploadObjects = transferObjects.compactMap { $0 as? UploadObject }
+        for uploadObject in uploadObjects {
+            if newSelectedThemeImageTempDirPath == uploadObject.fileName {
+                imagePathAWS = uploadObject.fileName
+                if let image = UIImage.getFromTempDir(imagePath: uploadObject.fileName) {
+                    let savedImage = try UIImage.set(image: image, imageName: uploadObject.fileName, thumbNailName: nil)
+                    imagePath = savedImage.imagePath
+                    imagePathThumbnail = savedImage.thumbPath
+                }
+                try FileManager.deleteTempFile(name: uploadObject.fileName)
+            }
+            if newSelectedSheetImageTempDirPath == uploadObject.fileName {
+                imagePathAWS = uploadObject.fileName
+                if let image = UIImage.getFromTempDir(imagePath: uploadObject.fileName) {
+                    let savedImage = try UIImage.set(image: image, imageName: uploadObject.fileName, thumbNailName: nil)
+                    imagePath = savedImage.imagePath
+                    imagePathThumbnail = savedImage.thumbPath
+                }
+                try FileManager.deleteTempFile(name: uploadObject.fileName)
+            }
+        }
+        for download in downloadObjects.compactMap({ $0 as? DownloadObject }) {
+            if imagePathAWS == download.remoteURL.absoluteString {
+                try setBackgroundImage(image: download.image, imageName: download.filename)
+            }
+        }
+    }
+    
+    func setDeleteDate() -> FileTransferable {
+        var modifiedDocument = self
+        if uploadSecret != nil {
+            modifiedDocument.rootDeleteDate = Date()
+        } else {
+            modifiedDocument.deleteDate = Date()
+        }
+        return modifiedDocument
+    }
+    
+    func setUpdatedAt() -> FileTransferable {
+        var modifiedDocument = self
+        modifiedDocument.updatedAt = Date()
+        return modifiedDocument
+    }
+    
+    func setUserUID() throws -> FileTransferable {
+        var modifiedDocument = self
+        guard let userUID = Auth.auth().currentUser?.uid else {
+            throw RequestError.unAuthorizedNoUser(requester: String(describing: self))
+        }
+        modifiedDocument.userUID = userUID
+        return modifiedDocument
+    }
+    
+    private mutating func setBackgroundImage(image: UIImage?, imageName: String?) throws {
+        let savedImage = try UIImage.set(image: image, imageName: imageName ?? self.imagePath, thumbNailName: self.imagePathThumbnail)
+        self.imagePath = savedImage.imagePath
+        self.imagePathThumbnail = savedImage.thumbPath
     }
 }

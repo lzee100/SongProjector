@@ -12,6 +12,40 @@ import CoreData
 
 public struct SheetTitleImageCodable: EntityCodableType, SheetMetaType {
     
+    static func makeDefault() -> SheetTitleImageCodable {
+#if DEBUG
+        let userId = "userid"
+#else
+        guard let userId = Auth.auth().currentUser?.uid else {
+            return nil
+        }
+#endif
+        
+        return SheetTitleImageCodable(
+            id: "CHURCHBEAM" + UUID().uuidString,
+            userUID: userId,
+            title: "Title image sheet",
+            createdAt: Date(),
+            updatedAt: Date(),
+            deleteDate: nil,
+            isTemp: false,
+            rootDeleteDate: nil,
+            isEmptySheet: false,
+            position: 0,
+            time: 0,
+            hasTheme: ThemeCodable.makeDefault(),
+            content: "Content image sheet",
+            hasTitle: false,
+            imageBorderColor: nil,
+            imageBorderSize: 0,
+            imageContentMode: 0,
+            imageHasBorder: false,
+            imagePath: nil,
+            thumbnailPath: nil,
+            imagePathAWS: nil
+        )
+    }
+    
     init?(managedObject: NSManagedObject, context: NSManagedObjectContext) {
         guard let entity = managedObject as? SheetTitleImageEntity else { return nil }
         id = entity.id
@@ -241,8 +275,8 @@ public struct SheetTitleImageCodable: EntityCodableType, SheetMetaType {
             throw RequestError.unAuthorizedNoUser(requester: String(describing: self))
         }
         try container.encode(userUID, forKey: .userUID)
-
-       try container.encode((createdAt as Date).intValue, forKey: .createdAt)
+        
+        try container.encode((createdAt as Date).intValue, forKey: .createdAt)
         if let updatedAt = updatedAt {
             try container.encode((updatedAt as Date).intValue, forKey: .updatedAt)
         } else {
@@ -255,4 +289,55 @@ public struct SheetTitleImageCodable: EntityCodableType, SheetMetaType {
             try container.encode(rootDeleteDate.intValue, forKey: .rootDeleteDate)
         }
     }
+}
+
+extension SheetTitleImageCodable: FileTransferable {
+    
+    mutating func clearDataForDeletedObjects(forceDelete: Bool) {
+    }
+    
+    func getDeleteObjects(forceDelete: Bool) -> [String] {
+        []
+    }
+    
+    var uploadObjects: [TransferObject] {
+        []
+    }
+    
+    var downloadObjects: [TransferObject] {
+        []
+    }
+    
+    var transferObjects: [TransferObject] {
+        uploadObjects + downloadObjects
+    }
+    
+    mutating func setTransferObjects(_ transferObjects: [TransferObject]) throws {
+    }
+    
+    func setDeleteDate() -> FileTransferable {
+        var modifiedDocument = self
+        if uploadSecret != nil {
+            modifiedDocument.rootDeleteDate = Date()
+        } else {
+            modifiedDocument.deleteDate = Date()
+        }
+        return modifiedDocument
+    }
+    
+    func setUpdatedAt() -> FileTransferable {
+        var modifiedDocument = self
+        modifiedDocument.updatedAt = Date()
+        return modifiedDocument
+    }
+    
+    func setUserUID() throws -> FileTransferable {
+        var modifiedDocument = self
+        guard let userUID = Auth.auth().currentUser?.uid else {
+            throw RequestError.unAuthorizedNoUser(requester: String(describing: self))
+        }
+        modifiedDocument.userUID = userUID
+        return modifiedDocument
+    }
+    
 }

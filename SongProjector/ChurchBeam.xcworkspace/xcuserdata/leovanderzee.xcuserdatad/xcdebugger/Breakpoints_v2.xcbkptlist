@@ -63,8 +63,8 @@
             filePath = "SongProjector/Controller/CustomSheetsController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "681"
-            endingLineNumber = "681"
+            startingLineNumber = "682"
+            endingLineNumber = "682"
             landmarkName = "isLessThanHeightTextViewFor(sheetNumber:)"
             landmarkType = "9">
          </BreakpointContent>
@@ -130,49 +130,64 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "0677BE5C-C323-42AF-9878-132CAC60CB69"
+            uuid = "B0250A1E-66DB-4802-8770-373171D28A1D"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SongProjector/Global/AppDelegate.swift"
+            filePath = "SongProjector/RestService/Submitters/FileSubmitter.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "55"
-            endingLineNumber = "55"
-            landmarkName = "unknown"
-            landmarkType = "0">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "2571B055-3A6B-401C-8ED4-8B24EEBB7479"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SongProjector/Global/AppDelegate.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "57"
-            endingLineNumber = "57"
-            landmarkName = "unknown"
-            landmarkType = "0">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "5A184A95-9787-46F7-8AEB-7271684FA6BF"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SongProjector/Controller/SongServiceController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "279"
-            endingLineNumber = "279"
-            landmarkName = "startSwiftUI()"
+            startingLineNumber = "188"
+            endingLineNumber = "188"
+            landmarkName = "startUpload()"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "B0250A1E-66DB-4802-8770-373171D28A1D - f0468471433e973e"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for ChurchBeam.FileSubmitter.startUpload() async -&gt; ChurchBeam.TransferResult"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/RestService/Submitters/FileSubmitter.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "188"
+                  endingLineNumber = "188"
+                  offsetFromSymbolStart = "5176">
+               </Location>
+               <Location
+                  uuid = "B0250A1E-66DB-4802-8770-373171D28A1D - a2ad7d6b5eabbd23"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(6) suspend resume partial function for ChurchBeam.FileSubmitter.startUpload() async -&gt; ChurchBeam.TransferResult"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/RestService/Submitters/FileSubmitter.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "188"
+                  endingLineNumber = "188"
+                  offsetFromSymbolStart = "1032">
+               </Location>
+               <Location
+                  uuid = "B0250A1E-66DB-4802-8770-373171D28A1D - 52159aa3c9b15b20"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(7) suspend resume partial function for ChurchBeam.FileSubmitter.startUpload() async -&gt; ChurchBeam.TransferResult"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/RestService/Submitters/FileSubmitter.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "188"
+                  endingLineNumber = "188"
+                  offsetFromSymbolStart = "1104">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

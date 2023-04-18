@@ -261,7 +261,13 @@ class ThemeDraft {
             imagePathAWS: imagePathAWS,
             isUniversal: isUniversal,
             isDeletable: isDeletable,
-            tempSelectedImage: imageSelectionAction.image
+            tempSelectedImage: imageSelectionAction.image,
+            newSelectedThemeImageTempDirPath: nil,
+            newSelectedSheetImageTempDirPath: nil,
+            newSelectedThemeImageThumbTempDirPath: nil,
+            newSelectedSheetImageThumbTempDirPath: nil,
+            isThemeImageDeleted: false,
+            isSheetImageDeleted: false
         )
     }
     

@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import SwiftUI
 
 extension String {
 	
@@ -105,6 +106,18 @@ extension String {
         let size = reversed().firstIndex(of: " ") ?? count
         self = String(self.dropLast(size))
         return size
+    }
+    
+    func loadImage() -> UIImage? {
+        UIImage.get(imagePath: self)
+    }
+    
+    var color: Color {
+        Color(hex: self)
+    }
+    
+    var uiColor: UIColor? {
+        UIColor(hex: self)
     }
 }
 

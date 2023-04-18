@@ -16,64 +16,45 @@ protocol TransferManagerDelegate {
 
 class TransferManager: NSObject {
     private var continueAfterFailure = true
-    var delegate: TransferManagerDelegate?
+    let uploadObjects: [UploadObject]
+    let downloadObjects: [DownloadObject]
+    @Published private(set) var progress: Double = 0
+    @Published private(set) var result: TransferResult?
+        
+    private var singleTransferManagers: [SingleTransferManagerProtocol]
     
-    var downloadObjects: [DownloadObject] {
-        return singleTransferManagers.compactMap({ $0.transferObject as? DownloadObject })
-    }
-    var uploadObjects: [UploadObject] {
-        return singleTransferManagers.compactMap({ $0.transferObject as? UploadObject })
-    }
-    
-    private let singleTransferManagers: [SingleTransferManager]
-    private var progress: Double = 0
-   
-    init(objects: [TransferObject]) {
-        let uploadObject = objects.compactMap({ $0 as? UploadObject })
-        let downloadObjects = objects.compactMap({ $0 as? DownloadObject })
-        let uploaders = uploadObject.map({ FileSubmitter(transferObject: $0) })
-        let downLoaders = downloadObjects.map({ FileFetcher(transferObject: $0) })
-        self.singleTransferManagers = uploaders + downLoaders
-    }
-    
-    init(singleTransferManagers: [SingleTransferManager]) {
+    init(singleTransferManagers: [SingleTransferManagerProtocol]) {
+        uploadObjects = []
+        downloadObjects = []
         self.singleTransferManagers = singleTransferManagers
     }
     
-    func start(progress: @escaping ((Double) -> Void), completion: @escaping ((_ result: TransferResult) -> Void)) {
-        
-        func startTransfer(_ singleTransferManager: SingleTransferManager) {
-            singleTransferManager.perform(progress: { (_) in
-                self.progress = self.singleTransferManagers.map({ $0.progress }).reduce(0, +) / Double(self.singleTransferManagers.count)
-                progress(self.progress)
-                self.delegate?.uploadDidProgress(progress: self.progress)
-            }) { (result) in
-                self.delegate?.didComplete(result: result)
-                if self.continueAfterFailure {
-                    if let submitter = self.singleTransferManagers.filter({ $0.readyToUpload }).first {
-                        startTransfer(submitter)
-                    } else {
-                        completion(.success)
-                    }
-                } else {
-                    switch result {
-                    case .failed(error: _): completion(result)
-                    case .success:
-                        if let submitter = self.singleTransferManagers.filter({ $0.readyToUpload }).first {
-                            startTransfer(submitter)
-                        } else {
-                            completion(.success)
-                        }
-                    }
-                }
-            }
-        }
-        
-        if let submitter = singleTransferManagers.first {
-            startTransfer(submitter)
-        } else {
-            completion(.success)
-        }
+    init(transferObjects: [TransferObject]) {
+        uploadObjects = transferObjects.compactMap { $0 as? UploadObject }
+        downloadObjects = transferObjects.compactMap { $0 as? DownloadObject }
+        self.singleTransferManagers = uploadObjects.map { FileSubmitter(transferObject: $0) } + downloadObjects.map { FileFetcher(downloadObject: $0) }
+    }
+    
+    func start() {
+        startTransfer()
+    }
+    
+    private func startTransfer() {
+//        let transferManager = singleTransferManagers.first
+//        transferManager?.startTransfer()
+//        _ = transferManager?.progress.sink(receiveValue: { [weak self] progress in
+//            guard let self = self else { return }
+//            self.progress = (progress + Double(self.singleTransferManagers.count - 1)) / Double(self.singleTransferManagers.count)
+//        })
+//        _ = transferManager?.result.sink(receiveValue: { [weak self] result in
+//            switch result {
+//            case .success, .none:
+//                self?.singleTransferManagers.removeFirst()
+//                self?.startTransfer()
+//            case .failed:
+//                self?.result = result
+//            }
+//        })
     }
     
 }

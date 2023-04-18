@@ -32,6 +32,7 @@
 "Actions-selectImage" = "Selecteer afbeelding";
 "Actions-import" = "Importeer";
 "Actions-upload" = "Upload";
+"Actions-uploading" = "Uploaden...";
 "Actions-restore" = "Herstel";
 
 "Intro-introHalloTitle" = "Hallo";
@@ -196,8 +197,10 @@
 "Settings-sectionAppSettings" = "App instellingen";
 "Settings-resetMutes" = "Reset opgeslagen mutes voor instrument";
 
+"EditTheme-title" = "Wijzig thema";
+
 "NewTheme-title" = "Nieuw thema";
-"NewTheme-descriptionTitle" = "Naam nieuw thema";
+"NewTheme-descriptionTitle" = "Naam thema";
 "NewTheme-descriptionTitlePlaceholder" = "Naam";
 "NewTheme-descriptionAsTheme" = "Gelijk aan thema";
 "NewTheme-descriptionTitleBackgroundColor" = "Achtergrond kleur";
@@ -261,6 +264,7 @@
 
 "BibleStudy-title" = "Bijbelstudie";
 
+"NewSheetTitleImage-contentTitle" = "Aanvullende tekst";
 "NewSheetTitleImage-title" = "Foto opties";
 "NewSheetTitleImage-descriptionTitle" = "Titel";
 "NewSheetTitleImage-descriptionTextLeft" = "Tekst links";

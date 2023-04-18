@@ -47,30 +47,28 @@ struct ClusterCodableFetcher: CodableFetcherType {
     
     func additionalProcessing(decodedEntities: [EntityCodableType], managedObjects: [NSManagedObject], context: NSManagedObjectContext, completion: @escaping (Result<[NSManagedObject], Error>) -> Void) {
 
-        guard let clustersCodable = decodedEntities as? [ClusterCodable] else {
             completion(.success(managedObjects))
-            return
-        }
-        let downloadObjects = clustersCodable.flatMap({ $0.downloadObjects }).unique { (lhs, rhs) -> Bool in
-            return lhs.remoteURL == rhs.remoteURL
-        }
-        let downloadManager = TransferManager(objects: downloadObjects)
-        
-        downloadManager.start(progress: { (progress) in
-        }) { (result) in
-            switch result {
-            case .failed(error: let error): completion(.failure(error))
-            case .success:
-                guard let clusters = managedObjects as? [Cluster] else {
-                    completion(.success(managedObjects))
-                    return
-                }
-                clusters.forEach({
-                    $0.setDownloadValues(downloadObjects, context: context)
-                })
-                completion(.success(clusters))
-            }
-        }
+//            return
+//        }
+//        let downloadObjects = clustersCodable.flatMap({ $0.downloadObjects }).unique { (lhs, rhs) -> Bool in
+//            return lhs.remoteURL == rhs.remoteURL
+//        }
+//        let downloadManager = TransferManager(transferObjects: downloadObjects)
+//
+//        _ = downloadManager.$result.sink { result in
+//            switch result {
+//            case .failed(error: let error): completion(.failure(error))
+//            case .success, .none:
+//                guard let clusters = managedObjects as? [Cluster] else {
+//                    completion(.success(managedObjects))
+//                    return
+//                }
+//                clusters.forEach({
+//                    $0.setDownloadValues(downloadObjects, context: context)
+//                })
+//                completion(.success(clusters))
+//            }
+//        }
     }
     
     func getCodableObjectFrom(_ objects: [NSManagedObject], context: NSManagedObjectContext) -> [EntityCodableType] {

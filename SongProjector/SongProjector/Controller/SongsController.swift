@@ -500,20 +500,22 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
         if song.musicDownloadObjects.count > 0 {
             let tm: MusicDownloadManager = MusicDownloadManager(cluster: song)
             downloadingSongs.append(tm)
-            tm.start(progress: { [weak self] (progress) in
-                guard let `self` = self else { return }
+            _ = tm.$progress.sink(receiveValue: { [weak self] progress in
+                guard let self = self else { return }
                 if let cell = self.tableView.visibleCells.compactMap({ $0 as? BasicCell }).first(where: { ($0.data as? VCluster) == song }) {
                     Queues.main.async {
                         cell.setProgress(progres: progress)
                     }
                 }
-            }) { [weak self] (result) in
+            })
+            
+            _ = tm.$result.sink(receiveValue: { [weak self] result in
                 Queues.main.async {
                     switch result {
                     case .failed(error: let error):
                         guard let `self` = self else { return }
                         self.show(message: error.localizedDescription)
-                    case .success:
+                    case .success, .none:
                         Queues.main.async {
                             song.setDownloadValues(tm.downloadObjects)
                             song.getManagedObject(context: moc)
@@ -533,7 +535,7 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
                     }
                     self?.downloadingSongs.removeAll(where: { $0.id == song.id })
                 }
-            }
+            })
         }
     }
     

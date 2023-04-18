@@ -84,14 +84,16 @@ class CsterSubmitter: Requester<VCluster> {
         let uploadObjects = body.filter({ $0.deleteDate == nil }).flatMap({ $0.uploadObjecs + (uploadMusic ? $0.uploadMusicObjects : []) }).unique { (lhs, rhs) -> Bool in
             return lhs.fileName == rhs.fileName
         }
-        let uploadManager = TransferManager(objects: uploadObjects)
+        let uploadManager = TransferManager(transferObjects: uploadObjects)
         
-        uploadManager.start(progress: { (progress) in
+        _ = uploadManager.$progress.sink { progress in
             self.observers.forEach({ $0.requesterDidProgress(progress: CGFloat(progress)) })
-        }) { (result) in
+        }
+        
+        _ = uploadManager.$result.sink(receiveValue: { result in
             switch result {
             case .failed(error: let error): completion(.failed(error: .failedUploadingMedia(requester: self.id, error: error)))
-            case .success:
+            case .success, .none:
                 FileDeleter.delete(files: deletableFiles)
                 do {
                     try body.forEach({
@@ -104,7 +106,7 @@ class CsterSubmitter: Requester<VCluster> {
                 self.deleteFilesLocallyIfNeeded(body: self.body)
                 completion(.succes(result: body))
             }
-        }
+        })
         
     }
     
@@ -119,22 +121,18 @@ class CsterSubmitter: Requester<VCluster> {
         let downloadObjects = entities.filter({ $0.deleteDate == nil }).flatMap({ $0.downloadObjects }).unique { (lhs, rhs) -> Bool in
             return lhs.remoteURL == rhs.remoteURL
         }
-        let downloadManager = TransferManager(objects: downloadObjects)
+        let downloadManager = TransferManager(transferObjects: downloadObjects)
         
-        downloadManager.start(progress: { (progress) in
-
-        }) { (result) in
+        _ = downloadManager.$result.sink { result in
             switch result {
             case .failed(error: let error): completion(.failed(error: .failedDownloadingMedia(requester: self.id, error: error)))
-            case .success:
+            case .success, .none:
                 entities.forEach({
                     $0.setDownloadValues(downloadObjects)
                 })
                 completion(.succes(result: entities))
             }
         }
-
-        
     }
     
     private func deleteFilesLocallyIfNeeded(body: [VCluster]) {

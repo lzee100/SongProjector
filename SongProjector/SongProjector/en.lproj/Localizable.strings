@@ -32,6 +32,7 @@
 "Actions-selectImage" = "Select image";
 "Actions-import" = "Import";
 "Actions-upload" = "Upload";
+"Actions-uploading" = "Uploading...";
 "Actions-restore" = "Restore";
 
 "Intro-introHalloTitle" = "Hello";
@@ -194,8 +195,10 @@
 "Settings-sectionAppSettings" = "App settings";
 "Settings-resetMutes" = "Reset saved mutes for instruments";
 
+"EditTheme-title" = "Edit theme";
+
 "NewTheme-title" = "New theme";
-"NewTheme-descriptionTitle" = "Name new theme";
+"NewTheme-descriptionTitle" = "Name theme";
 "NewTheme-descriptionTitlePlaceholder" = "Name";
 "NewTheme-descriptionAsTheme" = "As theme";
 "NewTheme-descriptionTitleBackgroundColor" = "Background color";
@@ -259,6 +262,7 @@
 
 "BibleStudy-title" = "Bible study";
 
+"NewSheetTitleImage-contentTitle" = "Content";
 "NewSheetTitleImage-title" = "Image options";
 "NewSheetTitleImage-descriptionTitle" = "Title";
 "NewSheetTitleImage-descriptionTextLeft" = "Text left";

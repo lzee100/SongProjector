@@ -43,6 +43,7 @@ class AppText: NSObject {
 		static let selectImage = NSLocalizedString("Actions-selectImage", comment: "")
 		static let `import` = NSLocalizedString("Actions-import", comment: "")
 		static let upload = NSLocalizedString("Actions-upload", comment: "")
+        static let uploading = NSLocalizedString("Actions-uploading", comment: "")
         static let restore = NSLocalizedString("Actions-restore", comment: "")
 	}
 	
@@ -315,6 +316,10 @@ class AppText: NSObject {
         static let buttonBackgroundImagePick = NSLocalizedString("NewTheme-buttonBackgroundImagePick", comment: "")
         static let buttonBackgroundImageChange = NSLocalizedString("NewTheme-buttonBackgroundImageChange", comment: "")
 	}
+    
+    struct EditTheme {
+        static let title = NSLocalizedString("EditTheme-title", comment: "")
+    }
 	
 	struct Sheet {
 		static let emptySheetTitle = NSLocalizedString("Sheet-emptySheetTitle", comment: "")
@@ -357,6 +362,7 @@ class AppText: NSObject {
 	
 	struct NewSheetTitleImage {
         static let title = NSLocalizedString("NewSheetTitleImage-title", comment: "")
+        static let sectionContentTitle = NSLocalizedString("NewSheetTitleImage-contentTitle", comment: "")
         static let descriptionTitle = NSLocalizedString("NewSheetTitleImage-descriptionTitle", comment: "")
         static let descriptionTextLeft = NSLocalizedString("NewSheetTitleImage-descriptionTextLeft", comment: "")
         static let descriptionTextRight = NSLocalizedString("NewSheetTitleImage-descriptionTextRight", comment: "")

@@ -11,6 +11,18 @@ import CoreData
 import UIKit
 import FirebaseAuth
 
+protocol FileTransferable: EntityCodableType {
+    var transferObjects: [TransferObject] { get }
+    var uploadObjects: [TransferObject] { get }
+    var downloadObjects: [TransferObject] { get }
+    mutating func setTransferObjects(_ transferObjects: [TransferObject]) throws
+    mutating func clearDataForDeletedObjects(forceDelete: Bool)
+    func getDeleteObjects(forceDelete: Bool) -> [String]
+    func setDeleteDate() -> FileTransferable
+    func setUpdatedAt() -> FileTransferable
+    func setUserUID() throws -> FileTransferable
+}
+
 protocol EntityCodableType: ManagedObjectCodable {
     var id: String { get set }
     var userUID: String { get set }
@@ -113,4 +125,55 @@ public struct EntityCodable: EntityCodableType {
             try container.encode(rootDeleteDate.intValue, forKey: .rootDeleteDate)
         }
     }
+}
+
+extension EntityCodable: FileTransferable {
+    
+    mutating func clearDataForDeletedObjects(forceDelete: Bool) {
+    }
+    
+    func getDeleteObjects(forceDelete: Bool) -> [String] {
+        []
+    }
+        
+    var uploadObjects: [TransferObject] {
+        []
+    }
+    
+    var downloadObjects: [TransferObject] {
+        []
+    }
+    
+    var transferObjects: [TransferObject] {
+        uploadObjects + downloadObjects
+    }
+    
+    mutating func setTransferObjects(_ transferObjects: [TransferObject]) throws {
+    }
+    
+    func setDeleteDate() -> FileTransferable {
+        var modifiedDocument = self
+        if uploadSecret != nil {
+            modifiedDocument.rootDeleteDate = Date()
+        } else {
+            modifiedDocument.deleteDate = Date()
+        }
+        return modifiedDocument
+    }
+    
+    func setUpdatedAt() -> FileTransferable {
+        var modifiedDocument = self
+        modifiedDocument.updatedAt = Date()
+        return modifiedDocument
+    }
+    
+    func setUserUID() throws -> FileTransferable {
+        var modifiedDocument = self
+        guard let userUID = Auth.auth().currentUser?.uid else {
+            throw RequestError.unAuthorizedNoUser(requester: String(describing: self))
+        }
+        modifiedDocument.userUID = userUID
+        return modifiedDocument
+    }
+
 }

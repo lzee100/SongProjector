@@ -17,7 +17,7 @@ class MusicDownloadManager: TransferManager {
     
     init(cluster: VCluster) {
         self.cluster = cluster
-        super.init(singleTransferManagers: cluster.musicDownloadObjects.compactMap({ FileFetcher(transferObject: $0) }))
+        super.init(singleTransferManagers: cluster.musicDownloadObjects.compactMap({ FileFetcher(downloadObject: $0) }))
     }
 
 }

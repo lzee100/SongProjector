@@ -21,5 +21,8 @@ extension Double {
         return NSString(format: "%.2f", self).doubleValue
     }
 
+    var cgFloat: CGFloat {
+        return CGFloat(self)
+    }
 
 }

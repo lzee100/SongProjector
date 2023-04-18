@@ -25,9 +25,9 @@ struct SheetDisplayerPageView: View {
                     
                     ForEach(getSheets()) { sheet in
                         VStack() {
-                            TitleContentViewUI(position: 0, scaleFactor: getScaleFactor(width: proxy.size.width), selectedSheet: $songService.selectedSheet, sheet: sheet, sheetTheme: VTheme(), showSelectionCover: false)
-                                .tag(sheet)
-                                .frame(width: proxy.size.width, height: getSizeWith(width: proxy.size.width).height, alignment: .center)
+//                            TitleContentViewUI(position: 0, scaleFactor: getScaleFactor(width: proxy.size.width), selectedSheet: $songService.selectedSheet, sheet: sheet, sheetTheme: VTheme(), showSelectionCover: false)
+//                                .tag(sheet)
+//                                .frame(width: proxy.size.width, height: getSizeWith(width: proxy.size.width).height, alignment: .center)
                             Spacer()
                         }
                         .frame(width: proxy.size.width)

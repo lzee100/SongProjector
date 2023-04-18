@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 protocol CustomSheetsControllerDelegate {
     func didCloseCustomSheet()
@@ -835,15 +836,30 @@ extension CustomSheetsController: SheetPickerMenuControllerDelegate {
                 self.performSegue(withIdentifier: "ChangeLyricsSegue", sender: self)
             }
         case .sheet(sheet: let sheet):
-            // open edit sheet controller
-            let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
-            controller.delegate = self
-            controller.modificationMode = .newCustomSheet
-            controller.sheet = sheet
-            let nav = UINavigationController(rootViewController: controller)
-            Queues.main.async {
-                self.present(nav, animated: true)
-            }
+            let editModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(
+                editMode: .newSheet(SheetPastorsCodable.makeDefault(), sheetType: .SheetPastors),
+                isUniversal: uploadSecret != nil)!
+            )
+
+            let controllerView = EditThemeOrSheetViewUI(dismiss: { [weak self] dismissPresenting in
+                if dismissPresenting {
+                    self?.dismiss(animated: true)
+                } else {
+                    self?.presentedViewController?.dismiss(animated: true)
+                }
+            }, navigationTitle: AppText.NewSheetTitleImage.title, editSheetOrThemeModel: editModel)
+
+            present(UIHostingController(rootView: controllerView), animated: true)
+            
+//            // open edit sheet controller
+//            let controller = storyboard?.instantiateViewController(withIdentifier: "NewOrEditIphoneController") as! NewOrEditIphoneController
+//            controller.delegate = self
+//            controller.modificationMode = .newCustomSheet
+//            controller.sheet = sheet
+//            let nav = UINavigationController(rootViewController: controller)
+//            Queues.main.async {
+//                self.present(nav, animated: true)
+//            }
         case .bibleStudy:
             showBibleStudyInputController()
         }

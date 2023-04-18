@@ -163,6 +163,13 @@ extension FileManager {
             try FileManager.default.removeItem(at: path)
         }
     }
+    
+    static func deleteTempFile(name: String) throws {
+        let path = getTempURLFor(name: name)
+        if fileExists(path: path.absoluteString) {
+            try FileManager.default.removeItem(at: path)
+        }
+    }
 
 
 }

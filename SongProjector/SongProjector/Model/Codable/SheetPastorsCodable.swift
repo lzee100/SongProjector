@@ -12,6 +12,9 @@ import CoreData
 
 public struct SheetPastorsCodable: EntityCodableType, SheetMetaType {
     
+    static func makeDefault() -> SheetPastorsCodable {
+        SheetPastorsCodable(title: "Pastor John and Jessy Doe", content: "Pastoring in Almere city")
+    }
     init?(managedObject: NSManagedObject, context: NSManagedObjectContext) {
         guard let entity = managedObject as? SheetPastorsEntity else { return nil }
         id = entity.id
@@ -33,6 +36,43 @@ public struct SheetPastorsCodable: EntityCodableType, SheetMetaType {
         imagePath = entity.imagePath
         thumbnailPath = entity.thumbnailPath
         imagePathAWS = entity.imagePathAWS
+    }
+    
+    init(id: String = "CHURCHBEAM" + UUID().uuidString,
+         userUID: String = "",
+         title: String? = nil,
+         createdAt: Date = Date().localDate(),
+         updatedAt: Date? = nil,
+         deleteDate: Date? = nil,
+         isTemp: Bool = false,
+         rootDeleteDate: Date? = nil,
+         isEmptySheet: Bool = false,
+         position: Int = 0,
+         time: Double = 0,
+         hasTheme: ThemeCodable? = nil,
+         content: String? = nil,
+         imagePath: String? = nil,
+         thumbnailPath: String? = nil,
+         imagePathAWS: String? = nil)
+    {
+        self.id = id
+        self.userUID = userUID
+        self.title = title
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.deleteDate = deleteDate
+        self.isTemp = isTemp
+        self.rootDeleteDate = rootDeleteDate
+        
+        self.isEmptySheet = isEmptySheet
+        self.position = position
+        self.time = time
+        self.hasTheme = hasTheme
+        
+        self.content = content
+        self.imagePath = imagePath
+        self.thumbnailPath = thumbnailPath
+        self.imagePathAWS = imagePathAWS
     }
     
     func getManagedObjectFrom(_ context: NSManagedObjectContext) -> NSManagedObject {
@@ -111,44 +151,6 @@ public struct SheetPastorsCodable: EntityCodableType, SheetMetaType {
         case imagePathAWS
     }
     
-    init(
-        id: String,
-        userUID: String,
-        title: String?,
-        createdAt: Date,
-        updatedAt: Date?,
-        deleteDate: Date?,
-        isTemp: Bool,
-        rootDeleteDate: Date?,
-        isEmptySheet: Bool,
-        position: Int,
-        time: Double,
-        hasTheme: ThemeCodable?,
-        content: String?,
-        imagePath: String?,
-        thumbnailPath: String?,
-        imagePathAWS: String?
-    ) {
-        self.id = id
-        self.userUID = userUID
-        self.title = title
-        self.createdAt = createdAt
-        self.updatedAt = updatedAt
-        self.deleteDate = deleteDate
-        self.isTemp = isTemp
-        self.rootDeleteDate = rootDeleteDate
-        self.isEmptySheet = isEmptySheet
-        self.position = position
-        self.time = time
-        self.hasTheme = hasTheme
-        self.content = content
-        self.imagePath = imagePath
-        self.thumbnailPath = thumbnailPath
-        self.imagePathAWS = imagePathAWS
-    }
-    
-
-    
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeysPastors.self)
         
@@ -223,3 +225,55 @@ public struct SheetPastorsCodable: EntityCodableType, SheetMetaType {
         }
     }
 }
+
+extension SheetPastorsCodable: FileTransferable {
+    
+    mutating func clearDataForDeletedObjects(forceDelete: Bool) {
+    }
+    
+    func getDeleteObjects(forceDelete: Bool) -> [String] {
+        []
+    }
+    
+    var uploadObjects: [TransferObject] {
+        []
+    }
+    
+    var downloadObjects: [TransferObject] {
+        []
+    }
+    
+    var transferObjects: [TransferObject] {
+        uploadObjects + downloadObjects
+    }
+    
+    mutating func setTransferObjects(_ transferObjects: [TransferObject]) throws {
+    }
+    
+    func setDeleteDate() -> FileTransferable {
+        var modifiedDocument = self
+        if uploadSecret != nil {
+            modifiedDocument.rootDeleteDate = Date()
+        } else {
+            modifiedDocument.deleteDate = Date()
+        }
+        return modifiedDocument
+    }
+    
+    func setUpdatedAt() -> FileTransferable {
+        var modifiedDocument = self
+        modifiedDocument.updatedAt = Date()
+        return modifiedDocument
+    }
+    
+    func setUserUID() throws -> FileTransferable {
+        var modifiedDocument = self
+        guard let userUID = Auth.auth().currentUser?.uid else {
+            throw RequestError.unAuthorizedNoUser(requester: String(describing: self))
+        }
+        modifiedDocument.userUID = userUID
+        return modifiedDocument
+    }
+
+}
+

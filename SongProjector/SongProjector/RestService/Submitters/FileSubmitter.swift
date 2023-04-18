@@ -9,6 +9,7 @@
 import Foundation
 import Firebase
 import FirebaseStorage
+import SwiftUI
 
 enum FileType: String, CaseIterable {
     case png
@@ -59,6 +60,13 @@ enum TransferError: Error {
 enum TransferResult {
     case failed(error: Error)
     case success
+    
+    var isFailed: Bool {
+        switch self {
+        case .failed: return true
+        case .success: return false
+        }
+    }
 }
 
 enum TransferState {
@@ -129,108 +137,55 @@ class DownloadObject: TransferObject {
     }
 }
 
-class SingleTransferManager {
-    
-    struct Constants {
-        static let images = "images"
-        static let audio = "audio"
-    }
+protocol SingleTransferManagerProtocol {
+    var transferObject: TransferObject { get }
+    func startTransfer() async throws -> TransferResult
+}
+
+struct SingleTransferManagerConstants {
+    static let images = "images"
+    static let audio = "audio"
+}
+
+class FileSubmitter: SingleTransferManagerProtocol {
     
     let transferObject: TransferObject
-    var progress: Double = 0.0
-    var state: TransferState = .idle
-    var failedError: Error? {
-        switch state {
-        case .finished(result: let result):
-            switch result {
-            case .failed(error: let error): return error
-            default: return nil
-            }
-        default: return nil
-        }
-    }
-    var readyToUpload: Bool {
-        switch state {
-        case .idle: return true
-        default: return false
-        }
-    }
     
-    init(transferObject: TransferObject) {
+    required init(transferObject: TransferObject) {
         self.transferObject = transferObject
     }
     
-    func perform(progress: @escaping ((Double) -> Void), completion: @escaping ((TransferResult) -> Void)) {
-        if transferObject is UploadObject {
-            startUpload(progress: progress, completion: completion)
-        } else {
-            startDownload(progress: progress, completion: completion)
-        }
+    func startTransfer() async -> TransferResult {
+        await startUpload()
     }
     
-    func startUpload(progress: @escaping ((Double) -> Void), completion: @escaping ((TransferResult) -> Void)) {
-        
-    }
-    
-    func startDownload(progress: @escaping ((Double) -> Void), completion: @escaping ((TransferResult) -> Void)) {
-        
-    }
-
-}
-
-class FileSubmitter: SingleTransferManager {
-    
-    
-    override func startUpload(progress: @escaping ((Double) -> Void), completion: @escaping ((TransferResult) -> Void)) {
-        
+    private func startUpload() async -> TransferResult {
         guard let uploadObject = transferObject as? UploadObject else {
-            self.state = .finished(result: .failed(error: TransferError.notAnUploadFile))
-            completion(.failed(error: TransferError.notAnUploadFile))
-            return
+            return .failed(error: TransferError.notAnUploadFile)
         }
         
         let storageRef = Storage.storage().reference()
         
         var subPath: String {
             switch uploadObject.type {
-            case .jpeg, .jpg, .png: return Constants.images
-            case .m4a: return Constants.audio
+            case .jpeg, .jpg, .png: return SingleTransferManagerConstants.images
+            case .m4a: return SingleTransferManagerConstants.audio
             }
         }
         
         let uploadFile = storageRef.child(subPath).child(uploadObject.fileName)
         
         do {
-            let localURL = FileManager.getURLfor(name: uploadObject.fileName)
+            let localURL = FileManager.getTempURLFor(name: uploadObject.fileName)
+            print(localURL.absoluteString)
             let data = try Data(contentsOf: localURL)
-            let uploadTask = uploadFile.putData(data, metadata: nil) { (metadata, error) in
-                guard metadata != nil else {
-                    self.state = .finished(result: .failed(error: error ?? TransferError.uploadFailedNoErrorInfo))
-                    completion(.failed(error: error ?? TransferError.uploadFailedNoErrorInfo))
-                    return
-                }
-                uploadFile.downloadURL { (url, error) in
-                    if let url = url {
-                        uploadObject.remoteURL = url
-                        self.state = .finished(result: .success)
-                        completion(.success)
-                    } else if let error = error {
-                        self.state = .finished(result: .failed(error: error))
-                        completion(.failed(error: error))
-                    } else {
-                        self.state = .finished(result: .failed(error: TransferError.uploadFailedNoErrorInfo))
-                        completion(.failed(error: TransferError.uploadFailedNoErrorInfo))
-                    }
-                }
-            }
-            
-            uploadTask.observe(.progress) { snapshot in
-                self.progress = snapshot.progress?.fractionCompleted ?? 1
-                progress(self.progress)
-            }
+            let metadata = try await uploadFile.putDataAsync(data)
+            let url = try await uploadFile.downloadURL()
+            uploadObject.remoteURL = url
+            return .success
         } catch {
-            self.state = .finished(result: .failed(error: TransferError.noDataToUpload))
-            completion(.failed(error: TransferError.noDataToUpload))
+            let err = error
+            return .failed(error: error)
         }
     }
 }

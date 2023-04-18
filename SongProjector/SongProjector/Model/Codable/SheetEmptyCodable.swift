@@ -12,6 +12,32 @@ import CoreData
 
 public struct SheetEmptyCodable: EntityCodableType, SheetMetaType {
     
+    static func makeDefault() -> SheetEmptyCodable {
+        
+#if DEBUG
+        let userId = "userid"
+#else
+        guard let userId = Auth.auth().currentUser?.uid else {
+            return nil
+        }
+#endif
+        
+        return SheetEmptyCodable(
+            id: "CHURCHBEAM" + UUID().uuidString,
+            userUID: userId,
+            title: nil,
+            createdAt: Date().localDate(),
+            updatedAt: nil,
+            deleteDate: nil,
+            isTemp: false,
+            rootDeleteDate: nil,
+            isEmptySheet: true,
+            position: 0,
+            time: 0.0,
+            hasTheme: nil
+        )
+    }
+    
     init?(managedObject: NSManagedObject, context: NSManagedObjectContext) {
         guard let entity = managedObject as? SheetEmptyEntity else { return nil }
         id = entity.id
@@ -188,3 +214,53 @@ public struct SheetEmptyCodable: EntityCodableType, SheetMetaType {
     }
 }
 
+extension SheetEmptyCodable: FileTransferable {
+    
+    mutating func clearDataForDeletedObjects(forceDelete: Bool) {
+    }
+    
+    func getDeleteObjects(forceDelete: Bool) -> [String] {
+        []
+    }
+
+    var uploadObjects: [TransferObject] {
+        []
+    }
+    
+    var downloadObjects: [TransferObject] {
+        []
+    }
+    
+    var transferObjects: [TransferObject] {
+        uploadObjects + downloadObjects
+    }
+    
+    mutating func setTransferObjects(_ transferObjects: [TransferObject]) throws {
+    }
+    
+    func setDeleteDate() -> FileTransferable {
+        var modifiedDocument = self
+        if uploadSecret != nil {
+            modifiedDocument.rootDeleteDate = Date()
+        } else {
+            modifiedDocument.deleteDate = Date()
+        }
+        return modifiedDocument
+    }
+    
+    func setUpdatedAt() -> FileTransferable {
+        var modifiedDocument = self
+        modifiedDocument.updatedAt = Date()
+        return modifiedDocument
+    }
+    
+    func setUserUID() throws -> FileTransferable {
+        var modifiedDocument = self
+        guard let userUID = Auth.auth().currentUser?.uid else {
+            throw RequestError.unAuthorizedNoUser(requester: String(describing: self))
+        }
+        modifiedDocument.userUID = userUID
+        return modifiedDocument
+    }
+
+}

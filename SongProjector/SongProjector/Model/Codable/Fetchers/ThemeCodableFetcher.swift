@@ -44,31 +44,7 @@ struct ThemeCodableFetcher: CodableFetcherType {
     }
     
     func additionalProcessing(decodedEntities: [EntityCodableType], managedObjects: [NSManagedObject], context: NSManagedObjectContext, completion: @escaping (Result<[NSManagedObject], Error>) -> Void) {
-        
-        guard let themeCodable = decodedEntities as? [ThemeCodable] else {
-            completion(.success(managedObjects))
-            return
-        }
-        
-        let downloadObjects = themeCodable.flatMap({ $0.downloadObjects }).unique { (lhs, rhs) -> Bool in
-            return lhs.remoteURL == rhs.remoteURL
-        }
-        
-        let downloadManager = TransferManager(objects: downloadObjects)
-        
-        downloadManager.start(progress: { (progress) in
-        }) { (result) in
-            switch result {
-            case .failed(error: let error): completion(.failure(error))
-            case .success:
-                guard let themes = managedObjects as? [Theme] else {
-                    completion(.success(managedObjects))
-                    return
-                }
-                themes.forEach { $0.setDownloadValues(downloadObjects) }
-                completion(.success(themes))
-            }
-        }
+        completion(.success(managedObjects))
     }
     
     func getCodableObjectFrom(_ objects: [NSManagedObject], context: NSManagedObjectContext) -> [EntityCodableType] {

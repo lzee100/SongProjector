@@ -11,82 +11,51 @@ import Firebase
 import FirebaseStorage
 
 
-class FileFetcher: SingleTransferManager {
+class FileFetcher: SingleTransferManagerProtocol {
     
-    override func startDownload(progress: @escaping ((Double) -> Void), completion: @escaping ((TransferResult) -> Void)) {
-        
-        guard let downloadObject = transferObject as? DownloadObject else {
-            self.state = .finished(result: .failed(error: TransferError.notAnDownloadFile))
-            completion(.failed(error: TransferError.notAnDownloadFile))
-            return
-        }
-        
+    private let downloadObject: DownloadObject
+    
+    var transferObject: TransferObject {
+        return downloadObject
+    }
+    
+    required init(downloadObject: DownloadObject) {
+        self.downloadObject = downloadObject
+    }
+    
+    func startTransfer() async throws -> TransferResult {
         let storageRef = Storage.storage().reference()
         
         var subPath: String {
             switch downloadObject.type {
-            case .jpeg, .jpg, .png: return Constants.images
-            case .m4a: return Constants.audio
+            case .jpeg, .jpg, .png: return SingleTransferManagerConstants.images
+            case .m4a: return SingleTransferManagerConstants.audio
             }
         }
         
         let downloadFile = storageRef.child(subPath).child(downloadObject.filename)
-        
-        do {
-            
-            let locURL: URL?
-            if downloadObject.isVideo {
-                locURL = FileManager.getURLfor(name: downloadObject.filename)
-            } else {
-                locURL = try FileManager.getUrlFor(fileName: downloadObject.filename)
-            }
-            
-            guard let localURL = locURL else {
-                completion(.failed(error: TransferError.noURLForDownloadingFile))
-                return
-            }
-
-            let downloadTask = downloadFile.write(toFile: localURL) { url, error in
-                if let error = error {
-                    self.state = TransferState.finished(result: .failed(error: error))
-                    completion(.failed(error: error))
-                } else if url != nil {
-                    do {
-                        if downloadObject.isVideo {
-                            downloadObject.localURL = URL(string: downloadObject.filename)
-                            self.state = TransferState.finished(result: .success)
-                            completion(.success)
-                        } else {
-                            let data = try Data(contentsOf: localURL)
-                            if let image = UIImage(data: data) {
-                                downloadObject.image = image
-                                self.state = TransferState.finished(result: .success)
-                                completion(.success)
-                            } else {
-                                self.state = TransferState.finished(result: .failed(error: TransferError.downloadNoLocalImage))
-                                completion(.failed(error: TransferError.downloadNoLocalImage))
-                            }
-                        }
-                    } catch {
-                        self.state = TransferState.finished(result: .failed(error: error))
-                        completion(.failed(error: error))
-                    }
-                } else {
-                    self.state = TransferState.finished(result: .failed(error: TransferError.uploadFailedNoErrorInfo))
-                    completion(.failed(error: TransferError.uploadFailedNoErrorInfo))
-                }
-                
-            }
-            
-            downloadTask.observe(.progress) { snapshot in
-                self.progress = snapshot.progress?.fractionCompleted ?? 1
-                progress(self.progress)
-            }
-
-        } catch {
-            self.state = TransferState.finished(result: .failed(error: error))
-            completion(.failed(error: error))
+        let locURL: URL?
+        if downloadObject.isVideo {
+            locURL = FileManager.getURLfor(name: downloadObject.filename)
+        } else {
+            locURL = try FileManager.getUrlFor(fileName: downloadObject.filename)
         }
-        
+        guard let localURL = locURL else {
+            return .failed(error: TransferError.noURLForDownloadingFile)
+        }
+
+        let url = try await downloadFile.writeAsync(toFile: localURL)
+        if downloadObject.isVideo {
+            downloadObject.localURL = URL(string: downloadObject.filename)
+            return .success
+        } else {
+            let data = try Data(contentsOf: localURL)
+            if let image = UIImage(data: data) {
+                downloadObject.image = image
+                return .success
+            } else {
+                return .failed(error: TransferError.downloadNoLocalImage)
+            }
+        }
     }
 }

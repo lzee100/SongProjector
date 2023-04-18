@@ -29,14 +29,13 @@ class TemeFetcher: Requester<VTheme> {
         let downloadObjects = entities.flatMap({ $0.downloadObjects }).unique { (lhs, rhs) -> Bool in
             return lhs.remoteURL == rhs.remoteURL
         }
-        let downloadManager = TransferManager(objects: downloadObjects)
+        let downloadManager = TransferManager(transferObjects: downloadObjects)
         
-        downloadManager.start(progress: { (progress) in
-        }) { (result) in
+        _ = downloadManager.$result.sink { result in
             switch result {
             case .failed(error: let error):
                 completion(.failed(error: .failedDownloadingMedia(requester: self.id, error: error)))
-            case .success:
+            case .success, .none:
                 entities.forEach({
                     $0.setDownloadValues(downloadObjects)
                 })
