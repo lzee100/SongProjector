@@ -9,15 +9,21 @@
 import SwiftUI
 
 struct BeamerViewUI: View {
-    @State var songsService: SongService
+    @State var songsService: WrappedStruct<SongServiceUI>
+    
+    init(songsService: WrappedStruct<SongServiceUI>) {
+        self.songsService = songsService
+    }
+    
     var body: some View {
-        BeamerPreviewUI(selectedSong: $songsService.selectedSong, selectedSheet: $songsService.selectedSheet)
-            .environmentObject(songsService)
+        BeamerPreviewUI(songService: self.songsService)
     }
 }
 
 struct BeamerViewUI_Previews: PreviewProvider {
+    @State static var songService = WrappedStruct(withItem: SongServiceUI(songs: []))
+
     static var previews: some View {
-        BeamerViewUI(songsService: makeSongService())
+        BeamerViewUI(songsService: songService)
     }
 }

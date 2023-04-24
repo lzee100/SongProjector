@@ -22,12 +22,10 @@ struct EditThemeOrSheetTitleViewUI: View {
             DisclosureGroup(isExpanded: $isSectionTitleExpanded) {
                 Divider()
                 switch editSheetOrThemeModel.item.editMode {
-                case .newTheme, .persistedTheme:
+                case .theme:
                     titleViewsPartOne(hasBackgroundColorAndAlignment: true)
                     titleViewsPartTwo
-                case .newSheet(_ , let type):
-                    viewFor(type)
-                case .persistedSheet(_, let type):
+                case .sheet(_ , let type):
                     viewFor(type)
                 }
             } label: {
@@ -154,7 +152,7 @@ struct EditThemeOrSheetTitleViewUI: View {
 }
 
 struct EditThemeOrSheetTitleViewUI_Previews: PreviewProvider {
-    @State static var editViewModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .newTheme, isUniversal: false)!)
+    @State static var editViewModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .theme(nil), isUniversal: false)!)
     @State static var selectedTitleAlignment = EditThemeOrSheetTitleViewUI.fontAlignmentPickerValues.first!
     @State static var isSectionExpanded = true
     static var previews: some View {

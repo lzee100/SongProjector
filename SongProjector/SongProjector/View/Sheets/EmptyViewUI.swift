@@ -8,34 +8,54 @@
 
 import SwiftUI
 
-struct EmptyViewUI: View {
-    let isForExternalDisplay: Bool
-    var displayModel: SheetDisplayViewModel?
+struct EmptyViewEditUI: View {
+    private let isForExternalDisplay: Bool
     
     @ObservedObject private var editViewModel: WrappedStruct<EditSheetOrThemeViewModel>
     
-    
     init(editViewModel: WrappedStruct<EditSheetOrThemeViewModel>, isForExternalDisplay: Bool) {
         self.editViewModel = editViewModel
-        displayModel = nil
-        self.isForExternalDisplay = isForExternalDisplay
-    }
-    
-    init(displayModel: SheetDisplayViewModel, isForExternalDisplay: Bool) {
-        self.displayModel = displayModel
-        self.editViewModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .newTheme, isUniversal: false)!)
         self.isForExternalDisplay = isForExternalDisplay
     }
     
     var body: some View {
         Rectangle().fill(.clear)
-            .setBackhgroundImage(isForExternalDisplay: isForExternalDisplay, displayModel: displayModel, editModel: editViewModel)
-            .modifier(SheetBackgroundColorAndOpacityModifier(displayModel: displayModel, editViewModel: editViewModel))
+            .setBackgroundImage(isForExternalDisplay: isForExternalDisplay, editModel: editViewModel)
+            .modifier(SheetBackgroundColorAndOpacityEditModifier(editViewModel: editViewModel))
+            .cornerRadius(10)
+            .aspectRatio(externalDisplayWindowRatioHeightWidth, contentMode: .fit)
+            .ignoresSafeArea()
+    }
+}
+
+
+struct EmptyViewDisplayUI: View {
+    
+    @ObservedObject private var songServiceModel: WrappedStruct<SongServiceUI>
+    private let isForExternalDisplay: Bool
+    private let scaleFactor: CGFloat
+    private let sheet: SheetMetaType
+    private let showSelectionCover: Bool
+    private var theme: ThemeCodable?
+    
+    init(serviceModel: WrappedStruct<SongServiceUI>, sheet: SheetMetaType, scaleFactor: CGFloat, isForExternalDisplay: Bool, showSelectionCover: Bool) {
+        _songServiceModel = ObservedObject(initialValue: serviceModel)
+        self.isForExternalDisplay = isForExternalDisplay
+        self.sheet = sheet
+        self.scaleFactor = scaleFactor
+        self.showSelectionCover = showSelectionCover
+        self.theme = serviceModel.item.themeFor(sheet: sheet)
+    }
+    
+    var body: some View {
+        Rectangle().fill(theme?.sheetBackgroundColor?.color ?? .clear)
+            .setBackgroundImage(isForExternalDisplay: isForExternalDisplay, theme: theme)
+            .modifier(SheetBackgroundColorAndOpacityModifier(sheetTheme: theme))
             .cornerRadius(10)
             .aspectRatio(externalDisplayWindowRatioHeightWidth, contentMode: .fit)
             .ignoresSafeArea()
             .overlay {
-                if let displayModel = displayModel, displayModel.selectedSheet?.id != displayModel.sheet.id, displayModel.showSelectionCover {
+                if songServiceModel.item.selectedSheetId != sheet.id, showSelectionCover {
                     Rectangle()
                         .fill(.black.opacity(0.3))
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -46,9 +66,9 @@ struct EmptyViewUI: View {
 
 struct EmptyViewUI_Previews: PreviewProvider {
     @State static var emptySheet = SheetEmptyCodable.makeDefault()
-    @State static var editModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .persistedSheet(emptySheet, sheetType: .SheetEmpty), isUniversal: false)!)
+    @State static var editModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .sheet(emptySheet, sheetType: .SheetEmpty), isUniversal: false)!)
 
     static var previews: some View {
-        EmptyViewUI(editViewModel: editModel, isForExternalDisplay: false)
+        EmptyViewEditUI(editViewModel: editModel, isForExternalDisplay: false)
     }
 }

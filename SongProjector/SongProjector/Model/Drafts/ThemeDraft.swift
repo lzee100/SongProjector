@@ -263,11 +263,7 @@ class ThemeDraft {
             isDeletable: isDeletable,
             tempSelectedImage: imageSelectionAction.image,
             newSelectedThemeImageTempDirPath: nil,
-            newSelectedSheetImageTempDirPath: nil,
-            newSelectedThemeImageThumbTempDirPath: nil,
-            newSelectedSheetImageThumbTempDirPath: nil,
-            isThemeImageDeleted: false,
-            isSheetImageDeleted: false
+            isThemeImageDeleted: false
         )
     }
     

@@ -12,6 +12,48 @@ import CoreData
 
 public struct SheetActivitiesCodable: EntityCodableType, SheetMetaType {
     
+    static func makeDefault() -> SheetActivitiesCodable {
+            
+    #if DEBUG
+            let userId = "userid"
+    #else
+            guard let userId = Auth.auth().currentUser?.uid else {
+                return nil
+            }
+    #endif
+            return SheetActivitiesCodable(
+                id: "CHURCHBEAM" + UUID().uuidString,
+                userUID: userId,
+                title: "Google activities sheet",
+                createdAt: Date().localDate(),
+                updatedAt: nil,
+                deleteDate: nil,
+                rootDeleteDate: nil,
+                hasGoogleActivities: []
+            )
+        }
+    
+    init(id: String = "CHURCHBEAM" + UUID().uuidString,
+         userUID: String,
+         title: String? = nil,
+         createdAt: Date = Date().localDate(),
+         updatedAt: Date? = nil,
+         deleteDate: Date? = nil,
+         rootDeleteDate: Date? = nil,
+         position: Int = 0,
+         hasGoogleActivities: [GoogleActivityCodable] = []) {
+        self.id = id
+        self.userUID = userUID
+        self.title = title
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.deleteDate = deleteDate
+        self.rootDeleteDate = rootDeleteDate
+        self.position = position
+        self.hasGoogleActivities = hasGoogleActivities
+    }
+
+    
     init?(managedObject: NSManagedObject, context: NSManagedObjectContext) {
         guard let entity = managedObject as? SheetActivitiesEntity else { return nil }
         id = entity.id
@@ -21,6 +63,7 @@ public struct SheetActivitiesCodable: EntityCodableType, SheetMetaType {
         updatedAt = entity.updatedAt?.date
         deleteDate = entity.deleteDate?.date
         rootDeleteDate = entity.rootDeleteDate?.date
+        self.position = entity.position.intValue
         
         if let activities = entity.hasGoogleActivity {
             hasGoogleActivities = (activities.allObjects as? [GoogleActivity])?.compactMap { GoogleActivityCodable(managedObject: $0, context: context) } ?? []
@@ -60,9 +103,8 @@ public struct SheetActivitiesCodable: EntityCodableType, SheetMetaType {
     var createdAt: Date = Date().localDate()
     var updatedAt: Date? = nil
     var deleteDate: Date? = nil
-    var isTemp: Bool = false
     var rootDeleteDate: Date? = nil
-    
+    var position: Int
     var hasGoogleActivities: [GoogleActivityCodable] = []
     
     enum CodingKeys: String, CodingKey
@@ -74,6 +116,7 @@ public struct SheetActivitiesCodable: EntityCodableType, SheetMetaType {
         case updatedAt
         case deleteDate = "deletedAt"
         case rootDeleteDate
+        case position
     }
     
     // MARK: - Decodable
@@ -85,7 +128,7 @@ public struct SheetActivitiesCodable: EntityCodableType, SheetMetaType {
         title = try container.decodeIfPresent(String.self, forKey: .title)
         userUID = try container.decode(String.self, forKey: .userUID)
         
-        let createdAtInt = try container.decode(Int64.self, forKey: .createdAt)
+        let createdAtInt = try container.decode(Int.self, forKey: .createdAt)
         let updatedAtInt = try container.decodeIfPresent(Int64.self, forKey: .updatedAt)
         let deletedAtInt = try container.decodeIfPresent(Int64.self, forKey: .deleteDate)
         createdAt = Date(timeIntervalSince1970: TimeInterval(createdAtInt) / 1000)
@@ -98,6 +141,11 @@ public struct SheetActivitiesCodable: EntityCodableType, SheetMetaType {
         }
         if let rootdeleteDateInt = try container.decodeIfPresent(Int.self, forKey: .rootDeleteDate) {
             rootDeleteDate = Date(timeIntervalSince1970: TimeInterval(rootdeleteDateInt))
+        }
+        if let position = try container.decodeIfPresent(Int.self, forKey: .position) {
+            self.position = position
+        } else {
+            self.position = 0
         }
     }
     
@@ -121,6 +169,7 @@ public struct SheetActivitiesCodable: EntityCodableType, SheetMetaType {
         if let rootDeleteDate = rootDeleteDate {
             try container.encode(rootDeleteDate.intValue, forKey: .rootDeleteDate)
         }
+        try container.encode(position, forKey: .position)
     }
 }
 

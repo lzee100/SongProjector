@@ -39,18 +39,37 @@ extension SheetMetaType {
     
     var sheetImagePath: String? {
         if let sheetTitleImageCodable = self as? SheetTitleImageCodable {
-            return sheetTitleImageCodable.imagePath
+            return sheetTitleImageCodable.sheetImagePath
         } else if let sheetPastors = self as? SheetPastorsCodable {
-            return sheetPastors.imagePath
+            return sheetPastors.sheetImagePath
         }
         return nil
     }
     
     var sheetImageThumbnailPath: String? {
         if let sheetTitleImageCodable = self as? SheetTitleImageCodable {
-            return sheetTitleImageCodable.thumbnailPath
+            return sheetTitleImageCodable.sheetImageThumbnailPath
         } else if let sheetPastors = self as? SheetPastorsCodable {
-            return sheetPastors.thumbnailPath
+            return sheetPastors.sheetImageThumbnailPath
+        }
+        return nil
+    }
+
+    
+    var sheetImage: UIImage? {
+        if let sheetTitleImageCodable = self as? SheetTitleImageCodable {
+            return sheetTitleImageCodable.uiImage
+        } else if let sheetPastors = self as? SheetPastorsCodable {
+            return sheetPastors.uiImage
+        }
+        return nil
+    }
+    
+    var sheetImageThumbnail: UIImage? {
+        if let sheetTitleImageCodable = self as? SheetTitleImageCodable {
+            return sheetTitleImageCodable.uiImageThumb
+        } else if let sheetPastors = self as? SheetPastorsCodable {
+            return sheetPastors.uiImageThumb
         }
         return nil
     }

@@ -10,7 +10,7 @@ import Foundation
 import FirebaseAuth
 import CoreData
 
-public struct SheetEmptyCodable: EntityCodableType, SheetMetaType {
+public struct SheetEmptyCodable: EntityCodableType, SheetMetaType {    
     
     static func makeDefault() -> SheetEmptyCodable {
         
@@ -29,7 +29,6 @@ public struct SheetEmptyCodable: EntityCodableType, SheetMetaType {
             createdAt: Date().localDate(),
             updatedAt: nil,
             deleteDate: nil,
-            isTemp: false,
             rootDeleteDate: nil,
             isEmptySheet: true,
             position: 0,
@@ -92,7 +91,6 @@ public struct SheetEmptyCodable: EntityCodableType, SheetMetaType {
     var createdAt: Date = Date().localDate()
     var updatedAt: Date? = nil
     var deleteDate: Date? = nil
-    var isTemp: Bool = false
     var rootDeleteDate: Date? = nil
     
     var isEmptySheet = false
@@ -124,7 +122,6 @@ public struct SheetEmptyCodable: EntityCodableType, SheetMetaType {
         createdAt: Date,
         updatedAt: Date?,
         deleteDate: Date?,
-        isTemp: Bool,
         rootDeleteDate: Date?,
         isEmptySheet: Bool,
         position: Int,
@@ -137,7 +134,6 @@ public struct SheetEmptyCodable: EntityCodableType, SheetMetaType {
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.deleteDate = deleteDate
-        self.isTemp = isTemp
         self.rootDeleteDate = rootDeleteDate
         self.isEmptySheet = isEmptySheet
         self.position = position

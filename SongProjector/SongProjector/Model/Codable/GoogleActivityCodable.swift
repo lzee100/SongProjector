@@ -10,7 +10,55 @@ import Foundation
 import FirebaseAuth
 import CoreData
 
-public struct GoogleActivityCodable: EntityCodableType {
+public struct GoogleActivityCodable: EntityCodableType, Hashable {
+    
+    static func makeDefault() -> GoogleActivityCodable {
+        
+#if DEBUG
+        let userId = "userid"
+#else
+        guard let userId = Auth.auth().currentUser?.uid else {
+            return nil
+        }
+#endif
+        return GoogleActivityCodable(
+            id: "CHURCHBEAM" + UUID().uuidString,
+            userUID: userId,
+            title: "Google activities sheet",
+            createdAt: Date().localDate(),
+            updatedAt: nil,
+            deleteDate: nil,
+            isTemp: false,
+            rootDeleteDate: nil,
+            startDate: Date().localDate(),
+            endDate: Date().dateByAddingMinutes(10).localDate(),
+            eventDescription: "My event"
+        )
+    }
+    
+    init(id: String = "CHURCHBEAM" + UUID().uuidString,
+         userUID: String,
+         title: String? = nil,
+         createdAt: Date = Date().localDate(),
+         updatedAt: Date? = nil,
+         deleteDate: Date? = nil,
+         isTemp: Bool = false,
+         rootDeleteDate: Date? = nil,
+         startDate: Date? = nil,
+         endDate: Date? = nil,
+         eventDescription: String? = nil) {
+        self.id = id
+        self.userUID = userUID
+        self.title = title
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.deleteDate = deleteDate
+        self.isTemp = isTemp
+        self.rootDeleteDate = rootDeleteDate
+        self.startDate = startDate
+        self.endDate = endDate
+        self.eventDescription = eventDescription
+    }
     
     init?(managedObject: NSManagedObject, context: NSManagedObjectContext) {
         guard let entity = managedObject as? GoogleActivity else { return nil }

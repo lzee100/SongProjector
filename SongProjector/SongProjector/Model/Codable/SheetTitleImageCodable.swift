@@ -9,6 +9,7 @@
 import Foundation
 import FirebaseAuth
 import CoreData
+import UIKit
 
 public struct SheetTitleImageCodable: EntityCodableType, SheetMetaType {
     
@@ -28,7 +29,6 @@ public struct SheetTitleImageCodable: EntityCodableType, SheetMetaType {
             createdAt: Date(),
             updatedAt: Date(),
             deleteDate: nil,
-            isTemp: false,
             rootDeleteDate: nil,
             isEmptySheet: false,
             position: 0,
@@ -42,7 +42,9 @@ public struct SheetTitleImageCodable: EntityCodableType, SheetMetaType {
             imageHasBorder: false,
             imagePath: nil,
             thumbnailPath: nil,
-            imagePathAWS: nil
+            imagePathAWS: nil,
+            newSelectedSheetImageTempDirPath: nil,
+            isSheetImageDeleted: false
         )
     }
     
@@ -71,6 +73,9 @@ public struct SheetTitleImageCodable: EntityCodableType, SheetMetaType {
         imagePath = entity.imagePath
         thumbnailPath = entity.thumbnailPath
         imagePathAWS = entity.imagePathAWS
+        
+        uiImage = imagePath?.loadImage()
+        uiImageThumb = thumbnailPath?.loadImage()
     }
     
     func getManagedObjectFrom(_ context: NSManagedObjectContext) -> NSManagedObject {
@@ -118,7 +123,6 @@ public struct SheetTitleImageCodable: EntityCodableType, SheetMetaType {
     var createdAt: Date = Date().localDate()
     var updatedAt: Date? = nil
     var deleteDate: Date? = nil
-    var isTemp: Bool = false
     var rootDeleteDate: Date? = nil
     var isEmptySheet: Bool = false
     var position: Int = 0
@@ -133,6 +137,29 @@ public struct SheetTitleImageCodable: EntityCodableType, SheetMetaType {
     var imagePath: String? = nil
     var thumbnailPath: String? = nil
     var imagePathAWS: String? = nil
+    
+    var uiImage: UIImage?
+    var uiImageThumb: UIImage?
+    
+    var newSelectedSheetImageTempDirPath: String? = nil
+    var isSheetImageDeleted: Bool = false
+    
+    var hasNewRemoteImage: Bool {
+        if let imagePathAWS = imagePathAWS {
+            if
+                let imagePath = imagePath,
+                let url = URL(string: imagePath),
+                let remoteURL = URL(string: imagePathAWS),
+                url.lastPathComponent == remoteURL.lastPathComponent
+            {
+                return false
+            } else {
+                return true
+            }
+        } else {
+            return false
+        }
+    }
     
     enum CodingKeysSheetTitleImage:String,CodingKey
     {
@@ -167,7 +194,6 @@ public struct SheetTitleImageCodable: EntityCodableType, SheetMetaType {
         createdAt: Date,
         updatedAt: Date?,
         deleteDate: Date?,
-        isTemp: Bool,
         rootDeleteDate: Date?,
         isEmptySheet: Bool,
         position: Int,
@@ -181,7 +207,10 @@ public struct SheetTitleImageCodable: EntityCodableType, SheetMetaType {
         imageHasBorder: Bool,
         imagePath: String?,
         thumbnailPath: String?,
-        imagePathAWS: String?
+        imagePathAWS: String?,
+        newSelectedSheetImageTempDirPath: String? = nil,
+        isSheetImageDeleted: Bool = false
+
     ) {
         self.id = id
         self.userUID = userUID
@@ -189,7 +218,6 @@ public struct SheetTitleImageCodable: EntityCodableType, SheetMetaType {
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.deleteDate = deleteDate
-        self.isTemp = isTemp
         self.rootDeleteDate = rootDeleteDate
         self.isEmptySheet = isEmptySheet
         self.position = position
@@ -204,6 +232,8 @@ public struct SheetTitleImageCodable: EntityCodableType, SheetMetaType {
         self.imagePath = imagePath
         self.thumbnailPath = thumbnailPath
         self.imagePathAWS = imagePathAWS
+        self.newSelectedSheetImageTempDirPath = newSelectedSheetImageTempDirPath
+        self.isSheetImageDeleted = isSheetImageDeleted
     }
     
     public init(from decoder: Decoder) throws {
@@ -218,7 +248,7 @@ public struct SheetTitleImageCodable: EntityCodableType, SheetMetaType {
         imagePathAWS = try container.decodeIfPresent(String.self, forKey: .imagePathAWS)
         
         isEmptySheet = try Bool(truncating: (container.decodeIfPresent(Int16.self, forKey: .isEmptySheet) ?? 0) as NSNumber)
-        position = Int(try container.decodeIfPresent(Int16.self, forKey: .position) ?? 0)
+        position = try container.decodeIfPresent(Int.self, forKey: .position) ?? 0
         let sheetTimeString = try container.decodeIfPresent(String.self, forKey: .time) ?? ""
         time = Double(sheetTimeString) ?? 0.0
         hasTheme = try container.decodeIfPresent(ThemeCodable.self, forKey: .hasTheme)
@@ -294,18 +324,29 @@ public struct SheetTitleImageCodable: EntityCodableType, SheetMetaType {
 extension SheetTitleImageCodable: FileTransferable {
     
     mutating func clearDataForDeletedObjects(forceDelete: Bool) {
+        if isSheetImageDeleted || forceDelete {
+            imagePathAWS = nil
+            // remove locally saved images
+            _ = try? UIImage.set(image: nil, imageName: imagePath, thumbNailName: thumbnailPath)
+            imagePath = nil
+            thumbnailPath = nil
+        }
     }
     
     func getDeleteObjects(forceDelete: Bool) -> [String] {
-        []
+        var fileNames: [String?] = []
+        if isSheetImageDeleted || forceDelete {
+            fileNames.append(imagePathAWS)
+        }
+        return fileNames.compactMap { $0 }
     }
     
     var uploadObjects: [TransferObject] {
-        []
+        [newSelectedSheetImageTempDirPath].compactMap { $0 }.compactMap { UploadObject(fileName: $0) }
     }
     
     var downloadObjects: [TransferObject] {
-        []
+        [self].filter({ $0.hasNewRemoteImage }).compactMap({ URL(string: $0.imagePathAWS) }).compactMap({ DownloadObject(remoteURL: $0) })
     }
     
     var transferObjects: [TransferObject] {
@@ -313,8 +354,25 @@ extension SheetTitleImageCodable: FileTransferable {
     }
     
     mutating func setTransferObjects(_ transferObjects: [TransferObject]) throws {
+        let uploadObjects = transferObjects.compactMap { $0 as? UploadObject }
+        for uploadObject in uploadObjects {
+            if newSelectedSheetImageTempDirPath == uploadObject.fileName {
+                imagePathAWS = uploadObject.fileName
+                if let image = UIImage.getFromTempDir(imagePath: uploadObject.fileName) {
+                    let savedImage = try UIImage.set(image: image, imageName: uploadObject.fileName, thumbNailName: nil)
+                    imagePath = savedImage.imagePath
+                    thumbnailPath = savedImage.thumbPath
+                }
+                try FileManager.deleteTempFile(name: uploadObject.fileName)
+            }
+        }
+        for download in downloadObjects.compactMap({ $0 as? DownloadObject }) {
+            if imagePathAWS == download.remoteURL.absoluteString {
+                try setBackgroundImage(image: download.image, imageName: download.filename)
+            }
+        }
     }
-    
+
     func setDeleteDate() -> FileTransferable {
         var modifiedDocument = self
         if uploadSecret != nil {
@@ -338,6 +396,12 @@ extension SheetTitleImageCodable: FileTransferable {
         }
         modifiedDocument.userUID = userUID
         return modifiedDocument
+    }
+    
+    private mutating func setBackgroundImage(image: UIImage?, imageName: String?) throws {
+        let savedImage = try UIImage.set(image: image, imageName: imageName ?? self.imagePath, thumbNailName: self.thumbnailPath)
+        self.imagePath = savedImage.imagePath
+        self.thumbnailPath = savedImage.thumbPath
     }
     
 }

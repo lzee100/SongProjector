@@ -9,7 +9,7 @@
 import Foundation
 import SwiftUI
 
-struct SheetContentModifier: ViewModifier {
+struct SheetContentEditModifier: ViewModifier {
     
     let scaleFactor: CGFloat
     let multiLine: Bool
@@ -39,6 +39,48 @@ struct SheetContentModifier: ViewModifier {
             ))
             .multilineTextAlignment(alignment)
             .frame(maxWidth: .infinity)
+        } else {
+            content.padding(EdgeInsets(
+                top: getScaledValue(5),
+                leading: getScaledValue(10),
+                bottom: getScaledValue(10),
+                trailing: getScaledValue(10)
+            ))
+        }
+    }
+    
+    private func getScaledValue(_ factor: CGFloat) -> CGFloat {
+        factor * scaleFactor
+    }
+    
+}
+
+struct SheetContentDisplayModifier: ViewModifier {
+    
+    private let scaleFactor: CGFloat
+    private let multiLine: Bool
+    private let alignment: TextAlignment
+
+    init(scaleFactor: CGFloat, multiLine: Bool, alignment: Int) {
+        self.scaleFactor = scaleFactor
+        self.multiLine = multiLine
+        switch alignment {
+        case 0: self.alignment = .leading
+        case 1: self.alignment = .center
+        case 2: self.alignment = .trailing
+        default: self.alignment = .leading
+        }
+    }
+    
+    func body(content: Content) -> some View {
+        if multiLine {
+            content.padding(EdgeInsets(
+                top: getScaledValue(5),
+                leading: getScaledValue(10),
+                bottom: getScaledValue(10),
+                trailing: getScaledValue(10)
+            ))
+            .multilineTextAlignment(alignment)
         } else {
             content.padding(EdgeInsets(
                 top: getScaledValue(5),

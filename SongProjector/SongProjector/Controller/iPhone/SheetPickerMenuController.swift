@@ -9,7 +9,12 @@
 import UIKit
 
 enum SheetPickerMenuOption {
-    case sheet(sheet: VSheet)
+    case SheetTitleContent
+    case SheetTitleImage
+    case SheetPastors
+    case SheetSplit
+    case SheetEmpty
+    case SheetActivities
     case bibleStudy
     case lyrics
 }
@@ -154,27 +159,23 @@ class SheetPickerMenuController: UITableViewController, NewOrEditIphoneControlle
     }
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		let sheet: VSheet?
-		var isBible = false
 		switch Row.for(indexPath, mode: mode) {
-		case .song: sheet = nil
-		case .SheetTitleContent: sheet = VSheetTitleContent()
-		case .SheetTitleImage: sheet = VSheetTitleImage()
-		case .SheetPastors: sheet = VSheetPastors()
-		case .SheetSplit: sheet = VSheetSplit()
-		case .SheetEmpty: sheet = VSheetEmpty()
-		case .SheetActivities: sheet = VSheetActivities()
-		case .bible: sheet = nil
-			isBible = true
-		}
-		
-		// open edit sheet controller
-		if let sheet = sheet {
-            delegate?.didSelectOption(option: .sheet(sheet: sheet))
-		} else if isBible { // open bible study
-            delegate?.didSelectOption(option: .bibleStudy)
-		} else { // open song
+		case .song:
             delegate?.didSelectOption(option: .lyrics)
+		case .SheetTitleContent:
+            delegate?.didSelectOption(option: .SheetTitleContent)
+		case .SheetTitleImage:
+            delegate?.didSelectOption(option: .SheetTitleImage)
+		case .SheetPastors:
+            delegate?.didSelectOption(option: .SheetPastors)
+		case .SheetSplit:
+            delegate?.didSelectOption(option: .SheetSplit)
+		case .SheetEmpty:
+            delegate?.didSelectOption(option: .SheetEmpty)
+		case .SheetActivities:
+            delegate?.didSelectOption(option: .SheetActivities)
+		case .bible:
+            delegate?.didSelectOption(option: .bibleStudy)
 		}
 	}
 	

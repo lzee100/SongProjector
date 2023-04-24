@@ -10,7 +10,7 @@ import SwiftUI
 
 struct PianoSoloViewUI: View {
     
-    @Binding var selectedSong: SongObject?
+    @Binding var selectedSong: SongObjectUI?
     @State var isAnimating = false
     @State var isPlaying = false
     @SwiftUI.Environment(\.horizontalSizeClass) var horizontalSizeClass
@@ -108,7 +108,7 @@ struct PianoSoloViewUI: View {
 
 struct PianoSoloViewUI_Previews: PreviewProvider {
     
-    @State static var selectedSong: SongObject? = nil
+    @State static var selectedSong: SongObjectUI? = nil
     
     static var previews: some View {
         PianoSoloViewUI(selectedSong: $selectedSong, isPlaying: false)

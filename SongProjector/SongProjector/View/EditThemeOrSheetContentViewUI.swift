@@ -22,16 +22,14 @@ struct EditThemeOrSheetContentViewUI: View {
             DisclosureGroup(isExpanded: $isSectionContentExpanded) {
                 Divider()
                 switch editSheetOrThemeModel.item.editMode {
-                case .newTheme, .persistedTheme:
+                case .theme:
                     viewsPartOne(hasBackgroundColorAndAlignment: true)
                     viewsPartTwo
-                case .newSheet(_ , let type):
-                    viewFor(type)
-                case .persistedSheet(_, let type):
+                case .sheet(_, let type):
                     viewFor(type)
                 }
             } label: {
-                Text(editSheetOrThemeModel.item.editMode.isEditingSheet ? AppText.NewSheetTitleImage.sectionContentTitle : AppText.NewTheme.sectionLyrics)
+                Text(editSheetOrThemeModel.item.editMode.isSheet ? AppText.NewSheetTitleImage.sectionContentTitle : AppText.NewTheme.sectionLyrics)
                     .styleAsSection
             }
             .accentColor(.black.opacity(0.8))
@@ -154,7 +152,7 @@ struct EditThemeOrSheetContentViewUI: View {
 }
 
 struct EditThemeOrSheetContentViewUI_Previews: PreviewProvider {
-    @State static var editViewModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .newTheme, isUniversal: false)!)
+    @State static var editViewModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .theme(nil), isUniversal: false)!)
     @State static var selectedcontentAlignment = EditThemeOrSheetContentViewUI.fontAlignmentPickerValues.first!
     @State static var isSectionExpanded = true
     static var previews: some View {

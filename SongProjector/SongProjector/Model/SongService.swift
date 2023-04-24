@@ -10,6 +10,106 @@ import Foundation
 import FirebaseAuth
 import UIKit
 
+struct SongServiceUI {
+    
+    var selectedSong: SongObjectUI? {
+        didSet {
+            setSectionIndex()
+            setSelectedTheme()
+            selectedSheetId = selectedSong?.sheets.first?.id
+        }
+        
+    }
+    var selectedSheetId: String? {
+        didSet {
+            selectedSheetIndex = selectedSong?.sheets.firstIndex(where: { $0.id == selectedSheetId })
+            selectedSheetTheme = selectedSong?.sheets.first(where: { $0.id == selectedSheetId })?.theme
+            setSelectedTheme()
+        }
+    }
+    var displayerSelectionIndex: Int? {
+        guard let selectedSongIndex = selectedSection else { return nil }
+         return selectedSongIndex + (selectedSong?.sheets.firstIndex(where: { $0.id == selectedSheetId }) ?? 0)
+    }
+    
+    private(set) var songs: [SongObjectUI] = []
+    private(set) var selectedSection: Int?
+    private(set) var selectedSheetIndex: Int?
+    private(set) var selectedSongTheme: ThemeCodable?
+    private(set) var selectedSheetTheme: ThemeCodable?
+    private(set) var sectionedSongs: [[SongObjectUI]] = []
+    
+    init(songs: [SongObjectUI]){
+        self.songs = songs.sorted { $0.cluster.position < $1.cluster.position }
+        setSectionedSongs()
+    }
+    
+    func sheetTitleFor(sheet: SheetMetaType) -> String? {
+        if sheet.theme != nil {
+            return sheet.title
+        }
+        if sheet.position == 0 {
+            return songs.first(where: { $0.sheets.contains(where: { $0.id == sheet.id }) })?.cluster.title
+        } else if selectedSongTheme?.allHaveTitle ?? false {
+            return songs.first(where: { $0.sheets.contains(where: { $0.id == sheet.id }) })?.cluster.title
+        }
+        return nil
+    }
+        
+    private mutating func setSectionedSongs() {
+        var sectionedSongs: [[SongObjectUI]] = []
+        var remainingSongs = songs
+        repeat {
+            var songsForSection = [SongObjectUI]()
+            if let firstRemainingSong = remainingSongs.first {
+                songsForSection.append(firstRemainingSong)
+                remainingSongs.remove(at: 0)
+                let firstIndex = remainingSongs.firstIndex(where: { $0.sectionHeader != nil })
+                if let firstIndex = firstIndex {
+                    songsForSection.append(contentsOf: remainingSongs[0..<firstIndex])
+                    sectionedSongs.append(songsForSection)
+                }
+            }
+        } while remainingSongs.count != 0
+        self.sectionedSongs = sectionedSongs
+    }
+    
+    mutating private func setSectionIndex() {
+        selectedSection = songs.firstIndex(where: { $0.cluster.id == selectedSong?.cluster.id })
+    }
+    
+    mutating private func setSelectedTheme() {
+        guard let cluster = selectedSong?.cluster else {
+            return selectedSongTheme = nil
+        }
+        let theme: Theme? = DataFetcher().getEntity(moc: moc, predicates: [.get(id: cluster.themeId)])
+        if let theme = theme {
+            selectedSongTheme = ThemeCodable(managedObject: theme, context: moc)
+        }
+    }
+    
+    func getSheetIndexWithSongIndexAddedIfNeeded(_ sheetIndex: Int) -> Int {
+        return sheetIndex + (selectedSection ?? 0)
+    }
+    
+    func getSongIndexWithSheetIndexAddedIfNeeded(_ songIndex: Int) -> Int {
+        let addedIndex = songIndex > (selectedSection ?? 0) ? (selectedSong?.sheets.count ?? 0) - 1 : 0
+        return songIndex + addedIndex
+    }
+    
+    func themeFor(sheet: SheetMetaType) -> ThemeCodable? {
+        if let theme = sheet.theme {
+            return theme
+        }
+        let cluster = songs.first(where: { $0.sheets.contains(where: { $0.id == sheet.id }) })?.cluster
+        if [cluster?.isTypeSong, cluster?.hasBibleVerses].compactMap({ $0 }).contains(true) {
+            return cluster?.theme
+        }
+        return nil
+    }
+
+}
+
 var isForPreviewUniversalSongEditing = false
 
 protocol SongServiceDelegate {
@@ -332,7 +432,7 @@ class SongService: ObservableObject {
 	
 	private func startPlay() {
 		
-        if selectedSong?.cluster.hasLocalMusic ?? false && selectedSheet?.position == selectedSong?.sheets.last?.position && selectedSong?.cluster.hasSheets.count != 1 {
+        if selectedSong?.cluster.hasLocalMusic ?? false && selectedSheet?.position == selectedSong?.sheets.last?.position && selectedSong?.sheets.count != 1 {
 			playerTimer.invalidate()
 			if let time = selectedSheet?.time {
 				stopAfterLastSheetTimer = Timer.scheduledTimer(timeInterval: time, target: self, selector: #selector(stopPlay), userInfo: nil, repeats: false)
@@ -396,20 +496,53 @@ class SongService: ObservableObject {
 	}
     
     func getSheetIndexWithSongIndexAddedIfNeeded(_ currentIndex: Int) -> Int {
-        print("sheet \(currentIndex + (selectedSongIndex ?? 0))")
         return currentIndex + (selectedSongIndex ?? 0)
     }
     
     func getSongIndexWithSheetIndexAddedIfNeeded(_ currentIndex: Int) -> Int {
-        let addedIndex = currentIndex > (selectedSongIndex ?? 0) ? (selectedSong?.cluster.hasSheets.count ?? 0) - 1 : 0
-        print("song \(currentIndex + addedIndex)")
+        let addedIndex = currentIndex > (selectedSongIndex ?? 0) ? (selectedSong?.sheets.count ?? 0) - 1 : 0
         return currentIndex + addedIndex
     }
 }
 
 
 
+struct SongObjectUI: Equatable {
+    
+    let sectionHeader: String?
+    let cluster: ClusterCodable
+    let sheets: [SheetMetaType]
+    var id: String {
+        cluster.id
+    }
+    
+    init(cluster: ClusterCodable, sectionHeader: String? = nil) {
+        self.sectionHeader = sectionHeader
+        self.cluster = cluster
+        
+        let theme: Theme? = DataFetcher().getEntity(moc: moc, predicates: [.get(id: cluster.themeId)])
+        if let theme = theme, theme.hasEmptySheet {
+            var sheetEmpty = SheetEmptyCodable.makeDefault()
+            sheetEmpty.isEmptySheet = true
+            let sortedSheets = cluster.hasSheets.sorted(by: { $0.position < $1.position })
+            let sheets = theme.isEmptySheetFirst ? [sheetEmpty] + cluster.hasSheets : cluster.hasSheets + [sheetEmpty]
+            var positionedSheets: [SheetMetaType] = []
+            for (index, sheet) in sheets.enumerated() {
+                var sheet = sheet
+                sheet.position = index
+                positionedSheets.append(sheet)
+            }
+            self.sheets = positionedSheets
+        } else {
+            self.sheets = cluster.hasSheets.sorted(by: { $0.position < $1.position })
+        }
+    }
+    
+    static func == (lhs: SongObjectUI, rhs: SongObjectUI) -> Bool {
+        return lhs.id == rhs.id
+    }
 
+}
 
 
 

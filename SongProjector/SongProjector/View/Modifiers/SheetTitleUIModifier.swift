@@ -9,12 +9,10 @@
 import Foundation
 import SwiftUI
 
-struct SheetTitleUIModifier: ViewModifier {
-    
+struct SheetTitleEditUIModifier: ViewModifier {
     
     private let scaleFactor: CGFloat
     private let frameWidth: CGFloat?
-    private var displayModel: SheetDisplayViewModel?
     @ObservedObject var editViewModel: WrappedStruct<EditSheetOrThemeViewModel>
     private var alignment: Alignment {
         switch editViewModel.item.titleAlignmentNumber {
@@ -25,9 +23,8 @@ struct SheetTitleUIModifier: ViewModifier {
         }
     }
     
-    init(scaleFactor: CGFloat, displayModel: SheetDisplayViewModel? = nil, editViewModel: WrappedStruct<EditSheetOrThemeViewModel>, frameWidth: CGFloat? = nil) {
+    init(scaleFactor: CGFloat, editViewModel: WrappedStruct<EditSheetOrThemeViewModel>, frameWidth: CGFloat? = nil) {
         self.scaleFactor = scaleFactor
-        self.displayModel = displayModel
         self.editViewModel = editViewModel
         self.frameWidth = frameWidth
     }
@@ -41,27 +38,40 @@ struct SheetTitleUIModifier: ViewModifier {
                 trailing: getScaledValue(10))
             )
             .frame(maxWidth: frameWidth, alignment: alignment)
-            .background(backgroundColor())
     }
     
-    private func backgroundColor() -> Color {
-        if let displayModel = displayModel {
-            if let titleBackgroundColor = displayModel.sheetTheme.backgroundColorTitleAsColor, let title = displayModel.selectedSheet?.title ?? displayModel.sheetTheme.title, title != "" {
-                if !displayModel.sheetTheme.allHaveTitle && displayModel.position < 1 {
-                    return titleBackgroundColor
-                } else if displayModel.sheetTheme.allHaveTitle {
-                    return titleBackgroundColor
-                } else {
-                    return .clear
-                }
-            } else {
-                return .clear
-            }
-        } else if let hexColor = editViewModel.item.titleBackgroundColor {
-            return Color(hex: hexColor)
-        } else {
-            return .clear
+    private func getScaledValue(_ factor: CGFloat) -> CGFloat {
+        factor * scaleFactor
+    }
+    
+}
+
+struct SheetTitleDisplayUIModifier: ViewModifier {
+    
+    private let scaleFactor: CGFloat
+    private let frameWidth: CGFloat?
+    private let alignment: Alignment
+    
+    init(scaleFactor: CGFloat, alignmentNumber: Int, frameWidth: CGFloat? = nil) {
+        self.scaleFactor = scaleFactor
+        self.frameWidth = frameWidth
+        switch alignmentNumber {
+        case 0: alignment = .leading
+        case 1: alignment = .center
+        case 2: alignment = .trailing
+        default: alignment = .leading
         }
+    }
+    
+    func body(content: Content) -> some View {
+        content
+            .padding(EdgeInsets(
+                top: getScaledValue(10),
+                leading: getScaledValue(10),
+                bottom: getScaledValue(5),
+                trailing: getScaledValue(10))
+            )
+            .frame(maxWidth: frameWidth, alignment: alignment)
     }
     
     private func getScaledValue(_ factor: CGFloat) -> CGFloat {

@@ -25,22 +25,22 @@ struct SheetTypeMenu {
         }
 
         let sheetTitleContent = UIAction(title: AppText.SheetsMenu.sheetTitleText) { (_) in
-            delegate.didSelectOption(option: .sheet(sheet: VSheetTitleContent()))
+            delegate.didSelectOption(option: .SheetTitleContent)
         }
         let sheetTitleImage = UIAction(title: AppText.SheetsMenu.sheetTitleImage) { (_) in
-            delegate.didSelectOption(option: .sheet(sheet: VSheetTitleImage()))
+            delegate.didSelectOption(option: .SheetTitleImage)
         }
         let sheetPastors = UIAction(title: AppText.SheetsMenu.sheetPastors) { (_) in
-            delegate.didSelectOption(option: .sheet(sheet: VSheetPastors()))
+            delegate.didSelectOption(option: .SheetPastors)
         }
         let sheetEmpty = UIAction(title: AppText.SheetsMenu.sheetEmpty) { (_) in
-            delegate.didSelectOption(option: .sheet(sheet: VSheetEmpty()))
+            delegate.didSelectOption(option: .SheetEmpty)
         }
         let sheetSplit = UIAction(title: AppText.SheetsMenu.sheetSplit) { (_) in
-            delegate.didSelectOption(option: .sheet(sheet: VSheetSplit()))
+            delegate.didSelectOption(option: .SheetSplit)
         }
         let sheetActivities = UIAction(title: AppText.SheetsMenu.sheetActivity) { (_) in
-            delegate.didSelectOption(option: .sheet(sheet: VSheetActivities()))
+            delegate.didSelectOption(option: .SheetActivities)
         }
         let customSheetsMenu = UIMenu(title: "Custom sheets", options: .displayInline, children: [sheetTitleContent, sheetTitleImage, sheetPastors, sheetEmpty, sheetSplit, sheetActivities])
         let bible = UIAction(title: AppText.SheetsMenu.bibleStudyGen) { (_) in

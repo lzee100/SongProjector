@@ -12,6 +12,75 @@ import CoreData
 
 public struct ClusterCodable: EntityCodableType {
     
+    static func makeDefault() -> ClusterCodable {
+#if DEBUG
+        let userId = "userid"
+#else
+        guard let userId = Auth.auth().currentUser?.uid else {
+            return nil
+        }
+#endif
+        
+        return ClusterCodable(userUID: userId)
+    }
+    
+    init(
+        id: String = "CHURCHBEAM" + UUID().uuidString,
+        userUID: String = "",
+        title: String? = nil,
+        createdAt: Date = Date().localDate(),
+        updatedAt: Date? = nil,
+        deleteDate: Date? = nil,
+        isTemp: Bool = false,
+        rootDeleteDate: Date? = nil,
+hasSheets: [SheetMetaType] = [SheetTitleContentCodable.makeDefault()].compactMap { $0 },
+        hasInstruments: [InstrumentCodable] = [],
+        hasTags: [TagCodable] = [],
+        root: String? = nil,
+        isLoop: Bool = false,
+        position: Int16 = 0,
+        time: Double = 0,
+        themeId: String = UUID().uuidString,
+        lastShownAt: Date? = nil,
+        instrumentIds: String = "",
+        sheetIds: [String] = [],
+        church: String? = nil,
+        startTime: Double = 0.0,
+        hasSheetPastors: Bool = false,
+        tagIds: [String] = []
+    ) {
+        self.id = id
+        self.userUID = userUID
+        self.title = title
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.deleteDate = deleteDate
+        self.isTemp = isTemp
+        self.rootDeleteDate = rootDeleteDate
+        self.hasSheets = hasSheets
+        self.hasInstruments = hasInstruments
+        self.hasTags = hasTags
+        self.root = root
+        self.isLoop = isLoop
+        self.position = position
+        self.time = time
+        self.themeId = themeId
+        self.lastShownAt = lastShownAt
+        self.instrumentIds = instrumentIds
+        self.sheetIds = sheetIds
+        self.church = church
+        self.startTime = startTime
+        self.hasSheetPastors = hasSheetPastors
+        self.tagIds = tagIds
+        
+        let persitedTheme: Theme? = DataFetcher().getEntity(moc: moc, predicates: [.get(id: themeId)])
+        if let persitedTheme {
+            self.theme = ThemeCodable(managedObject: persitedTheme, context: moc)
+        } else {
+            self.theme = nil
+        }
+    }
+    
     init?(managedObject: NSManagedObject, context: NSManagedObjectContext) {
         guard let entity = managedObject as? Cluster else { return nil }
         id = entity.id
@@ -42,13 +111,22 @@ public struct ClusterCodable: EntityCodableType {
         sheetIds = entity.sheetIds.split(separator: ",").compactMap({ String($0) })
         hasSheets = getSheets()
         tagIds = entity.tagIds.split(separator: ",").compactMap({ String($0) })
-        hasInstruments = entity.hasInstruments(moc: context).compactMap { InstrumentCodable(managedObject: $0, context: context) }
+        let instruments: [Instrument] = DataFetcher()
+            .getEntities(moc: context, predicates: instrumentIds.split(separator: ",")
+                .map(String.init)
+                .map{ NSPredicate.get(id: $0) }, sort: nil, predicateCompoundType: .or)
+        hasInstruments = instruments.compactMap { InstrumentCodable(managedObject: $0, context: context) }
         let predicates: [NSPredicate] = tagIds.map { .get(id: $0) }
         let tags: [Tag] = DataFetcher().getEntities(moc: context, predicates: predicates, predicateCompoundType: .or)
         hasTags = tags.compactMap { TagCodable(managedObject: $0, context: context) }
         church = entity.church
         startTime = entity.startTime
         hasSheetPastors = entity.hasSheetPastors
+        
+        let theme: Theme? = DataFetcher().getEntity(moc: context, predicates: [.get(id: themeId)])
+        if let theme {
+            self.theme = ThemeCodable(managedObject: theme, context: context)
+        }
     }
     
     func getManagedObjectFrom(_ context: NSManagedObjectContext) -> NSManagedObject {
@@ -99,6 +177,7 @@ public struct ClusterCodable: EntityCodableType {
     var deleteDate: Date? = nil
     var isTemp: Bool = false
     var rootDeleteDate: Date? = nil
+    var theme: ThemeCodable?
     
     var hasSheets: [SheetMetaType] = []
     var hasInstruments: [InstrumentCodable] = []
@@ -116,6 +195,26 @@ public struct ClusterCodable: EntityCodableType {
     var hasSheetPastors = false
     var tagIds: [String] = []
     
+    public var isTypeSong: Bool {
+        return !hasSheets.contains(where: { $0.theme?.isHidden == true  }) && hasSheets.count > 0 && !hasSheets.compactMap({ $0 as? SheetTitleContentCodable }).contains(where: { $0.isBibleVers })
+    }
+    
+    public var hasBibleVerses: Bool {
+        return hasSheets.compactMap({ $0 as? SheetTitleContentCodable }).contains(where: { $0.isBibleVers })
+    }
+    
+    public var hasPianoSolo: Bool {
+        return hasInstruments.contains(where: { $0.type == .pianoSolo && $0.resourcePath != nil })
+    }
+    
+    public var hasRemoteMusic: Bool {
+        return hasInstruments.contains(where: { $0.resourcePathAWS != nil })
+    }
+    
+    public var hasLocalMusic: Bool {
+           return hasInstruments.contains(where: { $0.resourcePath != nil })
+       }
+        
     enum CodingKeysCluster:String,CodingKey
     {
         case id

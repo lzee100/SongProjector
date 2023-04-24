@@ -12,7 +12,7 @@ extension UIImage {
     var data: Data? {
         self.jpegData(compressionQuality: 1)
     }
-    var image: Image? {
+    var image: Image {
         Image(uiImage: self)
     }
 }

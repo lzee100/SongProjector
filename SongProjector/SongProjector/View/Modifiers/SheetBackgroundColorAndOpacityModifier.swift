@@ -7,37 +7,29 @@
 //
 
 import Foundation
+import UIKit
 import SwiftUI
 
 
 struct SheetBackgroundColorAndOpacityModifier: ViewModifier {
     
-    var displayModel: SheetDisplayViewModel?
-    @ObservedObject private var editViewModel: WrappedStruct<EditSheetOrThemeViewModel>
-    
-    init(displayModel: SheetDisplayViewModel? = nil, editViewModel: WrappedStruct<EditSheetOrThemeViewModel>) {
-        self.displayModel = displayModel
-        self.editViewModel = editViewModel
+    private let sheetTheme: ThemeCodable?
+    private var backgroundColor: Color? {
+        sheetTheme?.sheetBackgroundColor?.color
+    }
+    private var backgroundOpacity: Double {
+        let transparancy = sheetTheme?.backgroundTransparancyNumber
+        return transparancy ?? 0.0
+    }
+
+    init(sheetTheme: ThemeCodable?) {
+        self.sheetTheme = sheetTheme
     }
     
     func body(content: Content) -> some View {
         content
-            .background(getColor() ?? .white)
-            .opacity(getOpacity())
-    }
-    
-    func getOpacity() -> Double {
-        let transparancy = displayModel?.sheetTheme.backgroundTransparancy ?? editViewModel.item.backgroundTransparancyNumber
-        if getColor() != nil {
-            let opacity = transparancy > 0.0 ? transparancy : 1.0
-            return opacity
-        } else {
-            return 1.0
-        }
-    }
-    
-    func getColor() -> Color? {
-        displayModel?.sheetTheme.backgroundColorAsColor ?? editViewModel.item.backgroundColor
+            .background(backgroundColor ?? .white)
+            .opacity(backgroundOpacity)
     }
     
 }

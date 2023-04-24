@@ -10,11 +10,9 @@ import SwiftUI
 
 struct BeamerPreviewUI: View {
     
-    @State private var selection: Int = 0
-    
-    @EnvironmentObject var songService: SongService
-    @Binding var selectedSong: SongObject?
-    @Binding var selectedSheet: VSheet?
+    @State private var selection: Int = -1
+    @State private var previousSelection: Int = -1
+    @ObservedObject var songService: WrappedStruct<SongServiceUI>
     private let displayerId = "DisplayerView"
     
     var body: some View {
@@ -24,78 +22,87 @@ struct BeamerPreviewUI: View {
             }
             .coordinateSpace(name: displayerId)
             .tabViewStyle(.page(indexDisplayMode: .always))
+            .onAppear {
+                UIPageControl.appearance().currentPageIndicatorTintColor = themeHighlighted
+                UIPageControl.appearance().pageIndicatorTintColor = .black.withAlphaComponent(0.2)
+            }
+            .onDisappear {
+                UIPageControl.appearance().currentPageIndicatorTintColor = nil
+                UIPageControl.appearance().pageIndicatorTintColor = nil
+            }
             .onChange(of: selection, perform: { newValue in
                 
-                guard let selectedSongIndex = songService.selectedSongIndex, let selectedSong else { return }
+                guard let selectedSongIndex = songService.item.selectedSection, let selectedSong = songService.item.selectedSong else { return }
+                guard selectedSongIndex + (songService.item.selectedSheetIndex ?? 0) != newValue else { return }
                 if newValue >= selectedSongIndex + selectedSong.cluster.hasSheets.count {
-                    songService.selectedSong = songService.songs[safe: selectedSongIndex + 1]
-                    selection = selectedSongIndex + 1
+                    songService.item.selectedSong = songService.item.songs[safe: selectedSongIndex + 1]
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
+                        self.selection = selectedSongIndex + 1
+                    })
                 } else if newValue < selectedSongIndex {
-                    songService.selectedSong = songService.songs[safe: selectedSongIndex - 1]
-                    selection = selectedSongIndex - 1
+                    songService.item.selectedSong = songService.item.songs[safe: selectedSongIndex - 1]
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
+                        self.selection = selectedSongIndex - 1
+                    })
                 } else {
-                    songService.selectedSheet = songService.selectedSong?.cluster.hasSheets[safe: newValue - selectedSongIndex]
+                    songService.item.selectedSheetId = songService.item.selectedSong?.sheets[safe: newValue - selectedSongIndex]?.id
                 }
                 
             })
-            .onChange(of: selectedSheet) { newValue in
-                guard let selectedSongIndex = songService.selectedSongIndex, let selectedSong else { return }
-                selection = selectedSongIndex + (selectedSong.cluster.hasSheets.firstIndex(where: { $0.id == selectedSheet?.id }) ?? 0)
+            .onChange(of: songService.item.selectedSheetId) { _ in
+                guard let index = songService.item.displayerSelectionIndex, selection != index else { return }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
+                    self.selection = index
+                })
             }
-            .onChange(of: selectedSong) { newValue in
-                guard let selectedSongIndex = songService.selectedSongIndex, selectedSong != nil else {
-                    selection = -1
+            .onChange(of: songService.item.selectedSong) { _ in
+                guard let selectedSongIndex = songService.item.selectedSection, selection != selectedSongIndex else {
                     return
                 }
-                selection = selectedSongIndex
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
+                    self.selection = selectedSongIndex
+                })
             }
         }
     }
     
     @ViewBuilder private func getTabView(screenSize: CGSize) -> some View {
-        ForEach(Array(songService.songs.enumerated()), id: \.offset) { offset, songObject in
+        
+        if songService.item.selectedSong == nil {
+            EmptyView()
+        } else {
             
-            if songService.selectedSong == nil {
+            ForEach(Array(songService.item.songs.enumerated()), id: \.offset) { offset, songObject in
                 
-                EmptyView()
-                
-            } else if songObject.cluster.id == selectedSong?.cluster.id {
-                
-                ForEach(Array(songObject.cluster.hasSheets.enumerated()), id: \.offset) { sheetOffset, sheet in
-                    getTitleContentViewUI(index: songService.getSheetIndexWithSongIndexAddedIfNeeded(sheetOffset), position: 0, sheet: sheet, screenSize: screenSize, songObject: songObject)
+                if songService.item.selectedSong == nil {
+                    
+                    EmptyView()
+                    
+                } else if songObject.id == songService.item.selectedSong?.id {
+                    
+                    ForEach(Array(songObject.sheets.enumerated()), id: \.offset) { sheetOffset, sheet in
+                        SheetUIHelper.sheet(viewSize: screenSize, ratioOnHeight: false, songServiceModel: songService, sheet: sheet, isForExternalDisplay: false, showSelectionCover: false)
+                            .tag(songService.item.getSheetIndexWithSongIndexAddedIfNeeded(sheetOffset))
+                    }
+                    
+                } else if let sheet = songObject.sheets.first {
+                    
+                    SheetUIHelper.sheet(viewSize: screenSize, ratioOnHeight: false, songServiceModel: songService, sheet: sheet, isForExternalDisplay: false, showSelectionCover: false)
+                        .tag(songService.item.getSongIndexWithSheetIndexAddedIfNeeded(offset))
+                    
+                } else {
+                    
+                    EmptyView()
+                    
                 }
-                
-            } else if let sheet = songObject.cluster.hasSheets.first {
-                
-                getTitleContentViewUI(index: songService.getSongIndexWithSheetIndexAddedIfNeeded(offset), position: 0, sheet: sheet, screenSize: screenSize, songObject: songObject)
-                
-            } else {
-                
-                EmptyView()
-                
             }
+            
         }
     }
-    
-    @ViewBuilder func getTitleContentViewUI(index: Int, position: Int, sheet: VSheet, screenSize: CGSize, songObject: SongObject) -> some View {
-        TitleContentViewUI(
-            displayModel: SheetDisplayViewModel(
-                position: position,
-                selectedSheet: $songService.selectedSheet,
-                sheet: sheet,
-                sheetTheme: (sheet as? VSheetTitleContent)?.hasTheme ?? songObject.cluster.hasTheme(moc: moc) ?? VTheme(),
-                showSelectionCover: false
-            ),
-            scaleFactor: getScaleFactor(width: screenSize.width),
-            isForExternalDisplay: false
-        )
-            .tag(index)
-    }
-
 }
 
 struct BeamerViewUI2_Previews: PreviewProvider {
-    @State static var songService = makeSongService(true)
+    @State static var songService = WrappedStruct(withItem: SongServiceUI(songs: []))
     
     static var previews: some View {
         let demoCluster = VCluster()
@@ -103,7 +110,7 @@ struct BeamerViewUI2_Previews: PreviewProvider {
         demoSheet.title = "Test title Leo"
         demoSheet.content = "Test content Leo"
         demoCluster.hasSheets = [demoSheet]
-        return BeamerPreviewUI(selectedSong: $songService.selectedSong, selectedSheet: $songService.selectedSheet)
+        return BeamerPreviewUI(songService: songService)
             .previewLayout(.sizeThatFits)
             .previewInterfaceOrientation(.landscapeLeft)
             .environmentObject(songService)

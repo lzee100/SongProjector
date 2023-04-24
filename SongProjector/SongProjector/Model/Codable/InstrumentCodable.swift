@@ -70,6 +70,10 @@ public struct InstrumentCodable: EntityCodableType {
     var typeString: String? =  nil
     var resourcePathAWS: String? = nil
     
+    var type: InstrumentType? {
+        return InstrumentType(typeString)
+    }
+    
     enum CodingKeys: String, CodingKey
     {
         case id

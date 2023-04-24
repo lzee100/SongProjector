@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import SwiftUI
 
 extension UIColor {
 
@@ -24,6 +25,10 @@ extension UIColor {
 	static let placeholderColor = UIColor.init(red: 150, green: 150, blue: 150, alpha: 1)
 	
 	static let textColorNormal = UIColor.whiteColor
+    
+    var color: Color {
+        return Color(uiColor: self)
+    }
 	
 }
 

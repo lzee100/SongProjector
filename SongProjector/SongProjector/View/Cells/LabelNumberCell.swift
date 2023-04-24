@@ -180,35 +180,35 @@ class LabelNumberCell: ChurchBeamCell, ThemeImplementation, SheetImplementation 
             case .toCell:
                 updateNumber(Int(value))
             case .newValue(value: let value):
-                try newDelegate?.handle(cell: .titleBorderSize(Float(value)))
+                newDelegate?.handle(cell: .titleBorderSize(Float(value)))
             }
         case .titleFontSize(let value):
             switch mode {
             case .toCell:
                 updateNumber(Int(value))
             case .newValue(value: let value):
-                try newDelegate?.handle(cell: .titleFontSize(Float(value)))
+                newDelegate?.handle(cell: .titleFontSize(Float(value)))
             }
         case .lyricsFontSize(let value):
             switch mode {
             case .toCell:
                 updateNumber(Int(value))
             case .newValue(value: let value):
-                try newDelegate?.handle(cell: .lyricsFontSize(Float(value)))
+                newDelegate?.handle(cell: .lyricsFontSize(Float(value)))
             }
         case .lyricsBorderSize(let value):
             switch mode {
             case .toCell:
                 updateNumber(Int(value))
             case .newValue(value: let value):
-                try newDelegate?.handle(cell: .lyricsBorderSize(Float(value)))
+                newDelegate?.handle(cell: .lyricsBorderSize(Float(value)))
             }
         case .imageBorderSize(let value):
             switch mode {
             case .toCell:
                 updateNumber(Int(value))
             case .newValue(value: let value):
-                try newDelegate?.handle(cell: .imageBorderSize(value))
+                newDelegate?.handle(cell: .imageBorderSize(value))
             }
         default: break
         }

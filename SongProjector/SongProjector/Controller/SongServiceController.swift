@@ -261,24 +261,26 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
         predicates += [.skipDeleted, .skipRootDeleted]
         
 //        predicates.append(NSPredicate(format: "not instrumentIds = nil"))
-        
-        var songObjects: [SongObject] = []
+                
+        var songObjects: [SongObjectUI] = []
         
         for (index, clusterOrCommentArray) in temptSwiftUIModel.sectionedClusterOrComment.enumerated() {
             let sectionTitle = temptSwiftUIModel.songServiceSettings?.sections[index].title
-            let clusters = clusterOrCommentArray.compactMap { $0.cluster }
+            let clusters = clusterOrCommentArray.compactMap { $0.cluster }.compactMap { ClusterCodable(managedObject: $0.getManagedObject(context: moc), context: moc) }
+            
             for (index, cluster) in clusters.enumerated() {
                 if index == 0 {
-                    songObjects.append(SongObject(cluster: cluster, headerTitle: sectionTitle))
+                    songObjects.append(SongObjectUI(cluster: cluster, sectionHeader: sectionTitle))
                 } else {
-                    songObjects.append(SongObject(cluster: cluster, headerTitle: nil))
+                    songObjects.append(SongObjectUI(cluster: cluster, sectionHeader: nil))
                 }
             }
         }
         
-        let songServiceUI = SongService(delegate: nil)
-        songServiceUI.songs = songObjects
-        let controller = UIHostingController(rootView: SongServiceViewUI(songService: songServiceUI))
+        let songServiceUI = WrappedStruct(withItem: SongServiceUI(songs: songObjects))
+        let controller = UIHostingController(rootView: SongServiceViewUI(songService: songServiceUI, dismiss: {
+            self.presentedViewController?.dismiss(animated: true)
+        }))
         controller.modalPresentationStyle = .fullScreen
         present(controller, animated: true)
 //        let beamerController = UIHostingController(rootView: BeamerViewUI(songsService: songServiceUI))

@@ -162,7 +162,7 @@ public struct SheetTitleContentCodable: EntityCodableType, SheetMetaType {
         isBibleVers = try container.decodeIfPresent(Bool.self, forKey: .isBibleVers) ?? false
         
         isEmptySheet = try Bool(truncating: (container.decodeIfPresent(Int16.self, forKey: .isEmptySheet) ?? 0) as NSNumber)
-        position = Int(try container.decodeIfPresent(Int16.self, forKey: .position) ?? 0)
+        position = Int(try container.decodeIfPresent(Int.self, forKey: .position) ?? 0)
         let sheetTimeString = try container.decodeIfPresent(String.self, forKey: .time) ?? ""
         time = Double(sheetTimeString) ?? 0.0
         hasTheme = try container.decodeIfPresent(ThemeCodable.self, forKey: .hasTheme)

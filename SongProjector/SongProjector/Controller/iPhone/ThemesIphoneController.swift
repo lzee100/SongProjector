@@ -133,7 +133,7 @@ class ThemesIphoneController: ChurchBeamViewController, UIGestureRecognizerDeleg
     
     var editModel: WrappedStruct<EditSheetOrThemeViewModel>? = nil
     @IBAction func addThemePressed(_ sender: UIBarButtonItem) {
-        guard let editThemeModel = EditSheetOrThemeViewModel(editMode: .newTheme, isUniversal: false) else { return }
+        guard let editThemeModel = EditSheetOrThemeViewModel(editMode: .theme(nil), isUniversal: false) else { return }
         let model = WrappedStruct(withItem: editThemeModel)
         self.editModel = model
         let editView = EditThemeOrSheetViewUI(
@@ -222,7 +222,7 @@ extension ThemesIphoneController: UITableViewDelegate {
                     context: moc
                 ),
                 let model = EditSheetOrThemeViewModel(
-                    editMode: .persistedTheme(themeCodable),
+                    editMode: .theme(themeCodable),
                     isUniversal: uploadSecret != nil
                 ) else {
                 return

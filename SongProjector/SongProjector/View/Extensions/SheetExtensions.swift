@@ -40,6 +40,17 @@ public enum SheetType: String, Codable {
 			return Cells.bulletOpen
 		}
 	}
+    
+    func  makeDefault() -> SheetMetaType? {
+        switch self {
+        case .SheetTitleContent: return SheetTitleContentCodable.makeDefault()
+        case .SheetTitleImage: return SheetTitleImageCodable.makeDefault()
+        case .SheetEmpty: return SheetEmptyCodable.makeDefault()
+        case .SheetSplit: return SheetTitleContentCodable.makeDefault()
+        case .SheetPastors: return SheetPastorsCodable.makeDefault()
+        case .SheetActivities: return SheetActivitiesCodable.makeDefault()
+        }
+    }
 	
 	var metatype: Sheet.Type {
 		switch self {

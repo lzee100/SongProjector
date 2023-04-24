@@ -66,11 +66,7 @@ struct ThemeCodable: EntityCodableType {
             isDeletable: isDeletable,
             tempSelectedImage: nil,
             newSelectedThemeImageTempDirPath: nil,
-            newSelectedSheetImageTempDirPath: nil,
-            newSelectedThemeImageThumbTempDirPath: nil,
-            newSelectedSheetImageThumbTempDirPath: nil,
-            isThemeImageDeleted: false,
-            isSheetImageDeleted: false
+            isThemeImageDeleted: false
             )
     }
     
@@ -115,11 +111,7 @@ struct ThemeCodable: EntityCodableType {
          isDeletable: Bool,
          tempSelectedImage: UIImage?,
          newSelectedThemeImageTempDirPath: String?,
-         newSelectedSheetImageTempDirPath: String?,
-         newSelectedThemeImageThumbTempDirPath: String?,
-         newSelectedSheetImageThumbTempDirPath: String?,
-         isThemeImageDeleted: Bool,
-         isSheetImageDeleted: Bool) {
+         isThemeImageDeleted: Bool) {
         self.id = id
         self.userUID = userUID
         self.title = title
@@ -161,11 +153,7 @@ struct ThemeCodable: EntityCodableType {
         self.isDeletable = isDeletable
         self.tempSelectedImage = tempSelectedImage
         self.newSelectedThemeImageTempDirPath = newSelectedThemeImageTempDirPath
-        self.newSelectedSheetImageTempDirPath = newSelectedSheetImageTempDirPath
-        self.newSelectedThemeImageThumbTempDirPath = newSelectedThemeImageThumbTempDirPath
-        self.newSelectedSheetImageThumbTempDirPath = newSelectedSheetImageThumbTempDirPath
         self.isThemeImageDeleted = isThemeImageDeleted
-        self.isSheetImageDeleted = isSheetImageDeleted
     }
     
     init?(managedObject: NSManagedObject, context: NSManagedObjectContext) {
@@ -210,6 +198,9 @@ struct ThemeCodable: EntityCodableType {
         imagePathAWS = entity.imagePathAWS
         isUniversal = entity.isUniversal
         isDeletable = entity.isDeletable
+        
+        uiImage = imagePath?.loadImage()
+        uiImageThumb = imagePathThumbnail?.loadImage()
     }
     
     func getManagedObjectFrom(_ context: NSManagedObjectContext) -> NSManagedObject {
@@ -314,11 +305,9 @@ struct ThemeCodable: EntityCodableType {
         tempSelectedImage?.resized(withPercentage: 0.5)
     }
     var newSelectedThemeImageTempDirPath: String? = nil
-    var newSelectedSheetImageTempDirPath: String? = nil
-    var newSelectedThemeImageThumbTempDirPath: String? = nil
-    var newSelectedSheetImageThumbTempDirPath: String? = nil
     var isThemeImageDeleted: Bool = false
-    var isSheetImageDeleted: Bool = false
+    var uiImage: UIImage?
+    var uiImageThumb: UIImage?
     
     var hasNewRemoteImage: Bool {
         if let imagePathAWS = imagePathAWS {
@@ -511,7 +500,7 @@ extension ThemeCodable: FileTransferable {
     }
     
     var uploadObjects: [TransferObject] {
-        [newSelectedThemeImageTempDirPath, newSelectedSheetImageTempDirPath].compactMap { $0 }.compactMap { UploadObject(fileName: $0) }
+        [newSelectedThemeImageTempDirPath].compactMap { $0 }.compactMap { UploadObject(fileName: $0) }
     }
     
     var downloadObjects: [TransferObject] {
@@ -527,15 +516,6 @@ extension ThemeCodable: FileTransferable {
         let uploadObjects = transferObjects.compactMap { $0 as? UploadObject }
         for uploadObject in uploadObjects {
             if newSelectedThemeImageTempDirPath == uploadObject.fileName {
-                imagePathAWS = uploadObject.fileName
-                if let image = UIImage.getFromTempDir(imagePath: uploadObject.fileName) {
-                    let savedImage = try UIImage.set(image: image, imageName: uploadObject.fileName, thumbNailName: nil)
-                    imagePath = savedImage.imagePath
-                    imagePathThumbnail = savedImage.thumbPath
-                }
-                try FileManager.deleteTempFile(name: uploadObject.fileName)
-            }
-            if newSelectedSheetImageTempDirPath == uploadObject.fileName {
                 imagePathAWS = uploadObject.fileName
                 if let image = UIImage.getFromTempDir(imagePath: uploadObject.fileName) {
                     let savedImage = try UIImage.set(image: image, imageName: uploadObject.fileName, thumbNailName: nil)

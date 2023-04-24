@@ -27,16 +27,7 @@ struct EditThemeOrSheetViewUI: View {
                     VStack(){
                         HStack {
                             Spacer(minLength: 0)
-                            switch editSheetOrThemeModel.item.sheetType {
-                            case .SheetTitleImage:
-                                sheetTitleImage(viewSize: proxy.size)
-                            case .SheetEmpty:
-                                sheetEmpty(viewSize: proxy.size)
-                            case .SheetPastors:
-                                sheetPastors(viewSize: proxy.size)
-                            default:
-                                sheetTitleContent(viewSize: proxy.size)
-                            }
+                            SheetUIHelper.sheet(viewSize: proxy.size, ratioOnHeight: false, maxWidth: 500, editSheetOrThemeModel: editSheetOrThemeModel, isForExternalDisplay: false)
                             Spacer(minLength: 0)
                         }
                         ScrollViewReader { proxy in
@@ -74,7 +65,7 @@ struct EditThemeOrSheetViewUI: View {
                 .padding()
                 .edgesIgnoringSafeArea([.bottom])
                 .navigationBarTitleDisplayMode(.inline)
-                .navigationBarTitle(AppText.NewTheme.title)
+                .navigationBarTitle(editSheetOrThemeModel.item.editMode.isSheet ? AppText.NewSheetTitleImage.title : AppText.NewTheme.title)
                 .navigationBarItems(leading:
                                         Button(action: {
                     dismiss(false)
@@ -120,42 +111,6 @@ struct EditThemeOrSheetViewUI: View {
         }
     }
     
-    @ViewBuilder func sheetTitleContent(viewSize: CGSize) -> some View {
-        TitleContentViewUI(editViewModel: editSheetOrThemeModel, scaleFactor: getScaleFactor(width: getSheetSizeFor(viewSize).width == nil ? getSizeWith(height: getSheetSizeFor(viewSize).height).width : getSheetSizeFor(viewSize).width!), isForExternalDisplay: false)
-            .frame(
-                width: getSheetSizeFor(viewSize).width == nil ? getSizeWith(height: getSheetSizeFor(viewSize).height).width  : getSheetSizeFor(viewSize).width!,
-                height: getSheetSizeFor(viewSize).height
-            )
-            .shadow(radius: 2)
-    }
-    
-    @ViewBuilder func sheetTitleImage(viewSize: CGSize) -> some View {
-        TitleImageViewUI(editViewModel: editSheetOrThemeModel, scaleFactor: getScaleFactor(width: getSheetSizeFor(viewSize).width == nil ? getSizeWith(height: getSheetSizeFor(viewSize).height).width : getSheetSizeFor(viewSize).width!), isForExternalDisplay: false)
-            .frame(
-                width: getSheetSizeFor(viewSize).width == nil ? getSizeWith(height: getSheetSizeFor(viewSize).height).width  : getSheetSizeFor(viewSize).width!,
-                height: getSheetSizeFor(viewSize).height
-            )
-            .shadow(radius: 2)
-    }
-    
-    @ViewBuilder func sheetEmpty(viewSize: CGSize) -> some View {
-        EmptyViewUI(editViewModel: editSheetOrThemeModel, isForExternalDisplay: false)
-            .frame(
-                width: getSheetSizeFor(viewSize).width == nil ? getSizeWith(height: getSheetSizeFor(viewSize).height).width  : getSheetSizeFor(viewSize).width!,
-                height: getSheetSizeFor(viewSize).height
-            )
-            .shadow(radius: 2)
-    }
-    
-    @ViewBuilder func sheetPastors(viewSize: CGSize) -> some View {
-        PastorsViewUI(editViewModel: editSheetOrThemeModel, scaleFactor: getScaleFactor(width: getSheetSizeFor(viewSize).width == nil ? getSizeWith(height: getSheetSizeFor(viewSize).height).width : getSheetSizeFor(viewSize).width!), isForExternalDisplay: false)
-            .frame(
-                width: getSheetSizeFor(viewSize).width == nil ? getSizeWith(height: getSheetSizeFor(viewSize).height).width  : getSheetSizeFor(viewSize).width!,
-                height: getSheetSizeFor(viewSize).height
-            )
-            .shadow(radius: 2)
-    }
-    
     @ViewBuilder func sectionHeaderWith(title: String) -> some View {
         Text(title)
             .padding(EdgeInsets(5))
@@ -199,7 +154,7 @@ struct EditThemeOrSheetViewUI: View {
             .accentColor(.black.opacity(0.8))
         }
     }
-    
+        
     private func getAlignmentValue() -> PickerRepresentable {
         let titleAlignmentValue = EditThemeOrSheetTitleViewUI.fontAlignmentPickerValues.first { value in
             if let value = value.value as? (Int, String) {
@@ -212,38 +167,27 @@ struct EditThemeOrSheetViewUI: View {
         }
         return titleAlignmentValue ?? EditThemeOrSheetTitleViewUI.fontAlignmentPickerValues.first!
     }
-    
-    private func getSheetSizeFor(_ containerSize: CGSize) -> (width: CGFloat?, height: CGFloat) {
-        (width: containerSize.width > containerSize.height ? min(containerSize.width, 500) : nil,
-            height: getSizeWith(width: containerSize.width > containerSize.height ? min(containerSize.width, 500) : containerSize.width).height
-        )
-    }
-    
+        
     private func hasSheetImage() -> Bool {
         [SheetType.SheetTitleImage, SheetType.SheetPastors].contains(where: { $0.rawValue == editSheetOrThemeModel.item.sheetType.rawValue })
     }
     
     private var isEmptySheet: Bool {
-        func isEmptySheetType(type: SheetType) -> Bool {
+        switch editSheetOrThemeModel.item.editMode {
+        case .sheet(_, sheetType: let type):
             switch type {
             case .SheetEmpty: return true
             case .SheetTitleContent, .SheetTitleImage, .SheetPastors, .SheetSplit, .SheetActivities: return false
             }
-        }
-        switch editSheetOrThemeModel.item.editMode {
-        case .newSheet(_, sheetType: let type):
-            return isEmptySheetType(type: type)
-        case .persistedSheet(_, sheetType: let type):
-            return isEmptySheetType(type: type)
-        case .newTheme, .persistedTheme: return false
+        case .theme: return false
         }
     }
 
 }
 
 struct EditThemeOrSheetViewUI_Previews: PreviewProvider {
-    @State static var sheetPastors = SheetPastorsCodable.makeDefault()
-    @State static var model = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .persistedSheet(sheetPastors, sheetType: .SheetPastors), isUniversal: false, image: UIImage(named: "Pio-Sebastiaan-en-Marilou.jpg"))!)
+    @State static var activities = SheetActivitiesCodable.makeDefault()
+    @State static var model = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .sheet(activities, sheetType: .SheetActivities), isUniversal: false, image: UIImage(named: "Pio-Sebastiaan-en-Marilou.jpg"))!)
     static var previews: some View {
         EditThemeOrSheetViewUI(dismiss: { _ in }, navigationTitle: "", editSheetOrThemeModel: model, submitThemeUseCaseResult: .idle)
     }

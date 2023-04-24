@@ -14,29 +14,25 @@ import FirebaseAuth
 struct EditSheetOrThemeViewModel {
     
     enum EditMode {
-        case newTheme
-        case persistedTheme(ThemeCodable)
-        case persistedSheet(SheetMetaType, sheetType: SheetType)
-        case newSheet(SheetMetaType, sheetType: SheetType)
+        case theme(ThemeCodable?)
+        case sheet(SheetMetaType?, sheetType: SheetType)
         
-        var isEditingSheet: Bool {
+        var isSheet: Bool {
             switch self {
-            case .newSheet, .persistedSheet: return true
-            case .newTheme, .persistedTheme: return false
+            case .sheet: return true
+            case .theme: return false
             }
         }
     }
     
+    let isNewEntity: Bool
     let editMode: EditMode
+    let theme: ThemeCodable
     let sheet: SheetMetaType
     let sheetType: SheetType
-    let theme: ThemeCodable
     
     var requestMethod: RequestMethod {
-        switch editMode {
-        case .newTheme, .newSheet: return .post
-        case .persistedTheme, .persistedSheet: return .put
-        }
+        isNewEntity ? .post : .put
     }
     
     var allHaveTitle: Bool
@@ -80,65 +76,19 @@ struct EditSheetOrThemeViewModel {
     var sheetImagePathThumb: String?
     var sheetImagePathAWS: String?
     
+    var uiImageTheme: UIImage?
+    var uiImageThumbTheme: UIImage?
+    var uiImageSheet: UIImage?
+    var uiImageThumbSheet: UIImage?
+
     var newSelectedThemeImageTempDirPath: String? = nil
-    var newSelectedThemeImage: UIImage?
-    var newSelectedThemeImageThumb: UIImage? {
-        newSelectedThemeImage?.resized(withPercentage: 0.4)
-    }
-    var newSelectedThemeImageData: Data? {
-        newSelectedThemeImage?.jpegData(compressionQuality: 1.0)
-    }
-    var newSelectedThemeImageThumbData: Data? {
-        newSelectedThemeImage?.resized(withPercentage: 0.4)?.jpegData(compressionQuality: 0.4)
-    }
     var newSelectedSheetImageTempDirPath: String? = nil
-    var newSelectedSheetImage: UIImage?
-    var newSelectedSheetThumb: UIImage? {
-        newSelectedSheetImage?.resized(withPercentage: 0.4)
-    }
-    var newSelectedtSheetImageData: Data? {
-        newSelectedSheetImage?.jpegData(compressionQuality: 1.0)
-    }
-    var newSelectedSheetImageThumbData: Data? {
-        newSelectedSheetImage?.resized(withPercentage: 0.4)?.jpegData(compressionQuality: 0.4)
-    }
     
-    var themeImage: UIImage? {
-        if isThemeImageDeleted {
-            return nil
-        }
-        return imagePath?.loadImage()
-    }
-    var themeImageThumb: UIImage? {
-        if isThemeImageDeleted {
-            return nil
-        }
-        return imagePathThumbnail?.loadImage()
-    }
-    var themeImageData: Data? {
-        if isThemeImageDeleted {
-            return nil
-        }
-        return imagePath?.loadImage()?.jpegData(compressionQuality: 1)
-    }
-    var themeImageThumbData: Data? {
-        if isThemeImageDeleted {
-            return nil
-        }
-        return imagePathThumbnail?.loadImage()?.jpegData(compressionQuality: 0.4)
-    }
-    var sheetImageData: Data? {
-        if isSheetImageDeleted {
-            return nil
-        }
-        return sheetImagePath?.loadImage()?.jpegData(compressionQuality: 1)
-    }
-    var sheetImageThumbData: Data? {
-        if isSheetImageDeleted {
-            return nil
-        }
-        return sheetImagePathThumb?.loadImage()?.jpegData(compressionQuality: 0.4)
-    }
+    var newSelectedThemeImage: UIImage? // binding
+    var newSelectedSheetImage: UIImage? // binding
+    private var newSelectedThemeImageThumb: UIImage?
+    private var newSelectedSheetImageThumb: UIImage?
+    
     var isThemeImageDeleted: Bool = false
     var isSheetImageDeleted: Bool = false
     
@@ -151,44 +101,25 @@ struct EditSheetOrThemeViewModel {
         self.editMode = editMode
         let theme: ThemeCodable
         switch editMode {
-        case .newTheme:
-            if let defaultTheme = ThemeCodable.makeDefault() {
-                theme = defaultTheme
-            } else {
-                return nil
-            }
-            if let sheet = SheetTitleContentCodable.makeDefault() {
+        case .theme(let persitedTheme):
+            self.isNewEntity = persitedTheme != nil
+            if let extractedTheme = persitedTheme ?? ThemeCodable.makeDefault(), let sheet = SheetTitleContentCodable.makeDefault() {
+                theme = extractedTheme
                 self.sheet = sheet
                 self.sheetType = .SheetTitleContent
             } else {
                 return nil
             }
-        case .persistedTheme(let persitedTheme):
-            theme = persitedTheme
-            if let sheet = SheetTitleContentCodable.makeDefault() {
+        case .sheet(let sheet, sheetType: let sheetType):
+            self.isNewEntity = sheet != nil
+            if let sheet = sheet ?? sheetType.makeDefault(), let extractedTheme = sheet.theme ?? ThemeCodable.makeDefault() {
                 self.sheet = sheet
-                self.sheetType = .SheetTitleContent
-            } else {
-                return nil
-            }
-        case .persistedSheet(let persitedSheet, let sheetType):
-            sheet = persitedSheet
-            self.sheetType = sheetType
-            if let defaultTheme = persitedSheet.theme ?? ThemeCodable.makeDefault(isHidden: true) {
-                theme = defaultTheme
-            } else {
-                return nil
-            }
-        case .newSheet(let newSheet, let sheetType):
-            sheet = newSheet
-            self.sheetType = sheetType
-            if let defaultTheme = ThemeCodable.makeDefault(isHidden: true) {
-                theme = defaultTheme
+                self.sheetType = sheetType
+                theme = extractedTheme
             } else {
                 return nil
             }
         }
-        self.theme = theme
         self.allHaveTitle = theme.allHaveTitle
         self.backgroundColor = theme.backgroundColor?.color ?? .white
         self.backgroundTransparancyNumber = theme.backgroundTransparancyNumber
@@ -228,6 +159,10 @@ struct EditSheetOrThemeViewModel {
         self.sheetImagePath = sheet.sheetImagePath
         self.sheetImagePathThumb = sheet.sheetImageThumbnailPath
         self.newSelectedSheetImage = image
+        self.uiImageTheme = imagePath?.loadImage()
+        self.uiImageThumbTheme = imagePathThumbnail?.loadImage()
+        self.uiImageSheet = sheetImagePath?.loadImage()
+        self.uiImageThumbSheet = sheetImagePathThumb?.loadImage()
         
         if let sheet = sheet as? SheetTitleImageCodable {
             imageBorderColor = sheet.imageBorderColor
@@ -240,6 +175,7 @@ struct EditSheetOrThemeViewModel {
             imageContentMode = 0
             imageHasBorder = false
         }
+        self.theme = theme
     }
     
     mutating func styleAsTheme(_ theme: Theme) {
@@ -308,6 +244,52 @@ struct EditSheetOrThemeViewModel {
         if let backgroundImage = theme.backgroundImage {
             self.newSelectedThemeImage = backgroundImage
         }
+    }
+    
+    mutating func setNewThemeImage(_ image: UIImage) {
+        newSelectedThemeImage = image
+        newSelectedThemeImageThumb = image.resized(withPercentage: 0.4)
+    }
+    
+    mutating func deleteNewThemeImage() {
+        newSelectedThemeImage = nil
+        newSelectedThemeImageThumb = nil
+        isThemeImageDeleted = true
+    }
+    
+    func getThemeImage(thumb: Bool) -> UIImage? {
+        if isThemeImageDeleted { return nil }
+        if thumb {
+            return newSelectedThemeImageThumb ?? uiImageThumbTheme
+        }
+        return newSelectedThemeImage ?? uiImageTheme
+    }
+    
+    mutating func setNewSheetImage(_ image: UIImage) {
+        newSelectedSheetImage = image
+        newSelectedSheetImageThumb = image.resized(withPercentage: 0.4)
+    }
+    
+    mutating func deleteNewSheetImage() {
+        newSelectedSheetImage = nil
+        newSelectedSheetImageThumb = nil
+        isThemeImageDeleted = true
+    }
+    
+    func getSheetImage(thumb: Bool) -> UIImage? {
+        if isSheetImageDeleted { return nil }
+        if thumb {
+            return newSelectedSheetImageThumb ?? uiImageThumbSheet
+        }
+        return newSelectedSheetImage ?? uiImageSheet
+    }
+    
+    func getThemeImageData(thumb: Bool) -> Data? {
+        getThemeImage(thumb: thumb)?.jpegData(compressionQuality: 0.4)
+    }
+    
+    func getSheetImageData(thumb: Bool) -> Data? {
+        return getSheetImage(thumb: thumb)?.jpegData(compressionQuality: 0.4)
     }
     
     func getTitleAttributes(_ scaleFactor: CGFloat = 1) -> [NSAttributedString.Key: Any] {
@@ -424,15 +406,9 @@ struct EditSheetOrThemeViewModel {
     mutating func createThemeCodable() throws -> ThemeCodable? {
         let imagePath = try newSelectedThemeImage?.saveTemp()
         newSelectedThemeImageTempDirPath = imagePath
-        let sheetImagePath = try newSelectedSheetImage?.saveTemp()
-        newSelectedSheetImageTempDirPath = sheetImagePath
-        let imagePathThumb = try newSelectedThemeImage?.resized(withPercentage: 0.4)?.saveTemp()
-        newSelectedThemeImageTempDirPath = imagePathThumb
-        let sheetImagePathThumb = try newSelectedSheetImage?.resized(withPercentage: 0.4)?.saveTemp()
-        newSelectedSheetImageTempDirPath = sheetImagePathThumb
         
         switch editMode {
-        case .newTheme, .persistedTheme:
+        case .theme:
             return ThemeCodable(
                 userUID: theme.userUID,
                 title: title,
@@ -445,7 +421,7 @@ struct EditSheetOrThemeViewModel {
                 backgroundTransparancyNumber: backgroundTransparancyNumber,
                 displayTime: displayTime,
                 hasEmptySheet: hasEmptySheet,
-                imagePath: imagePath,
+                imagePath: self.imagePath,
                 imagePathThumbnail: imagePathThumbnail,
                 isEmptySheetFirst: isEmptySheetFirst,
                 isHidden: isHidden,
@@ -473,15 +449,122 @@ struct EditSheetOrThemeViewModel {
                 isUniversal: isUniversal,
                 isDeletable: isDeletable,
                 tempSelectedImage: nil,
-                newSelectedThemeImageTempDirPath: newSelectedThemeImageTempDirPath,
-                newSelectedSheetImageTempDirPath: newSelectedSheetImageTempDirPath,
-                newSelectedThemeImageThumbTempDirPath: newSelectedThemeImageTempDirPath,
-                newSelectedSheetImageThumbTempDirPath: newSelectedSheetImageTempDirPath,
-                isThemeImageDeleted: isThemeImageDeleted,
-                isSheetImageDeleted: isSheetImageDeleted
+                newSelectedThemeImageTempDirPath: imagePath,
+                isThemeImageDeleted: isThemeImageDeleted
             )
-        case .newSheet, .persistedSheet:
+        case .sheet:
             return nil
         }
     }
+    
+    mutating func createSheet() throws -> SheetMetaType? {
+        let sheetImagePath = try newSelectedThemeImage?.saveTemp()
+        newSelectedThemeImageTempDirPath = sheetImagePath
+
+        switch editMode {
+        case .sheet:
+            switch sheetType {
+            case .SheetTitleContent:
+                return SheetTitleContentCodable(
+                    id: sheet.id,
+                    userUID: sheet.userUID,
+                    title: sheet.title,
+                    createdAt: sheet.createdAt,
+                    updatedAt: sheet.updatedAt,
+                    deleteDate: sheet.deleteDate,
+                    rootDeleteDate: sheet.rootDeleteDate,
+                    isEmptySheet: false,
+                    position: 0,
+                    time: 0,
+                    hasTheme: nil,
+                    content: self.sheetContent,
+                    isBibleVers: false
+                )
+            case .SheetTitleImage:
+                return SheetTitleImageCodable(
+                    id: sheet.id,
+                    userUID: sheet.userUID,
+                    title: sheet.title,
+                    createdAt: sheet.createdAt,
+                    updatedAt: sheet.updatedAt,
+                    deleteDate: sheet.deleteDate,
+                    rootDeleteDate: sheet.rootDeleteDate,
+                    isEmptySheet: false,
+                    position: 0,
+                    time: 0,
+                    hasTheme: nil,
+                    content: sheetContent,
+                    hasTitle: !self.title.isBlanc,
+                    imageBorderColor: nil,
+                    imageBorderSize: 0,
+                    imageContentMode: 0,
+                    imageHasBorder: false,
+                    imagePath: self.imagePath,
+                    thumbnailPath: imagePathThumbnail,
+                    imagePathAWS: sheetImagePathAWS
+                )
+            case .SheetPastors:
+                return SheetPastorsCodable(
+                    id: sheet.id,
+                    userUID: sheet.userUID,
+                    title: sheet.title,
+                    createdAt: sheet.createdAt,
+                    updatedAt: sheet.updatedAt,
+                    deleteDate: sheet.deleteDate,
+                    rootDeleteDate: sheet.rootDeleteDate,
+                    isEmptySheet: false,
+                    position: 0,
+                    time: 0,
+                    hasTheme: nil,
+                    content: sheetContent,
+                    imagePath: self.sheetImagePath,
+                    thumbnailPath: self.sheetImagePathThumb,
+                    imagePathAWS: sheetImagePathAWS
+                )
+            case .SheetSplit:
+                return SheetTitleContentCodable(
+                    id: sheet.id,
+                    userUID: sheet.userUID,
+                    title: sheet.title,
+                    createdAt: sheet.createdAt,
+                    updatedAt: sheet.updatedAt,
+                    deleteDate: sheet.deleteDate,
+                    rootDeleteDate: sheet.rootDeleteDate,
+                    isEmptySheet: false,
+                    position: 0,
+                    time: 0,
+                    hasTheme: nil,
+                    content: self.sheetContent,
+                    isBibleVers: false
+                )
+            case .SheetEmpty:
+                return SheetEmptyCodable(
+                    id: sheet.id,
+                    userUID: sheet.userUID,
+                    title: sheet.title,
+                    createdAt: sheet.createdAt,
+                    updatedAt: sheet.updatedAt,
+                    deleteDate: sheet.deleteDate,
+                    rootDeleteDate: sheet.rootDeleteDate,
+                    isEmptySheet: false,
+                    position: 0,
+                    time: 0,
+                    hasTheme: nil
+                )
+            case .SheetActivities:
+                return SheetActivitiesCodable(
+                    id: sheet.id,
+                    userUID: sheet.userUID,
+                    title: sheet.title,
+                    createdAt: sheet.createdAt,
+                    updatedAt: sheet.updatedAt,
+                    deleteDate: sheet.deleteDate,
+                    rootDeleteDate: sheet.rootDeleteDate,
+                    hasGoogleActivities: [])
+            }
+        case .theme:
+            return nil
+        }
+    }
+    
 }

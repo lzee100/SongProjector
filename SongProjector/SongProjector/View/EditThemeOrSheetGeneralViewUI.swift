@@ -19,7 +19,7 @@ struct EditThemeOrSheetGeneralViewUI: View {
             DisclosureGroup(isExpanded: $isSectionGeneralExpanded) {
                 Divider()
                 switch editSheetOrThemeModel.item.editMode {
-                case .newTheme, .persistedTheme:
+                case .theme:
                     VStack() {
                         titleInputView
                         Divider()
@@ -33,9 +33,7 @@ struct EditThemeOrSheetGeneralViewUI: View {
                         backgroundColorAndImageView
                         dividerAndDisplayTime
                     }
-                case .newSheet(_ , let type):
-                    viewForSheet(type)
-                case .persistedSheet(_, let type):
+                case .sheet(_, let type):
                     viewForSheet(type)
                 }
             } label: {
@@ -57,14 +55,14 @@ struct EditThemeOrSheetGeneralViewUI: View {
             
             Divider()
             
-            LabelPhotoPickerViewUI(label: AppText.NewTheme.backgroundImage, selectedImageData: editSheetOrThemeModel.item.themeImageThumbData, selectedImage: $editSheetOrThemeModel.item.newSelectedThemeImage) { image in
+            LabelPhotoPickerViewUI(label: AppText.NewTheme.backgroundImage, selectedImageData: editSheetOrThemeModel.item.getThemeImageData(thumb: true), selectedImage: $editSheetOrThemeModel.item.newSelectedThemeImage) { image in
                 if image == nil {
                     editSheetOrThemeModel.item.deleteThemeImage()
                     editSheetOrThemeModel.item.backgroundTransparancyNumber = 1.0
                 }
             }
             
-            if editSheetOrThemeModel.item.newSelectedThemeImage != nil || editSheetOrThemeModel.item.themeImage != nil {
+            if editSheetOrThemeModel.item.getThemeImage(thumb: true) != nil {
                 Slider(value: $editSheetOrThemeModel.item.backgroundTransparancyNumber, in: 0.0...100.0) {
                     Text(AppText.NewTheme.descriptionBackgroundTransparency)
                         .styleAs(font: .xNormal)
@@ -77,7 +75,7 @@ struct EditThemeOrSheetGeneralViewUI: View {
     @ViewBuilder var titleInputView: some View {
         TextFieldViewUI(
             textFieldViewModel: TextFieldViewModel(
-                label: editSheetOrThemeModel.item.editMode.isEditingSheet ? AppText.NewSheetTitleImage.descriptionTitle : AppText.NewTheme.descriptionTitle,
+                label: editSheetOrThemeModel.item.editMode.isSheet ? AppText.NewSheetTitleImage.descriptionTitle : AppText.NewTheme.descriptionTitle,
                 placeholder: AppText.NewTheme.descriptionTitlePlaceholder,
                 characterLimit: 80,
                 text: $editSheetOrThemeModel.item.title
@@ -198,7 +196,7 @@ struct EditThemeOrSheetGeneralViewUI: View {
 }
 
 struct EditThemeOrSheetGeneralViewUI_Previews: PreviewProvider {
-    @State static var editViewModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .newTheme, isUniversal: false)!)
+    @State static var editViewModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .theme(nil), isUniversal: false)!)
     @State static var isExpanded = true
     static var previews: some View {
         EditThemeOrSheetGeneralViewUI(isSectionGeneralExpanded: $isExpanded, editSheetOrThemeModel: editViewModel)

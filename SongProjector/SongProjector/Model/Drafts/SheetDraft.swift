@@ -148,7 +148,6 @@ class SheetDraft {
         self.createdAt = sheetTitleImage.createdAt
         self.updatedAt = sheetTitleImage.updatedAt
         self.deleteDate = sheetTitleImage.deleteDate
-        self.isTemp = sheetTitleImage.isTemp
         self.rootDeleteDate = sheetTitleImage.rootDeleteDate
         self.isEmptySheet = sheetTitleImage.isEmptySheet
         self.position = sheetTitleImage.position
@@ -174,7 +173,6 @@ class SheetDraft {
         self.createdAt = sheetEmpty.createdAt
         self.updatedAt = sheetEmpty.updatedAt
         self.deleteDate = sheetEmpty.deleteDate
-        self.isTemp = sheetEmpty.isTemp
         self.rootDeleteDate = sheetEmpty.rootDeleteDate
         self.isEmptySheet = sheetEmpty.isEmptySheet
         self.position = sheetEmpty.position
@@ -191,7 +189,6 @@ class SheetDraft {
         self.createdAt = sheetSplit.createdAt
         self.updatedAt = sheetSplit.updatedAt
         self.deleteDate = sheetSplit.deleteDate
-        self.isTemp = sheetSplit.isTemp
         self.rootDeleteDate = sheetSplit.rootDeleteDate
         self.isEmptySheet = sheetSplit.isEmptySheet
         self.position = sheetSplit.position
@@ -210,7 +207,6 @@ class SheetDraft {
         self.createdAt = sheetPastors.createdAt
         self.updatedAt = sheetPastors.updatedAt
         self.deleteDate = sheetPastors.deleteDate
-        self.isTemp = sheetPastors.isTemp
         self.rootDeleteDate = sheetPastors.rootDeleteDate
         self.isEmptySheet = sheetPastors.isEmptySheet
         self.position = sheetPastors.position
@@ -285,7 +281,6 @@ class SheetDraft {
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 deleteDate: deleteDate,
-                isTemp: isTemp,
                 rootDeleteDate: rootDeleteDate,
                 isEmptySheet: isEmptySheet,
                 position: position,
@@ -309,7 +304,6 @@ class SheetDraft {
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 deleteDate: deleteDate,
-                isTemp: isTemp,
                 rootDeleteDate: rootDeleteDate,
                 isEmptySheet: isEmptySheet,
                 position: position,

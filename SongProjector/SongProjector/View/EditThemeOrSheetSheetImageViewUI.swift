@@ -19,20 +19,16 @@ struct EditThemeOrSheetSheetImageViewUI: View {
             DisclosureGroup(isExpanded: $isSectionSheetImageExpanded) {
                 Divider()
                 switch editSheetOrThemeModel.item.editMode {
-                case .newTheme, .persistedTheme:
+                case .theme:
                     EmptyView()
-                case .newSheet(_ , let type):
-                    viewFor(type)
-                case .persistedSheet(_, let type):
+                case .sheet(_ , let type):
                     viewFor(type)
                 }
             } label: {
                 switch editSheetOrThemeModel.item.editMode {
-                case .newTheme, .persistedTheme:
+                case .theme:
                     EmptyView()
-                case .newSheet(_ , let type):
-                    titleViewFor(type)
-                case .persistedSheet(_, let type):
+                case .sheet(_ , let type):
                     titleViewFor(type)
                 }
             }
@@ -70,7 +66,7 @@ struct EditThemeOrSheetSheetImageViewUI: View {
     @ViewBuilder private var photoPickerView: some View {
         LabelPhotoPickerViewUI(
             label: AppText.NewSheetTitleImage.descriptionImage,
-            selectedImageData: editSheetOrThemeModel.item.sheetImageThumbData,
+            selectedImageData: editSheetOrThemeModel.item.getSheetImageData(thumb: true),
             selectedImage: $editSheetOrThemeModel.item.newSelectedSheetImage
         ) { image in
             if image == nil {
@@ -81,8 +77,8 @@ struct EditThemeOrSheetSheetImageViewUI: View {
 }
 
 struct EditThemeOrSheetSheetImageViewUI_Previews: PreviewProvider {
-    @State static var imageSheet = SheetTitleImageCodable(id: "", userUID: "", title: "Title image sheet", createdAt: Date(), updatedAt: Date(), deleteDate: nil, isTemp: false, rootDeleteDate: nil, isEmptySheet: false, position: 0, time: 0, hasTheme: ThemeCodable.makeDefault(), content: "Content image sheet", hasTitle: false, imageBorderColor: nil, imageBorderSize: 0, imageContentMode: 0, imageHasBorder: false, imagePath: nil, thumbnailPath: nil, imagePathAWS: nil)
-    @State static var editViewModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .persistedSheet(imageSheet, sheetType: .SheetTitleImage), isUniversal: false, image: UIImage(named: "Pio-Sebastiaan-en-Marilou.jpg"))!)
+    @State static var imageSheet = SheetTitleImageCodable(id: "", userUID: "", title: "Title image sheet", createdAt: Date(), updatedAt: Date(), deleteDate: nil, rootDeleteDate: nil, isEmptySheet: false, position: 0, time: 0, hasTheme: ThemeCodable.makeDefault(), content: "Content image sheet", hasTitle: false, imageBorderColor: nil, imageBorderSize: 0, imageContentMode: 0, imageHasBorder: false, imagePath: nil, thumbnailPath: nil, imagePathAWS: nil)
+    @State static var editViewModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .sheet(imageSheet, sheetType: .SheetTitleImage), isUniversal: false, image: UIImage(named: "Pio-Sebastiaan-en-Marilou.jpg"))!)
     @State static var isSectionExpanded = true
     static var previews: some View {
         EditThemeOrSheetSheetImageViewUI(isSectionSheetImageExpanded: $isSectionExpanded, editSheetOrThemeModel: editViewModel)
