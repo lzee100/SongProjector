@@ -62,6 +62,17 @@ public enum SheetType: String, Codable {
 		case .SheetActivities: return SheetActivitiesEntity.self
 		}
 	}
+    
+    var name: String {
+        switch self {
+        case .SheetTitleContent: return AppText.SheetsMenu.sheetTitleText
+        case .SheetTitleImage: return AppText.SheetsMenu.sheetTitleImage
+        case .SheetSplit: return AppText.SheetsMenu.sheetSplit
+        case .SheetEmpty: return AppText.SheetsMenu.sheetEmpty
+        case .SheetPastors: return AppText.SheetsMenu.sheetPastors
+        case .SheetActivities: return AppText.SheetsMenu.sheetActivity
+        }
+    }
 }
 
 public enum VSheetType: String, Codable {

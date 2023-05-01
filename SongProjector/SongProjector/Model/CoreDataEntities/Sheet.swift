@@ -16,6 +16,7 @@ import CoreData
 protocol SheetMetaType : EntityCodableType {
 	static var type: SheetType { get }
     var position: Int { get set }
+    var sheetType: SheetType { get }
 }
 
 public class Sheet: Entity {

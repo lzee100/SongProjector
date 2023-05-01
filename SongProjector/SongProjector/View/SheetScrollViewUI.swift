@@ -152,13 +152,15 @@ struct SheetScrollViewUI_Previews: PreviewProvider {
 struct PortraitSectionBackground: ViewModifier {
     
     var viewSize: CGSize
+    var color: Color = .white
+    var edgeInsets: EdgeInsets
     @SwiftUI.Environment(\.horizontalSizeClass) var horizontalSizeClass
     
     func body(content: Content) -> some View {
         if isCompactOrVertical(viewSize: viewSize) {
             content
-                .padding(EdgeInsets(top: 10, leading: 10, bottom: 25, trailing: 10))
-                .background(.white.opacity(0.2))
+                .padding(edgeInsets)
+                .background(color.opacity(0.2))
                 .cornerRadius(10)
         } else {
             content
@@ -171,7 +173,7 @@ struct PortraitSectionBackground: ViewModifier {
 
 }
 extension View {
-    func portraitSectionBackgroundFor(viewSize: CGSize) -> some View {
-        modifier(PortraitSectionBackground(viewSize: viewSize))
+    func portraitSectionBackgroundFor(viewSize: CGSize, color: Color = .white, edgeInsets: EdgeInsets = EdgeInsets(top: 10, leading: 10, bottom: 25, trailing: 10)) -> some View {
+        modifier(PortraitSectionBackground(viewSize: viewSize, color: color, edgeInsets: edgeInsets))
     }
 }

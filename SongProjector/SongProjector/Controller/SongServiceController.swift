@@ -255,34 +255,53 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
     var temptSwiftUIModel: TempClustersModel?
     @objc func startSwiftUI() {
         
-        guard let temptSwiftUIModel = temptSwiftUIModel else { return }
-
-        var predicates: [NSPredicate] = []
-        predicates += [.skipDeleted, .skipRootDeleted]
+        let bla = (cluster: ClusterCodable.makeDefault()!, sheet: SheetTitleContentCodable.makeDefault()!)
+        let model = EditSheetOrThemeViewModel(editMode: .sheet(bla, sheetType: .SheetTitleContent), isUniversal: false)!
         
-//        predicates.append(NSPredicate(format: "not instrumentIds = nil"))
-                
-        var songObjects: [SongObjectUI] = []
-        
-        for (index, clusterOrCommentArray) in temptSwiftUIModel.sectionedClusterOrComment.enumerated() {
-            let sectionTitle = temptSwiftUIModel.songServiceSettings?.sections[index].title
-            let clusters = clusterOrCommentArray.compactMap { $0.cluster }.compactMap { ClusterCodable(managedObject: $0.getManagedObject(context: moc), context: moc) }
-            
-            for (index, cluster) in clusters.enumerated() {
-                if index == 0 {
-                    songObjects.append(SongObjectUI(cluster: cluster, sectionHeader: sectionTitle))
-                } else {
-                    songObjects.append(SongObjectUI(cluster: cluster, sectionHeader: nil))
-                }
-            }
-        }
-        
-        let songServiceUI = WrappedStruct(withItem: SongServiceUI(songs: songObjects))
-        let controller = UIHostingController(rootView: SongServiceViewUI(songService: songServiceUI, dismiss: {
+        let editView = EditThemeOrSheetViewUI(dismiss: { dismissPresenting in
             self.presentedViewController?.dismiss(animated: true)
-        }))
-        controller.modalPresentationStyle = .fullScreen
+        }, navigationTitle: "test", editSheetOrThemeModel: WrappedStruct(withItem: model))
+        let controller = UIHostingController(rootView: editView)
+        controller.modalPresentationStyle = .formSheet
+        controller.preferredContentSize = CGSize(width: min(UIScreen.main.bounds.width, 500), height: UIScreen.main.bounds.height)
         present(controller, animated: true)
+
+//
+//        // SONGSERVICE UI
+//
+//        guard let temptSwiftUIModel = temptSwiftUIModel else { return }
+//
+//        var predicates: [NSPredicate] = []
+//        predicates += [.skipDeleted, .skipRootDeleted]
+//
+////        predicates.append(NSPredicate(format: "not instrumentIds = nil"))
+//
+//        var songObjects: [SongObjectUI] = []
+//
+//        for (index, clusterOrCommentArray) in temptSwiftUIModel.sectionedClusterOrComment.enumerated() {
+//            let sectionTitle = temptSwiftUIModel.songServiceSettings?.sections[index].title
+//            let clusters = clusterOrCommentArray.compactMap { $0.cluster }.compactMap { ClusterCodable(managedObject: $0.getManagedObject(context: moc), context: moc) }
+//
+//            for (index, cluster) in clusters.enumerated() {
+//                if index == 0 {
+//                    songObjects.append(SongObjectUI(cluster: cluster, sectionHeader: sectionTitle))
+//                } else {
+//                    songObjects.append(SongObjectUI(cluster: cluster, sectionHeader: nil))
+//                }
+//            }
+//        }
+//
+//        let songServiceUI = WrappedStruct(withItem: SongServiceUI(songs: songObjects))
+//        let controller = UIHostingController(rootView: SongServiceViewUI(songService: songServiceUI, dismiss: {
+//            self.presentedViewController?.dismiss(animated: true)
+//        }))
+//        controller.modalPresentationStyle = .fullScreen
+//        present(controller, animated: true)
+//
+//
+//        // SONGSERVICE UI
+//
+//
 //        let beamerController = UIHostingController(rootView: BeamerViewUI(songsService: songServiceUI))
 //        if let externalDisplay = externalDisplayWindow {
 //            for subview in externalDisplay.subviews {

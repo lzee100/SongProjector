@@ -18,7 +18,7 @@ struct EditThemeOrSheetViewUI: View {
     @State var isSectionImageExpanded = false
     @ObservedObject var editSheetOrThemeModel: WrappedStruct<EditSheetOrThemeViewModel>
     @State var progress: CGFloat = 0
-    @State var submitThemeUseCaseResult: SubmitEntitiesUseCase<ThemeCodable>.ProgressResult = .idle
+    @State var submitThemeUseCaseResult: RequesterResult = .idle
     @State var submitThemeUseCase: SubmitEntitiesUseCase<ThemeCodable>?
     var body: some View {
         ZStack {
@@ -186,8 +186,9 @@ struct EditThemeOrSheetViewUI: View {
 }
 
 struct EditThemeOrSheetViewUI_Previews: PreviewProvider {
+    @State static var cluster = ClusterCodable.makeDefault()!
     @State static var activities = SheetActivitiesCodable.makeDefault()
-    @State static var model = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .sheet(activities, sheetType: .SheetActivities), isUniversal: false, image: UIImage(named: "Pio-Sebastiaan-en-Marilou.jpg"))!)
+    @State static var model = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .sheet((cluster, activities), sheetType: .SheetActivities), isUniversal: false, image: UIImage(named: "Pio-Sebastiaan-en-Marilou.jpg"))!)
     static var previews: some View {
         EditThemeOrSheetViewUI(dismiss: { _ in }, navigationTitle: "", editSheetOrThemeModel: model, submitThemeUseCaseResult: .idle)
     }

@@ -206,7 +206,7 @@ class ThemeDraft {
         contentFontName = theme.contentFontName
         contentTextColorHex = theme.contentTextColorHex
         contentTextSize = theme.contentTextSize
-        position = theme.position
+        position = Int16(theme.position)
         titleAlignmentNumber = theme.titleAlignmentNumber
         titleBackgroundColor = theme.titleBackgroundColor
         titleBorderColorHex = theme.titleBorderColorHex
@@ -217,7 +217,6 @@ class ThemeDraft {
         imagePathAWS = theme.imagePathAWS
         isUniversal = theme.isUniversal
         isDeletable = theme.isDeletable
-        position = theme.position
     }
     
     func makeCodable() throws -> ThemeCodable {
@@ -250,7 +249,7 @@ class ThemeDraft {
             contentFontName: contentFontName,
             contentTextColorHex: contentTextColorHex,
             contentTextSize: contentTextSize,
-            position: position,
+            position: position.intValue,
             titleAlignmentNumber: titleAlignmentNumber,
             titleBackgroundColor: titleBackgroundColor,
             titleBorderColorHex: titleBorderColorHex,

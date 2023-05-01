@@ -64,6 +64,9 @@ public struct SheetSplitCodable: EntityCodableType, SheetMetaType {
 
     
     static let type: SheetType = .SheetSplit
+    var sheetType: SheetType {
+        .SheetSplit
+    }
     
     var id: String = "CHURCHBEAM" + UUID().uuidString
     var userUID: String = ""

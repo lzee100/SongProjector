@@ -116,6 +116,9 @@ public struct SheetTitleImageCodable: EntityCodableType, SheetMetaType {
     }
     
     static var type: SheetType = .SheetTitleImage
+    var sheetType: SheetType {
+        .SheetTitleImage
+    }
     
     var id: String = "CHURCHBEAM" + UUID().uuidString
     var userUID: String = ""

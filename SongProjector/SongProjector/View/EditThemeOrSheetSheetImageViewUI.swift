@@ -77,8 +77,9 @@ struct EditThemeOrSheetSheetImageViewUI: View {
 }
 
 struct EditThemeOrSheetSheetImageViewUI_Previews: PreviewProvider {
+    @State static var cluster = ClusterCodable.makeDefault()!
     @State static var imageSheet = SheetTitleImageCodable(id: "", userUID: "", title: "Title image sheet", createdAt: Date(), updatedAt: Date(), deleteDate: nil, rootDeleteDate: nil, isEmptySheet: false, position: 0, time: 0, hasTheme: ThemeCodable.makeDefault(), content: "Content image sheet", hasTitle: false, imageBorderColor: nil, imageBorderSize: 0, imageContentMode: 0, imageHasBorder: false, imagePath: nil, thumbnailPath: nil, imagePathAWS: nil)
-    @State static var editViewModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .sheet(imageSheet, sheetType: .SheetTitleImage), isUniversal: false, image: UIImage(named: "Pio-Sebastiaan-en-Marilou.jpg"))!)
+    @State static var editViewModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .sheet((cluster, imageSheet), sheetType: .SheetTitleImage), isUniversal: false, image: UIImage(named: "Pio-Sebastiaan-en-Marilou.jpg"))!)
     @State static var isSectionExpanded = true
     static var previews: some View {
         EditThemeOrSheetSheetImageViewUI(isSectionSheetImageExpanded: $isSectionExpanded, editSheetOrThemeModel: editViewModel)

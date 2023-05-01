@@ -8,7 +8,7 @@
 
 import Foundation
 
-class WrappedStruct<T>: ObservableObject {
+class WrappedStruct<T>: ObservableObject, Identifiable {
     @Published var item: T
     
     init(withItem item:T) {

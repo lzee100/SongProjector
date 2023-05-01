@@ -96,6 +96,9 @@ public struct SheetActivitiesCodable: EntityCodableType, SheetMetaType {
 
     
     static let type: SheetType = .SheetActivities
+    var sheetType: SheetType {
+        .SheetActivities
+    }
     
     var id: String = "CHURCHBEAM" + UUID().uuidString
     var userUID: String = ""

@@ -84,6 +84,9 @@ public struct SheetEmptyCodable: EntityCodableType, SheetMetaType {
 
     
     static let type: SheetType = .SheetEmpty
+    var sheetType: SheetType {
+        .SheetEmpty
+    }
 
     var id: String = "CHURCHBEAM" + UUID().uuidString
     var userUID: String = ""

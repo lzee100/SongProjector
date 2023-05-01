@@ -11,7 +11,7 @@ import FirebaseAuth
 import CoreData
 import CoreData
 
-public struct TagCodable: EntityCodableType {
+public struct TagCodable: EntityCodableType, Identifiable {
     
     init?(managedObject: NSManagedObject, context: NSManagedObjectContext) {
         guard let entity = managedObject as? Tag else { return nil }
@@ -50,7 +50,7 @@ public struct TagCodable: EntityCodableType {
         entity.isDeletable = isDeletable
     }
     
-    var id: String = "CHURCHBEAM" + UUID().uuidString
+    public var id: String = "CHURCHBEAM" + UUID().uuidString
     var userUID: String = ""
     var title: String? = nil
     var createdAt: Date = Date().localDate()

@@ -156,6 +156,15 @@
 		E330A036253118DD0014DB44 /* BasicHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E330A035253118DD0014DB44 /* BasicHeaderView.swift */; };
 		E330A039253119180014DB44 /* BasicHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E330A038253119170014DB44 /* BasicHeaderView.xib */; };
 		E330A05C29F28EAD00E227AD /* SheetUIHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E330A05B29F28EAD00E227AD /* SheetUIHelper.swift */; };
+		E330A05E29F6C51400E227AD /* ClusterEditorModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E330A05D29F6C51400E227AD /* ClusterEditorModel.swift */; };
+		E330A06229F7184600E227AD /* ThemesScrollViewUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = E330A06129F7184600E227AD /* ThemesScrollViewUI.swift */; };
+		E330A06429F719DC00E227AD /* CollectionEditorViewUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = E330A06329F719DC00E227AD /* CollectionEditorViewUI.swift */; };
+		E330A06829F71E3100E227AD /* TagsSelectorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E330A06729F71E3100E227AD /* TagsSelectorViewModel.swift */; };
+		E330A06A29F71EED00E227AD /* TagSelectionViewUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = E330A06929F71EED00E227AD /* TagSelectionViewUI.swift */; };
+		E330A06C29F84E0400E227AD /* SelectionCapsuleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E330A06B29F84E0400E227AD /* SelectionCapsuleButton.swift */; };
+		E330A06F29F87BA600E227AD /* RoundedCornerShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = E330A06E29F87BA600E227AD /* RoundedCornerShape.swift */; };
+		E330A07229F9497400E227AD /* BibleStudyTextUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E330A07129F9497400E227AD /* BibleStudyTextUseCase.swift */; };
+		E330A07629FC5EE300E227AD /* LyricsOrBibleStudyInputViewUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = E330A07529FC5EE300E227AD /* LyricsOrBibleStudyInputViewUI.swift */; };
 		E3314B6620077DD100F470C0 /* SheetExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3314B6520077DD100F470C0 /* SheetExtensions.swift */; };
 		E3314B682007836D00F470C0 /* SheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3314B672007836D00F470C0 /* SheetView.swift */; };
 		E33268BC2022241E002CDA7C /* SongsMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33268BB2022241E002CDA7C /* SongsMenuController.swift */; };
@@ -324,6 +333,7 @@
 		E3A4703421E10D35000CB3D3 /* AsynchronousOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A4703321E10D35000CB3D3 /* AsynchronousOperation.swift */; };
 		E3AA96C529F070740061C63C /* SizePreferenceKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AA96C429F070740061C63C /* SizePreferenceKey.swift */; };
 		E3AA96C729F071440061C63C /* SizeModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AA96C629F071440061C63C /* SizeModifier.swift */; };
+		E3B126EE29FC7E060085E230 /* TextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B126ED29FC7E060085E230 /* TextView.swift */; };
 		E3B1EABE24B4937500304A2D /* SongServiceHeaderCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B1EABC24B4937500304A2D /* SongServiceHeaderCollectionReusableView.swift */; };
 		E3B1EABF24B4937500304A2D /* SongServiceHeaderCollectionReusableView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3B1EABD24B4937500304A2D /* SongServiceHeaderCollectionReusableView.xib */; };
 		E3B1EAC124B4948400304A2D /* UICollectionViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B1EAC024B4948400304A2D /* UICollectionViewExtensions.swift */; };
@@ -577,6 +587,15 @@
 		E330A035253118DD0014DB44 /* BasicHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicHeaderView.swift; sourceTree = "<group>"; };
 		E330A038253119170014DB44 /* BasicHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BasicHeaderView.xib; sourceTree = "<group>"; };
 		E330A05B29F28EAD00E227AD /* SheetUIHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetUIHelper.swift; sourceTree = "<group>"; };
+		E330A05D29F6C51400E227AD /* ClusterEditorModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClusterEditorModel.swift; sourceTree = "<group>"; };
+		E330A06129F7184600E227AD /* ThemesScrollViewUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemesScrollViewUI.swift; sourceTree = "<group>"; };
+		E330A06329F719DC00E227AD /* CollectionEditorViewUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionEditorViewUI.swift; sourceTree = "<group>"; };
+		E330A06729F71E3100E227AD /* TagsSelectorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsSelectorViewModel.swift; sourceTree = "<group>"; };
+		E330A06929F71EED00E227AD /* TagSelectionViewUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagSelectionViewUI.swift; sourceTree = "<group>"; };
+		E330A06B29F84E0400E227AD /* SelectionCapsuleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionCapsuleButton.swift; sourceTree = "<group>"; };
+		E330A06E29F87BA600E227AD /* RoundedCornerShape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedCornerShape.swift; sourceTree = "<group>"; };
+		E330A07129F9497400E227AD /* BibleStudyTextUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BibleStudyTextUseCase.swift; sourceTree = "<group>"; };
+		E330A07529FC5EE300E227AD /* LyricsOrBibleStudyInputViewUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsOrBibleStudyInputViewUI.swift; sourceTree = "<group>"; };
 		E3314B6520077DD100F470C0 /* SheetExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetExtensions.swift; sourceTree = "<group>"; };
 		E3314B672007836D00F470C0 /* SheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetView.swift; sourceTree = "<group>"; };
 		E33268BB2022241E002CDA7C /* SongsMenuController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongsMenuController.swift; sourceTree = "<group>"; };
@@ -749,6 +768,7 @@
 		E3A4703321E10D35000CB3D3 /* AsynchronousOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsynchronousOperation.swift; sourceTree = "<group>"; };
 		E3AA96C429F070740061C63C /* SizePreferenceKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizePreferenceKey.swift; sourceTree = "<group>"; };
 		E3AA96C629F071440061C63C /* SizeModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizeModifier.swift; sourceTree = "<group>"; };
+		E3B126ED29FC7E060085E230 /* TextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextView.swift; sourceTree = "<group>"; };
 		E3B1EABC24B4937500304A2D /* SongServiceHeaderCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongServiceHeaderCollectionReusableView.swift; sourceTree = "<group>"; };
 		E3B1EABD24B4937500304A2D /* SongServiceHeaderCollectionReusableView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SongServiceHeaderCollectionReusableView.xib; sourceTree = "<group>"; };
 		E3B1EAC024B4948400304A2D /* UICollectionViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UICollectionViewExtensions.swift; sourceTree = "<group>"; };
@@ -977,6 +997,8 @@
 				B37EFED0294CA80B005F7D4F /* CreateEditSheetSplitViewModel.swift */,
 				B37EFED2294CA820005F7D4F /* CreateEditSheetPastorsViewModel.swift */,
 				E33BFE7129E6AA0400912B4E /* EditSheetOrThemeViewModel.swift */,
+				E330A05D29F6C51400E227AD /* ClusterEditorModel.swift */,
+				E330A06729F71E3100E227AD /* TagsSelectorViewModel.swift */,
 			);
 			path = Viewmodel;
 			sourceTree = "<group>";
@@ -1038,6 +1060,7 @@
 		E31171451FE59E98008D9D51 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				E330A07029F9495600E227AD /* UseCases */,
 				B38A1D0E292587EA00565BDA /* Datasources */,
 				B37EFEC5294BC885005F7D4F /* Viewmodel */,
 				B37EFEBA29492938005F7D4F /* Drafts */,
@@ -1056,6 +1079,7 @@
 		E31171461FE59E9F008D9D51 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				E330A06D29F87B9400E227AD /* Shapes */,
 				E3AA96C329F0705E0061C63C /* PreferenceKeys */,
 				E3C001BE29EEA67800D9AB17 /* Sheets */,
 				E33BFE9A29E89AFF00912B4E /* ButtonStyleConfigurations */,
@@ -1081,6 +1105,10 @@
 				E33BFEA329E8B04D00912B4E /* EditThemeOrSheetTitleViewUI.swift */,
 				E3C001B229EC922200D9AB17 /* EditThemeOrSheetContentViewUI.swift */,
 				E3C001C329EEE45400D9AB17 /* EditThemeOrSheetSheetImageViewUI.swift */,
+				E330A06129F7184600E227AD /* ThemesScrollViewUI.swift */,
+				E330A06329F719DC00E227AD /* CollectionEditorViewUI.swift */,
+				E330A07529FC5EE300E227AD /* LyricsOrBibleStudyInputViewUI.swift */,
+				E3B126ED29FC7E060085E230 /* TextView.swift */,
 				E311714A1FE5A04A008D9D51 /* Extensions */,
 			);
 			path = View;
@@ -1276,6 +1304,22 @@
 			path = Cells;
 			sourceTree = "<group>";
 		};
+		E330A06D29F87B9400E227AD /* Shapes */ = {
+			isa = PBXGroup;
+			children = (
+				E330A06E29F87BA600E227AD /* RoundedCornerShape.swift */,
+			);
+			path = Shapes;
+			sourceTree = "<group>";
+		};
+		E330A07029F9495600E227AD /* UseCases */ = {
+			isa = PBXGroup;
+			children = (
+				E330A07129F9497400E227AD /* BibleStudyTextUseCase.swift */,
+			);
+			path = UseCases;
+			sourceTree = "<group>";
+		};
 		E33BFE7529E6BFCC00912B4E /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
@@ -1296,6 +1340,7 @@
 				E3C001AE29EC804000D9AB17 /* FrameSizeAndRatioModifier.swift */,
 				E3C001C129EEB88A00D9AB17 /* SheetEditModeModifier.swift */,
 				E3AA96C629F071440061C63C /* SizeModifier.swift */,
+				E330A06B29F84E0400E227AD /* SelectionCapsuleButton.swift */,
 			);
 			path = Modifiers;
 			sourceTree = "<group>";
@@ -1309,6 +1354,7 @@
 				E33BFE9029E81F5400912B4E /* LabelColorPickerViewUI.swift */,
 				E33BFE9229E84AF900912B4E /* LabelPhotoPickerViewUI.swift */,
 				E33BFE8E29E81C7200912B4E /* NumberModifierViewUI.swift */,
+				E330A06929F71EED00E227AD /* TagSelectionViewUI.swift */,
 			);
 			path = CellsUI;
 			sourceTree = "<group>";
@@ -1778,6 +1824,7 @@
 				E3C2AD1E202749CD00ACFFE7 /* InstrumentExtensions.swift in Sources */,
 				E33BFE7429E6ACD700912B4E /* SheetMetaTypeExtensions.swift in Sources */,
 				B37EFE832936BB60005F7D4F /* InstrumentCodable.swift in Sources */,
+				E330A06C29F84E0400E227AD /* SelectionCapsuleButton.swift in Sources */,
 				E3F4A15A24BCC7B8004E6B08 /* SongServicePlayDateFetcher.swift in Sources */,
 				E33BFE7729E6BFE800912B4E /* WrappedStruct.swift in Sources */,
 				E311715B1FE5A0A3008D9D51 /* Features.swift in Sources */,
@@ -1804,6 +1851,7 @@
 				E35E7CEE23BA29570071DCC8 /* VSheetTitleImage.swift in Sources */,
 				E32DB8E4223468D500277C45 /* InviteCodeController.swift in Sources */,
 				E35014A9248985A30082741A /* UserSubmitter.swift in Sources */,
+				E330A05E29F6C51400E227AD /* ClusterEditorModel.swift in Sources */,
 				E3C001C229EEB88A00D9AB17 /* SheetEditModeModifier.swift in Sources */,
 				E3812DE7201C972B00F10B2C /* SettingsController.swift in Sources */,
 				B37EFE992937499D005F7D4F /* AdminCodable.swift in Sources */,
@@ -1832,10 +1880,12 @@
 				E3896A3121E3F04B008CB5A5 /* Entity.swift in Sources */,
 				E32B881929C87E2400DFF9D8 /* DeviceOrientationModifier.swift in Sources */,
 				E3E78B922520825E00AF9284 /* SheetTypesMenu.swift in Sources */,
+				E330A07629FC5EE300E227AD /* LyricsOrBibleStudyInputViewUI.swift in Sources */,
 				E33BFE7229E6AA0400912B4E /* EditSheetOrThemeViewModel.swift in Sources */,
 				E3C13F1024C772CB00BE3C35 /* CalendarIdExplainController.swift in Sources */,
 				B37EFE7B2936B7E1005F7D4F /* SheetTitleImageCodable.swift in Sources */,
 				E39B6A102216236A002B53B1 /* IntroPageViewContainer.swift in Sources */,
+				E330A07229F9497400E227AD /* BibleStudyTextUseCase.swift in Sources */,
 				E309DCEA1FF45A8A00C3D135 /* MoreSplitViewController.swift in Sources */,
 				E35014AF248B6EB20082741A /* TagSubmitter.swift in Sources */,
 				E3F8C9D220168F6F00C94292 /* BibleStudyGeneratorIphoneController.swift in Sources */,
@@ -1865,6 +1915,7 @@
 				B37EFE972937496D005F7D4F /* ContractCodable.swift in Sources */,
 				E3875373248432550050B425 /* RequestManager.swift in Sources */,
 				E35E7CF423BA30540071DCC8 /* VSheetSplit.swift in Sources */,
+				E330A06F29F87BA600E227AD /* RoundedCornerShape.swift in Sources */,
 				E34B306A25B63AFA009BFE58 /* UploadUniTimesController.swift in Sources */,
 				E33BFE8529E8097800912B4E /* TextFieldViewUI.swift in Sources */,
 				B38A1D102925880500565BDA /* SongServiceDataSource.swift in Sources */,
@@ -1921,12 +1972,14 @@
 				E31171671FE5A0E7008D9D51 /* MoreController.swift in Sources */,
 				E35E7CF623BA31200071DCC8 /* VSheetActivities.swift in Sources */,
 				E32B882929CB3F3B00DFF9D8 /* SwiftUITestView.swift in Sources */,
+				E3B126EE29FC7E060085E230 /* TextView.swift in Sources */,
 				E33BFE9C29E89B2E00912B4E /* GrayButtonConfiguration.swift in Sources */,
 				E3501498248596AC0082741A /* IntroPageController22.swift in Sources */,
 				E334B10721ED031C0088CD48 /* SheetEmptyEntity.swift in Sources */,
 				B37EFE7F2936B8FF005F7D4F /* SheetEmptyCodable.swift in Sources */,
 				E35A1A6925616EAE008CF6A3 /* FileDeleter.swift in Sources */,
 				E3CB6854200635D600F007B2 /* LoadingViewController.swift in Sources */,
+				E330A06429F719DC00E227AD /* CollectionEditorViewUI.swift in Sources */,
 				B37EFE8D2936C0BB005F7D4F /* ContractLedgerCodable.swift in Sources */,
 				B37EFE7D2936B80C005F7D4F /* SheetPastorsCodable.swift in Sources */,
 				E31114862206460C007C7A61 /* ChurchBeamTableViewController.swift in Sources */,
@@ -1961,6 +2014,7 @@
 				E3E78B842519409F00AF9284 /* TempClusterModel.swift in Sources */,
 				E384E07A23CF18190017B73F /* SongsUploadSheetCell.swift in Sources */,
 				E31171331FE59DA3008D9D51 /* ViewController.swift in Sources */,
+				E330A06A29F71EED00E227AD /* TagSelectionViewUI.swift in Sources */,
 				E31171311FE59DA3008D9D51 /* AppDelegate.swift in Sources */,
 				E38347601FF7E8B5008AE69D /* LabelPhotoPickerCell.swift in Sources */,
 				E3CB398C2551F338003DD07E /* SubscriptionCell.swift in Sources */,
@@ -1984,6 +2038,7 @@
 				E3AA96C529F070740061C63C /* SizePreferenceKey.swift in Sources */,
 				E3314B6620077DD100F470C0 /* SheetExtensions.swift in Sources */,
 				E3EED5002494E21E00AE47BC /* UniversalClusterUpdatedAtSubmitter.swift in Sources */,
+				E330A06829F71E3100E227AD /* TagsSelectorViewModel.swift in Sources */,
 				E3CB6850200634A600F007B2 /* LoadingIndicator.swift in Sources */,
 				E32B880D29C21E0200DFF9D8 /* SongServiceViewUI.swift in Sources */,
 				E3F201DE201E0CC9002FF06E /* ActivityView.swift in Sources */,
@@ -2085,6 +2140,7 @@
 				E3896A3521E3F0E3008CB5A5 /* AccountStore.swift in Sources */,
 				E30B30EC24CF8E7400C8E9A4 /* DefaultPopUpController.swift in Sources */,
 				E309DD021FF5127400C3D135 /* LabelNumberCell.swift in Sources */,
+				E330A06229F7184600E227AD /* ThemesScrollViewUI.swift in Sources */,
 				E3847EFA248ED020002D4BED /* AdminFetcher.swift in Sources */,
 				E33BFE8029E6E36F00912B4E /* SheetBackgroundColorAndOpacityModifier.swift in Sources */,
 				E330A05C29F28EAD00E227AD /* SheetUIHelper.swift in Sources */,

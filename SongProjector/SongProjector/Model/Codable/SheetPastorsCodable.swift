@@ -118,6 +118,9 @@ public struct SheetPastorsCodable: EntityCodableType, SheetMetaType {
 
     
     static var type: SheetType = .SheetPastors
+    var sheetType: SheetType {
+        .SheetPastors
+    }
     
     var id: String = "CHURCHBEAM" + UUID().uuidString
     var userUID: String = ""

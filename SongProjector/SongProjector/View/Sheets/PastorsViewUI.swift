@@ -213,8 +213,9 @@ struct PastorsViewDisplayUI: View {
 }
 
 struct PastorsViewUI_Previews: PreviewProvider {
+    @State static var cluster = ClusterCodable.makeDefault()!
     @State static var pastorsSheet = SheetPastorsCodable.makeDefault()
-    @State static var editModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .sheet(pastorsSheet, sheetType: .SheetPastors), isUniversal: false)!)
+    @State static var editModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .sheet((cluster, pastorsSheet), sheetType: .SheetPastors), isUniversal: false)!)
 
     static var previews: some View {
         PastorsViewEditUI(editViewModel: editModel, scaleFactor: 1, isForExternalDisplay: false)

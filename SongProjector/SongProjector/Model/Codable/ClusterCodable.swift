@@ -12,7 +12,7 @@ import CoreData
 
 public struct ClusterCodable: EntityCodableType {
     
-    static func makeDefault() -> ClusterCodable {
+    static func makeDefault() -> ClusterCodable? {
 #if DEBUG
         let userId = "userid"
 #else

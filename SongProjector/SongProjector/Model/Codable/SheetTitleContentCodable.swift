@@ -90,6 +90,10 @@ public struct SheetTitleContentCodable: EntityCodableType, SheetMetaType {
     }
     
     static var type: SheetType = .SheetTitleContent
+    
+    var sheetType: SheetType {
+        return .SheetTitleContent
+    }
 
     var id: String = "CHURCHBEAM" + UUID().uuidString
     var userUID: String = ""

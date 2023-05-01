@@ -9,7 +9,11 @@
 import SwiftUI
 
 struct TextFieldViewModel {
-    let label: String
+    enum CharacterLimit: Int {
+        case standaard = 100
+    }
+    
+    let label: String?
     let placeholder: String
     let characterLimit: Int
     @Binding var text: String
@@ -25,9 +29,11 @@ struct TextFieldViewUI: View {
     
     var body: some View {
         HStack() {
-            Text(viewModel.label)
-                .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10))
-                .styleAs(font: .xNormal)
+            if let label = viewModel.label {
+                Text(label)
+                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10))
+                    .styleAs(font: .xNormal)
+            }
             TextField(viewModel.placeholder, text: viewModel.$text)
                 .styleAs(font: .xNormal)
                 .lineLimit(1)

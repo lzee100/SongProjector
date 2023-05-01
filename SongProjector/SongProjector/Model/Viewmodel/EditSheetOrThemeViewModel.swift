@@ -11,11 +11,13 @@ import UIKit
 import SwiftUI
 import FirebaseAuth
 
-struct EditSheetOrThemeViewModel {
+struct EditSheetOrThemeViewModel: Identifiable {
+    
+    let id = UUID()
     
     enum EditMode {
         case theme(ThemeCodable?)
-        case sheet(SheetMetaType?, sheetType: SheetType)
+        case sheet((cluster: ClusterCodable, sheet: SheetMetaType)?, sheetType: SheetType)
         
         var isSheet: Bool {
             switch self {
@@ -29,6 +31,7 @@ struct EditSheetOrThemeViewModel {
     let editMode: EditMode
     let theme: ThemeCodable
     let sheet: SheetMetaType
+    let cluster: ClusterCodable?
     let sheetType: SheetType
     
     var requestMethod: RequestMethod {
@@ -56,7 +59,7 @@ struct EditSheetOrThemeViewModel {
     var contentFontName: String?
     var contentTextColorHex: String?
     var contentTextSize: Float
-    var position: Int16
+    var position: Int
     var titleAlignmentNumber: Int16
     var titleBackgroundColor: String?
     var titleBorderColorHex: String?
@@ -67,6 +70,7 @@ struct EditSheetOrThemeViewModel {
     var imagePathAWS: String?
     var isUniversal: Bool
     var isDeletable: Bool
+    var isBibleVers = false
     
     // sheet properties
     var title: String = ""
@@ -103,6 +107,8 @@ struct EditSheetOrThemeViewModel {
         switch editMode {
         case .theme(let persitedTheme):
             self.isNewEntity = persitedTheme != nil
+            self.cluster = nil
+            
             if let extractedTheme = persitedTheme ?? ThemeCodable.makeDefault(), let sheet = SheetTitleContentCodable.makeDefault() {
                 theme = extractedTheme
                 self.sheet = sheet
@@ -110,12 +116,25 @@ struct EditSheetOrThemeViewModel {
             } else {
                 return nil
             }
-        case .sheet(let sheet, sheetType: let sheetType):
-            self.isNewEntity = sheet != nil
-            if let sheet = sheet ?? sheetType.makeDefault(), let extractedTheme = sheet.theme ?? ThemeCodable.makeDefault() {
+        case .sheet(let persisted, let sheetType):
+            self.isNewEntity = persisted == nil
+            self.sheetType = sheetType
+            
+            if let persisted {
+                let (cluster, sheet) = persisted
+                self.cluster = cluster
                 self.sheet = sheet
-                self.sheetType = sheetType
-                theme = extractedTheme
+                if let persistedTheme = sheet.theme ?? cluster.theme {
+                    theme = persistedTheme
+                } else if let defaultTheme = ThemeCodable.makeDefault() {
+                    theme = defaultTheme
+                } else {
+                    return nil
+                }
+            } else if let sheet = sheetType.makeDefault(), let defaultTheme = ThemeCodable.makeDefault() {
+                self.sheet = sheet
+                theme = defaultTheme
+                self.cluster = nil
             } else {
                 return nil
             }
@@ -198,7 +217,7 @@ struct EditSheetOrThemeViewModel {
         self.contentFontName = theme.contentFontName
         self.contentTextColorHex = theme.contentTextColorHex
         self.contentTextSize = theme.contentTextSize
-        self.position = theme.position
+        self.position = theme.position.intValue
         self.titleAlignmentNumber = theme.titleAlignmentNumber
         self.titleBackgroundColor = theme.titleBackgroundColor
         self.titleBorderColorHex = theme.titleBorderColorHex

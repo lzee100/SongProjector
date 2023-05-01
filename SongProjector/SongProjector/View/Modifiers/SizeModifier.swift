@@ -12,7 +12,7 @@ import SwiftUI
 struct SizeModifier: ViewModifier {
     private var sizeView: some View {
         GeometryReader { geometry in
-            Color.orange.preference(key: SizePreferenceKey.self, value: geometry.size)
+            Color.clear.preference(key: SizePreferenceKey.self, value: geometry.size)
         }
     }
 

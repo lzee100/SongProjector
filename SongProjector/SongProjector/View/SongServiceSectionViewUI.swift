@@ -105,7 +105,7 @@ struct SongServiceSectionViewUI: View {
 struct SongServiceSectionViewUI_Previews: PreviewProvider {
     @State static var selectedSong: SongObjectUI? = nil
     static var previews: some View {
-        SongServiceSectionViewUI(superViewSize: superViewSizePortrait, selectedSong: $selectedSong, song: SongObjectUI(cluster: .makeDefault()))
+        SongServiceSectionViewUI(superViewSize: superViewSizePortrait, selectedSong: $selectedSong, song: SongObjectUI(cluster: .makeDefault()!))
             .previewLayout(.sizeThatFits)
             .previewInterfaceOrientation(.portrait)
     }

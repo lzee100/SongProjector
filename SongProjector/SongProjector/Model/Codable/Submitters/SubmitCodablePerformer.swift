@@ -159,7 +159,29 @@ struct ManagedObjectContextHandler<T: FileTransferable> {
             return completion(.failure(error))
         }
     }
-} 
+}
+
+enum RequesterResult: Equatable {
+    case idle
+    case preparation
+    case transfer
+    case saveLocally
+    case finished(Result<[FileTransferable], Error>)
+    
+    var progress: CGFloat {
+        switch self {
+        case .idle: return 0
+        case .preparation: return 0.2
+        case .transfer: return 0.6
+        case .saveLocally: return 0.8
+        case .finished: return 1
+        }
+    }
+    
+    static func == (lhs: RequesterResult, rhs: RequesterResult) -> Bool {
+        return lhs.progress == rhs.progress
+    }
+}
 
 struct SubmitEntitiesUseCase<T: FileTransferable> {
     
@@ -167,36 +189,14 @@ struct SubmitEntitiesUseCase<T: FileTransferable> {
         case themes = "themes"
     }
     
-    enum ProgressResult: Equatable {
-        case idle
-        case preSubmit
-        case submit
-        case saveLocally
-        case finished(Result<[FileTransferable], Error>)
-        
-        var progress: CGFloat {
-            switch self {
-            case .idle: return 0
-            case .preSubmit: return 0.2
-            case .submit: return 0.6
-            case .saveLocally: return 0.8
-            case .finished: return 1
-            }
-        }
-        
-        static func == (lhs: SubmitEntitiesUseCase<T>.ProgressResult, rhs: SubmitEntitiesUseCase<T>.ProgressResult) -> Bool {
-            return lhs.progress == rhs.progress
-        }
-    }
-    
     private let endpoint: String
     private let requestMethod: RequestMethod
     private let uploadObjects: [FileTransferable]
     private let managedObjectContextHandler = ManagedObjectContextHandler<T>()
     private let filesTransferUseCase: FilesTransferUseCase
-    @Binding var result: ProgressResult
+    @Binding var result: RequesterResult
     
-    init(endpoint: EndPoint, requestMethod: RequestMethod, uploadObjects: [FileTransferable], result: Binding<ProgressResult>) {
+    init(endpoint: EndPoint, requestMethod: RequestMethod, uploadObjects: [FileTransferable], result: Binding<RequesterResult>) {
         self.endpoint = endpoint.rawValue
         self.requestMethod = requestMethod
         self.uploadObjects = uploadObjects
@@ -207,7 +207,7 @@ struct SubmitEntitiesUseCase<T: FileTransferable> {
     func submit() {
         Task {
             do {
-                result = .preSubmit
+                result = .preparation
                 let deleteFiles = getDeleteDeletedFiles()
                 let uploadOrDownloadFilesResult = try await uploadOrDownloadFiles()
                 switch uploadOrDownloadFilesResult {
@@ -224,7 +224,7 @@ struct SubmitEntitiesUseCase<T: FileTransferable> {
                         updatedUploadObjects.append(updatedUploadObject)
                     }
                     let workload = updatedUploadObjects.map { SubmitCodableUseCase(endpoint: endpoint, requestMethod: requestMethod, uploadObject: $0) }
-                    result = .submit
+                    result = .transfer
                     let submittedEntities = try await submit(useCases: workload)
                     result = .saveLocally
                     managedObjectContextHandler.save(entities: submittedEntities) { result in

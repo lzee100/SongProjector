@@ -11,11 +11,11 @@ import FirebaseAuth
 import CoreData
 import UIKit
 
-struct ThemeCodable: EntityCodableType {
+struct ThemeCodable: EntityCodableType, Identifiable {
     
     static func makeDefault(isDeletable: Bool = true, isHidden: Bool = false) -> ThemeCodable? {
         let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "position", ascending: false))
-        let position = (themes.first?.position ?? 0) + 1
+        let position = ((themes.first?.position ?? 0) + 1).intValue
         
         #if DEBUG
         let userId = "userid"
@@ -98,7 +98,7 @@ struct ThemeCodable: EntityCodableType {
          contentFontName: String?,
          contentTextColorHex: String?,
          contentTextSize: Float,
-         position: Int16,
+         position: Int,
          titleAlignmentNumber: Int16,
          titleBackgroundColor: String?,
          titleBorderColorHex: String?,
@@ -187,7 +187,7 @@ struct ThemeCodable: EntityCodableType {
         contentFontName = entity.contentFontName
         contentTextColorHex = entity.contentTextColorHex
         contentTextSize = entity.contentTextSize
-        position = entity.position
+        position = entity.position.intValue
         titleAlignmentNumber = entity.titleAlignmentNumber
         titleBackgroundColor = entity.titleBackgroundColor
         titleBorderColorHex = entity.titleBorderColorHex
@@ -245,7 +245,7 @@ struct ThemeCodable: EntityCodableType {
         entity.contentFontName = contentFontName
         entity.contentTextColorHex = contentTextColorHex
         entity.contentTextSize = contentTextSize
-        entity.position = position
+        entity.position = Int16(position)
         entity.titleAlignmentNumber = titleAlignmentNumber
         entity.titleBackgroundColor = titleBackgroundColor
         entity.titleBorderColorHex = titleBorderColorHex
@@ -256,7 +256,6 @@ struct ThemeCodable: EntityCodableType {
         entity.imagePathAWS = imagePathAWS
         entity.isUniversal = isUniversal
         entity.isDeletable = isDeletable
-        entity.position = position
     }
 
     
@@ -289,7 +288,7 @@ struct ThemeCodable: EntityCodableType {
     var contentFontName: String? = "Avenir"
     var contentTextColorHex: String? = "000000"
     var contentTextSize: Float = 9
-    var position: Int16 = 0
+    var position: Int = 0
     var titleAlignmentNumber: Int16 = 0
     var titleBackgroundColor: String? = nil
     var titleBorderColorHex: String? = nil
@@ -445,7 +444,7 @@ struct ThemeCodable: EntityCodableType {
         contentFontName = try container.decodeIfPresent(String.self, forKey: .contentFontName)
         contentTextColorHex = try container.decodeIfPresent(String.self, forKey: .contentTextColorHex)
         contentTextSize = try container.decodeIfPresent(Float.self, forKey: .contentTextSize) ?? 14
-        position = try container.decodeIfPresent(Int16.self, forKey: .position) ?? 0
+        position = try container.decodeIfPresent(Int.self, forKey: .position) ?? 0
         titleAlignmentNumber = try container.decodeIfPresent(Int16.self, forKey: .titleAlignment) ?? 0
         titleBackgroundColor = try container.decodeIfPresent(String.self, forKey: .titleBackgroundColor)
         titleBorderColorHex = try container.decodeIfPresent(String.self, forKey: .titleBorderColorHex)

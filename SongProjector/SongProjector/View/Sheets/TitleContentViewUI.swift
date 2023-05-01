@@ -50,9 +50,10 @@ struct TitleContentViewUI<T: BodyView>: View {
 }
 
 struct TitleContentViewDisplayUI_Previews: PreviewProvider {
-    @State static var songServiceModel = WrappedStruct(withItem: SongServiceUI(songs: [SongObjectUI(cluster: .makeDefault())]))
+    @State static var cluster = ClusterCodable.makeDefault()!
+    @State static var songServiceModel = WrappedStruct(withItem: SongServiceUI(songs: [SongObjectUI(cluster: .makeDefault()!)]))
     @State static var imageSheet = SheetTitleImageCodable.makeDefault()
-    @State static var editModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .sheet(imageSheet, sheetType: .SheetTitleImage), isUniversal: false, image: UIImage(named: "Pio-Sebastiaan-en-Marilou.jpg"))!)
+    @State static var editModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .sheet((cluster, imageSheet), sheetType: .SheetTitleImage), isUniversal: false, image: UIImage(named: "Pio-Sebastiaan-en-Marilou.jpg"))!)
     
     static var previews: some View {
         TitleContentViewDisplayUI(songServiceModel: songServiceModel, sheet: SheetTitleImageCodable.makeDefault(), scaleFactor: 1, isForExternalDisplay: false, showSelectionCover: false)
@@ -64,7 +65,9 @@ struct TitleContentViewDisplayUI_Previews: PreviewProvider {
 
 struct TitleContentViewEditUI: View {
     
-    
+    @State private(set) var textViewSize: CGSize = .zero
+    @State private(set) var contentTextViewSize: CGSize = .zero
+
     private let isForExternalDisplay: Bool
     private let scaleFactor: CGFloat
     
@@ -91,15 +94,18 @@ struct TitleContentViewEditUI: View {
             }
             .frame(maxWidth: .infinity)
            
-            Text(getContentAttributedString())
-                .modifier(SheetContentEditModifier(scaleFactor: scaleFactor, multiLine: true, editViewModel: editViewModel))
+            GeometryReader { proxy in
+                Text(getContentAttributedString())
+            }
+            .observeViewSize()
+            .modifier(SheetContentEditModifier(scaleFactor: scaleFactor, multiLine: true, editViewModel: editViewModel))
             Spacer()
         }
         .setBackgroundImage(isForExternalDisplay: false, editModel: editViewModel)
         .modifier(SheetBackgroundColorAndOpacityEditModifier(editViewModel: editViewModel))
         .cornerRadius(10)
         .aspectRatio(16 / 9, contentMode: .fit)
-        .ignoresSafeArea()
+        .ignoresSafeArea()        
     }
     
     private func getTitleAttributedString(text: String) -> AttributedString {
