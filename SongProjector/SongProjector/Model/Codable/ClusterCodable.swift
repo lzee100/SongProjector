@@ -341,10 +341,13 @@ extension ClusterCodable: FileTransferable {
     }
     
     var downloadObjects: [TransferObject] {
-        let sheetThemesPaths = hasSheets.getThemes(context: newMOCBackground).filter({ $0.hasNewRemoteImage }).compactMap({ $0.imagePathAWS })
-        let pastorstPaths = hasSheets.compactMap({ $0 as? VSheetPastors }).filter({ $0.hasNewRemoteImage }).compactMap({ $0.imagePathAWS })
-        let titleImagePaths = hasSheets.compactMap({ $0 as? VSheetTitleImage }).filter({ $0.hasNewRemoteImage }).compactMap({ $0.imagePathAWS })
-        
+//        let sheetThemesPaths = hasSheets.getThemes(context: newMOCBackground).filter({ $0.hasNewRemoteImage }).compactMap({ $0.imagePathAWS })
+//        let pastorstPaths = hasSheets.compactMap({ $0 as? SheetPastorsCodable }).filter({ $0.hasNewRemoteImage }).compactMap({ $0.imagePathAWS })
+//        let titleImagePaths = hasSheets.compactMap({ $0 as? SheetPastorsCodable }).filter({ $0.hasNewRemoteImage }).compactMap({ $0.imagePathAWS })
+        let sheetThemesPaths = hasSheets.getThemes(context: newMOCBackground).compactMap({ $0.imagePathAWS })
+        let pastorstPaths = hasSheets.compactMap({ $0 as? SheetPastorsCodable }).compactMap({ $0.imagePathAWS })
+        let titleImagePaths = hasSheets.compactMap({ $0 as? SheetPastorsCodable }).compactMap({ $0.imagePathAWS })
+
         var allPaths = sheetThemesPaths
         allPaths += pastorstPaths
         allPaths += titleImagePaths
@@ -368,11 +371,8 @@ extension ClusterCodable: FileTransferable {
 //                imagePathAWS = uploadObject.fileName
 //            }
 //        }
-//        for download in downloadObjects.compactMap({ $0 as? DownloadObject }) {
-//            if imagePathAWS == download.remoteURL.absoluteString {
-//                try setBackgroundImage(image: download.image, imageName: download.filename)
-//            }
-//        }
+        
+        hasSheets = try hasSheets.updateWith(downloadObjects: transferObjects.compactMap { $0 as? DownloadObject })
     }
     
     func setDeleteDate() -> FileTransferable {

@@ -20,6 +20,7 @@ struct EditThemeOrSheetViewUI: View {
     @State var progress: CGFloat = 0
     @State var submitThemeUseCaseResult: RequesterResult = .idle
     @State var submitThemeUseCase: SubmitEntitiesUseCase<ThemeCodable>?
+    
     var body: some View {
         ZStack {
             NavigationStack {

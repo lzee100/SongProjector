@@ -11,24 +11,33 @@ import UIKit
 
 struct SongServiceViewUI: View {
     
-    @StateObject var songService: WrappedStruct<SongServiceUI>
+    @State var songService: WrappedStruct<SongServiceUI>
     let dismiss: (() -> Void)
-    @State private var alignment: Sticky.Alignment = .horizontal
+    private let alignment: Sticky.Alignment
     @SwiftUI.Environment(\.horizontalSizeClass) var horizontalSizeClass
+    @State var selectedSheet: String?
+    
+    init(songService: WrappedStruct<SongServiceUI>, dismiss: @escaping (() -> Void), alignment: Sticky.Alignment = .horizontal) {
+        self._songService = State(wrappedValue: songService)
+        self.dismiss = dismiss
+        self.alignment = alignment
+    }
     
     var body: some View {
         NavigationStack {
             GeometryReader { ruler in
                 VStack(alignment: .center, spacing: 0) {
+                    
                     BeamerPreviewUI(songService: songService)
                         .padding(EdgeInsets(top: 10, leading: 50, bottom: 50, trailing: 50))
                         .aspectRatio(externalDisplayWindowRatioHeightWidth, contentMode: .fit)
+                    
                     SheetScrollViewUI(songServiceModel: songService, isSelectable: true)
                         .frame(maxWidth: isCompactOrVertical(ruler: ruler) ? (ruler.size.width * 0.7) : .infinity, maxHeight: isCompactOrVertical(ruler: ruler) ? .infinity : 200)
+                    
                 }
                 .background(.black)
                 .edgesIgnoringSafeArea(.all)
-                .environmentObject(songService)
             }
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarTitle(AppText.SongService.title)
@@ -39,6 +48,9 @@ struct SongServiceViewUI: View {
                     }
                 }
             })
+        }
+        .onChange(of: selectedSheet) { newValue in
+            songService.item.selectedSheetId = newValue
         }
     }
     

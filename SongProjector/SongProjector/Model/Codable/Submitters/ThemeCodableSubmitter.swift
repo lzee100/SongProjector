@@ -81,16 +81,17 @@ struct ThemeCodableSubmitter: CodableFetcherType {
         prepareForSubmit { result in
             switch result {
             case .success(let themes):
-                let submitter = SubmitCodablePerformer<ThemeCodable>(body: (themes as? [ThemeCodable] ?? []), requestMethod: requestMethod, requesterInfo: ThemeRequesterInfo())
-                
-                submitter.performSubmit { result in
-                    switch result {
-                    case .success(let result):
-                        completion(.success(result))
-                    case .failure(let error):
-                        completion(.failure(error))
-                    }
-                }
+//                let submitter = SubmitCodablePerformer<ThemeCodable>(body: (themes as? [ThemeCodable] ?? []), requestMethod: requestMethod, requesterInfo: ThemeRequesterInfo())
+//
+//                submitter.performSubmit { result in
+//                    switch result {
+//                    case .success(let result):
+//                        completion(.success(result))
+//                    case .failure(let error):
+//                        completion(.failure(error))
+//                    }
+//                }
+                print("not done yet")
             case .failure(let error):
                 completion(.failure(error))
             }

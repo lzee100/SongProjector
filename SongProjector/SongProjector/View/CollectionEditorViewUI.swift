@@ -10,41 +10,18 @@ import SwiftUI
 
 struct CollectionEditorViewUI: View {
     
-    enum EditController: Equatable {
-        case none
-        case lyrics
-        case bibleStudy
-        case customSheet(type: SheetType)
-        
-        var sheet: SheetMetaType? {
-            switch self {
-            case .customSheet(type: let type):
-                return type.makeDefault()
-            default: return nil
-            }
-        }
-        
-        var sheetType: SheetType? {
-            switch self {
-            case .customSheet(type: let type):
-                return type
-            default: return nil
-            }
-        }
-    }
     
     @ObservedObject private var model: WrappedStruct<ClusterEditorModel>
     private var themeSelectionModel: WrappedStruct<ThemesSelectionModel>
     private var tagsSelectionModel: WrappedStruct<TagsSelectionModel>
-    @State private var editController: EditController = .none
-    @State private var bibleStudyText: String = ""
+    @State private var lyricsOrBibleStudyText: String = ""
     @State private var bibleStudySheetContent: [(title: String?, content: String)] = []
-    @State private var isShowingBibleStudy = false
     @State private var sheetContentSize: CGSize = .zero
     @State private var screenWidth: CGFloat = .zero
     @State private var isShowingLyricsOrBibleStudyInputView = false
     @State private var isShowingSheetEditor = false
-    
+    @State private var isShowingNoThemeSelectedAlert = false
+
     init(model: WrappedStruct<ClusterEditorModel>) {
         self.model = model
         self.themeSelectionModel = WrappedStruct(withItem: ThemesSelectionModel(selectedTheme: model.item.selectedClusterTheme, didSelectTheme: { theme in
@@ -95,7 +72,9 @@ struct CollectionEditorViewUI: View {
                         }
                         .onPreferenceChange(SizePreferenceKey.self) { size in
                             self.sheetContentSize = size
-                            generateBibleStudySheets()
+                            if model.item.editController.isBibleStudy {
+                                model.item.bibleStudyTextDidChange(lyricsOrBibleStudyText, contentTextViewContentSize: size)
+                            }
                         }
                     }
                     .padding(EdgeInsets(top: 25, leading: 10, bottom: 0, trailing: 10))
@@ -119,31 +98,32 @@ struct CollectionEditorViewUI: View {
             })
             
         }
-        .onChange(of: editController) { newValue in
-            
-        }
         .sheet(isPresented: $isShowingLyricsOrBibleStudyInputView) {
-            LyricsOrBibleStudyInputViewUI(content: $bibleStudyText, isShowingLyricsOrBibleStudyInputView: $isShowingLyricsOrBibleStudyInputView)
+            LyricsOrBibleStudyInputViewUI(content: $lyricsOrBibleStudyText, isShowingLyricsOrBibleStudyInputView: $isShowingLyricsOrBibleStudyInputView)
         }
         .sheet(isPresented: $isShowingSheetEditor, content: {
-            if let type = editController.sheetType, let sheet = editController.sheet, let model = EditSheetOrThemeViewModel(editMode: .sheet((model.item.cluster, sheet), sheetType: type), isUniversal: uploadSecret != nil) {
+            if let model = model.item.customSheetsEditModel {
                 EditThemeOrSheetViewUI(dismiss: { dismissPresenting in
-                }, navigationTitle: AppText.SheetPickerMenu.pickCustom, editSheetOrThemeModel: WrappedStruct(withItem: model))
+                }, navigationTitle: AppText.SheetPickerMenu.pickCustom, editSheetOrThemeModel: model)
             } else {
                 EmptyView()
             }
         })
-        .onChange(of: bibleStudyText) { newValue in
-            if newValue.count > 0 {
-                generateBibleStudySheets()
+        .alert(AppText.CustomSheets.errorSelectTheme, isPresented: $isShowingNoThemeSelectedAlert) {
+            Button("OK", role: .cancel) { }
+        }
+        .onChange(of: lyricsOrBibleStudyText) { newValue in
+            if model.item.editController.isBibleStudy {
+                model.item.bibleStudyTextDidChange(newValue, contentTextViewContentSize: sheetContentSize)
+            } else {
+                model.item.lyricsTextDidChange(newValue, screenWidth: screenWidth)
             }
         }
-        
     }
     
     @ViewBuilder func sheets(_ viewSize: CGSize) -> some View {
         VStack {
-            switch editController {
+            switch model.item.editController {
             case .bibleStudy:
                 bibleStudySheets(viewSize)
             case .lyrics, .customSheet, .none:
@@ -159,7 +139,7 @@ struct CollectionEditorViewUI: View {
     
     @ViewBuilder func bibleStudySheets(_ viewSize: CGSize) -> some View {
         VStack {
-            if bibleStudyText.count > 0, !isShowingLyricsOrBibleStudyInputView {
+            if lyricsOrBibleStudyText.count > 0, !isShowingLyricsOrBibleStudyInputView {
                 if let cluster = ClusterCodable.makeDefault(), let titleContentSheet = SheetTitleContentCodable.makeDefault(), let model = EditSheetOrThemeViewModel(editMode: .sheet((cluster: cluster, sheet: titleContentSheet), sheetType: .SheetTitleContent), isUniversal: false) {
                     SheetUIHelper.sheet(viewSize: viewSize, editSheetOrThemeModel: WrappedStruct(withItem: model), isForExternalDisplay: false)
                 } else {
@@ -172,34 +152,23 @@ struct CollectionEditorViewUI: View {
             }
         }
     }
-    
-    private func generateBibleStudySheets() {
-        guard let theme = model.item.selectedClusterTheme, bibleStudyText.count > 0 else {
-            return
-        }
-        let bibleStudyTitleContent =  BibleStudyTextUseCase.generateSheetsFromText(
-            bibleStudyText,
-            contentSize: sheetContentSize,
-            theme: theme,
-            scaleFactor: getScaleFactor(width: screenWidth),
-            cluster: model.item.cluster
-        )
-        isShowingLyricsOrBibleStudyInputView = true
-        model.item.sheets = bibleStudyTitleContent // TODO: ADD EMPTY SHEETS BASED ON THEME SETTINGS
-    }
-    
+
     private var menu: some View {
         Menu {
             Section {
-                Button(AppText.Lyrics.titleLyrics) {
-                    editController = .bibleStudy
-                    isShowingBibleStudy.toggle()
+                Button(AppText.SheetsMenu.lyrics) {
+                    if model.item.selectedClusterTheme == nil {
+                        isShowingNoThemeSelectedAlert = true
+                    } else {
+                        model.item.editController = .lyrics
+                        isShowingLyricsOrBibleStudyInputView.toggle()
+                    }
                 }
             }
             Section {
                 ForEach(SheetType.all, id: \.rawValue) { type in
                     Button(type.name) {
-                        editController = .customSheet(type: type)
+                        model.item.editController = .customSheet(type: type)
                         self.isShowingSheetEditor.toggle()
                     }
                 }
@@ -207,10 +176,10 @@ struct CollectionEditorViewUI: View {
             Section {
                 Button(AppText.Lyrics.titleBibleText) {
                     if model.item.selectedClusterTheme == nil {
-                        // TODO: show alert
+                        isShowingNoThemeSelectedAlert = true
                     } else {
-                        editController = .bibleStudy
-                        isShowingBibleStudy.toggle()
+                        model.item.editController = .bibleStudy
+                        isShowingLyricsOrBibleStudyInputView.toggle()
                     }
                 }
             }

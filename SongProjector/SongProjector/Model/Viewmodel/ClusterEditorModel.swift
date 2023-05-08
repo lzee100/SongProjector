@@ -11,6 +11,37 @@ import SwiftUI
 
 struct ClusterEditorModel {
     
+    enum EditController: Equatable {
+        case none
+        case lyrics
+        case bibleStudy
+        case customSheet(type: SheetType)
+        
+        var sheet: SheetMetaType? {
+            switch self {
+            case .customSheet(type: let type):
+                return type.makeDefault()
+            default: return nil
+            }
+        }
+        
+        var sheetType: SheetType? {
+            switch self {
+            case .customSheet(type: let type):
+                return type
+            default: return nil
+            }
+        }
+        var isBibleStudy: Bool {
+            switch self {
+            case .bibleStudy: return true
+            case .none, .lyrics, .customSheet: return false
+            }
+        }
+    }
+    
+    var editController: EditController = .none
+
     var cluster: ClusterCodable
     var isNew = false
     var title: String = ""
@@ -18,10 +49,17 @@ struct ClusterEditorModel {
     var isBibleVerses = false
     var isLyrics = false
     var isUniversalSong = false // has no save option
-    var sheets: [EditSheetOrThemeViewModel]
+    private(set) var sheets: [EditSheetOrThemeViewModel]
     var selectedClusterTheme: ThemeCodable? { mutating didSet { updateSheets() } }
     var selectedTags: [TagCodable] = []
-
+    var customSheetsEditModel: WrappedStruct<EditSheetOrThemeViewModel>? {
+        if let type = editController.sheetType, let sheet = editController.sheet, let model = EditSheetOrThemeViewModel(editMode: .sheet((cluster, sheet), sheetType: type), isUniversal: uploadSecret != nil) {
+            return WrappedStruct(withItem: model)
+        } else {
+            return nil
+        }
+    }
+    
     init?(cluster: ClusterCodable?) {
         guard let unwrappedCluster = cluster ?? .makeDefault() else {
             return nil
@@ -59,7 +97,28 @@ struct ClusterEditorModel {
             }
         })
     }
-
+        
+    mutating func bibleStudyTextDidChange(_ text: String, contentTextViewContentSize: CGSize) {
+        if text.count > 0, let theme = selectedClusterTheme {
+            let bibleStudyTitleContent =  BibleStudyTextUseCase.generateSheetsFromText(
+                text,
+                contentSize: contentTextViewContentSize,
+                theme: theme,
+                scaleFactor: getScaleFactor(width: contentTextViewContentSize.width),
+                cluster: cluster
+            )
+            sheets = bibleStudyTitleContent // TODO: ADD EMPTY SHEETS BASED ON THEME SETTINGS
+        }
+    }
+    
+    mutating func lyricsTextDidChange(_ text: String, screenWidth: CGFloat) {
+        if text.count > 0 {
+            cluster.title = GenerateLyricsSheetContentUseCase.getTitle(from: text)
+            title = cluster.title ?? ""
+            let sheets = GenerateLyricsSheetContentUseCase.buildSheets(fromText: text, cluster: cluster)
+            self.sheets = sheets
+        }
+    }
 }
 
 struct ThemesSelectionModel {

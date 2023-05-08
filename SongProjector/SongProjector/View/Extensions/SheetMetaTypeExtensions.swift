@@ -33,6 +33,8 @@ extension SheetMetaType {
             return sheetPastors.content
         } else if let sheetSplit = self as? SheetSplitCodable {
             return sheetSplit.textLeft
+        } else if let sheetActivities = self as? SheetActivitiesCodable {
+            return sheetActivities.sheetContent
         }
         return nil
     }
@@ -54,7 +56,7 @@ extension SheetMetaType {
         }
         return nil
     }
-
+    
     
     var sheetImage: UIImage? {
         if let sheetTitleImageCodable = self as? SheetTitleImageCodable {
@@ -81,4 +83,81 @@ extension SheetMetaType {
     var themeBackgroundImageThumbnail: UIImage? {
         theme?.thumbnail
     }
+    
+    var time: Double? {
+        if let sheetTitleContentCodable = self as? SheetTitleContentCodable {
+            return sheetTitleContentCodable.time
+        } else if let sheetTitleImageCodable = self as? SheetTitleImageCodable {
+            return sheetTitleImageCodable.time
+        } else if let sheetPastors = self as? SheetPastorsCodable {
+            return sheetPastors.time
+        } else if let sheetSplit = self as? SheetSplitCodable {
+            return sheetSplit.time
+        } else if let sheetActivities = self as? SheetActivitiesCodable {
+            return sheetActivities.time
+        }
+        return nil
+    }
+    
+}
+
+extension Array where Element == SheetMetaType {
+    
+    func updateWith(downloadObjects: [DownloadObject]) throws -> [SheetMetaType] {
+        var sheets: [SheetMetaType] = []
+        for sheet in self {
+            if var changeableSheet = sheet as? SheetTitleContentCodable {
+                if let downloadObject = downloadObjects.first(where: { $0.remoteURL.absoluteString == changeableSheet.hasTheme?.imagePathAWS }) {
+                    let savedImageInfo = try UIImage.set(image: downloadObject.image, imageName: downloadObject.filename, thumbNailName: nil)
+                    changeableSheet.hasTheme?.imagePath = savedImageInfo.imagePath
+                    changeableSheet.hasTheme?.imagePathThumbnail = savedImageInfo.thumbPath
+                }
+                sheets.append(changeableSheet)
+            } else if var changeableSheet = sheet as? SheetTitleImageCodable {
+                if let downloadObject = downloadObjects.first(where: { $0.remoteURL.absoluteString == changeableSheet.hasTheme?.imagePathAWS }) {
+                    let savedImageInfo = try UIImage.set(image: downloadObject.image, imageName: downloadObject.filename, thumbNailName: nil)
+                    changeableSheet.hasTheme?.imagePath = savedImageInfo.imagePath
+                    changeableSheet.hasTheme?.imagePathThumbnail = savedImageInfo.thumbPath
+                }
+                if let downloadObject = downloadObjects.first(where: { $0.remoteURL.absoluteString == changeableSheet.imagePathAWS }) {
+                    let savedImageInfo = try UIImage.set(image: downloadObject.image, imageName: downloadObject.filename, thumbNailName: nil)
+                    changeableSheet.imagePath = savedImageInfo.imagePath
+                    changeableSheet.thumbnailPath = savedImageInfo.thumbPath
+                }
+                
+                sheets.append(changeableSheet)
+            } else if var changeableSheet = sheet as? SheetPastorsCodable {
+                if let downloadObject = downloadObjects.first(where: { $0.remoteURL.absoluteString == changeableSheet.hasTheme?.imagePathAWS }) {
+                    let savedImageInfo = try UIImage.set(image: downloadObject.image, imageName: downloadObject.filename, thumbNailName: nil)
+                    changeableSheet.hasTheme?.imagePath = savedImageInfo.imagePath
+                    changeableSheet.hasTheme?.imagePathThumbnail = savedImageInfo.thumbPath
+                }
+                if let downloadObject = downloadObjects.first(where: { $0.remoteURL.absoluteString == changeableSheet.imagePathAWS }) {
+                    let savedImageInfo = try UIImage.set(image: downloadObject.image, imageName: downloadObject.filename, thumbNailName: nil)
+                    changeableSheet.imagePath = savedImageInfo.imagePath
+                    changeableSheet.thumbnailPath = savedImageInfo.thumbPath
+                }
+                sheets.append(changeableSheet)
+            } else if var changeableSheet = sheet as? SheetEmptyCodable {
+                if let downloadObject = downloadObjects.first(where: { $0.remoteURL.absoluteString == changeableSheet.hasTheme?.imagePathAWS }) {
+                    let savedImageInfo = try UIImage.set(image: downloadObject.image, imageName: downloadObject.filename, thumbNailName: nil)
+                    changeableSheet.hasTheme?.imagePath = savedImageInfo.imagePath
+                    changeableSheet.hasTheme?.imagePathThumbnail = savedImageInfo.thumbPath
+                }
+                sheets.append(changeableSheet)
+            } else if var changeableSheet = sheet as? SheetSplitCodable {
+                if let downloadObject = downloadObjects.first(where: { $0.remoteURL.absoluteString == changeableSheet.hasTheme?.imagePathAWS }) {
+                    let savedImageInfo = try UIImage.set(image: downloadObject.image, imageName: downloadObject.filename, thumbNailName: nil)
+                    changeableSheet.hasTheme?.imagePath = savedImageInfo.imagePath
+                    changeableSheet.hasTheme?.imagePathThumbnail = savedImageInfo.thumbPath
+                }
+                sheets.append(changeableSheet)
+            } else {
+                sheets.append(sheet)
+            }
+            
+        }
+        return sheets
+    }
+    
 }

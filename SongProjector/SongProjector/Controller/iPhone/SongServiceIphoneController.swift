@@ -10,6 +10,7 @@ import UIKit
 import QuartzCore
 import MediaPlayer
 import GoogleSignIn
+import SwiftUI
 
 class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate, UIGestureRecognizerDelegate, SongsControllerDelegate {
     
@@ -113,8 +114,8 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
     override var requesters: [RequesterBase] {
         return [UniversalClusterFetcher, SongServicePlayDateFetcher]
     }
-    
-    private lazy var fetcher = RequesterCodable(requests: [TagCodableFetcher()], completion: self.requesterObserver)
+    @State var result: RequesterResult = .idle
+    private lazy var fetcher = FetchUseCase<TagCodable>(endpoint: .tags, result: $result)
     private var fetchers: [RequesterCodable] = []
     
 	// MARK: - Functions
@@ -133,13 +134,13 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
 //        UniversalClusterFetcher.initialFetch()
 //        SongServicePlayDateFetcher.fetch()
         
-        func startFetching(countValue: Double) {
-            DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + (0.1 * countValue), execute: {
-                let fetcher = RequesterCodable(requests: [ThemeCodableFetcher()], completion: self.requesterObserver)
-                    self.fetchers.append(fetcher)
-                    fetcher.startRequest()
-            })
-        }
+//        func startFetching(countValue: Double) {
+//            DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + (0.1 * countValue), execute: {
+//                let fetcher = RequesterCodable(requests: [ThemeCodableFetcher()], completion: self.requesterObserver)
+//                    self.fetchers.append(fetcher)
+//                    fetcher.startRequest()
+//            })
+//        }
 
     }
 	

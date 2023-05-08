@@ -178,6 +178,10 @@ struct VolumeManager {
         UserDefaults.standard.bool(forKey: self.instrument + instrument.id)
     }
     
+    static func isMutedFor(instrument: InstrumentCodable) -> Bool {
+        UserDefaults.standard.bool(forKey: self.instrument + instrument.id)
+    }
+    
     static func resetMutes(completion: @escaping (() -> Void)) {
         DispatchQueue.global(qos: .userInitiated).async {
             let moc = newMOCBackground

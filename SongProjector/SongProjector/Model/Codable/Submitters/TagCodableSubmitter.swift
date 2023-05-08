@@ -24,16 +24,16 @@ struct TagCodableSubmitter: CodableFetcherType {
     }
     
     func perform(completion: @escaping ((Result<[EntityCodableType], Error>) -> Void)) {
-        let fetcherInfo = TagRequesterInfo()
-
-        var submitter = SubmitCodablePerformer<TagCodable>(body: [], requestMethod: requestMethod, requesterInfo: TagRequesterInfo())
-        
-        submitter.performSubmit { result in
-            switch result {
-            case .success(let result): completion(.success(result))
-            case .failure(let error): completion(.failure(error))
-            }
-        }
+//        let fetcherInfo = TagRequesterInfo()
+//
+//        var submitter = SubmitCodablePerformer<TagCodable>(body: [], requestMethod: requestMethod, requesterInfo: TagRequesterInfo())
+//        
+//        submitter.performSubmit { result in
+//            switch result {
+//            case .success(let result): completion(.success(result))
+//            case .failure(let error): completion(.failure(error))
+//            }
+//        }
     }
     
     func additionalProcessing(decodedEntities: [EntityCodableType], managedObjects: [NSManagedObject], context: NSManagedObjectContext, completion: @escaping (Result<[NSManagedObject], Error>) -> Void) {

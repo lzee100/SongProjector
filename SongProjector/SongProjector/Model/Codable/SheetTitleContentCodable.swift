@@ -12,7 +12,7 @@ import CoreData
 
 public struct SheetTitleContentCodable: EntityCodableType, SheetMetaType {
     
-    static func makeDefault(position: Int = 0) -> SheetTitleContentCodable? {
+    static func makeDefault(position: Int = 0, title: String = AppText.NewTheme.sampleTitle, content: String = AppText.NewTheme.sampleLyrics) -> SheetTitleContentCodable? {
         
         #if DEBUG
         let userId = "sdaf"
@@ -25,7 +25,7 @@ public struct SheetTitleContentCodable: EntityCodableType, SheetMetaType {
         return SheetTitleContentCodable(
             id: "CHURCHBEAM" + UUID().uuidString,
             userUID: userId,
-            title: AppText.NewTheme.sampleTitle,
+            title: title,
             createdAt: Date(),
             updatedAt: Date(),
             deleteDate: nil,
@@ -34,7 +34,7 @@ public struct SheetTitleContentCodable: EntityCodableType, SheetMetaType {
             position: position,
             time: 0.0,
             hasTheme: nil,
-            content: AppText.NewTheme.sampleLyrics,
+            content: content,
             isBibleVers: false
         )
     }

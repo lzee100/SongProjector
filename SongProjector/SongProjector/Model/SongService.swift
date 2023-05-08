@@ -17,6 +17,11 @@ struct SongServiceUI {
             setSectionIndex()
             setSelectedTheme()
             selectedSheetId = selectedSong?.sheets.first?.id
+            if let selectedSong {
+                soundPlayer?.play(song: selectedSong)
+            } else {
+                soundPlayer?.stop()
+            }
         }
         
     }
@@ -38,6 +43,7 @@ struct SongServiceUI {
     private(set) var selectedSongTheme: ThemeCodable?
     private(set) var selectedSheetTheme: ThemeCodable?
     private(set) var sectionedSongs: [[SongObjectUI]] = []
+    var soundPlayer: SoundPlayer2?
     
     init(songs: [SongObjectUI]){
         self.songs = songs.sorted { $0.cluster.position < $1.cluster.position }
@@ -58,22 +64,22 @@ struct SongServiceUI {
         
     private mutating func setSectionedSongs() {
         var sectionedSongs: [[SongObjectUI]] = []
-        var remainingSongs = songs
-        repeat {
-            var songsForSection = [SongObjectUI]()
-            if let firstRemainingSong = remainingSongs.first {
-                songsForSection.append(firstRemainingSong)
-                remainingSongs.remove(at: 0)
-                let firstIndex = remainingSongs.firstIndex(where: { $0.sectionHeader != nil })
-                if let firstIndex = firstIndex {
-                    songsForSection.append(contentsOf: remainingSongs[0..<firstIndex])
+        var songsForSection = [SongObjectUI]()
+        
+        for (index, song) in songs.enumerated() {
+            if songsForSection.count == 0 || song.sectionHeader == nil {
+                songsForSection.append(song)
+            } else {
+                sectionedSongs.append(songsForSection)
+                songsForSection = [song]
+                if index == songs.count - 1 {
                     sectionedSongs.append(songsForSection)
                 }
             }
-        } while remainingSongs.count != 0
+        }
         self.sectionedSongs = sectionedSongs
     }
-    
+        
     mutating private func setSectionIndex() {
         selectedSection = songs.firstIndex(where: { $0.cluster.id == selectedSong?.cluster.id })
     }

@@ -22,6 +22,14 @@ extension ISO8601DateFormatter {
     }
 }
 
+extension Array where Element: QuerySnapshot {
+    
+    func decoded<Type: Decodable>() throws -> [Type] {
+        try map { try $0.decoded() }.flatMap { $0 }
+    }
+
+}
+
 extension DocumentSnapshot {
     
     

@@ -39,7 +39,7 @@
 		B37EFEAC2947C732005F7D4F /* TagCodableFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37EFEAB2947C732005F7D4F /* TagCodableFetcher.swift */; };
 		B37EFEAE2947C756005F7D4F /* ThemeCodableFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37EFEAD2947C756005F7D4F /* ThemeCodableFetcher.swift */; };
 		B37EFEB02947C80A005F7D4F /* RequesterInfoBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37EFEAF2947C80A005F7D4F /* RequesterInfoBase.swift */; };
-		B37EFEB22947D1CF005F7D4F /* FetcherCodablePerformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37EFEB12947D1CF005F7D4F /* FetcherCodablePerformer.swift */; };
+		B37EFEB22947D1CF005F7D4F /* FetchUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37EFEB12947D1CF005F7D4F /* FetchUseCase.swift */; };
 		B37EFEB42947D943005F7D4F /* SubmitCodablePerformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37EFEB32947D943005F7D4F /* SubmitCodablePerformer.swift */; };
 		B37EFEB62947DFCF005F7D4F /* TagCodableSubmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37EFEB52947DFCF005F7D4F /* TagCodableSubmitter.swift */; };
 		B37EFEB929492798005F7D4F /* ThemeCodableSubmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37EFEB829492798005F7D4F /* ThemeCodableSubmitter.swift */; };
@@ -334,6 +334,10 @@
 		E3AA96C529F070740061C63C /* SizePreferenceKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AA96C429F070740061C63C /* SizePreferenceKey.swift */; };
 		E3AA96C729F071440061C63C /* SizeModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AA96C629F071440061C63C /* SizeModifier.swift */; };
 		E3B126EE29FC7E060085E230 /* TextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B126ED29FC7E060085E230 /* TextView.swift */; };
+		E3B126F029FFB65D0085E230 /* GenerateLyricsSheetContentUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B126EF29FFB65D0085E230 /* GenerateLyricsSheetContentUseCase.swift */; };
+		E3B126F22A02E7500085E230 /* SoundPlayer2.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B126F12A02E7500085E230 /* SoundPlayer2.swift */; };
+		E3B126F62A084B380085E230 /* SubmitEntitiesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B126F52A084B380085E230 /* SubmitEntitiesUseCase.swift */; };
+		E3B126F82A084E970085E230 /* Endpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B126F72A084E970085E230 /* Endpoints.swift */; };
 		E3B1EABE24B4937500304A2D /* SongServiceHeaderCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B1EABC24B4937500304A2D /* SongServiceHeaderCollectionReusableView.swift */; };
 		E3B1EABF24B4937500304A2D /* SongServiceHeaderCollectionReusableView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3B1EABD24B4937500304A2D /* SongServiceHeaderCollectionReusableView.xib */; };
 		E3B1EAC124B4948400304A2D /* UICollectionViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B1EAC024B4948400304A2D /* UICollectionViewExtensions.swift */; };
@@ -476,7 +480,7 @@
 		B37EFEAB2947C732005F7D4F /* TagCodableFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagCodableFetcher.swift; sourceTree = "<group>"; };
 		B37EFEAD2947C756005F7D4F /* ThemeCodableFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeCodableFetcher.swift; sourceTree = "<group>"; };
 		B37EFEAF2947C80A005F7D4F /* RequesterInfoBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequesterInfoBase.swift; sourceTree = "<group>"; };
-		B37EFEB12947D1CF005F7D4F /* FetcherCodablePerformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetcherCodablePerformer.swift; sourceTree = "<group>"; };
+		B37EFEB12947D1CF005F7D4F /* FetchUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchUseCase.swift; sourceTree = "<group>"; };
 		B37EFEB32947D943005F7D4F /* SubmitCodablePerformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmitCodablePerformer.swift; sourceTree = "<group>"; };
 		B37EFEB52947DFCF005F7D4F /* TagCodableSubmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagCodableSubmitter.swift; sourceTree = "<group>"; };
 		B37EFEB829492798005F7D4F /* ThemeCodableSubmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeCodableSubmitter.swift; sourceTree = "<group>"; };
@@ -769,6 +773,10 @@
 		E3AA96C429F070740061C63C /* SizePreferenceKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizePreferenceKey.swift; sourceTree = "<group>"; };
 		E3AA96C629F071440061C63C /* SizeModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizeModifier.swift; sourceTree = "<group>"; };
 		E3B126ED29FC7E060085E230 /* TextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextView.swift; sourceTree = "<group>"; };
+		E3B126EF29FFB65D0085E230 /* GenerateLyricsSheetContentUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateLyricsSheetContentUseCase.swift; sourceTree = "<group>"; };
+		E3B126F12A02E7500085E230 /* SoundPlayer2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundPlayer2.swift; sourceTree = "<group>"; };
+		E3B126F52A084B380085E230 /* SubmitEntitiesUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmitEntitiesUseCase.swift; sourceTree = "<group>"; };
+		E3B126F72A084E970085E230 /* Endpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Endpoints.swift; sourceTree = "<group>"; };
 		E3B1EABC24B4937500304A2D /* SongServiceHeaderCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongServiceHeaderCollectionReusableView.swift; sourceTree = "<group>"; };
 		E3B1EABD24B4937500304A2D /* SongServiceHeaderCollectionReusableView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SongServiceHeaderCollectionReusableView.xib; sourceTree = "<group>"; };
 		E3B1EAC024B4948400304A2D /* UICollectionViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UICollectionViewExtensions.swift; sourceTree = "<group>"; };
@@ -925,6 +933,7 @@
 		B37EFE6F2936AFE5005F7D4F /* Codable */ = {
 			isa = PBXGroup;
 			children = (
+				E3B126F72A084E970085E230 /* Endpoints.swift */,
 				B37EFEB72947DFDD005F7D4F /* Submitters */,
 				B37EFEA82947C6EB005F7D4F /* Fetchers */,
 				B37EFE702936AFF5005F7D4F /* EntityCodable.swift */,
@@ -959,7 +968,7 @@
 			isa = PBXGroup;
 			children = (
 				B37EFEA029380CAD005F7D4F /* RequesterCodable.swift */,
-				B37EFEB12947D1CF005F7D4F /* FetcherCodablePerformer.swift */,
+				B37EFEB12947D1CF005F7D4F /* FetchUseCase.swift */,
 				B37EFEAF2947C80A005F7D4F /* RequesterInfoBase.swift */,
 				B37EFEA92947C6FA005F7D4F /* ClusterCodableFetcher.swift */,
 				B37EFEAB2947C732005F7D4F /* TagCodableFetcher.swift */,
@@ -974,6 +983,7 @@
 				B37EFEB32947D943005F7D4F /* SubmitCodablePerformer.swift */,
 				B37EFEB52947DFCF005F7D4F /* TagCodableSubmitter.swift */,
 				B37EFEB829492798005F7D4F /* ThemeCodableSubmitter.swift */,
+				E3B126F52A084B380085E230 /* SubmitEntitiesUseCase.swift */,
 			);
 			path = Submitters;
 			sourceTree = "<group>";
@@ -1038,6 +1048,7 @@
 				E3896A3C21E3F56A008CB5A5 /* SongProjector.entitlements */,
 				E31F0B7020F5029500C22FD1 /* Pio-Sebastiaan-en-Marilou.jpg */,
 				E33268BD2022FCD2002CDA7C /* SoundPlayer.swift */,
+				E3B126F12A02E7500085E230 /* SoundPlayer2.swift */,
 				E3C2AD2120275AE200ACFFE7 /* InstrumentPlayer.swift */,
 				E3D12AA22018E9E500BD060C /* RestService */,
 				E31171571FE5A09A008D9D51 /* Global */,
@@ -1316,6 +1327,7 @@
 			isa = PBXGroup;
 			children = (
 				E330A07129F9497400E227AD /* BibleStudyTextUseCase.swift */,
+				E3B126EF29FFB65D0085E230 /* GenerateLyricsSheetContentUseCase.swift */,
 			);
 			path = UseCases;
 			sourceTree = "<group>";
@@ -1855,6 +1867,7 @@
 				E3C001C229EEB88A00D9AB17 /* SheetEditModeModifier.swift in Sources */,
 				E3812DE7201C972B00F10B2C /* SettingsController.swift in Sources */,
 				B37EFE992937499D005F7D4F /* AdminCodable.swift in Sources */,
+				E3B126F82A084E970085E230 /* Endpoints.swift in Sources */,
 				E390864D22105EA300320421 /* DataExtensions.swift in Sources */,
 				E334B10D21ED045C0088CD48 /* GoogleActivity.swift in Sources */,
 				B37EFE872936BC30005F7D4F /* GoogleActivityCodable.swift in Sources */,
@@ -1969,6 +1982,7 @@
 				E3CF0BD8248BA3F70032007E /* SongServiceSettingsFetcher.swift in Sources */,
 				E35E7CEC23BA1C990071DCC8 /* VInstrument.swift in Sources */,
 				B3125F0A2921A8A5009E8E56 /* SongServiceSectionHeaderTitleStackView.swift in Sources */,
+				E3B126F62A084B380085E230 /* SubmitEntitiesUseCase.swift in Sources */,
 				E31171671FE5A0E7008D9D51 /* MoreController.swift in Sources */,
 				E35E7CF623BA31200071DCC8 /* VSheetActivities.swift in Sources */,
 				E32B882929CB3F3B00DFF9D8 /* SwiftUITestView.swift in Sources */,
@@ -1998,6 +2012,7 @@
 				E3A4703021E0CC80000CB3D3 /* ChurchBeamConfiguration.swift in Sources */,
 				E3847F02248FE419002D4BED /* UniversalClusterFetcher.swift in Sources */,
 				B37EFE772936B585005F7D4F /* SheetCodable.swift in Sources */,
+				E3B126F22A02E7500085E230 /* SoundPlayer2.swift in Sources */,
 				E3D9C28E20D6F11E006EDFE3 /* TestView.swift in Sources */,
 				E3C001BD29EE8B8C00D9AB17 /* UIimageExtensions.swift in Sources */,
 				E3FB64492484D65800E03617 /* UserFetcher.swift in Sources */,
@@ -2113,6 +2128,7 @@
 				E30B8ED4224CA79500F121D9 /* SongServiceSection.swift in Sources */,
 				E3C001C429EEE45400D9AB17 /* EditThemeOrSheetSheetImageViewUI.swift in Sources */,
 				E35E7CF223BA2FE30071DCC8 /* VSheetEmpty.swift in Sources */,
+				E3B126F029FFB65D0085E230 /* GenerateLyricsSheetContentUseCase.swift in Sources */,
 				E3896A2C21E3F011008CB5A5 /* HTTPURLResponse.swift in Sources */,
 				E35099EF20DCD152005CA984 /* LyricsViewController.swift in Sources */,
 				E3F201D6201E04FC002FF06E /* FetcherTimeInterval.swift in Sources */,
@@ -2136,7 +2152,7 @@
 				E33BFE8929E80F2800912B4E /* FontModifier.swift in Sources */,
 				E39B6A1822184E5D002B53B1 /* IntroPageController2.swift in Sources */,
 				E30B8ED6224DFBE900F121D9 /* TagSelectionController.swift in Sources */,
-				B37EFEB22947D1CF005F7D4F /* FetcherCodablePerformer.swift in Sources */,
+				B37EFEB22947D1CF005F7D4F /* FetchUseCase.swift in Sources */,
 				E3896A3521E3F0E3008CB5A5 /* AccountStore.swift in Sources */,
 				E30B30EC24CF8E7400C8E9A4 /* DefaultPopUpController.swift in Sources */,
 				E309DD021FF5127400C3D135 /* LabelNumberCell.swift in Sources */,

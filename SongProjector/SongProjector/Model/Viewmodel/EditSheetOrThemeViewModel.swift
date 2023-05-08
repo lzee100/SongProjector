@@ -113,6 +113,7 @@ struct EditSheetOrThemeViewModel: Identifiable {
                 theme = extractedTheme
                 self.sheet = sheet
                 self.sheetType = .SheetTitleContent
+                self.position = extractedTheme.position
             } else {
                 return nil
             }
@@ -124,6 +125,7 @@ struct EditSheetOrThemeViewModel: Identifiable {
                 let (cluster, sheet) = persisted
                 self.cluster = cluster
                 self.sheet = sheet
+                self.position = sheet.position
                 if let persistedTheme = sheet.theme ?? cluster.theme {
                     theme = persistedTheme
                 } else if let defaultTheme = ThemeCodable.makeDefault() {
@@ -134,6 +136,7 @@ struct EditSheetOrThemeViewModel: Identifiable {
             } else if let sheet = sheetType.makeDefault(), let defaultTheme = ThemeCodable.makeDefault() {
                 self.sheet = sheet
                 theme = defaultTheme
+                self.position = sheet.position
                 self.cluster = nil
             } else {
                 return nil
@@ -160,7 +163,6 @@ struct EditSheetOrThemeViewModel: Identifiable {
         self.contentFontName = theme.contentFontName
         self.contentTextColorHex = theme.contentTextColorHex
         self.contentTextSize = theme.contentTextSize
-        self.position = theme.position
         self.titleAlignmentNumber = theme.titleAlignmentNumber
         self.titleBackgroundColor = theme.titleBackgroundColor
         self.titleBorderColorHex = theme.titleBorderColorHex
@@ -172,7 +174,11 @@ struct EditSheetOrThemeViewModel: Identifiable {
         self.isUniversal = isUniversal
         self.isDeletable = !isUniversal
         
-        self.title = sheet.title ?? ""
+        if position == 0 {
+            self.title = cluster?.title ?? sheet.title ?? ""
+        } else {
+            self.title = sheet.title ?? ""
+        }
         self.sheetContent = sheet.sheetContent ?? ""
         
         self.sheetImagePath = sheet.sheetImagePath
@@ -217,7 +223,6 @@ struct EditSheetOrThemeViewModel: Identifiable {
         self.contentFontName = theme.contentFontName
         self.contentTextColorHex = theme.contentTextColorHex
         self.contentTextSize = theme.contentTextSize
-        self.position = theme.position.intValue
         self.titleAlignmentNumber = theme.titleAlignmentNumber
         self.titleBackgroundColor = theme.titleBackgroundColor
         self.titleBorderColorHex = theme.titleBorderColorHex
@@ -251,7 +256,6 @@ struct EditSheetOrThemeViewModel: Identifiable {
         self.contentFontName = theme.contentFontName
         self.contentTextColorHex = theme.contentTextColorHex
         self.contentTextSize = theme.contentTextSize
-        self.position = theme.position
         self.titleAlignmentNumber = theme.titleAlignmentNumber
         self.titleBackgroundColor = theme.titleBackgroundColor
         self.titleBorderColorHex = theme.titleBorderColorHex
@@ -493,7 +497,7 @@ struct EditSheetOrThemeViewModel: Identifiable {
                     deleteDate: sheet.deleteDate,
                     rootDeleteDate: sheet.rootDeleteDate,
                     isEmptySheet: false,
-                    position: 0,
+                    position: position,
                     time: 0,
                     hasTheme: nil,
                     content: self.sheetContent,
@@ -509,7 +513,7 @@ struct EditSheetOrThemeViewModel: Identifiable {
                     deleteDate: sheet.deleteDate,
                     rootDeleteDate: sheet.rootDeleteDate,
                     isEmptySheet: false,
-                    position: 0,
+                    position: position,
                     time: 0,
                     hasTheme: nil,
                     content: sheetContent,
@@ -532,7 +536,7 @@ struct EditSheetOrThemeViewModel: Identifiable {
                     deleteDate: sheet.deleteDate,
                     rootDeleteDate: sheet.rootDeleteDate,
                     isEmptySheet: false,
-                    position: 0,
+                    position: position,
                     time: 0,
                     hasTheme: nil,
                     content: sheetContent,
@@ -550,7 +554,7 @@ struct EditSheetOrThemeViewModel: Identifiable {
                     deleteDate: sheet.deleteDate,
                     rootDeleteDate: sheet.rootDeleteDate,
                     isEmptySheet: false,
-                    position: 0,
+                    position: position,
                     time: 0,
                     hasTheme: nil,
                     content: self.sheetContent,
@@ -566,7 +570,7 @@ struct EditSheetOrThemeViewModel: Identifiable {
                     deleteDate: sheet.deleteDate,
                     rootDeleteDate: sheet.rootDeleteDate,
                     isEmptySheet: false,
-                    position: 0,
+                    position: position,
                     time: 0,
                     hasTheme: nil
                 )
