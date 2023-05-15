@@ -849,15 +849,15 @@ extension CustomSheetsController: SheetPickerMenuControllerDelegate {
     private func show(mode: EditSheetOrThemeViewModel.EditMode) {
         guard let editModel = EditSheetOrThemeViewModel(editMode: mode, isUniversal: uploadSecret != nil) else { return }
 
-        let controllerView = EditThemeOrSheetViewUI(dismiss: { [weak self] dismissPresenting in
-            if dismissPresenting {
-                self?.dismiss(animated: true)
-            } else {
-                self?.presentedViewController?.dismiss(animated: true)
-            }
-        }, navigationTitle: AppText.NewSheetTitleImage.title, editSheetOrThemeModel: WrappedStruct(withItem: editModel))
-
-        present(UIHostingController(rootView: controllerView), animated: true)
+//        let controllerView = EditThemeOrSheetViewUI(dismiss: { [weak self] dismissPresenting in
+//            if dismissPresenting {
+//                self?.dismiss(animated: true)
+//            } else {
+//                self?.presentedViewController?.dismiss(animated: true)
+//            }
+//        }, navigationTitle: AppText.NewSheetTitleImage.title, editSheetOrThemeModel: WrappedStruct(withItem: editModel))
+//
+//        present(UIHostingController(rootView: controllerView), animated: true)
 
     }
     

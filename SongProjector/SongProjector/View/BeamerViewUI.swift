@@ -21,7 +21,7 @@ struct BeamerViewUI: View {
 }
 
 struct BeamerViewUI_Previews: PreviewProvider {
-    @State static var songService = WrappedStruct(withItem: SongServiceUI(songs: []))
+    @State static var songService = WrappedStruct(withItem: SongServiceUI())
 
     static var previews: some View {
         BeamerViewUI(songsService: songService)

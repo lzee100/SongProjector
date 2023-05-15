@@ -101,7 +101,7 @@ struct EditSheetOrThemeViewModel: Identifiable {
     var imageContentMode: Int16
     var imageHasBorder: Bool
     
-    init?(editMode: EditMode, isUniversal: Bool, image: UIImage? = nil) {
+    init?(editMode: EditMode, isUniversal: Bool, image: UIImage? = nil, isCustomSheetType: Bool = false) {
         self.editMode = editMode
         let theme: ThemeCodable
         switch editMode {
@@ -126,7 +126,8 @@ struct EditSheetOrThemeViewModel: Identifiable {
                 self.cluster = cluster
                 self.sheet = sheet
                 self.position = sheet.position
-                if let persistedTheme = sheet.theme ?? cluster.theme {
+                let clusterTheme = isCustomSheetType ? nil : cluster.theme
+                if let persistedTheme = sheet.theme ?? clusterTheme {
                     theme = persistedTheme
                 } else if let defaultTheme = ThemeCodable.makeDefault() {
                     theme = defaultTheme

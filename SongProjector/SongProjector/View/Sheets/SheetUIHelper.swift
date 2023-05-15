@@ -11,12 +11,12 @@ import SwiftUI
 
 struct SheetUIHelper {
     
-    @ViewBuilder static func sheet(viewSize: CGSize, ratioOnHeight: Bool = false, maxWidth: CGFloat? = nil, editSheetOrThemeModel: WrappedStruct<EditSheetOrThemeViewModel>, isForExternalDisplay: Bool) -> some View {
+    @ViewBuilder static func sheet(ratioOnHeight: Bool = false, maxWidth: CGFloat? = nil, editSheetOrThemeModel: WrappedStruct<EditSheetOrThemeViewModel>, isForExternalDisplay: Bool) -> some View {
         switch editSheetOrThemeModel.item.sheetType {
         case .SheetTitleContent:
-            Self.sheetTitleContent(viewSize: viewSize, ratioOnHeight: ratioOnHeight, maxWidth: maxWidth, editSheetOrThemeModel: editSheetOrThemeModel, isForExternalDisplay: isForExternalDisplay)
+            Self.sheetTitleContent(ratioOnHeight: ratioOnHeight, maxWidth: maxWidth, editSheetOrThemeModel: editSheetOrThemeModel, isForExternalDisplay: isForExternalDisplay)
         case .SheetTitleImage:
-            Self.sheetTitleImage(viewSize: viewSize, ratioOnHeight: ratioOnHeight, maxWidth: maxWidth, editSheetOrThemeModel: editSheetOrThemeModel, isForExternalDisplay: isForExternalDisplay)
+            Self.sheetTitleImage(ratioOnHeight: ratioOnHeight, maxWidth: maxWidth, editSheetOrThemeModel: editSheetOrThemeModel, isForExternalDisplay: isForExternalDisplay)
         case .SheetPastors:
             Self.sheetPastors(viewSize: viewSize, ratioOnHeight: ratioOnHeight, maxWidth: maxWidth, editSheetOrThemeModel: editSheetOrThemeModel, isForExternalDisplay: isForExternalDisplay)
         case .SheetEmpty:
@@ -40,11 +40,11 @@ struct SheetUIHelper {
         } else if sheet is SheetActivitiesCodable {
             Self.sheetActivities(viewSize: viewSize, ratioOnHeight: ratioOnHeight, serviceModel: songServiceModel, sheet: sheet, isForExternalDisplay: isForExternalDisplay, showSelectionCover: showSelectionCover)
         } else if sheet is SheetSplitCodable {
-            Self.sheetTitleContent(viewSize: viewSize, ratioOnHeight: ratioOnHeight, songServiceModel: songServiceModel, sheet: sheet, isForExternalDisplay: isForExternalDisplay, showSelectionCover: showSelectionCover)
+            Self.sheetTitleContent(ratioOnHeight: ratioOnHeight, songServiceModel: songServiceModel, sheet: sheet, isForExternalDisplay: isForExternalDisplay, showSelectionCover: showSelectionCover)
         }
     }
 
-    @ViewBuilder static func sheetTitleContent(viewSize: CGSize, ratioOnHeight: Bool = false, maxWidth: CGFloat? = nil, songServiceModel: WrappedStruct<SongServiceUI>, sheet: SheetMetaType, isForExternalDisplay: Bool, showSelectionCover: Bool) -> some View {
+    @ViewBuilder static func sheetTitleContent(ratioOnHeight: Bool = false, maxWidth: CGFloat? = nil, songServiceModel: WrappedStruct<SongServiceUI>, sheet: SheetMetaType, isForExternalDisplay: Bool, showSelectionCover: Bool) -> some View {
         TitleContentViewDisplayUI(
             songServiceModel: songServiceModel,
             sheet: sheet,
@@ -52,10 +52,7 @@ struct SheetUIHelper {
             isForExternalDisplay: isForExternalDisplay,
             showSelectionCover: showSelectionCover
         )
-        .frame(
-            width: getWidthBasedOn(viewSize, ratioOnHeight: ratioOnHeight, maxWidth: maxWidth),
-            height: getSheetSizeFor(viewSize, ratioOnHeight: ratioOnHeight, maxWidth: maxWidth).height
-        )
+        .aspectRatio(16 / 9, contentMode: .fit)
         .shadow(radius: 2)
     }
     
@@ -70,10 +67,7 @@ struct SheetUIHelper {
     
     @ViewBuilder static func sheetEmpty(viewSize: CGSize, ratioOnHeight: Bool = false, maxWidth: CGFloat? = nil, serviceModel: WrappedStruct<SongServiceUI>, sheet: SheetMetaType, isForExternalDisplay: Bool, showSelectionCover: Bool) -> some View {
         EmptyViewDisplayUI(serviceModel: serviceModel, sheet: sheet, scaleFactor: getScaleFactorFor(viewSize, ratioOnHeight: ratioOnHeight, maxWidth: maxWidth), isForExternalDisplay: isForExternalDisplay, showSelectionCover: showSelectionCover)
-            .frame(
-                width: getWidthBasedOn(viewSize, ratioOnHeight: ratioOnHeight, maxWidth: maxWidth),
-                height: getSheetSizeFor(viewSize, ratioOnHeight: ratioOnHeight, maxWidth: maxWidth).height
-            )
+            .aspectRatio(16 / 9, contentMode: .fit)
             .shadow(radius: 2)
     }
     

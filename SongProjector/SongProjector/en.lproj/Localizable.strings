@@ -34,6 +34,8 @@
 "Actions-upload" = "Upload";
 "Actions-uploading" = "Uploading...";
 "Actions-restore" = "Restore";
+"Actions-generateSongService" = "Generate song service";
+"Actions-share" = "Share";
 
 "Intro-introHalloTitle" = "Hello";
 "Intro-introHalloContent" = "Welcome to Churchbeam. This app supports the entire song service in your church.";
@@ -80,6 +82,7 @@
 "SongService-titleTableClusters" = "Songs";
 "SongService-titleTableSheets" = "Sheets";
 "SongService-warnCannotPlay" = "It seems that another user started the song service with this account. Two song services cannot be active at the same time. You can start the song service from the admin account.";
+"SongService-startNew" = "Start a new song service";
 
 "NewSongService-title" = "New song service";
 "NewSongService-selectedSongsDescription" = "Below are the selected songs for the song service";
@@ -114,9 +117,11 @@
 "Songs-deleteBody" = "Are you sure you want to delete %@? You can get deleted items back under the tab \"Deleted items\".";
 "Songs-deleteMusicTitle" = "Delete music";
 "Songs-deleteMusicBody" = "Are you sure you want to delete the music from %@? You can get deleted music back by clicking the download button of this song.";
-"Songs-errorNoUserFound" = "We were unable to confirm your identity. Log in again under settings.";
+"Songs-errorNoUserFound" = "Your identity could not be confirmed. Log in again under settings.";
+"Songs-errorDeletingLocalMusic" = "Unable to delete the data: %@";
+"Songs-errorDeletingSongRemotely" = "Something went wrong with deleting '%@' \n%@";
 
-"NewSong-title" = "Title";
+"NewSong-title" = "New song";
 "NewSong-songTitle" = "Title";
 "NewSong-headerTheme" = "Select the theme here";
 "NewSong-headerLyrics" = "Enter text for the song here";
@@ -141,6 +146,7 @@
 
 "Themes-title" = "Themes";
 "Themes-searchBarPlaceholderText" = "Search themes";
+"Themes-deleteThemeError" = "Something went wrong with deleting the theme: %@";
 
 "Tags-title" = "Tags";
 "Tags-placeholder" = "Search tags";
@@ -164,6 +170,7 @@
 "CustomSheets-tableViewHeaderSheets" = "Sheets";
 "CustomSheets-titleMenu" = "Adding sheets";
 "CustomSheets-errorSelectTheme" = "Select a theme";
+"CustomSheets-errorChangeSheetGenerator" = "Do you want to change the type of sheet generator and lose the current sheets / text?";
 "CustomSheets-errorLoseOtherSheets" = "You have other sheets between the bible texts. These are lost when you modify the bible texts and have them regenerated";
 "CustomSheets-universalSongEditErrorTitle" = "Couldn't edit text";
 "CustomSheets-universalSongEditErrorMessage" = "This track has music and has a playback time with each slide. Adjusting the NUMBER of slides causes the times to be incorrect. Your changes have been undone.";

@@ -10,9 +10,11 @@ import SwiftUI
 
 struct SheetScrollViewUI: View {
     
+    @State private var orientation: UIDeviceOrientation = .unknown
     @State private var frames: [CGRect] = []
     @ObservedObject private(set) var songServiceModel: WrappedStruct<SongServiceUI>
     @State private var nextSelectedSong: SongObjectUI? = nil
+    var superViewSize: CGSize
     
     let isSelectable: Bool
     @SwiftUI.Environment(\.horizontalSizeClass) var horizontalSizeClass
@@ -22,14 +24,14 @@ struct SheetScrollViewUI: View {
             GeometryReader { ruler in
                 
                 ScrollViewReader { value in
-                    ScrollView(isCompactOrVertical(viewSize: ruler.size) ? .vertical : .horizontal) {
-                        if isCompactOrVertical(viewSize: ruler.size) {
+                    ScrollView(isCompactOrVertical(viewSize: superViewSize) ? .vertical : .horizontal) {
+                        if isCompactOrVertical(viewSize: superViewSize) {
                             VStack(spacing: 10) {
-                                scrollViewItemsPortrait(viewSize: ruler.size)
+                                scrollViewItemsPortrait(viewSize: superViewSize)
                             }
                         } else {
                             HStack(spacing: 10) {
-                                scrollViewItemsLandscape(viewSize: ruler.size)
+                                scrollViewItemsLandscape()
                             }
                         }
                     }
@@ -37,61 +39,89 @@ struct SheetScrollViewUI: View {
                     .onPreferenceChange(FramePreference.self, perform: {
                         frames = $0
                     })
-                    .ignoresSafeArea(.all)
                     .onChange(of: songServiceModel.item.selectedSheetId) { newValue in
-                        guard let sheetIndex = songServiceModel.item.selectedSheetIndex else { return }
-                        let selectionIndex = songServiceModel.item.getSheetIndexWithSongIndexAddedIfNeeded(sheetIndex)
+                        guard let selectedSheetId = songServiceModel.item.selectedSheetId else { return }
+                        
                         withAnimation {
-                            value.scrollTo(selectionIndex, anchor: .center)
+                            value.scrollTo(selectedSheetId, anchor: .center)
                         }
                     }
+                    .onRotate { orientation in
+                        self.orientation = orientation
+                    }
                 }
-                
             }
         } else {
             EmptyView()
         }
     }
     
-    @ViewBuilder func scrollViewItemsLandscape(viewSize: CGSize) -> some View {
-        ForEach(Array(songServiceModel.item.songs.enumerated()), id: \.offset) { index, songObject in
-            Group {
-                Section {
-                    if let selectedSong = songServiceModel.item.selectedSong,  songObject.cluster.id == selectedSong.id {
-                        ForEach(Array(selectedSong.sheets.enumerated()), id: \.offset) { sheetIndex, sheet in
-                            SheetUIHelper.sheet(viewSize: viewSize, ratioOnHeight: true, songServiceModel: songServiceModel, sheet: sheet, isForExternalDisplay: false, showSelectionCover: true)
-                                .id(index + sheetIndex)
+    @ViewBuilder func scrollViewItemsLandscape() -> some View {
+        ForEach(Array(songServiceModel.item.sectionedSongs.enumerated()), id: \.offset) { offset, songObjectsPerSection in
+            VStack {
+                Text(songObjectsPerSection.title)
+                    .styleAs(font: .xNormalBold, color: .white)
+                HStack(spacing: 10) {
+                    ForEach(Array(songObjectsPerSection.songs.enumerated()), id: \.offset) { index, songObject in
+                        Section {
+                            if let selectedSong = songServiceModel.item.selectedSong,  songObject.cluster.id == selectedSong.id {
+                                HStack {
+                                    ForEach(Array(selectedSong.sheets.enumerated()), id: \.offset) { sheetIndex, sheet in
+                                        SheetUIHelper.sheet(viewSize: CGSize(width: 200, height: 100), ratioOnHeight: true, songServiceModel: songServiceModel, sheet: sheet, isForExternalDisplay: false, showSelectionCover: true)
+                                            .id(sheet.id)
+                                    }
+                                }
+                            }
+                        } header: {
+                            SongServiceSectionViewUI(superViewSize: superViewSize, sectionTitle: songObjectsPerSection.title, selectedSong: $songServiceModel.item.selectedSong, song: songObject)
+                                .sticky(frames, alignment: .horizontal)
+                                .onTapGesture {
+                                    songServiceModel.item.selectedSong = songServiceModel.item.selectedSong?.id == songObject.id ? nil : songObject
+                                }
+                                .id(songObject.id)
                         }
                     }
-                } header: {
-                    SongServiceSectionViewUI(superViewSize: viewSize, selectedSong: $songServiceModel.item.selectedSong, song: songObject)
-                        .sticky(frames, alignment: .horizontal)
-                        .onTapGesture {
-//                            withAnimation {
-                                songServiceModel.item.selectedSong = songServiceModel.item.selectedSong?.id == songObject.id ? nil : songObject
-//                            }
-                        }
-                        .id(index)
                 }
             }
+            .styleAsSectionBackground(edgeInsets: EdgeInsets(top: 10, leading: 10, bottom: 5, trailing: 10))
         }
+        
+//        ForEach(Array(songServiceModel.item.songs.enumerated()), id: \.offset) { index, songObject in
+//            Group {
+//                Section {
+//                    if let selectedSong = songServiceModel.item.selectedSong,  songObject.cluster.id == selectedSong.id {
+//                        ForEach(Array(selectedSong.sheets.enumerated()), id: \.offset) { sheetIndex, sheet in
+//                            SheetUIHelper.sheet(viewSize: viewSize, ratioOnHeight: true, songServiceModel: songServiceModel, sheet: sheet, isForExternalDisplay: false, showSelectionCover: true)
+//                                .id(index + sheetIndex)
+//                        }
+//                    }
+//                } header: {
+//                    SongServiceSectionViewUI(superViewSize: viewSize, sectionTitle: songo, selectedSong: $songServiceModel.item.selectedSong, song: songObject)
+//                        .sticky(frames, alignment: .horizontal)
+//                        .onTapGesture {
+//                            songServiceModel.item.selectedSong = songServiceModel.item.selectedSong?.id == songObject.id ? nil : songObject
+//                        }
+//                        .id(index)
+//                }
+//            }
+//        }
     }
     
     @ViewBuilder func scrollViewItemsPortrait(viewSize: CGSize) -> some View {
         ForEach(Array(songServiceModel.item.sectionedSongs.enumerated()), id: \.offset) { offset, songObjectsPerSection in
             VStack(spacing: 10) {
-                ForEach(Array(songObjectsPerSection.enumerated()), id: \.offset) { index, songObject in
+                ForEach(Array(songObjectsPerSection.songs.enumerated()), id: \.offset) { index, songObject in
                     VStack(spacing: 10) {
-                        sectionedItemsFor(viewSize: viewSize, index: index, songObject: songObject)
+                        sectionedItemsFor(viewSize: viewSize, index: index, songObject: songObject, sectionTitle: songObjectsPerSection.title)
                     }
                 }
             }
-            .portraitSectionBackgroundFor(viewSize: viewSize)
+            .styleAsSectionBackground()
         }
     }
     
-    @ViewBuilder func sectionedItemsFor(viewSize: CGSize, index: Int, songObject: SongObjectUI) -> some View {
-        SongServiceSectionViewUI(superViewSize: viewSize, selectedSong: $songServiceModel.item.selectedSong, song: songObject)
+    @ViewBuilder func sectionedItemsFor(viewSize: CGSize, index: Int, songObject: SongObjectUI, sectionTitle: String) -> some View {
+        SongServiceSectionViewUI(superViewSize: viewSize, sectionTitle: sectionTitle, selectedSong: $songServiceModel.item.selectedSong, song: songObject)
             .sticky(frames, alignment: .horizontal)
             .onTapGesture {
                 songServiceModel.item.selectedSong = songServiceModel.item.selectedSong?.id == songObject.id ? nil : songObject
@@ -134,7 +164,9 @@ struct SheetScrollViewUI: View {
     }
     
     private func isCompactOrVertical(viewSize: CGSize) -> Bool {
-        viewSize.width < viewSize.height || horizontalSizeClass == .compact
+//        viewSize.width < viewSize.height || horizontalSizeClass == .compact
+        print(viewSize.width < viewSize.height || horizontalSizeClass == .compact ? "portrait" : "landscape")
+        return viewSize.width < viewSize.height || horizontalSizeClass == .compact
     }
 
 }
@@ -143,37 +175,27 @@ struct SheetScrollViewUI_Previews: PreviewProvider {
     @State static var songService = WrappedStruct(withItem: SongServiceUI(songs: []))
 
     static var previews: some View {
-        SheetScrollViewUI(songServiceModel: songService, isSelectable: true)
+        SheetScrollViewUI(songServiceModel: songService, superViewSize: .zero, isSelectable: true)
             .previewLayout(.sizeThatFits)
             .previewInterfaceOrientation(.portrait)
     }
 }
 
-struct PortraitSectionBackground: ViewModifier {
+struct SectionBackgroundModifier: ViewModifier {
     
-    var viewSize: CGSize
     var color: Color = .white
     var edgeInsets: EdgeInsets
-    @SwiftUI.Environment(\.horizontalSizeClass) var horizontalSizeClass
     
     func body(content: Content) -> some View {
-        if isCompactOrVertical(viewSize: viewSize) {
-            content
-                .padding(edgeInsets)
-                .background(color.opacity(0.2))
-                .cornerRadius(10)
-        } else {
-            content
-        }
+        content
+            .padding(edgeInsets)
+            .background(color.opacity(0.2))
+            .cornerRadius(10)
     }
     
-    private func isCompactOrVertical(viewSize: CGSize) -> Bool {
-        viewSize.width < viewSize.height || horizontalSizeClass == .compact
-    }
-
 }
 extension View {
-    func portraitSectionBackgroundFor(viewSize: CGSize, color: Color = .white, edgeInsets: EdgeInsets = EdgeInsets(top: 10, leading: 10, bottom: 25, trailing: 10)) -> some View {
-        modifier(PortraitSectionBackground(viewSize: viewSize, color: color, edgeInsets: edgeInsets))
+    func styleAsSectionBackground(color: Color = .white, edgeInsets: EdgeInsets = EdgeInsets(top: 10, leading: 10, bottom: 25, trailing: 10)) -> some View {
+        modifier(SectionBackgroundModifier(color: color, edgeInsets: edgeInsets))
     }
 }

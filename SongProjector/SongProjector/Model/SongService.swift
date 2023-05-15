@@ -17,11 +17,6 @@ struct SongServiceUI {
             setSectionIndex()
             setSelectedTheme()
             selectedSheetId = selectedSong?.sheets.first?.id
-            if let selectedSong {
-                soundPlayer?.play(song: selectedSong)
-            } else {
-                soundPlayer?.stop()
-            }
         }
         
     }
@@ -42,12 +37,17 @@ struct SongServiceUI {
     private(set) var selectedSheetIndex: Int?
     private(set) var selectedSongTheme: ThemeCodable?
     private(set) var selectedSheetTheme: ThemeCodable?
-    private(set) var sectionedSongs: [[SongObjectUI]] = []
-    var soundPlayer: SoundPlayer2?
+    private(set) var sectionedSongs: [SongServiceSectionWithSongs] = []
     
-    init(songs: [SongObjectUI]){
-        self.songs = songs.sorted { $0.cluster.position < $1.cluster.position }
-        setSectionedSongs()
+    mutating func set(sectionedSongs: [SongServiceSectionWithSongs]) {
+        self.sectionedSongs = sectionedSongs
+        self.songs = sectionedSongs.flatMap { $0.songs }
+        selectedSong  = nil
+        selectedSheetId = nil
+        selectedSection = nil
+        selectedSheetIndex = nil
+        selectedSongTheme = nil
+        selectedSheetTheme = nil
     }
     
     func sheetTitleFor(sheet: SheetMetaType) -> String? {
@@ -61,25 +61,7 @@ struct SongServiceUI {
         }
         return nil
     }
-        
-    private mutating func setSectionedSongs() {
-        var sectionedSongs: [[SongObjectUI]] = []
-        var songsForSection = [SongObjectUI]()
-        
-        for (index, song) in songs.enumerated() {
-            if songsForSection.count == 0 || song.sectionHeader == nil {
-                songsForSection.append(song)
-            } else {
-                sectionedSongs.append(songsForSection)
-                songsForSection = [song]
-                if index == songs.count - 1 {
-                    sectionedSongs.append(songsForSection)
-                }
-            }
-        }
-        self.sectionedSongs = sectionedSongs
-    }
-        
+    
     mutating private func setSectionIndex() {
         selectedSection = songs.firstIndex(where: { $0.cluster.id == selectedSong?.cluster.id })
     }
@@ -98,7 +80,8 @@ struct SongServiceUI {
         return sheetIndex + (selectedSection ?? 0)
     }
     
-    func getSongIndexWithSheetIndexAddedIfNeeded(_ songIndex: Int) -> Int {
+    func getSongIndexWithSheetIndexAddedIfNeeded(_ song: SongObjectUI) -> Int {
+        guard let songIndex = songs.firstIndex(where: { $0.id == song.id }) else { return 0 }
         let addedIndex = songIndex > (selectedSection ?? 0) ? (selectedSong?.sheets.count ?? 0) - 1 : 0
         return songIndex + addedIndex
     }

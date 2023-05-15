@@ -8,10 +8,16 @@
 
 import SwiftUI
 
+protocol EditThemeOrSheetViewUIDelegate {
+    func dismiss()
+}
+
 struct EditThemeOrSheetViewUI: View {
     
-    let dismiss: ((_ dismissPresenting: Bool) -> Void)
     let navigationTitle: String
+    
+    let delegate: EditThemeOrSheetViewUIDelegate?
+    @State var editingCollectionModel: WrappedStruct<ClusterEditorModel>?
     @State var isSectionGeneralExpanded = true
     @State var isSectionTitleExpanded = false
     @State var isSectionContentExpanded = false
@@ -19,8 +25,7 @@ struct EditThemeOrSheetViewUI: View {
     @ObservedObject var editSheetOrThemeModel: WrappedStruct<EditSheetOrThemeViewModel>
     @State var progress: CGFloat = 0
     @State var submitThemeUseCaseResult: RequesterResult = .idle
-    @State var submitThemeUseCase: SubmitEntitiesUseCase<ThemeCodable>?
-    
+
     var body: some View {
         ZStack {
             NavigationStack {
@@ -67,31 +72,34 @@ struct EditThemeOrSheetViewUI: View {
                 .edgesIgnoringSafeArea([.bottom])
                 .navigationBarTitleDisplayMode(.inline)
                 .navigationBarTitle(editSheetOrThemeModel.item.editMode.isSheet ? AppText.NewSheetTitleImage.title : AppText.NewTheme.title)
-                .navigationBarItems(leading:
-                                        Button(action: {
-                    dismiss(false)
-                }) {
-                    Text(AppText.Actions.cancel)
-                }
-                                    , trailing:
-                                        Button(action: {
-                    do {
-                        if let theme = try editSheetOrThemeModel.item.createThemeCodable() {
-                            self.submitThemeUseCase = SubmitEntitiesUseCase(
-                                endpoint: .themes,
-                                requestMethod: editSheetOrThemeModel.item.requestMethod,
-                                uploadObjects: [theme],
-                                result: $submitThemeUseCaseResult
-                            )
-                            self.submitThemeUseCase?.submit()
+                .toolbar(content: {
+                    ToolbarItemGroup(placement: .navigationBarLeading) {
+                        Button {
+                            delegate?.dismiss()
+                        } label: {
+                            Text(AppText.Actions.cancel)
                         }
-                    } catch {
-                        submitThemeUseCaseResult = .finished(.failure(error))
+                        .tint(Color(uiColor: themeHighlighted))
                     }
-                }) {
-                    Text(AppText.Actions.save)
-                }
-                )
+                    ToolbarItemGroup(placement: .navigationBarTrailing) {
+                        if let editingCollectionModel {
+                            Button {
+                                editingCollectionModel.item.sheets.append(editSheetOrThemeModel.item)
+                                delegate?.dismiss()
+                            } label: {
+                                Text(AppText.Actions.add)
+                            }
+                            .tint(Color(uiColor: themeHighlighted))
+                        } else {
+                            Button {
+                                submitTheme()
+                            } label: {
+                                Text(AppText.Actions.save)
+                            }
+                            .tint(Color(uiColor: themeHighlighted))
+                        }
+                    }
+                })
             }
             .ignoresSafeArea()
             .blur(radius: submitThemeUseCaseResult.progress != 0 ? 8 : 0)
@@ -106,7 +114,7 @@ struct EditThemeOrSheetViewUI: View {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.4, execute: {
                     self.submitThemeUseCaseResult = .idle
                     self.progress = 0
-                    self.dismiss(true)
+                    delegate?.dismiss()
                 })
             }
         }
@@ -183,14 +191,30 @@ struct EditThemeOrSheetViewUI: View {
         case .theme: return false
         }
     }
+    
+    private func submitTheme() {
+        do {
+            if let theme = try editSheetOrThemeModel.item.createThemeCodable() {
+                SubmitEntitiesUseCase<ThemeCodable>(
+                    endpoint: .themes,
+                    requestMethod: editSheetOrThemeModel.item.requestMethod,
+                    uploadObjects: [theme],
+                    result: $submitThemeUseCaseResult
+                ).submit()
+            }
+        } catch {
+            submitThemeUseCaseResult = .finished(.failure(error))
+        }
+    }
 
 }
 
 struct EditThemeOrSheetViewUI_Previews: PreviewProvider {
+    @State static var isShowingEditor = false
     @State static var cluster = ClusterCodable.makeDefault()!
     @State static var activities = SheetActivitiesCodable.makeDefault()
     @State static var model = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .sheet((cluster, activities), sheetType: .SheetActivities), isUniversal: false, image: UIImage(named: "Pio-Sebastiaan-en-Marilou.jpg"))!)
     static var previews: some View {
-        EditThemeOrSheetViewUI(dismiss: { _ in }, navigationTitle: "", editSheetOrThemeModel: model, submitThemeUseCaseResult: .idle)
+        EditThemeOrSheetViewUI(navigationTitle: "", delegate: nil, editSheetOrThemeModel: model)
     }
 }

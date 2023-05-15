@@ -97,6 +97,20 @@ struct FileDownloadUseCase: TransferUseCaseProtocol {
             return results
         }
     }
+    
+    func updateFromResults(_ cluster: inout ClusterCodable) {
+        var updatedInstruments: [InstrumentCodable] = []
+        cluster.hasInstruments.forEach { instrument in
+            if let downloadedFile = results.compactMap({ $0 as? DownloadObject }).first(where: { $0?.remoteURL.absoluteString == instrument.resourcePathAWS }) {
+                var changedInstrument = instrument
+                changedInstrument.resourcePath = downloadedFile?.localURL?.absoluteString
+                updatedInstruments.append(changedInstrument)
+            } else {
+                updatedInstruments.append(instrument)
+            }
+        }
+        cluster.hasInstruments = updatedInstruments
+    }
 }
 
 protocol TransferUseCaseProtocol {
@@ -175,6 +189,17 @@ enum RequesterResult: Equatable {
         case .transfer: return 0.6
         case .saveLocally: return 0.8
         case .finished: return 1
+        }
+    }
+    
+    var isSuccess: Bool {
+        switch self {
+        case .finished(let result):
+            switch result {
+            case .success: return true
+            case .failure: return false
+            }
+        case .idle, .preparation, .transfer, .saveLocally: return false
         }
     }
     

@@ -14,7 +14,7 @@ import CoreData
 public struct SongServiceSectionCodable: EntityCodableType, Codable {
     
     init?(managedObject: NSManagedObject, context: NSManagedObjectContext) {
-        guard let entity = managedObject as? Tag else { return nil }
+        guard let entity = managedObject as? SongServiceSection else { return nil }
         id = entity.id
         userUID = entity.userUID
         title = entity.title
@@ -22,21 +22,26 @@ public struct SongServiceSectionCodable: EntityCodableType, Codable {
         updatedAt = entity.updatedAt?.date
         deleteDate = entity.deleteDate?.date
         rootDeleteDate = entity.rootDeleteDate?.date
+        
+        position = entity.position
+        numberOfSongs = entity.numberOfSongs
+        tagIds = entity.tagIds.split(separator: ",").map(String.init)
+        tags = entity.hasTags(moc: moc).compactMap { TagCodable(managedObject: $0, context: context) }
     }
     
     func getManagedObjectFrom(_ context: NSManagedObjectContext) -> NSManagedObject {
         
-        if let entity: Tag = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
+        if let entity: SongServiceSection = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
             setPropertiesTo(entity, context: context)
             return entity
         } else {
-            let entity: Tag = DataFetcher().createEntity(moc: context)
+            let entity: SongServiceSection = DataFetcher().createEntity(moc: context)
             setPropertiesTo(entity, context: context)
             return entity
         }
     }
     
-    private func setPropertiesTo(_ entity: Tag, context: NSManagedObjectContext) {
+    private func setPropertiesTo(_ entity: SongServiceSection, context: NSManagedObjectContext) {
         entity.id = id
         entity.userUID = userUID
         entity.title = title
@@ -44,6 +49,11 @@ public struct SongServiceSectionCodable: EntityCodableType, Codable {
         entity.updatedAt = updatedAt?.nsDate
         entity.deleteDate = deleteDate?.nsDate
         entity.rootDeleteDate = rootDeleteDate?.nsDate
+        
+        entity.position = position
+        entity.numberOfSongs = numberOfSongs
+        entity.tagIds = tagIds.joined(separator: ",")
+
     }
     
     var id: String = "CHURCHBEAM" + UUID().uuidString
@@ -58,6 +68,7 @@ public struct SongServiceSectionCodable: EntityCodableType, Codable {
     var position: Int16 = 0
     var numberOfSongs: Int16 = 0
     var tagIds: [String] = []
+    var tags: [TagCodable] = []
     
     func hasTags(moc: NSManagedObjectContext) -> [VTag] {
         let persitentTags: [Tag] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted])

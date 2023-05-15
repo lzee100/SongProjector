@@ -12,11 +12,11 @@ struct InstrumentViewUI: View {
     
     @State var isSelected: Bool = true
     @State private var orientation: Sticky.Alignment = .vertical
-    var instrument: VInstrument
+    var instrument: InstrumentCodable
     
     var body: some View {
         VStack(spacing: 2) {
-            Image(uiImage: instrument.image ?? UIImage(systemName: "minus")!)
+            (instrument.image ?? Image(systemName: "minus"))
                 .resizable()
                 .renderingMode(.template)
                 .foregroundColor(Color(uiColor: .whiteColor))
@@ -24,10 +24,11 @@ struct InstrumentViewUI: View {
                 .padding(EdgeInsets(top: 2, leading: 2, bottom: 2, trailing: 2))
             Rectangle()
                 .fill(isSelected ? Color(uiColor: themeHighlighted) : .black)
-                .frame(height: 8)
+                .frame(height: 5)
         }
         .onTapGesture {
-            isSelected = !isSelected
+            isSelected.toggle()
+            MuteInstrumentsUseCase().setMuteFor(instrument: instrument, isMuted: !isSelected)
         }
         .background(.black)
         .cornerRadius(orientation.isVertical ? 10 : 0)
@@ -37,6 +38,7 @@ struct InstrumentViewUI: View {
             } else {
                 self.orientation = .vertical
             }
+            isSelected = !MuteInstrumentsUseCase().isMutedFor(instrument: instrument)
         }
         .onRotate { orientation in
             if [.landscapeLeft, .landscapeRight].contains(orientation) {
@@ -50,8 +52,22 @@ struct InstrumentViewUI: View {
 
 struct InstrumentViewUI_Previews: PreviewProvider {
     static var previews: some View {
-        InstrumentViewUI(instrument: makeDemoInstruments().first!)
+        InstrumentViewUI(instrument: InstrumentCodable.makeDefault()!)
             .previewLayout(.sizeThatFits)
             .previewDevice("iPhone 14")
+    }
+}
+
+private extension InstrumentCodable {
+    var image: Image? {
+        guard let type = type else {
+            return nil
+        }
+        switch type {
+        case .guitar, .piano, .drums: return Image(type.rawValue.capitalized)
+        case .bassGuitar: return Image("BassGuitar")
+        case .pianoSolo: return Image("Piano")
+        case .unKnown: return nil
+        }
     }
 }

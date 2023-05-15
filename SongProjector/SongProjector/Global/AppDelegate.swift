@@ -91,7 +91,7 @@ func getScaleFactor(width: CGFloat) -> CGFloat {
 }
 
 
-@UIApplicationMain
+//@UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?

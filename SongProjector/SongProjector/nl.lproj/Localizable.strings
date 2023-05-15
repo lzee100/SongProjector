@@ -34,6 +34,8 @@
 "Actions-upload" = "Upload";
 "Actions-uploading" = "Uploaden...";
 "Actions-restore" = "Herstel";
+"Actions-generateSongService" = "Genereer zangdienst";
+"Actions-share" = "Deel";
 
 "Intro-introHalloTitle" = "Hallo";
 "Intro-introHalloContent" = "Welkom bij Churchbeam. Deze app ondersteund de gehele voordienst in jouw kerk.";
@@ -81,6 +83,7 @@
 "SongService-titleTableClusters" = "Liedjes";
 "SongService-titleTableSheets" = "Dia's";
 "SongService-warnCannotPlay" = "Het lijkt erop dat een andere gebruiker de zangdienst gestart is met dit account. Er kunnen geen twee zangdiensten tegelijk actief zijn. Je kan de zangdienst eventueel starten vanaf het admin account.";
+"SongService-startNew" = "Begin een nieuwe zangdienst";
 
 "NewSongService-title" = "Nieuwe zangdienst";
 "NewSongService-selectedSongsDescription" = "Hieronder staan de geselecteerde liedjes voor de zangdienst";
@@ -116,9 +119,11 @@
 "Songs-deleteBody" = "Weet je zeker dat je %@ wilt verwijderen? Verwijderde items kan je eventueel weer terug terug krijgen onder het tabje \"Verwijderde items\".";
 "Songs-deleteMusicTitle" = "Verwijder muziek";
 "Songs-deleteMusicBody" = "Weet je zeker dat je de muziek van %@ wilt verwijderen? Verwijderde muziek kan je eventueel weer terug terug krijgen door op de downloadknop te klikken van dit liedje.";
-"Songs-errorNoUserFound" = "We konden je identiteit niet bevestigen. Log opnieuw in onder instellingen.";
+"Songs-errorNoUserFound" = "Je identiteit kon niet worden bevestigd. Log opnieuw in onder instellingen.";
+"Songs-errorDeletingLocalMusic" = "De data kon niet worden verwijderd: %@";
+"Songs-errorDeletingSongRemotely" = "Er ging iets mis bij het verwijderen van '%@' \n%@";
 
-"NewSong-title" = "Titel";
+"NewSong-title" = "Nieuw lied";
 "NewSong-songTitle" = "Titel";
 "NewSong-headerTheme" = "Selecteer hier het thema";
 "NewSong-headerLyrics" = "Voer hier de tekst van het liedje in";
@@ -143,6 +148,7 @@
 
 "Themes-title" = "Thema's";
 "Themes-searchBarPlaceholderText" = "Zoek thema's";
+"Themes-deleteThemeError" = "Er ging iets mis in het verwijderen van het thema: %@";
 
 "Tags-title" = "Tags";
 "Tags-placeholder" = "Zoek tags";
@@ -166,6 +172,7 @@
 "CustomSheets-tableViewHeaderSheets" = "Dia's";
 "CustomSheets-titleMenu" = "Dia's toevoegen";
 "CustomSheets-errorSelectTheme" = "Selecteer een thema";
+"CustomSheets-errorChangeSheetGenerator" = "Wil je de huidige dia generator type wijzigen en hierdoor de dia's / tekst kwijt raken?";
 "CustomSheets-errorLoseOtherSheets" = "Je hebt andere sheets tussen de bijbelteksten staan. Deze gaan verloren wanneer je de bijbelteksten aanpast en opnieuw laat genereren";
 "CustomSheets-universalSongEditErrorTitle" = "Kon tekst niet aanpassen";
 "CustomSheets-universalSongEditErrorMessage" = "Dit liedje heeft muziek en heeft een weergave tijdsduur bij elke dia. Het aanpassen van het AANTAL dia's zorgt ervoor dat de tijden niet meer kloppen. Je wijzigingen zijn ongedaan gemaakt.";

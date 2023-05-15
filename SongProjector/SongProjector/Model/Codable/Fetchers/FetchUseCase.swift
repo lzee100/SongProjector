@@ -20,51 +20,77 @@ struct FetchUseCase<T: FileTransferable> {
     private let db = Firestore.firestore()
     private let fetchCount = 5
     private let managedObjectContextHandler = ManagedObjectContextHandler<T>()
+    private let useCase: FetchUseCaseCallBack<T>
     let lastUpdatedAtKey = "updatedAt"
     let createdAtKey = "createdAt"
     let userIdKey = "userUID"
     let fetchAll: Bool
     @Binding var result: RequesterResult
-
+    
     init(endpoint: EndPoint, fetchAll: Bool = true, result: Binding<RequesterResult>) {
         self.endpoint = endpoint
         self.fetchAll = fetchAll
         self._result = result
+        useCase = FetchUseCaseCallBack<T>(endpoint: endpoint, fetchAll: fetchAll)
     }
     
     func fetch(snapshots: [QuerySnapshot] = [], lastUpdatedAt: Date? = nil) {
-        result = .transfer
+        useCase.fetch { progress in
+            self.result = progress
+        }
+    }
+}
+
+class FetchUseCaseCallBack<T: FileTransferable> {
+    
+    private let endpoint: EndPoint
+    private let db = Firestore.firestore()
+    private let fetchCount = 5
+    private let managedObjectContextHandler = ManagedObjectContextHandler<T>()
+    let lastUpdatedAtKey = "updatedAt"
+    let createdAtKey = "createdAt"
+    let userIdKey = "userUID"
+    let fetchAll: Bool
+    
+    init(endpoint: EndPoint, fetchAll: Bool = true) {
+        self.endpoint = endpoint
+        self.fetchAll = fetchAll
+    }
+    
+    func fetch(snapshots: [QuerySnapshot] = [], lastUpdatedAt: Date? = nil, didProgress: @escaping ((RequesterResult) -> Void)) {
+        didProgress(.preparation)
         if let userId = Auth.auth().currentUser?.uid {
             var collection: Query = Firestore.firestore().collection(endpoint.rawValue)
             self.addFetchingParamsFor(userId: userId, lastUpdatedAt: lastUpdatedAt, collection: &collection)
-            collection.getDocuments(source: .server) { (snapshot, error) in
+            collection.getDocuments(source: .server) { [weak self] (snapshot, error) in
+                guard let self = self else { return }
                 
                 if let error = error {
-                    result = .finished(.failure(error))
+                    didProgress(.finished(.failure(error)))
                 } else {
                     guard let snapshot = snapshot else {
-                        result = .finished(.success([]))
+                        didProgress(.finished(.success([])))
                         return
                     }
                     do {
                         if snapshot.documents.count != 0 {
                             let decoded: [T] = try snapshot.decoded()
-                            let lastUpdatedAt = getLastUpdatedAt(currentLastUpdatedAt: lastUpdatedAt, objects: decoded)
-                            if fetchAll {
-                                fetch(snapshots: snapshots + [snapshot], lastUpdatedAt: lastUpdatedAt)
+                            let lastUpdatedAt = self.getLastUpdatedAt(currentLastUpdatedAt: lastUpdatedAt, objects: decoded)
+                            if self.fetchAll {
+                                self.fetch(snapshots: snapshots + [snapshot], lastUpdatedAt: lastUpdatedAt, didProgress: didProgress)
                             } else {
-                                downloadFiles(try (snapshots + [snapshot]).decoded())
+                                self.downloadFiles(try (snapshots + [snapshot]).decoded(), didProgress: didProgress)
                             }
                         } else {
-                            downloadFiles(try snapshots.decoded())
+                            self.downloadFiles(try snapshots.decoded(), didProgress: didProgress)
                         }
                     } catch {
-                        result = .finished(.failure(error))
+                        didProgress(.finished(.failure(error)))
                     }
                 }
             }
         } else {
-            result = .finished(.failure(CodableError.noFireBaseUser))
+            didProgress(.finished(.failure(CodableError.noFireBaseUser)))
         }
     }
     
@@ -99,7 +125,7 @@ struct FetchUseCase<T: FileTransferable> {
         }
     }
 //    20201117212400001860761F-0EDE-41FD-878B-FD8264A198DD.jpg
-    private func downloadFiles(_ entities: [T]) {
+    private func downloadFiles(_ entities: [T], didProgress: @escaping ((RequesterResult) -> Void)) {
         Task {
             let fileDownloadUseCase = FileDownloadUseCase(downloadFiles: entities.flatMap { $0.downloadObjects as? [DownloadObject] ?? [] })
             let downloadResult = try await fileDownloadUseCase.start()
@@ -108,7 +134,7 @@ struct FetchUseCase<T: FileTransferable> {
                 
             case .failed(error: let error):
                 
-                result = .finished(.failure(error))
+                didProgress(.finished(.failure(error)))
                 
             case .success:
                 
@@ -119,21 +145,21 @@ struct FetchUseCase<T: FileTransferable> {
                     changedEntities.append(changeableEntity)
                 }
                 
-                saveLocally(changedEntities)
+                saveLocally(changedEntities, didProgress: didProgress)
                 
             }
         }
     }
     
-    private func saveLocally(_ entities: [T]) {
-        result = .saveLocally
+    private func saveLocally(_ entities: [T], didProgress: ((RequesterResult) -> Void)) {
+        didProgress(.saveLocally)
         
         managedObjectContextHandler.save(entities: entities) { result in
             switch result {
             case .success(let uploadObjects):
-                self.result = .finished(.success(uploadObjects))
+                didProgress(.finished(.success(uploadObjects)))
             case .failure(let error):
-                self.result = .finished(.failure(error))
+                didProgress(.finished(.failure(error)))
             }
         }
         

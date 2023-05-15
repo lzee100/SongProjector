@@ -11,21 +11,91 @@ import SwiftUI
 import AVFoundation
 import MediaPlayer
 
-class SoundPlayer2 {
+class SheetPlayer {
+    var didSelectSheet: ((String?) -> Void)?
+    private var selectedSong: SongObjectUI?
+    private var timers: [Timer] = []
+    private var sheetIndex: Int?
     
-    @Binding private var selectedSheet: String?
+    init(didSelectSheet: ((String?) -> Void)? = nil) {
+        self.didSelectSheet = didSelectSheet
+    }
     
-    private var selectedSong: SongObjectUI? = nil
+    func play(song: SongObjectUI, pianoSolo: Bool = false) {
+        selectedSong = song
+        if song.cluster.time > 0 {
+            setCollectionTimer()
+        } else {
+            setSheetTimers()
+        }
+    }
+    
+    func stop() {
+        selectedSong = nil
+        sheetIndex = nil
+        timers.forEach { $0.invalidate() }
+        timers = []
+    }
+
+    private func setCollectionTimer() {
+        guard let selectedSong else { return }
+        let timer = Timer.scheduledTimer(withTimeInterval: selectedSong.cluster.time, repeats: true) { [weak self] _ in
+            guard let self else { return }
+            let sheetIndex = (self.sheetIndex ?? 0) + 1 > selectedSong.sheets.count - 1 ? 0 : (self.sheetIndex ?? 0) + 1
+            self.sheetIndex = sheetIndex
+            self.didSelectSheet?(selectedSong.sheets[sheetIndex].id)
+        }
+        timers.append(timer)
+    }
+    
+    private func setSheetTimers() {
+        guard let selectedSong else { return }
+        for index in 0..<selectedSong.cluster.hasSheets.count {
+            let totalTime = Array(0...index).compactMap{ selectedSong.sheets[safe: $0]?.sheetTime }.reduce(0, +)
+            let timer = Timer.scheduledTimer(withTimeInterval: totalTime, repeats: false) { [weak self] _ in
+                if let sheetId = selectedSong.sheets[safe: index + 1]?.id {
+                    self?.didSelectSheet?(sheetId)
+                }
+            }
+            timers.append(timer)
+        }
+    }
+
+}
+
+class SoundWithSheetPlayer {
+    private let soundPlayer2: SoundPlayer2
+    private let sheetPlayer: SheetPlayer
+
+    init(soundPlayer: SoundPlayer2, didSelectSheet: ((String?) -> Void)? = nil) {
+        sheetPlayer = SheetPlayer(didSelectSheet: didSelectSheet)
+        self.soundPlayer2 = soundPlayer
+    }
+    func play(song: SongObjectUI, pianoSolo: Bool = false) {
+        if song.cluster.hasLocalMusic {
+            soundPlayer2.play(song: song, pianoSolo: pianoSolo)
+        }
+        sheetPlayer.play(song: song)
+    }
+    
+    func stop() {
+        soundPlayer2.stop()
+        sheetPlayer.stop()
+    }
+}
+
+class SoundPlayer2: ObservableObject {
+    
+    @Published private(set) var selectedSong: SongObjectUI? = nil
     private var isPianoSolo = false
     private var isPlaying = false
     private var isLooping = false
-    private var timers: [Timer] = []
     private var loopTime: TimeInterval = 0
     private var queuePlayer = AVQueuePlayer()
     private var playerLooper: AVPlayerLooper? = nil
     private var players: [InstrumentPlayer] = []
     
-    init(selectedSheet: Binding<String?>) {
+    init() {
         do {
             UIApplication.shared.beginReceivingRemoteControlEvents()
             let audioSession = AVAudioSession.sharedInstance()
@@ -33,13 +103,12 @@ class SoundPlayer2 {
         } catch {
             print(error)
         }
-        self._selectedSheet = selectedSheet
     }
     
     func play(song: SongObjectUI, pianoSolo: Bool = false) {
+        stop()
         self.selectedSong = song
         try? AVAudioSession.sharedInstance().setActive(true)
-        stop()
         isPianoSolo = pianoSolo
         players = []
         
@@ -49,19 +118,19 @@ class SoundPlayer2 {
             return
         }
         
-        self.loadAudio(pianoSolo: pianoSolo)
+        loadAudio(pianoSolo: pianoSolo)
+        playInstruments()
     }
     
     func stop() {
         try? AVAudioSession.sharedInstance().setActive(false)
-        timers.forEach { $0.invalidate() }
-        timers = []
         for player in players {
             player.setVolume(0, fadeDuration: 2)
             DispatchQueue.main.asyncAfter(deadline: .now() + TimeInterval.seconds(2)) {
                 player.stop()
             }
         }
+        players = []
         isPlaying = false
         isPianoSolo = false
         isLooping = false
@@ -71,7 +140,6 @@ class SoundPlayer2 {
     
     private func playInstruments() {
         
-        DispatchQueue.global().async {
             let commandCenter = MPRemoteCommandCenter.shared()
             commandCenter.playCommand.isEnabled = true
             
@@ -87,7 +155,6 @@ class SoundPlayer2 {
                 player.play()
                 self.setVolumeFor(player: player)
             }
-        }
     }
     
     private func setVolumeFor(player: InstrumentPlayer) {
@@ -147,6 +214,7 @@ class SoundPlayer2 {
     
     private func loadAudio(pianoSolo: Bool) {
         
+        players = []
         if let song = selectedSong {
                         
             if pianoSolo, let instrument = song.cluster.hasInstruments.first(where: { $0.type == .pianoSolo }) {
@@ -182,16 +250,4 @@ class SoundPlayer2 {
             
         }
     }
-    
-    private func setSheetTimers() {
-        guard let selectedSong else { return }
-        for index in 0..<selectedSong.cluster.hasSheets.count {
-            let totalTime = Array(0...index).compactMap{ selectedSong.sheets[safe: $0]?.time }.reduce(0, +)
-            let timer = Timer.scheduledTimer(withTimeInterval: totalTime, repeats: false) { [weak self] _ in
-                self?.selectedSheet = selectedSong.sheets[safe: index + 1]?.id
-            }
-            timers.append(timer)
-        }
-    }
-    
 }

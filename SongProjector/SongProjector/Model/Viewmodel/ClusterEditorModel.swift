@@ -49,11 +49,11 @@ struct ClusterEditorModel {
     var isBibleVerses = false
     var isLyrics = false
     var isUniversalSong = false // has no save option
-    private(set) var sheets: [EditSheetOrThemeViewModel]
+    var sheets: [EditSheetOrThemeViewModel]
     var selectedClusterTheme: ThemeCodable? { mutating didSet { updateSheets() } }
     var selectedTags: [TagCodable] = []
     var customSheetsEditModel: WrappedStruct<EditSheetOrThemeViewModel>? {
-        if let type = editController.sheetType, let sheet = editController.sheet, let model = EditSheetOrThemeViewModel(editMode: .sheet((cluster, sheet), sheetType: type), isUniversal: uploadSecret != nil) {
+        if let type = editController.sheetType, let sheet = editController.sheet, let model = EditSheetOrThemeViewModel(editMode: .sheet((cluster, sheet), sheetType: type), isUniversal: uploadSecret != nil, isCustomSheetType: true) {
             return WrappedStruct(withItem: model)
         } else {
             return nil
@@ -98,13 +98,13 @@ struct ClusterEditorModel {
         })
     }
         
-    mutating func bibleStudyTextDidChange(_ text: String, contentTextViewContentSize: CGSize) {
+    mutating func bibleStudyTextDidChange(_ text: String, contentTextViewContentSize: CGSize, scaleFactor: CGFloat) {
         if text.count > 0, let theme = selectedClusterTheme {
             let bibleStudyTitleContent =  BibleStudyTextUseCase.generateSheetsFromText(
                 text,
                 contentSize: contentTextViewContentSize,
                 theme: theme,
-                scaleFactor: getScaleFactor(width: contentTextViewContentSize.width),
+                scaleFactor: scaleFactor,
                 cluster: cluster
             )
             sheets = bibleStudyTitleContent // TODO: ADD EMPTY SHEETS BASED ON THEME SETTINGS

@@ -12,6 +12,7 @@ import UIKit
 struct SongServiceSectionViewUI: View {
     
     var superViewSize: CGSize
+    let sectionTitle: String
     @Binding var selectedSong: SongObjectUI?
     var song: SongObjectUI
     @SwiftUI.Environment(\.horizontalSizeClass) var horizontalSizeClass
@@ -55,7 +56,7 @@ struct SongServiceSectionViewUI: View {
                 Spacer()
                 if song.cluster.hasPianoSolo {
                     PianoSoloViewUI(selectedSong: $selectedSong)
-                        .frame(height: isCompactOrVertical(viewSize: ruler.size) ? ruler.size.height * 0.9 : ruler.size.height * 0.25)
+                        .frame(height: ruler.size.height * 0.25)
                 } else if song.cluster.hasLocalMusic {
                     instrumentsView
                 } else {
@@ -69,31 +70,27 @@ struct SongServiceSectionViewUI: View {
     }
     
     @ViewBuilder var sectionLabel: some View {
-        if let sectionTitle = song.sectionHeader {
-            HStack(spacing: 0) {
-                Text(sectionTitle)
-                    .font(.title2)
-                    .foregroundColor(.white)
-                    .lineLimit(2)
-                    .multilineTextAlignment(.leading)
-                    .padding()
-                Spacer()
-            }
-        } else {
-            EmptyView()
+        HStack(spacing: 0) {
+            Text(sectionTitle)
+                .font(.title2)
+                .foregroundColor(.white)
+                .lineLimit(2)
+                .multilineTextAlignment(.leading)
+                .padding()
+            Spacer()
         }
     }
     
     @ViewBuilder var titleView: some View {
         Text(song.cluster.title ?? "")
-            .font(.title)
+            .font(.xxNormal)
             .foregroundColor(.white)
             .lineLimit(2)
             .padding()
     }
     
     @ViewBuilder var instrumentsView: some View {
-        InstrumentsViewUI(instruments: makeDemoInstruments())
+        InstrumentsViewUI(instruments: song.cluster.hasInstruments)
             .padding(isCompactOrVertical(viewSize: superViewSize) ? .all : .top)
     }
     
@@ -105,7 +102,7 @@ struct SongServiceSectionViewUI: View {
 struct SongServiceSectionViewUI_Previews: PreviewProvider {
     @State static var selectedSong: SongObjectUI? = nil
     static var previews: some View {
-        SongServiceSectionViewUI(superViewSize: superViewSizePortrait, selectedSong: $selectedSong, song: SongObjectUI(cluster: .makeDefault()!))
+        SongServiceSectionViewUI(superViewSize: superViewSizePortrait, sectionTitle: "section", selectedSong: $selectedSong, song: SongObjectUI(cluster: .makeDefault()!))
             .previewLayout(.sizeThatFits)
             .previewInterfaceOrientation(.portrait)
     }

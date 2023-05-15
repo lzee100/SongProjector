@@ -1,5 +1,5 @@
 //
-//  TagSelectionViewUI.swift
+//  TagSelectionDropdownViewUI.swift
 //  SongProjector
 //
 //  Created by Leo van der Zee on 24/04/2023.
@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct TagSelectionViewUI: View {
+struct TagSelectionDropdownViewUI: View {
     
     @ObservedObject private var model: WrappedStruct<TagsSelectionModel>
     
@@ -47,7 +47,7 @@ struct TagSelectionViewUI_Previews: PreviewProvider {
     @State static var model = WrappedStruct(withItem: TagsSelectionModel(label: AppText.Tags.title, selectedTags: selectedTags, didSelectTags: {_ in }))
     
     static var previews: some View {
-        TagSelectionViewUI(model: model)
+        TagSelectionDropdownViewUI(model: model)
     }
     
 }

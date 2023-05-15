@@ -130,27 +130,16 @@ class ThemesIphoneController: ChurchBeamViewController, UIGestureRecognizerDeleg
             tableView.setEditing(tableView.isEditing ? false : true, animated: false)
         }
     }
-    
+    @State var isShowingEditor = false
     var editModel: WrappedStruct<EditSheetOrThemeViewModel>? = nil
     @IBAction func addThemePressed(_ sender: UIBarButtonItem) {
-        guard let editThemeModel = EditSheetOrThemeViewModel(editMode: .theme(nil), isUniversal: false) else { return }
-        let model = WrappedStruct(withItem: editThemeModel)
-        self.editModel = model
-        let editView = EditThemeOrSheetViewUI(
-            dismiss: { dismissPresenting in
-                if dismissPresenting {
-                    self.dismiss(animated: true)
-                } else {
-                    self.presentedViewController?.dismiss(animated: true)
-                }
-        },
-            navigationTitle: AppText.NewTheme.title,
-            editSheetOrThemeModel: model,
-            submitThemeUseCaseResult: .idle
-        )
-        let controller = UIHostingController(rootView: editView)
-        controller.modalPresentationStyle = .fullScreen
-        present(controller, animated: true)
+//        guard let editThemeModel = EditSheetOrThemeViewModel(editMode: .theme(nil), isUniversal: false) else { return }
+//        let model = WrappedStruct(withItem: editThemeModel)
+//        self.editModel = model
+//        let editView = EditThemeOrSheetViewUI(navigationTitle: AppText.NewTheme.title, isShowingEditThemeOrSheetViewUI: $isShowingEditor, editSheetOrThemeModel: model)
+//        let controller = UIHostingController(rootView: editView)
+//        controller.modalPresentationStyle = .fullScreen
+//        present(controller, animated: true)
     }
 }
 
@@ -227,14 +216,8 @@ extension ThemesIphoneController: UITableViewDelegate {
                 ) else {
                 return
             }
-            let editView = EditThemeOrSheetViewUI(dismiss: { [weak self] dismissPresenting in
-                if dismissPresenting {
-                    self?.dismiss(animated: true)
-                } else {
-                    self?.presentedViewController?.dismiss(animated: true)
-                }
-            }, navigationTitle: AppText.EditTheme.title, editSheetOrThemeModel: WrappedStruct<EditSheetOrThemeViewModel>(withItem: model))
-            self.present(UIHostingController(rootView: editView), animated: true)
+//            let editView = EditThemeOrSheetViewUI(navigationTitle: AppText.EditTheme.title, isShowingEditThemeOrSheetViewUI: self.$isShowingEditor, editSheetOrThemeModel: WrappedStruct<EditSheetOrThemeViewModel>(withItem: model))
+//            self.present(UIHostingController(rootView: editView), animated: true)
         }
     }
     

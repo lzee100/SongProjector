@@ -88,7 +88,7 @@ struct BeamerPreviewUI: View {
                 } else if let sheet = songObject.sheets.first {
                     
                     SheetUIHelper.sheet(viewSize: screenSize, ratioOnHeight: false, songServiceModel: songService, sheet: sheet, isForExternalDisplay: false, showSelectionCover: false)
-                        .tag(songService.item.getSongIndexWithSheetIndexAddedIfNeeded(offset))
+                        .tag(songService.item.getSongIndexWithSheetIndexAddedIfNeeded(songObject))
                     
                 } else {
                     
@@ -102,7 +102,7 @@ struct BeamerPreviewUI: View {
 }
 
 struct BeamerViewUI2_Previews: PreviewProvider {
-    @State static var songService = WrappedStruct(withItem: SongServiceUI(songs: []))
+    @State static var songService = WrappedStruct(withItem: SongServiceUI())
     
     static var previews: some View {
         let demoCluster = VCluster()

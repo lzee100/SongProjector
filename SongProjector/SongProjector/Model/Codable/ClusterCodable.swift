@@ -10,7 +10,7 @@ import Foundation
 import FirebaseAuth
 import CoreData
 
-public struct ClusterCodable: EntityCodableType {
+public struct ClusterCodable: EntityCodableType, Identifiable, Equatable {
     
     static func makeDefault() -> ClusterCodable? {
 #if DEBUG
@@ -111,11 +111,13 @@ hasSheets: [SheetMetaType] = [SheetTitleContentCodable.makeDefault()].compactMap
         sheetIds = entity.sheetIds.split(separator: ",").compactMap({ String($0) })
         hasSheets = getSheets()
         tagIds = entity.tagIds.split(separator: ",").compactMap({ String($0) })
-        let instruments: [Instrument] = DataFetcher()
-            .getEntities(moc: context, predicates: instrumentIds.split(separator: ",")
-                .map(String.init)
-                .map{ NSPredicate.get(id: $0) }, sort: nil, predicateCompoundType: .or)
-        hasInstruments = instruments.compactMap { InstrumentCodable(managedObject: $0, context: context) }
+        if !instrumentIds.isBlanc {
+            let instruments: [Instrument] = DataFetcher()
+                .getEntities(moc: context, predicates: instrumentIds.split(separator: ",")
+                    .map(String.init)
+                    .map{ NSPredicate.get(id: $0) }, sort: nil, predicateCompoundType: .or)
+            hasInstruments = instruments.compactMap { InstrumentCodable(managedObject: $0, context: context) }
+        }
         let predicates: [NSPredicate] = tagIds.map { .get(id: $0) }
         let tags: [Tag] = DataFetcher().getEntities(moc: context, predicates: predicates, predicateCompoundType: .or)
         hasTags = tags.compactMap { TagCodable(managedObject: $0, context: context) }
@@ -169,7 +171,7 @@ hasSheets: [SheetMetaType] = [SheetTitleContentCodable.makeDefault()].compactMap
         hasInstruments.forEach { _ = $0.getManagedObjectFrom(context) }
     }
     
-    var id: String = "CHURCHBEAM" + UUID().uuidString
+    public var id: String = "CHURCHBEAM" + UUID().uuidString
     var userUID: String = ""
     var title: String? = nil
     var createdAt: Date = Date().localDate()
@@ -323,6 +325,10 @@ hasSheets: [SheetMetaType] = [SheetTitleContentCodable.makeDefault()].compactMap
         if let rootdeleteDateInt = try container.decodeIfPresent(Int.self, forKey: .rootDeleteDate) {
             rootDeleteDate = Date(timeIntervalSince1970: TimeInterval(rootdeleteDateInt))
         }
+    }
+    
+    public static func == (lhs: ClusterCodable, rhs: ClusterCodable) -> Bool {
+        return lhs.id == rhs.id
     }
 }
 

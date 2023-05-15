@@ -56,7 +56,7 @@ struct TitleContentViewDisplayUI_Previews: PreviewProvider {
     @State static var editModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .sheet((cluster, imageSheet), sheetType: .SheetTitleImage), isUniversal: false, image: UIImage(named: "Pio-Sebastiaan-en-Marilou.jpg"))!)
     
     static var previews: some View {
-        TitleContentViewDisplayUI(songServiceModel: songServiceModel, sheet: SheetTitleImageCodable.makeDefault(), scaleFactor: 1, isForExternalDisplay: false, showSelectionCover: false)
+        TitleContentViewDisplayUI(songServiceModel: songServiceModel, sheet: SheetTitleImageCodable.makeDefault(), isForExternalDisplay: false, showSelectionCover: false)
             .previewInterfaceOrientation(.portrait)
             .previewLayout(.sizeThatFits)
     }
@@ -69,56 +69,56 @@ struct TitleContentViewEditUI: View {
     @State private(set) var contentTextViewSize: CGSize = .zero
 
     private let isForExternalDisplay: Bool
-    private let scaleFactor: CGFloat
     
     @ObservedObject private var editViewModel: WrappedStruct<EditSheetOrThemeViewModel>
     
-    init(editViewModel: WrappedStruct<EditSheetOrThemeViewModel>, scaleFactor: CGFloat, isForExternalDisplay: Bool) {
+    init(editViewModel: WrappedStruct<EditSheetOrThemeViewModel>, isForExternalDisplay: Bool) {
         self.editViewModel = editViewModel
-        self.scaleFactor = scaleFactor
         self.isForExternalDisplay = isForExternalDisplay
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            HStack {
-                Text(getTitleAttributedString(text: editViewModel.item.title))
-                    .modifier(SheetTitleEditUIModifier(scaleFactor: scaleFactor, editViewModel: editViewModel, frameWidth: .infinity))
-                    .lineLimit(1)
-                if editViewModel.item.displayTime {
-                    Spacer()
-                    Text(getTitleAttributedString(text: Date().time))
-                        .modifier(SheetTitleEditUIModifier(scaleFactor: scaleFactor, editViewModel: editViewModel, frameWidth: .infinity))
+        GeometryReader { proxy in
+            VStack(spacing: 0) {
+                HStack {
+                    Text(getTitleAttributedString(text: editViewModel.item.title, viewSize: getScaleFactor(width: proxy.size.width)))
+                        .modifier(SheetTitleEditUIModifier(scaleFactor: getScaleFactor(width: proxy.size.width), editViewModel: editViewModel, frameWidth: .infinity))
                         .lineLimit(1)
+                    if editViewModel.item.displayTime {
+                        Spacer()
+                        Text(getTitleAttributedString(text: Date().time))
+                            .modifier(SheetTitleEditUIModifier(scaleFactor: getScaleFactor(width: proxy.size.width), editViewModel: editViewModel, frameWidth: .infinity))
+                            .lineLimit(1)
+                    }
                 }
+                .frame(maxWidth: .infinity)
+                
+                GeometryReader { proxy in
+                    Text(getContentAttributedString(viewSize: getScaleFactor(width: proxy.size.width)))
+                }
+                .observeViewSize()
+                .modifier(SheetContentEditModifier(scaleFactor: getScaleFactor(width: proxy.size.width), multiLine: true, editViewModel: editViewModel))
+                Spacer()
             }
-            .frame(maxWidth: .infinity)
-           
-            GeometryReader { proxy in
-                Text(getContentAttributedString())
-            }
-            .observeViewSize()
-            .modifier(SheetContentEditModifier(scaleFactor: scaleFactor, multiLine: true, editViewModel: editViewModel))
-            Spacer()
+            .setBackgroundImage(isForExternalDisplay: false, editModel: editViewModel)
+            .modifier(SheetBackgroundColorAndOpacityEditModifier(editViewModel: editViewModel))
+            .cornerRadius(10)
+            .aspectRatio(16 / 9, contentMode: .fit)
+            .ignoresSafeArea()
         }
-        .setBackgroundImage(isForExternalDisplay: false, editModel: editViewModel)
-        .modifier(SheetBackgroundColorAndOpacityEditModifier(editViewModel: editViewModel))
-        .cornerRadius(10)
-        .aspectRatio(16 / 9, contentMode: .fit)
-        .ignoresSafeArea()        
     }
     
-    private func getTitleAttributedString(text: String) -> AttributedString {
+    private func getTitleAttributedString(text: String, viewSize: CGSize) -> AttributedString {
         AttributedString(NSAttributedString(
             string: text,
-            attributes: editViewModel.item.getTitleAttributes(scaleFactor)
+            attributes: editViewModel.item.getTitleAttributes(getScaleFactor(width: viewSize.width))
         ))
     }
     
-    private func getContentAttributedString() -> AttributedString {
+    private func getContentAttributedString(viewSize: CGSize) -> AttributedString {
         AttributedString(NSAttributedString(
             string: editViewModel.item.sheetContent,
-            attributes: editViewModel.item.getLyricsAttributes(scaleFactor)
+            attributes: editViewModel.item.getLyricsAttributes(getScaleFactor(width: viewSize.width))
         ))
     }
 }
@@ -171,39 +171,39 @@ struct TitleContentViewDisplayUI: View {
         theme?.contentAlignmentNumber.intValue ?? 0
     }
     
-    init(songServiceModel: WrappedStruct<SongServiceUI>, sheet: SheetMetaType, scaleFactor: CGFloat, isForExternalDisplay: Bool, showSelectionCover: Bool) {
+    init(songServiceModel: WrappedStruct<SongServiceUI>, sheet: SheetMetaType, isForExternalDisplay: Bool, showSelectionCover: Bool) {
         self.songServiceModel = songServiceModel
         self.sheet = sheet
-        self.scaleFactor = scaleFactor
         self.isForExternalDisplay = isForExternalDisplay
         self.showSelectionCover = showSelectionCover
         self.theme = songServiceModel.item.themeFor(sheet: sheet)
     }
     
     var body: some View {
-        VStack(spacing: 0) {
-            HStack {
-                Text(getTitleAttributedString(text: (songServiceModel.item.sheetTitleFor(sheet: sheet) ?? "") + "\(sheet.position)"))
-                    .modifier(SheetTitleDisplayUIModifier(
-                        scaleFactor: scaleFactor,
-                        alignmentNumber: titleAlignmentNumber,
-                        frameWidth: .infinity
-                    ))
-                    .lineLimit(1)
-                if theme?.displayTime ?? false {
-                    Spacer()
-                    Text(getTitleAttributedString(text: Date().time))
+        GeometryReader { proxy in
+            VStack(spacing: 0) {
+                HStack {
+                    Text(getTitleAttributedString(text: (songServiceModel.item.sheetTitleFor(sheet: sheet) ?? "") + "\(sheet.position)", viewSize: proxy.size))
                         .modifier(SheetTitleDisplayUIModifier(
-                            scaleFactor: scaleFactor,
+                            scaleFactor: getScaleFactor(width: proxy.size.width),
                             alignmentNumber: titleAlignmentNumber,
                             frameWidth: .infinity
                         ))
                         .lineLimit(1)
+                    if theme?.displayTime ?? false {
+                        Spacer()
+                        Text(getTitleAttributedString(text: Date().time, viewSize: proxy.size))
+                            .modifier(SheetTitleDisplayUIModifier(
+                                scaleFactor: getScaleFactor(width: proxy.size.width),
+                                alignmentNumber: titleAlignmentNumber,
+                                frameWidth: .infinity
+                            ))
+                            .lineLimit(1)
+                    }
                 }
-            }
-            .frame(maxWidth: .infinity)
-            
-            if let content = getContentAttributedString() {
+                .frame(maxWidth: .infinity)
+                
+                if let content = getContentAttributedString(viewSize: proxy.size) {
                     
                     HStack{
                         if [1, 2].contains(theme?.contentAlignmentNumber) {
@@ -211,7 +211,7 @@ struct TitleContentViewDisplayUI: View {
                         }
                         Text(content)
                             .modifier(SheetContentDisplayModifier(
-                                scaleFactor: scaleFactor,
+                                scaleFactor: getScaleFactor(width: proxy.size.width),
                                 multiLine: true,
                                 alignment: contentAlignmentNumber
                             ))
@@ -219,37 +219,38 @@ struct TitleContentViewDisplayUI: View {
                             Spacer()
                         }
                     }
+                }
+                Spacer()
             }
-            Spacer()
-        }
-        .setBackgroundImage(isForExternalDisplay: false, theme: theme)
-        .modifier(SheetBackgroundColorAndOpacityModifier(sheetTheme: theme))
-        .background(theme?.backgroundColor?.color ?? .clear)
-        .opacity(theme?.backgroundTransparancy ?? 1)
-        .cornerRadius(10)
-        .aspectRatio(16 / 9, contentMode: .fit)
-        .ignoresSafeArea()
-        .overlay {
-            if songServiceModel.item.selectedSheetId != sheet.id, showSelectionCover {
-                Rectangle()
-                    .fill(.black.opacity(0.3))
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .setBackgroundImage(isForExternalDisplay: false, theme: theme)
+            .modifier(SheetBackgroundColorAndOpacityModifier(sheetTheme: theme))
+            .background(theme?.backgroundColor?.color ?? .clear)
+            .opacity(theme?.backgroundTransparancy ?? 1)
+            .cornerRadius(10)
+            .aspectRatio(16 / 9, contentMode: .fit)
+            .ignoresSafeArea()
+            .overlay {
+                if songServiceModel.item.selectedSheetId != sheet.id, showSelectionCover {
+                    Rectangle()
+                        .fill(.black.opacity(0.3))
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
             }
         }
     }
     
-    private func getTitleAttributedString(text: String) -> AttributedString {
+    private func getTitleAttributedString(text: String, viewSize: CGSize) -> AttributedString {
         AttributedString(NSAttributedString(
             string: text,
-            attributes: theme?.getTitleAttributes(scaleFactor) ?? [:]
+            attributes: theme?.getTitleAttributes(getScaleFactor(width: viewSize.width)) ?? [:]
         ))
     }
     
-    private func getContentAttributedString() -> AttributedString? {
+    private func getContentAttributedString(viewSize: CGSize) -> AttributedString? {
         guard let content = sheet.sheetContent else { return nil }
         return AttributedString(NSAttributedString(
             string: content,
-            attributes: theme?.getLyricsAttributes(scaleFactor) ?? [:]
+            attributes: theme?.getLyricsAttributes(getScaleFactor(width: viewSize.width)) ?? [:]
         ))
     }
 }

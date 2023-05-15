@@ -75,11 +75,16 @@ extension NSPredicate {
 
 struct DataFetcher<T: Entity> {
     
-    func getEntities(moc: NSManagedObjectContext, predicates: [NSPredicate] = [], sort: NSSortDescriptor? = nil, predicateCompoundType: NSCompoundPredicate.LogicalType = .and) -> [T] {
+    func getEntities(moc: NSManagedObjectContext, predicates: [NSPredicate] = [], sort: NSSortDescriptor? = nil, predicateCompoundType: NSCompoundPredicate.LogicalType = .and, fetchDeleted: Bool = false) -> [T] {
         let Lock = NSRecursiveLock()
         var entityName: String {  return T.classForCoder().description().deletingPrefix("ChurchBeam.") }
         
         Lock.lock()
+        
+        var predicates = predicates
+        if !fetchDeleted {
+            predicates.append(NSCompoundPredicate(andPredicateWithSubpredicates: predicates + [.skipDeleted, .skipRootDeleted]))
+        }
         
         var entities: [T] = []
         let request = NSFetchRequest<T>(entityName: entityName)

@@ -33,8 +33,6 @@ extension SheetMetaType {
             return sheetPastors.content
         } else if let sheetSplit = self as? SheetSplitCodable {
             return sheetSplit.textLeft
-        } else if let sheetActivities = self as? SheetActivitiesCodable {
-            return sheetActivities.sheetContent
         }
         return nil
     }
@@ -84,7 +82,7 @@ extension SheetMetaType {
         theme?.thumbnail
     }
     
-    var time: Double? {
+    var sheetTime: Double? {
         if let sheetTitleContentCodable = self as? SheetTitleContentCodable {
             return sheetTitleContentCodable.time
         } else if let sheetTitleImageCodable = self as? SheetTitleImageCodable {
@@ -93,8 +91,6 @@ extension SheetMetaType {
             return sheetPastors.time
         } else if let sheetSplit = self as? SheetSplitCodable {
             return sheetSplit.time
-        } else if let sheetActivities = self as? SheetActivitiesCodable {
-            return sheetActivities.time
         }
         return nil
     }

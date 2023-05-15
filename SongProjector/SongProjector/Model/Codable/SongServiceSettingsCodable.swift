@@ -13,7 +13,7 @@ import CoreData
 public struct SongServiceSettingsCodable: EntityCodableType {
     
     init?(managedObject: NSManagedObject, context: NSManagedObjectContext) {
-        guard let entity = managedObject as? Tag else { return nil }
+        guard let entity = managedObject as? SongServiceSettings else { return nil }
         id = entity.id
         userUID = entity.userUID
         title = entity.title
@@ -21,21 +21,23 @@ public struct SongServiceSettingsCodable: EntityCodableType {
         updatedAt = entity.updatedAt?.date
         deleteDate = entity.deleteDate?.date
         rootDeleteDate = entity.rootDeleteDate?.date
+        
+        sections = entity.hasSections(moc: context).compactMap { SongServiceSectionCodable(managedObject: $0, context: context) }
     }
     
     func getManagedObjectFrom(_ context: NSManagedObjectContext) -> NSManagedObject {
         
-        if let entity: Tag = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
+        if let entity: SongServiceSettings = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
             setPropertiesTo(entity, context: context)
             return entity
         } else {
-            let entity: Tag = DataFetcher().createEntity(moc: context)
+            let entity: SongServiceSettings = DataFetcher().createEntity(moc: context)
             setPropertiesTo(entity, context: context)
             return entity
         }
     }
     
-    private func setPropertiesTo(_ entity: Tag, context: NSManagedObjectContext) {
+    private func setPropertiesTo(_ entity: SongServiceSettings, context: NSManagedObjectContext) {
         entity.id = id
         entity.userUID = userUID
         entity.title = title
@@ -43,6 +45,8 @@ public struct SongServiceSettingsCodable: EntityCodableType {
         entity.updatedAt = updatedAt?.nsDate
         entity.deleteDate = deleteDate?.nsDate
         entity.rootDeleteDate = rootDeleteDate?.nsDate
+        
+        entity.sectionIds = sections.map { $0.id }.joined(separator: ",")
     }
     
     var id: String = "CHURCHBEAM" + UUID().uuidString
@@ -54,7 +58,7 @@ public struct SongServiceSettingsCodable: EntityCodableType {
     var isTemp: Bool = false
     var rootDeleteDate: Date? = nil
     
-    var sections: [VSongServiceSection] = []
+    var sections: [SongServiceSectionCodable] = []
     
     enum CodingKeys: String, CodingKey
     {
@@ -93,7 +97,7 @@ public struct SongServiceSettingsCodable: EntityCodableType {
             rootDeleteDate = Date(timeIntervalSince1970: TimeInterval(rootdeleteDateInt))
         }
         
-        sections = try (container.decodeIfPresent([VSongServiceSection].self, forKey: .sections) ?? []).sorted(by: { $0.position < $1.position })
+        sections = try (container.decodeIfPresent([SongServiceSectionCodable].self, forKey: .sections) ?? []).sorted(by: { $0.position < $1.position })
     }
     
     public func encode(to encoder: Encoder) throws {

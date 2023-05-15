@@ -11,7 +11,20 @@ import FirebaseAuth
 import CoreData
 import CoreData
 
-public struct TagCodable: EntityCodableType, Identifiable {
+public struct TagCodable: EntityCodableType, Identifiable, Equatable {
+    
+    static func makeDefault(id: String? = nil) -> TagCodable? {
+#if DEBUG
+        let userId = "userid"
+#else
+        guard let userId = Auth.auth().currentUser?.uid else {
+            return nil
+        }
+#endif
+        
+        return TagCodable(id: id ?? "CHURCHBEAM" + UUID().uuidString)
+    }
+    
     
     init?(managedObject: NSManagedObject, context: NSManagedObjectContext) {
         guard let entity = managedObject as? Tag else { return nil }
@@ -74,6 +87,30 @@ public struct TagCodable: EntityCodableType, Identifiable {
         
         case position
         case isDeletable
+    }
+    
+    init(
+        id: String = "CHURCHBEAM" + UUID().uuidString,
+        userUID: String = "",
+        title: String? = nil,
+        createdAt: Date = Date().localDate(),
+        updatedAt: Date? = nil,
+        deleteDate: Date? = nil,
+        isTemp: Bool = false,
+        rootDeleteDate: Date? = nil,
+        position: Int16 = 0,
+        isDeletable: Bool = true
+    ) {
+        self.id = id
+        self.userUID = userUID
+        self.title = title
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.deleteDate = deleteDate
+        self.isTemp = isTemp
+        self.rootDeleteDate = rootDeleteDate
+        self.position = position
+        self.isDeletable = isDeletable
     }
     
     // MARK: - Decodable

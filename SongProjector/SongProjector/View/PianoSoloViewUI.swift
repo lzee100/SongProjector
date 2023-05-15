@@ -76,27 +76,14 @@ struct PianoSoloViewUI: View {
     
     @ViewBuilder private var playAnimation: some View {
         GeometryReader { ruler in
-            
-            Rectangle()
-                    .mask {
-                        HStack(spacing: 4) {
-                            ForEach(0..<6) { _ in
-                                Rectangle()
-                                    .cornerRadius((((ruler.size.width * 0.4) - 20) / 6) / 2)
-                                    .frame(height: ruler.size.height * Double.random(in: 0.3..<0.8))
-                                    .scaleEffect(y: isAnimating ? Double.random(in: 0.1..<0.5) : 1.0)
-                                    .animation(.linear.repeatForever(autoreverses: true).delay(Double.random(in: 0.1..<0.5)), value: isAnimating)
-                            }
-                        }
-                        .frame(width: ruler.size.width * 0.2)
-                    }
-                    .foregroundColor(Color(uiColor: .softBlueGrey))
-                    .padding(EdgeInsets(
-                        top: 0,
-                        leading: isCompactOrVertical(ruler: ruler) ? 80 : 0,
-                        bottom: 0,
-                        trailing: isCompactOrVertical(ruler: ruler) ? 80 : 0)
-                    )
+            SoundAnimationViewUI()
+                .foregroundColor(Color(uiColor: .softBlueGrey))
+                .padding(EdgeInsets(
+                    top: 0,
+                    leading: isCompactOrVertical(ruler: ruler) ? 80 : 0,
+                    bottom: 0,
+                    trailing: isCompactOrVertical(ruler: ruler) ? 80 : 0)
+                )
         }
     }
     

@@ -25,7 +25,6 @@ struct LyricsOrBibleStudyInputViewUI: View {
         NavigationStack {
             GeometryReader { proxy in
                 TextView(text: $content, textStyle: $font)
-                    .portraitSectionBackgroundFor(viewSize: proxy.size)
                     .padding()
                     .navigationBarTitleDisplayMode(.inline)
                     .navigationBarTitle(AppText.NewSong.title)
@@ -33,11 +32,12 @@ struct LyricsOrBibleStudyInputViewUI: View {
                         ToolbarItemGroup(placement: .navigationBarLeading) {
                             Button(AppText.Actions.close) {
                                 content = initialContent
+                                isShowingLyricsOrBibleStudyInputView.toggle()
                             }
                         }
                         ToolbarItemGroup(placement: .navigationBarTrailing) {
                             Button(AppText.Actions.save) {
-                                self.isShowingLyricsOrBibleStudyInputView.toggle()
+                                isShowingLyricsOrBibleStudyInputView.toggle()
                             }
                         }
                     })

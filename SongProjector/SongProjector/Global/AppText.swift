@@ -45,6 +45,8 @@ class AppText: NSObject {
 		static let upload = NSLocalizedString("Actions-upload", comment: "")
         static let uploading = NSLocalizedString("Actions-uploading", comment: "")
         static let restore = NSLocalizedString("Actions-restore", comment: "")
+        static let generateSongService = NSLocalizedString("Actions-generateSongService", comment: "")
+        static let share = NSLocalizedString("Actions-share", comment: "")
 	}
 	
 	struct Intro {
@@ -120,6 +122,7 @@ class AppText: NSObject {
 		static let titleTableClusters = NSLocalizedString("SongService-titleTableClusters", comment: "")
 		static let titleTableSheets = NSLocalizedString("SongService-titleTableSheets", comment: "")
         static let warnCannotPlay = NSLocalizedString("SongService-warnCannotPlay", comment: "")
+        static let startNew = NSLocalizedString("SongService-startNew", comment: "")
 	}
 	
 	struct NewSongService {
@@ -174,6 +177,12 @@ class AppText: NSObject {
             return String(format: NSLocalizedString("Songs-restoreBody", comment: ""), songName)
         }
         static let errorNoUserFound = NSLocalizedString("Songs-errorNoUserFound", comment: "")
+        static func errorDeletingLocalMusic(error: String) -> String {
+            return String(format: NSLocalizedString("Songs-errorDeletingLocalMusic", comment: ""), error)
+        }
+        static func errorDeletingSongRemotely(title: String, errorMessage: String) -> String {
+            return String(format: NSLocalizedString("Songs-errorDeletingSongRemotely", comment: ""), title, errorMessage)
+        }
 	}
 	
 	struct NewSong {
@@ -207,6 +216,9 @@ class AppText: NSObject {
 	struct Themes {
 		static let title = NSLocalizedString("Themes-title", comment: "")
 		static let searchBarPlaceholderText = NSLocalizedString("Themes-searchBarPlaceholderText", comment: "")
+        static func deleteThemeError(error: Error) -> String {
+            return String(format: NSLocalizedString("RequesterErrors-deleteThemeError", comment: ""), error.localizedDescription)
+        }
 	}
 	
 	struct Tags {
@@ -218,30 +230,30 @@ class AppText: NSObject {
         
 	}
 	
-	struct CustomSheets {
-		static let title = NSLocalizedString("CustomSheets-title", comment: "")
-		static let namePlaceHolder = NSLocalizedString("CustomSheets-namePlaceHolder", comment: "")
-		static let errorTitle = NSLocalizedString("CustomSheets-errorTitle", comment: "")
-		static let errorNoName = NSLocalizedString("CustomSheets-errorNoName", comment: "")
-		static let segmentInput = NSLocalizedString("CustomSheets-segmentInput", comment: "")
-		static let segmentCheck = NSLocalizedString("CustomSheets-segmentCheck", comment: "")
-		static let segmentSheets = NSLocalizedString("CustomSheets-segmentSheets", comment: "")
-		static let segmentChange = NSLocalizedString("CustomSheets-segmentChange", comment: "")
-		static let descriptionName = NSLocalizedString("CustomSheets-descriptionName", comment: "")
-		static let descriptionTime = NSLocalizedString("CustomSheets-descriptionTime", comment: "")
-		static let descriptionTimeAdd = NSLocalizedString("CustomSheets-descriptionTimeAdd", comment: "")
-		
-		static let tableViewHeaderGeneral = NSLocalizedString("CustomSheets-tableViewHeaderGeneral", comment: "")
-		static let tableViewHeaderSheets = NSLocalizedString("CustomSheets-tableViewHeaderSheets", comment: "")
-		
-		static let titleMenu = NSLocalizedString("CustomSheets-titleMenu", comment: "")
+    struct CustomSheets {
+        static let title = NSLocalizedString("CustomSheets-title", comment: "")
+        static let namePlaceHolder = NSLocalizedString("CustomSheets-namePlaceHolder", comment: "")
+        static let errorTitle = NSLocalizedString("CustomSheets-errorTitle", comment: "")
+        static let errorNoName = NSLocalizedString("CustomSheets-errorNoName", comment: "")
+        static let segmentInput = NSLocalizedString("CustomSheets-segmentInput", comment: "")
+        static let segmentCheck = NSLocalizedString("CustomSheets-segmentCheck", comment: "")
+        static let segmentSheets = NSLocalizedString("CustomSheets-segmentSheets", comment: "")
+        static let segmentChange = NSLocalizedString("CustomSheets-segmentChange", comment: "")
+        static let descriptionName = NSLocalizedString("CustomSheets-descriptionName", comment: "")
+        static let descriptionTime = NSLocalizedString("CustomSheets-descriptionTime", comment: "")
+        static let descriptionTimeAdd = NSLocalizedString("CustomSheets-descriptionTimeAdd", comment: "")
+        
+        static let tableViewHeaderGeneral = NSLocalizedString("CustomSheets-tableViewHeaderGeneral", comment: "")
+        static let tableViewHeaderSheets = NSLocalizedString("CustomSheets-tableViewHeaderSheets", comment: "")
+        
+        static let titleMenu = NSLocalizedString("CustomSheets-titleMenu", comment: "")
         static let errorSelectTheme = NSLocalizedString("CustomSheets-errorSelectTheme", comment: "")
         static let errorLoseOtherSheets = NSLocalizedString("CustomSheets-errorLoseOtherSheets", comment: "")
-
+        
         static let universalSongEditErrorTitle = NSLocalizedString("CustomSheets-universalSongEditErrorTitle", comment: "")
         static let universalSongEditErrorMessage = NSLocalizedString("CustomSheets-universalSongEditErrorMessage", comment: "")
-        
-	}
+        static let errorChangeSheetGenerator = NSLocalizedString("CustomSheets-errorChangeSheetGenerator", comment: "")
+    }
     
 	struct SongServiceManagement {
 		static let title = NSLocalizedString("SongServiceManagement-title", comment: "")

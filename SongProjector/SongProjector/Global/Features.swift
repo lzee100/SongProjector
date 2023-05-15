@@ -14,7 +14,7 @@ var uploadSecret: String? {
 	UserDefaults.standard.string(forKey: secretKey)
 }
 
-enum Feature : String {
+enum Feature : String, Identifiable {
 	
 	case songService = "SongService"
 	case songs = "Songs"
@@ -27,7 +27,9 @@ enum Feature : String {
 	case uploadUniversalSong = "UploadUniversalSong"
     case about = "About"
 	
-	
+    var id: String {
+        return self.rawValue
+    }
 	
 	// MARK: - Properties
 	

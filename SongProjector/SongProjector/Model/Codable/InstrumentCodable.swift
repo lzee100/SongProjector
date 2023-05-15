@@ -10,7 +10,18 @@ import Foundation
 import FirebaseAuth
 import CoreData
 
-public struct InstrumentCodable: EntityCodableType {
+public struct InstrumentCodable: EntityCodableType, Identifiable {
+    
+    static func makeDefault() -> InstrumentCodable? {
+#if DEBUG
+        let userId = "userid"
+#else
+        guard let userId = Auth.auth().currentUser?.uid else {
+            return nil
+        }
+#endif
+        return InstrumentCodable(userUID: userId)
+    }
     
     init?(managedObject: NSManagedObject, context: NSManagedObjectContext) {
         guard let entity = managedObject as? Instrument else { return nil }
@@ -56,7 +67,7 @@ public struct InstrumentCodable: EntityCodableType {
     }
 
     
-    var id: String = "CHURCHBEAM" + UUID().uuidString
+    public var id: String = "CHURCHBEAM" + UUID().uuidString
     var userUID: String = ""
     var title: String? = nil
     var createdAt: Date = Date().localDate()
@@ -88,6 +99,32 @@ public struct InstrumentCodable: EntityCodableType {
         case resourcePath
         case typeString = "type"
         case resourcePathAWS
+    }
+    
+    init(
+        id: String = "CHURCHBEAM" + UUID().uuidString,
+        userUID: String = "",
+        title: String? = nil,
+        createdAt: Date = Date().localDate(),
+        updatedAt: Date? = nil,
+        deleteDate: Date? = nil,
+        rootDeleteDate: Date? = nil,
+        isLoop: Bool = false,
+        resourcePath: String? = nil,
+        typeString: String? =  nil,
+        resourcePathAWS: String? = nil
+    ) {
+        self.id = id
+        self.userUID = userUID
+        self.title = title
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.deleteDate = deleteDate
+        self.rootDeleteDate = rootDeleteDate
+        self.isLoop = isLoop
+        self.resourcePath = resourcePath
+        self.typeString = typeString
+        self.resourcePathAWS = resourcePathAWS
     }
     
     // MARK: - Decodable
@@ -197,4 +234,3 @@ extension InstrumentCodable: FileTransferable {
     }
 
 }
-
