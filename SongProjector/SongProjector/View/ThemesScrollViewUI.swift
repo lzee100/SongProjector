@@ -10,22 +10,18 @@ import SwiftUI
 
 struct ThemesScrollViewUI: View {
     
-    @ObservedObject private var model: WrappedStruct<ThemesSelectionModel>
-    
-    init(model: WrappedStruct<ThemesSelectionModel>) {
-        self.model = model
-    }
+    @StateObject var model: ThemesSelectionModel
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack() {
-                ForEach(model.item.themes) { theme in
+                ForEach(model.themes) { theme in
                     Button {
-                        model.item.didSelect(theme: theme)
+                        model.didSelect(theme: theme)
                     } label: {
                         Text(theme.title ?? "-")
                     }
-                    .styleAsSelectionCapsuleButton(isSelected: model.item.selectedTheme?.id == theme.id)
+                    .styleAsSelectionCapsuleButton(isSelected: model.selectedTheme?.id == theme.id)
                 }
             }
         }
@@ -33,7 +29,7 @@ struct ThemesScrollViewUI: View {
 }
 
 struct ThemesScrollViewUI_Previews: PreviewProvider {
-    @State static var model = WrappedStruct(withItem: ThemesSelectionModel(selectedTheme: nil, didSelectTheme: {_ in }))
+    @State static var model = ThemesSelectionModel(selectedTheme: nil)
     static var previews: some View {
         ThemesScrollViewUI(model: model)
     }

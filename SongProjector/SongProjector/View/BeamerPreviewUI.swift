@@ -18,7 +18,7 @@ struct BeamerPreviewUI: View {
     var body: some View {
         GeometryReader { screenProxy in
             TabView(selection: $selection) {
-                getTabView(screenSize: screenProxy.size)
+                getTabView()
             }
             .coordinateSpace(name: displayerId)
             .tabViewStyle(.page(indexDisplayMode: .always))
@@ -66,7 +66,7 @@ struct BeamerPreviewUI: View {
         }
     }
     
-    @ViewBuilder private func getTabView(screenSize: CGSize) -> some View {
+    @ViewBuilder private func getTabView() -> some View {
         
         if songService.item.selectedSong == nil {
             EmptyView()
@@ -81,13 +81,13 @@ struct BeamerPreviewUI: View {
                 } else if songObject.id == songService.item.selectedSong?.id {
                     
                     ForEach(Array(songObject.sheets.enumerated()), id: \.offset) { sheetOffset, sheet in
-                        SheetUIHelper.sheet(viewSize: screenSize, ratioOnHeight: false, songServiceModel: songService, sheet: sheet, isForExternalDisplay: false, showSelectionCover: false)
+                        SheetUIHelper.sheet(ratioOnHeight: false, songServiceModel: songService, sheet: sheet, isForExternalDisplay: false, showSelectionCover: false)
                             .tag(songService.item.getSheetIndexWithSongIndexAddedIfNeeded(sheetOffset))
                     }
                     
                 } else if let sheet = songObject.sheets.first {
                     
-                    SheetUIHelper.sheet(viewSize: screenSize, ratioOnHeight: false, songServiceModel: songService, sheet: sheet, isForExternalDisplay: false, showSelectionCover: false)
+                    SheetUIHelper.sheet(ratioOnHeight: false, songServiceModel: songService, sheet: sheet, isForExternalDisplay: false, showSelectionCover: false)
                         .tag(songService.item.getSongIndexWithSheetIndexAddedIfNeeded(songObject))
                     
                 } else {

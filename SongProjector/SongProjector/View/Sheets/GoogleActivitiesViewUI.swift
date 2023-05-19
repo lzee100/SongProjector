@@ -12,13 +12,11 @@ struct GoogleActivitiesViewEditUI: View {
     
     @State private var activityRowHeight: CGFloat = 1
     private let isForExternalDisplay: Bool
-    private let scaleFactor: CGFloat
     
     @ObservedObject private var editViewModel: WrappedStruct<EditSheetOrThemeViewModel>
     
-    init(editViewModel: WrappedStruct<EditSheetOrThemeViewModel>, scaleFactor: CGFloat, isForExternalDisplay: Bool) {
+    init(editViewModel: WrappedStruct<EditSheetOrThemeViewModel>, isForExternalDisplay: Bool) {
         self.editViewModel = editViewModel
-        self.scaleFactor = scaleFactor
         self.isForExternalDisplay = isForExternalDisplay
     }
     
@@ -28,13 +26,13 @@ struct GoogleActivitiesViewEditUI: View {
                 VStack {
                     if !hasNoTitle {
                         HStack {
-                            Text(getTitleAttributedString(text: editViewModel.item.title))
-                                .modifier(SheetTitleEditUIModifier(scaleFactor: scaleFactor, editViewModel: editViewModel))
+                            Text(getTitleAttributedString(text: editViewModel.item.title, viewSize: proxy.size))
+                                .modifier(SheetTitleEditUIModifier(scaleFactor: getScaleFactor(width: proxy.size.width), editViewModel: editViewModel))
                                 .lineLimit(1)
                             if editViewModel.item.displayTime {
                                 Spacer()
-                                Text(getTitleAttributedString(text: Date().time))
-                                    .modifier(SheetTitleEditUIModifier(scaleFactor: scaleFactor, editViewModel: editViewModel))
+                                Text(getTitleAttributedString(text: Date().time, viewSize: proxy.size))
+                                    .modifier(SheetTitleEditUIModifier(scaleFactor: getScaleFactor(width: proxy.size.width), editViewModel: editViewModel))
                                     .lineLimit(1)
                             }
                         }
@@ -42,10 +40,10 @@ struct GoogleActivitiesViewEditUI: View {
                     }
                     getActivitiesRow(sheetProxy: proxy)
                         .padding(EdgeInsets(
-                            top: getScaledValue(10),
-                            leading: getScaledValue(10),
+                            top: getScaleFactor(width: proxy.size.width) * 10,
+                            leading: getScaleFactor(width: proxy.size.width) * 10,
                             bottom: 0,
-                            trailing: getScaledValue(10))
+                            trailing: getScaleFactor(width: proxy.size.width) * 10)
                         )
                     
                     Spacer()
@@ -69,16 +67,16 @@ struct GoogleActivitiesViewEditUI: View {
                 VStack(spacing: 0) {
                     if googleActivities.count > 0 {
                         HStack {
-                            Text(getContentAttributedString(Date().toString("d MMMM hh:mm")))
-                            Text(getContentAttributedString("Geweldige activiteiten hier"))
+                            Text(getContentAttributedString(Date().toString("d MMMM hh:mm"), viewSize: proxy.size))
+                            Text(getContentAttributedString("Geweldige activiteiten hier", viewSize: proxy.size))
                             Spacer()
                         }.observeViewSize()
                     }
-                    ForEach(googleActivities.prefix(getMaxItemsFor(height: proxy.size.height)), id: \.self) { activity in
+                    ForEach(googleActivities.prefix(getMaxItemsFor(height: proxy.size.height, viewSize: proxy.size)), id: \.self) { activity in
                         if proxy.size.height + activityRowHeight < sheetProxy.size.height {
                             HStack {
-                                Text(getContentAttributedString(activity.startDate?.toString("d MMMM hh:mm") ?? "-"))
-                                Text(getContentAttributedString(activity.eventDescription ?? "-"))
+                                Text(getContentAttributedString(activity.startDate?.toString("d MMMM hh:mm") ?? "-", viewSize: proxy.size))
+                                Text(getContentAttributedString(activity.eventDescription ?? "-", viewSize: proxy.size))
                                 Spacer()
                             }.observeViewSize()
                         }
@@ -91,26 +89,22 @@ struct GoogleActivitiesViewEditUI: View {
         }
     }
     
-    private func getTitleAttributedString(text: String) -> AttributedString {
+    private func getTitleAttributedString(text: String, viewSize: CGSize) -> AttributedString {
         AttributedString(NSAttributedString(
             string: text,
-            attributes: editViewModel.item.getTitleAttributes(scaleFactor)
+            attributes: editViewModel.item.getTitleAttributes(getScaleFactor(width: viewSize.width))
         ))
     }
     
-    private func getContentAttributedString(_ text: String) -> AttributedString {
+    private func getContentAttributedString(_ text: String, viewSize: CGSize) -> AttributedString {
         AttributedString(NSAttributedString(
             string: text,
-            attributes: editViewModel.item.getLyricsAttributes(scaleFactor)
+            attributes: editViewModel.item.getLyricsAttributes(getScaleFactor(width: viewSize.width))
         ))
     }
 
     private var hasNoTitle: Bool {
         editViewModel.item.title.count == 0 && !editViewModel.item.displayTime
-    }
-    
-    private func getScaledValue(_ factor: CGFloat) -> CGFloat {
-        factor * scaleFactor
     }
     
     private func getSheetHeightFor(width: CGFloat) -> CGFloat {
@@ -121,10 +115,10 @@ struct GoogleActivitiesViewEditUI: View {
         (editViewModel.item.sheet as? SheetActivitiesCodable)?.hasGoogleActivities ?? []
     }
     
-    private func getMaxItemsFor(height: CGFloat) -> Int {
+    private func getMaxItemsFor(height: CGFloat, viewSize: CGSize) -> Int {
         guard height > 0, activityRowHeight > 0 else { return 0 }
         
-        let bottomMargin = getScaledValue(10)
+        let bottomMargin = getScaleFactor(width: viewSize.width) * 10
         let rowHeight = CGFloat(activityRowHeight)
         let one: Int = 1 // line outside of foreach to calculate height
         
@@ -138,7 +132,7 @@ struct GoogleActivitiesViewUI_Previews: PreviewProvider {
         @State static var editModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .sheet((cluster, imageSheet), sheetType: .SheetTitleImage), isUniversal: false, image: UIImage(named: "Pio-Sebastiaan-en-Marilou.jpg"))!)
 
     static var previews: some View {
-        GoogleActivitiesViewEditUI(editViewModel: editModel, scaleFactor: 1, isForExternalDisplay: false)
+        GoogleActivitiesViewEditUI(editViewModel: editModel, isForExternalDisplay: false)
     }
 }
 
@@ -147,7 +141,6 @@ struct GoogleActivitiesViewDisplayUI: View {
     
     @State private var activityRowHeight: CGFloat = .zero
     private let isForExternalDisplay: Bool
-    private let scaleFactor: CGFloat
     @ObservedObject private var songServiceModel: WrappedStruct<SongServiceUI>
     private let sheet: SheetMetaType
     private let showSelectionCover: Bool
@@ -159,10 +152,9 @@ struct GoogleActivitiesViewDisplayUI: View {
         theme?.contentAlignmentNumber.intValue ?? 0
     }
     
-    init(songServiceModel: WrappedStruct<SongServiceUI>, sheet: SheetMetaType, scaleFactor: CGFloat, isForExternalDisplay: Bool, showSelectionCover: Bool) {
+    init(songServiceModel: WrappedStruct<SongServiceUI>, sheet: SheetMetaType, isForExternalDisplay: Bool, showSelectionCover: Bool) {
         self.songServiceModel = songServiceModel
         self.sheet = sheet
-        self.scaleFactor = scaleFactor
         self.isForExternalDisplay = isForExternalDisplay
         self.showSelectionCover = showSelectionCover
         self.theme = songServiceModel.item.themeFor(sheet: sheet)
@@ -173,17 +165,17 @@ struct GoogleActivitiesViewDisplayUI: View {
                 VStack {
                     if !hasNoTitle {
                         HStack {
-                            Text(getTitleAttributedString(text: songServiceModel.item.sheetTitleFor(sheet: sheet) ?? ""))
+                            Text(getTitleAttributedString(text: songServiceModel.item.sheetTitleFor(sheet: sheet) ?? "", viewSize: proxy.size))
                                 .modifier(SheetTitleDisplayUIModifier(
-                                    scaleFactor: scaleFactor,
+                                    scaleFactor: getScaleFactor(width: proxy.size.width),
                                     alignmentNumber: titleAlignmentNumber,
                                     frameWidth: .infinity
                                 ))
                             if theme?.displayTime ?? false {
                                 Spacer()
-                                Text(getTitleAttributedString(text: Date().time))
+                                Text(getTitleAttributedString(text: Date().time, viewSize: proxy.size))
                                     .modifier(SheetTitleDisplayUIModifier(
-                                        scaleFactor: scaleFactor,
+                                        scaleFactor: getScaleFactor(width: proxy.size.width),
                                         alignmentNumber: titleAlignmentNumber
                                     ))
                             }
@@ -192,10 +184,10 @@ struct GoogleActivitiesViewDisplayUI: View {
                     }
                     getActivitiesRow(sheetProxy: proxy)
                         .padding(EdgeInsets(
-                            top: getScaledValue(10),
-                            leading: getScaledValue(10),
+                            top: getScaleFactor(width: proxy.size.width) * 10,
+                            leading: getScaleFactor(width: proxy.size.width) * 10,
                             bottom: 0,
-                            trailing: getScaledValue(10))
+                            trailing: getScaleFactor(width: proxy.size.width) * 10)
                         )
                     Spacer()
                 }
@@ -224,22 +216,22 @@ struct GoogleActivitiesViewDisplayUI: View {
                 VStack(spacing: 0) {
                     if googleActivities.count > 0 {
                         HStack {
-                            if let text = getContentAttributedString(Date().toString("d MMMM hh:mm")) {
+                            if let text = getContentAttributedString(Date().toString("d MMMM hh:mm"), viewSize: proxy.size) {
                                 Text(text)
                             }
-                            if let text = getContentAttributedString("Geweldige activiteiten hier") {
+                            if let text = getContentAttributedString("Geweldige activiteiten hier", viewSize: proxy.size) {
                                 Text(text)
                             }
                             Spacer()
                         }.observeViewSize()
                     }
-                    ForEach(googleActivities.prefix(getMaxItemsFor(height: proxy.size.height)), id: \.self) { activity in
+                    ForEach(googleActivities.prefix(getMaxItemsFor(height: proxy.size.height, viewSize: proxy.size)), id: \.self) { activity in
                         if proxy.size.height + activityRowHeight < sheetProxy.size.height {
                             HStack {
-                                if let text = getContentAttributedString(activity.startDate?.toString("d MMMM hh:mm") ?? "-") {
+                                if let text = getContentAttributedString(activity.startDate?.toString("d MMMM hh:mm") ?? "-", viewSize: proxy.size) {
                                     Text(text)
                                 }
-                                if let text = getContentAttributedString(activity.eventDescription ?? "-") {
+                                if let text = getContentAttributedString(activity.eventDescription ?? "-", viewSize: proxy.size) {
                                     Text(text)
                                 }
                                 Spacer()
@@ -254,29 +246,25 @@ struct GoogleActivitiesViewDisplayUI: View {
         }
     }
     
-    private func getTitleAttributedString(text: String) -> AttributedString {
+    private func getTitleAttributedString(text: String, viewSize: CGSize) -> AttributedString {
         AttributedString(NSAttributedString(
             string: text,
-            attributes: theme?.getTitleAttributes(scaleFactor) ?? [:]
+            attributes: theme?.getTitleAttributes(getScaleFactor(width: viewSize.width)) ?? [:]
         ))
     }
     
-    private func getContentAttributedString(_ text: String?) -> AttributedString? {
+    private func getContentAttributedString(_ text: String?, viewSize: CGSize) -> AttributedString? {
         guard let content = text else { return nil }
         return AttributedString(NSAttributedString(
             string: content,
-            attributes: theme?.getLyricsAttributes(scaleFactor) ?? [:]
+            attributes: theme?.getLyricsAttributes(getScaleFactor(width: viewSize.width)) ?? [:]
         ))
     }
     
     private var hasNoTitle: Bool {
         songServiceModel.item.sheetTitleFor(sheet: sheet)?.count ?? 0 == 0 && !(theme?.displayTime ?? true)
     }
-    
-    private func getScaledValue(_ factor: CGFloat) -> CGFloat {
-        factor * scaleFactor
-    }
-    
+        
     private func getSheetHeightFor(width: CGFloat) -> CGFloat {
         return externalDisplayWindowRatio * width
     }
@@ -285,10 +273,10 @@ struct GoogleActivitiesViewDisplayUI: View {
         (sheet as? SheetActivitiesCodable)?.hasGoogleActivities ?? []
     }
     
-    private func getMaxItemsFor(height: CGFloat) -> Int {
+    private func getMaxItemsFor(height: CGFloat, viewSize: CGSize) -> Int {
         guard height > 0, activityRowHeight > 0 else { return 0 }
         
-        let bottomMargin = getScaledValue(10)
+        let bottomMargin = getScaleFactor(width: viewSize.width) * 10
         let rowHeight = CGFloat(activityRowHeight)
         let one: Int = 1 // line outside of foreach to calculate height
         

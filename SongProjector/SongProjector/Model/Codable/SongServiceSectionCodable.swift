@@ -11,7 +11,20 @@ import FirebaseAuth
 import CoreData
 import CoreData
 
-public struct SongServiceSectionCodable: EntityCodableType, Codable {
+public struct SongServiceSectionCodable: EntityCodableType, Codable, Identifiable {
+    
+    static func makeDefault(title: String, position: Int, numberOfSongs: Int, tags: [TagCodable]) -> SongServiceSectionCodable? {
+#if DEBUG
+        let userId = "userid"
+#else
+        guard let userId = Auth.auth().currentUser?.uid else {
+            return nil
+        }
+#endif
+        
+        return SongServiceSectionCodable(userUID: userId, title: title, position: position, numberOfSongs: numberOfSongs, tags: tags)
+    }
+    
     
     init?(managedObject: NSManagedObject, context: NSManagedObjectContext) {
         guard let entity = managedObject as? SongServiceSection else { return nil }
@@ -52,11 +65,12 @@ public struct SongServiceSectionCodable: EntityCodableType, Codable {
         
         entity.position = position
         entity.numberOfSongs = numberOfSongs
-        entity.tagIds = tagIds.joined(separator: ",")
+        entity.tagIds = tags.compactMap({ $0.id }).joined(separator: ",")
+        tags.forEach { $0.getManagedObjectFrom(context) }
 
     }
     
-    var id: String = "CHURCHBEAM" + UUID().uuidString
+    public var id: String = "CHURCHBEAM" + UUID().uuidString
     var userUID: String = ""
     var title: String? = nil
     var createdAt: Date = Date().localDate()
@@ -90,6 +104,33 @@ public struct SongServiceSectionCodable: EntityCodableType, Codable {
         case tags
     }
     
+    init(
+        id: String = "CHURCHBEAM" + UUID().uuidString,
+        userUID: String = "",
+        title: String? = nil,
+        createdAt: Date = Date().localDate(),
+        updatedAt: Date? = nil,
+        deleteDate: Date? = nil,
+        isTemp: Bool = false,
+        rootDeleteDate: Date? = nil,
+        position: Int,
+        numberOfSongs: Int,
+        tags: [TagCodable]
+    ) {
+        self.id = id
+        self.userUID = userUID
+        self.title = title
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.deleteDate = deleteDate
+        self.isTemp = isTemp
+        self.rootDeleteDate = rootDeleteDate
+        self.position = Int16(position)
+        self.numberOfSongs = Int16(numberOfSongs)
+        self.tags = tags
+    }
+    
+    
     // MARK: - Decodable
     
     public init(from decoder: Decoder) throws {
@@ -116,12 +157,13 @@ public struct SongServiceSectionCodable: EntityCodableType, Codable {
         
         position = try container.decode(Int16.self, forKey: .position)
         numberOfSongs = try container.decode(Int16.self, forKey: .numberOfSongs)
-        let tags = try container.decodeIfPresent([VTag].self, forKey: .tags) ?? []
+        tags = try container.decodeIfPresent([TagCodable].self, forKey: .tags) ?? []
         tagIds = tags.compactMap({ $0.id })
     }
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
         try container.encodeIfPresent(title, forKey: .title)
         guard let userUID = Auth.auth().currentUser?.uid else {
             throw RequestError.unAuthorizedNoUser(requester: String(describing: self))
@@ -143,7 +185,7 @@ public struct SongServiceSectionCodable: EntityCodableType, Codable {
         
         try container.encode(position, forKey: .position)
         try container.encode(numberOfSongs, forKey: .numberOfSongs)
-        try container.encode(hasTags(moc: newMOCBackground), forKey: .tags)
+        try container.encode(tags, forKey: .tags)
     }
 }
 

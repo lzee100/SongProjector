@@ -35,7 +35,7 @@ enum FileType: String, CaseIterable {
     
 }
 
-enum TransferError: Error {
+enum TransferError: LocalizedError {
     case noDataToUpload
     case uploadFailedNoErrorInfo
     case noURLForDownloadingFile
@@ -58,7 +58,7 @@ enum TransferError: Error {
 }
 
 enum TransferResult {
-    case failed(error: Error)
+    case failed(error: LocalizedError)
     case success
     
     var isFailed: Bool {
@@ -149,6 +149,16 @@ struct SingleTransferManagerConstants {
 
 class FileSubmitter: SingleTransferManagerProtocol {
     
+    enum SubmitError: LocalizedError {
+        case error(Error)
+        
+        var errorDescription: String? {
+            switch self {
+            case .error(let error): return AppText.RequesterErrors.failedUploadingMedia(requester: "", error: error)
+            }
+        }
+    }
+    
     let transferObject: TransferObject
     
     required init(transferObject: TransferObject) {
@@ -185,7 +195,7 @@ class FileSubmitter: SingleTransferManagerProtocol {
             return .success
         } catch {
             let err = error
-            return .failed(error: error)
+            return .failed(error: SubmitError.error(error))
         }
     }
 }

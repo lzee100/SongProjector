@@ -11,7 +11,8 @@ import SwiftUI
 struct MixerViewUI: View {
     
     private let volumeUseCase = VolumeUseCase()
-    
+
+    @EnvironmentObject private var soundPlayer: SoundPlayer2
     @State private var pianoVolume: Float = 0
     @State private var guitarVolume: Float = 0
     @State private var bassGuitarVolume: Float = 0
@@ -37,15 +38,19 @@ struct MixerViewUI: View {
         .rotationEffect(.degrees(-90))
         .onChange(of: pianoVolume) { newValue in
             volumeUseCase.set(volume: newValue, instrumentType: .piano)
+            soundPlayer.setVolumeFor(.piano, volume: newValue)
         }
         .onChange(of: guitarVolume) { newValue in
             volumeUseCase.set(volume: newValue, instrumentType: .guitar)
+            soundPlayer.setVolumeFor(.guitar, volume: newValue)
         }
         .onChange(of: bassGuitarVolume) { newValue in
             volumeUseCase.set(volume: newValue, instrumentType: .bassGuitar)
+            soundPlayer.setVolumeFor(.bassGuitar, volume: newValue)
         }
         .onChange(of: drumsVolume) { newValue in
             volumeUseCase.set(volume: newValue, instrumentType: .drums)
+            soundPlayer.setVolumeFor(.drums, volume: newValue)
         }
         .onAppear {
             if let pianoVolume = volumeUseCase.getVolumeFor(instrumentType: .piano) {

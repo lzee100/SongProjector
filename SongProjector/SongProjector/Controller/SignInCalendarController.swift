@@ -21,8 +21,8 @@ class SignInCalendarController: UIViewController {
     @IBOutlet var singInButtonContainer: UIView!
     @IBOutlet var closeButton: UIBarButtonItem!
     
-    lazy var signInButton: GoogleSignInButton = {
-        GoogleSignInButton(viewModel: GoogleSignInButtonViewModel(), action: handleSignInButton)
+    lazy var signInButton: GoogleSignInSwift.GoogleSignInButton = {
+        GoogleSignInSwift.GoogleSignInButton(viewModel: GoogleSignInButtonViewModel(), action: handleSignInButton)
     }()
 
     override func viewDidLoad() {

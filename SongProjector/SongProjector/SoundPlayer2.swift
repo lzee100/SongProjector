@@ -11,6 +11,52 @@ import SwiftUI
 import AVFoundation
 import MediaPlayer
 
+class CollectionCountDown {
+    
+    private var timers: [Timer] = []
+    private let countDownDidChange: ((Int?) -> Void)
+    private var countDownNumber = 0
+    
+    init(countDownDidChange: @escaping ((Int?) -> Void)) {
+        self.countDownDidChange = countDownDidChange
+    }
+    
+    func start(song: SongObjectUI) {
+        stop()
+        setTimers(for: song)
+    }
+    
+    func stop() {
+        countDownDidChange(nil)
+        timers.forEach { $0.invalidate() }
+        timers = []
+    }
+    
+    private func setTimers(for song: SongObjectUI) {
+        let startTime = song.cluster.startTime
+        if startTime > 0 {
+            switch startTime {
+            case 5...: countDownNumber = 3
+            case 1 ..< 1.6: countDownNumber = 1
+            default: countDownNumber = 1
+            }
+            
+            for counter in (1...countDownNumber).reversed() {
+                let timer = Timer.scheduledTimer(withTimeInterval: startTime - Double(counter), repeats: false) { [weak self] timer in
+                    self?.countDownDidChange(counter)
+                }
+                timers.append(timer)
+            }
+            let finishCountDowntimer = Timer.scheduledTimer(withTimeInterval: startTime, repeats: false) { [weak self] _ in
+                self?.countDownDidChange(nil)
+                self?.stop()
+            }
+            timers.append(finishCountDowntimer)
+        }
+    }
+    
+}
+
 class SheetPlayer {
     var didSelectSheet: ((String?) -> Void)?
     private var selectedSong: SongObjectUI?
@@ -36,7 +82,7 @@ class SheetPlayer {
         timers.forEach { $0.invalidate() }
         timers = []
     }
-
+    
     private func setCollectionTimer() {
         guard let selectedSong else { return }
         let timer = Timer.scheduledTimer(withTimeInterval: selectedSong.cluster.time, repeats: true) { [weak self] _ in
@@ -66,14 +112,17 @@ class SheetPlayer {
 class SoundWithSheetPlayer {
     private let soundPlayer2: SoundPlayer2
     private let sheetPlayer: SheetPlayer
+    private let collectionCountDown: CollectionCountDown
 
-    init(soundPlayer: SoundPlayer2, didSelectSheet: ((String?) -> Void)? = nil) {
+    init(soundPlayer: SoundPlayer2, collectionCountDown: CollectionCountDown, didSelectSheet: ((String?) -> Void)? = nil) {
         sheetPlayer = SheetPlayer(didSelectSheet: didSelectSheet)
         self.soundPlayer2 = soundPlayer
+        self.collectionCountDown = collectionCountDown
     }
     func play(song: SongObjectUI, pianoSolo: Bool = false) {
         if song.cluster.hasLocalMusic {
             soundPlayer2.play(song: song, pianoSolo: pianoSolo)
+            collectionCountDown.start(song: song)
         }
         sheetPlayer.play(song: song)
     }
@@ -81,6 +130,7 @@ class SoundWithSheetPlayer {
     func stop() {
         soundPlayer2.stop()
         sheetPlayer.stop()
+        collectionCountDown.stop()
     }
 }
 
@@ -178,11 +228,15 @@ class SoundPlayer2: ObservableObject {
         return players.first(where: { $0.instrumentType == instrumentType })
     }
     
-    func setVolumeFor(_ type: InstrumentType, volume: Float, saveValue: Bool = true) {
-        playerFor(instrumentType: type)?.setVolume(volume, fadeDuration: 0)
-        if saveValue {
-            VolumeManager.set(volume: volume, instrumentType: type)
+    func updateVolumeForInstrumentForMuteChange(instrument: InstrumentCodable) {
+        guard selectedSong?.cluster.hasInstruments.contains(where: { $0.id == instrument.id }) ?? false else { return }
+        if let player = players.first(where: { $0.instrumentType == instrument.type }) {
+            setVolumeFor(player: player)
         }
+    }
+    
+    func setVolumeFor(_ type: InstrumentType, volume: Float) {
+        playerFor(instrumentType: type)?.setVolume(volume, fadeDuration: 0)
     }
     
     func getVolumeFor(_ type: InstrumentType) -> Float? {

@@ -13,10 +13,10 @@ struct GenerateLyricsSheetContentUseCase {
     static func getTitle(from text: String) -> String {
         let start = text.index(text.startIndex, offsetBy: 0)
         guard let end = text.range(of: "\n\n") else { return "" }
-        let cleanString = text.replacingOccurrences(of: "\n\n", with: "", options: .caseInsensitive, range: start..<end.upperBound)
-        if let rangeTitle = cleanString.range(of: "\n"){
+
+        if let rangeTitle = text.range(of: "\n\n"){
             let rangeSheetTitle = start..<rangeTitle.lowerBound
-            return String(cleanString[rangeSheetTitle])
+            return String(text[rangeSheetTitle])
         }
         return ""
     }

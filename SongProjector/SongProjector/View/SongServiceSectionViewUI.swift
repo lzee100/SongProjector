@@ -12,7 +12,6 @@ import UIKit
 struct SongServiceSectionViewUI: View {
     
     var superViewSize: CGSize
-    let sectionTitle: String
     @Binding var selectedSong: SongObjectUI?
     var song: SongObjectUI
     @SwiftUI.Environment(\.horizontalSizeClass) var horizontalSizeClass
@@ -26,42 +25,18 @@ struct SongServiceSectionViewUI: View {
     }
     
     @ViewBuilder var contentPortrait: some View {
-        VStack(spacing: 0) {
-            sectionLabel
+        HStack(spacing: 0) {
             HStack(spacing: 0) {
-                HStack(spacing: 0) {
-                    titleView
-                    Spacer()
-                }
-                Spacer()
-                if song.cluster.hasPianoSolo {
-                    PianoSoloViewUI(selectedSong: $selectedSong)
-                        .padding()
-                        .frame(maxWidth: 200, minHeight: 0, maxHeight: 100)
-                } else {
-                    instrumentsView
-                }
-            }
-            .background(Color(uiColor: .softBlueGrey))
-            .aspectRatio(1.0, contentMode: .fit)
-            .cornerRadius(10)
-        }
-    }
-    
-    @ViewBuilder var contentLandscape: some View {
-        GeometryReader { ruler in
-            VStack(spacing: 0) {
-                Spacer()
                 titleView
                 Spacer()
-                if song.cluster.hasPianoSolo {
-                    PianoSoloViewUI(selectedSong: $selectedSong)
-                        .frame(height: ruler.size.height * 0.25)
-                } else if song.cluster.hasLocalMusic {
-                    instrumentsView
-                } else {
-                    EmptyView()
-                }
+            }
+            Spacer()
+            if song.cluster.hasPianoSolo {
+                PianoSoloViewUI(selectedSong: $selectedSong)
+                    .padding()
+                    .frame(maxWidth: 200, minHeight: 0, maxHeight: 100)
+            } else {
+                instrumentsView
             }
         }
         .background(Color(uiColor: .softBlueGrey))
@@ -69,16 +44,35 @@ struct SongServiceSectionViewUI: View {
         .cornerRadius(10)
     }
     
-    @ViewBuilder var sectionLabel: some View {
-        HStack(spacing: 0) {
-            Text(sectionTitle)
-                .font(.title2)
-                .foregroundColor(.white)
-                .lineLimit(2)
-                .multilineTextAlignment(.leading)
-                .padding()
-            Spacer()
+    @ViewBuilder var contentLandscape: some View {
+        GeometryReader { ruler in
+            VStack(spacing: 0) {
+                ZStack {
+                    
+                    VStack {
+                        Spacer()
+                    titleView
+                        Spacer()
+                    }
+                    
+                    VStack {
+                        Spacer()
+                        if song.cluster.hasPianoSolo {
+                            PianoSoloViewUI(selectedSong: $selectedSong)
+                                .frame(height: ruler.size.height * 0.25)
+                        } else if song.cluster.hasLocalMusic {
+                            instrumentsView
+                        } else {
+                            EmptyView()
+                        }
+                    }
+                    
+                }
+            }
         }
+        .background(Color(uiColor: .softBlueGrey))
+        .aspectRatio(1.0, contentMode: .fit)
+        .cornerRadius(10)
     }
     
     @ViewBuilder var titleView: some View {
@@ -102,7 +96,7 @@ struct SongServiceSectionViewUI: View {
 struct SongServiceSectionViewUI_Previews: PreviewProvider {
     @State static var selectedSong: SongObjectUI? = nil
     static var previews: some View {
-        SongServiceSectionViewUI(superViewSize: superViewSizePortrait, sectionTitle: "section", selectedSong: $selectedSong, song: SongObjectUI(cluster: .makeDefault()!))
+        SongServiceSectionViewUI(superViewSize: superViewSizePortrait, selectedSong: $selectedSong, song: SongObjectUI(cluster: .makeDefault()!))
             .previewLayout(.sizeThatFits)
             .previewInterfaceOrientation(.portrait)
     }

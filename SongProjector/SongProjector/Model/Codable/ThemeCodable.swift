@@ -11,7 +11,7 @@ import FirebaseAuth
 import CoreData
 import UIKit
 
-struct ThemeCodable: EntityCodableType, Identifiable {
+struct ThemeCodable: EntityCodableType, Identifiable, Equatable {
     
     static func makeDefault(isDeletable: Bool = true, isHidden: Bool = false) -> ThemeCodable? {
         let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "position", ascending: false))
@@ -34,7 +34,7 @@ struct ThemeCodable: EntityCodableType, Identifiable {
             rootDeleteDate: nil,
             allHaveTitle: false,
             backgroundColor: UIColor(hex: "FFFFFF")!.hexCode,
-            backgroundTransparancyNumber: 100,
+            backgroundTransparancyNumber: 1,
             displayTime: false,
             hasEmptySheet: false,
             imagePath: nil,

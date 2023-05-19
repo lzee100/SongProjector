@@ -27,6 +27,42 @@ extension View {
     }
 }
 
+struct ObserveSheetContentSize: ViewModifier {
+    private var sizeView: some View {
+        GeometryReader { geometry in
+            Color.clear.preference(key: ObserveSheetContentSizeKey.self, value: geometry.size)
+        }
+    }
+
+    func body(content: Content) -> some View {
+        content.background(sizeView)
+    }
+}
+
+extension View {
+    func observeSheetContentSize() -> some View {
+        self.modifier(ObserveSheetContentSize())
+    }
+}
+
+struct ObserveSheetSize: ViewModifier {
+    private var sizeView: some View {
+        GeometryReader { geometry in
+            Color.clear.preference(key: ObserveSheetSizeKey.self, value: geometry.size)
+        }
+    }
+
+    func body(content: Content) -> some View {
+        content.background(sizeView)
+    }
+}
+
+extension View {
+    func observeSheetSize() -> some View {
+        self.modifier(ObserveSheetSize())
+    }
+}
+
 struct SizeCalculator: ViewModifier {
     
     @Binding var size: CGSize

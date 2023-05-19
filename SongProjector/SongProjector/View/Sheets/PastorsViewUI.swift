@@ -10,13 +10,11 @@ import SwiftUI
 
 struct PastorsViewEditUI: View {
     private let isForExternalDisplay: Bool
-    private let scaleFactor: CGFloat
     
     @ObservedObject private var editViewModel: WrappedStruct<EditSheetOrThemeViewModel>
     
-    init(editViewModel: WrappedStruct<EditSheetOrThemeViewModel>, scaleFactor: CGFloat, isForExternalDisplay: Bool) {
+    init(editViewModel: WrappedStruct<EditSheetOrThemeViewModel>, isForExternalDisplay: Bool) {
         self.editViewModel = editViewModel
-        self.scaleFactor = scaleFactor
         self.isForExternalDisplay = isForExternalDisplay
     }
     
@@ -35,8 +33,8 @@ struct PastorsViewEditUI: View {
                 }
                 VStack(spacing: 0) {
                     Spacer()
-                    titleView
-                    contentView
+                    titleView(proxy.size)
+                    contentView(proxy.size)
                     Spacer()
                 }
                 .padding(EdgeInsets(top: 0, leading: getScaleFactor(width: proxy.size.width) * 15, bottom: 0, trailing: 0))
@@ -50,14 +48,14 @@ struct PastorsViewEditUI: View {
         }
     }
     
-    @ViewBuilder private var titleView: some View {
-        Text(getTitleAttributedString(editViewModel.item.title))
+    @ViewBuilder private func titleView(_ viewSize: CGSize) -> some View {
+        Text(getTitleAttributedString(editViewModel.item.title, viewSize: viewSize))
             .frame(maxWidth: .infinity, alignment: .leading)
             .lineLimit(2)
     }
     
-    @ViewBuilder private var contentView: some View {
-        Text(getContentAttributedString())
+    @ViewBuilder private func contentView(_ viewSize: CGSize) -> some View {
+        Text(getContentAttributedString(viewSize: viewSize))
             .frame(maxWidth: .infinity, alignment: .leading)
             .lineLimit(2)
     }
@@ -77,17 +75,17 @@ struct PastorsViewEditUI: View {
         }
     }
     
-    private func getTitleAttributedString(_ text: String) -> AttributedString {
+    private func getTitleAttributedString(_ text: String, viewSize: CGSize) -> AttributedString {
         AttributedString(NSAttributedString(
             string: text,
-            attributes: editViewModel.item.getTitleAttributes(scaleFactor)
+            attributes: editViewModel.item.getTitleAttributes(getScaleFactor(width: viewSize.width))
         ))
     }
     
-    private func getContentAttributedString() -> AttributedString {
+    private func getContentAttributedString(viewSize: CGSize) -> AttributedString {
         AttributedString(NSAttributedString(
             string: editViewModel.item.sheetContent,
-            attributes: editViewModel.item.getLyricsAttributes(scaleFactor)
+            attributes: editViewModel.item.getLyricsAttributes(getScaleFactor(width: viewSize.width))
         ))
     }
     
@@ -104,16 +102,14 @@ struct PastorsViewEditUI: View {
 
 struct PastorsViewDisplayUI: View {
     private let isForExternalDisplay: Bool
-    private let scaleFactor: CGFloat
     @ObservedObject private var songServiceModel: WrappedStruct<SongServiceUI>
     private let sheet: SheetMetaType
     private let showSelectionCover: Bool
     private var theme: ThemeCodable?
     
-    init(serviceModel: WrappedStruct<SongServiceUI>, sheet: SheetMetaType, scaleFactor: CGFloat, isForExternalDisplay: Bool, showSelectionCover: Bool) {
+    init(serviceModel: WrappedStruct<SongServiceUI>, sheet: SheetMetaType, isForExternalDisplay: Bool, showSelectionCover: Bool) {
         _songServiceModel = ObservedObject(initialValue: serviceModel)
         self.sheet = sheet
-        self.scaleFactor = scaleFactor
         self.isForExternalDisplay = isForExternalDisplay
         self.showSelectionCover = showSelectionCover
         self.theme = serviceModel.item.themeFor(sheet: sheet)
@@ -134,8 +130,8 @@ struct PastorsViewDisplayUI: View {
                 }
                 VStack(spacing: 0) {
                     Spacer()
-                    titleView
-                    contentView
+                    titleView(proxy.size)
+                    contentView(proxy.size)
                     Spacer()
                 }
                 .padding(EdgeInsets(top: 0, leading: getScaleFactor(width: proxy.size.width) * 15, bottom: 0, trailing: 0))
@@ -156,10 +152,10 @@ struct PastorsViewDisplayUI: View {
         }
     }
     
-    @ViewBuilder private var titleView: some View {
+    @ViewBuilder private func titleView(_ viewSize: CGSize) -> some View {
         
         if let title = sheet.title {
-            Text(getTitleAttributedString(title))
+            Text(getTitleAttributedString(title, viewSize: viewSize))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .lineLimit(2)
         } else {
@@ -167,8 +163,8 @@ struct PastorsViewDisplayUI: View {
         }
     }
     
-    @ViewBuilder private var contentView: some View {
-        Text(getContentAttributedString())
+    @ViewBuilder private func contentView(_ viewSize: CGSize) -> some View {
+        Text(getContentAttributedString(viewSize: viewSize))
             .frame(maxWidth: .infinity, alignment: .leading)
             .lineLimit(2)
     }
@@ -188,18 +184,18 @@ struct PastorsViewDisplayUI: View {
         }
     }
     
-    private func getTitleAttributedString(_ text: String) -> AttributedString {
+    private func getTitleAttributedString(_ text: String, viewSize: CGSize) -> AttributedString {
         AttributedString(NSAttributedString(
             string: text,
-            attributes: theme?.getTitleAttributes(scaleFactor) ?? [:]
+            attributes: theme?.getTitleAttributes(getScaleFactor(width: viewSize.width)) ?? [:]
         ))
     }
     
-    private func getContentAttributedString() -> AttributedString {
+    private func getContentAttributedString(viewSize: CGSize) -> AttributedString {
         guard let content = sheet.sheetContent else { return AttributedString() }
         return AttributedString(NSAttributedString(
             string: content,
-            attributes: theme?.getLyricsAttributes(scaleFactor) ?? [:]
+            attributes: theme?.getLyricsAttributes(getScaleFactor(width: viewSize.width)) ?? [:]
         ))
     }
     
@@ -218,6 +214,6 @@ struct PastorsViewUI_Previews: PreviewProvider {
     @State static var editModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .sheet((cluster, pastorsSheet), sheetType: .SheetPastors), isUniversal: false)!)
 
     static var previews: some View {
-        PastorsViewEditUI(editViewModel: editModel, scaleFactor: 1, isForExternalDisplay: false)
+        PastorsViewEditUI(editViewModel: editModel, isForExternalDisplay: false)
     }
 }

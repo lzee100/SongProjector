@@ -15,10 +15,10 @@ struct CollectionListViewUI: View {
     private var collection: ClusterCodable
     @EnvironmentObject private var soundPlayer: SoundPlayer2
     @ObservedObject private var fetchMusicUseCase: FetchMusicUseCase
-    private let managedCollections: ManagedCollections
+    @ObservedObject private var collectionsViewModel: CollectionsViewModel
 
     init(
-        managedCollections: ManagedCollections,
+        collectionsViewModel: CollectionsViewModel,
         collection: ClusterCodable,
         fetchMusicUseCase: FetchMusicUseCase,
         isSelectable: Bool,
@@ -26,7 +26,7 @@ struct CollectionListViewUI: View {
     ) {
         self.collection = collection
         self._fetchMusicUseCase = ObservedObject(initialValue: fetchMusicUseCase)
-        self.managedCollections = managedCollections
+        self.collectionsViewModel = collectionsViewModel
         self.isSelectable = isSelectable
         self.isSelected = isSelected
     }
@@ -62,7 +62,7 @@ struct CollectionListViewUI: View {
             case .finished(let result):
                 switch result {
                 case .success:
-                    managedCollections.reload()
+                    collectionsViewModel.reload()
                 default: return
                 }
             default: return
@@ -105,7 +105,7 @@ struct CollectionListViewUI: View {
 
 struct CollectionListViewUI_Previews: PreviewProvider {
     static var previews: some View {
-        CollectionListViewUI(managedCollections: ManagedCollections(), collection: .makeDefault()!, fetchMusicUseCase: FetchMusicUseCase(cluster: .makeDefault()!), isSelectable: false, isSelected: false)
+        CollectionListViewUI(collectionsViewModel: CollectionsViewModel(), collection: .makeDefault()!, fetchMusicUseCase: FetchMusicUseCase(cluster: .makeDefault()!), isSelectable: false, isSelected: false)
             .previewLayout(.sizeThatFits)
     }
 }

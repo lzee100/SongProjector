@@ -31,14 +31,15 @@ struct SheetContentEditModifier: ViewModifier {
     
     func body(content: Content) -> some View {
         if multiLine {
-            content.padding(EdgeInsets(
+            content
+               .padding(EdgeInsets(
                 top: getScaledValue(5),
                 leading: getScaledValue(10),
                 bottom: getScaledValue(10),
                 trailing: getScaledValue(10)
             ))
-            .multilineTextAlignment(alignment)
             .frame(maxWidth: .infinity)
+            .multilineTextAlignment(.center)
         } else {
             content.padding(EdgeInsets(
                 top: getScaledValue(5),

@@ -13,7 +13,7 @@ import FirebaseAuth
 
 struct EditSheetOrThemeViewModel: Identifiable {
     
-    let id = UUID()
+    let id = UUID().uuidString
     
     enum EditMode {
         case theme(ThemeCodable?)
@@ -88,8 +88,16 @@ struct EditSheetOrThemeViewModel: Identifiable {
     var newSelectedThemeImageTempDirPath: String? = nil
     var newSelectedSheetImageTempDirPath: String? = nil
     
-    var newSelectedThemeImage: UIImage? // binding
-    var newSelectedSheetImage: UIImage? // binding
+    var newSelectedThemeImage: UIImage? { // binding
+        didSet {
+            newSelectedThemeImageThumb = newSelectedThemeImage?.resized(withPercentage: 0.4)
+        }
+    }
+    var newSelectedSheetImage: UIImage? { // binding
+        didSet {
+            newSelectedSheetImageThumb = newSelectedSheetImage?.resized(withPercentage: 0.4)
+        }
+    }
     private var newSelectedThemeImageThumb: UIImage?
     private var newSelectedSheetImageThumb: UIImage?
     
@@ -271,6 +279,7 @@ struct EditSheetOrThemeViewModel: Identifiable {
     }
     
     mutating func setNewThemeImage(_ image: UIImage) {
+        isThemeImageDeleted = false
         newSelectedThemeImage = image
         newSelectedThemeImageThumb = image.resized(withPercentage: 0.4)
     }
@@ -418,7 +427,7 @@ struct EditSheetOrThemeViewModel: Identifiable {
     
     mutating func deleteThemeImage() {
         newSelectedThemeImage = nil
-        backgroundTransparancyNumber = 100
+        backgroundTransparancyNumber = 1
         isThemeImageDeleted = true
     }
     
@@ -481,7 +490,7 @@ struct EditSheetOrThemeViewModel: Identifiable {
         }
     }
     
-    mutating func createSheet() throws -> SheetMetaType? {
+    mutating func createSheetCodable() throws -> SheetMetaType? {
         let sheetImagePath = try newSelectedThemeImage?.saveTemp()
         newSelectedThemeImageTempDirPath = sheetImagePath
 
@@ -500,7 +509,7 @@ struct EditSheetOrThemeViewModel: Identifiable {
                     isEmptySheet: false,
                     position: position,
                     time: 0,
-                    hasTheme: nil,
+                    hasTheme: try createThemeCodable(),
                     content: self.sheetContent,
                     isBibleVers: false
                 )
@@ -516,7 +525,7 @@ struct EditSheetOrThemeViewModel: Identifiable {
                     isEmptySheet: false,
                     position: position,
                     time: 0,
-                    hasTheme: nil,
+                    hasTheme: try createThemeCodable(),
                     content: sheetContent,
                     hasTitle: !self.title.isBlanc,
                     imageBorderColor: nil,
@@ -539,7 +548,7 @@ struct EditSheetOrThemeViewModel: Identifiable {
                     isEmptySheet: false,
                     position: position,
                     time: 0,
-                    hasTheme: nil,
+                    hasTheme: try createThemeCodable(),
                     content: sheetContent,
                     imagePath: self.sheetImagePath,
                     thumbnailPath: self.sheetImagePathThumb,
@@ -557,7 +566,7 @@ struct EditSheetOrThemeViewModel: Identifiable {
                     isEmptySheet: false,
                     position: position,
                     time: 0,
-                    hasTheme: nil,
+                    hasTheme: try createThemeCodable(),
                     content: self.sheetContent,
                     isBibleVers: false
                 )
@@ -573,7 +582,7 @@ struct EditSheetOrThemeViewModel: Identifiable {
                     isEmptySheet: false,
                     position: position,
                     time: 0,
-                    hasTheme: nil
+                    hasTheme: try createThemeCodable()
                 )
             case .SheetActivities:
                 return SheetActivitiesCodable(

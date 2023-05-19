@@ -14,12 +14,14 @@ struct SongServiceViewUI: View {
     let dismiss: (() -> Void)
     private let alignment: Sticky.Alignment
     @EnvironmentObject private var soundPlayer: SoundPlayer2
+    @State private var collectionCountDown: CollectionCountDown?
     @SwiftUI.Environment(\.horizontalSizeClass) var horizontalSizeClass
     @State var selectedSheet: String?
     @State var isUserInteractionEnabledForBeamer = true
     @State var showingMixerView = false
     @State private var soundAndSheetPlayer: SoundWithSheetPlayer?
     @State private var showingSongServiceEditor = false
+    @State private var countDownValue: Int? = nil
 //    @State var songService: WrappedStruct<SongServiceUI>
     @ObservedObject var songService: WrappedStruct<SongServiceUI>
 
@@ -35,12 +37,29 @@ struct SongServiceViewUI: View {
             GeometryReader { ruler in
                 VStack(alignment: .center, spacing: 0) {
                     if songService.item.sectionedSongs.count != 0 {
-                        BeamerPreviewUI(songService: songService)
-                            .aspectRatio(externalDisplayWindowRatioHeightWidth, contentMode: .fit)
-                            .padding(EdgeInsets(top: 10, leading: 50, bottom: 0, trailing: 50))
-                            .allowsHitTesting(isUserInteractionEnabledForBeamer)
+                            BeamerPreviewUI(songService: songService)
+                                .aspectRatio(externalDisplayWindowRatioHeightWidth, contentMode: .fit)
+                                .padding(EdgeInsets(top: 10, leading: 50, bottom: 0, trailing: 50))
+                                .allowsHitTesting(isUserInteractionEnabledForBeamer)
+                                .overlay {
+                                    if let countDownValue {
+                                        VStack {
+                                            Spacer()
+                                            HStack {
+                                                Spacer()
+                                                Text("\(countDownValue)")
+                                                    .styleAs(font: .xxxLargeBold, color: .white)
+                                                    .padding(EdgeInsets(top: 5, leading: 50, bottom: 5, trailing: 50))
+                                                    .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 10))
+                                                    .environment(\.colorScheme, .dark)
+                                                Spacer()
+                                            }
+                                            .padding([.bottom], 30)
+                                        }
+                                    }
+                                }
                     } else {
-                        RoundedRectangle(cornerRadius: 20).fill(Color(uiColor: .black1))
+                        RoundedRectangle(cornerRadius: 20).fill(Color(uiColor: .grey1))
                             .aspectRatio(externalDisplayWindowRatioHeightWidth, contentMode: .fit)
                             .padding(EdgeInsets(top: 10, leading: 50, bottom: 0, trailing: 50))
                             .overlay {
@@ -52,35 +71,13 @@ struct SongServiceViewUI: View {
                                             .resizable()
                                             .frame(width: 40, height: 40)
                                         Text(AppText.SongService.startNew)
-                                            .styleAs(font: .xxNormal, color: .white.opacity(0.5))
+                                            .styleAs(font: .xxNormal, color: Color(uiColor: .blackColor).opacity(0.5))
                                             .shadow(color: .white.opacity(0.3), radius: 2)
                                     }
                                 }
                             }
                     }
-                    HStack {
-                        Spacer()
-                        Button {
-                            showingMixerView.toggle()
-                        } label: {
-                            Image("Mixer")
-                                .resizable()
-                                .frame(width: 50, height: 50)
-                                .foregroundColor(.white)
-                                .padding([.top, .bottom])
-                        }
-                        .sheet(isPresented: $showingMixerView, content: {
-                            ZStack {
-                                Color.black.opacity(0.95).ignoresSafeArea(.all)
-                                MixerViewUI()
-                                    .presentationDetents([.height(400)])
-                                    .background(.clear)
-                            }
-                        })
-                        Spacer()
-                    }
                     Spacer()
-                    
                     SheetScrollViewUI(songServiceModel: songService, superViewSize: ruler.size, isSelectable: true)
                         .frame(maxWidth: isCompactOrVertical(ruler: ruler) ? (ruler.size.width * 0.7) : .infinity, maxHeight: isCompactOrVertical(ruler: ruler) ? .infinity : 220)
                 }
@@ -89,6 +86,15 @@ struct SongServiceViewUI: View {
                 .navigationBarTitle(AppText.SongService.title)
                 .toolbar {
                     ToolbarItemGroup(placement: .navigationBarTrailing) {
+                        Button {
+                            showingMixerView.toggle()
+                        } label: {
+                            Image("Mixer")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 30, height: 30)
+                                .tint(Color(uiColor: themeHighlighted))
+                        }
                         if songService.item.sectionedSongs.count > 0 {
                             Button {
                                 showingSongServiceEditor.toggle()
@@ -103,11 +109,15 @@ struct SongServiceViewUI: View {
                 .toolbarBackground(.visible, for: .navigationBar)
                 .toolbarColorScheme(.dark, for: .tabBar)
                 .toolbarBackground(.black, for: .tabBar)
-
             }
         }
         .onAppear {
-            soundAndSheetPlayer = SoundWithSheetPlayer(soundPlayer: soundPlayer) { id in
+            if collectionCountDown == nil {
+                collectionCountDown = CollectionCountDown(countDownDidChange: { countDown in
+                    countDownValue = countDown
+                })
+            }
+            soundAndSheetPlayer = SoundWithSheetPlayer(soundPlayer: soundPlayer, collectionCountDown: collectionCountDown!) { id in
                 self.songService.item.selectedSheetId = id
             }
             let songService: [SongServiceSettings] = DataFetcher().getEntities(moc: moc)
@@ -141,8 +151,16 @@ struct SongServiceViewUI: View {
             soundAndSheetPlayer.play(song: song)
         }
         .sheet(isPresented: $showingSongServiceEditor) {
-            SongServiceEditorViewUI(songService: songService, showingSongServiceEditorViewUI: $showingSongServiceEditor)
+            SongServiceEditorViewUI(songService: songService, viewModel: SongServiceEditorModel(songServiceUI: songService.item), showingSongServiceEditorViewUI: $showingSongServiceEditor)
         }
+        .sheet(isPresented: $showingMixerView, content: {
+            ZStack {
+                Color(uiColor: .black1).ignoresSafeArea(.all)
+                MixerViewUI()
+                    .presentationDetents([.height(400)])
+                    .background(.clear)
+            }
+        })
     }
     
     func isCompactOrVertical(ruler: GeometryProxy) -> Bool {

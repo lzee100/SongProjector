@@ -47,6 +47,7 @@ class AppText: NSObject {
         static let restore = NSLocalizedString("Actions-restore", comment: "")
         static let generateSongService = NSLocalizedString("Actions-generateSongService", comment: "")
         static let share = NSLocalizedString("Actions-share", comment: "")
+        static let change = NSLocalizedString("Actions-change", comment: "")
 	}
 	
 	struct Intro {
@@ -203,7 +204,8 @@ class AppText: NSObject {
 		static let changeLyrics = NSLocalizedString("NewSong-changeLyrics", comment: "")
 		static let newLyrics = NSLocalizedString("NewSong-newLyrics", comment: "")
 		static let changeTitleTime = NSLocalizedString("NewSong-changeTitleTime", comment: "")
-
+        static let timeExplained = NSLocalizedString("NewSong-timeExplained", comment: "")
+        static let tagsExplained = NSLocalizedString("NewSong-tagsExplained", comment: "")
 	}
     
     struct Lyrics {
@@ -227,7 +229,8 @@ class AppText: NSObject {
         static let newTag = NSLocalizedString("Tags-newTag", comment: "")
         static let name = NSLocalizedString("Tags-name", comment: "")
         static let deletedClusters = NSLocalizedString("Tags-deletedClusters", comment: "")
-        
+        static let errorEmptyTitle = NSLocalizedString("Tags-errorEmptyTitle", comment: "")
+        static let editTag = NSLocalizedString("Tags-editTag", comment: "")
 	}
 	
     struct CustomSheets {
@@ -263,6 +266,16 @@ class AppText: NSObject {
 		static let addTags = NSLocalizedString("SongServiceManagement-addTags", comment: "")
 		static let name = NSLocalizedString("SongServiceManagement-name", comment: "")
 		static let numberOfSongs = NSLocalizedString("SongServiceManagement-numberOfSongs", comment: "")
+        static let titleNewSongServiceSchema = NSLocalizedString("SongServiceManagement-titleNewSongServiceSchema", comment: "")
+        static let titleEditSongServiceSchema = NSLocalizedString("SongServiceManagement-titleEditSongServiceSchema", comment: "")
+        static let addSection = NSLocalizedString("SongServiceManagement-addSection", comment: "")
+        static let errorAddASection = NSLocalizedString("SongServiceManagement-errorAddASection", comment: "")        
+        static func errorInSections(_ sections: [Int]) -> String {
+            return String(format: NSLocalizedString("SongServiceManagement-errorInSections", comment: ""),  sections.compactMap { String($0)}.joined(separator: ", "))
+        }
+        static func errorInSection(_ section: Int) -> String {
+            return String(format: NSLocalizedString("SongServiceManagement-errorInSections", comment: ""),  String(section))
+        }
 	}
 	
 	struct Settings {
@@ -439,6 +452,9 @@ class AppText: NSObject {
     }
     
     struct RequesterErrors {
+        static func errorParsing(_ error: Error) -> String {
+            return String(format: NSLocalizedString("RequesterErrors-errorParsing", comment: ""),  error.localizedDescription)
+        }
         static func failedSavingImageLocallyBeforeSubmit(requester: String, error: Error) -> String {
             return String(format: NSLocalizedString("RequesterErrors-failedSavingImageLocallyBeforeSubmit", comment: ""), requester, error.localizedDescription)
         }

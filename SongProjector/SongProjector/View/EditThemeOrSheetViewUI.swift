@@ -17,7 +17,7 @@ struct EditThemeOrSheetViewUI: View {
     let navigationTitle: String
     
     let delegate: EditThemeOrSheetViewUIDelegate?
-    @State var editingCollectionModel: WrappedStruct<ClusterEditorModel>?
+    @State var editingCollectionModel: CollectionEditorViewModel? // TODO: remove, do in didDismiss
     @State var isSectionGeneralExpanded = true
     @State var isSectionTitleExpanded = false
     @State var isSectionContentExpanded = false
@@ -33,7 +33,7 @@ struct EditThemeOrSheetViewUI: View {
                     VStack(){
                         HStack {
                             Spacer(minLength: 0)
-                            SheetUIHelper.sheet(viewSize: proxy.size, ratioOnHeight: false, maxWidth: 500, editSheetOrThemeModel: editSheetOrThemeModel, isForExternalDisplay: false)
+                            SheetUIHelper.sheet(ratioOnHeight: false, maxWidth: 500, editSheetOrThemeModel: editSheetOrThemeModel, isForExternalDisplay: false)
                             Spacer(minLength: 0)
                         }
                         ScrollViewReader { proxy in
@@ -84,10 +84,19 @@ struct EditThemeOrSheetViewUI: View {
                     ToolbarItemGroup(placement: .navigationBarTrailing) {
                         if let editingCollectionModel {
                             Button {
-                                editingCollectionModel.item.sheets.append(editSheetOrThemeModel.item)
+                                if let index = editingCollectionModel.getIndexOf(editSheetOrThemeModel.item) {
+                                    editingCollectionModel.sheets.remove(at: index)
+                                    editingCollectionModel.sheets.insert(editSheetOrThemeModel.item, at: index)
+                                } else {
+                                    editingCollectionModel.sheets.append(editSheetOrThemeModel.item)
+                                }
                                 delegate?.dismiss()
                             } label: {
-                                Text(AppText.Actions.add)
+                                if editingCollectionModel.getIndexOf(editSheetOrThemeModel.item) == nil {
+                                    Text(AppText.Actions.add)
+                                } else {
+                                    Text(AppText.Actions.change)
+                                }
                             }
                             .tint(Color(uiColor: themeHighlighted))
                         } else {

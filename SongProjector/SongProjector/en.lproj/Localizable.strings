@@ -36,6 +36,7 @@
 "Actions-restore" = "Restore";
 "Actions-generateSongService" = "Generate song service";
 "Actions-share" = "Share";
+"Actions-change" = "Change";
 
 "Intro-introHalloTitle" = "Hello";
 "Intro-introHalloContent" = "Welcome to Churchbeam. This app supports the entire song service in your church.";
@@ -138,6 +139,9 @@
 "NewSong-changeLyrics" = "Change song service";
 "NewSong-newLyrics" = "New song service";
 "NewSong-changeTitleTime" = "Change title & length of time";
+"NewSong-timeExplained" = "The number of seconds the next slide\nis automatically shown. Automatically\nmoves from the last slide to the first\n(endless loop).";
+"NewSong-tagsExplained" = "The tags for this collection. When\nyou create a song service, you can\nindicate which tags belong in which\nsection so that the song service\ngenerator can automatically\ngenerate a song service.";
+
 
 "Lyrics-titleBibleText" = "Enter scriptures";
 "Lyrics-titleLyrics" = "Enter text";
@@ -153,6 +157,8 @@
 "Tags-newTag" = "New tag";
 "Tags-name" = "Name";
 "Tags-deletedClusters" = "Deleted items";
+"Tags-errorEmptyTitle" = "Title can not be empty";
+"Tags-editTag" = "Change tag";
 
 
 "CustomSheets-title" = "Change sheets";
@@ -182,6 +188,13 @@
 "SongServiceManagement-addTags" = "Add tags";
 "SongServiceManagement-name" = "Name";
 "SongServiceManagement-numberOfSongs" = "Number of songs: ";
+"SongServiceManagement-newSongService" = "New songservice structure";
+"SongServiceManagement-titleNewSongServiceSchema" = "New songservice scheme";
+"SongServiceManagement-titleEditSongServiceSchema" = "Change songservice schema";
+"SongServiceManagement-addSection" = "Add section";
+"SongServiceManagement-errorAddASection" = "Add a section to the song service";
+"SongServiceManagement-errorInSections" = "Please add a title and at least one tag in the following sections: %$";
+"SongServiceManagement-errorInSection" = "Please add a title and at least one tag in this section: %$";
 
 "Settings-title" = "Settings";
 "Settings-descriptionGoogleSub" = "Login to retrieve activities";
@@ -336,6 +349,7 @@
 "RequesterErrors-errorSavingTempImage" = "Error in saving image locally before sending; %@, error: %@";
 "RequesterErrors-notConnectedToNetwork" = "No connection to the internet";
 "RequesterErrors-unknown" = "Unknown error for %@, error: %@";
+"RequesterErrors-errorParsing" = "Something went wrong when parsing the data: %@";
 
 "IAPErrors-paymentNotAllowed" = "You are not authorized to make payments";
 "IAPErrors-busyPurchasing" = "There is already a transaction in progress.";

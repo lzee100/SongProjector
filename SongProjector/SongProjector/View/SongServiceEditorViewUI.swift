@@ -29,6 +29,22 @@ class SongServiceEditorModel: ObservableObject {
     @Published private(set) var sectionedSongs: [SongServiceSectionWithSongs] = []
     @Published private(set) var songServiceSettings: SongServiceSettingsCodable? = nil
     
+    init(songServiceUI: SongServiceUI) {
+        guard songServiceUI.songs.count > 0 else { return }
+        let songServiceSettings: [SongServiceSettings] = DataFetcher().getEntities(moc: moc)
+        if let songServiceSettings = songServiceSettings.compactMap({ $0 }).compactMap({ SongServiceSettingsCodable(managedObject: $0, context: moc) }).first {
+            self.songServiceSettings = songServiceSettings
+            if songServiceUI.sectionedSongs.count == 1 {
+                customSelectedSongs = songServiceUI.sectionedSongs.flatMap { $0.songs }.map { $0.cluster }
+            } else {
+                sectionedSongs = songServiceUI.sectionedSongs
+            }
+        }
+    }
+    
+    init() {
+    }
+    
     var editButtons: [EditButtons] {
        if songServiceSettings == nil, customSelectedSongs.count == 0 {
            return [.generateSongService, .add]
@@ -92,7 +108,7 @@ class SongServiceEditorModel: ObservableObject {
 struct SongServiceEditorViewUI: View {
     
     let songService: WrappedStruct<SongServiceUI>
-    @ObservedObject var viewModel = SongServiceEditorModel()
+    @ObservedObject var viewModel: SongServiceEditorModel
     @State private var songServiceSettingsFetchProgress: RequesterResult = .idle
     @State private var showingCollectionsView = false
     @State private var editingSection: SongServiceSectionWithSongs? = nil
@@ -145,7 +161,7 @@ struct SongServiceEditorViewUI: View {
                     editingSection: editingSection,
                     songServiceEditorModel: viewModel,
                     mandatoryTags: mandatoryTags,
-                    tagSelectionModel: WrappedStruct(withItem: TagSelectionModel(mandatoryTags: mandatoryTags))
+                    tagSelectionModel: TagSelectionModel(mandatoryTags: mandatoryTags)
                 )
             }
         }
@@ -275,6 +291,6 @@ struct SongServiceEditorViewUI_Previews: PreviewProvider {
     @State static var model = WrappedStruct(withItem: SongServiceUI())
     @State static var showing = false
     static var previews: some View {
-        SongServiceEditorViewUI(songService: model, showingSongServiceEditorViewUI: $showing)
+        SongServiceEditorViewUI(songService: model, viewModel: SongServiceEditorModel(), showingSongServiceEditorViewUI: $showing)
     }
 }

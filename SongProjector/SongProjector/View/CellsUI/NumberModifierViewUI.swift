@@ -39,7 +39,8 @@ struct NumberModifierViewUI<T>: View where T: Numeric, T: CustomStringConvertibl
                         .foregroundColor(Color(uiColor: themeHighlighted))
                         .padding()
                 }
-                
+                .buttonStyle(.borderless)
+
                 Text("\(viewModel.numberValue.description)")
                     .styleAs(font: .xNormal)
                 
@@ -52,6 +53,7 @@ struct NumberModifierViewUI<T>: View where T: Numeric, T: CustomStringConvertibl
                         .foregroundColor(Color(uiColor: themeHighlighted))
                         .padding()
                 }
+                .buttonStyle(.borderless)
             }
         }
     }

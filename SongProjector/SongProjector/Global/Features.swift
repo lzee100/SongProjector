@@ -33,7 +33,7 @@ enum Feature : String, Identifiable {
 	
 	// MARK: - Properties
 	
-    static let all = [songService, songs, themes, more, tags, songServiceManagement, settings, uploadUniversalSong, about]
+    static let all = [songService, songs, themes, tags, songServiceManagement, settings, uploadUniversalSong, about]
 
 	var titel : String {
 		return rawValue

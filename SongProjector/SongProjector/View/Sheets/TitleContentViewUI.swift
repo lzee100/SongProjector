@@ -65,47 +65,58 @@ struct TitleContentViewDisplayUI_Previews: PreviewProvider {
 
 struct TitleContentViewEditUI: View {
     
-    @State private(set) var textViewSize: CGSize = .zero
-    @State private(set) var contentTextViewSize: CGSize = .zero
+    @State var sheetSize: CGSize
 
+    @ObservedObject private var editViewModel: WrappedStruct<EditSheetOrThemeViewModel>
     private let isForExternalDisplay: Bool
     
-    @ObservedObject private var editViewModel: WrappedStruct<EditSheetOrThemeViewModel>
-    
-    init(editViewModel: WrappedStruct<EditSheetOrThemeViewModel>, isForExternalDisplay: Bool) {
+    init(editViewModel: WrappedStruct<EditSheetOrThemeViewModel>, sheetSize: CGSize, isForExternalDisplay: Bool) {
+        self.sheetSize = sheetSize
         self.editViewModel = editViewModel
         self.isForExternalDisplay = isForExternalDisplay
     }
-
+    
     var body: some View {
-        GeometryReader { proxy in
             VStack(spacing: 0) {
+                
                 HStack {
-                    Text(getTitleAttributedString(text: editViewModel.item.title, viewSize: getScaleFactor(width: proxy.size.width)))
-                        .modifier(SheetTitleEditUIModifier(scaleFactor: getScaleFactor(width: proxy.size.width), editViewModel: editViewModel, frameWidth: .infinity))
+                    Text(getTitleAttributedString(text: editViewModel.item.title, viewSize: sheetSize))
+                        .modifier(SheetTitleEditUIModifier(scaleFactor: getScaleFactor(width: sheetSize.width), editViewModel: editViewModel, frameWidth: .infinity))
                         .lineLimit(1)
                     if editViewModel.item.displayTime {
                         Spacer()
-                        Text(getTitleAttributedString(text: Date().time))
-                            .modifier(SheetTitleEditUIModifier(scaleFactor: getScaleFactor(width: proxy.size.width), editViewModel: editViewModel, frameWidth: .infinity))
+                        Text(getTitleAttributedString(text: Date().time, viewSize: sheetSize))
+                            .modifier(SheetTitleEditUIModifier(scaleFactor: getScaleFactor(width: sheetSize.width), editViewModel: editViewModel, frameWidth: .infinity))
                             .lineLimit(1)
                     }
                 }
                 .frame(maxWidth: .infinity)
                 
-                GeometryReader { proxy in
-                    Text(getContentAttributedString(viewSize: getScaleFactor(width: proxy.size.width)))
+                HStack{
+                    if [1, 2].contains(editViewModel.item.theme.contentAlignmentNumber) {
+                        Spacer()
+                    }
+                    Text(getContentAttributedString(viewSize: sheetSize))
+                        .modifier(SheetContentDisplayModifier(
+                            scaleFactor: getScaleFactor(width: sheetSize.width),
+                            multiLine: true,
+                            alignment: editViewModel.item.theme.contentAlignmentNumber.intValue
+                        ))
+                    if [0, 1].contains(editViewModel.item.theme.contentAlignmentNumber) {
+                        Spacer()
+                    }
                 }
-                .observeViewSize()
-                .modifier(SheetContentEditModifier(scaleFactor: getScaleFactor(width: proxy.size.width), multiLine: true, editViewModel: editViewModel))
                 Spacer()
             }
+            .observeViewSize()
+            .onPreferenceChange(SizePreferenceKey.self, perform: { size in
+                sheetSize = size
+            })
             .setBackgroundImage(isForExternalDisplay: false, editModel: editViewModel)
             .modifier(SheetBackgroundColorAndOpacityEditModifier(editViewModel: editViewModel))
             .cornerRadius(10)
             .aspectRatio(16 / 9, contentMode: .fit)
             .ignoresSafeArea()
-        }
     }
     
     private func getTitleAttributedString(text: String, viewSize: CGSize) -> AttributedString {
@@ -158,7 +169,6 @@ struct SheetBackgroundColorAndOpacityEditModifier: ViewModifier {
 struct TitleContentViewDisplayUI: View {
     
     private let isForExternalDisplay: Bool
-    private let scaleFactor: CGFloat
     @ObservedObject private var songServiceModel: WrappedStruct<SongServiceUI>
     private let sheet: SheetMetaType
     private let showSelectionCover: Bool

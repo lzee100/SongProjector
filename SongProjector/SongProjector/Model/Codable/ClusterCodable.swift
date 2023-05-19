@@ -12,7 +12,7 @@ import CoreData
 
 public struct ClusterCodable: EntityCodableType, Identifiable, Equatable {
     
-    static func makeDefault() -> ClusterCodable? {
+    static func makeDefault(userUID: String? = nil) -> ClusterCodable? {
 #if DEBUG
         let userId = "userid"
 #else
@@ -21,7 +21,7 @@ public struct ClusterCodable: EntityCodableType, Identifiable, Equatable {
         }
 #endif
         
-        return ClusterCodable(userUID: userId)
+        return ClusterCodable(userUID: userUID ?? userId)
     }
     
     init(
@@ -116,7 +116,7 @@ hasSheets: [SheetMetaType] = [SheetTitleContentCodable.makeDefault()].compactMap
                 .getEntities(moc: context, predicates: instrumentIds.split(separator: ",")
                     .map(String.init)
                     .map{ NSPredicate.get(id: $0) }, sort: nil, predicateCompoundType: .or)
-            hasInstruments = instruments.compactMap { InstrumentCodable(managedObject: $0, context: context) }
+            hasInstruments = instruments.compactMap { InstrumentCodable(managedObject: $0, context: context) }.sorted(by: {$0.type?.position ?? 0 < $1.type?.position ?? 0 })
         }
         let predicates: [NSPredicate] = tagIds.map { .get(id: $0) }
         let tags: [Tag] = DataFetcher().getEntities(moc: context, predicates: predicates, predicateCompoundType: .or)
@@ -198,6 +198,9 @@ hasSheets: [SheetMetaType] = [SheetTitleContentCodable.makeDefault()].compactMap
     var tagIds: [String] = []
     
     public var isTypeSong: Bool {
+        if hasSheets.contains(where: { $0.theme?.isHidden ?? false }) {
+            return false
+        }
         return !hasSheets.contains(where: { $0.theme?.isHidden == true  }) && hasSheets.count > 0 && !hasSheets.compactMap({ $0 as? SheetTitleContentCodable }).contains(where: { $0.isBibleVers })
     }
     

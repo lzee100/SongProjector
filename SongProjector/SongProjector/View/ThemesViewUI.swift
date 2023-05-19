@@ -8,19 +8,23 @@
 
 import SwiftUI
 
-struct ThemesViewModel {
+@MainActor class ThemesViewModel: ObservableObject {
     
-    private(set) var themes: [ThemeCodable] = []
+    @Published var error: LocalizedError?
     
-    mutating func loadThemes() {
+    @Published private(set) var themes: [ThemeCodable] = []
+    @Published private(set) var showingLoader = false
+
+    
+    func reloadThemes() {
         setThemes(searchText: nil)
     }
     
-    mutating func filterOn(_ searchText: String) {
+    func filterOn(_ searchText: String) {
         setThemes(searchText: searchText == "" ? nil : searchText)
     }
     
-    private mutating func setThemes(searchText: String?) {
+    private func setThemes(searchText: String?) {
         let predicates: [NSPredicate] = [searchText?.lowercased()]
             .compactMap { $0 }
             .map { NSPredicate(format: "title CONTAINS[cd] %@", $0) }
@@ -28,6 +32,35 @@ struct ThemesViewModel {
         self.themes = themes.compactMap { ThemeCodable(managedObject: $0, context: moc) }
     }
     
+    func fetchRemoteThemes() async {
+        reloadThemes()
+        showingLoader = true
+        do {
+            let result = try await FetchCollectionsUseCase(fetchAll: false).fetch()
+            switch result {
+            case .succes(let clusters): saveLocally(clusters)
+            case .failed(let error):
+                showingLoader = false
+                self.error = error
+            }
+        } catch {
+            self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
+        }
+    }
+    
+    private func saveLocally(_ entities: [ClusterCodable]) {
+        ManagedObjectContextHandler<ClusterCodable>().save(entities: entities, completion: { [weak self] _ in
+            self?.reload()
+            if entities.count > 0 {
+                Task {
+                    await fetchRemoteCollections()
+                }
+            } else {
+                self?.showingLoader = false
+            }
+        })
+    }
+
 }
 
 struct ThemesViewUI: View {
@@ -37,7 +70,7 @@ struct ThemesViewUI: View {
     @State private var deleteThemeProgress: RequesterResult = .idle
     @State fileprivate(set) var selectedTheme: ThemeCodable?
     @State private var isShowingThemesEditor = false
-    @State private var deleteThemeError: Error?
+    @State private var deleteThemeError: LocalizedError?
 
     var body: some View {
         NavigationStack {
@@ -71,7 +104,7 @@ struct ThemesViewUI: View {
             }
         }
         .onAppear {
-            viewModel.item.loadThemes()
+            viewModel.item.reloadThemes()
         }
         .onChange(of: searchText) { newValue in
             viewModel.item.filterOn(newValue)
@@ -99,15 +132,15 @@ struct ThemesViewUI: View {
             switch newValue {
             case .finished(let result):
                 switch result {
-                case .success: viewModel.item.loadThemes()
+                case .success: viewModel.item.reloadThemes()
                 case .failure(let error):
-                    deleteThemeError = error
+                    deleteThemeError = error as? LocalizedError // TODO: is this value a localized error?
                 }
             default: break
             }
         }
         .onChange(of: isShowingThemesEditor) { _ in
-            viewModel.item.loadThemes()
+            viewModel.item.reloadThemes()
         }
     }
     
@@ -153,7 +186,7 @@ struct ThemesViewUI_Previews: PreviewProvider {
     }
 }
 extension View {
-    func errorAlert(error: Binding<Error?>, buttonTitle: String = "OK") -> some View {
+    func errorAlert(error: Binding<LocalizedError?>, buttonTitle: String = "OK") -> some View {
         let localizedAlertError = LocalizedAlertError(error: error.wrappedValue)
         return alert(isPresented: .constant(localizedAlertError != nil), error: localizedAlertError) { _ in
             Button(buttonTitle) {

@@ -36,6 +36,7 @@
 "Actions-restore" = "Herstel";
 "Actions-generateSongService" = "Genereer zangdienst";
 "Actions-share" = "Deel";
+"Actions-change" = "Verander";
 
 "Intro-introHalloTitle" = "Hallo";
 "Intro-introHalloContent" = "Welkom bij Churchbeam. Deze app ondersteund de gehele voordienst in jouw kerk.";
@@ -140,6 +141,8 @@
 "NewSong-changeLyrics" = "Wijzig zangtekst";
 "NewSong-newLyrics" = "Nieuwe zangtekst";
 "NewSong-changeTitleTime" = "Wijzig titel & tijdsduur";
+"NewSong-timeExplained" = "Het aantal seconden dat de\nvolgende dia automatisch wordt\nafgespeeld. Gaat automatisch naar\nvan de laatste dia naar de\neerste (eindeloze loop).";
+"NewSong-tagsExplained" = "De tags voor deze collectie. Wanneer je een zangdienst aanmaakt, dan kan je aangeven welke tags in welke sectie horen zodat de zangdienst generator automatisch een zangdienst kan genereren.";
 
 "Lyrics-titleBibleText" = "Voer bijbelteksten in";
 "Lyrics-titleLyrics" = "Voer tekst in";
@@ -155,7 +158,8 @@
 "Tags-newTag" = "Nieuwe tag";
 "Tags-name" = "Naam";
 "Tags-deletedClusters" = "Verwijderde items";
-
+"Tags-errorEmptyTitle" = "De titel mag niet leeg zijn";
+"Tags-editTag" = "Wijzig tag";
 
 "CustomSheets-title" = "Wijzig dia's";
 "CustomSheets-namePlaceHolder" = "Voer titel in (voor zoeken)";
@@ -177,13 +181,19 @@
 "CustomSheets-universalSongEditErrorTitle" = "Kon tekst niet aanpassen";
 "CustomSheets-universalSongEditErrorMessage" = "Dit liedje heeft muziek en heeft een weergave tijdsduur bij elke dia. Het aanpassen van het AANTAL dia's zorgt ervoor dat de tijden niet meer kloppen. Je wijzigingen zijn ongedaan gemaakt.";
 
-"SongServiceManagement-title" = "Beheer zangdienst";
+"SongServiceManagement-title" = "Zangdienst schema";
 "SongServiceManagement-numberOfSections" = "Aantal secties";
 "SongServiceManagement-section" = "Sectie";
 "SongServiceManagement-nameSection" = "Naam sectie";
 "SongServiceManagement-addTags" = "Voeg tags toe";
 "SongServiceManagement-name" = "Naam";
 "SongServiceManagement-numberOfSongs" = "Aantal liedjes: ";
+"SongServiceManagement-titleNewSongServiceSchema" = "Nieuwe zangdienst schema";
+"SongServiceManagement-titleEditSongServiceSchema" = "Wijzig zangdienst schema";
+"SongServiceManagement-addSection" = "Voeg sectie toe";
+"SongServiceManagement-errorAddASection" = "Voeg een sectie toe aan het schema";
+"SongServiceManagement-errorInSections" = "Voeg een titel en ten minste 1 tag toe aan de volgende secties: %$";
+"SongServiceManagement-errorInSection" = "Voeg een titel en ten minste 1 tag toe aan deze sectie: %$";
 
 "Settings-title" = "Instellingen";
 "Settings-descriptionGoogleSub" = "Login om activiteiten op te halen";
@@ -323,6 +333,7 @@
 "SingInGoogleController-title" = "Inloggen Agenda";
 "SingInGoogleController-infoText" = "Om de activiteiten op te halen uit je kerk agenda is het nodig om in te loggen bij Google agenda. Klik hieronder om (opnieuw) in te loggen bij Google.";
 
+"RequesterErrors-errorParsing" = "Er ging iets mis met het verwerken van de data: %@";
 "RequesterErrors-failedSavingImageLocallyBeforeSubmit" = "Kon media niet op apparaat opslaan voor %@: %@";
 "RequesterErrors-failedDownloadingMedia" = "Kon media niet downloaden voor %@: %@";
 "RequesterErrors-failedUploadingMedia" = "Kon media niet uploaden voor %@: %@";

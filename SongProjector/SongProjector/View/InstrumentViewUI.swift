@@ -13,6 +13,8 @@ struct InstrumentViewUI: View {
     @State var isSelected: Bool = true
     @State private var orientation: Sticky.Alignment = .vertical
     var instrument: InstrumentCodable
+    @EnvironmentObject private var soundPlayer: SoundPlayer2
+
     
     var body: some View {
         VStack(spacing: 2) {
@@ -29,11 +31,12 @@ struct InstrumentViewUI: View {
         .onTapGesture {
             isSelected.toggle()
             MuteInstrumentsUseCase().setMuteFor(instrument: instrument, isMuted: !isSelected)
+            soundPlayer.updateVolumeForInstrumentForMuteChange(instrument: instrument)
         }
         .background(.black)
         .cornerRadius(orientation.isVertical ? 10 : 0)
         .onAppear {
-            if [.landscapeLeft, .landscapeRight].contains(UIDevice.current.orientation) {
+            if UIDevice.current.orientation.isLandscape {
                 self.orientation = .horizontal
             } else {
                 self.orientation = .vertical
@@ -41,7 +44,7 @@ struct InstrumentViewUI: View {
             isSelected = !MuteInstrumentsUseCase().isMutedFor(instrument: instrument)
         }
         .onRotate { orientation in
-            if [.landscapeLeft, .landscapeRight].contains(orientation) {
+            if UIDevice.current.orientation.isLandscape {
                 self.orientation = .horizontal
             } else {
                 self.orientation = .vertical

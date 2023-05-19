@@ -10,7 +10,20 @@ import Foundation
 import FirebaseAuth
 import CoreData
 
-public struct SongServiceSettingsCodable: EntityCodableType {
+public struct SongServiceSettingsCodable: EntityCodableType, Identifiable {
+    
+    static func makeDefault(userUID: String? = nil) -> SongServiceSettingsCodable? {
+#if DEBUG
+        let userId = "userid"
+#else
+        guard let userId = Auth.auth().currentUser?.uid else {
+            return nil
+        }
+#endif
+        
+        return SongServiceSettingsCodable(userUID: userUID ?? userId)
+    }
+
     
     init?(managedObject: NSManagedObject, context: NSManagedObjectContext) {
         guard let entity = managedObject as? SongServiceSettings else { return nil }
@@ -47,9 +60,10 @@ public struct SongServiceSettingsCodable: EntityCodableType {
         entity.rootDeleteDate = rootDeleteDate?.nsDate
         
         entity.sectionIds = sections.map { $0.id }.joined(separator: ",")
+        sections.forEach { $0.getManagedObjectFrom(context) }
     }
     
-    var id: String = "CHURCHBEAM" + UUID().uuidString
+    public var id: String = "CHURCHBEAM" + UUID().uuidString
     var userUID: String = ""
     var title: String? = nil
     var createdAt: Date = Date().localDate()
@@ -72,6 +86,29 @@ public struct SongServiceSettingsCodable: EntityCodableType {
         
         case sections
     }
+    
+    init(
+        id: String = "CHURCHBEAM" + UUID().uuidString,
+        userUID: String = "",
+        title: String? = nil,
+        createdAt: Date = Date().localDate(),
+        updatedAt: Date? = nil,
+        deleteDate: Date? = nil,
+        isTemp: Bool = false,
+        rootDeleteDate: Date? = nil,
+        sections: [SongServiceSectionCodable] = []
+    ) {
+        self.id = id
+        self.userUID = userUID
+        self.title = title
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.deleteDate = deleteDate
+        self.isTemp = isTemp
+        self.rootDeleteDate = rootDeleteDate
+        self.sections = sections
+    }
+
     
     // MARK: - Decodable
     
@@ -102,6 +139,7 @@ public struct SongServiceSettingsCodable: EntityCodableType {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
         try container.encodeIfPresent(title, forKey: .title)
         guard let userUID = Auth.auth().currentUser?.uid else {
             throw RequestError.unAuthorizedNoUser(requester: String(describing: self))

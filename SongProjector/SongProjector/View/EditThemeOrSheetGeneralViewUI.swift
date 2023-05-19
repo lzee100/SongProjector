@@ -63,7 +63,7 @@ struct EditThemeOrSheetGeneralViewUI: View {
             }
             
             if editSheetOrThemeModel.item.getThemeImage(thumb: true) != nil {
-                Slider(value: $editSheetOrThemeModel.item.backgroundTransparancyNumber, in: 0.0...100.0) {
+                Slider(value: $editSheetOrThemeModel.item.backgroundTransparancyNumber, in: 0.0...1.0) {
                     Text(AppText.NewTheme.descriptionBackgroundTransparency)
                         .styleAs(font: .xNormal)
                 }

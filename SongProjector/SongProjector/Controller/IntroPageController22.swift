@@ -39,7 +39,7 @@ class IntroPageController22: PageController {
         descriptionTextView.text = AppText.Intro.loginWithChurchGoogle
         descriptionTextView.noPadding()
         
-        let googleLogin = UIHostingController(rootView: GoogleSignInButton(action: didTapLoginWithGoogle)).view
+        let googleLogin = UIHostingController(rootView: GoogleSignInSwift.GoogleSignInButton(action: didTapLoginWithGoogle)).view
         googleLogin?.translatesAutoresizingMaskIntoConstraints = false
         
         let appleLogin = ASAuthorizationAppleIDButton()

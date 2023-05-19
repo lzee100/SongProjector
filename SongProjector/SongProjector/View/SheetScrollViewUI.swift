@@ -67,13 +67,13 @@ struct SheetScrollViewUI: View {
                             if let selectedSong = songServiceModel.item.selectedSong,  songObject.cluster.id == selectedSong.id {
                                 HStack {
                                     ForEach(Array(selectedSong.sheets.enumerated()), id: \.offset) { sheetIndex, sheet in
-                                        SheetUIHelper.sheet(viewSize: CGSize(width: 200, height: 100), ratioOnHeight: true, songServiceModel: songServiceModel, sheet: sheet, isForExternalDisplay: false, showSelectionCover: true)
+                                        SheetUIHelper.sheet(ratioOnHeight: true, songServiceModel: songServiceModel, sheet: sheet, isForExternalDisplay: false, showSelectionCover: true)
                                             .id(sheet.id)
                                     }
                                 }
                             }
                         } header: {
-                            SongServiceSectionViewUI(superViewSize: superViewSize, sectionTitle: songObjectsPerSection.title, selectedSong: $songServiceModel.item.selectedSong, song: songObject)
+                            SongServiceSectionViewUI(superViewSize: superViewSize, selectedSong: $songServiceModel.item.selectedSong, song: songObject)
                                 .sticky(frames, alignment: .horizontal)
                                 .onTapGesture {
                                     songServiceModel.item.selectedSong = songServiceModel.item.selectedSong?.id == songObject.id ? nil : songObject
@@ -85,34 +85,16 @@ struct SheetScrollViewUI: View {
             }
             .styleAsSectionBackground(edgeInsets: EdgeInsets(top: 10, leading: 10, bottom: 5, trailing: 10))
         }
-        
-//        ForEach(Array(songServiceModel.item.songs.enumerated()), id: \.offset) { index, songObject in
-//            Group {
-//                Section {
-//                    if let selectedSong = songServiceModel.item.selectedSong,  songObject.cluster.id == selectedSong.id {
-//                        ForEach(Array(selectedSong.sheets.enumerated()), id: \.offset) { sheetIndex, sheet in
-//                            SheetUIHelper.sheet(viewSize: viewSize, ratioOnHeight: true, songServiceModel: songServiceModel, sheet: sheet, isForExternalDisplay: false, showSelectionCover: true)
-//                                .id(index + sheetIndex)
-//                        }
-//                    }
-//                } header: {
-//                    SongServiceSectionViewUI(superViewSize: viewSize, sectionTitle: songo, selectedSong: $songServiceModel.item.selectedSong, song: songObject)
-//                        .sticky(frames, alignment: .horizontal)
-//                        .onTapGesture {
-//                            songServiceModel.item.selectedSong = songServiceModel.item.selectedSong?.id == songObject.id ? nil : songObject
-//                        }
-//                        .id(index)
-//                }
-//            }
-//        }
     }
     
     @ViewBuilder func scrollViewItemsPortrait(viewSize: CGSize) -> some View {
         ForEach(Array(songServiceModel.item.sectionedSongs.enumerated()), id: \.offset) { offset, songObjectsPerSection in
             VStack(spacing: 10) {
+                Text(songObjectsPerSection.title)
+                    .styleAs(font: .xNormalBold, color: .white)
                 ForEach(Array(songObjectsPerSection.songs.enumerated()), id: \.offset) { index, songObject in
                     VStack(spacing: 10) {
-                        sectionedItemsFor(viewSize: viewSize, index: index, songObject: songObject, sectionTitle: songObjectsPerSection.title)
+                        sectionedItemsFor(viewSize: viewSize, index: index, songObject: songObject)
                     }
                 }
             }
@@ -120,8 +102,8 @@ struct SheetScrollViewUI: View {
         }
     }
     
-    @ViewBuilder func sectionedItemsFor(viewSize: CGSize, index: Int, songObject: SongObjectUI, sectionTitle: String) -> some View {
-        SongServiceSectionViewUI(superViewSize: viewSize, sectionTitle: sectionTitle, selectedSong: $songServiceModel.item.selectedSong, song: songObject)
+    @ViewBuilder func sectionedItemsFor(viewSize: CGSize, index: Int, songObject: SongObjectUI) -> some View {
+        SongServiceSectionViewUI(superViewSize: viewSize, selectedSong: $songServiceModel.item.selectedSong, song: songObject)
             .sticky(frames, alignment: .horizontal)
             .onTapGesture {
                 songServiceModel.item.selectedSong = songServiceModel.item.selectedSong?.id == songObject.id ? nil : songObject

@@ -33,16 +33,14 @@ struct EmptyViewDisplayUI: View {
     
     @ObservedObject private var songServiceModel: WrappedStruct<SongServiceUI>
     private let isForExternalDisplay: Bool
-    private let scaleFactor: CGFloat
     private let sheet: SheetMetaType
     private let showSelectionCover: Bool
     private var theme: ThemeCodable?
     
-    init(serviceModel: WrappedStruct<SongServiceUI>, sheet: SheetMetaType, scaleFactor: CGFloat, isForExternalDisplay: Bool, showSelectionCover: Bool) {
+    init(serviceModel: WrappedStruct<SongServiceUI>, sheet: SheetMetaType, isForExternalDisplay: Bool, showSelectionCover: Bool) {
         _songServiceModel = ObservedObject(initialValue: serviceModel)
         self.isForExternalDisplay = isForExternalDisplay
         self.sheet = sheet
-        self.scaleFactor = scaleFactor
         self.showSelectionCover = showSelectionCover
         self.theme = serviceModel.item.themeFor(sheet: sheet)
     }

@@ -57,3 +57,31 @@ extension UIView {
         }
     }
 }
+
+extension View {
+  // sync block on a DispatchQueue at specified deadline
+  func perform(on queue: DispatchQueue = .main,
+               at deadline: DispatchTime,
+               action: @escaping () -> Void) -> some View {
+    onAppear {
+      queue.asyncAfter(deadline: deadline, execute: action)
+    }
+  }
+
+  // sync block on a DispatchQueue after the specified interval
+  func perform(on queue: DispatchQueue = .main,
+               after interval: TimeInterval,
+               action: @escaping () -> Void) -> some View {
+    perform(on: queue, at: .now() + interval, action: action)
+  }
+
+  // async block on main thread after the specified interval
+  func perform(after interval: TimeInterval,
+               action: @escaping @Sendable () async -> Void) -> some View {
+    task {
+      try? await Task.sleep(nanoseconds: UInt64(interval * 1E9))
+      await action()
+    }
+  }
+}
+

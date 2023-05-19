@@ -14,6 +14,10 @@ extension Double {
         return "\(self)"
     }
     
+    var intValue: Int {
+        return Int(self)
+    }
+    
     var oneDecimal: Double {
         return NSString(format: "%.1f", self).doubleValue
     }
