@@ -42,26 +42,15 @@ import SwiftUI
         isLoading = true
         fetchSettings()
         do {
-            let result = try await FetchSongServiceSettingsUseCase.fetch()
-            switch result {
-            case .failed(let error):
-                self.error = error
-            case .succes(let settings):
-                saveLocally(settings)
+            let result = try await FetchSongServiceSettingsUseCase().fetch()
+            if result.count > 0 {
+                fetchSettings()
             }
-            fetchSettings()
+            isLoading = false
         } catch {
             self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
         }
     }
-    
-    private func saveLocally(_ entities: [SongServiceSettingsCodable]) {
-        ManagedObjectContextHandler<SongServiceSettingsCodable>().save(entities: entities, completion: { [weak self] _ in
-            self?.fetchSettings()
-            self?.isLoading = false
-        })
-    }
-
 }
 
 struct SongServiceSettingsViewUI: View {

@@ -68,19 +68,13 @@ import FirebaseAuth
             isLoading = true
             do {
                 
-                let result = try await SubmitUseCase<SongServiceSettingsCodable>(endpoint: .songservicesettings, requestMethod: .put, uploadObjects: [createSongServiceSettings()]).submit()
-                saveLocally(result)
+                try await SubmitUseCase<SongServiceSettingsCodable>(endpoint: .songservicesettings, requestMethod: .put, uploadObjects: [createSongServiceSettings()]).submit()
+                isLoading = false
             } catch {
                 isLoading = false
                 self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
             }
         }
-    }
-    
-    private func saveLocally(_ entities: [SongServiceSettingsCodable]) {
-        ManagedObjectContextHandler<SongServiceSettingsCodable>().save(entities: entities, completion: { [weak self] _ in
-            self?.isLoading = false
-        })
     }
     
     private func createSongServiceSettings() -> SongServiceSettingsCodable {

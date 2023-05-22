@@ -67,6 +67,13 @@ enum TransferResult {
         case .success: return false
         }
     }
+    
+    var error: LocalizedError? {
+        switch self {
+        case .failed(error: let error): return error
+        case .success: return nil
+        }
+    }
 }
 
 enum TransferState {
@@ -138,8 +145,7 @@ class DownloadObject: TransferObject {
 }
 
 protocol SingleTransferManagerProtocol {
-    var transferObject: TransferObject { get }
-    func startTransfer() async throws -> TransferResult
+    func startTransfer() async throws -> TransferObject
 }
 
 struct SingleTransferManagerConstants {
@@ -159,21 +165,13 @@ class FileSubmitter: SingleTransferManagerProtocol {
         }
     }
     
-    let transferObject: TransferObject
+    let uploadObject: UploadObject
     
-    required init(transferObject: TransferObject) {
-        self.transferObject = transferObject
+    required init(uploadObject: UploadObject) {
+        self.uploadObject = uploadObject
     }
     
-    func startTransfer() async -> TransferResult {
-        await startUpload()
-    }
-    
-    private func startUpload() async -> TransferResult {
-        guard let uploadObject = transferObject as? UploadObject else {
-            return .failed(error: TransferError.notAnUploadFile)
-        }
-        
+    func startTransfer() async throws -> TransferObject {
         let storageRef = Storage.storage().reference()
         
         var subPath: String {
@@ -184,18 +182,11 @@ class FileSubmitter: SingleTransferManagerProtocol {
         }
         
         let uploadFile = storageRef.child(subPath).child(uploadObject.fileName)
-        
-        do {
-            let localURL = FileManager.getTempURLFor(name: uploadObject.fileName)
-            print(localURL.absoluteString)
-            let data = try Data(contentsOf: localURL)
-            let metadata = try await uploadFile.putDataAsync(data)
-            let url = try await uploadFile.downloadURL()
-            uploadObject.remoteURL = url
-            return .success
-        } catch {
-            let err = error
-            return .failed(error: SubmitError.error(error))
-        }
+        let localURL = FileManager.getTempURLFor(name: uploadObject.fileName)
+        let data = try Data(contentsOf: localURL)
+        let metadata = try await uploadFile.putDataAsync(data)
+        let url = try await uploadFile.downloadURL()
+        uploadObject.remoteURL = url
+        return uploadObject
     }
 }

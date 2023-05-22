@@ -20,6 +20,7 @@ struct ChurchBeamApp: App {
     
     @StateObject var userAuth: UserAuthModel =  UserAuthModel()
     @StateObject var soundPlayer = SoundPlayer2()
+    @StateObject var musicDownloadManager =  MusicDownloadManager()
     @State private var showApp = false
     @State private var showOnboarding = false
     @State private var handleFireStore: Any?
@@ -52,6 +53,7 @@ struct ChurchBeamApp: App {
             .fullScreenCover(isPresented: $showApp) {
                 TabViewUI()
                     .environmentObject(soundPlayer)
+                    .environmentObject(musicDownloadManager)
             }
             .animation(.easeOut, value: showApp)
             .fullScreenCover(isPresented: $showOnboarding) {
@@ -62,17 +64,19 @@ struct ChurchBeamApp: App {
     }
     
     private func initializeFireStore() {
-        if UserDefaults.standard.integer(forKey: "config.environment") != 0 {
-            ChurchBeamConfiguration.environment.loadGoogleFile()
-        } else {
-            switch AppConfiguration.mode {
-            case .TestFlight, .AppStore:
-                ChurchBeamConfiguration.environment = .production
-            case .Debug:
-                ChurchBeamConfiguration.environment = .dev
-            }
-            ChurchBeamConfiguration.environment.loadGoogleFile()
-        }
+        ChurchBeamConfiguration.environment = .production
+        ChurchBeamConfiguration.environment.loadGoogleFile()
+//        if UserDefaults.standard.integer(forKey: "config.environment") != 0 {
+//            ChurchBeamConfiguration.environment.loadGoogleFile()
+//        } else {
+//            switch AppConfiguration.mode {
+//            case .TestFlight, .AppStore:
+//                ChurchBeamConfiguration.environment = .production
+//            case .Debug:
+//                ChurchBeamConfiguration.environment = .dev
+//            }
+//            ChurchBeamConfiguration.environment.loadGoogleFile()
+//        }
         FirebaseConfiguration.shared.setLoggerLevel(.min)
     }
     

@@ -43,21 +43,19 @@ struct SongServiceSectionWithSongs: Identifiable {
     }
 }
 
-struct SongServiceGeneratorUseCase {
+actor SongServiceGeneratorUseCase {
     
     private let line = "----------------"
     
-    func generate(for songService: SongServiceSettingsCodable) -> [SongServiceSectionWithSongs] {
+    func generate(for songService: SongServiceSettingsCodable) async -> [SongServiceSectionWithSongs] {
         
         var position: Int16 = 0
-        return songService.sections.map { section in
+        return await songService.sections.asyncMap { section in
             var clustersForSection: [ClusterCodable] = []
-            filterOn(section.tagIds, to: &clustersForSection)
+            await filterOn(section.tagIds, to: &clustersForSection)
             filterOnPlayDate(&clustersForSection, numberOfSongs: section.numberOfSongs.intValue)
-            
             return SongServiceSectionWithSongs(title: section.title ?? "", cocList: map(clustersForSection, numberOfSongs: section.numberOfSongs.intValue, position: &position))
         }
-        
     }
     
     func generateShareTextOnlyTitles(_ clusters: [ClusterCodable]) -> (title: String, content: String)? {
@@ -75,9 +73,9 @@ struct SongServiceGeneratorUseCase {
         return (title, sectionedText)
     }
     
-    private func filterOn(_ tagIds: [String], to clustersForSection: inout [ClusterCodable]) {
+    private func filterOn(_ tagIds: [String], to clustersForSection: inout [ClusterCodable]) async {
         let tags: [Tag] = DataFetcher().getEntities(moc: moc, predicates: tagIds.map { .get(id: $0) })
-        clustersForSection = FilteredCollectionsUseCase().getCollections(searchText: nil, showDeleted: false, selectedTags: tags.compactMap { TagCodable(managedObject: $0, context: moc) })
+        clustersForSection = await FilteredCollectionsUseCase().getCollections(searchText: nil, showDeleted: false, selectedTags: tags.compactMap { TagCodable(managedObject: $0, context: moc) })
     }
     
     private func filterOnPlayDate(_ clustersForSection: inout [ClusterCodable], numberOfSongs: Int) {

@@ -51,20 +51,13 @@ import SwiftUI
         } else {
             isLoading = true
             do {
-                
-                let result = try await SubmitUseCase<SongServiceSettingsCodable>(endpoint: .songservicesettings, requestMethod: .put, uploadObjects: [updateSongServiceSettings()]).submit()
-                saveLocally(result)
+                try await SubmitUseCase<SongServiceSettingsCodable>(endpoint: .songservicesettings, requestMethod: .put, uploadObjects: [updateSongServiceSettings()]).submit()
+                isLoading = false
             } catch {
                 isLoading = false
                 self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
             }
         }
-    }
-    
-    private func saveLocally(_ entities: [SongServiceSettingsCodable]) {
-        ManagedObjectContextHandler<SongServiceSettingsCodable>().save(entities: entities, completion: { [weak self] _ in
-            self?.isLoading = false
-        })
     }
     
     private func updateSongServiceSettings() -> SongServiceSettingsCodable {

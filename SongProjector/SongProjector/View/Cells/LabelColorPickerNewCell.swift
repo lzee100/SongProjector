@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import FlexColorPicker
 
 
 class LabelColorPickerNewCell: ChurchBeamCell, ThemeImplementation {

@@ -11,7 +11,7 @@ import Foundation
 struct FetchUsersUseCase {
     private static let useCase = FetchUseCaseAsync<UserCodable, User>(endpoint: .users)
     
-    static func fetch() async throws -> FetchUseCaseAsyncTask<UserCodable>.FetchUseCaseAsyncDownloadResult {
+    static func fetch() async throws -> [UserCodable] {
         try await useCase.fetch()
     }
 }

@@ -177,7 +177,7 @@ import SwiftUI
     
     init(selectedTheme: ThemeCodable?) {
         self.selectedTheme = selectedTheme
-        let persitedThemes: [Theme] = DataFetcher().getEntities(moc: moc, sort: NSSortDescriptor(key: "position", ascending: true))
+        let persitedThemes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: [.skipHidden], sort: NSSortDescriptor(key: "position", ascending: true))
         
         themes = persitedThemes.compactMap { ThemeCodable(managedObject: $0, context: moc) }
     }

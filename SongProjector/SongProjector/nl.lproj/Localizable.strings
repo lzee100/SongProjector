@@ -179,7 +179,7 @@
 "CustomSheets-errorChangeSheetGenerator" = "Wil je de huidige dia generator type wijzigen en hierdoor de dia's / tekst kwijt raken?";
 "CustomSheets-errorLoseOtherSheets" = "Je hebt andere sheets tussen de bijbelteksten staan. Deze gaan verloren wanneer je de bijbelteksten aanpast en opnieuw laat genereren";
 "CustomSheets-universalSongEditErrorTitle" = "Kon tekst niet aanpassen";
-"CustomSheets-universalSongEditErrorMessage" = "Dit liedje heeft muziek en heeft een weergave tijdsduur bij elke dia. Het aanpassen van het AANTAL dia's zorgt ervoor dat de tijden niet meer kloppen. Je wijzigingen zijn ongedaan gemaakt.";
+"CustomSheets-universalSongEditErrorMessage" = "Dit liedje heeft muziek en heeft een weergave tijdsduur bij elke dia. Het aanpassen van het AANTAL dia's zorgt ervoor dat de tijden niet meer kloppen. Corrigeer of annuleer de wijzigingen.";
 
 "SongServiceManagement-title" = "Zangdienst schema";
 "SongServiceManagement-numberOfSections" = "Aantal secties";

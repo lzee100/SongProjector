@@ -8,46 +8,84 @@
 
 import SwiftUI
 
+@MainActor class MusicDownloadButtonViewModel: ObservableObject {
+    
+    @Published var error: LocalizedError? = nil
+    @Published private(set) var showingLoader = false
+    
+    @State private var collection: ClusterCodable
+    
+    init(collection: ClusterCodable) {
+        self._collection = State(initialValue: collection)
+    }
+    
+    func downloadMusic(manager: MusicDownloadManager) async {
+        showingLoader = true
+        do {
+            try await manager.downloadMusicFor(collection: collection)
+            showingLoader = false
+        } catch {
+            self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
+        }
+    }
+    
+    func isDownloading(manager: MusicDownloadManager) async -> Bool {
+        await manager.isDownloading(for: collection)
+    }
+    
+}
+
 struct MusicDownloadButtonViewUI: View {
     
-    @State private var fetchMusicProgress: RequesterResult = .idle
-    @ObservedObject private var fetchMusicUseCase: FetchMusicUseCase
+    @State private var viewModel: MusicDownloadButtonViewModel
+    @EnvironmentObject private var musicDownloadManager: MusicDownloadManager
+    @State private var showingDownloading = false
     
-    init(fetchMusicUseCase: FetchMusicUseCase) {
-        self.fetchMusicUseCase = fetchMusicUseCase
+    init(collection: ClusterCodable) {
+        self._viewModel = State(initialValue: MusicDownloadButtonViewModel(collection: collection))
     }
     
     var body: some View {
         Button {
-            fetchMusicUseCase.fetch()
+            Task {
+                Task {
+                    await viewModel.downloadMusic(manager: musicDownloadManager)
+                }
+            }
         } label: {
             HStack {
                 Image("DownloadIcon")
                     .resizable()
                     .renderingMode(.template)
-                    .foregroundColor(fetchMusicUseCase.progress == .idle ? .white : .black.opacity(0.8))
+                    .foregroundColor(!showingDownloading ? .white : .black.opacity(0.8))
                     .frame(width: 30, height: 30)
-                    .opacity(fetchMusicUseCase.progress == .idle ? 1 : 0)
+                    .opacity(!showingDownloading ? 1 : 0)
                     .overlay {
-                        if fetchMusicUseCase.progress != .idle {
-                            CircleProgressViewUI(
-                                fetchMusicUseCase: fetchMusicUseCase,
-                                lineWidth: 4
-                            )
+                        if showingDownloading {
+                            ProgressView()
                         }
                     }
             }
             .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
-            .background(Color(uiColor: fetchMusicUseCase.progress == .idle ? .softBlueGrey : .clear))
+            .background(Color(uiColor: !showingDownloading ? .softBlueGrey : .clear))
             .cornerRadius(8)
         }
         .buttonStyle(.plain)
         .tint(.white)
+        .onAppear {
+            Task {
+                showingDownloading = await viewModel.isDownloading(manager: musicDownloadManager)
+            }
+        }
+        .onChange(of: viewModel.showingLoader) { newValue in
+            showingDownloading = newValue
+        }
     }
 }
 
 struct MusicDownloadButtonUI_Previews: PreviewProvider {
+    @State static var viewModel = CollectionsViewModel()
     static var previews: some View {
-        MusicDownloadButtonViewUI(fetchMusicUseCase: FetchMusicUseCase(cluster: .makeDefault()!))
+        MusicDownloadButtonViewUI(collection: .makeDefault()!)
     }
 }

@@ -12,6 +12,40 @@ protocol EditThemeOrSheetViewUIDelegate {
     func dismiss()
 }
 
+@MainActor class ThemeEditorViewModel: ObservableObject {
+    
+    @Published var error: LocalizedError?
+    @Published private(set) var showingLoader = false
+    private(set) var editModel: WrappedStruct<EditSheetOrThemeViewModel>
+    
+    init(error: LocalizedError? = nil, showingLoader: Bool = false, editModel: WrappedStruct<EditSheetOrThemeViewModel>) {
+        self.error = error
+        self.showingLoader = showingLoader
+        self.editModel = editModel
+    }
+    
+    func submitTheme() async {
+        setIsLoading(true)
+        do {
+            if let theme = try editModel.item.createThemeCodable() {
+                let result = try await SubmitUseCase(endpoint: .themes, requestMethod: .put, uploadObjects: [theme]).submit()
+                setIsLoading(false)
+            }
+        } catch {
+            setIsLoading(false)
+            self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
+        }
+    }
+    
+    private func setIsLoading(_ showingLoader: Bool) {
+        withAnimation(.linear) {
+            self.showingLoader = showingLoader
+        }
+    }
+
+}
+
+
 struct EditThemeOrSheetViewUI: View {
     
     let navigationTitle: String
@@ -23,12 +57,22 @@ struct EditThemeOrSheetViewUI: View {
     @State var isSectionContentExpanded = false
     @State var isSectionImageExpanded = false
     @ObservedObject var editSheetOrThemeModel: WrappedStruct<EditSheetOrThemeViewModel>
-    @State var progress: CGFloat = 0
-    @State var submitThemeUseCaseResult: RequesterResult = .idle
+    @StateObject var viewModel: ThemeEditorViewModel
+    
+    init(navigationTitle: String, delegate: EditThemeOrSheetViewUIDelegate?, editingCollectionModel: CollectionEditorViewModel? = nil, isSectionGeneralExpanded: Bool = true, isSectionTitleExpanded: Bool = false, isSectionContentExpanded: Bool = false, isSectionImageExpanded: Bool = false, editSheetOrThemeModel: WrappedStruct<EditSheetOrThemeViewModel>) {
+        self.navigationTitle = navigationTitle
+        self.delegate = delegate
+        self._editingCollectionModel = State(initialValue: editingCollectionModel)
+        self._isSectionGeneralExpanded = State(initialValue: isSectionGeneralExpanded)
+        self._isSectionTitleExpanded = State(initialValue: isSectionTitleExpanded)
+        self._isSectionContentExpanded = State(initialValue: isSectionContentExpanded)
+        self._isSectionImageExpanded = State(initialValue: isSectionImageExpanded)
+        self.editSheetOrThemeModel = editSheetOrThemeModel
+        self._viewModel = StateObject(wrappedValue: ThemeEditorViewModel(editModel: editSheetOrThemeModel))
+    }
 
     var body: some View {
-        ZStack {
-            NavigationStack {
+        NavigationStack {
                 GeometryReader { proxy in
                     VStack(){
                         HStack {
@@ -67,7 +111,10 @@ struct EditThemeOrSheetViewUI: View {
                             }
                         }
                     }
+                    .blur(radius: viewModel.showingLoader ? 5 : 0)
+                    .disabled(viewModel.showingLoader)
                 }
+                .errorAlert(error: $viewModel.error)
                 .padding()
                 .edgesIgnoringSafeArea([.bottom])
                 .navigationBarTitleDisplayMode(.inline)
@@ -101,7 +148,9 @@ struct EditThemeOrSheetViewUI: View {
                             .tint(Color(uiColor: themeHighlighted))
                         } else {
                             Button {
-                                submitTheme()
+                                Task {
+                                   await viewModel.submitTheme()
+                                }
                             } label: {
                                 Text(AppText.Actions.save)
                             }
@@ -110,21 +159,10 @@ struct EditThemeOrSheetViewUI: View {
                     }
                 })
             }
-            .ignoresSafeArea()
-            .blur(radius: submitThemeUseCaseResult.progress != 0 ? 8 : 0)
-            if submitThemeUseCaseResult.progress != 0 {
-                ProgressControllerUI(circleProgress: $progress, action: .uploading)
-            }
-        }
         .ignoresSafeArea()
-        .onChange(of: submitThemeUseCaseResult) { newValue in
-            progress = newValue.progress
-            if progress == 1 {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.4, execute: {
-                    self.submitThemeUseCaseResult = .idle
-                    self.progress = 0
-                    delegate?.dismiss()
-                })
+        .onChange(of: viewModel.showingLoader) { newValue in
+            if !newValue {
+                delegate?.dismiss()
             }
         }
     }
@@ -201,21 +239,6 @@ struct EditThemeOrSheetViewUI: View {
         }
     }
     
-    private func submitTheme() {
-        do {
-            if let theme = try editSheetOrThemeModel.item.createThemeCodable() {
-                SubmitEntitiesUseCase<ThemeCodable>(
-                    endpoint: .themes,
-                    requestMethod: editSheetOrThemeModel.item.requestMethod,
-                    uploadObjects: [theme],
-                    result: $submitThemeUseCaseResult
-                ).submit()
-            }
-        } catch {
-            submitThemeUseCaseResult = .finished(.failure(error))
-        }
-    }
-
 }
 
 struct EditThemeOrSheetViewUI_Previews: PreviewProvider {
@@ -224,6 +247,6 @@ struct EditThemeOrSheetViewUI_Previews: PreviewProvider {
     @State static var activities = SheetActivitiesCodable.makeDefault()
     @State static var model = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .sheet((cluster, activities), sheetType: .SheetActivities), isUniversal: false, image: UIImage(named: "Pio-Sebastiaan-en-Marilou.jpg"))!)
     static var previews: some View {
-        EditThemeOrSheetViewUI(navigationTitle: "", delegate: nil, editSheetOrThemeModel: model)
+        EditThemeOrSheetViewUI(navigationTitle: "", delegate: nil, editingCollectionModel: nil, editSheetOrThemeModel: model)
     }
 }

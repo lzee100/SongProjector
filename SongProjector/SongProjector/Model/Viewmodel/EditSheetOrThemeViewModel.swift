@@ -151,6 +151,7 @@ struct EditSheetOrThemeViewModel: Identifiable {
                 return nil
             }
         }
+        self.title = theme.title ?? ""
         self.allHaveTitle = theme.allHaveTitle
         self.backgroundColor = theme.backgroundColor?.color ?? .white
         self.backgroundTransparancyNumber = theme.backgroundTransparancyNumber
@@ -183,10 +184,14 @@ struct EditSheetOrThemeViewModel: Identifiable {
         self.isUniversal = isUniversal
         self.isDeletable = !isUniversal
         
-        if position == 0 {
-            self.title = cluster?.title ?? sheet.title ?? ""
+        if theme.title?.isBlanc ?? true {
+            if position == 0 {
+                self.title = cluster?.title ?? sheet.title ?? ""
+            } else {
+                self.title = sheet.title ?? ""
+            }
         } else {
-            self.title = sheet.title ?? ""
+            self.title = theme.title ?? ""
         }
         self.sheetContent = sheet.sheetContent ?? ""
         
@@ -443,6 +448,7 @@ struct EditSheetOrThemeViewModel: Identifiable {
         switch editMode {
         case .theme:
             return ThemeCodable(
+                id: theme.id,
                 userUID: theme.userUID,
                 title: title,
                 createdAt: theme.createdAt,

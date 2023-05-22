@@ -15,7 +15,7 @@ struct SectionTitleModifier: ViewModifier {
         content
             .padding(EdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0))
             .font(.title3)
-            .foregroundColor(.black.opacity(0.8))
+            .foregroundColor(Color(uiColor: .blackColor).opacity(0.8))
     }
 }
 

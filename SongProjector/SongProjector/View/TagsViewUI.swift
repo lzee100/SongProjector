@@ -22,16 +22,12 @@ import SwiftUI
     func fetchTagsWithRemote() async {
         fetchTags()
         do {
-            let result = try await FetchTagsUseCase.fetch()
-            switch result {
-            case .failed(let error):
-                self.error = error
-            case .succes(let tags):
+            let result = try await FetchTagsUseCase().fetch()
+            if result.count > 0 {
                 fetchTags()
-                saveLocally(tags)
             }
         } catch {
-            self.error = error as? LocalizedError
+            self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
         }
     }
     
@@ -47,19 +43,13 @@ import SwiftUI
     func submit(_ tags: [TagCodable]) async {
         showingLoader = true
         do {
-            let submittedTags = try await SubmitUseCase(endpoint: .tags, requestMethod: .put, uploadObjects: tags).submit()
-            saveLocally(submittedTags)
+            _ = try await SubmitUseCase(endpoint: .tags, requestMethod: .put, uploadObjects: tags).submit()
+            fetchTags()
+            showingLoader = false
         } catch {
             showingLoader = false
             self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
         }
-    }
-    
-    private func saveLocally(_ entities: [TagCodable]) {
-        ManagedObjectContextHandler<TagCodable>().save(entities: entities, completion: { [weak self] _ in
-            self?.fetchTags()
-            self?.showingLoader = false
-        })
     }
     
 }

@@ -11,51 +11,66 @@ import Firebase
 import FirebaseStorage
 
 
-class FileFetcher: SingleTransferManagerProtocol {
+actor FileFetcher: SingleTransferManagerProtocol {
     
-    private let downloadObject: DownloadObject
-    
-    var transferObject: TransferObject {
-        return downloadObject
+    enum FileFetcherError: LocalizedError {
+        case noFileOnAmazonStorageFound
+        
+        var errorDescription: String? {
+            switch self {
+            case .noFileOnAmazonStorageFound: return "No image / video found on aws for this url (deleted on aws?)"
+            }
+        }
     }
     
-    required init(downloadObject: DownloadObject) {
+    let downloadObject: DownloadObject
+    
+    init(downloadObject: DownloadObject) {
         self.downloadObject = downloadObject
     }
     
-    func startTransfer() async throws -> TransferResult {
-        let storageRef = Storage.storage().reference()
-        
-        var subPath: String {
-            switch downloadObject.type {
-            case .jpeg, .jpg, .png: return SingleTransferManagerConstants.images
-            case .m4a: return SingleTransferManagerConstants.audio
+    func startTransfer() async throws -> TransferObject {
+        do {
+            let storageRef = Storage.storage().reference()
+            
+            var subPath: String {
+                switch downloadObject.type {
+                case .jpeg, .jpg, .png: return SingleTransferManagerConstants.images
+                case .m4a: return SingleTransferManagerConstants.audio
+                }
             }
-        }
-        
-        let downloadFile = storageRef.child(subPath).child(downloadObject.filename)
-        let locURL: URL?
-        if downloadObject.isVideo {
-            locURL = FileManager.getURLfor(name: downloadObject.filename)
-        } else {
-            locURL = try FileManager.getUrlFor(fileName: downloadObject.filename)
-        }
-        guard let localURL = locURL else {
-            return .failed(error: TransferError.noURLForDownloadingFile)
-        }
-
-        let url = try await downloadFile.writeAsync(toFile: localURL)
-        if downloadObject.isVideo {
-            downloadObject.localURL = URL(string: downloadObject.filename)
-            return .success
-        } else {
-            let data = try Data(contentsOf: localURL)
-            if let image = UIImage(data: data) {
-                downloadObject.image = image
-                return .success
+            
+            let downloadFile = storageRef.child(subPath).child(downloadObject.filename)
+            let locURL: URL?
+            if downloadObject.isVideo {
+                locURL = FileManager.getURLfor(name: downloadObject.filename)
             } else {
-                return .failed(error: TransferError.downloadNoLocalImage)
+                locURL = try FileManager.getUrlFor(fileName: downloadObject.filename)
             }
+            guard let localURL = locURL else {
+                throw TransferError.noURLForDownloadingFile
+            }
+            
+            guard (try? await downloadFile.writeAsync(toFile: localURL)) != nil else {
+                throw FileFetcherError.noFileOnAmazonStorageFound
+            }
+            
+            if downloadObject.isVideo {
+                downloadObject.localURL = URL(string: downloadObject.filename)
+            } else {
+                let data = try Data(contentsOf: localURL)
+                if let image = UIImage(data: data) {
+                    downloadObject.image = image
+                } else {
+                    throw TransferError.downloadNoLocalImage
+                }
+            }
+            return downloadObject
+        } catch {
+            print("download error from aws")
+            print(downloadObject.remoteURL)
+            print(error)
+            throw error
         }
     }
 }

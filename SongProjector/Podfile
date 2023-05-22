@@ -7,9 +7,7 @@ use_frameworks!
 pod 'GoogleAPIClientForREST'
 pod 'GTMOAuth2', '~> 1.1.0'
 pod 'GoogleAPIClientForREST/Calendar', '~> 1.2.1'
-pod 'VerticalSlider'
 pod 'SwiftKeychainWrapper'
-pod 'FlexColorPicker'
 
 target 'SongProjector' do
 

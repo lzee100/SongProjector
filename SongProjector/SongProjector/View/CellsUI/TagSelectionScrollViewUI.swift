@@ -15,16 +15,13 @@ import SwiftUI
     @Published private(set) var tags: [TagCodable] = []
     @Published private(set) var selectedTags: [TagCodable]
     @Published var error: LocalizedError? = nil
-    private let fetchTagsUseCase: FetchUseCaseCallBack<TagCodable>
     private var isLoading = false
     private var fetchRemoteTags: Bool
-
+    
     init(mandatoryTags: [TagCodable], selectedTags: [TagCodable] = [], fetchRemoteTags: Bool = true) {
         self.mandatoryTags = mandatoryTags
         self.selectedTags = (mandatoryTags + selectedTags).unique.sorted(by: { $0.position < $1.position})
         self.fetchRemoteTags = fetchRemoteTags
-        fetchTagsUseCase = FetchUseCaseCallBack<TagCodable>(endpoint: .tags)
-        
         defer {
             fetchTags()
         }
@@ -48,22 +45,14 @@ import SwiftUI
             fetchTags()
             return
         }
+        isLoading = true
         do {
-            let result = try await FetchTagsUseCase.fetch()
-            switch result {
-            case .failed(let error): self.error = error
-            case .succes(let tags): saveLocally(tags)
-            }
+            tags = try await FetchTagsUseCase().fetch()
+            isLoading = false
+            fetchTags()
         } catch {
             self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
         }
-    }
-    
-    private func saveLocally(_ entities: [TagCodable]) {
-        ManagedObjectContextHandler<TagCodable>().save(entities: entities, completion: { [weak self] _ in
-            self?.fetchTags()
-            self?.isLoading = false
-        })
     }
 }
 
@@ -89,21 +78,6 @@ struct TagSelectionScrollViewUI: View {
             }
             .task {
                 await viewModel.fetchRemoteTags()
-            }
-            .errorAlert(error: $viewModel.error)
-            .onAppear {
-                FetchUseCaseCallBack<TagCodable>(endpoint: .tags).fetch{ progress in
-                    switch progress {
-                    case .finished(let result):
-                        switch result {
-                        case .success:
-                            viewModel.fetchTags()
-                        case .failure(let error):
-                            print(error)
-                        }
-                    default: break
-                    }
-                }
                 if let mandatoryTagId = viewModel.mandatoryTags.first?.id {
                     reader.scrollTo(mandatoryTagId)
                 }
@@ -111,12 +85,12 @@ struct TagSelectionScrollViewUI: View {
                     reader.scrollTo(selectedTagId)
                 }
             }
+            .errorAlert(error: $viewModel.error)
         }
     }
 }
 
 struct TagSelectionScrollViewUI_Previews: PreviewProvider {
-    @State static var progress: RequesterResult = .idle
     @State static var model = TagSelectionModel(mandatoryTags: [])
     static var previews: some View {
         TagSelectionScrollViewUI(viewModel: model)

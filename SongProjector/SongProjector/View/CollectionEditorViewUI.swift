@@ -98,7 +98,13 @@ struct CollectionEditorViewUI: View {
             }
         }
         .sheet(isPresented: $isShowingLyricsOrBibleStudyInputView) {
-            LyricsOrBibleStudyInputViewUI(content: $lyricsOrBibleStudyText, isShowingLyricsOrBibleStudyInputView: $isShowingLyricsOrBibleStudyInputView)
+            LyricsOrBibleStudyInputViewUI(viewModel: LyricsOrBibleStudyInputViewModel(
+                content: $lyricsOrBibleStudyText,
+                cluster: viewModel.cluster,
+                font: .body,
+                collectionType: viewModel.collectionType,
+                isShowingLyricsOrBibleStudyInputView: $isShowingLyricsOrBibleStudyInputView
+            ))
         }
         .sheet(item: $selectedSheetModel, content: { model in
             EditThemeOrSheetViewUI(navigationTitle: AppText.SheetPickerMenu.pickCustom, delegate: self, editingCollectionModel: self.viewModel, editSheetOrThemeModel: model)

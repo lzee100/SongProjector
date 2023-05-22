@@ -14,18 +14,15 @@ struct CollectionListViewUI: View {
     let isSelected: Bool
     private var collection: ClusterCodable
     @EnvironmentObject private var soundPlayer: SoundPlayer2
-    @ObservedObject private var fetchMusicUseCase: FetchMusicUseCase
     @ObservedObject private var collectionsViewModel: CollectionsViewModel
 
     init(
         collectionsViewModel: CollectionsViewModel,
         collection: ClusterCodable,
-        fetchMusicUseCase: FetchMusicUseCase,
         isSelectable: Bool,
         isSelected: Bool
     ) {
         self.collection = collection
-        self._fetchMusicUseCase = ObservedObject(initialValue: fetchMusicUseCase)
         self.collectionsViewModel = collectionsViewModel
         self.isSelectable = isSelectable
         self.isSelected = isSelected
@@ -39,12 +36,12 @@ struct CollectionListViewUI: View {
                     .frame(width: 5)
             }
             Text(collection.title ?? "-")
-                .foregroundColor(Color(uiColor: isSelected ? .softBlueGrey : .black.withAlphaComponent(0.8)))
+                .foregroundColor(Color(uiColor: isSelected ? .softBlueGrey : .blackColor.withAlphaComponent(0.8)))
                 .styleAs(font: .xNormal)
             Spacer()
             if collection.hasInstruments.count > 0 && !collection.hasLocalMusic {
                 MusicDownloadButtonViewUI(
-                    fetchMusicUseCase: fetchMusicUseCase
+                    collection: collection
                 )
             } else if collection.hasLocalMusic {
                 if collection.hasPianoSolo {
@@ -55,17 +52,6 @@ struct CollectionListViewUI: View {
                 } else {
                     playLocalMusicButton
                 }
-            }
-        }
-        .onChange(of: fetchMusicUseCase.progress) { newValue in
-            switch newValue {
-            case .finished(let result):
-                switch result {
-                case .success:
-                    collectionsViewModel.reload()
-                default: return
-                }
-            default: return
             }
         }
     }
@@ -105,7 +91,7 @@ struct CollectionListViewUI: View {
 
 struct CollectionListViewUI_Previews: PreviewProvider {
     static var previews: some View {
-        CollectionListViewUI(collectionsViewModel: CollectionsViewModel(), collection: .makeDefault()!, fetchMusicUseCase: FetchMusicUseCase(cluster: .makeDefault()!), isSelectable: false, isSelected: false)
+        CollectionListViewUI(collectionsViewModel: CollectionsViewModel(), collection: .makeDefault()!, isSelectable: false, isSelected: false)
             .previewLayout(.sizeThatFits)
     }
 }

@@ -114,8 +114,6 @@ class SongServiceIphoneController: ChurchBeamViewController, UITableViewDelegate
     override var requesters: [RequesterBase] {
         return [UniversalClusterFetcher, SongServicePlayDateFetcher]
     }
-    @State var result: RequesterResult = .idle
-    private lazy var fetcher = FetchUseCase<TagCodable>(endpoint: .tags, result: $result)
     private var fetchers: [RequesterCodable] = []
     
 	// MARK: - Functions

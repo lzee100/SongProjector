@@ -1,5 +1,4 @@
 PODS:
-  - FlexColorPicker (1.4.4)
   - GoogleAPIClientForREST (1.2.1):
     - GoogleAPIClientForREST/Core (= 1.2.1)
     - GTMSessionFetcher (>= 1.1.7)
@@ -16,33 +15,26 @@ PODS:
   - GTMSessionFetcher/Full (1.7.2):
     - GTMSessionFetcher/Core (= 1.7.2)
   - SwiftKeychainWrapper (4.0.1)
-  - VerticalSlider (2.0.0)
 
 DEPENDENCIES:
-  - FlexColorPicker
   - GoogleAPIClientForREST
   - GoogleAPIClientForREST/Calendar (~> 1.2.1)
   - GTMOAuth2 (~> 1.1.0)
   - SwiftKeychainWrapper
-  - VerticalSlider
 
 SPEC REPOS:
   trunk:
-    - FlexColorPicker
     - GoogleAPIClientForREST
     - GTMOAuth2
     - GTMSessionFetcher
     - SwiftKeychainWrapper
-    - VerticalSlider
 
 SPEC CHECKSUMS:
-  FlexColorPicker: ce72e0a9e0870815a0beba419ac3e09913401624
   GoogleAPIClientForREST: a8b95a252014ce2e618df6b75dc72eca2c00b4af
   GTMOAuth2: e8b6512c896235149df975c41d9a36c868ab7fba
   GTMSessionFetcher: 5595ec75acf5be50814f81e9189490412bad82ba
   SwiftKeychainWrapper: 807ba1d63c33a7d0613288512399cd1eda1e470c
-  VerticalSlider: 655f2bc3ed062bac13e21c174f5ff93b8308571d
 
-PODFILE CHECKSUM: e6747bd2b07a2ea17fc637744d0233eda0f1e7bd
+PODFILE CHECKSUM: e03c7b868b1241ecd6965c58afa1c66929c5d3b6
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.12.1

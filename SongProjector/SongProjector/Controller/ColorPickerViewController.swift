@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import FlexColorPicker
 
 class ColorPickerViewController: UIViewController {
     
@@ -17,13 +16,13 @@ class ColorPickerViewController: UIViewController {
 
     var selectedColor: UIColor = .whiteColor
     
-    lazy var colorPickerViewController: DefaultColorPickerViewController = {
-        let vc = DefaultColorPickerViewController()
-        view.addSubview(vc.view)
-        vc.view.frame = view.bounds.insetBy(dx: 0, dy: 44)
-        vc.didMove(toParent: self)
-        return vc
-    }()
+//    lazy var colorPickerViewController: DefaultColorPickerViewController = {
+//        let vc = DefaultColorPickerViewController()
+//        view.addSubview(vc.view)
+//        vc.view.frame = view.bounds.insetBy(dx: 0, dy: 44)
+//        vc.didMove(toParent: self)
+//        return vc
+//    }()
     
     private lazy var navBar: UINavigationBar = {
         let navBar = UINavigationBar(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 44))
@@ -41,7 +40,7 @@ class ColorPickerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        colorPickerViewController.delegate = self
+//        colorPickerViewController.delegate = self
         navBar.items?.first?.title = "Kies kleur"
     }
     
@@ -55,10 +54,10 @@ class ColorPickerViewController: UIViewController {
     
 }
 
-extension ColorPickerViewController: ColorPickerDelegate {
-    
-    func colorPicker(_ colorPicker: ColorPickerController, selectedColor: UIColor, usingControl: ColorControl) {
-        self.selectedColor = selectedColor
-        self.didSelectColor?(selectedColor)
-    }
-}
+//extension ColorPickerViewController: ColorPickerDelegate {
+//    
+//    func colorPicker(_ colorPicker: ColorPickerController, selectedColor: UIColor, usingControl: ColorControl) {
+//        self.selectedColor = selectedColor
+//        self.didSelectColor?(selectedColor)
+//    }
+//}

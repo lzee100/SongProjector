@@ -19,36 +19,44 @@ struct SubmitUseCase<T: FileTransferable> {
     private let requestMethod: RequestMethod
     private let uploadObjects: [T]
     private let managedObjectContextHandler = ManagedObjectContextHandler<T>()
-    private let uploadFilesUseCase: FilesTransferUseCase
     
     init(endpoint: EndPoint, requestMethod: RequestMethod, uploadObjects: [T]) {
         self.endpoint = endpoint.rawValue
         self.requestMethod = requestMethod
         self.uploadObjects = uploadObjects
-        self.uploadFilesUseCase = FilesTransferUseCase(transferObjects: uploadObjects.flatMap { $0.transferObjects })
     }
     
     @discardableResult
     func submit() async throws -> [T] {
-        let deleteFiles = getDeleteDeletedFiles()
-        let uploadFilesResult = try await uploadFilesUseCase.start()
         
-        switch uploadFilesResult {
-        case .failed(error: let error):
-            throw error
-        case .success:
-            
-            let transferObjects = uploadObjects.flatMap { $0.uploadObjects }
-            var updatedUploadObjects: [T] = []
+        let deleteFiles = getDeleteDeletedFiles()
+        let uploadFilesResult = try await uploadFiles()
+        
+        var updatedUploadObjects: [T] = []
+        for uploadObject in uploadObjects {
+            var updatedUploadObject: T = uploadObject
+            updatedUploadObject.clearDataForDeletedObjects(forceDelete: requestMethod == .delete)
+            setDeleteDateIfneeded(&updatedUploadObject)
+            updatedUploadObjects.append(updatedUploadObject)
+        }
+        let workload = updatedUploadObjects.map { SubmitCodableSyncVersionUseCase<T>(endpoint: endpoint, requestMethod: requestMethod, uploadObject: $0) }
+        return try await submit(useCases: workload)
+    }
+    
+    private func uploadFiles() async throws -> [T] {
+        return try await withThrowingTaskGroup(of: T.self) { group in
             for uploadObject in uploadObjects {
-                var updatedUploadObject: T = uploadObject
-                updatedUploadObject.clearDataForDeletedObjects(forceDelete: requestMethod == .delete)
-                try updatedUploadObject.setTransferObjects(transferObjects)
-                setDeleteDateIfneeded(&updatedUploadObject)
-                updatedUploadObjects.append(updatedUploadObject)
+                group.addTask {
+                    try await FileUploadsUseCase().startUploadingFor(uploadObject)
+                }
             }
-            let workload = updatedUploadObjects.map { SubmitCodableSyncVersionUseCase<T>(endpoint: endpoint, requestMethod: requestMethod, uploadObject: $0) }
-            return try await submit(useCases: workload)
+            
+            var results: [T] = []
+            for try await (result) in group {
+                results.append(result)
+            }
+            return results
+            
         }
     }
     

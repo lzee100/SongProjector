@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct FilteredCollectionsUseCase {
+actor FilteredCollectionsUseCase {
     
     func getCollections(searchText: String?, showDeleted: Bool, selectedTags: [TagCodable]) -> [ClusterCodable] {
         let predicates = predicatesFor(searchText: searchText, showDeleted: showDeleted, selectedTags: selectedTags)

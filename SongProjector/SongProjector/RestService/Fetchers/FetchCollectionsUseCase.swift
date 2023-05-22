@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct FetchCollectionsUseCase {
+actor FetchCollectionsUseCase {
     
     private let useCase: FetchUseCaseAsync<ClusterCodable, Cluster>
 
@@ -16,20 +16,7 @@ struct FetchCollectionsUseCase {
         useCase = FetchUseCaseAsync<ClusterCodable, Cluster>(endpoint: .clusters, fetchAll: fetchAll)
     }
     
-    func fetch() async throws -> FetchUseCaseAsyncTask<ClusterCodable>.FetchUseCaseAsyncDownloadResult {
-        try await useCase.fetch()
-    }
-}
-
-struct FetchThemesUseCase {
-    
-    private let useCase: FetchUseCaseAsync<ThemeCodable, Theme>
-
-    init(fetchAll: Bool) {
-        useCase = FetchUseCaseAsync<ThemeCodable, Theme>(endpoint: .themes, fetchAll: fetchAll)
-    }
-    
-    func fetch() async throws -> FetchUseCaseAsyncTask<ThemeCodable>.FetchUseCaseAsyncDownloadResult {
+    func fetch() async throws -> [ClusterCodable] {
         try await useCase.fetch()
     }
 }

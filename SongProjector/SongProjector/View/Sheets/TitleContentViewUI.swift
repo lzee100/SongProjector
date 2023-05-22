@@ -150,8 +150,8 @@ struct SheetBackgroundColorAndOpacityEditModifier: ViewModifier {
     
     func getOpacity() -> Double {
         let transparancy = editViewModel.item.backgroundTransparancyNumber
-        if getColor() == nil {
-            return 0.0
+        if getColor() == nil || (editViewModel.item.imagePath == nil && editViewModel.item.newSelectedThemeImage == nil) {
+            return 1.0
         }
         return transparancy
     }

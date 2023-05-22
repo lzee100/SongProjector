@@ -15,3 +15,12 @@ class WrappedStruct<T>: ObservableObject, Identifiable {
         self.item = item
     }
 }
+
+
+class WrappedOptionalStruct<T>: ObservableObject, Identifiable {
+    @Published var item: T?
+    
+    init(withItem item:T?) {
+        self.item = item
+    }
+}

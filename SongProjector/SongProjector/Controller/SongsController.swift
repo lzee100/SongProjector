@@ -28,7 +28,6 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
     private var selectedTags: [VTag] = []
     private var selectedCluster: VCluster?
     private var filteredClusters: [Cluster] = []
-    private var downloadingSongs: [MusicDownloadManager] = []
     private var playingCluster: VCluster?
     
     
@@ -120,7 +119,7 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
             cell.selectedCell = clusters?.contains(where: { filteredClusters[indexPath.row].id == $0.id }) ?? false
             
             if !cluster.hasLocalMusic && cluster.hasRemoteMusic {
-                let isUserinteractionEnabled = !downloadingSongs.contains(where: { $0.id == cluster.id })
+                let isUserinteractionEnabled = false
                 cell.setAction(icon: UIImage(named: "DownloadIcon")!, buttonBackgroundColor: .softBlueGrey, isUserinteractionEnabled: isUserinteractionEnabled) {
                     Queues.main.async {
                         self.downloadSongFilesFor(song: cluster)
@@ -501,47 +500,6 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
     }
     
     private func downloadSongFilesFor(song: VCluster) {
-        guard !downloadingSongs.contains(where: { $0.id == song.id }) else { return }
-        if song.musicDownloadObjects.count > 0 {
-            let tm: MusicDownloadManager = MusicDownloadManager(cluster: song)
-            downloadingSongs.append(tm)
-            _ = tm.$progress.sink(receiveValue: { [weak self] progress in
-                guard let self = self else { return }
-                if let cell = self.tableView.visibleCells.compactMap({ $0 as? BasicCell }).first(where: { ($0.data as? VCluster) == song }) {
-                    Queues.main.async {
-                        cell.setProgress(progres: progress)
-                    }
-                }
-            })
-            
-            _ = tm.$result.sink(receiveValue: { [weak self] result in
-                Queues.main.async {
-                    switch result {
-                    case .failed(error: let error):
-                        guard let `self` = self else { return }
-                        self.show(message: error.localizedDescription)
-                    case .success, .none:
-                        Queues.main.async {
-                            song.setDownloadValues(tm.downloadObjects)
-                            song.getManagedObject(context: moc)
-                            moc.perform {
-                                do {
-                                    try moc.save()
-                                    guard let `self` = self else { return }
-                                    if let cell = self.tableView.visibleCells.compactMap({ $0 as? BasicCell }).first(where: { ($0.data as? VCluster) == song }) {
-                                        cell.finishProgress()
-                                    }
-                                } catch {
-                                    guard let `self` = self else { return }
-                                    self.show(message: error.localizedDescription)
-                                }
-                            }
-                        }
-                    }
-                    self?.downloadingSongs.removeAll(where: { $0.id == song.id })
-                }
-            })
-        }
     }
     
     @IBAction func cancelPressed(_ sender: UIBarButtonItem) {

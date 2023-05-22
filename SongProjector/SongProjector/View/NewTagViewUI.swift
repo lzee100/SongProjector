@@ -19,10 +19,10 @@ import SwiftUI
         do {
             let tag = try createTagWith(title: title)
             let createdTags = try await SubmitUseCase<TagCodable>.init(endpoint: .tags, requestMethod: .put, uploadObjects: [tag]).submit()
-            saveLocally(createdTags)
             if let createdTag = createdTags.first {
                 self.newTag = createdTag
             }
+            showingLoader = false
         } catch {
             showingLoader = false
             self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
@@ -43,12 +43,6 @@ import SwiftUI
         } else {
             throw RequestError.unAuthorizedNoUser(requester: "")
         }
-    }
-    
-    private func saveLocally(_ entities: [TagCodable]) {
-        ManagedObjectContextHandler<TagCodable>().save(entities: entities, completion: { [weak self] _ in
-            self?.showingLoader = false
-        })
     }
     
 }

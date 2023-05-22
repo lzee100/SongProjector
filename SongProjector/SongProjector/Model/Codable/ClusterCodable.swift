@@ -382,6 +382,19 @@ extension ClusterCodable: FileTransferable {
 //        }
         
         hasSheets = try hasSheets.updateWith(downloadObjects: transferObjects.compactMap { $0 as? DownloadObject })
+        
+        let downloadObjects = transferObjects.compactMap { $0 as? DownloadObject }
+        var updatedInstruments: [InstrumentCodable] = []
+        hasInstruments.forEach { instrument in
+            if let downloadedFile = downloadObjects.first(where: { $0.remoteURL.absoluteString == instrument.resourcePathAWS }) {
+                var changedInstrument = instrument
+                changedInstrument.resourcePath = downloadedFile.localURL?.absoluteString
+                updatedInstruments.append(changedInstrument)
+            } else {
+                updatedInstruments.append(instrument)
+            }
+        }
+        self.hasInstruments = updatedInstruments
     }
     
     func setDeleteDate() -> FileTransferable {

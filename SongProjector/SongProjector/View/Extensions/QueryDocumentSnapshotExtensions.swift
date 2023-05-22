@@ -45,7 +45,12 @@ extension DocumentSnapshot {
 
 extension QuerySnapshot {
     func decoded<Type: Decodable>() throws -> [Type] {
-        let objects: [Type] = try documents.map({ try $0.decoded() })
-        return objects
+        do {
+            let objects: [Type] = try documents.map({ try $0.decoded() })
+            return objects
+        } catch {
+            print(error)
+            throw error
+        }
     }
 }

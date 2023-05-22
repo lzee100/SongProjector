@@ -32,10 +32,8 @@ import FirebaseAuth
         showingLoader = true
         do {
             let result = try await FetchUsersUseCase.fetch()
-            switch result {
-            case .failed(let error): self.error = error
-            case .succes(let users): saveLocally(users)
-            }
+            self.user = result.first
+            showingLoader = false
         } catch {
             showingLoader = false
             self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
@@ -55,14 +53,6 @@ import FirebaseAuth
         MuteInstrumentsUseCase().resetMutes {
         }
     }
-    
-    private func saveLocally(_ entities: [UserCodable]) {
-        ManagedObjectContextHandler<UserCodable>().save(entities: entities, completion: { [weak self] _ in
-            self?.fetchUser()
-            self?.showingLoader = false
-        })
-    }
-
 }
 
 struct SettingsViewUI: View {

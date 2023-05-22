@@ -32,7 +32,7 @@ class TransferManager: NSObject {
     init(transferObjects: [TransferObject]) {
         uploadObjects = transferObjects.compactMap { $0 as? UploadObject }
         downloadObjects = transferObjects.compactMap { $0 as? DownloadObject }
-        self.singleTransferManagers = uploadObjects.map { FileSubmitter(transferObject: $0) } + downloadObjects.map { FileFetcher(downloadObject: $0) }
+        self.singleTransferManagers = uploadObjects.map { FileSubmitter(uploadObject: $0) } + downloadObjects.map { FileFetcher(downloadObject: $0) }
     }
     
     func start() {

@@ -146,7 +146,7 @@ class MenuController: UITabBarController {
                     }
                 }
                 if $0 == .songs {
-                    let view = CollectionsViewUI(editingSection: nil, songServiceEditorModel: nil)
+                    let view = CollectionsViewUI(editingSection: nil, songServiceEditorModel: WrappedOptionalStruct<SongServiceEditorModel>(withItem: nil))
                     contr.append(UIHostingController(rootView: view))
                 } else {
                     contr.append(Storyboard.MainStoryboard.instantiateViewController(identifier: $0.identifier))

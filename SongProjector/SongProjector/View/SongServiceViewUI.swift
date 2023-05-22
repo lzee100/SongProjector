@@ -9,6 +9,17 @@
 import SwiftUI
 import UIKit
 
+@MainActor class SongServiceViewModel: ObservableObject {
+    
+    
+    
+    func submitPlayDateFor(_ song: SongObjectUI) async {
+        var cluster = song.cluster
+        cluster.lastShownAt = Date()
+        _ = try? await SubmitUseCase(endpoint: .clusters, requestMethod: .put, uploadObjects: [cluster]).submit()
+    }
+}
+
 struct SongServiceViewUI: View {
     
     let dismiss: (() -> Void)
@@ -22,12 +33,11 @@ struct SongServiceViewUI: View {
     @State private var soundAndSheetPlayer: SoundWithSheetPlayer?
     @State private var showingSongServiceEditor = false
     @State private var countDownValue: Int? = nil
-//    @State var songService: WrappedStruct<SongServiceUI>
-    @ObservedObject var songService: WrappedStruct<SongServiceUI>
+    @StateObject var songService: WrappedStruct<SongServiceUI>
+    @StateObject var viewModel = SongServiceViewModel()
 
     init(songService: WrappedStruct<SongServiceUI>, dismiss: @escaping (() -> Void), alignment: Sticky.Alignment = .horizontal) {
-//        self._songService = State(initialValue: songService)
-        self._songService = ObservedObject(initialValue: songService)
+        self._songService = StateObject(wrappedValue: songService)
         self.dismiss = dismiss
         self.alignment = alignment
     }
@@ -122,8 +132,12 @@ struct SongServiceViewUI: View {
             }
             let songService: [SongServiceSettings] = DataFetcher().getEntities(moc: moc)
             if let songService = songService.first, let cod = SongServiceSettingsCodable(managedObject: songService, context: moc) {
-                let service = SongServiceGeneratorUseCase().generate(for: cod)
-                self.songService.item.set(sectionedSongs: service)
+                Task {
+                    let service = await SongServiceGeneratorUseCase().generate(for: cod)
+                    await MainActor.run {
+                        self.songService.item.set(sectionedSongs: service)
+                    }
+                }
             }
         }
         .onChange(of: selectedSheet) { newValue in
@@ -138,6 +152,9 @@ struct SongServiceViewUI: View {
                 isUserInteractionEnabledForBeamer = false
             } else {
                 isUserInteractionEnabledForBeamer = true
+            }
+            Task {
+                await viewModel.submitPlayDateFor(selectedSong)
             }
         }
         .onChange(of: songService.item.selectedSong) { song in

@@ -127,54 +127,6 @@
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "4E9A9E57-DE28-4A87-8559-64739D650637"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SongProjector/View/NewSongServiceSettingsViewUI.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "87"
-            endingLineNumber = "87"
-            landmarkName = "createSongServiceSettings()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "997969A3-A4F9-4E5C-A8F4-13C51D8C64DC"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SongProjector/View/NewSongServiceSettingsViewUI.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "94"
-            endingLineNumber = "94"
-            landmarkName = "createSongServiceSettings()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "B2240290-0E06-40FE-A53B-16E79C4CAA81"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SongProjector/Model/Codable/Submitters/SubmitCodablePerformer.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "173"
-            endingLineNumber = "173"
-            landmarkName = "save(entities:completion:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.ExceptionBreakpoint">
          <BreakpointContent
             uuid = "18AEF7D4-82F5-470F-B5FF-DB600016569F"
@@ -189,64 +141,814 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "956851CA-12DD-444F-8D83-E924E1E61EE5"
+            uuid = "BFE2FEC4-0957-4782-8134-DED5B37C676F"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SongProjector/View/CollectionsViewUI.swift"
+            filePath = "SongProjector/View/Extensions/ImageExtensions.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "57"
-            endingLineNumber = "57"
-            landmarkName = "saveLocally(_:)"
+            startingLineNumber = "236"
+            endingLineNumber = "236"
+            landmarkName = "set(image:imageName:thumbNailName:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "3AB93215-C9DE-48D2-B4DB-DE2FFE9213CF"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SongProjector/View/LyricsOrBibleStudyInputViewUI.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "35"
+            endingLineNumber = "35"
+            landmarkName = "save(newContent:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7283AE10-B10D-44D2-B5EA-6EBCB6589F93"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "105"
+            endingLineNumber = "105"
+            landmarkName = "fetch(snapshots:lastUpdatedAt:)"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "956851CA-12DD-444F-8D83-E924E1E61EE5 - 2098884760db1605"
+                  uuid = "7283AE10-B10D-44D2-B5EA-6EBCB6589F93 - c554a466153b7184"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "closure #1 @Sendable () async -&gt; () in closure #1 (Swift.Result&lt;Swift.Array&lt;ChurchBeam.FileTransferable&gt;, Swift.Error&gt;) -&gt; () in ChurchBeam.CollectionsViewModel.saveLocally(Swift.Array&lt;ChurchBeam.ClusterCodable&gt;) -&gt; ()"
+                  symbolName = "(1) suspend resume partial function for ChurchBeam.FetchUseCaseAsyncTask.fetch(snapshots: Swift.Array&lt;__C.FIRQuerySnapshot&gt;, lastUpdatedAt: Swift.Optional&lt;Foundation.Date&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
                   moduleName = "SongProjector"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/View/CollectionsViewUI.swift"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "57"
-                  endingLineNumber = "57"
-                  offsetFromSymbolStart = "280">
+                  startingLineNumber = "105"
+                  endingLineNumber = "105"
+                  offsetFromSymbolStart = "2332">
                </Location>
                <Location
-                  uuid = "956851CA-12DD-444F-8D83-E924E1E61EE5 - e38f5f63a61652f0"
+                  uuid = "7283AE10-B10D-44D2-B5EA-6EBCB6589F93 - 6fee7d395d53ad86"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "(1) await resume partial function for closure #1 @Sendable () async -&gt; () in closure #1 (Swift.Result&lt;Swift.Array&lt;ChurchBeam.FileTransferable&gt;, Swift.Error&gt;) -&gt; () in ChurchBeam.CollectionsViewModel.saveLocally(Swift.Array&lt;ChurchBeam.ClusterCodable&gt;) -&gt; ()"
+                  symbolName = "(3) suspend resume partial function for ChurchBeam.FetchUseCaseAsyncTask.fetch(snapshots: Swift.Array&lt;__C.FIRQuerySnapshot&gt;, lastUpdatedAt: Swift.Optional&lt;Foundation.Date&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
                   moduleName = "SongProjector"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/View/CollectionsViewUI.swift"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "52"
-                  endingLineNumber = "52"
-                  offsetFromSymbolStart = "32">
+                  startingLineNumber = "105"
+                  endingLineNumber = "105"
+                  offsetFromSymbolStart = "5072">
                </Location>
                <Location
-                  uuid = "956851CA-12DD-444F-8D83-E924E1E61EE5 - 6dd8f3cad5732f86"
+                  uuid = "7283AE10-B10D-44D2-B5EA-6EBCB6589F93 - 9183d7f3856be980"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "(2) suspend resume partial function for closure #1 @Sendable () async -&gt; () in closure #1 (Swift.Result&lt;Swift.Array&lt;ChurchBeam.FileTransferable&gt;, Swift.Error&gt;) -&gt; () in ChurchBeam.CollectionsViewModel.saveLocally(Swift.Array&lt;ChurchBeam.ClusterCodable&gt;) -&gt; ()"
+                  symbolName = "(5) suspend resume partial function for ChurchBeam.FetchUseCaseAsyncTask.fetch(snapshots: Swift.Array&lt;__C.FIRQuerySnapshot&gt;, lastUpdatedAt: Swift.Optional&lt;Foundation.Date&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
                   moduleName = "SongProjector"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/View/CollectionsViewUI.swift"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "52"
-                  endingLineNumber = "52"
-                  offsetFromSymbolStart = "32">
+                  startingLineNumber = "105"
+                  endingLineNumber = "105"
+                  offsetFromSymbolStart = "792">
+               </Location>
+               <Location
+                  uuid = "7283AE10-B10D-44D2-B5EA-6EBCB6589F93 - 5cfe799d34da618c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(9) suspend resume partial function for ChurchBeam.FetchUseCaseAsyncTask.fetch(snapshots: Swift.Array&lt;__C.FIRQuerySnapshot&gt;, lastUpdatedAt: Swift.Optional&lt;Foundation.Date&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "105"
+                  endingLineNumber = "105"
+                  offsetFromSymbolStart = "804">
+               </Location>
+               <Location
+                  uuid = "7283AE10-B10D-44D2-B5EA-6EBCB6589F93 - fe6241cf138c244"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(13) suspend resume partial function for ChurchBeam.FetchUseCaseAsyncTask.fetch(snapshots: Swift.Array&lt;__C.FIRQuerySnapshot&gt;, lastUpdatedAt: Swift.Optional&lt;Foundation.Date&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "105"
+                  endingLineNumber = "105"
+                  offsetFromSymbolStart = "644">
+               </Location>
+               <Location
+                  uuid = "7283AE10-B10D-44D2-B5EA-6EBCB6589F93 - 413a4e4d85c39f47"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(14) suspend resume partial function for ChurchBeam.FetchUseCaseAsyncTask.fetch(snapshots: Swift.Array&lt;__C.FIRQuerySnapshot&gt;, lastUpdatedAt: Swift.Optional&lt;Foundation.Date&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "105"
+                  endingLineNumber = "105"
+                  offsetFromSymbolStart = "560">
+               </Location>
+               <Location
+                  uuid = "7283AE10-B10D-44D2-B5EA-6EBCB6589F93 - fb59e863298a3c46"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(15) suspend resume partial function for ChurchBeam.FetchUseCaseAsyncTask.fetch(snapshots: Swift.Array&lt;__C.FIRQuerySnapshot&gt;, lastUpdatedAt: Swift.Optional&lt;Foundation.Date&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "105"
+                  endingLineNumber = "105"
+                  offsetFromSymbolStart = "1028">
+               </Location>
+               <Location
+                  uuid = "7283AE10-B10D-44D2-B5EA-6EBCB6589F93 - 2d7d1290fe52d941"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(16) suspend resume partial function for ChurchBeam.FetchUseCaseAsyncTask.fetch(snapshots: Swift.Array&lt;__C.FIRQuerySnapshot&gt;, lastUpdatedAt: Swift.Optional&lt;Foundation.Date&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "105"
+                  endingLineNumber = "105"
+                  offsetFromSymbolStart = "1028">
+               </Location>
+               <Location
+                  uuid = "7283AE10-B10D-44D2-B5EA-6EBCB6589F93 - 6090bcc1821d7640"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(17) suspend resume partial function for ChurchBeam.FetchUseCaseAsyncTask.fetch(snapshots: Swift.Array&lt;__C.FIRQuerySnapshot&gt;, lastUpdatedAt: Swift.Optional&lt;Foundation.Date&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "105"
+                  endingLineNumber = "105"
+                  offsetFromSymbolStart = "1040">
+               </Location>
+               <Location
+                  uuid = "7283AE10-B10D-44D2-B5EA-6EBCB6589F93 - 9ab4e6f756a41343"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(18) suspend resume partial function for ChurchBeam.FetchUseCaseAsyncTask.fetch(snapshots: Swift.Array&lt;__C.FIRQuerySnapshot&gt;, lastUpdatedAt: Swift.Optional&lt;Foundation.Date&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "105"
+                  endingLineNumber = "105"
+                  offsetFromSymbolStart = "880">
+               </Location>
+               <Location
+                  uuid = "7283AE10-B10D-44D2-B5EA-6EBCB6589F93 - ccc80f24fb6cb042"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(19) suspend resume partial function for ChurchBeam.FetchUseCaseAsyncTask.fetch(snapshots: Swift.Array&lt;__C.FIRQuerySnapshot&gt;, lastUpdatedAt: Swift.Optional&lt;Foundation.Date&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "105"
+                  endingLineNumber = "105"
+                  offsetFromSymbolStart = "892">
+               </Location>
+               <Location
+                  uuid = "7283AE10-B10D-44D2-B5EA-6EBCB6589F93 - 6fee7d395d53ad86"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for ChurchBeam.FetchUseCaseAsyncTask.fetch(snapshots: Swift.Array&lt;__C.FIRQuerySnapshot&gt;, lastUpdatedAt: Swift.Optional&lt;Foundation.Date&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "105"
+                  endingLineNumber = "105"
+                  offsetFromSymbolStart = "5448">
+               </Location>
+               <Location
+                  uuid = "7283AE10-B10D-44D2-B5EA-6EBCB6589F93 - fb59e863298a3c46"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(15) suspend resume partial function for ChurchBeam.FetchUseCaseAsyncTask.fetch(snapshots: Swift.Array&lt;__C.FIRQuerySnapshot&gt;, lastUpdatedAt: Swift.Optional&lt;Foundation.Date&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "105"
+                  endingLineNumber = "105"
+                  offsetFromSymbolStart = "728">
+               </Location>
+               <Location
+                  uuid = "7283AE10-B10D-44D2-B5EA-6EBCB6589F93 - 2d7d1290fe52d941"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(16) suspend resume partial function for ChurchBeam.FetchUseCaseAsyncTask.fetch(snapshots: Swift.Array&lt;__C.FIRQuerySnapshot&gt;, lastUpdatedAt: Swift.Optional&lt;Foundation.Date&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "105"
+                  endingLineNumber = "105"
+                  offsetFromSymbolStart = "728">
+               </Location>
+               <Location
+                  uuid = "7283AE10-B10D-44D2-B5EA-6EBCB6589F93 - 6090bcc1821d7640"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(17) suspend resume partial function for ChurchBeam.FetchUseCaseAsyncTask.fetch(snapshots: Swift.Array&lt;__C.FIRQuerySnapshot&gt;, lastUpdatedAt: Swift.Optional&lt;Foundation.Date&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "105"
+                  endingLineNumber = "105"
+                  offsetFromSymbolStart = "740">
+               </Location>
+               <Location
+                  uuid = "7283AE10-B10D-44D2-B5EA-6EBCB6589F93 - 9ab4e6f756a41343"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(18) suspend resume partial function for ChurchBeam.FetchUseCaseAsyncTask.fetch(snapshots: Swift.Array&lt;__C.FIRQuerySnapshot&gt;, lastUpdatedAt: Swift.Optional&lt;Foundation.Date&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "105"
+                  endingLineNumber = "105"
+                  offsetFromSymbolStart = "580">
+               </Location>
+               <Location
+                  uuid = "7283AE10-B10D-44D2-B5EA-6EBCB6589F93 - ccc80f24fb6cb042"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(19) suspend resume partial function for ChurchBeam.FetchUseCaseAsyncTask.fetch(snapshots: Swift.Array&lt;__C.FIRQuerySnapshot&gt;, lastUpdatedAt: Swift.Optional&lt;Foundation.Date&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "105"
+                  endingLineNumber = "105"
+                  offsetFromSymbolStart = "592">
                </Location>
             </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "88D13FDA-69F1-4C58-97BB-2141224C870A"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "144"
+            endingLineNumber = "144"
+            landmarkName = "downloadFiles(_:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "88D13FDA-69F1-4C58-97BB-2141224C870A - 648ce4e64132ee94"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for closure #1 (inout Swift.ThrowingTaskGroup&lt;&#x3c4;_0_0, Swift.Error&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt; in ChurchBeam.FetchUseCaseAsyncTask.downloadFiles(Swift.Array&lt;&#x3c4;_0_0&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "144"
+                  endingLineNumber = "144"
+                  offsetFromSymbolStart = "2680">
+               </Location>
+               <Location
+                  uuid = "88D13FDA-69F1-4C58-97BB-2141224C870A - bc2a14a5224f9bab"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Sendable () async throws -&gt; &#x3c4;_0_0 in closure #1 (inout Swift.ThrowingTaskGroup&lt;&#x3c4;_0_0, Swift.Error&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt; in ChurchBeam.FetchUseCaseAsyncTask.downloadFiles(Swift.Array&lt;&#x3c4;_0_0&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "143"
+                  endingLineNumber = "143"
+                  offsetFromSymbolStart = "48">
+               </Location>
+               <Location
+                  uuid = "88D13FDA-69F1-4C58-97BB-2141224C870A - dc9e97617f04c02"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for closure #1 @Sendable () async throws -&gt; &#x3c4;_0_0 in closure #1 (inout Swift.ThrowingTaskGroup&lt;&#x3c4;_0_0, Swift.Error&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt; in ChurchBeam.FetchUseCaseAsyncTask.downloadFiles(Swift.Array&lt;&#x3c4;_0_0&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "143"
+                  endingLineNumber = "143"
+                  offsetFromSymbolStart = "36">
+               </Location>
+               <Location
+                  uuid = "88D13FDA-69F1-4C58-97BB-2141224C870A - 2c7cc43b9cd7bd53"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for ChurchBeam.FetchUseCaseAsyncTask.downloadFiles(Swift.Array&lt;&#x3c4;_0_0&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "144"
+                  endingLineNumber = "144"
+                  offsetFromSymbolStart = "508">
+               </Location>
+               <Location
+                  uuid = "88D13FDA-69F1-4C58-97BB-2141224C870A - 61dd55a0d1e7a35d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(2) await resume partial function for ChurchBeam.FetchUseCaseAsyncTask.downloadFiles(Swift.Array&lt;&#x3c4;_0_0&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "142"
+                  endingLineNumber = "142"
+                  offsetFromSymbolStart = "32">
+               </Location>
+               <Location
+                  uuid = "88D13FDA-69F1-4C58-97BB-2141224C870A - f5835cc0436eb0f3"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for ChurchBeam.FetchUseCaseAsyncTask.downloadFiles(Swift.Array&lt;&#x3c4;_0_0&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "142"
+                  endingLineNumber = "142"
+                  offsetFromSymbolStart = "36">
+               </Location>
+               <Location
+                  uuid = "88D13FDA-69F1-4C58-97BB-2141224C870A - 19a82f142a5d36f0"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(4) suspend resume partial function for ChurchBeam.FetchUseCaseAsyncTask.downloadFiles(Swift.Array&lt;&#x3c4;_0_0&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "142"
+                  endingLineNumber = "142"
+                  offsetFromSymbolStart = "36">
+               </Location>
+               <Location
+                  uuid = "88D13FDA-69F1-4C58-97BB-2141224C870A - 9a903e5d889399a1"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (inout Swift.ThrowingTaskGroup&lt;&#x3c4;_0_0, Swift.Error&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt; in ChurchBeam.FetchUseCaseAsyncTask.downloadFiles(Swift.Array&lt;&#x3c4;_0_0&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "144"
+                  endingLineNumber = "144"
+                  offsetFromSymbolStart = "56">
+               </Location>
+               <Location
+                  uuid = "88D13FDA-69F1-4C58-97BB-2141224C870A - 648ce4e64132ee94"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for closure #1 (inout Swift.ThrowingTaskGroup&lt;&#x3c4;_0_0, Swift.Error&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt; in ChurchBeam.FetchUseCaseAsyncTask.downloadFiles(Swift.Array&lt;&#x3c4;_0_0&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "144"
+                  endingLineNumber = "144"
+                  offsetFromSymbolStart = "88">
+               </Location>
+               <Location
+                  uuid = "88D13FDA-69F1-4C58-97BB-2141224C870A - 8298454bddc55166"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(2) await resume partial function for closure #1 (inout Swift.ThrowingTaskGroup&lt;&#x3c4;_0_0, Swift.Error&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt; in ChurchBeam.FetchUseCaseAsyncTask.downloadFiles(Swift.Array&lt;&#x3c4;_0_0&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "144"
+                  endingLineNumber = "144"
+                  offsetFromSymbolStart = "32">
+               </Location>
+               <Location
+                  uuid = "88D13FDA-69F1-4C58-97BB-2141224C870A - 3da78201f442296"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for closure #1 (inout Swift.ThrowingTaskGroup&lt;&#x3c4;_0_0, Swift.Error&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt; in ChurchBeam.FetchUseCaseAsyncTask.downloadFiles(Swift.Array&lt;&#x3c4;_0_0&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "144"
+                  endingLineNumber = "144"
+                  offsetFromSymbolStart = "68">
+               </Location>
+               <Location
+                  uuid = "88D13FDA-69F1-4C58-97BB-2141224C870A - e4f4bc3f26cc097"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(4) suspend resume partial function for closure #1 (inout Swift.ThrowingTaskGroup&lt;&#x3c4;_0_0, Swift.Error&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt; in ChurchBeam.FetchUseCaseAsyncTask.downloadFiles(Swift.Array&lt;&#x3c4;_0_0&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "144"
+                  endingLineNumber = "144"
+                  offsetFromSymbolStart = "36">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B0664A22-D3D4-4335-B631-1CE87F61E054"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SongProjector/Global/ManagedObjectContextHandlerUseCase.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "34"
+            endingLineNumber = "34"
+            landmarkName = "save(entities:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "B0664A22-D3D4-4335-B631-1CE87F61E054 - eb72a67213c827b5"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(4) suspend resume partial function for ChurchBeam.ManagedObjectContextHandler.save(entities: Swift.Array&lt;&#x3c4;_0_0&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Global/ManagedObjectContextHandlerUseCase.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "34"
+                  endingLineNumber = "34"
+                  offsetFromSymbolStart = "880">
+               </Location>
+               <Location
+                  uuid = "B0664A22-D3D4-4335-B631-1CE87F61E054 - eb72a67213c827b5"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(4) suspend resume partial function for ChurchBeam.ManagedObjectContextHandler.save(entities: Swift.Array&lt;&#x3c4;_0_0&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Global/ManagedObjectContextHandlerUseCase.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "34"
+                  endingLineNumber = "34"
+                  offsetFromSymbolStart = "896">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "63B6751E-C151-4841-BD66-A6E320FF8A83"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "100"
+            endingLineNumber = "100"
+            landmarkName = "fetch(snapshots:lastUpdatedAt:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "63B6751E-C151-4841-BD66-A6E320FF8A83 - a3af51b998a988f7"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(11) suspend resume partial function for ChurchBeam.FetchUseCaseAsyncTask.fetch(snapshots: Swift.Array&lt;__C.FIRQuerySnapshot&gt;, lastUpdatedAt: Swift.Optional&lt;Foundation.Date&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "100"
+                  endingLineNumber = "100"
+                  offsetFromSymbolStart = "400">
+               </Location>
+               <Location
+                  uuid = "63B6751E-C151-4841-BD66-A6E320FF8A83 - 3e555667bb706107"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(12) await resume partial function for ChurchBeam.FetchUseCaseAsyncTask.fetch(snapshots: Swift.Array&lt;__C.FIRQuerySnapshot&gt;, lastUpdatedAt: Swift.Optional&lt;Foundation.Date&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "79"
+                  endingLineNumber = "79"
+                  offsetFromSymbolStart = "36">
+               </Location>
+               <Location
+                  uuid = "63B6751E-C151-4841-BD66-A6E320FF8A83 - 3e555667bb701ccc"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(12) await resume partial function for ChurchBeam.FetchUseCaseAsyncTask.fetch(snapshots: Swift.Array&lt;__C.FIRQuerySnapshot&gt;, lastUpdatedAt: Swift.Optional&lt;Foundation.Date&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "100"
+                  endingLineNumber = "100"
+                  offsetFromSymbolStart = "212">
+               </Location>
+               <Location
+                  uuid = "63B6751E-C151-4841-BD66-A6E320FF8A83 - fe6241cf138bf22"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(13) suspend resume partial function for ChurchBeam.FetchUseCaseAsyncTask.fetch(snapshots: Swift.Array&lt;__C.FIRQuerySnapshot&gt;, lastUpdatedAt: Swift.Optional&lt;Foundation.Date&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "79"
+                  endingLineNumber = "79"
+                  offsetFromSymbolStart = "32">
+               </Location>
+               <Location
+                  uuid = "63B6751E-C151-4841-BD66-A6E320FF8A83 - fe6241cf138c2e9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(13) suspend resume partial function for ChurchBeam.FetchUseCaseAsyncTask.fetch(snapshots: Swift.Array&lt;__C.FIRQuerySnapshot&gt;, lastUpdatedAt: Swift.Optional&lt;Foundation.Date&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "100"
+                  endingLineNumber = "100"
+                  offsetFromSymbolStart = "340">
+               </Location>
+               <Location
+                  uuid = "63B6751E-C151-4841-BD66-A6E320FF8A83 - ccc80f24fb6ccd24"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(19) suspend resume partial function for ChurchBeam.FetchUseCaseAsyncTask.fetch(snapshots: Swift.Array&lt;__C.FIRQuerySnapshot&gt;, lastUpdatedAt: Swift.Optional&lt;Foundation.Date&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "79"
+                  endingLineNumber = "79"
+                  offsetFromSymbolStart = "36">
+               </Location>
+               <Location
+                  uuid = "63B6751E-C151-4841-BD66-A6E320FF8A83 - ccc80f24fb6cb0ef"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(19) suspend resume partial function for ChurchBeam.FetchUseCaseAsyncTask.fetch(snapshots: Swift.Array&lt;__C.FIRQuerySnapshot&gt;, lastUpdatedAt: Swift.Optional&lt;Foundation.Date&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "100"
+                  endingLineNumber = "100"
+                  offsetFromSymbolStart = "116">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "28B476D2-CE4F-4A47-AB24-42E925BE426C"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "102"
+            endingLineNumber = "102"
+            landmarkName = "fetch(snapshots:lastUpdatedAt:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "28B476D2-CE4F-4A47-AB24-42E925BE426C - 6fee7d395d53ade9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for ChurchBeam.FetchUseCaseAsyncTask.fetch(snapshots: Swift.Array&lt;__C.FIRQuerySnapshot&gt;, lastUpdatedAt: Swift.Optional&lt;Foundation.Date&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "102"
+                  endingLineNumber = "102"
+                  offsetFromSymbolStart = "4704">
+               </Location>
+               <Location
+                  uuid = "28B476D2-CE4F-4A47-AB24-42E925BE426C - fb59e863298a3c29"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(15) suspend resume partial function for ChurchBeam.FetchUseCaseAsyncTask.fetch(snapshots: Swift.Array&lt;__C.FIRQuerySnapshot&gt;, lastUpdatedAt: Swift.Optional&lt;Foundation.Date&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "102"
+                  endingLineNumber = "102"
+                  offsetFromSymbolStart = "660">
+               </Location>
+               <Location
+                  uuid = "28B476D2-CE4F-4A47-AB24-42E925BE426C - 2d7d1290fe52d92e"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(16) suspend resume partial function for ChurchBeam.FetchUseCaseAsyncTask.fetch(snapshots: Swift.Array&lt;__C.FIRQuerySnapshot&gt;, lastUpdatedAt: Swift.Optional&lt;Foundation.Date&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "102"
+                  endingLineNumber = "102"
+                  offsetFromSymbolStart = "660">
+               </Location>
+               <Location
+                  uuid = "28B476D2-CE4F-4A47-AB24-42E925BE426C - 6090bcc1821d762f"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(17) suspend resume partial function for ChurchBeam.FetchUseCaseAsyncTask.fetch(snapshots: Swift.Array&lt;__C.FIRQuerySnapshot&gt;, lastUpdatedAt: Swift.Optional&lt;Foundation.Date&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "102"
+                  endingLineNumber = "102"
+                  offsetFromSymbolStart = "672">
+               </Location>
+               <Location
+                  uuid = "28B476D2-CE4F-4A47-AB24-42E925BE426C - 9ab4e6f756a4132c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(18) suspend resume partial function for ChurchBeam.FetchUseCaseAsyncTask.fetch(snapshots: Swift.Array&lt;__C.FIRQuerySnapshot&gt;, lastUpdatedAt: Swift.Optional&lt;Foundation.Date&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "102"
+                  endingLineNumber = "102"
+                  offsetFromSymbolStart = "512">
+               </Location>
+               <Location
+                  uuid = "28B476D2-CE4F-4A47-AB24-42E925BE426C - ccc80f24fb6cb02d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(19) suspend resume partial function for ChurchBeam.FetchUseCaseAsyncTask.fetch(snapshots: Swift.Array&lt;__C.FIRQuerySnapshot&gt;, lastUpdatedAt: Swift.Optional&lt;Foundation.Date&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "102"
+                  endingLineNumber = "102"
+                  offsetFromSymbolStart = "524">
+               </Location>
+               <Location
+                  uuid = "28B476D2-CE4F-4A47-AB24-42E925BE426C - 6fee7d395d53ade9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for ChurchBeam.FetchUseCaseAsyncTask.fetch(snapshots: Swift.Array&lt;__C.FIRQuerySnapshot&gt;, lastUpdatedAt: Swift.Optional&lt;Foundation.Date&gt;) async throws -&gt; Swift.Array&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "102"
+                  endingLineNumber = "102"
+                  offsetFromSymbolStart = "4824">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F6FE03A9-1321-44CA-9689-F91CA239DF7E"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "90"
+            endingLineNumber = "90"
+            landmarkName = "fetch(snapshots:lastUpdatedAt:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

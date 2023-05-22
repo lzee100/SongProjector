@@ -33,12 +33,16 @@ struct SoundAnimationViewUI: View {
                 }
                 .tint(animationColor)
         }
-        .onChange(of: soundPlayer.selectedSong) { newValue in
-            update.toggle()
-        }
         .onAppear {
             update.toggle()
+            withAnimation(Animation.default.delay(0.5)) {
+                update.toggle()
+            }
         }
+        .onChange(of: update) { value in
+            print(value)
+        }
+
     }
 }
 

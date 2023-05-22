@@ -8,6 +8,24 @@
 
 import SwiftUI
 
+actor MusicDownloadManager: ObservableObject {
+    
+    @Published private var musicDownloaders: [FetchMusicUseCase] = []
+    
+    func downloadMusicFor(collection: ClusterCodable) async throws {
+        guard musicDownloaders.contains(where: { $0.id != collection.id }) else { return }
+        let fetchMusicUseCase = FetchMusicUseCase(cluster: collection)
+        musicDownloaders.append(fetchMusicUseCase)
+        try await fetchMusicUseCase.fetch()
+        musicDownloaders.removeAll(where: { $0.id == collection.id })
+    }
+
+    func isDownloading(for cluster: ClusterCodable) async -> Bool {
+        musicDownloaders.contains(where: { $0.id == cluster.id })
+    }
+
+}
+
 @MainActor class CollectionsViewModel: ObservableObject {
     
     @Published var error: LocalizedError?
@@ -18,50 +36,94 @@ import SwiftUI
     private var searchText: String? = nil
     private var showDeleted = false
     private var selectedTags: [TagCodable] = []
-
+    
+    
     init() {
-        reload()
+        Task {
+            await reload()
+        }
     }
-    func fetchCollections(searchText: String? = nil, showDeleted: Bool = false, selectedTags: [TagCodable] = []) {
-        collections = FilteredCollectionsUseCase().getCollections(searchText: searchText, showDeleted: showDeleted, selectedTags: selectedTags)
+    
+    func fetchCollections(searchText: String? = nil, showDeleted: Bool = false, selectedTags: [TagCodable] = []) async {
+        collections = await FilteredCollectionsUseCase().getCollections(searchText: searchText, showDeleted: showDeleted, selectedTags: selectedTags)
         self.searchText = searchText
         self.showDeleted = showDeleted
         self.selectedTags = selectedTags
     }
     
-    func reload() {
-        collections = FilteredCollectionsUseCase().getCollections(searchText: searchText, showDeleted: showDeleted, selectedTags: selectedTags)
+    func reload() async {
+        collections = await FilteredCollectionsUseCase().getCollections(searchText: searchText, showDeleted: showDeleted, selectedTags: selectedTags)
     }
     
-    func fetchRemoteCollections() async {
-        reload()
+    func fetchRemoteThemes() async {
+        guard !showingLoader else { return }
         showingLoader = true
+        await reload()
         do {
-            let result = try await FetchCollectionsUseCase(fetchAll: false).fetch()
-            switch result {
-            case .succes(let clusters): saveLocally(clusters)
-            case .failed(let error):
-                showingLoader = false
-                self.error = error
-            }
+            try await FetchThemesUseCase(fetchAll: false).fetch()
+            self.showingLoader = false
         } catch {
+            self.showingLoader = false
             self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
         }
     }
     
-    private func saveLocally(_ entities: [ClusterCodable]) {
-        ManagedObjectContextHandler<ClusterCodable>().save(entities: entities, completion: { [weak self] _ in
-            self?.reload()
-            if entities.count > 0 {
-                Task {
-                    await fetchRemoteCollections()
-                }
-            } else {
-                self?.showingLoader = false
-            }
-        })
+    func fetchRemoteCollections() async {
+        guard !showingLoader else { return }
+        await reload()
+        showingLoader = true
+        do {
+            collections = try await FetchCollectionsUseCase(fetchAll: false).fetch()
+            showingLoader = false
+        } catch {
+            showingLoader = false
+            self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
+        }
     }
     
+    func deleteMusicFor(_ cluster: ClusterCodable) async {
+        showingLoader = true
+        do {
+            try await DeleteLocalMusicUseCase(cluster: cluster).delete()
+            await reload()
+        } catch {
+            self.error = error as? LocalizedAlertError ?? RequestError.unknown(requester: "", error: error)
+            showingLoader = false
+        }
+    }
+        
+    func restore(_ collection: ClusterCodable) async {
+        showingLoader = true
+        var collection = collection
+        collection.deleteDate = nil
+        if uploadSecret == nil {
+            collection.rootDeleteDate = nil
+        }
+        do {
+            try await SubmitUseCase(endpoint: .clusters, requestMethod: .put, uploadObjects: [collection]).submit()
+            showingLoader = false
+        } catch {
+            showingLoader = false
+            self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
+        }
+        
+    }
+    
+    func delete(_ collection: ClusterCodable) async {
+        showingLoader = true
+        var collection = collection
+        collection.deleteDate = Date()
+        if uploadSecret == nil {
+            collection.rootDeleteDate = Date()
+        }
+        do {
+            try await SubmitUseCase(endpoint: uploadSecret == nil ? .clusters : .universalclusters, requestMethod: .put, uploadObjects: [collection]).submit()
+            showingLoader = false
+        } catch {
+            showingLoader = false
+            self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
+        }
+    }
 }
 
 struct CollectionsViewUI: View {
@@ -79,7 +141,7 @@ struct CollectionsViewUI: View {
     }
     
     let editingSection: SongServiceSectionWithSongs?
-    let songServiceEditorModel: SongServiceEditorModel?
+    @ObservedObject var songServiceEditorModel: WrappedOptionalStruct<SongServiceEditorModel>
     @EnvironmentObject private var soundPlayer: SoundPlayer2
     @State var showingCollectionsViewUI: Binding<Bool>? = nil
     @State var mandatoryTags: [TagCodable] = []
@@ -88,17 +150,15 @@ struct CollectionsViewUI: View {
 
     @State private var showingDeleteLocalMusicAlert = false
     @State private var showingDoYouWantToDeleteSongAlert = false
-    @State private var showingDeleteSongNetworkError = false
     @State private var deleteLocalMusicError: Error?
     @State private var networkError: Error?
     @State private var selectedCollectionForTrailingActions: ClusterCodable?
-    @State private var requestProgress: RequesterResult = .idle
     @State private var showingCollectionEditor: CollectionEditor?
     @State private var showDeletedCollections = false
     @State private var searchText = ""
     
     private var allowsRowSelection: Bool {
-        if songServiceEditorModel != nil {
+        if songServiceEditorModel.item != nil {
             return editingSection == nil
         } else {
             return true
@@ -118,12 +178,23 @@ struct CollectionsViewUI: View {
                     .styleAsSelectionCapsuleButton(isSelected: showDeletedCollections)
                 }
                 .padding([.top, .leading, .trailing])
+                if viewModel.showingLoader {
+                    ProgressView()
+                        .padding([.top, .leading, .trailing])
+                        .tint(Color(uiColor: .blackColor).opacity(0.8))
+                }
+
                 List {
+                    if viewModel.showingLoader {
+                        ProgressView()
+                            .padding()
+                            .tint(Color(uiColor: .systemGray5))
+                    }
                     ForEach(viewModel.collections, id: \.id) { collection in
                         Button {
                             if let editingSection {
-                                songServiceEditorModel?.add(collection, to: editingSection)
-                            } else if let songServiceEditorModel {
+                                songServiceEditorModel.item?.add(collection, to: editingSection)
+                            } else if let songServiceEditorModel = songServiceEditorModel.item {
                                 songServiceEditorModel.didSelect(collection)
                             } else {
                                 showingCollectionEditor = .existing(collection)
@@ -132,9 +203,8 @@ struct CollectionsViewUI: View {
                             CollectionListViewUI(
                                 collectionsViewModel: viewModel,
                                 collection: collection,
-                                fetchMusicUseCase: FetchMusicUseCase(cluster: collection),
-                                isSelectable: songServiceEditorModel != nil,
-                                isSelected: songServiceEditorModel?.isSelected(collection) ?? false
+                                isSelectable: songServiceEditorModel.item != nil,
+                                isSelected: songServiceEditorModel.item?.isSelected(collection) ?? false
                             )
                             .frame(minHeight: 50)
                         }
@@ -153,6 +223,7 @@ struct CollectionsViewUI: View {
                         .allowsHitTesting(allowsRowSelection)
                     }
                 }
+                .padding([.top], 0)
                 .refreshable {
                     await viewModel.fetchRemoteCollections()
                 }
@@ -202,43 +273,36 @@ struct CollectionsViewUI: View {
             }
             .alert(AppText.Songs.deleteBody(songName: selectedCollectionForTrailingActions?.title ?? "-"), isPresented: $showingDoYouWantToDeleteSongAlert) {
                 Button(AppText.Actions.delete, role: .destructive) {
-                    deleteSong()
+                    if let selectedCollectionForTrailingActions {
+                        Task {
+                            await viewModel.delete(selectedCollectionForTrailingActions)
+                        }
+                    }
                 }
                 Button(AppText.Actions.cancel, role: .cancel) {
                     showingDoYouWantToDeleteSongAlert.toggle()
                 }
             }
-            .alert(AppText.Songs.errorDeletingSongRemotely(title: selectedCollectionForTrailingActions?.title ?? "??", errorMessage: networkError?.localizedDescription ?? ""), isPresented: $showingDeleteSongNetworkError) {
-                Button(AppText.Actions.cancel, role: .cancel) {
-                    showingDeleteSongNetworkError.toggle()
-                }
-            }
             .searchable(text: $searchText).tint(Color(uiColor: themeHighlighted))
         }
         .task {
+            await viewModel.fetchRemoteThemes()
             await viewModel.fetchRemoteCollections()
         }
-        .onChange(of: requestProgress) { newValue in
-            switch newValue {
-            case .finished(let result):
-                switch result {
-                case .success:
-                    viewModel.fetchCollections(searchText: searchText, selectedTags: mandatoryTags + tagSelectionModel.selectedTags)
-                case .failure(let error):
-                    networkError = error
-                    showingDeleteSongNetworkError.toggle()
-                }
-            default: break
-            }
-        }
         .onChange(of: searchText, perform: { searchText in
-            viewModel.fetchCollections(searchText: searchText, showDeleted: showDeletedCollections, selectedTags: mandatoryTags + tagSelectionModel.selectedTags)
+            Task {
+                await viewModel.fetchCollections(searchText: searchText, showDeleted: showDeletedCollections, selectedTags: mandatoryTags + tagSelectionModel.selectedTags)
+            }
         })
         .onChange(of: tagSelectionModel.selectedTags, perform: { selectedTags in
-            viewModel.fetchCollections(searchText: searchText, showDeleted: showDeletedCollections, selectedTags: mandatoryTags + tagSelectionModel.selectedTags)
+            Task {
+                await viewModel.fetchCollections(searchText: searchText, showDeleted: showDeletedCollections, selectedTags: mandatoryTags + tagSelectionModel.selectedTags)
+            }
         })
         .onChange(of: showDeletedCollections, perform: { showDeletedCollections in
-            viewModel.fetchCollections(searchText: searchText, showDeleted: showDeletedCollections, selectedTags: mandatoryTags + tagSelectionModel.selectedTags)
+            Task {
+                await viewModel.fetchCollections(searchText: searchText, showDeleted: showDeletedCollections, selectedTags: mandatoryTags + tagSelectionModel.selectedTags)
+            }
         })
         .sheet(item: $showingCollectionEditor, content: { editor in
             switch editor {
@@ -278,12 +342,9 @@ struct CollectionsViewUI: View {
     
     @ViewBuilder private func restore(collection: ClusterCodable) -> some View {
         Button {
-            var collection = collection
-            collection.deleteDate = nil
-            if uploadSecret == nil {
-                collection.rootDeleteDate = nil
+            Task {
+                await viewModel.restore(collection)
             }
-            SubmitEntitiesUseCase<ClusterCodable>(endpoint: .clusters, requestMethod: .put, uploadObjects: [collection], result: $requestProgress).submit()
         } label: {
             Text(AppText.Actions.restore)
         }
@@ -292,26 +353,17 @@ struct CollectionsViewUI: View {
     
     private func deleteLocalMusic() {
         if let selectedCollectionForTrailingActions {
-            DeleteLocalMusicUseCase(cluster: selectedCollectionForTrailingActions).delete { result in
-                switch result {
-                case .success: viewModel.fetchCollections(searchText: searchText, selectedTags: mandatoryTags + tagSelectionModel.selectedTags)
-                case .failure(let error):
-                    self.deleteLocalMusicError = error
-                    showingDeleteLocalMusicAlert.toggle()
-                }
+            Task {
+                await viewModel.deleteMusicFor(selectedCollectionForTrailingActions)
+                
             }
         }
     }
     
-    private func deleteSong() {
-        if let selectedCollectionForTrailingActions {
-            DeleteSongUseCase(cluster: selectedCollectionForTrailingActions, progress: $requestProgress).delete()
-        }
-    }
 }
 
 struct CollectionsViewUI_Previews: PreviewProvider {
     static var previews: some View {
-        CollectionsViewUI(editingSection: nil, songServiceEditorModel: nil)
+        CollectionsViewUI(editingSection: nil, songServiceEditorModel: WrappedOptionalStruct<SongServiceEditorModel>(withItem: nil))
     }
 }

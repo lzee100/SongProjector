@@ -9,9 +9,10 @@
 import Foundation
 
 struct FetchTagsUseCase {
-    private static let useCase = FetchUseCaseAsync<TagCodable, Tag>(endpoint: .tags)
+    private let useCase = FetchUseCaseAsync<TagCodable, Tag>(endpoint: .tags)
     
-    static func fetch() async throws -> FetchUseCaseAsyncTask<TagCodable>.FetchUseCaseAsyncDownloadResult {
+    @discardableResult
+     func fetch() async throws -> [TagCodable] {
         try await useCase.fetch()
     }
 }

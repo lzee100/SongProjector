@@ -20,7 +20,7 @@ struct SelectionCapsuleButton: ViewModifier {
     func body(content: Content) -> some View {
         content
             .font(.xNormal)
-            .foregroundColor(isSelected ? .white : .black.opacity(0.8))
+            .foregroundColor(isSelected ? Color(uiColor: .whiteColor) : Color(uiColor: .blackColor).opacity(0.8))
             .padding(EdgeInsets(top: 8, leading: 20, bottom: 8, trailing: 20))
             .background(
                 Capsule().fill(isSelected ? Color(uiColor: themeHighlighted) : .gray.opacity(0.2))

@@ -70,9 +70,8 @@ struct SongServiceUI {
         guard let cluster = selectedSong?.cluster else {
             return selectedSongTheme = nil
         }
-        let theme: Theme? = DataFetcher().getEntity(moc: moc, predicates: [.get(id: cluster.themeId)])
-        if let theme = theme {
-            selectedSongTheme = ThemeCodable(managedObject: theme, context: moc)
+        if let theme = cluster.theme {
+            selectedSongTheme = theme
         }
     }
     

@@ -21,7 +21,7 @@ struct TabViewUI: View {
                     tabView(SongServiceViewUI(songService: songService) {
                     }, feature: feature)
                 case .songs:
-                    tabView(CollectionsViewUI(editingSection: nil, songServiceEditorModel: nil), feature: feature)
+                    tabView(CollectionsViewUI(editingSection: nil, songServiceEditorModel: WrappedOptionalStruct<SongServiceEditorModel>(withItem: nil)), feature: feature)
                 case .themes:
                     tabView(ThemesViewUI(), feature: feature)
                 case .tags:

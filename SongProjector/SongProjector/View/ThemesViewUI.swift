@@ -7,6 +7,10 @@
 //
 
 import SwiftUI
+import FirebaseFirestore
+import FirebaseStorage
+import FirebaseFirestoreSwift
+
 
 @MainActor class ThemesViewModel: ObservableObject {
     
@@ -16,7 +20,7 @@ import SwiftUI
     @Published private(set) var showingLoader = false
 
     
-    func reloadThemes() {
+    func reload() {
         setThemes(searchText: nil)
     }
     
@@ -28,46 +32,53 @@ import SwiftUI
         let predicates: [NSPredicate] = [searchText?.lowercased()]
             .compactMap { $0 }
             .map { NSPredicate(format: "title CONTAINS[cd] %@", $0) }
-        let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: predicates + [.skipDeleted, .skipRootDeleted], sort: NSSortDescriptor(key: "title", ascending: true))
+        let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: predicates + [.skipDeleted, .skipRootDeleted, .skipHidden], sort: NSSortDescriptor(key: "title", ascending: true))
         self.themes = themes.compactMap { ThemeCodable(managedObject: $0, context: moc) }
     }
     
     func fetchRemoteThemes() async {
-        reloadThemes()
-        showingLoader = true
+        reload()
+        setIsLoading(true)
         do {
-            let result = try await FetchCollectionsUseCase(fetchAll: false).fetch()
-            switch result {
-            case .succes(let clusters): saveLocally(clusters)
-            case .failed(let error):
-                showingLoader = false
-                self.error = error
+            let result = try await FetchThemesUseCase(fetchAll: false).fetch()
+            if result.count > 0 {
+                await fetchRemoteThemes()
+            } else {
+                setIsLoading(false)
             }
         } catch {
+            setIsLoading(false)
+            self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
+        }
+    }
+
+    func delete(_ theme: ThemeCodable) async {
+        setIsLoading(true)
+        var theme = theme
+        theme.deleteDate = Date()
+        if uploadSecret != nil {
+            theme.rootDeleteDate = Date()
+        }
+        do {
+            try await SubmitUseCase(endpoint: .themes, requestMethod: .put, uploadObjects: [theme]).submit()
+            reload()
+        } catch {
+            setIsLoading(false)
             self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
         }
     }
     
-    private func saveLocally(_ entities: [ClusterCodable]) {
-        ManagedObjectContextHandler<ClusterCodable>().save(entities: entities, completion: { [weak self] _ in
-            self?.reload()
-            if entities.count > 0 {
-                Task {
-                    await fetchRemoteCollections()
-                }
-            } else {
-                self?.showingLoader = false
-            }
-        })
+    private func setIsLoading(_ showingLoader: Bool) {
+        withAnimation(.linear) {
+            self.showingLoader = showingLoader
+        }
     }
-
 }
 
 struct ThemesViewUI: View {
         
-    @ObservedObject private var viewModel = WrappedStruct(withItem: ThemesViewModel())
+    @StateObject private var viewModel = ThemesViewModel()
     @State private var searchText: String = ""
-    @State private var deleteThemeProgress: RequesterResult = .idle
     @State fileprivate(set) var selectedTheme: ThemeCodable?
     @State private var isShowingThemesEditor = false
     @State private var deleteThemeError: LocalizedError?
@@ -75,39 +86,44 @@ struct ThemesViewUI: View {
     var body: some View {
         NavigationStack {
             GeometryReader { proxy in
-                List {
-                    ForEach(viewModel.item.themes) { theme in
-                        Button {
-                            selectedTheme = theme
-                        } label: {
-                            HStack {
-                                Text(theme.title ?? "")
-                                    .styleAs(font: .xNormal)
-                                Spacer()
+                if viewModel.showingLoader {
+                    ProgressView()
+                }
+                VStack {
+                    List {
+                        ForEach(viewModel.themes) { theme in
+                            Button {
+                                selectedTheme = theme
+                            } label: {
+                                HStack {
+                                    Text(theme.title ?? "")
+                                        .styleAs(font: .xNormal)
+                                    Spacer()
+                                }
+                            }
+                            .buttonStyle(.borderless)
+                            .swipeActions {
+                                deleteButton(theme)
                             }
                         }
-                        .buttonStyle(.borderless)
-                        .swipeActions {
-                            deleteButton(theme)
+                    }
+                    .navigationTitle(AppText.Themes.title)
+                    .navigationBarTitleDisplayMode(.large)
+                    .toolbar {
+                        ToolbarItemGroup(placement: .navigationBarTrailing) {
+                            newthemeButton
                         }
                     }
+                    .searchable(text: $searchText)
                 }
-                .navigationTitle(AppText.Themes.title)
-                .navigationBarTitleDisplayMode(.large)
-                .toolbar {
-                    ToolbarItemGroup(placement: .navigationBarTrailing) {
-                        newthemeButton
-                    }
-                }
-                .searchable(text: $searchText)
-                
             }
         }
-        .onAppear {
-            viewModel.item.reloadThemes()
+        .task {
+            await viewModel.fetchRemoteThemes()
         }
+        .errorAlert(error: $viewModel.error)
         .onChange(of: searchText) { newValue in
-            viewModel.item.filterOn(newValue)
+            viewModel.filterOn(newValue)
         }
         .sheet(item: $selectedTheme, content: { theme in
             if let model = EditSheetOrThemeViewModel(editMode: .theme(theme), isUniversal: uploadSecret != nil) {
@@ -128,30 +144,16 @@ struct ThemesViewUI: View {
             }
         }
         .errorAlert(error: $deleteThemeError)
-        .onChange(of: deleteThemeProgress) { newValue in
-            switch newValue {
-            case .finished(let result):
-                switch result {
-                case .success: viewModel.item.reloadThemes()
-                case .failure(let error):
-                    deleteThemeError = error as? LocalizedError // TODO: is this value a localized error?
-                }
-            default: break
-            }
-        }
         .onChange(of: isShowingThemesEditor) { _ in
-            viewModel.item.reloadThemes()
+            viewModel.reload()
         }
     }
     
     @ViewBuilder func deleteButton(_ theme: ThemeCodable) -> some View {
         Button {
-            var theme = theme
-            theme.deleteDate = Date()
-            if uploadSecret != nil {
-                theme.rootDeleteDate = Date()
+            Task {
+                await viewModel.delete(theme)
             }
-            SubmitEntitiesUseCase<ThemeCodable>(endpoint: .themes, requestMethod: .put, uploadObjects: [theme], result: $deleteThemeProgress).submit()
         } label: {
             Image(systemName: "trash")
                 .tint(.white)
@@ -177,6 +179,7 @@ extension ThemesViewUI: EditThemeOrSheetViewUIDelegate {
     func dismiss() {
         selectedTheme = nil
         isShowingThemesEditor = false
+        viewModel.reload()
     }
 }
 

@@ -26,20 +26,14 @@ import SwiftUI
         showingLoader = true
         do {
             let updatedTags = try await SubmitUseCase<TagCodable>.init(endpoint: .tags, requestMethod: .put, uploadObjects: [tag]).submit()
-            saveLocally(updatedTags)
             if let updatedTag = updatedTags.first {
                 self.tag = updatedTag
             }
+            showingLoader = false
         } catch {
             showingLoader = false
             self.error = error
         }
-    }
-    
-    private func saveLocally(_ entities: [TagCodable]) {
-        ManagedObjectContextHandler<TagCodable>().save(entities: entities, completion: { [weak self] _ in
-            self?.showingLoader = false
-        })
     }
     
 }

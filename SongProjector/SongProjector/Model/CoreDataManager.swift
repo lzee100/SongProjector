@@ -68,6 +68,10 @@ extension NSPredicate {
     static var skipRootDeleted: NSPredicate {
         return NSPredicate(format: "rootDeleteDate == nil")
     }
+    
+    static var skipHidden: NSPredicate {
+        return NSPredicate(format: "isHidden == false")
+    }
     static func get(id: String) -> NSPredicate {
         return NSPredicate(format: "id = %@", id)
     }

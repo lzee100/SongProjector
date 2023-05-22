@@ -7,16 +7,15 @@
 //
 
 import UIKit
-import VerticalSlider
 import MediaPlayer
 
 class MixerView: UIView {
     
     @IBOutlet var mixerView: UIView!
-    @IBOutlet var pianoControl: VerticalSlider!
-    @IBOutlet var guitarControl: VerticalSlider!
-    @IBOutlet var bassGuitarControl: VerticalSlider!
-    @IBOutlet var drumsControl: VerticalSlider!
+//    @IBOutlet var pianoControl: VerticalSlider!
+//    @IBOutlet var guitarControl: VerticalSlider!
+//    @IBOutlet var bassGuitarControl: VerticalSlider!
+//    @IBOutlet var drumsControl: VerticalSlider!
     
     @IBOutlet var pianoImageView: UIImageView!
     @IBOutlet var guitarImageView: UIImageView!
@@ -62,21 +61,21 @@ class MixerView: UIView {
         guitarImageView.tintColor = color
         bassGuitarImageView.tintColor = color
         drumsImageView.tintColor = color
-        
-        pianoControl.value = VolumeManager.getVolumeFor(instrumentType: .piano) ?? 0.5
-        guitarControl.value = VolumeManager.getVolumeFor(instrumentType: .guitar) ?? 0.5
-        bassGuitarControl.value = VolumeManager.getVolumeFor(instrumentType: .bassGuitar) ?? 0.5
-        drumsControl.value = VolumeManager.getVolumeFor(instrumentType: .drums) ?? 0.5
-        
-        pianoControl.tintColor = .softBlueGreyBright
-        guitarControl.tintColor = .softBlueGreyBright
-        bassGuitarControl.tintColor = .softBlueGreyBright
-        drumsControl.tintColor = .softBlueGreyBright
-        
-        pianoControl.addTarget(self, action: #selector(pianoSliderChanged), for: .valueChanged)
-        guitarControl.addTarget(self, action: #selector(guitarSliderChanged), for: .valueChanged)
-        bassGuitarControl.addTarget(self, action: #selector(bassGuitarSliderChanged), for: .valueChanged)
-        drumsControl.addTarget(self, action: #selector(drumsSliderChanged), for: .valueChanged)
+//
+//        pianoControl.value = VolumeManager.getVolumeFor(instrumentType: .piano) ?? 0.5
+//        guitarControl.value = VolumeManager.getVolumeFor(instrumentType: .guitar) ?? 0.5
+//        bassGuitarControl.value = VolumeManager.getVolumeFor(instrumentType: .bassGuitar) ?? 0.5
+//        drumsControl.value = VolumeManager.getVolumeFor(instrumentType: .drums) ?? 0.5
+//
+//        pianoControl.tintColor = .softBlueGreyBright
+//        guitarControl.tintColor = .softBlueGreyBright
+//        bassGuitarControl.tintColor = .softBlueGreyBright
+//        drumsControl.tintColor = .softBlueGreyBright
+//
+//        pianoControl.addTarget(self, action: #selector(pianoSliderChanged), for: .valueChanged)
+//        guitarControl.addTarget(self, action: #selector(guitarSliderChanged), for: .valueChanged)
+//        bassGuitarControl.addTarget(self, action: #selector(bassGuitarSliderChanged), for: .valueChanged)
+//        drumsControl.addTarget(self, action: #selector(drumsSliderChanged), for: .valueChanged)
         
         updateVolumeSliders()
         
@@ -91,19 +90,19 @@ class MixerView: UIView {
     }
     
     @objc func pianoSliderChanged() {
-        set(volume: pianoControl.value, forType: .piano)
+//        set(volume: pianoControl.value, forType: .piano)
     }
     
     @objc func guitarSliderChanged() {
-        set(volume: guitarControl.value, forType: .guitar)
+//        set(volume: guitarControl.value, forType: .guitar)
     }
     
     @objc func bassGuitarSliderChanged() {
-        set(volume: bassGuitarControl.value, forType: .bassGuitar)
+//        set(volume: bassGuitarControl.value, forType: .bassGuitar)
     }
     
     @objc func drumsSliderChanged() {
-        set(volume: drumsControl.value, forType: .drums)
+//        set(volume: drumsControl.value, forType: .drums)
     }
     
     private func set(volume: Float, forType: InstrumentType) {
@@ -114,43 +113,43 @@ class MixerView: UIView {
         
         if let savedVolume = VolumeManager.getVolumeFor(instrumentType: .piano) {
             if SoundPlayer.getVolumeFor(.piano) ?? 0 == 0 {
-                pianoControl.slider.value = savedVolume
+//                pianoControl.slider.value = savedVolume
             } else {
-                pianoControl.slider.value = savedVolume * AVAudioSession.sharedInstance().outputVolume
+//                pianoControl.slider.value = savedVolume * AVAudioSession.sharedInstance().outputVolume
             }
         } else {
-            pianoControl.slider.value = AVAudioSession.sharedInstance().outputVolume
+//            pianoControl.slider.value = AVAudioSession.sharedInstance().outputVolume
         }
         
         if let savedVolume = VolumeManager.getVolumeFor(instrumentType: .guitar) {
             if SoundPlayer.getVolumeFor(.guitar) ?? 0 == 0 {
-                guitarControl.slider.value = savedVolume
+//                guitarControl.slider.value = savedVolume
             } else {
-                guitarControl.slider.value = savedVolume * AVAudioSession.sharedInstance().outputVolume
+//                guitarControl.slider.value = savedVolume * AVAudioSession.sharedInstance().outputVolume
             }
         } else {
-            guitarControl.slider.value = AVAudioSession.sharedInstance().outputVolume
+//            guitarControl.slider.value = AVAudioSession.sharedInstance().outputVolume
         }
         
         if let savedVolume = VolumeManager.getVolumeFor(instrumentType: .bassGuitar) {
             if SoundPlayer.getVolumeFor(.bassGuitar) ?? 0 == 0 {
-                bassGuitarControl.slider.value = savedVolume
+//                bassGuitarControl.slider.value = savedVolume
             } else {
-                bassGuitarControl.slider.value = savedVolume * AVAudioSession.sharedInstance().outputVolume
+//                bassGuitarControl.slider.value = savedVolume * AVAudioSession.sharedInstance().outputVolume
             }
         } else {
-            bassGuitarControl.slider.value = AVAudioSession.sharedInstance().outputVolume
+//            bassGuitarControl.slider.value = AVAudioSession.sharedInstance().outputVolume
         }
-        
-        if let savedVolume = VolumeManager.getVolumeFor(instrumentType: .drums) {
-            if SoundPlayer.getVolumeFor(.drums) ?? 0 == 0 {
-                drumsControl.slider.value = savedVolume
-            } else {
-                drumsControl.slider.value = savedVolume * AVAudioSession.sharedInstance().outputVolume
-            }
-        } else {
-            drumsControl.slider.value = AVAudioSession.sharedInstance().outputVolume
-        }
+//        
+//        if let savedVolume = VolumeManager.getVolumeFor(instrumentType: .drums) {
+//            if SoundPlayer.getVolumeFor(.drums) ?? 0 == 0 {
+//                drumsControl.slider.value = savedVolume
+//            } else {
+//                drumsControl.slider.value = savedVolume * AVAudioSession.sharedInstance().outputVolume
+//            }
+//        } else {
+//            drumsControl.slider.value = AVAudioSession.sharedInstance().outputVolume
+//        }
         
     }
     

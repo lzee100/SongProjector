@@ -8,10 +8,10 @@
 
 import Foundation
 
-struct FetchSongServiceSettingsUseCase {
-    private static let useCase = FetchUseCaseAsync<SongServiceSettingsCodable, SongServiceSettings>(endpoint: .songservicesettings)
+actor FetchSongServiceSettingsUseCase {
+    private let useCase = FetchUseCaseAsync<SongServiceSettingsCodable, SongServiceSettings>(endpoint: .songservicesettings)
     
-    static func fetch() async throws -> FetchUseCaseAsyncTask<SongServiceSettingsCodable>.FetchUseCaseAsyncDownloadResult {
+    func fetch() async throws -> [SongServiceSettingsCodable] {
         try await useCase.fetch()
     }
 }

@@ -11,7 +11,7 @@ import FirebaseAuth
 import CoreData
 import UIKit
 
-struct ThemeCodable: EntityCodableType, Identifiable, Equatable {
+struct ThemeCodable: EntityCodableType, Identifiable, Equatable, Hashable {
     
     static func makeDefault(isDeletable: Bool = true, isHidden: Bool = false) -> ThemeCodable? {
         let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "position", ascending: false))
@@ -524,7 +524,7 @@ extension ThemeCodable: FileTransferable {
                 try FileManager.deleteTempFile(name: uploadObject.fileName)
             }
         }
-        for download in downloadObjects.compactMap({ $0 as? DownloadObject }) {
+        for download in transferObjects.compactMap({ $0 as? DownloadObject }) {
             if imagePathAWS == download.remoteURL.absoluteString {
                 try setBackgroundImage(image: download.image, imageName: download.filename)
             }

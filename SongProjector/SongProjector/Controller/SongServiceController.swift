@@ -148,11 +148,9 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
         SongServicePlayDateFetcher.fetch()
     }
 
-    @State var result: RequesterResult = .idle
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 		update()
-        FetchUseCase<ClusterCodable>.init(endpoint: .clusters, fetchAll: false, result: $result).fetch()
 	}
 	
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

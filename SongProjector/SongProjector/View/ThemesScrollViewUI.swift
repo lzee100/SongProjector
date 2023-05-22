@@ -13,15 +13,23 @@ struct ThemesScrollViewUI: View {
     @StateObject var model: ThemesSelectionModel
     
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack() {
-                ForEach(model.themes) { theme in
-                    Button {
-                        model.didSelect(theme: theme)
-                    } label: {
-                        Text(theme.title ?? "-")
+        ScrollViewReader { proxy in
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack() {
+                    ForEach(model.themes) { theme in
+                        Button {
+                            model.didSelect(theme: theme)
+                        } label: {
+                            Text(theme.title ?? "-")
+                        }
+                        .styleAsSelectionCapsuleButton(isSelected: model.selectedTheme?.id == theme.id)
+                        .id(theme.id)
                     }
-                    .styleAsSelectionCapsuleButton(isSelected: model.selectedTheme?.id == theme.id)
+                }
+            }
+            .onAppear {
+                if let theme = model.selectedTheme {
+                    proxy.scrollTo(theme.id)
                 }
             }
         }

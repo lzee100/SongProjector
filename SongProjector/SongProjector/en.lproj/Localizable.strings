@@ -179,7 +179,7 @@
 "CustomSheets-errorChangeSheetGenerator" = "Do you want to change the type of sheet generator and lose the current sheets / text?";
 "CustomSheets-errorLoseOtherSheets" = "You have other sheets between the bible texts. These are lost when you modify the bible texts and have them regenerated";
 "CustomSheets-universalSongEditErrorTitle" = "Couldn't edit text";
-"CustomSheets-universalSongEditErrorMessage" = "This track has music and has a playback time with each slide. Adjusting the NUMBER of slides causes the times to be incorrect. Your changes have been undone.";
+"CustomSheets-universalSongEditErrorMessage" = "This track has music and has a playback time with each slide. Adjusting the NUMBER of slides causes the times to be incorrect. Correct or cancel the changes";
 
 "SongServiceManagement-title" = "Manage song service";
 "SongServiceManagement-numberOfSections" = "Number of sections";

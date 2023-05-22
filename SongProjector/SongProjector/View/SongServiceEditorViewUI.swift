@@ -28,17 +28,26 @@ class SongServiceEditorModel: ObservableObject {
     @Published private(set) var customSelectedSongs: [ClusterCodable] = []
     @Published private(set) var sectionedSongs: [SongServiceSectionWithSongs] = []
     @Published private(set) var songServiceSettings: SongServiceSettingsCodable? = nil
-    
+    @Published private(set) var showingLoader = false
+    @Published var error: LocalizedError? = nil
+
     init(songServiceUI: SongServiceUI) {
         guard songServiceUI.songs.count > 0 else { return }
         let songServiceSettings: [SongServiceSettings] = DataFetcher().getEntities(moc: moc)
-        if let songServiceSettings = songServiceSettings.compactMap({ $0 }).compactMap({ SongServiceSettingsCodable(managedObject: $0, context: moc) }).first {
-            self.songServiceSettings = songServiceSettings
+        let songServiceSettingsCodable = songServiceSettings
+            .compactMap({ $0 })
+            .compactMap({ SongServiceSettingsCodable(managedObject: $0, context: moc) })
+            .first
+        
+        if let songServiceSettingsCodable, songServiceUI.sectionedSongs.count > 1 {
+            self.songServiceSettings = songServiceSettingsCodable
             if songServiceUI.sectionedSongs.count == 1 {
                 customSelectedSongs = songServiceUI.sectionedSongs.flatMap { $0.songs }.map { $0.cluster }
             } else {
                 sectionedSongs = songServiceUI.sectionedSongs
             }
+        } else if songServiceUI.sectionedSongs.count == 1 {
+            customSelectedSongs = songServiceUI.songs.map { $0.cluster }
         }
     }
     
@@ -61,10 +70,20 @@ class SongServiceEditorModel: ObservableObject {
         sectionedSongs = []
     }
     
-    func setFirstSongServiceSettings() {
+    func fetchSongServiceSettingsRemotely() async {
+        guard !showingLoader else { return }
+        do {
+            let settings = try await FetchSongServiceSettingsUseCase().fetch()
+            await setFirstSongServiceSettings()
+        } catch {
+            self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
+        }
+    }
+    
+    func setFirstSongServiceSettings() async {
         let data: [SongServiceSettings] = DataFetcher().getEntities(moc: moc, sort: NSSortDescriptor(key: "createdAt", ascending: false))
         songServiceSettings = data.compactMap { SongServiceSettingsCodable(managedObject: $0, context: moc)}.first
-        generateSongServiceSettingsRows()
+        await generateSongServiceSettingsRows()
     }
     
     func isSelected(_ cluster: ClusterCodable) -> Bool {
@@ -98,9 +117,17 @@ class SongServiceEditorModel: ObservableObject {
         sectionedSongs.append(SongServiceSectionWithSongs(title: section.title, cocList: clusterComments))
     }
     
-    private func generateSongServiceSettingsRows() {
+    func getShareInfo() async -> (title: String, content: String)? {
+        return await SongServiceGeneratorUseCase().generateShareTextOnlyTitles(customSelectedSongs)
+    }
+    
+    func getShareInfoTitlesOnly() async -> (title: String, content: String)? {
+        return await SongServiceGeneratorUseCase().generateShareTextTitleAndContent(sectionedSongs)
+    }
+    
+    private func generateSongServiceSettingsRows() async {
         if let songServiceSettings {
-            self.sectionedSongs = SongServiceGeneratorUseCase().generate(for: songServiceSettings)
+            self.sectionedSongs = await SongServiceGeneratorUseCase().generate(for: songServiceSettings)
         }
     }
 }
@@ -109,7 +136,6 @@ struct SongServiceEditorViewUI: View {
     
     let songService: WrappedStruct<SongServiceUI>
     @ObservedObject var viewModel: SongServiceEditorModel
-    @State private var songServiceSettingsFetchProgress: RequesterResult = .idle
     @State private var showingCollectionsView = false
     @State private var editingSection: SongServiceSectionWithSongs? = nil
     @Binding var showingSongServiceEditorViewUI: Bool
@@ -140,26 +166,15 @@ struct SongServiceEditorViewUI: View {
                 }
             }
         }
-        .onChange(of: songServiceSettingsFetchProgress) { newValue in
-            switch newValue {
-            case .finished(let result):
-                switch result {
-                case .success: viewModel.setFirstSongServiceSettings()
-                case .failure(let error):
-                    print(error)
-                }
-            default: break
-            }
-        }
         .sheet(isPresented: $showingCollectionsView, content: {
-            CollectionsViewUI(editingSection: nil, songServiceEditorModel: viewModel, showingCollectionsViewUI: $showingCollectionsView)
+            CollectionsViewUI(editingSection: nil, songServiceEditorModel: WrappedOptionalStruct(withItem: viewModel), showingCollectionsViewUI: $showingCollectionsView)
         })
         .sheet(item: $editingSection) { editingSection in
-            if let editingSection, let sectionIndex = viewModel.sectionedSongs.firstIndex(where: { $0.id == editingSection.id }) {
+            if let sectionIndex = viewModel.sectionedSongs.firstIndex(where: { $0.id == editingSection.id }) {
                 let mandatoryTags = viewModel.songServiceSettings?.sections[sectionIndex].tags ?? []
                 CollectionsViewUI(
                     editingSection: editingSection,
-                    songServiceEditorModel: viewModel,
+                    songServiceEditorModel: WrappedOptionalStruct(withItem: viewModel),
                     mandatoryTags: mandatoryTags,
                     tagSelectionModel: TagSelectionModel(mandatoryTags: mandatoryTags)
                 )
@@ -231,7 +246,9 @@ struct SongServiceEditorViewUI: View {
     
     @ViewBuilder var generateSongServiceButton: some View {
         Button {
-            FetchUseCase<SongServiceSettingsCodable>(endpoint: .songservicesettings, result: $songServiceSettingsFetchProgress).fetch()
+            Task {
+                await viewModel.fetchSongServiceSettingsRemotely()
+            }
         } label: {
             Label {
                 Text(AppText.Actions.generateSongService)
@@ -245,14 +262,18 @@ struct SongServiceEditorViewUI: View {
     @ViewBuilder var shareButon: some View {
         Menu {
             Button {
-                guard let shareInfo = SongServiceGeneratorUseCase().generateShareTextOnlyTitles(viewModel.customSelectedSongs) else { return }
-                EmailController.shared.sendEmail(subject: shareInfo.title, body: shareInfo.content)
+                Task {
+                    guard let shareInfo = await viewModel.getShareInfoTitlesOnly() else { return }
+                    EmailController.shared.sendEmail(subject: shareInfo.title, body: shareInfo.content)
+                }
             } label: {
                 Text(AppText.NewSongService.shareOptionTitles)
             }
             Button {
-                guard let shareInfo = SongServiceGeneratorUseCase().generateShareTextTitleAndContent(viewModel.sectionedSongs) else { return }
-                EmailController.shared.sendEmail(subject: shareInfo.title, body: shareInfo.content)
+                Task {
+                    guard let shareInfo = await viewModel.getShareInfo() else { return }
+                    EmailController.shared.sendEmail(subject: shareInfo.title, body: shareInfo.content)
+                }
             } label: {
                 Text(AppText.NewSongService.shareOptionTitlesWithSections)
             }
