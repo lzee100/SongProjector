@@ -11,6 +11,20 @@ import SwiftUI
 
 @MainActor class CollectionEditorViewModel: ObservableObject {
     
+    enum Error: LocalizedError {
+        case noThemeSelected
+        case noTitle
+        case loseOtherSheets
+
+        var errorDescription: String? {
+            switch self {
+            case .noThemeSelected: return AppText.NewSong.erorrMessageNoTheme
+            case .noTitle: return AppText.NewSong.errorNoTitle
+            case .loseOtherSheets: return AppText.CustomSheets.errorLoseOtherSheets
+            }
+        }
+    }
+    
     enum CollectionType: Equatable {
         case none
         case lyrics
@@ -48,15 +62,23 @@ import SwiftUI
     @Published var isNew = false
     @Published var title: String = ""
     
-    @Published var isBibleVerses = false
     @Published var isLyrics = false
     @Published var isUniversalSong = false // has no save option
-    @Published var sheets: [EditSheetOrThemeViewModel]
+    @Published var sheets: [EditSheetOrThemeViewModel] = []
+    private(set) var deletedSheets: [EditSheetOrThemeViewModel] = []
     @Published var clusterTime: Int = 0
     @Published var error: LocalizedError?
+    @Published var showingLoader = false
+    
+    var hasOtherSheetTypes: Bool {
+        sheets.filter { $0.theme.isHidden }.count > 0
+    }
+    var showTimePickerScrollView: Bool {
+        hasOtherSheetTypes || sheets.count == 0
+    }
 
     var customSheetsEditModel: WrappedStruct<EditSheetOrThemeViewModel>? {
-        if let type = collectionType.sheetType, let sheet = collectionType.sheet, let model = EditSheetOrThemeViewModel(editMode: .sheet((cluster, sheet), sheetType: type), isUniversal: uploadSecret != nil, isCustomSheetType: true) {
+        if let type = collectionType.sheetType, let sheet = collectionType.sheet, let model = EditSheetOrThemeViewModel(editMode: .sheet((cluster, sheet), sheetType: type), isUniversal: uploadSecret != nil, isCustomSheetType: true, isBibleVers: false) {
             return WrappedStruct(withItem: model)
         } else {
             return nil
@@ -74,11 +96,10 @@ import SwiftUI
         self.collectionType = Self.editControllerType(for: cluster)
         self.isNew = cluster == nil
         self.title = cluster?.title ?? ""
-        self.isBibleVerses = cluster?.hasBibleVerses ?? false
         self.isLyrics = cluster?.isTypeSong ?? false
         self.isUniversalSong = uploadSecret != nil
         if let cluster = cluster {
-            self.sheets = (cluster.hasSheets.sorted(by: { $0.position < $1.position })).compactMap { EditSheetOrThemeViewModel(editMode: .sheet((cluster, $0), sheetType: $0.sheetType ), isUniversal: uploadSecret != nil) }
+            self.sheets = (cluster.hasSheets.sorted(by: { $0.position < $1.position })).compactMap { EditSheetOrThemeViewModel(editMode: .sheet((cluster, $0), sheetType: $0.sheetType ), isUniversal: uploadSecret != nil, isBibleVers: $0.isBibleVers) }
         } else {
             self.sheets = []
         }
@@ -92,7 +113,7 @@ import SwiftUI
                 if let extracted = clusterAndSheet {
                     var (cluster, sheet) = extracted
                     cluster.theme = themeSelectionModel.selectedTheme
-                    if let model = EditSheetOrThemeViewModel(editMode: .sheet((cluster, sheet), sheetType: sheetType), isUniversal: uploadSecret != nil) {
+                    if let model = EditSheetOrThemeViewModel(editMode: .sheet((cluster, sheet), sheetType: sheetType), isUniversal: uploadSecret != nil, isBibleVers: sheet.isBibleVers) {
                         return model
                     }
                     return nil
@@ -103,15 +124,15 @@ import SwiftUI
         })
     }
     
-    func getIndexOf(_ model: EditSheetOrThemeViewModel) -> Int? {
-        sheets.firstIndex(where: { $0.sheet.id == model.sheet.id })
+    func updateClusterWithTheme() {
+        cluster.theme = themeSelectionModel.selectedTheme
     }
-        
-    func bibleStudyTextDidChange(_ text: String, contentTextViewContentSize: CGSize, scaleFactor: CGFloat) {
+    
+    func bibleStudyTextDidChange(_ text: String, parentViewSize: CGSize, scaleFactor: CGFloat) {
         if text.count > 0, let theme = themeSelectionModel.selectedTheme {
-            let bibleStudyTitleContent =  BibleStudyTextUseCase.generateSheetsFromText(
+            let bibleStudyTitleContent = BibleStudyTextUseCase().generateSheetsFromText(
                 text,
-                contentSize: contentTextViewContentSize,
+                parentViewSize: parentViewSize,
                 theme: theme,
                 scaleFactor: scaleFactor,
                 cluster: cluster
@@ -129,15 +150,46 @@ import SwiftUI
         }
     }
     
-    func getLyricsOrBibleStudyString() -> String {
-        let sheetContents = sheets.compactMap { $0.sheet.sheetContent }.joined(separator: "\n\n")
-        return [title, sheetContents].joined(separator: "\n\n")
+    func getLyricsOrBibleStudyString() async -> String {
+        return await BibleStudyTextUseCase().getTextFromSheets(models: sheets)
     }
     
-    func saveCluster() {
-        guard let selectedTheme = themeSelectionModel.selectedTheme else {
-            return
+    func delete(model: EditSheetOrThemeViewModel) {
+        guard let index = sheets.firstIndex(where: { $0.id == model.id }) else { return }
+        var model = model
+        model.isDeleted = true
+        if !model.isNewEntity {
+            deletedSheets.append(model)
         }
+        sheets.remove(at: index)
+    }
+    
+    func add(_ model: EditSheetOrThemeViewModel) {
+        var model = model
+        if let index = sheets.firstIndex(where: { $0.sheet.id == model.sheet.id }) {
+            sheets.remove(at: index)
+            model.position = index
+            sheets.insert(model, at: index)
+        } else {
+            model.position = sheets.count
+            sheets.append(model)
+        }
+    }
+    
+    func saveCluster() async -> Bool {
+        showingLoader = true
+        guard let selectedTheme = themeSelectionModel.selectedTheme else {
+            error = Error.noThemeSelected
+            showingLoader = false
+            return false
+        }
+        
+        guard !title.isBlanc else {
+            error = Error.noTitle
+            showingLoader = false
+            return false
+        }
+        
         do {
             var codableSheets: [SheetMetaType] = []
             for sheet in sheets {
@@ -148,14 +200,24 @@ import SwiftUI
             }
             
             cluster.title = title
+            cluster.time = Double(clusterTime)
             cluster.hasTags = tagsSelectionModel.selectedTags
             cluster.theme = selectedTheme
             cluster.hasSheets = codableSheets
             
+            var deleteObjects: [DeleteObject] {
+                deletedSheets.compactMap { $0.sheet }.flatMap { $0.deleteObjects }
+            }
+            
+            try await SubmitUseCase(endpoint: .clusters, requestMethod: isNew ? .post : .put, uploadObjects: [cluster], deleteObjects: deleteObjects).submit()
+            showingLoader = false
+            return true
+            
         } catch {
+            showingLoader = false
             self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
+            return false
         }
-        
     }
     
     private static func editControllerType(for cluster: ClusterCodable?) -> CollectionType {

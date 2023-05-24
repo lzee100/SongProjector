@@ -158,6 +158,7 @@ public struct InstrumentCodable: EntityCodableType, Identifiable {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
         try container.encodeIfPresent(title, forKey: .title)
         guard let userUID = Auth.auth().currentUser?.uid else {
             throw RequestError.unAuthorizedNoUser(requester: String(describing: self))
@@ -206,6 +207,16 @@ extension InstrumentCodable: FileTransferable {
     }
     
     mutating func setTransferObjects(_ transferObjects: [TransferObject]) throws {
+        transferObjects.compactMap({ $0 as? DownloadObject }).forEach({ downloadObject in
+            if downloadObject.remoteURL.absoluteString == resourcePathAWS {
+                self.resourcePath = downloadObject.localURL?.absoluteString
+            }
+        })
+        transferObjects.compactMap({ $0 as? UploadObject }).forEach({ uploadObject in
+            if uploadObject.fileName == resourcePath {
+                self.resourcePathAWS = uploadObject.remoteURL?.absoluteString
+            }
+        })
     }
     
     func setDeleteDate() -> FileTransferable {

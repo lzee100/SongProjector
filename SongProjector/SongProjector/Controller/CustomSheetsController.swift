@@ -847,7 +847,7 @@ extension CustomSheetsController: SheetPickerMenuControllerDelegate {
     }
     
     private func show(mode: EditSheetOrThemeViewModel.EditMode) {
-        guard let editModel = EditSheetOrThemeViewModel(editMode: mode, isUniversal: uploadSecret != nil) else { return }
+//        guard let editModel = EditSheetOrThemeViewModel(editMode: mode, isUniversal: uploadSecret != nil) else { return }
 
 //        let controllerView = EditThemeOrSheetViewUI(dismiss: { [weak self] dismissPresenting in
 //            if dismissPresenting {

@@ -11,9 +11,10 @@ import Foundation
 actor FilteredCollectionsUseCase {
     
     func getCollections(searchText: String?, showDeleted: Bool, selectedTags: [TagCodable]) -> [ClusterCodable] {
+        let context = newMOCBackground
         let predicates = predicatesFor(searchText: searchText, showDeleted: showDeleted, selectedTags: selectedTags)
-        let persitedClusters: [Cluster] = DataFetcher().getEntities(moc: moc, predicates: predicates, sort: NSSortDescriptor(key: "title", ascending: true), fetchDeleted: showDeleted)
-        return persitedClusters.compactMap { ClusterCodable(managedObject: $0, context: moc) }
+        let persitedClusters: [Cluster] = DataFetcher().getEntities(moc: context, predicates: predicates, sort: NSSortDescriptor(key: "title", ascending: true), fetchDeleted: showDeleted)
+        return persitedClusters.compactMap { ClusterCodable(managedObject: $0, context: context) }
     }
     
     private func predicatesFor(searchText: String?, showDeleted: Bool, selectedTags: [TagCodable]) -> [NSPredicate] {

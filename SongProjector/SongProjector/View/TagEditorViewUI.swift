@@ -88,7 +88,9 @@ struct TagEditorViewUI: View {
                         } else {
                             Task {
                                 await viewModel.update()
-                                isShowingTagEditor = nil
+                                await MainActor.run(body: {
+                                    isShowingTagEditor = nil
+                                })
                             }
                         }
                     } label: {

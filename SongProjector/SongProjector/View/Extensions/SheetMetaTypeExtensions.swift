@@ -11,6 +11,49 @@ import UIKit
 
 extension SheetMetaType {
     
+    func getTransferObjects() -> [TransferObject] {
+        if var sheetTitleContentCodable = self as? SheetTitleContentCodable {
+            return sheetTitleContentCodable.transferObjects
+        } else if var sheetTitleImageCodable = self as? SheetTitleImageCodable {
+            return sheetTitleImageCodable.transferObjects
+        } else if var sheetPastors = self as? SheetPastorsCodable {
+            return sheetPastors.transferObjects
+        } else if var sheetTitleContentCodable = self as? SheetEmptyCodable {
+            return sheetTitleContentCodable.transferObjects
+        }else if var sheetTitleContentCodable = self as? SheetEmptyCodable {
+            return sheetTitleContentCodable.transferObjects
+        }
+        return []
+    }
+    
+    mutating func clearDataForDeletedObjects(forceDelete: Bool) {
+        if var sheet = self as? SheetTitleImageCodable {
+            return sheet.clearDataForDeletedObjects(forceDelete: forceDelete)
+        } else if var sheet = self as? SheetPastorsCodable {
+            return sheet.clearDataForDeletedObjects(forceDelete: forceDelete)
+        }
+    }
+    
+    func set(theme: ThemeCodable) -> SheetMetaType {
+        if var sheet = self as? SheetTitleContentCodable {
+            sheet.hasTheme = theme
+            return sheet
+        } else if var sheet = self as? SheetTitleImageCodable {
+            sheet.hasTheme = theme
+            return sheet
+        } else if var sheet = self as? SheetPastorsCodable {
+            sheet.hasTheme = theme
+            return sheet
+        } else if var sheet = self as? SheetEmptyCodable {
+            sheet.hasTheme = theme
+            return sheet
+        } else if var sheet = self as? SheetSplitCodable {
+            sheet.hasTheme = theme
+            return sheet
+        }
+        return self
+    }
+    
     var theme: ThemeCodable? {
         if let sheetTitleContentCodable = self as? SheetTitleContentCodable {
             return sheetTitleContentCodable.hasTheme
@@ -24,6 +67,16 @@ extension SheetMetaType {
         return nil
     }
     
+    var isBibleVers: Bool {
+        if let sheetTitleContentCodable = self as? SheetTitleContentCodable {
+            return sheetTitleContentCodable.isBibleVers
+        }
+        if let sheet = self as? SheetEmptyCodable {
+            return sheet.hasTheme == nil
+        }
+        return false
+    }
+
     var sheetContent: String? {
         if let sheetTitleContentCodable = self as? SheetTitleContentCodable {
             return sheetTitleContentCodable.content
@@ -35,6 +88,56 @@ extension SheetMetaType {
             return sheetSplit.textLeft
         }
         return nil
+    }
+    
+    var deleteObjects: [DeleteObject] {
+        if let sheet = self as? SheetTitleContentCodable {
+            let deleteObject = DeleteObject(
+                imagePathAWS: sheet.hasTheme?.imagePathAWS,
+                imagePath: sheet.hasTheme?.imagePath,
+                thumbnailPath: sheet.hasTheme?.imagePathThumbnail
+            )
+            return [deleteObject]
+        } else if let sheet = self as? SheetTitleImageCodable {
+            let deleteObject = DeleteObject(
+                imagePathAWS: sheet.hasTheme?.imagePathAWS,
+                imagePath: sheet.hasTheme?.imagePath,
+                thumbnailPath: sheet.hasTheme?.imagePathThumbnail
+            )
+            let deleteObject2 = DeleteObject(
+                imagePathAWS: sheet.imagePathAWS,
+                imagePath: sheet.imagePath,
+                thumbnailPath: sheet.thumbnailPath
+            )
+            return [deleteObject, deleteObject2]
+        } else if let sheet = self as? SheetPastorsCodable {
+            let deleteObject = DeleteObject(
+                imagePathAWS: sheet.hasTheme?.imagePathAWS,
+                imagePath: sheet.hasTheme?.imagePath,
+                thumbnailPath: sheet.hasTheme?.imagePathThumbnail
+            )
+            let deleteObject2 = DeleteObject(
+                imagePathAWS: sheet.imagePathAWS,
+                imagePath: sheet.imagePath,
+                thumbnailPath: sheet.thumbnailPath
+            )
+            return [deleteObject, deleteObject2]
+        } else if let sheet = self as? SheetSplitCodable {
+            let deleteObject = DeleteObject(
+                imagePathAWS: sheet.hasTheme?.imagePathAWS,
+                imagePath: sheet.hasTheme?.imagePath,
+                thumbnailPath: sheet.hasTheme?.imagePathThumbnail
+            )
+            return [deleteObject]
+        } else if let sheet = self as? SheetEmptyCodable {
+            let deleteObject = DeleteObject(
+                imagePathAWS: sheet.hasTheme?.imagePathAWS,
+                imagePath: sheet.hasTheme?.imagePath,
+                thumbnailPath: sheet.hasTheme?.imagePathThumbnail
+            )
+            return [deleteObject]
+        }
+        return []
     }
     
     var sheetImagePath: String? {
@@ -156,4 +259,74 @@ extension Array where Element == SheetMetaType {
         return sheets
     }
     
+}
+
+extension Array where Element == SheetMetaType {
+    
+    var downloadObjects: [TransferObject] {
+        let sheetDownloadObjects = self.map { sheet in
+            if let sheetTitleContentCodable = sheet as? SheetTitleContentCodable {
+                return sheetTitleContentCodable.downloadObjects as [TransferObject]
+            } else if let sheetTitleImageCodable = sheet as? SheetTitleImageCodable {
+                return sheetTitleImageCodable.downloadObjects as [TransferObject]
+            } else if let sheetPastors = sheet as? SheetPastorsCodable {
+                return sheetPastors.downloadObjects as [TransferObject]
+            } else if let sheetTitleContentCodable = sheet as? SheetEmptyCodable {
+                return sheetTitleContentCodable.downloadObjects as [TransferObject]
+            }else if let sheetTitleContentCodable = sheet as? SheetEmptyCodable {
+                return sheetTitleContentCodable.downloadObjects as [TransferObject]
+            } else {
+                let empty = [TransferObject]()
+                return empty
+            }
+        }
+        return self.map { $0.theme?.downloadObjects ?? [] }.flatMap { $0 } + sheetDownloadObjects.flatMap { $0 }
+    }
+    
+    var uploadObjects: [TransferObject] {
+        let sheetUploadObjects = self.map { sheet in
+            if let sheetTitleContentCodable = sheet as? SheetTitleContentCodable {
+                return sheetTitleContentCodable.uploadObjects
+            } else if let sheetTitleImageCodable = sheet as? SheetTitleImageCodable {
+                return sheetTitleImageCodable.uploadObjects
+            } else if let sheetPastors = sheet as? SheetPastorsCodable {
+                return sheetPastors.uploadObjects
+            } else if let sheetTitleContentCodable = sheet as? SheetEmptyCodable {
+                return sheetTitleContentCodable.uploadObjects
+            }else if let sheetTitleContentCodable = sheet as? SheetEmptyCodable {
+                return sheetTitleContentCodable.uploadObjects
+            } else {
+                let empty: [TransferObject] = []
+                return empty
+            }
+        }.flatMap { $0 }
+        return self.map { $0.theme?.uploadObjects ?? [] }.flatMap { $0 } + sheetUploadObjects
+    }
+    
+    var deleteObjects: [String] {
+        uploadObjects
+            .compactMap { $0 as? UploadObject }
+            .compactMap { $0.remoteURL?.absoluteString }
+            .compactMap { $0 }
+    }
+    
+    
+    func setObjects(transferObjects: [TransferObject]) throws -> [SheetMetaType] {
+        try self.map { sheet in
+            if var sheetTitleContentCodable = sheet as? SheetTitleContentCodable {
+                try sheetTitleContentCodable.setTransferObjects(transferObjects)
+                return sheetTitleContentCodable
+            } else if var sheetTitleImageCodable = sheet as? SheetTitleImageCodable {
+                try sheetTitleImageCodable.setTransferObjects(transferObjects)
+                return sheetTitleImageCodable
+            } else if var sheetPastors = sheet as? SheetPastorsCodable {
+                try sheetPastors.setTransferObjects(transferObjects)
+                return sheetPastors
+            } else if var sheetEmpty = sheet as? SheetEmptyCodable {
+                try sheetEmpty.setTransferObjects(transferObjects)
+                return sheetEmpty
+            }
+            return sheet
+        }
+    }
 }

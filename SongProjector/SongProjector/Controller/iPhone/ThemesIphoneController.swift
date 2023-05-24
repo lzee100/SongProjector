@@ -212,7 +212,8 @@ extension ThemesIphoneController: UITableViewDelegate {
                 ),
                 let model = EditSheetOrThemeViewModel(
                     editMode: .theme(themeCodable),
-                    isUniversal: uploadSecret != nil
+                    isUniversal: uploadSecret != nil,
+                    isBibleVers: false
                 ) else {
                 return
             }

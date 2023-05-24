@@ -10,37 +10,39 @@ import SwiftUI
 
 class LyricsOrBibleStudyInputViewModel: ObservableObject {
     
+    let originalContent: String
     @Binding var content: String
     @State var cluster: ClusterCodable
     @State var font: UIFont.TextStyle = .body
     @State var collectionType: CollectionEditorViewModel.CollectionType
     @Published var showingNumberOfSheetsError = false
-    @Binding var isShowingLyricsOrBibleStudyInputView: Bool
+    @Binding var sheetPresentMode: CollectionEditorViewUI.SheetPresentMode?
     
-    init(content: Binding<String>, cluster: ClusterCodable, font: UIFont.TextStyle, collectionType: CollectionEditorViewModel.CollectionType, isShowingLyricsOrBibleStudyInputView: Binding<Bool>) {
+    init(originalContent: String, content: Binding<String>, cluster: ClusterCodable, font: UIFont.TextStyle, collectionType: CollectionEditorViewModel.CollectionType, sheetPresentMode: Binding<CollectionEditorViewUI.SheetPresentMode?>) {
+        self.originalContent = originalContent
         self._content = content
         self.cluster = cluster
-        self._isShowingLyricsOrBibleStudyInputView = isShowingLyricsOrBibleStudyInputView
+        self._sheetPresentMode = sheetPresentMode
         self._collectionType = State(initialValue: collectionType)
     }
     
     func close() {
-        isShowingLyricsOrBibleStudyInputView.toggle()
+        sheetPresentMode = nil
     }
     
     func save(newContent: String) {
         if collectionType == .lyrics {
-            let numberOfSheetsOriginal = GenerateLyricsSheetContentUseCase.buildSheets(fromText: newContent, cluster: cluster).count
-            let numberOfSheetsNew = GenerateLyricsSheetContentUseCase.buildSheets(fromText: content, cluster: cluster).count
-            if numberOfSheetsNew != numberOfSheetsOriginal {
+            let numberOfSheetsOriginal = GenerateLyricsSheetContentUseCase.buildSheets(fromText: originalContent, cluster: cluster).count
+            let numberOfSheetsNew = GenerateLyricsSheetContentUseCase.buildSheets(fromText: newContent, cluster: cluster).count
+            if numberOfSheetsOriginal != 0 && (numberOfSheetsNew != numberOfSheetsOriginal) {
                 showingNumberOfSheetsError.toggle()
             } else {
                 content = newContent
-                isShowingLyricsOrBibleStudyInputView.toggle()
+                sheetPresentMode = nil
             }
         } else {
             content = newContent
-            isShowingLyricsOrBibleStudyInputView.toggle()
+            sheetPresentMode = nil
         }
     }
 }
@@ -76,7 +78,7 @@ struct LyricsOrBibleStudyInputViewUI: View {
                         }
                     }
                     .onAppear {
-                        changedContent = viewModel.content
+                        changedContent = viewModel.originalContent
                     }
             }
         }
@@ -84,9 +86,9 @@ struct LyricsOrBibleStudyInputViewUI: View {
 }
 
 struct LyricsOrBibleStudyInputViewUI_Previews: PreviewProvider {
-    @State static var isShowingBibleStudy = false
+    @State static var isShowingBibleStudy: CollectionEditorViewUI.SheetPresentMode? = nil
     @State static var content: String = ""
     static var previews: some View {
-        LyricsOrBibleStudyInputViewUI(viewModel: LyricsOrBibleStudyInputViewModel(content: $content, cluster: .makeDefault()!, font: .callout, collectionType: .lyrics, isShowingLyricsOrBibleStudyInputView: $isShowingBibleStudy))
+        LyricsOrBibleStudyInputViewUI(viewModel: LyricsOrBibleStudyInputViewModel(originalContent: "", content: $content, cluster: .makeDefault()!, font: .callout, collectionType: .lyrics, sheetPresentMode: $isShowingBibleStudy))
     }
 }

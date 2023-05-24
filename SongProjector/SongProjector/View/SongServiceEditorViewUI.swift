@@ -264,7 +264,9 @@ struct SongServiceEditorViewUI: View {
             Button {
                 Task {
                     guard let shareInfo = await viewModel.getShareInfoTitlesOnly() else { return }
-                    EmailController.shared.sendEmail(subject: shareInfo.title, body: shareInfo.content)
+                    await MainActor.run(body: {
+                        EmailController.shared.sendEmail(subject: shareInfo.title, body: shareInfo.content)
+                    })
                 }
             } label: {
                 Text(AppText.NewSongService.shareOptionTitles)
@@ -272,7 +274,9 @@ struct SongServiceEditorViewUI: View {
             Button {
                 Task {
                     guard let shareInfo = await viewModel.getShareInfo() else { return }
-                    EmailController.shared.sendEmail(subject: shareInfo.title, body: shareInfo.content)
+                    await MainActor.run(body: {
+                        EmailController.shared.sendEmail(subject: shareInfo.title, body: shareInfo.content)
+                    })
                 }
             } label: {
                 Text(AppText.NewSongService.shareOptionTitlesWithSections)

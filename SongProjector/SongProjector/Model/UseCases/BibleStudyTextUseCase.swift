@@ -9,12 +9,18 @@
 import Foundation
 import UIKit
 
-struct BibleStudyTextUseCase {
+@MainActor class BibleStudyTextUseCase {
     
-    static func generateSheetsFromText(_ text: String, contentSize: CGSize, theme: ThemeCodable, scaleFactor: CGFloat, cluster: ClusterCodable) -> [EditSheetOrThemeViewModel] {
+    enum SheetContent {
+        case titleContent(title: String?, content: String)
+        case empty
+    }
+    
+    func generateSheetsFromText(_ text: String, parentViewSize: CGSize, theme: ThemeCodable, scaleFactor: CGFloat, cluster: ClusterCodable) -> [EditSheetOrThemeViewModel] {
         
+        let contentSize = calculateContentsize(parentViewSize: parentViewSize, theme: theme, scaleFactor: scaleFactor)
         let devided = text.components(separatedBy: "\n\n")
-        let allTitles = devided.compactMap({ $0.split(separator: "\n").first }).compactMap({ String($0) })
+        let allTitles = devided.compactMap({ $0.split(separator: "\n").first }).map({ String($0) })
         let onlyScriptures: [String] = devided.compactMap({
             guard $0.count > 1 else { return nil }
             var splitOnReturns = $0.split(separator: "\n")
@@ -22,18 +28,30 @@ struct BibleStudyTextUseCase {
             return splitOnReturns.joined(separator: "\n")
         })
         
-        var sheetContent: [(title: String?, content: String)] = []
+        var position: Int = 0
+        var sheetContent: [SheetContent] = []
         
         for (index, title) in allTitles.enumerated() {
-            let sheets = Self.splitContentIntoSheets((title, onlyScriptures[index]), contentSize: contentSize, theme: theme, scaleFactor: scaleFactor)
-            sheetContent += sheets
+            let sheets = splitContentIntoSheets((title, onlyScriptures[index]), contentSize: contentSize, theme: theme, scaleFactor: scaleFactor)
+            sheetContent += (sheets.map { .titleContent(title: $0.title, content: $0.content)} + [.empty])
         }
         
-        return makeEditModel(sheetContent, cluster: cluster)
+        return makeEditModel(sheetContent, cluster: cluster, position: &position)
     }
     
-    private static func splitContentIntoSheets(_ titleContent: (title: String, contentWithTitle: String), contentSize: CGSize, theme: ThemeCodable, scaleFactor: CGFloat) -> [(title: String?, content: String)] {
-                
+    func getTextFromSheets(models: [EditSheetOrThemeViewModel]) async -> String {
+        let bibleVersSheetsSplit = models.map { $0.sheet }.filter { $0.isBibleVers }.split(whereSeparator: { $0 is SheetEmptyCodable })
+
+        let text = bibleVersSheetsSplit.compactMap { Array($0) as? [SheetTitleContentCodable] }.compactMap { sheets in
+            var sheetContent = sheets.compactMap { $0.sheetContent }.joined(separator: "")
+            sheetContent = sheetContent.replacingOccurrences(of: ("\n\(sheets.first?.title ?? "")"), with: "")
+            return (title: sheets.first?.title ?? "", content: sheetContent.trimmingCharacters(in: .whitespacesAndNewlines))
+        }
+        return text.compactMap({ [$0.title, $0.content].joined(separator: "\n")}).joined(separator: "\n\n")
+    }
+
+    private func splitContentIntoSheets(_ titleContent: (title: String, contentWithTitle: String), contentSize: CGSize, theme: ThemeCodable, scaleFactor: CGFloat) -> [(title: String?, content: String)] {
+        
         let (title, contentWithTitle) = titleContent
         var content = contentWithTitle
         if let range = contentWithTitle.range(of: "\n" + title) {
@@ -78,18 +96,58 @@ struct BibleStudyTextUseCase {
         return titleContentStrings
     }
     
-    private static func makeEditModel(_ sheetValues: [(title: String?, content: String)], cluster: ClusterCodable) -> [EditSheetOrThemeViewModel] {
+    private func makeEditModel(_ sheetValues: [SheetContent], cluster: ClusterCodable, position: inout Int) -> [EditSheetOrThemeViewModel] {
         
-        sheetValues.compactMap { titleContent in
-            var sheet = SheetTitleContentCodable.makeDefault()
-            sheet?.title = titleContent.title
-            sheet?.content = titleContent.content
+        sheetValues.compactMap { sheetContent in
             
-            guard let sheet, let model = EditSheetOrThemeViewModel(editMode: .sheet((cluster, sheet), sheetType: .SheetTitleContent), isUniversal: uploadSecret != nil) else {
-                return nil
+            func makeModel(sheet: SheetMetaType?, type: SheetType) -> EditSheetOrThemeViewModel? {
+                guard let sheet, let model = EditSheetOrThemeViewModel(editMode: .sheet((cluster, sheet), sheetType: type), isUniversal: uploadSecret != nil, isBibleVers: true) else {
+                    return nil
+                }
+                return model
             }
-            return model
+            
+            var sheet: SheetMetaType?
+            let sheetType: SheetType
+            switch sheetContent {
+            case .titleContent(title: let title, content: let content):
+                var titleContent = SheetTitleContentCodable.makeDefault()
+                titleContent?.title = title
+                titleContent?.content = content
+                titleContent?.isBibleVers = true
+                titleContent?.position = position
+                sheet = titleContent
+                sheetType = .SheetTitleContent
+            case .empty:
+                var emptySheet = SheetEmptyCodable.makeDefault()
+                emptySheet.isEmptySheet = true
+                emptySheet.position = position
+                sheet = emptySheet
+                sheetType = .SheetEmpty
+            }
+            
+            position += 1
+            return makeModel(sheet: sheet, type: sheetType)
         }
+    }
+    
+    private func calculateContentsize(parentViewSize: CGSize, theme: ThemeCodable, scaleFactor: CGFloat) -> CGSize {
+        
+        let sheetSize = getSizeWith(width: parentViewSize.width)
+        let leadingTrailingMargins: CGFloat = 10 * scaleFactor * 2
+        let topBottomMargin: CGFloat = 10 * scaleFactor
+        let titleContentPadding: CGFloat = 10 * scaleFactor
+        let maxContentWidth = sheetSize.width - leadingTrailingMargins
+
+        let titleHeight = NSAttributedString(
+            string: "k",
+            attributes: theme.getTitleAttributes(scaleFactor)
+        ).height(containerWidth: maxContentWidth)
+                
+        let contentHeight = sheetSize.height - topBottomMargin - titleHeight - titleContentPadding - topBottomMargin
+        
+        return CGSize(width: maxContentWidth, height: contentHeight)
+        
     }
 
 }

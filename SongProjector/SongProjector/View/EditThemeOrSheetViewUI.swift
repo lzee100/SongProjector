@@ -9,6 +9,7 @@
 import SwiftUI
 
 protocol EditThemeOrSheetViewUIDelegate {
+    func dismissAndSave(model: EditSheetOrThemeViewModel)
     func dismiss()
 }
 
@@ -51,7 +52,7 @@ struct EditThemeOrSheetViewUI: View {
     let navigationTitle: String
     
     let delegate: EditThemeOrSheetViewUIDelegate?
-    @State var editingCollectionModel: CollectionEditorViewModel? // TODO: remove, do in didDismiss
+    let isNew: Bool
     @State var isSectionGeneralExpanded = true
     @State var isSectionTitleExpanded = false
     @State var isSectionContentExpanded = false
@@ -59,10 +60,19 @@ struct EditThemeOrSheetViewUI: View {
     @ObservedObject var editSheetOrThemeModel: WrappedStruct<EditSheetOrThemeViewModel>
     @StateObject var viewModel: ThemeEditorViewModel
     
-    init(navigationTitle: String, delegate: EditThemeOrSheetViewUIDelegate?, editingCollectionModel: CollectionEditorViewModel? = nil, isSectionGeneralExpanded: Bool = true, isSectionTitleExpanded: Bool = false, isSectionContentExpanded: Bool = false, isSectionImageExpanded: Bool = false, editSheetOrThemeModel: WrappedStruct<EditSheetOrThemeViewModel>) {
+    init(
+        navigationTitle: String,
+        delegate: EditThemeOrSheetViewUIDelegate?,
+        isNew: Bool,
+        isSectionGeneralExpanded: Bool = true,
+        isSectionTitleExpanded: Bool = false,
+        isSectionContentExpanded: Bool = false,
+        isSectionImageExpanded: Bool = false,
+        editSheetOrThemeModel: WrappedStruct<EditSheetOrThemeViewModel>
+    ) {
         self.navigationTitle = navigationTitle
         self.delegate = delegate
-        self._editingCollectionModel = State(initialValue: editingCollectionModel)
+        self.isNew = isNew
         self._isSectionGeneralExpanded = State(initialValue: isSectionGeneralExpanded)
         self._isSectionTitleExpanded = State(initialValue: isSectionTitleExpanded)
         self._isSectionContentExpanded = State(initialValue: isSectionContentExpanded)
@@ -129,17 +139,11 @@ struct EditThemeOrSheetViewUI: View {
                         .tint(Color(uiColor: themeHighlighted))
                     }
                     ToolbarItemGroup(placement: .navigationBarTrailing) {
-                        if let editingCollectionModel {
+                        if let delegate {
                             Button {
-                                if let index = editingCollectionModel.getIndexOf(editSheetOrThemeModel.item) {
-                                    editingCollectionModel.sheets.remove(at: index)
-                                    editingCollectionModel.sheets.insert(editSheetOrThemeModel.item, at: index)
-                                } else {
-                                    editingCollectionModel.sheets.append(editSheetOrThemeModel.item)
-                                }
-                                delegate?.dismiss()
+                                delegate.dismissAndSave(model: editSheetOrThemeModel.item)
                             } label: {
-                                if editingCollectionModel.getIndexOf(editSheetOrThemeModel.item) == nil {
+                                if isNew {
                                     Text(AppText.Actions.add)
                                 } else {
                                     Text(AppText.Actions.change)
@@ -245,8 +249,8 @@ struct EditThemeOrSheetViewUI_Previews: PreviewProvider {
     @State static var isShowingEditor = false
     @State static var cluster = ClusterCodable.makeDefault()!
     @State static var activities = SheetActivitiesCodable.makeDefault()
-    @State static var model = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .sheet((cluster, activities), sheetType: .SheetActivities), isUniversal: false, image: UIImage(named: "Pio-Sebastiaan-en-Marilou.jpg"))!)
+    @State static var model = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .sheet((cluster, activities), sheetType: .SheetActivities), isUniversal: false, isBibleVers: false)!)
     static var previews: some View {
-        EditThemeOrSheetViewUI(navigationTitle: "", delegate: nil, editingCollectionModel: nil, editSheetOrThemeModel: model)
+        EditThemeOrSheetViewUI(navigationTitle: "", delegate: nil, isNew: true, editSheetOrThemeModel: model)
     }
 }

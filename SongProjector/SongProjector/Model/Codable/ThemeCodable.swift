@@ -522,6 +522,7 @@ extension ThemeCodable: FileTransferable {
                     imagePathThumbnail = savedImage.thumbPath
                 }
                 try FileManager.deleteTempFile(name: uploadObject.fileName)
+                newSelectedThemeImageTempDirPath = nil
             }
         }
         for download in transferObjects.compactMap({ $0 as? DownloadObject }) {

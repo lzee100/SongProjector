@@ -146,7 +146,7 @@ public struct SheetTitleImageCodable: EntityCodableType, SheetMetaType {
     
     var newSelectedSheetImageTempDirPath: String? = nil
     var isSheetImageDeleted: Bool = false
-    
+
     var hasNewRemoteImage: Bool {
         if let imagePathAWS = imagePathAWS {
             if
@@ -213,7 +213,6 @@ public struct SheetTitleImageCodable: EntityCodableType, SheetMetaType {
         imagePathAWS: String?,
         newSelectedSheetImageTempDirPath: String? = nil,
         isSheetImageDeleted: Bool = false
-
     ) {
         self.id = id
         self.userUID = userUID
@@ -345,11 +344,11 @@ extension SheetTitleImageCodable: FileTransferable {
     }
     
     var uploadObjects: [TransferObject] {
-        [newSelectedSheetImageTempDirPath].compactMap { $0 }.compactMap { UploadObject(fileName: $0) }
+        [newSelectedSheetImageTempDirPath].compactMap { $0 }.compactMap { UploadObject(fileName: $0) } + [hasTheme].compactMap { $0?.newSelectedThemeImageTempDirPath }.compactMap { UploadObject(fileName: $0) }
     }
     
     var downloadObjects: [TransferObject] {
-        [self].filter({ $0.hasNewRemoteImage }).compactMap({ URL(string: $0.imagePathAWS) }).compactMap({ DownloadObject(remoteURL: $0) })
+        [self].filter({ $0.hasNewRemoteImage }).compactMap({ URL(string: $0.imagePathAWS) }).compactMap({ DownloadObject(remoteURL: $0) }) + [self].compactMap { $0.hasTheme?.imagePathAWS }.compactMap { URL(string: $0) }.compactMap { DownloadObject(remoteURL: $0)}
     }
     
     var transferObjects: [TransferObject] {
@@ -367,13 +366,20 @@ extension SheetTitleImageCodable: FileTransferable {
                     thumbnailPath = savedImage.thumbPath
                 }
                 try FileManager.deleteTempFile(name: uploadObject.fileName)
+                newSelectedSheetImageTempDirPath = nil
             }
+            var theme = hasTheme
+            try theme?.setTransferObjects(transferObjects)
+            self.hasTheme = theme
         }
         for download in downloadObjects.compactMap({ $0 as? DownloadObject }) {
             if imagePathAWS == download.remoteURL.absoluteString {
                 try setBackgroundImage(image: download.image, imageName: download.filename)
             }
         }
+        var theme = self.theme
+        try theme?.setTransferObjects(transferObjects)
+        self.hasTheme = theme
     }
 
     func setDeleteDate() -> FileTransferable {

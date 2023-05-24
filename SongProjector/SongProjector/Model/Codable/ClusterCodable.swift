@@ -103,6 +103,7 @@ hasSheets: [SheetMetaType] = [SheetTitleContentCodable.makeDefault()].compactMap
         hasSheetPastors = entity.hasSheetPastors
         
         func getSheets() -> [SheetMetaType] {
+            guard sheetIds.count > 0 else { return [] }
             let predicates: [NSPredicate] = sheetIds.map { .get(id: $0) }
             let data: [Sheet] = DataFetcher().getEntities(moc: context, predicates: predicates, predicateCompoundType: .or)
             return data.getSheets(context: context)
@@ -158,13 +159,13 @@ hasSheets: [SheetMetaType] = [SheetTitleContentCodable.makeDefault()].compactMap
         entity.isLoop = isLoop
         entity.position = Int16(position)
         entity.time = time
-        entity.themeId = themeId
+        entity.themeId = theme?.id ?? themeId
         entity.church = church
         entity.startTime = startTime
         entity.lastShownAt = lastShownAt as NSDate?
         entity.hasSheetPastors = hasSheetPastors
         entity.instrumentIds = instrumentIds
-        entity.sheetIds = sheetIds.joined(separator: ",")
+        entity.sheetIds = hasSheets.map { $0.id }.joined(separator: ",")
         entity.tagIds = tagIds.joined(separator: ",")
         
         hasSheets.forEach { _ = $0.getManagedObjectFrom(context) }
@@ -262,6 +263,7 @@ hasSheets: [SheetMetaType] = [SheetTitleContentCodable.makeDefault()].compactMap
         try container.encode(String(startTime), forKey: .startTime)
         try container.encode(Int(truncating: NSNumber(value: hasSheetPastors)), forKey: .hasSheetPastors)
         
+        try container.encodeIfPresent(id, forKey: .id)
         try container.encodeIfPresent(title, forKey: .title)
         guard let userUID = Auth.auth().currentUser?.uid else {
             throw RequestError.unAuthorizedNoUser(requester: String(describing: self))
@@ -339,31 +341,30 @@ hasSheets: [SheetMetaType] = [SheetTitleContentCodable.makeDefault()].compactMap
 extension ClusterCodable: FileTransferable {
     
     mutating func clearDataForDeletedObjects(forceDelete: Bool) {
+        var updatedSheets: [SheetMetaType] = []
+        hasSheets.forEach { sheet in
+            var sheet = sheet
+            var theme = sheet.theme
+            theme?.clearDataForDeletedObjects(forceDelete: forceDelete)
+            sheet.clearDataForDeletedObjects(forceDelete: forceDelete)
+            if let theme {
+                sheet = sheet.set(theme: theme)
+            }
+            updatedSheets.append(sheet)
+        }
+        self.hasSheets = updatedSheets
     }
     
     func getDeleteObjects(forceDelete: Bool) -> [String] {
-        []
+        hasSheets.deleteObjects
     }
     
     var uploadObjects: [TransferObject] {
-        []
+        hasSheets.uploadObjects
     }
     
     var downloadObjects: [TransferObject] {
-//        let sheetThemesPaths = hasSheets.getThemes(context: newMOCBackground).filter({ $0.hasNewRemoteImage }).compactMap({ $0.imagePathAWS })
-//        let pastorstPaths = hasSheets.compactMap({ $0 as? SheetPastorsCodable }).filter({ $0.hasNewRemoteImage }).compactMap({ $0.imagePathAWS })
-//        let titleImagePaths = hasSheets.compactMap({ $0 as? SheetPastorsCodable }).filter({ $0.hasNewRemoteImage }).compactMap({ $0.imagePathAWS })
-        let sheetThemesPaths = hasSheets.getThemes(context: newMOCBackground).compactMap({ $0.imagePathAWS })
-        let pastorstPaths = hasSheets.compactMap({ $0 as? SheetPastorsCodable }).compactMap({ $0.imagePathAWS })
-        let titleImagePaths = hasSheets.compactMap({ $0 as? SheetPastorsCodable }).compactMap({ $0.imagePathAWS })
-
-        var allPaths = sheetThemesPaths
-        allPaths += pastorstPaths
-        allPaths += titleImagePaths
-        
-        allPaths = allPaths.unique
-        
-        return allPaths.compactMap({ URL(string: $0) }).compactMap({ DownloadObject(remoteURL: $0) })
+        hasSheets.downloadObjects
     }
     
     var transferObjects: [TransferObject] {
@@ -371,28 +372,15 @@ extension ClusterCodable: FileTransferable {
     }
     
     mutating func setTransferObjects(_ transferObjects: [TransferObject]) throws {
-//        let uploadObjects = transferObjects.compactMap { $0 as? UploadObject }
-//        for uploadObject in uploadObjects {
-//            if newSelectedThemeImageTempDirPath == uploadObject.fileName {
-//                imagePathAWS = uploadObject.fileName
-//            }
-//            if newSelectedSheetImageTempDirPath == uploadObject.fileName {
-//                imagePathAWS = uploadObject.fileName
-//            }
-//        }
-        
-        hasSheets = try hasSheets.updateWith(downloadObjects: transferObjects.compactMap { $0 as? DownloadObject })
+        var sheets = try hasSheets.setObjects(transferObjects: transferObjects)
+        self.hasSheets = sheets
         
         let downloadObjects = transferObjects.compactMap { $0 as? DownloadObject }
         var updatedInstruments: [InstrumentCodable] = []
-        hasInstruments.forEach { instrument in
-            if let downloadedFile = downloadObjects.first(where: { $0.remoteURL.absoluteString == instrument.resourcePathAWS }) {
-                var changedInstrument = instrument
-                changedInstrument.resourcePath = downloadedFile.localURL?.absoluteString
-                updatedInstruments.append(changedInstrument)
-            } else {
-                updatedInstruments.append(instrument)
-            }
+        try hasInstruments.forEach { instrument in
+            var changedInstrument = instrument
+            try changedInstrument.setTransferObjects(transferObjects)
+            updatedInstruments.append(changedInstrument)
         }
         self.hasInstruments = updatedInstruments
     }

@@ -64,19 +64,19 @@ struct ChurchBeamApp: App {
     }
     
     private func initializeFireStore() {
-        ChurchBeamConfiguration.environment = .production
-        ChurchBeamConfiguration.environment.loadGoogleFile()
-//        if UserDefaults.standard.integer(forKey: "config.environment") != 0 {
-//            ChurchBeamConfiguration.environment.loadGoogleFile()
-//        } else {
-//            switch AppConfiguration.mode {
-//            case .TestFlight, .AppStore:
-//                ChurchBeamConfiguration.environment = .production
-//            case .Debug:
-//                ChurchBeamConfiguration.environment = .dev
-//            }
-//            ChurchBeamConfiguration.environment.loadGoogleFile()
-//        }
+//        ChurchBeamConfiguration.environment = .production
+//        ChurchBeamConfiguration.environment.loadGoogleFile()
+        if UserDefaults.standard.integer(forKey: "config.environment") != 0 {
+            ChurchBeamConfiguration.environment.loadGoogleFile()
+        } else {
+            switch AppConfiguration.mode {
+            case .TestFlight, .AppStore:
+                ChurchBeamConfiguration.environment = .production
+            case .Debug:
+                ChurchBeamConfiguration.environment = .dev
+            }
+            ChurchBeamConfiguration.environment.loadGoogleFile()
+        }
         FirebaseConfiguration.shared.setLoggerLevel(.min)
     }
     

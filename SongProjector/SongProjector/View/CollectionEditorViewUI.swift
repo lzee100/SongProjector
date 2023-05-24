@@ -10,6 +10,16 @@ import SwiftUI
 
 struct CollectionEditorViewUI: View {
     
+    enum SheetPresentMode: Identifiable {
+        var id: String {
+            switch self {
+            case .bibleStudySheets: return "0"
+            }
+        }
+        
+        case bibleStudySheets(content: String)
+    }
+    
     @StateObject private var viewModel: CollectionEditorViewModel
     @StateObject private var themeSelectionModel: ThemesSelectionModel
     @StateObject private var tagsSelectionModel: TagSelectionModel
@@ -17,14 +27,14 @@ struct CollectionEditorViewUI: View {
     @Binding var showingCollectionEditor: CollectionsViewUI.CollectionEditor?
     @State private var lyricsOrBibleStudyText: String = ""
     @State private var sheetSize: CGSize = .zero
-    @State private var isShowingLyricsOrBibleStudyInputView = false
+    @State private var sheetPresentMode: SheetPresentMode? = nil
     @State private var selectedSheetModel: WrappedStruct<EditSheetOrThemeViewModel>?
     @State private var isShowingNoThemeSelectedAlert = false
     @State private var isShowingChangeEditControllerTypeAlert = false
     @State private var isShowingLosingOtherSheetsAlert = false
     @State private var showingTagsExplainedPopOver = false
     @State private var showingTimeExplainedPopOver = false
-    
+
     init?(cluster: ClusterCodable?, showingCollectionEditor: Binding<CollectionsViewUI.CollectionEditor?>) {
         let themesSelectionModel = ThemesSelectionModel(selectedTheme: cluster?.theme)
         let tagsSelectionModel = TagSelectionModel(mandatoryTags: [], selectedTags: cluster?.hasTags ?? [])
@@ -54,21 +64,31 @@ struct CollectionEditorViewUI: View {
                         text: boundTitle
                     ))
                     tagSelectionRowView
-                    clusterSheettimeRowView
+                        .observeViewSize()
+                        .onPreferenceChange(SizePreferenceKey.self) { size in
+                            self.sheetSize = size
+                            if viewModel.collectionType.isBibleStudy {
+                                viewModel.bibleStudyTextDidChange(
+                                    lyricsOrBibleStudyText,
+                                    parentViewSize: sheetSize,
+                                    scaleFactor: getScaleFactor(width: size.width)
+                                )
+                            }
+                        }
+
+                    if viewModel.showTimePickerScrollView {
+                        clusterSheettimeRowView
+                    }
                 }
                 
                 Section {
                     ThemesScrollViewUI(model: viewModel.themeSelectionModel)
                     sheets
                 }
-                .onPreferenceChange(SizePreferenceKey.self) { size in
-                    self.sheetSize = size
-                    if viewModel.collectionType.isBibleStudy {
-                        viewModel.bibleStudyTextDidChange(lyricsOrBibleStudyText, contentTextViewContentSize: .zero
-                                                           , scaleFactor: getScaleFactor(width: size.width))
-                    }
-                }
+
             }
+            .blur(radius: viewModel.showingLoader ? 5 : 0)
+            .errorAlert(error: $viewModel.error)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarTitle(AppText.NewSong.title)
             .toolbar(content: {
@@ -77,37 +97,56 @@ struct CollectionEditorViewUI: View {
                         showingCollectionEditor = nil
                     }
                     .tint(Color(uiColor: themeHighlighted))
+                    .disabled(viewModel.showingLoader)
                 }
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     if viewModel.sheets.count > 0 {
                         Button {
-                            viewModel.saveCluster()
+                            Task {
+                                if await viewModel.saveCluster() {
+                                    await MainActor.run(body: {
+                                        showingCollectionEditor = nil
+                                    })
+                                }
+                            }
                         } label: {
                             Text(AppText.Actions.save)
                         }
                         .tint(Color(uiColor: themeHighlighted))
+                        .disabled(viewModel.showingLoader)
                     }
                     menu
+                        .disabled(viewModel.showingLoader)
                 }
             })
-            
         }
-        .onAppear {
-            if [.bibleStudy, .lyrics].contains(viewModel.collectionType) {
-                lyricsOrBibleStudyText = viewModel.getLyricsOrBibleStudyString()
+        .interactiveDismissDisabled()
+        .sheet(item: $sheetPresentMode, onDismiss: {
+            if viewModel.isLyrics {
+                viewModel.lyricsTextDidChange(lyricsOrBibleStudyText, screenWidth: sheetSize.width)
+            } else {
+                viewModel.bibleStudyTextDidChange(lyricsOrBibleStudyText, parentViewSize: sheetSize, scaleFactor: getScaleFactor(width: sheetSize.width))
             }
-        }
-        .sheet(isPresented: $isShowingLyricsOrBibleStudyInputView) {
-            LyricsOrBibleStudyInputViewUI(viewModel: LyricsOrBibleStudyInputViewModel(
-                content: $lyricsOrBibleStudyText,
-                cluster: viewModel.cluster,
-                font: .body,
-                collectionType: viewModel.collectionType,
-                isShowingLyricsOrBibleStudyInputView: $isShowingLyricsOrBibleStudyInputView
-            ))
-        }
+        }, content: { sheetPresenter in
+            switch sheetPresenter {
+            case .bibleStudySheets(let content):
+                LyricsOrBibleStudyInputViewUI(viewModel: LyricsOrBibleStudyInputViewModel(
+                    originalContent: content,
+                    content: $lyricsOrBibleStudyText,
+                    cluster: viewModel.cluster,
+                    font: .body,
+                    collectionType: viewModel.collectionType,
+                    sheetPresentMode: $sheetPresentMode
+                ))
+            }
+        })
         .sheet(item: $selectedSheetModel, content: { model in
-            EditThemeOrSheetViewUI(navigationTitle: AppText.SheetPickerMenu.pickCustom, delegate: self, editingCollectionModel: self.viewModel, editSheetOrThemeModel: model)
+            EditThemeOrSheetViewUI(
+                navigationTitle: AppText.SheetPickerMenu.pickCustom,
+                delegate: self,
+                isNew: model.item.isNewEntity,
+                editSheetOrThemeModel: model
+            )
         })
         .alert(AppText.CustomSheets.errorSelectTheme, isPresented: $isShowingNoThemeSelectedAlert, actions: {
             Button("OK", role: .cancel) { }
@@ -120,27 +159,28 @@ struct CollectionEditorViewUI: View {
                 } else {
                     viewModel.collectionType = .bibleStudy
                 }
-                isShowingLyricsOrBibleStudyInputView.toggle()
             }
             Button(AppText.Actions.cancel, role: .cancel) { }
         })
         .alert(AppText.CustomSheets.errorLoseOtherSheets, isPresented: $isShowingLosingOtherSheetsAlert, actions: {
             Button(AppText.Actions.continue, role: .destructive) {
-                lyricsOrBibleStudyText = ""
-                isShowingLyricsOrBibleStudyInputView.toggle()
+                Task {
+                    let text = await viewModel.getLyricsOrBibleStudyString()
+                    await MainActor.run(body: {
+                        sheetPresentMode = .bibleStudySheets(content: text)
+                    })
+                }
             }
             Button(AppText.Actions.cancel, role: .cancel) { }
         })
-        .onChange(of: viewModel.themeSelectionModel.selectedTheme, perform: { theme in
-            viewModel.updateSheets()
-        })
-        .onChange(of: lyricsOrBibleStudyText) { newValue in
-            if viewModel.collectionType.isBibleStudy {
-                viewModel.bibleStudyTextDidChange(newValue, contentTextViewContentSize: .zero, scaleFactor: getScaleFactor(width: sheetSize.width))
+        .onChange(of: viewModel.themeSelectionModel.selectedTheme, perform: { _ in
+            if viewModel.collectionType == .bibleStudy {
+                viewModel.updateClusterWithTheme()
+                viewModel.bibleStudyTextDidChange(lyricsOrBibleStudyText, parentViewSize: sheetSize, scaleFactor: getScaleFactor(width: sheetSize.width))
             } else {
-                viewModel.lyricsTextDidChange(newValue, screenWidth: sheetSize.width)
+                viewModel.updateSheets()
             }
-        }
+        })
     }
     
     @ViewBuilder var sheets: some View {
@@ -148,16 +188,20 @@ struct CollectionEditorViewUI: View {
         case .bibleStudy:
             bibleStudySheets()
         case .lyrics, .customSheet, .none:
-                ForEach(viewModel.sheets) { sheetModel in
+            ForEach(viewModel.sheets) { sheetModel in
                     Button {
                         if viewModel.collectionType == .lyrics {
-                            isShowingLyricsOrBibleStudyInputView.toggle()
+                            Task {
+                                let text = await viewModel.getLyricsOrBibleStudyString()
+                                await MainActor.run(body: {
+                                    sheetPresentMode = .bibleStudySheets(content: text)
+                                })
+                            }
                         } else {
                             selectedSheetModel = WrappedStruct(withItem: sheetModel)
                         }
                     } label: {
                         SheetUIHelper.sheet(editSheetOrThemeModel: WrappedStruct(withItem: sheetModel), isForExternalDisplay: false)
-                            .observeViewSize()
                     }
                     .buttonStyle(.borderless)
                     .overlay {
@@ -166,7 +210,7 @@ struct CollectionEditorViewUI: View {
                                 HStack {
                                     Spacer()
                                     Button {
-                                        viewModel.sheets.removeAll(where: { $0.id == sheetModel.id })
+                                        viewModel.delete(model: sheetModel)
                                     } label: {
                                         Image(systemName: "trash")
                                             .tint(Color(uiColor: themeHighlighted))
@@ -189,17 +233,23 @@ struct CollectionEditorViewUI: View {
                 }
         }
     }
-
+    
     @ViewBuilder func bibleStudySheets() -> some View {
         VStack {
-            if lyricsOrBibleStudyText.count > 0 {
-                ForEach(viewModel.sheets) { sheetModel in
-                    SheetUIHelper.sheet(editSheetOrThemeModel: WrappedStruct(withItem: sheetModel), isForExternalDisplay: false, calculateBibleStudyContentSizeForSheetSize: sheetSize)
-                        .observeViewSize()
-                        .onTapGesture {
-                            isShowingLyricsOrBibleStudyInputView.toggle()
+            ForEach(viewModel.sheets) { sheetModel in
+                SheetUIHelper.sheet(editSheetOrThemeModel: WrappedStruct(withItem: sheetModel), isForExternalDisplay: false, calculateBibleStudyContentSizeForSheetSize: sheetSize)
+                    .onTapGesture {
+                        if viewModel.hasOtherSheetTypes {
+                            isShowingLosingOtherSheetsAlert.toggle()
+                        } else {
+                            Task {
+                                let text = await viewModel.getLyricsOrBibleStudyString()
+                                await MainActor.run(body: {
+                                    sheetPresentMode = .bibleStudySheets(content: text)
+                                })
+                            }
                         }
-                }
+                    }
             }
         }
     }
@@ -269,7 +319,7 @@ struct CollectionEditorViewUI: View {
                         isShowingChangeEditControllerTypeAlert.toggle()
                     } else {
                         viewModel.collectionType = .lyrics
-                        isShowingLyricsOrBibleStudyInputView.toggle()
+                        sheetPresentMode = .bibleStudySheets(content: "")
                     }
                 }
             }
@@ -287,11 +337,11 @@ struct CollectionEditorViewUI: View {
                         isShowingNoThemeSelectedAlert = true
                     } else if ![.none, .bibleStudy].contains(viewModel.collectionType) && lyricsOrBibleStudyText.count > 0 {
                         isShowingChangeEditControllerTypeAlert.toggle()
-                    } else if ![.none, .bibleStudy].contains(viewModel.collectionType) && viewModel.sheets.count > 0 {
+                    } else if ![.none, .bibleStudy].contains(viewModel.collectionType) && viewModel.hasOtherSheetTypes {
                         isShowingLosingOtherSheetsAlert.toggle()
                     } else {
                         viewModel.collectionType = .bibleStudy
-                        isShowingLyricsOrBibleStudyInputView.toggle()
+                        sheetPresentMode = .bibleStudySheets(content: "")
                     }
                 }
             }
@@ -303,6 +353,11 @@ struct CollectionEditorViewUI: View {
 }
 
 extension CollectionEditorViewUI: EditThemeOrSheetViewUIDelegate {
+    
+    func dismissAndSave(model: EditSheetOrThemeViewModel) {
+        viewModel.add(model)
+        selectedSheetModel = nil
+    }
     
     func dismiss() {
         selectedSheetModel = nil

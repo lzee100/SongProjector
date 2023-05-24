@@ -42,11 +42,13 @@ struct LabelPhotoPickerViewUI: View {
                         // Retrieve selected asset in the form of Data
                         if let data = try? await
                             newItem?.loadTransferable(type: Data.self) {
-                            if let image = UIImage(data: data) {
-                                didSelectItem(image)
-                                selectedImage = image
-                            }
-                            selectedImageData = data
+                            await MainActor.run(body: {
+                                if let image = UIImage(data: data) {
+                                    didSelectItem(image)
+                                    selectedImage = image
+                                }
+                                selectedImageData = data
+                            })
                         }
                     }
                 }

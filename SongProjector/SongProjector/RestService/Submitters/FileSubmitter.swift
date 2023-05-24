@@ -88,6 +88,12 @@ protocol TransferObjectDelegate {
     func transferDidFinish()
 }
 
+struct DeleteObject {
+    let imagePathAWS: String?
+    let imagePath: String?
+    let thumbnailPath: String?
+}
+
 class TransferObject {
     
 }

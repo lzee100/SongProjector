@@ -131,6 +131,7 @@
 "NewSong-searchThemePlaceHolder" = "Search theme";
 "NewSong-errorTitleNoTheme" = "Error";
 "NewSong-erorrMessageNoTheme" = "Select a theme";
+"NewSong-errorNoTitle" = "Title can not be empty";
 "NewSong-segmentTitleText" = "Text";
 "NewSong-segmentTitleSheets" = "Sheets";
 "NewSong-generateSheetsButton" = "Generate sheets";

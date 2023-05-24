@@ -152,7 +152,7 @@ struct EditThemeOrSheetContentViewUI: View {
 }
 
 struct EditThemeOrSheetContentViewUI_Previews: PreviewProvider {
-    @State static var editViewModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .theme(nil), isUniversal: false)!)
+    @State static var editViewModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .theme(nil), isUniversal: false, isBibleVers: false)!)
     @State static var selectedcontentAlignment = EditThemeOrSheetContentViewUI.fontAlignmentPickerValues.first!
     @State static var isSectionExpanded = true
     static var previews: some View {

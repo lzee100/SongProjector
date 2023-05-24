@@ -196,7 +196,7 @@ struct EditThemeOrSheetGeneralViewUI: View {
 }
 
 struct EditThemeOrSheetGeneralViewUI_Previews: PreviewProvider {
-    @State static var editViewModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .theme(nil), isUniversal: false)!)
+    @State static var editViewModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .theme(nil), isUniversal: false, isBibleVers: false)!)
     @State static var isExpanded = true
     static var previews: some View {
         EditThemeOrSheetGeneralViewUI(isSectionGeneralExpanded: $isExpanded, editSheetOrThemeModel: editViewModel)

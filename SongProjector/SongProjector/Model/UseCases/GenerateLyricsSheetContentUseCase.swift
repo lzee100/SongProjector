@@ -43,15 +43,8 @@ struct GenerateLyricsSheetContentUseCase {
             let rangeRemove = start..<range.upperBound
             
             let sheetLyrics = String(contentToDevide[rangeSheet])
-            var sheetTitle: String = ""
             
-            // get title
-            if let rangeTitle = contentToDevide.range(of: "\n"), position == 0 {
-                let rangeSheetTitle = start..<rangeTitle.lowerBound
-                sheetTitle = String(contentToDevide[rangeSheetTitle])
-            }
-            
-            if let newSheet = SheetTitleContentCodable.makeDefault(position: position, title: sheetTitle, content: sheetLyrics) {
+            if let newSheet = SheetTitleContentCodable.makeDefault(position: position, title: nil, content: sheetLyrics) {
                 newSheets.append(newSheet)
                 position += 1
             }
@@ -59,7 +52,7 @@ struct GenerateLyricsSheetContentUseCase {
             contentToDevide.removeSubrange(rangeRemove)
         }
                 
-        return newSheets.compactMap { EditSheetOrThemeViewModel(editMode: .sheet((cluster, $0), sheetType: $0.sheetType), isUniversal: uploadSecret != nil) }
+        return newSheets.compactMap { EditSheetOrThemeViewModel(editMode: .sheet((cluster, $0), sheetType: $0.sheetType), isUniversal: uploadSecret != nil, isBibleVers: false) }
     }
 
 }

@@ -100,7 +100,7 @@ public struct SheetEmptyCodable: EntityCodableType, SheetMetaType {
     var position: Int = 0
     var time: Double = 0
     var hasTheme: ThemeCodable? = nil
-    
+
     enum CodingKeysTheme:String,CodingKey
     {
         case id
@@ -223,11 +223,11 @@ extension SheetEmptyCodable: FileTransferable {
     }
 
     var uploadObjects: [TransferObject] {
-        []
+        [hasTheme].compactMap { $0?.newSelectedThemeImageTempDirPath }.compactMap { UploadObject(fileName: $0) }
     }
     
     var downloadObjects: [TransferObject] {
-        []
+        [self].compactMap { $0.hasTheme?.imagePathAWS }.compactMap { URL(string: $0) }.compactMap { DownloadObject(remoteURL: $0)}
     }
     
     var transferObjects: [TransferObject] {
@@ -235,6 +235,9 @@ extension SheetEmptyCodable: FileTransferable {
     }
     
     mutating func setTransferObjects(_ transferObjects: [TransferObject]) throws {
+        var theme = self.theme
+        try theme?.setTransferObjects(transferObjects)
+        self.hasTheme = theme
     }
     
     func setDeleteDate() -> FileTransferable {

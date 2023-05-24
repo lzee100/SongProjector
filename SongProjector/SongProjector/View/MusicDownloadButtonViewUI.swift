@@ -48,9 +48,7 @@ struct MusicDownloadButtonViewUI: View {
     var body: some View {
         Button {
             Task {
-                Task {
-                    await viewModel.downloadMusic(manager: musicDownloadManager)
-                }
+                await viewModel.downloadMusic(manager: musicDownloadManager)
             }
         } label: {
             HStack {
@@ -74,7 +72,10 @@ struct MusicDownloadButtonViewUI: View {
         .tint(.white)
         .onAppear {
             Task {
-                showingDownloading = await viewModel.isDownloading(manager: musicDownloadManager)
+                let isDownloading = await viewModel.isDownloading(manager: musicDownloadManager)
+                await MainActor.run(body: {
+                    self.showingDownloading = isDownloading
+                })
             }
         }
         .onChange(of: viewModel.showingLoader) { newValue in

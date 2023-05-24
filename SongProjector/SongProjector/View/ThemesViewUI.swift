@@ -126,19 +126,21 @@ struct ThemesViewUI: View {
             viewModel.filterOn(newValue)
         }
         .sheet(item: $selectedTheme, content: { theme in
-            if let model = EditSheetOrThemeViewModel(editMode: .theme(theme), isUniversal: uploadSecret != nil) {
+            if let model = EditSheetOrThemeViewModel(editMode: .theme(theme), isUniversal: uploadSecret != nil, isBibleVers: false) {
                 EditThemeOrSheetViewUI(
                     navigationTitle: AppText.EditTheme.title,
                     delegate: self,
+                    isNew: false,
                     editSheetOrThemeModel: WrappedStruct(withItem: model)
                 )
             }
         })
         .sheet(isPresented: $isShowingThemesEditor) {
-            if let model = EditSheetOrThemeViewModel(editMode: .theme(nil), isUniversal: uploadSecret != nil) {
+            if let model = EditSheetOrThemeViewModel(editMode: .theme(nil), isUniversal: uploadSecret != nil, isBibleVers: false) {
                 EditThemeOrSheetViewUI(
                     navigationTitle: AppText.EditTheme.title,
                     delegate: self,
+                    isNew: true,
                     editSheetOrThemeModel: WrappedStruct(withItem: model)
                 )
             }
@@ -175,6 +177,9 @@ struct ThemesViewUI: View {
 }
 
 extension ThemesViewUI: EditThemeOrSheetViewUIDelegate {
+    
+    func dismissAndSave(model: EditSheetOrThemeViewModel) {
+    }
     
     func dismiss() {
         selectedTheme = nil

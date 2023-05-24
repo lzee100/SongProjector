@@ -52,6 +52,7 @@ actor MusicDownloadManager: ObservableObject {
     }
     
     func reload() async {
+        let searchText = self.searchText?.isBlanc ?? true ? nil : self.searchText
         collections = await FilteredCollectionsUseCase().getCollections(searchText: searchText, showDeleted: showDeleted, selectedTags: selectedTags)
     }
     
@@ -60,8 +61,13 @@ actor MusicDownloadManager: ObservableObject {
         showingLoader = true
         await reload()
         do {
-            try await FetchThemesUseCase(fetchAll: false).fetch()
-            self.showingLoader = false
+            let newThemes = try await FetchThemesUseCase(fetchAll: false).fetch()
+            if newThemes.count > 0 {
+                showingLoader = false
+                await fetchRemoteThemes()
+            } else {
+                self.showingLoader = false
+            }
         } catch {
             self.showingLoader = false
             self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
@@ -70,11 +76,16 @@ actor MusicDownloadManager: ObservableObject {
     
     func fetchRemoteCollections() async {
         guard !showingLoader else { return }
-        await reload()
         showingLoader = true
         do {
-            collections = try await FetchCollectionsUseCase(fetchAll: false).fetch()
-            showingLoader = false
+            let newCollections = try await FetchCollectionsUseCase(fetchAll: false).fetch()
+            if newCollections.count > 0 {
+                showingLoader = false
+                await fetchRemoteCollections()
+            } else {
+                await reload()
+                showingLoader = false
+            }
         } catch {
             showingLoader = false
             self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
@@ -101,6 +112,7 @@ actor MusicDownloadManager: ObservableObject {
         }
         do {
             try await SubmitUseCase(endpoint: .clusters, requestMethod: .put, uploadObjects: [collection]).submit()
+            await reload()
             showingLoader = false
         } catch {
             showingLoader = false
@@ -117,7 +129,8 @@ actor MusicDownloadManager: ObservableObject {
             collection.rootDeleteDate = Date()
         }
         do {
-            try await SubmitUseCase(endpoint: uploadSecret == nil ? .clusters : .universalclusters, requestMethod: .put, uploadObjects: [collection]).submit()
+            try await SubmitUseCase(endpoint: uploadSecret == nil ? .clusters : .universalclusters, requestMethod: .delete, uploadObjects: [collection]).submit()
+            await reload()
             showingLoader = false
         } catch {
             showingLoader = false
@@ -127,6 +140,11 @@ actor MusicDownloadManager: ObservableObject {
 }
 
 struct CollectionsViewUI: View {
+    
+    enum AlertMessage {
+        case delete(ClusterCodable)
+        case deleteMusic(ClusterCodable)
+    }
     
     enum CollectionEditor: Identifiable {
         case new
@@ -148,14 +166,12 @@ struct CollectionsViewUI: View {
     @StateObject var viewModel = CollectionsViewModel()
     @StateObject var tagSelectionModel = TagSelectionModel(mandatoryTags: [])
 
-    @State private var showingDeleteLocalMusicAlert = false
-    @State private var showingDoYouWantToDeleteSongAlert = false
-    @State private var deleteLocalMusicError: Error?
-    @State private var networkError: Error?
+    @State private var showingError = false
     @State private var selectedCollectionForTrailingActions: ClusterCodable?
     @State private var showingCollectionEditor: CollectionEditor?
     @State private var showDeletedCollections = false
     @State private var searchText = ""
+    @State private var alertMessage: AlertMessage? = nil
     
     private var allowsRowSelection: Bool {
         if songServiceEditorModel.item != nil {
@@ -178,6 +194,7 @@ struct CollectionsViewUI: View {
                     .styleAsSelectionCapsuleButton(isSelected: showDeletedCollections)
                 }
                 .padding([.top, .leading, .trailing])
+                
                 if viewModel.showingLoader {
                     ProgressView()
                         .padding([.top, .leading, .trailing])
@@ -185,11 +202,6 @@ struct CollectionsViewUI: View {
                 }
 
                 List {
-                    if viewModel.showingLoader {
-                        ProgressView()
-                            .padding()
-                            .tint(Color(uiColor: .systemGray5))
-                    }
                     ForEach(viewModel.collections, id: \.id) { collection in
                         Button {
                             if let editingSection {
@@ -214,9 +226,9 @@ struct CollectionsViewUI: View {
                             if showDeletedCollections {
                                 restore(collection: collection)
                             } else {
-                                deleteSongButtonView(collection: collection)
+                                deleteSongButton(collection: collection)
                                 if collection.hasLocalMusic {
-                                    deleteLocalContentButtonView(collection: collection)
+                                    deleteLMusicButton(collection: collection)
                                 }
                             }
                         }
@@ -258,31 +270,6 @@ struct CollectionsViewUI: View {
                 }
             }
             .background(Color(uiColor: .systemGray6))
-            .alert(AppText.Songs.deleteMusicBody(songName: "'\(selectedCollectionForTrailingActions?.title ?? "??")'"), isPresented: $showingDeleteLocalMusicAlert) {
-                Button(AppText.Actions.delete, role: .destructive) {
-                    deleteLocalMusic()
-                }
-                Button(AppText.Actions.cancel, role: .cancel) {
-                    showingDeleteLocalMusicAlert.toggle()
-                }
-            }
-            .alert(AppText.Songs.errorDeletingLocalMusic(error: deleteLocalMusicError?.localizedDescription ?? "-"), isPresented: $showingDeleteLocalMusicAlert) {
-                Button(AppText.Actions.ok) {
-                    showingDeleteLocalMusicAlert.toggle()
-                }
-            }
-            .alert(AppText.Songs.deleteBody(songName: selectedCollectionForTrailingActions?.title ?? "-"), isPresented: $showingDoYouWantToDeleteSongAlert) {
-                Button(AppText.Actions.delete, role: .destructive) {
-                    if let selectedCollectionForTrailingActions {
-                        Task {
-                            await viewModel.delete(selectedCollectionForTrailingActions)
-                        }
-                    }
-                }
-                Button(AppText.Actions.cancel, role: .cancel) {
-                    showingDoYouWantToDeleteSongAlert.toggle()
-                }
-            }
             .searchable(text: $searchText).tint(Color(uiColor: themeHighlighted))
         }
         .task {
@@ -304,7 +291,33 @@ struct CollectionsViewUI: View {
                 await viewModel.fetchCollections(searchText: searchText, showDeleted: showDeletedCollections, selectedTags: mandatoryTags + tagSelectionModel.selectedTags)
             }
         })
-        .sheet(item: $showingCollectionEditor, content: { editor in
+        .alert(isPresented: $showingError, content: {
+            switch alertMessage {
+            case .delete(let cluster):
+                return Alert(title: Text(AppText.Songs.deleteBody(songName: cluster.title ?? "")), message: nil, primaryButton: Alert.Button.destructive(Text(AppText.Actions.delete), action: {
+                    Task {
+                        await viewModel.delete(cluster)
+                    }
+                }), secondaryButton: Alert.Button.cancel({
+                    alertMessage = nil
+                }))
+            case .deleteMusic(let cluster):
+                return Alert(title: Text(AppText.Songs.deleteMusicBody(songName: cluster.title ?? "")), message: nil, primaryButton: Alert.Button.destructive(Text(AppText.Actions.delete), action: {
+                    Task {
+                        await viewModel.deleteMusicFor(cluster)
+                    }
+                }), secondaryButton: Alert.Button.cancel({
+                    alertMessage = nil
+                }))
+            case .none:
+                return Alert(title: Text(""), message: nil, dismissButton: .cancel())
+            }
+        })
+        .sheet(item: $showingCollectionEditor, onDismiss: {
+            Task {
+                await viewModel.reload()
+            }
+        }, content: { editor in
             switch editor {
             case .new:
                 CollectionEditorViewUI(cluster: nil, showingCollectionEditor: $showingCollectionEditor)
@@ -314,10 +327,10 @@ struct CollectionsViewUI: View {
         })
     }
     
-    @ViewBuilder private func deleteLocalContentButtonView(collection: ClusterCodable) -> some View {
+    @ViewBuilder private func deleteLMusicButton(collection: ClusterCodable) -> some View {
         Button {
-            selectedCollectionForTrailingActions = collection
-            showingDeleteLocalMusicAlert.toggle()
+            alertMessage = .deleteMusic(collection)
+            showingError = true
         } label: {
             Image("TrashMusic")
                 .resizable()
@@ -326,9 +339,10 @@ struct CollectionsViewUI: View {
         .tint(Color(uiColor: .red2))
     }
     
-    @ViewBuilder private func deleteSongButtonView(collection: ClusterCodable) -> some View {
+    @ViewBuilder private func deleteSongButton(collection: ClusterCodable) -> some View {
         Button {
-            showingDoYouWantToDeleteSongAlert.toggle()
+            alertMessage = .delete(collection)
+            showingError = true
         } label: {
             Label {
                 Text(AppText.Actions.delete)
@@ -350,16 +364,6 @@ struct CollectionsViewUI: View {
         }
         .tint(Color(uiColor: .green1))
     }
-    
-    private func deleteLocalMusic() {
-        if let selectedCollectionForTrailingActions {
-            Task {
-                await viewModel.deleteMusicFor(selectedCollectionForTrailingActions)
-                
-            }
-        }
-    }
-    
 }
 
 struct CollectionsViewUI_Previews: PreviewProvider {

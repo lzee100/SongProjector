@@ -164,6 +164,7 @@ public struct GoogleActivityCodable: EntityCodableType, Hashable {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
         try container.encodeIfPresent(title, forKey: .title)
         guard let userUID = Auth.auth().currentUser?.uid else {
             throw RequestError.unAuthorizedNoUser(requester: String(describing: self))

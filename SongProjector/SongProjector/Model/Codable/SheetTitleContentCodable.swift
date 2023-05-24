@@ -12,7 +12,7 @@ import CoreData
 
 public struct SheetTitleContentCodable: EntityCodableType, SheetMetaType {
     
-    static func makeDefault(position: Int = 0, title: String = AppText.NewTheme.sampleTitle, content: String = AppText.NewTheme.sampleLyrics) -> SheetTitleContentCodable? {
+    static func makeDefault(position: Int = 0, title: String? = nil, content: String = AppText.NewTheme.sampleLyrics) -> SheetTitleContentCodable? {
         
         #if DEBUG
         let userId = "sdaf"
@@ -108,7 +108,7 @@ public struct SheetTitleContentCodable: EntityCodableType, SheetMetaType {
     var hasTheme: ThemeCodable? = nil
     var content: String? = nil
     var isBibleVers: Bool = false
-    
+
     enum CodingKeysTitleContent:String, CodingKey
     {
         case id
@@ -244,11 +244,11 @@ extension SheetTitleContentCodable: FileTransferable {
     }
     
     var uploadObjects: [TransferObject] {
-        []
+        [hasTheme].compactMap { $0?.newSelectedThemeImageTempDirPath }.compactMap { UploadObject(fileName: $0) }
     }
     
     var downloadObjects: [TransferObject] {
-        []
+        [self].compactMap { $0.hasTheme?.imagePathAWS }.compactMap { URL(string: $0) }.compactMap { DownloadObject(remoteURL: $0)}
     }
     
     var transferObjects: [TransferObject] {
@@ -256,6 +256,9 @@ extension SheetTitleContentCodable: FileTransferable {
     }
     
     mutating func setTransferObjects(_ transferObjects: [TransferObject]) throws {
+        var theme = theme
+        try theme?.setTransferObjects(transferObjects)
+        self.hasTheme = theme
     }
     
     func setDeleteDate() -> FileTransferable {

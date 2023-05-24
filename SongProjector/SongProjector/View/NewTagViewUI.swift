@@ -87,7 +87,9 @@ struct NewTagViewUI: View {
                         } else {
                             Task {
                                 await viewModel.submitTagWith(title: tagTitle.text)
-                                showingNewTagViewUI.toggle()
+                                await MainActor.run(body: {
+                                    showingNewTagViewUI.toggle()
+                                })
                             }
                         }
                     } label: {

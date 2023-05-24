@@ -65,7 +65,7 @@ struct EmptyViewDisplayUI: View {
 struct EmptyViewUI_Previews: PreviewProvider {
     @State static var cluster = ClusterCodable.makeDefault()!
     @State static var emptySheet = SheetEmptyCodable.makeDefault()
-    @State static var editModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .sheet((cluster, emptySheet), sheetType: .SheetEmpty), isUniversal: false)!)
+    @State static var editModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .sheet((cluster, emptySheet), sheetType: .SheetEmpty), isUniversal: false, isBibleVers: false)!)
 
     static var previews: some View {
         EmptyViewEditUI(editViewModel: editModel, isForExternalDisplay: false)

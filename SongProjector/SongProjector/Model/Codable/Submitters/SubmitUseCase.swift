@@ -19,11 +19,13 @@ struct SubmitUseCase<T: FileTransferable> {
     private let requestMethod: RequestMethod
     private let uploadObjects: [T]
     private let managedObjectContextHandler = ManagedObjectContextHandler<T>()
+    private let deleteObjects: [DeleteObject]
     
-    init(endpoint: EndPoint, requestMethod: RequestMethod, uploadObjects: [T]) {
+    init(endpoint: EndPoint, requestMethod: RequestMethod, uploadObjects: [T], deleteObjects: [DeleteObject] = []) {
         self.endpoint = endpoint.rawValue
         self.requestMethod = requestMethod
         self.uploadObjects = uploadObjects
+        self.deleteObjects = deleteObjects
     }
     
     @discardableResult
@@ -33,14 +35,19 @@ struct SubmitUseCase<T: FileTransferable> {
         let uploadFilesResult = try await uploadFiles()
         
         var updatedUploadObjects: [T] = []
-        for uploadObject in uploadObjects {
+        for uploadObject in uploadFilesResult {
             var updatedUploadObject: T = uploadObject
             updatedUploadObject.clearDataForDeletedObjects(forceDelete: requestMethod == .delete)
             setDeleteDateIfneeded(&updatedUploadObject)
             updatedUploadObjects.append(updatedUploadObject)
         }
         let workload = updatedUploadObjects.map { SubmitCodableSyncVersionUseCase<T>(endpoint: endpoint, requestMethod: requestMethod, uploadObject: $0) }
-        return try await submit(useCases: workload)
+        let result = try await submit(useCases: workload)
+        
+        await deleteFilesOnAWS(files: deleteFiles)
+        deleteFilesLocally()
+        
+        return try await managedObjectContextHandler.save(entities: result)
     }
     
     private func uploadFiles() async throws -> [T] {
@@ -90,7 +97,26 @@ struct SubmitUseCase<T: FileTransferable> {
                 deletableFiles.append(Storage.storage().reference().child("images").child(awsPath))
             })
         }
+        self.deleteObjects.compactMap { $0.imagePathAWS }.forEach { awsPath in
+            deletableFiles.append(Storage.storage().reference().child("images").child(awsPath))
+        }
         return deletableFiles
+    }
+    
+    private func deleteFilesOnAWS(files: [StorageReference]) async {
+        await withTaskGroup(of: Void.self) { group in
+            files.forEach { reference in
+                group.addTask {
+                    try? await reference.delete()
+                }
+            }
+        }
+    }
+    
+    private func deleteFilesLocally() {
+        deleteObjects.flatMap { [$0.imagePath, $0.thumbnailPath].compactMap { $0 } }.forEach { name in
+            try? FileManager.deleteFile(name: name)
+        }
     }
     
     private func setDeleteDateIfneeded(_ uploadObject: inout T) {

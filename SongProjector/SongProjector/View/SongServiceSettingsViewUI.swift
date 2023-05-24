@@ -82,13 +82,7 @@ struct SongServiceSettingsViewUI: View {
                     ProgressView()
                 }
             }
-            .task {
-                let settings: [SongServiceSettings] = DataFetcher().getEntities(moc: moc)
-                if let settings = settings.first {
-                    moc.delete(settings)
-                    try? moc.save()
-                }
-                
+            .task {                
                 await viewModel.fetchRemoteSettings()
             }
             .navigationTitle(AppText.SongServiceManagement.title)

@@ -109,7 +109,9 @@ struct EditSheetOrThemeViewModel: Identifiable {
     var imageContentMode: Int16
     var imageHasBorder: Bool
     
-    init?(editMode: EditMode, isUniversal: Bool, image: UIImage? = nil, isCustomSheetType: Bool = false) {
+    var isDeleted = false
+    
+    init?(editMode: EditMode, isUniversal: Bool, isCustomSheetType: Bool = false, isBibleVers: Bool) {
         self.editMode = editMode
         let theme: ThemeCodable
         switch editMode {
@@ -122,6 +124,7 @@ struct EditSheetOrThemeViewModel: Identifiable {
                 self.sheet = sheet
                 self.sheetType = .SheetTitleContent
                 self.position = extractedTheme.position
+                self.isHidden = extractedTheme.isHidden
             } else {
                 return nil
             }
@@ -137,21 +140,35 @@ struct EditSheetOrThemeViewModel: Identifiable {
                 let clusterTheme = isCustomSheetType ? nil : cluster.theme
                 if let persistedTheme = sheet.theme ?? clusterTheme {
                     theme = persistedTheme
+                    self.isHidden = theme.isHidden
                 } else if let defaultTheme = ThemeCodable.makeDefault() {
                     theme = defaultTheme
+                    isHidden = true
                 } else {
                     return nil
                 }
-            } else if let sheet = sheetType.makeDefault(), let defaultTheme = ThemeCodable.makeDefault() {
+            } else if let sheet = sheetType.makeDefault(), var defaultTheme = ThemeCodable.makeDefault() {
                 self.sheet = sheet
+                defaultTheme.isHidden = true
                 theme = defaultTheme
+                self.isHidden = true
                 self.position = sheet.position
                 self.cluster = nil
             } else {
                 return nil
             }
         }
-        self.title = theme.title ?? ""
+        if isBibleVers {
+            self.title = sheet.title ?? ""
+            self.isBibleVers = true
+        } else if isCustomSheetType {
+            self.title = theme.allHaveTitle ? (sheet.title ?? "") : position == 0 ? (sheet.title ?? "")  : ""
+        } else if !isBibleVers {
+            if theme.allHaveTitle || position == 0 {
+                self.title = cluster?.title ?? theme.title ?? ""
+            }
+        }
+        self.isBibleVers = isBibleVers
         self.allHaveTitle = theme.allHaveTitle
         self.backgroundColor = theme.backgroundColor?.color ?? .white
         self.backgroundTransparancyNumber = theme.backgroundTransparancyNumber
@@ -160,7 +177,6 @@ struct EditSheetOrThemeViewModel: Identifiable {
         self.imagePath = theme.imagePath
         self.imagePathThumbnail = theme.imagePathThumbnail
         self.isEmptySheetFirst = theme.isEmptySheetFirst
-        self.isHidden = theme.isHidden
         self.isContentBold = theme.isContentBold
         self.isContentItalic = theme.isContentItalic
         self.isContentUnderlined = theme.isContentUnderlined
@@ -184,20 +200,10 @@ struct EditSheetOrThemeViewModel: Identifiable {
         self.isUniversal = isUniversal
         self.isDeletable = !isUniversal
         
-        if theme.title?.isBlanc ?? true {
-            if position == 0 {
-                self.title = cluster?.title ?? sheet.title ?? ""
-            } else {
-                self.title = sheet.title ?? ""
-            }
-        } else {
-            self.title = theme.title ?? ""
-        }
         self.sheetContent = sheet.sheetContent ?? ""
         
         self.sheetImagePath = sheet.sheetImagePath
         self.sheetImagePathThumb = sheet.sheetImageThumbnailPath
-        self.newSelectedSheetImage = image
         self.uiImageTheme = imagePath?.loadImage()
         self.uiImageThumbTheme = imagePathThumbnail?.loadImage()
         self.uiImageSheet = sheetImagePath?.loadImage()
@@ -442,64 +448,62 @@ struct EditSheetOrThemeViewModel: Identifiable {
     }
     
     mutating func createThemeCodable() throws -> ThemeCodable? {
-        let imagePath = try newSelectedThemeImage?.saveTemp()
-        newSelectedThemeImageTempDirPath = imagePath
-        
-        switch editMode {
-        case .theme:
-            return ThemeCodable(
-                id: theme.id,
-                userUID: theme.userUID,
-                title: title,
-                createdAt: theme.createdAt,
-                updatedAt: nil,
-                deleteDate: nil,
-                rootDeleteDate: nil,
-                allHaveTitle: allHaveTitle,
-                backgroundColor: backgroundColor.toHex(),
-                backgroundTransparancyNumber: backgroundTransparancyNumber,
-                displayTime: displayTime,
-                hasEmptySheet: hasEmptySheet,
-                imagePath: self.imagePath,
-                imagePathThumbnail: imagePathThumbnail,
-                isEmptySheetFirst: isEmptySheetFirst,
-                isHidden: isHidden,
-                isContentBold: isContentBold,
-                isContentItalic: isContentItalic,
-                isContentUnderlined: isContentUnderlined,
-                isTitleBold: isTitleBold,
-                isTitleItalic: isTitleItalic,
-                isTitleUnderlined: isTitleUnderlined,
-                contentAlignmentNumber: contentAlignmentNumber,
-                contentBorderColorHex: contentBorderColorHex,
-                contentBorderSize: contentBorderSize,
-                contentFontName: contentFontName,
-                contentTextColorHex: contentTextColorHex,
-                contentTextSize: contentTextSize,
-                position: position,
-                titleAlignmentNumber: titleAlignmentNumber,
-                titleBackgroundColor: titleBackgroundColor,
-                titleBorderColorHex: titleBorderColorHex,
-                titleBorderSize: titleBorderSize,
-                titleFontName: titleFontName,
-                titleTextColorHex: titleTextColorHex,
-                titleTextSize: titleTextSize,
-                imagePathAWS: imagePathAWS,
-                isUniversal: isUniversal,
-                isDeletable: isDeletable,
-                tempSelectedImage: nil,
-                newSelectedThemeImageTempDirPath: imagePath,
-                isThemeImageDeleted: isThemeImageDeleted
-            )
-        case .sheet:
-            return nil
+        if let newSelectedThemeImage {
+            let imagePath = try newSelectedThemeImage.saveTemp()
+            newSelectedThemeImageTempDirPath = imagePath
         }
+        
+        return ThemeCodable(
+            id: theme.id,
+            userUID: theme.userUID,
+            title: title,
+            createdAt: theme.createdAt,
+            updatedAt: nil,
+            deleteDate: nil,
+            rootDeleteDate: nil,
+            allHaveTitle: allHaveTitle,
+            backgroundColor: backgroundColor.toHex(),
+            backgroundTransparancyNumber: backgroundTransparancyNumber,
+            displayTime: displayTime,
+            hasEmptySheet: hasEmptySheet,
+            imagePath: self.imagePath,
+            imagePathThumbnail: imagePathThumbnail,
+            isEmptySheetFirst: isEmptySheetFirst,
+            isHidden: isHidden,
+            isContentBold: isContentBold,
+            isContentItalic: isContentItalic,
+            isContentUnderlined: isContentUnderlined,
+            isTitleBold: isTitleBold,
+            isTitleItalic: isTitleItalic,
+            isTitleUnderlined: isTitleUnderlined,
+            contentAlignmentNumber: contentAlignmentNumber,
+            contentBorderColorHex: contentBorderColorHex,
+            contentBorderSize: contentBorderSize,
+            contentFontName: contentFontName,
+            contentTextColorHex: contentTextColorHex,
+            contentTextSize: contentTextSize,
+            position: editMode.isSheet ? theme.position : position,
+            titleAlignmentNumber: titleAlignmentNumber,
+            titleBackgroundColor: titleBackgroundColor,
+            titleBorderColorHex: titleBorderColorHex,
+            titleBorderSize: titleBorderSize,
+            titleFontName: titleFontName,
+            titleTextColorHex: titleTextColorHex,
+            titleTextSize: titleTextSize,
+            imagePathAWS: imagePathAWS,
+            isUniversal: isUniversal,
+            isDeletable: isDeletable,
+            tempSelectedImage: nil,
+            newSelectedThemeImageTempDirPath: newSelectedThemeImageTempDirPath,
+            isThemeImageDeleted: isThemeImageDeleted
+        )
     }
     
     mutating func createSheetCodable() throws -> SheetMetaType? {
-        let sheetImagePath = try newSelectedThemeImage?.saveTemp()
-        newSelectedThemeImageTempDirPath = sheetImagePath
-
+        if let newSelectedSheetImage {
+            let sheetImagePath = try newSelectedSheetImage.saveTemp()
+            newSelectedSheetImageTempDirPath = sheetImagePath
+        }
         switch editMode {
         case .sheet:
             switch sheetType {
@@ -515,9 +519,9 @@ struct EditSheetOrThemeViewModel: Identifiable {
                     isEmptySheet: false,
                     position: position,
                     time: 0,
-                    hasTheme: try createThemeCodable(),
+                    hasTheme: isBibleVers ? nil : try createThemeCodable(),
                     content: self.sheetContent,
-                    isBibleVers: false
+                    isBibleVers: isBibleVers
                 )
             case .SheetTitleImage:
                 return SheetTitleImageCodable(
@@ -540,7 +544,9 @@ struct EditSheetOrThemeViewModel: Identifiable {
                     imageHasBorder: false,
                     imagePath: self.imagePath,
                     thumbnailPath: imagePathThumbnail,
-                    imagePathAWS: sheetImagePathAWS
+                    imagePathAWS: sheetImagePathAWS,
+                    newSelectedSheetImageTempDirPath: newSelectedSheetImageTempDirPath,
+                    isSheetImageDeleted: isSheetImageDeleted
                 )
             case .SheetPastors:
                 return SheetPastorsCodable(
@@ -558,7 +564,9 @@ struct EditSheetOrThemeViewModel: Identifiable {
                     content: sheetContent,
                     imagePath: self.sheetImagePath,
                     thumbnailPath: self.sheetImagePathThumb,
-                    imagePathAWS: sheetImagePathAWS
+                    imagePathAWS: sheetImagePathAWS,
+                    newSelectedSheetImageTempDirPath: newSelectedSheetImageTempDirPath,
+                    isSheetImageDeleted: isSheetImageDeleted
                 )
             case .SheetSplit:
                 return SheetTitleContentCodable(
@@ -585,10 +593,10 @@ struct EditSheetOrThemeViewModel: Identifiable {
                     updatedAt: sheet.updatedAt,
                     deleteDate: sheet.deleteDate,
                     rootDeleteDate: sheet.rootDeleteDate,
-                    isEmptySheet: false,
+                    isEmptySheet: isBibleVers,
                     position: position,
                     time: 0,
-                    hasTheme: try createThemeCodable()
+                    hasTheme: isBibleVers ? nil : try createThemeCodable()
                 )
             case .SheetActivities:
                 return SheetActivitiesCodable(

@@ -78,12 +78,14 @@ struct TagSelectionScrollViewUI: View {
             }
             .task {
                 await viewModel.fetchRemoteTags()
-                if let mandatoryTagId = viewModel.mandatoryTags.first?.id {
-                    reader.scrollTo(mandatoryTagId)
-                }
-                else if let selectedTagId = viewModel.selectedTags.first?.id {
-                    reader.scrollTo(selectedTagId)
-                }
+                await MainActor.run(body: {
+                    if let mandatoryTagId = viewModel.mandatoryTags.first?.id {
+                        reader.scrollTo(mandatoryTagId)
+                    }
+                    else if let selectedTagId = viewModel.selectedTags.first?.id {
+                        reader.scrollTo(selectedTagId)
+                    }
+                })
             }
             .errorAlert(error: $viewModel.error)
         }

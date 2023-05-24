@@ -18,7 +18,9 @@ import SwiftUI
 actor FileUploadsUseCase<T: FileTransferable> {
     
     func startUploadingFor(_ entity: T) async throws -> T {
-        let submitters = entity.uploadObjects.compactMap { $0 as? UploadObject }.map { FileSubmitter(uploadObject: $0) }
+        let submitters = entity.uploadObjects
+            .compactMap { $0 as? UploadObject }
+            .map { FileSubmitter(uploadObject: $0) }
         
         let transferObjects = try await submitFiles(submitters)
         var changableEntity = entity

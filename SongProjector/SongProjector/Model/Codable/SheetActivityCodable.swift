@@ -41,7 +41,8 @@ public struct SheetActivitiesCodable: EntityCodableType, SheetMetaType {
          deleteDate: Date? = nil,
          rootDeleteDate: Date? = nil,
          position: Int = 0,
-         hasGoogleActivities: [GoogleActivityCodable] = []) {
+         hasGoogleActivities: [GoogleActivityCodable] = []
+    ) {
         self.id = id
         self.userUID = userUID
         self.title = title
@@ -109,7 +110,7 @@ public struct SheetActivitiesCodable: EntityCodableType, SheetMetaType {
     var rootDeleteDate: Date? = nil
     var position: Int
     var hasGoogleActivities: [GoogleActivityCodable] = []
-    
+
     enum CodingKeys: String, CodingKey
     {
         case id
@@ -154,6 +155,7 @@ public struct SheetActivitiesCodable: EntityCodableType, SheetMetaType {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
         try container.encodeIfPresent(title, forKey: .title)
         guard let userUID = Auth.auth().currentUser?.uid else {
             throw RequestError.unAuthorizedNoUser(requester: String(describing: self))

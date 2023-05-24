@@ -129,7 +129,7 @@ struct GoogleActivitiesViewEditUI: View {
 struct GoogleActivitiesViewUI_Previews: PreviewProvider {
     @State static var cluster = ClusterCodable.makeDefault()!
     @State static var imageSheet = SheetTitleImageCodable.makeDefault()
-        @State static var editModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .sheet((cluster, imageSheet), sheetType: .SheetTitleImage), isUniversal: false, image: UIImage(named: "Pio-Sebastiaan-en-Marilou.jpg"))!)
+        @State static var editModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .sheet((cluster, imageSheet), sheetType: .SheetTitleImage), isUniversal: false, isBibleVers: false)!)
 
     static var previews: some View {
         GoogleActivitiesViewEditUI(editViewModel: editModel, isForExternalDisplay: false)

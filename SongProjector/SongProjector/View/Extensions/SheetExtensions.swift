@@ -280,29 +280,3 @@ extension Array where Element == Sheet {
     }
     
 }
-
-extension Array where Element == SheetMetaType {
-    
-    func getThemes(context: NSManagedObjectContext) -> [ThemeCodable] {
-        let results: [ThemeCodable] = self.compactMap { sheet in
-            if let sheet = sheet as? SheetTitleContentEntity, let mapped = SheetTitleContentCodable(managedObject: sheet, context: context)?.hasTheme {
-                return mapped
-            }
-            if let sheet = sheet as? SheetTitleImageEntity, let mapped = SheetTitleImageCodable(managedObject: sheet, context: context)?.hasTheme {
-                return mapped
-            }
-            if let sheet = sheet as? SheetEmptyEntity, let mapped = SheetEmptyCodable(managedObject: sheet, context: context)?.hasTheme {
-                return mapped
-            }
-            if let sheet = sheet as? SheetSplitEntity, let mapped = SheetSplitCodable(managedObject: sheet, context: context)?.hasTheme {
-                return mapped
-            }
-            if let sheet = sheet as? SheetPastorsEntity, let mapped = SheetPastorsCodable(managedObject: sheet, context: context)?.hasTheme {
-                return mapped
-            }
-            return nil
-        }
-        return results
-    }
-    
-}

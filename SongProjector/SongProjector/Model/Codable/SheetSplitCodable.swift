@@ -84,7 +84,7 @@ public struct SheetSplitCodable: EntityCodableType, SheetMetaType {
     
     var textLeft: String?
     var textRight: String?
-    
+
     enum CodingKeysSheetSplit:String,CodingKey
     {
         case id
@@ -179,7 +179,8 @@ public struct SheetSplitCodable: EntityCodableType, SheetMetaType {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeysSheetSplit.self)
-        
+        try container.encode(id, forKey: .id)
+
         try container.encode(textLeft, forKey: .textLeft)
         try container.encode(textRight, forKey: .textRight)
         
@@ -222,11 +223,11 @@ extension SheetSplitCodable: FileTransferable {
     }
     
     var uploadObjects: [TransferObject] {
-        []
+       [hasTheme].compactMap { $0?.newSelectedThemeImageTempDirPath }.compactMap { UploadObject(fileName: $0) }
     }
     
     var downloadObjects: [TransferObject] {
-        []
+        [self].compactMap { $0.hasTheme?.imagePathAWS }.compactMap { URL(string: $0) }.compactMap { DownloadObject(remoteURL: $0)}
     }
     
     var transferObjects: [TransferObject] {
@@ -234,6 +235,9 @@ extension SheetSplitCodable: FileTransferable {
     }
     
     mutating func setTransferObjects(_ transferObjects: [TransferObject]) throws {
+        var theme = self.theme
+        try theme?.setTransferObjects(transferObjects)
+        self.hasTheme = theme
     }
     
     func setDeleteDate() -> FileTransferable {
