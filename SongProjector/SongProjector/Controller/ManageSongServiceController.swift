@@ -90,10 +90,10 @@ class ManageSongServiceController: ChurchBeamViewController, UITableViewDataSour
 	}
     
     override func update() {
-        let settings: [SongServiceSettings] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "updatedAt", ascending: false))
-        self.songServiceObject = [settings.first].compactMap({ $0 }).map({ VSongServiceSettings(songserviceSettings: $0, context: moc) }).first
-        self.addOrEditButton.title = self.songServiceObject == nil ? AppText.Actions.new : AppText.Actions.edit
-        self.tableView.reloadData()
+//        let settings: [SongServiceSettings] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "updatedAt", ascending: false))
+//        self.songServiceObject = [settings.first].compactMap({ $0 }).map({ VSongServiceSettings(songserviceSettings: $0, context: moc) }).first
+//        self.addOrEditButton.title = self.songServiceObject == nil ? AppText.Actions.new : AppText.Actions.edit
+//        self.tableView.reloadData()
     }
 	
 	override func handleRequestFinish(requesterId: String, result: Any?) {

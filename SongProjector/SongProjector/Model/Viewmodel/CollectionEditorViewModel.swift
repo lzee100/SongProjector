@@ -11,6 +11,15 @@ import SwiftUI
 
 @MainActor class CollectionEditorViewModel: ObservableObject {
     
+    enum EditAction: Identifiable {
+        var id: String {
+            return UUID().uuidString
+        }
+        case add
+        case change
+        case save
+    }
+    
     enum Error: LocalizedError {
         case noThemeSelected
         case noTitle
@@ -31,10 +40,10 @@ import SwiftUI
         case bibleStudy
         case customSheet(type: SheetType)
         
-        var sheet: SheetMetaType? {
+        func sheet() async -> SheetMetaType? {
             switch self {
             case .customSheet(type: let type):
-                return type.makeDefault()
+                return await type.makeDefault()
             default: return nil
             }
         }
@@ -52,35 +61,60 @@ import SwiftUI
             case .none, .lyrics, .customSheet: return false
             }
         }
+        var isCustomType: Bool {
+            switch self {
+            case .customSheet: return true
+            default: return false
+            }
+        }
     }
     
+    var lyricsOrBibleStudyText: String = ""
     @Published var themeSelectionModel: ThemesSelectionModel
     @Published var tagsSelectionModel: TagSelectionModel
-    
-    @Published var collectionType: CollectionType = .none
+
+    @Published private(set) var collectionType: CollectionType = .none
     @Published var cluster: ClusterCodable
     @Published var isNew = false
     @Published var title: String = ""
     
-    @Published var isLyrics = false
     @Published var isUniversalSong = false // has no save option
-    @Published var sheets: [EditSheetOrThemeViewModel] = []
-    private(set) var deletedSheets: [EditSheetOrThemeViewModel] = []
+    @Published var sheets: [SheetViewModel] = []
+    private var deletedSheets: [SheetViewModel] = []
     @Published var clusterTime: Int = 0
     @Published var error: LocalizedError?
     @Published var showingLoader = false
     
     var hasOtherSheetTypes: Bool {
-        sheets.filter { $0.theme.isHidden }.count > 0
+        sheets.filter { $0.themeModel.theme.isHidden }.count > 0
     }
     var showTimePickerScrollView: Bool {
-        hasOtherSheetTypes || sheets.count == 0
+        ![.bibleStudy, .lyrics].contains(collectionType)
     }
-
-    var customSheetsEditModel: WrappedStruct<EditSheetOrThemeViewModel>? {
-        if let type = collectionType.sheetType, let sheet = collectionType.sheet, let model = EditSheetOrThemeViewModel(editMode: .sheet((cluster, sheet), sheetType: type), isUniversal: uploadSecret != nil, isCustomSheetType: true, isBibleVers: false) {
-            return WrappedStruct(withItem: model)
+    var canDeleteSheets: Bool {
+        ![.bibleStudy, .lyrics].contains(collectionType)
+    }
+    var editActions: [EditAction] {
+        let optionalSaveAction: [EditAction] = sheets.count > 0 ? [.save] : []
+        if case .lyrics = collectionType {
+            return optionalSaveAction + [.change]
         } else {
+            return optionalSaveAction + [.add]
+        }
+    }
+    
+    func customSheetsEditModel(collectionType: CollectionType) async -> SheetViewModel? {
+        do {
+            let defaultTheme = try await CreateThemeUseCase().create(isHidden: true)
+            var sheet = await collectionType.sheet()
+            sheet = sheet?.set(theme: defaultTheme)
+            if let type = collectionType.sheetType, let sheet = sheet {
+                return try await SheetViewModel(cluster: cluster, theme: sheet.theme, defaultTheme: defaultTheme, sheet: sheet, sheetType: type, sheetEditType: .custom)
+            } else {
+                return nil
+            }
+        } catch {
+            self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
             return nil
         }
     }
@@ -96,83 +130,156 @@ import SwiftUI
         self.collectionType = Self.editControllerType(for: cluster)
         self.isNew = cluster == nil
         self.title = cluster?.title ?? ""
-        self.isLyrics = cluster?.isTypeSong ?? false
         self.isUniversalSong = uploadSecret != nil
-        if let cluster = cluster {
-            self.sheets = (cluster.hasSheets.sorted(by: { $0.position < $1.position })).compactMap { EditSheetOrThemeViewModel(editMode: .sheet((cluster, $0), sheetType: $0.sheetType ), isUniversal: uploadSecret != nil, isBibleVers: $0.isBibleVers) }
-        } else {
-            self.sheets = []
-        }
-    }
-    
-    func updateSheets() {
-        cluster.theme = themeSelectionModel.selectedTheme
-        sheets = sheets.compactMap({ sheet in
-            switch sheet.editMode {
-            case .sheet(let clusterAndSheet, sheetType: let sheetType):
-                if let extracted = clusterAndSheet {
-                    var (cluster, sheet) = extracted
-                    cluster.theme = themeSelectionModel.selectedTheme
-                    if let model = EditSheetOrThemeViewModel(editMode: .sheet((cluster, sheet), sheetType: sheetType), isUniversal: uploadSecret != nil, isBibleVers: sheet.isBibleVers) {
-                        return model
+        
+        defer {
+            Task {
+                do {
+                    let defaultTheme = try await CreateThemeUseCase().create()
+                    if let cluster = cluster {
+                        self.sheets = try await (cluster.hasSheets.sorted(by: { $0.position < $1.position })).asyncMap {
+                            
+                            return try await SheetViewModel(
+                                cluster: cluster,
+                                theme: nil,
+                                defaultTheme: defaultTheme,
+                                sheet: $0,
+                                sheetType: $0.sheetType,
+                                sheetEditType: collectionType == .lyrics ? .lyrics : collectionType == .bibleStudy ? .bibleStudy : .custom
+                            )
+                            
+                        }
+                        switch collectionType {
+                        case .lyrics:
+                            lyricsOrBibleStudyText = GenerateLyricsSheetContentUseCase().getTextFrom(cluster: unwrappedCluster, models: sheets)
+                        case .bibleStudy:
+                            lyricsOrBibleStudyText = await BibleStudyTextUseCase().getTextFromSheets(models: sheets)
+                        case .none, .customSheet:
+                            break
+                        }
+                    } else {
+                        self.sheets = []
                     }
-                    return nil
+                } catch {
+                    self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
                 }
-                return nil
-            case .theme: return nil
             }
-        })
+        }
     }
     
-    func updateClusterWithTheme() {
+    func updateSheets(sheetSize: CGSize) {
         cluster.theme = themeSelectionModel.selectedTheme
+        
+        switch collectionType {
+        case .bibleStudy:
+            Task {
+                await bibleStudyTextDidChange(updateExistingSheets: false, parentViewSize: sheetSize)
+                await updateCustomSheets()
+            }
+        case .lyrics:
+            Task {
+                await lyricsTextDidChange(screenWidth: sheetSize.width)
+            }
+        case .customSheet:
+            return
+        case .none:
+            return
+        }
     }
     
-    func bibleStudyTextDidChange(_ text: String, parentViewSize: CGSize, scaleFactor: CGFloat) {
+    func bibleStudyTextDidChange(updateExistingSheets: Bool, parentViewSize: CGSize) async {
+        var sheetsWithIndex = [(Int ,SheetViewModel)]()
+        for (index, sheet) in sheets.enumerated() {
+            if !sheet.sheetModel.isBibleVers {
+                sheetsWithIndex.append((index, sheet))
+            }
+        }
+        let text = updateExistingSheets ? await getBibleStudyString() : lyricsOrBibleStudyText
         if text.count > 0, let theme = themeSelectionModel.selectedTheme {
-            let bibleStudyTitleContent = BibleStudyTextUseCase().generateSheetsFromText(
-                text,
-                parentViewSize: parentViewSize,
-                theme: theme,
-                scaleFactor: scaleFactor,
-                cluster: cluster
-            )
-            sheets = bibleStudyTitleContent // TODO: ADD EMPTY SHEETS BASED ON THEME SETTINGS
+            Task {
+                let bibleStudyTitleContent = try await BibleStudyTextUseCase().generateSheetsFromText(
+                    text,
+                    parentViewSize: parentViewSize,
+                    theme: theme,
+                    scaleFactor: getScaleFactor(width: parentViewSize.width),
+                    cluster: cluster
+                )
+                
+                var updatedSheets = bibleStudyTitleContent
+                for indexWithSheet in sheetsWithIndex {
+                    let (index, sheet) = indexWithSheet
+                    updatedSheets.insert(sheet, at: index)
+                }
+                self.sheets = updatedSheets
+            }
+        }
+    }
+        
+    func lyricsTextDidChange(screenWidth: CGFloat) async {
+        do {
+            let lyrics = lyricsOrBibleStudyText
+            if lyrics.count > 0 {
+                title = GenerateLyricsSheetContentUseCase().getTitle(from: lyrics)
+                cluster.title = title
+                let models = try await GenerateLyricsSheetContentUseCase().buildSheetsModels(from: lyrics, cluster: cluster)
+                sheets = models
+            }
+        } catch {
+            self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
         }
     }
     
-    func lyricsTextDidChange(_ text: String, screenWidth: CGFloat) {
-        if text.count > 0 {
-            cluster.title = GenerateLyricsSheetContentUseCase.getTitle(from: text)
-            title = cluster.title ?? ""
-            let sheets = GenerateLyricsSheetContentUseCase.buildSheets(fromText: text, cluster: cluster)
-            self.sheets = sheets
-        }
-    }
-    
-    func getLyricsOrBibleStudyString() async -> String {
+    func getBibleStudyString() async -> String {
         return await BibleStudyTextUseCase().getTextFromSheets(models: sheets)
     }
     
-    func delete(model: EditSheetOrThemeViewModel) {
-        guard let index = sheets.firstIndex(where: { $0.id == model.id }) else { return }
-        var model = model
-        model.isDeleted = true
-        if !model.isNewEntity {
+    func getLyricsString() -> String {
+        return GenerateLyricsSheetContentUseCase().getTextFrom(cluster: cluster, models: sheets)
+    }
+
+    func delete(model: SheetViewModel) {
+        guard let index = sheets.firstIndex(where: { $0.sheetModel.sheet.id == model.sheetModel.sheet.id }) else { return }
+        if !model.sheetModel.isNew {
             deletedSheets.append(model)
         }
         sheets.remove(at: index)
     }
     
-    func add(_ model: EditSheetOrThemeViewModel) {
+    func deleteAllSheets() {
+        deletedSheets = []
+        sheets.forEach { model in
+            if !model.sheetModel.isNew {
+                deletedSheets.append(model)
+            }
+        }
+        sheets = []
+    }
+    
+    func deleteOtherSheetsThanBibleStudy() {
+        deletedSheets += sheets.filter { !$0.sheetModel.isBibleVers }
+    }
+    
+    func add(_ model: SheetViewModel) {
         var model = model
-        if let index = sheets.firstIndex(where: { $0.sheet.id == model.sheet.id }) {
+        if let index = sheets.firstIndex(where: { $0.sheetModel.sheet.id == model.sheetModel.sheet.id }) {
             sheets.remove(at: index)
-            model.position = index
+            model.sheetModel.position = index
             sheets.insert(model, at: index)
         } else {
-            model.position = sheets.count
+            model.sheetModel.position = sheets.count
             sheets.append(model)
+        }
+    }
+    
+    func update(collectionType: CollectionType) {
+        guard collectionType != self.collectionType else { return }
+        if case .customSheet = collectionType, self.collectionType == .bibleStudy {
+            // dont change when custom sheet is added to biblestudy
+        } else if [.bibleStudy, .lyrics].contains(collectionType) {
+            self.collectionType = collectionType
+            deletedSheets += sheets
+        } else {
+            self.collectionType = collectionType
         }
     }
     
@@ -192,21 +299,24 @@ import SwiftUI
         
         do {
             var codableSheets: [SheetMetaType] = []
-            for sheet in sheets {
-                var saveableSheet = sheet
-                if let createdSheet = try saveableSheet.createSheetCodable() {
+            for (index, sheet) in sheets.enumerated() {
+                if var createdSheet = try sheet.createSheetCodable() {
+                    createdSheet.position = index
                     codableSheets.append(createdSheet)
+                    
                 }
             }
             
             cluster.title = title
-            cluster.time = Double(clusterTime)
+            cluster.time = showTimePickerScrollView ? Double(clusterTime) : 0
             cluster.hasTags = tagsSelectionModel.selectedTags
+            cluster.tagIds = tagsSelectionModel.selectedTags.compactMap { $0.id }
             cluster.theme = selectedTheme
+            cluster.themeId = selectedTheme.id
             cluster.hasSheets = codableSheets
             
             var deleteObjects: [DeleteObject] {
-                deletedSheets.compactMap { $0.sheet }.flatMap { $0.deleteObjects }
+                deletedSheets.compactMap { $0.sheetModel.sheet }.flatMap { $0.getDeleteObjects(forceDelete: true) }
             }
             
             try await SubmitUseCase(endpoint: .clusters, requestMethod: isNew ? .post : .put, uploadObjects: [cluster], deleteObjects: deleteObjects).submit()
@@ -230,25 +340,17 @@ import SwiftUI
         return .none
     }
     
-}
-
-@MainActor class ThemesSelectionModel: ObservableObject {
-    
-    @Published private(set) var selectedTheme: ThemeCodable?
-    @Published private(set) var themes: [ThemeCodable] = []
-    
-    init(selectedTheme: ThemeCodable?) {
-        self.selectedTheme = selectedTheme
-        let persitedThemes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: [.skipHidden], sort: NSSortDescriptor(key: "position", ascending: true))
-        
-        themes = persitedThemes.compactMap { ThemeCodable(managedObject: $0, context: moc) }
-    }
-    
-    func didSelect(theme: ThemeCodable?) {
-        selectedTheme = selectedTheme?.id == theme?.id ? nil : theme
-    }
-    
-    func fetchRemoteThemes() {
+    private func updateCustomSheets() async {
+        do {
+            cluster.theme = themeSelectionModel.selectedTheme
+            let theme = try await CreateThemeUseCase().create()
+            sheets = try await sheets.concurrentCompactMap({ model in
+                guard !model.sheetModel.isBibleVers else { return model }
+                return try await SheetViewModel(cluster: self.cluster, theme: model.themeModel.theme, defaultTheme: theme, sheet: model.sheetModel.sheet, sheetType: model.sheetModel.sheetType, sheetEditType: model.sheetEditType)
+            })
+        } catch {
+            self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
+        }
     }
     
 }

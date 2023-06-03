@@ -13,6 +13,7 @@ extension UIColor {
     
     static var blackColor: UIColor { return UIColor(named: "000000")! }
     static var black1: UIColor { return UIColor(named: "2E2C2C")! }
+    static var almostBlack: UIColor { return UIColor(named: "151315")! }
     
     static var whiteColor: UIColor { return UIColor(named: "FFFFFF")! }
     

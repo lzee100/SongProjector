@@ -37,20 +37,21 @@ class CreateEditSheetEmptyViewModel: CreateEditThemeSheetViewModelProtocol {
         ]
     }
     private var generalRows: [NewOrEditIphoneController.Cell] {
-        let themes: [Theme] = DataFetcher().getEntities(moc: moc)
+//        let themes: [Theme] = await DataFetcher().getEntities(moc: moc)
 
-        let sheetCells: [NewOrEditIphoneController.Cell] = [
-            .asTheme(themes.compactMap { ThemeCodable(managedObject: $0, context: moc) }),
-            .backgroundColor(sheetDraft.hasThemeDraft.sheetBackgroundColor),
-            .backgroundImage(image: sheetDraft.hasThemeDraft.thumbnail, imageName: sheetDraft.hasThemeDraft.imagePathThumbnail)
-        ]
-        let sheetCellsTransBackground: [NewOrEditIphoneController.Cell] = [
-            .asTheme(themes.compactMap { ThemeCodable(managedObject: $0, context: moc) }),
-            .backgroundColor(sheetDraft.hasThemeDraft.sheetBackgroundColor),
-            .backgroundImage(image: sheetDraft.hasThemeDraft.thumbnail, imageName: sheetDraft.hasThemeDraft.imagePathThumbnail),
-            .backgroundTransparancy(sheetDraft.hasThemeDraft.backgroundTransparancy)
-        ]
-        return sheetDraft.hasAnyImage() ? sheetCellsTransBackground : sheetCells
+//        let sheetCells: [NewOrEditIphoneController.Cell] = [
+//            .asTheme(themes.compactMap { ThemeCodable(managedObject: $0, context: moc) }),
+//            .backgroundColor(sheetDraft.hasThemeDraft.sheetBackgroundColor),
+//            .backgroundImage(image: sheetDraft.hasThemeDraft.thumbnail, imageName: sheetDraft.hasThemeDraft.imagePathThumbnail)
+//        ]
+//        let sheetCellsTransBackground: [NewOrEditIphoneController.Cell] = [
+//            .asTheme(themes.compactMap { ThemeCodable(managedObject: $0, context: moc) }),
+//            .backgroundColor(sheetDraft.hasThemeDraft.sheetBackgroundColor),
+//            .backgroundImage(image: sheetDraft.hasThemeDraft.thumbnail, imageName: sheetDraft.hasThemeDraft.imagePathThumbnail),
+//            .backgroundTransparancy(sheetDraft.hasThemeDraft.backgroundTransparancy)
+//        ]
+//        return sheetDraft.hasAnyImage() ? sheetCellsTransBackground : sheetCells
+        return []
     }
     
     private var sheetDraft: SheetDraft {

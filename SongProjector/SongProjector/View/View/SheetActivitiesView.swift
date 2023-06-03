@@ -44,8 +44,8 @@ class SheetActivitiesView: SheetView {
         if isPreview {
             addPreviewActivities()
         } else {
-            let activities: [GoogleActivity] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "startDate", ascending: true))
-            self.activities = activities.map({ VGoogleActivity(activity: $0, context: moc) })
+//            let activities: [GoogleActivity] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "startDate", ascending: true))
+//            self.activities = activities.map({ VGoogleActivity(activity: $0, context: moc) })
         }
         
         if let scaleFactor = scaleFactor {

@@ -12,53 +12,10 @@ import CoreData
 
 public struct OrganisatieCodable: EntityCodableType {
     
-    init?(managedObject: NSManagedObject, context: NSManagedObjectContext) {
-        guard let entity = managedObject as? Organization else { return nil }
-        id = entity.id
-        userUID = entity.userUID
-        title = entity.title
-        createdAt = entity.createdAt.date
-        updatedAt = entity.updatedAt?.date
-        deleteDate = entity.deleteDate?.date
-        rootDeleteDate = entity.rootDeleteDate?.date
-        
-        if let roles = entity.hasRoles {
-            hasRoles = (roles.allObjects as? [Role])?.compactMap { RoleCodable(managedObject: $0, context: context) } ?? []
-        }
-        if let contractLedgers = entity.hasContractLedgers {
-            hasContractLedgers = (contractLedgers.allObjects as? [ContractLedger])?.compactMap { ContractLedgerCodable(managedObject: $0, context: context) } ?? []
-        }
-    }
-    
-    func getManagedObjectFrom(_ context: NSManagedObjectContext) -> NSManagedObject {
-        
-        if let entity: Organization = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
-            setPropertiesTo(entity, context: context)
-            return entity
-        } else {
-            let entity: Organization = DataFetcher().createEntity(moc: context)
-            setPropertiesTo(entity, context: context)
-            return entity
-        }
-    }
-    
-    private func setPropertiesTo(_ entity: Organization, context: NSManagedObjectContext) {
-        entity.id = id
-        entity.userUID = userUID
-        entity.title = title
-        entity.createdAt = createdAt.nsDate
-        entity.updatedAt = updatedAt?.nsDate
-        entity.deleteDate = deleteDate?.nsDate
-        entity.rootDeleteDate = rootDeleteDate?.nsDate
-        
-        entity.hasRoles = NSSet(array: hasRoles.compactMap { $0.getManagedObjectFrom(context) as? Role })
-        entity.hasContractLedgers = NSSet(array: hasContractLedgers.compactMap { $0.getManagedObjectFrom(context) as? ContractLedger })
-    }
-    
     var id: String = "CHURCHBEAM" + UUID().uuidString
     var userUID: String = ""
     var title: String? = nil
-    var createdAt: Date = Date().localDate()
+    var createdAt: Date = Date.localDate()
     var updatedAt: Date? = nil
     var deleteDate: Date? = nil
     var isTemp: Bool = false
@@ -145,7 +102,7 @@ extension OrganisatieCodable: FileTransferable {
     mutating func clearDataForDeletedObjects(forceDelete: Bool) {
     }
     
-    func getDeleteObjects(forceDelete: Bool) -> [String] {
+    func getDeleteObjects(forceDelete: Bool) -> [DeleteObject] {
         []
     }
     
@@ -176,7 +133,7 @@ extension OrganisatieCodable: FileTransferable {
     
     func setUpdatedAt() -> FileTransferable {
         var modifiedDocument = self
-        modifiedDocument.updatedAt = Date()
+        modifiedDocument.updatedAt = Date.localDate()
         return modifiedDocument
     }
     

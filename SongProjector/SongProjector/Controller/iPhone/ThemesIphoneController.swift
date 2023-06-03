@@ -96,7 +96,7 @@ class ThemesIphoneController: ChurchBeamViewController, UIGestureRecognizerDeleg
         super.update()
         var predicates: [NSPredicate] = [.skipDeleted]
         predicates.append("isHidden", notEquals: true)
-        let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: predicates, sort: NSSortDescriptor(key: "position", ascending: true))
+        let themes: [Theme] = []
         
         self.themes = themes.map({ VTheme(theme: $0, context: moc) })
         filteredThemes = self.themes
@@ -131,9 +131,9 @@ class ThemesIphoneController: ChurchBeamViewController, UIGestureRecognizerDeleg
         }
     }
     @State var isShowingEditor = false
-    var editModel: WrappedStruct<EditSheetOrThemeViewModel>? = nil
+    var sheetViewModel: SheetViewModel? = nil
     @IBAction func addThemePressed(_ sender: UIBarButtonItem) {
-//        guard let editThemeModel = EditSheetOrThemeViewModel(editMode: .theme(nil), isUniversal: false) else { return }
+//        guard let editThemeModel = SheetViewModel(editMode: .theme(nil), isUniversal: false) else { return }
 //        let model = WrappedStruct(withItem: editThemeModel)
 //        self.editModel = model
 //        let editView = EditThemeOrSheetViewUI(navigationTitle: AppText.NewTheme.title, isShowingEditThemeOrSheetViewUI: $isShowingEditor, editSheetOrThemeModel: model)
@@ -203,23 +203,7 @@ extension ThemesIphoneController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        Queues.main.async {
-            self.selectedTheme = self.filteredThemes[indexPath.row]
-            guard
-                let themeCodable = ThemeCodable(
-                    managedObject: self.filteredThemes[indexPath.row].getManagedObject(context: moc),
-                    context: moc
-                ),
-                let model = EditSheetOrThemeViewModel(
-                    editMode: .theme(themeCodable),
-                    isUniversal: uploadSecret != nil,
-                    isBibleVers: false
-                ) else {
-                return
-            }
-//            let editView = EditThemeOrSheetViewUI(navigationTitle: AppText.EditTheme.title, isShowingEditThemeOrSheetViewUI: self.$isShowingEditor, editSheetOrThemeModel: WrappedStruct<EditSheetOrThemeViewModel>(withItem: model))
-//            self.present(UIHostingController(rootView: editView), animated: true)
-        }
+    
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {

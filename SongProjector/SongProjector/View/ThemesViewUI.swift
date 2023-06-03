@@ -20,24 +20,25 @@ import FirebaseFirestoreSwift
     @Published private(set) var showingLoader = false
 
     
-    func reload() {
-        setThemes(searchText: nil)
+    func reload() async {
+        await setThemes(searchText: nil)
     }
     
-    func filterOn(_ searchText: String) {
-        setThemes(searchText: searchText == "" ? nil : searchText)
+    func filterOn(_ searchText: String) async {
+        await setThemes(searchText: searchText == "" ? nil : searchText)
     }
     
-    private func setThemes(searchText: String?) {
-        let predicates: [NSPredicate] = [searchText?.lowercased()]
-            .compactMap { $0 }
-            .map { NSPredicate(format: "title CONTAINS[cd] %@", $0) }
-        let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: predicates + [.skipDeleted, .skipRootDeleted, .skipHidden], sort: NSSortDescriptor(key: "title", ascending: true))
-        self.themes = themes.compactMap { ThemeCodable(managedObject: $0, context: moc) }
+    private func setThemes(searchText: String?) async {
+        var predicates = [Predicate]()
+        if let searchText {
+            predicates += [.customWithValue(format: "title CONTAINS[cd] %@", value: searchText.lowercased())]
+        }
+        predicates += [.skipHidden]
+        themes = await GetThemesUseCase().fetch(predicates: predicates, sort: .position(asc: true))
     }
     
     func fetchRemoteThemes() async {
-        reload()
+        await reload()
         setIsLoading(true)
         do {
             let result = try await FetchThemesUseCase(fetchAll: false).fetch()
@@ -51,7 +52,16 @@ import FirebaseFirestoreSwift
             self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
         }
     }
-
+    
+    func createDefaultTheme() async -> ThemeCodable? {
+        do {
+            return try await CreateThemeUseCase().create()
+        } catch {
+            self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
+            return nil
+        }
+    }
+    
     func delete(_ theme: ThemeCodable) async {
         setIsLoading(true)
         var theme = theme
@@ -61,7 +71,7 @@ import FirebaseFirestoreSwift
         }
         do {
             try await SubmitUseCase(endpoint: .themes, requestMethod: .put, uploadObjects: [theme]).submit()
-            reload()
+            await reload()
         } catch {
             setIsLoading(false)
             self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
@@ -76,16 +86,17 @@ import FirebaseFirestoreSwift
 }
 
 struct ThemesViewUI: View {
-        
+    
     @StateObject private var viewModel = ThemesViewModel()
     @State private var searchText: String = ""
-    @State fileprivate(set) var selectedTheme: ThemeCodable?
-    @State private var isShowingThemesEditor = false
+    @State fileprivate(set) var selectedTheme: SheetViewModel? = nil
     @State private var deleteThemeError: LocalizedError?
 
     var body: some View {
         NavigationStack {
             GeometryReader { proxy in
+                Text("\(selectedTheme?.title ?? "")")
+                    .hidden()
                 if viewModel.showingLoader {
                     ProgressView()
                 }
@@ -93,7 +104,9 @@ struct ThemesViewUI: View {
                     List {
                         ForEach(viewModel.themes) { theme in
                             Button {
-                                selectedTheme = theme
+                                Task {
+                                    selectedTheme = try await SheetViewModel(cluster: nil, theme: theme, defaultTheme: theme, sheet: nil, sheetType: .SheetTitleContent, sheetEditType: .theme)
+                                }
                             } label: {
                                 HStack {
                                     Text(theme.title ?? "")
@@ -123,32 +136,22 @@ struct ThemesViewUI: View {
         }
         .errorAlert(error: $viewModel.error)
         .onChange(of: searchText) { newValue in
-            viewModel.filterOn(newValue)
-        }
-        .sheet(item: $selectedTheme, content: { theme in
-            if let model = EditSheetOrThemeViewModel(editMode: .theme(theme), isUniversal: uploadSecret != nil, isBibleVers: false) {
-                EditThemeOrSheetViewUI(
-                    navigationTitle: AppText.EditTheme.title,
-                    delegate: self,
-                    isNew: false,
-                    editSheetOrThemeModel: WrappedStruct(withItem: model)
-                )
+            Task {
+                await viewModel.filterOn(newValue)
             }
+        }
+        .sheet(item: $selectedTheme, onDismiss: {
+            Task {
+                await viewModel.reload()
+            }
+        }, content: { model in
+            EditThemeOrSheetViewUI(
+                navigationTitle: AppText.EditTheme.title,
+                delegate: self,
+                sheetViewModel: model
+            )
         })
-        .sheet(isPresented: $isShowingThemesEditor) {
-            if let model = EditSheetOrThemeViewModel(editMode: .theme(nil), isUniversal: uploadSecret != nil, isBibleVers: false) {
-                EditThemeOrSheetViewUI(
-                    navigationTitle: AppText.EditTheme.title,
-                    delegate: self,
-                    isNew: true,
-                    editSheetOrThemeModel: WrappedStruct(withItem: model)
-                )
-            }
-        }
         .errorAlert(error: $deleteThemeError)
-        .onChange(of: isShowingThemesEditor) { _ in
-            viewModel.reload()
-        }
     }
     
     @ViewBuilder func deleteButton(_ theme: ThemeCodable) -> some View {
@@ -166,7 +169,15 @@ struct ThemesViewUI: View {
     
     @ViewBuilder var newthemeButton: some View {
         Button {
-            isShowingThemesEditor.toggle()
+            Task {
+                do {
+                    if let theme = await viewModel.createDefaultTheme() {
+                        selectedTheme = try await SheetViewModel(cluster: nil, theme: nil, defaultTheme: theme, sheet: nil, sheetType: .SheetTitleContent, sheetEditType: .theme)
+                    }
+                } catch {
+                    
+                }
+            }
         } label: {
             Image(systemName: "plus")
                 .tint(Color(uiColor: themeHighlighted))
@@ -178,13 +189,14 @@ struct ThemesViewUI: View {
 
 extension ThemesViewUI: EditThemeOrSheetViewUIDelegate {
     
-    func dismissAndSave(model: EditSheetOrThemeViewModel) {
+    func dismissAndSave(model: SheetViewModel) {
     }
     
     func dismiss() {
         selectedTheme = nil
-        isShowingThemesEditor = false
-        viewModel.reload()
+        Task {
+            await viewModel.reload()
+        }
     }
 }
 

@@ -153,15 +153,4 @@ class VSheetTitleImage: VSheet, VSheetMetaType {
 		getPropertiesFrom(entity: sheetTitleImage, context: context)
 	}
 	
-    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-        if let entity: SheetTitleImageEntity = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
-            setPropertiesTo(entity: entity, context: context)
-            return entity
-        } else {
-            let entity: SheetTitleImageEntity = DataFetcher().createEntity(moc: context)
-            setPropertiesTo(entity: entity, context: context)
-            return entity
-        }
-    }
-
 }

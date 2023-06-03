@@ -83,7 +83,7 @@ class SettingsController: ChurchBeamViewController, UITableViewDelegate, UITable
             let cell = tableView.dequeueReusableCell(withIdentifier: LabelTextFieldCell.identifier) as! LabelTextFieldCell
             cell.id = AppText.Settings.calendarIdPlaceHolder
             cell.setup(description: "ID", placeholder: AppText.Settings.calendarIdPlaceHolder, delegate: self)
-            let user: User? = DataFetcher().getEntity(moc: moc)
+            let user: User? = nil
             cell.textField.text = user?.googleCalendarId
             return cell
         case .appsettings:
@@ -219,7 +219,7 @@ class SettingsController: ChurchBeamViewController, UITableViewDelegate, UITable
 	
 	func textFieldDidChange(cell: LabelTextFieldCell, text: String?) {
         if cell.id == AppText.Settings.calendarIdPlaceHolder {
-            let user: User? = DataFetcher().getEntity(moc: moc, predicates: [.skipDeleted])
+            let user: User? = nil
             let vUser = [user].compactMap({ $0 }).map({ VUser(user: $0, context: moc) }).first
             if let user = vUser {
                 user.googleCalendarId = text
@@ -227,7 +227,7 @@ class SettingsController: ChurchBeamViewController, UITableViewDelegate, UITable
             }
         } else {
             if let value = text, let time = Double(value) {
-                let user: User? = DataFetcher().getEntity(moc: moc, predicates: [.skipDeleted])
+                let user: User? = nil
                 let vUser = [user].compactMap({ $0 }).map({ VUser(user: $0, context: moc) }).first
                 if let user = vUser {
                     user.sheetTimeOffset = time

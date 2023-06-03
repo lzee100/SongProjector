@@ -237,7 +237,7 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
             }
 //            requesters.forEach({ $0.removeObserver(self) })
 //            performSegue(withIdentifier: "customSheetsControllerSegue", sender: "existing")
-            let cluster: Cluster? = DataFetcher().getEntity(moc: moc, predicates: [.get(id: selectedCluster?.id ?? "-1")])
+//            let cluster: Cluster? = DataFetcher().getEntity(moc: moc, predicates: [.get(id: selectedCluster?.id ?? "-1")])
 //            if let cluster {
 //                showCollectionEditorController(ClusterCodable(managedObject: cluster, context: moc))
 //            }
@@ -370,76 +370,76 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
     }
     
     private func setFilteredClusters(reloadData: Bool = true) {
-        
-        let searchString = self.searchController.searchBar.text?.lowercased() ?? ""
-        
-        var tagsResult: [VTag] = []
-        var indexToScrollTo: IndexPath? = nil
-        var predicates: [NSPredicate] = []
-        
-        //        let user = VUser.first(moc: moc)
-        //        if let user = VUser.first(moc: moc), !user.hasActiveSongContract {
-        //            var songPreds: [NSPredicate] = []
-        //            if !user.hasActiveSongContract {
-        //                songPreds.append(NSPredicate(format: "instrumentIds == nil"))
-        //                songPreds.append(NSPredicate(format: "instrumentIds == %@", ""))
-        //                let comp = NSCompoundPredicate(orPredicateWithSubpredicates: songPreds)
-        //                predicates.append(and: [comp])
-        //            }
-        //        }
-                
-        var deletedPredicate: [NSPredicate] = []
-        if self.selectedTags.contains(where: { $0.title == AppText.Tags.deletedClusters }) {
-            if uploadSecret != nil {
-                deletedPredicate.append(format: "rootDeleteDate != nil")
-            } else {
-                deletedPredicate.append(NSPredicate(format: "deleteDate != nil"))
-            }
-        } else {
-            predicates += [.skipDeleted, .skipRootDeleted]
-        }
-        if selectedTags.count > 0 {
-            let selectedTagsWithoutDeleted = self.selectedTags.filter({ $0.title != AppText.Tags.deletedClusters })
-            let selectedTagsPred = NSCompoundPredicate(orPredicateWithSubpredicates: selectedTagsWithoutDeleted.map({ NSPredicate(format:"tagIds CONTAINS %@", $0.id) }) + deletedPredicate)
-            predicates.append(selectedTagsPred)
-        }
-        
-        if let manditoryTagIds = self.manditoryTagIds, manditoryTagIds.count > 0 {
-            let manditoryTagIdsPred = NSCompoundPredicate(orPredicateWithSubpredicates: self.manditoryTagIds?.map({ NSPredicate(format:"tagIds CONTAINS %@", $0) }) ?? [])
-            predicates.append(manditoryTagIdsPred)
-        }
-        if searchString != "" {
-            predicates.append(NSPredicate(format: "title contains[c] %@", searchString))
-        }
-        let pClustersFiltered: [Cluster] = DataFetcher().getEntities(moc: moc, predicates: predicates, sort: NSSortDescriptor(key: "title", ascending: true))
-        pClustersFiltered.forEach({ moc.refresh($0, mergeChanges: false) })
-        
-        let tagIdsPredicates = self.manditoryTagIds?.map({ NSPredicate(format:"tagIds CONTAINS %@", $0) }) ?? []
-        predicates = tagIdsPredicates + [.skipDeleted]
-        
-        let pTags: [Tag] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "position", ascending: true))
-        tagsResult = pTags.compactMap({ VTag(tag: $0, context: moc) })
-        if let deletedTag = self.selectedTags.first(where: { $0.title == AppText.Tags.deletedClusters }) {
-            tagsResult.append(deletedTag)
-        } else {
-            let deletedClustersTag = VTag()
-            deletedClustersTag.title = AppText.Tags.deletedClusters
-            tagsResult.append(deletedClustersTag)
-        }
-        
-        if let manditoryTagIds = self.manditoryTagIds, let index = tagsResult.firstIndex(where: { $0.id == manditoryTagIds.first }) {
-            indexToScrollTo = IndexPath(row: index, section: 0)
-        }
-        
-        self.filteredClusters = pClustersFiltered
-        self.tags = tagsResult
-        if reloadData {
-            self.tableView.reloadData()
-            self.collectionView.reloadData()
-        }
-        if let index = indexToScrollTo {
-            self.collectionView.scrollToItem(at: index, at: .centeredHorizontally, animated: false)
-        }
+//
+//        let searchString = self.searchController.searchBar.text?.lowercased() ?? ""
+//
+//        var tagsResult: [VTag] = []
+//        var indexToScrollTo: IndexPath? = nil
+//        var predicates: [NSPredicate] = []
+//
+//        //        let user = VUser.first(moc: moc)
+//        //        if let user = VUser.first(moc: moc), !user.hasActiveSongContract {
+//        //            var songPreds: [NSPredicate] = []
+//        //            if !user.hasActiveSongContract {
+//        //                songPreds.append(NSPredicate(format: "instrumentIds == nil"))
+//        //                songPreds.append(NSPredicate(format: "instrumentIds == %@", ""))
+//        //                let comp = NSCompoundPredicate(orPredicateWithSubpredicates: songPreds)
+//        //                predicates.append(and: [comp])
+//        //            }
+//        //        }
+//
+//        var deletedPredicate: [NSPredicate] = []
+//        if self.selectedTags.contains(where: { $0.title == AppText.Tags.deletedClusters }) {
+//            if uploadSecret != nil {
+//                deletedPredicate.append(format: "rootDeleteDate != nil")
+//            } else {
+//                deletedPredicate.append(NSPredicate(format: "deleteDate != nil"))
+//            }
+//        } else {
+//            predicates += [.skipDeleted, .skipRootDeleted]
+//        }
+//        if selectedTags.count > 0 {
+//            let selectedTagsWithoutDeleted = self.selectedTags.filter({ $0.title != AppText.Tags.deletedClusters })
+//            let selectedTagsPred = NSCompoundPredicate(orPredicateWithSubpredicates: selectedTagsWithoutDeleted.map({ NSPredicate(format:"tagIds CONTAINS %@", $0.id) }) + deletedPredicate)
+//            predicates.append(selectedTagsPred)
+//        }
+//
+//        if let manditoryTagIds = self.manditoryTagIds, manditoryTagIds.count > 0 {
+//            let manditoryTagIdsPred = NSCompoundPredicate(orPredicateWithSubpredicates: self.manditoryTagIds?.map({ NSPredicate(format:"tagIds CONTAINS %@", $0) }) ?? [])
+//            predicates.append(manditoryTagIdsPred)
+//        }
+//        if searchString != "" {
+//            predicates.append(NSPredicate(format: "title contains[c] %@", searchString))
+//        }
+////        let pClustersFiltered: [Cluster] = DataFetcher().getEntities(moc: moc, predicates: predicates, sort: NSSortDescriptor(key: "title", ascending: true))
+////        pClustersFiltered.forEach({ moc.refresh($0, mergeChanges: false) })
+//
+//        let tagIdsPredicates = self.manditoryTagIds?.map({ NSPredicate(format:"tagIds CONTAINS %@", $0) }) ?? []
+//        predicates = tagIdsPredicates + [.skipDeleted]
+//
+//        let pTags: [Tag] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "position", ascending: true))
+//        tagsResult = pTags.compactMap({ VTag(tag: $0, context: moc) })
+//        if let deletedTag = self.selectedTags.first(where: { $0.title == AppText.Tags.deletedClusters }) {
+//            tagsResult.append(deletedTag)
+//        } else {
+//            let deletedClustersTag = VTag()
+//            deletedClustersTag.title = AppText.Tags.deletedClusters
+//            tagsResult.append(deletedClustersTag)
+//        }
+//
+//        if let manditoryTagIds = self.manditoryTagIds, let index = tagsResult.firstIndex(where: { $0.id == manditoryTagIds.first }) {
+//            indexToScrollTo = IndexPath(row: index, section: 0)
+//        }
+//
+//        self.filteredClusters = pClustersFiltered
+//        self.tags = tagsResult
+//        if reloadData {
+//            self.tableView.reloadData()
+//            self.collectionView.reloadData()
+//        }
+//        if let index = indexToScrollTo {
+//            self.collectionView.scrollToItem(at: index, at: .centeredHorizontally, animated: false)
+//        }
     }
     
     private func deleteMusic(indexPath: IndexPath, song: VCluster) {
@@ -448,17 +448,17 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
         alert.addAction(UIAlertAction(title: AppText.Actions.cancel, style: .cancel))
         alert.addAction(UIAlertAction(title: AppText.Actions.delete, style: .destructive, handler: { _ in
             // Delete Local CONTENT
-            song.hasInstruments.compactMap({ $0.resourcePath }).compactMap({ FileManager.getURLfor(name: $0) }).forEach { (url) in
-                do {
-                    try FileManager.default.removeItem(at: url)
-                    song.hasInstruments.forEach({ $0.resourcePath = nil })
-                    song.getManagedObject(context: moc)
-                    try moc.save()
-                    self.tableView.reloadRows(at: [indexPath], with: .none)
-                } catch {
-                    self.show(message: error.localizedDescription)
-                }
-            }
+//            song.hasInstruments.compactMap({ $0.resourcePath }).compactMap({ FileManager.getURLfor(name: $0) }).forEach { (url) in
+//                do {
+////                    try FileManager.default.removeItem(at: url)
+//                    song.hasInstruments.forEach({ $0.resourcePath = nil })
+////                    song.getManagedObject(context: moc)
+//                    try moc.save()
+//                    self.tableView.reloadRows(at: [indexPath], with: .none)
+//                } catch {
+//                    self.show(message: error.localizedDescription)
+//                }
+//            }
         }))
         self.present(alert, animated: true)
     }
@@ -537,13 +537,13 @@ class SongsController: ChurchBeamViewController, UITableViewDelegate, UITableVie
                 }
             }
 
-            let songs: [Cluster] = DataFetcher().getEntities(moc: moc, predicates: predicates, sort: nil)
-
-            if songs.count > 10 {
-                SubscriptionsSettings.showSubscriptionsViewController(presentingViewController: self)
-            } else {
-                performSegue(withIdentifier: "customSheetsControllerSegue", sender: nil)
-            }
+//            let songs: [Cluster] = DataFetcher().getEntities(moc: moc, predicates: predicates, sort: nil)
+//
+//            if songs.count > 10 {
+//                SubscriptionsSettings.showSubscriptionsViewController(presentingViewController: self)
+//            } else {
+//                performSegue(withIdentifier: "customSheetsControllerSegue", sender: nil)
+//            }
 
         }
     }

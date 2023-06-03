@@ -16,6 +16,7 @@ import Firebase
 import GoogleSignIn
 import FirebaseAuth
 import Network
+import SwiftUI
 
 let ApplicationIdentifier = "ApplicationIdentifier"
 var hasInternet = true
@@ -91,59 +92,60 @@ func getScaleFactor(width: CGFloat) -> CGFloat {
 }
 
 
-//@UIApplicationMain
+@main
 class AppDelegate: UIResponder, UIApplicationDelegate {
-    
+    var store = ExternalDisplayConnector()
+
     var window: UIWindow?
     //Used for checking whether Push Notification is enabled in Amazon Pinpoint
     static let remoteNotificationKey = "RemoteNotification"
     var isInitialized: Bool = false
-    private var isRegistered: Bool {
-        let user: User? = DataFetcher().getEntity(moc: moc, predicates: [.skipDeleted])
-        return user != nil
-    }
+//    private var isRegistered: Bool {
+//        let user: User? = DataFetcher().getEntity(moc: moc, predicates: [.skipDeleted])
+//        return user != nil
+//    }
     let monitor = NWPathMonitor()
     let queue = DispatchQueue(label: "Monitor")
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        UINavigationBar.appearance(whenContainedInInstancesOf: [UISplitViewController.self]).tintColor = themeHighlighted
+//        UINavigationBar.appearance(whenContainedInInstancesOf: [UISplitViewController.self]).tintColor = themeHighlighted
         let userDefaults = UserDefaults.standard
         if userDefaults.object(forKey: ApplicationIdentifier) == nil {
             let UUID = NSUUID().uuidString
             userDefaults.set(UUID, forKey: ApplicationIdentifier)
         }
         let intvalue = Date().intValue
-        if UserDefaults.standard.integer(forKey: "config.environment") != 0 {
-            ChurchBeamConfiguration.environment.loadGoogleFile()
-        } else {
-            switch AppConfiguration.mode {
-            case .TestFlight, .AppStore:
-                ChurchBeamConfiguration.environment = .production
-            case .Debug:
-                ChurchBeamConfiguration.environment = .dev
-            }
-            ChurchBeamConfiguration.environment.loadGoogleFile()
-        }
-        FirebaseConfiguration.shared.setLoggerLevel(.min)
-        
+//        if UserDefaults.standard.integer(forKey: "config.environment") != 0 {
+//            ChurchBeamConfiguration.environment.loadGoogleFile()
+//        } else {
+//            switch AppConfiguration.mode {
+//            case .TestFlight, .AppStore:
+//                ChurchBeamConfiguration.environment = .production
+//            case .Debug:
+//                ChurchBeamConfiguration.environment = .dev
+//            }
+//            ChurchBeamConfiguration.environment.loadGoogleFile()
+//        }
+//        FirebaseConfiguration.shared.setLoggerLevel(.min)
+//
         setupAirPlay()
 
-        UNUserNotificationCenter.current().delegate = self
-        
-        NotificationCenter.default.addObserver(forName: .checkAuthentication, object: nil, queue: .main) { (_) in
-            self.checkAuthentication()
-        }
-        if SystemInfo.sharedInstance.isDebugMode() == .debug {
-            PopUpTimeManager.resetAll()
-        }
+//        UNUserNotificationCenter.current().delegate = self
+//
+//        NotificationCenter.default.addObserver(forName: .checkAuthentication, object: nil, queue: .main) { (_) in
+//            self.checkAuthentication()
+//        }
+//        if SystemInfo.sharedInstance.isDebugMode() == .debug {
+//            PopUpTimeManager.resetAll()
+//        }
         
 //        let manager = IAPManager(delegate: nil, sharedSecret: "0269d507736f44638d69284ad77f2ba7")
 //        manager.refreshSubscriptionsStatus()
 //        fixLastShowAt()
         
-        GIDSignIn.sharedInstance.restorePreviousSignIn { [weak self] user, error in
-            self?.checkAuthentication()
-        }
+//        GIDSignIn.sharedInstance.restorePreviousSignIn { [weak self] user, error in
+//            self?.checkAuthentication()
+//        }
         return true
     }
     
@@ -155,22 +157,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-        monitor.cancel()
+//        monitor.cancel()
     }
     
     func applicationWillEnterForeground(_ application: UIApplication) {
-        monitor.pathUpdateHandler = { path in
-            if path.status == .satisfied {
-                Task {
-                    let hasI = await CheckInternet.checkInternet()
-                    hasInternet = hasI
-                }
-            } else {
-                hasInternet = false
-            }
-            
-        }
-        monitor.start(queue: queue)
+//        monitor.pathUpdateHandler = { path in
+//            if path.status == .satisfied {
+//                Task {
+//                    let hasI = await CheckInternet.checkInternet()
+//                    hasInternet = hasI
+//                }
+//            } else {
+//                hasInternet = false
+//            }
+//
+//        }
+//        monitor.start(queue: queue)
 
         // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
     }
@@ -225,6 +227,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     frame: screen.bounds
                 )
                 externalDisplayWindow?.screen = screen
+                let content = ExternalDisplayView(externalDisplayConnector: store)
+                externalDisplayWindow?.rootViewController = UIHostingController(rootView: content)
+
                 NotificationCenter.default.post(name: .externalDisplayDidChange, object: nil, userInfo: nil)
                 externalDisplayWindow?.isHidden = false
             }
@@ -239,23 +244,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     fileprivate func checkAuthentication() {
-        let user: User? = DataFetcher().getEntity(moc: moc, predicates: [.skipDeleted])
-        let userId = user?.userUID
-        let authId = Auth.auth().currentUser?.uid
-        if userId != nil, authId != nil, userId == authId {
-            NotificationCenter.default.post(name: .authenticated, object: nil)
-        } else {
-            UserDefaults.standard.removeObject(forKey: secretKey)
-            UserDefaults.standard.removeObject(forKey: UniversalClusterOperationsPerformed)
-            let entities: [Entity] = DataFetcher().getEntities(moc: moc)
-            entities.forEach({ moc.delete($0) })
-            do {
-                try moc.save()
-            } catch {
-                print(error)
-            }
-            NotificationCenter.default.post(name: .signedOut, object: nil)
-        }
+//        let user: User? = DataFetcher().getEntity(moc: moc, predicates: [.skipDeleted])
+//        let userId = user?.userUID
+//        let authId = Auth.auth().currentUser?.uid
+//        if userId != nil, authId != nil, userId == authId {
+//            NotificationCenter.default.post(name: .authenticated, object: nil)
+//        } else {
+//            UserDefaults.standard.removeObject(forKey: secretKey)
+//            UserDefaults.standard.removeObject(forKey: UniversalClusterOperationsPerformed)
+//            let entities: [Entity] = DataFetcher().getEntities(moc: moc)
+//            entities.forEach({ moc.delete($0) })
+//            do {
+//                try moc.save()
+//            } catch {
+//                print(error)
+//            }
+//            NotificationCenter.default.post(name: .signedOut, object: nil)
+//        }
     }
     
 }
@@ -270,60 +275,4 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     }
     
     
-}
-
-
-extension AppDelegate {
-    
-    func fixLastShowAt() {
-        let mocBackground = newMOCBackground
-        var clusters: [Cluster] = DataFetcher().getEntities(moc: mocBackground)
-        guard clusters.contains(where: { $0.lastShownAt?.date.isAfter(Date()) ?? false }) else { return }
-
-        func update(cluster: Cluster) {
-            print("started")
-            cluster.updateLastShownAt(moc: mocBackground) {
-                print("finished")
-                clusters.removeFirst()
-                checkCluster()
-            }
-        }
-
-        func checkCluster() {
-            if let cluster = clusters.first {
-                update(cluster: cluster)
-            } else {
-                let clusters: [Cluster] = DataFetcher().getEntities(moc: mocBackground)
-                let future = clusters.filter({ $0.lastShownAt?.date.isAfter(Date()) ?? false })
-                future.forEach({ $0.lastShownAt = nil })
-                do {
-                    try moc.save()
-                } catch {
-                }
-                
-            }
-        }
-        
-        checkCluster()
-        
-        
-    }
-    
-}
-
-extension Cluster {
-    
-    func updateLastShownAt(moc: NSManagedObjectContext, completion: @escaping (() -> Void)) {
-        Firestore.firestore().collection("clusters").document(self.id).getDocument { [weak self] snapshot, error in
-            let cluster: VCluster? = try? snapshot?.decoded()
-            self?.lastShownAt = cluster?.lastShownAt as NSDate?
-            do {
-                try moc.save()
-                completion()
-            } catch {
-                completion()
-            }
-        }
-    }
-
 }

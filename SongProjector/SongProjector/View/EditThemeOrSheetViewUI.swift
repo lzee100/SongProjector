@@ -9,27 +9,54 @@
 import SwiftUI
 
 protocol EditThemeOrSheetViewUIDelegate {
-    func dismissAndSave(model: EditSheetOrThemeViewModel)
+    func dismissAndSave(model: SheetViewModel)
     func dismiss()
 }
 
-@MainActor class ThemeEditorViewModel: ObservableObject {
+@MainActor class EditThemeOrSheetViewModel: ObservableObject {
+    
+    enum RightNavigationBarButton {
+        case submitTheme
+        case addNewSheet
+        case changeSheet
+    }
     
     @Published var error: LocalizedError?
     @Published private(set) var showingLoader = false
-    private(set) var editModel: WrappedStruct<EditSheetOrThemeViewModel>
+    @StateObject var sheetViewModel: SheetViewModel
+    var navigationBarTitle: String {
+        switch sheetViewModel.sheetEditType {
+        case .theme:
+            return sheetViewModel.themeModel.isNew ? AppText.NewTheme.title : AppText.EditTheme.title
+        case .lyrics:
+            return sheetViewModel.sheetModel.isNew ? AppText.NewSong.newLyrics : AppText.NewSong.changeLyrics
+        case .bibleStudy:
+            return sheetViewModel.sheetModel.isNew ? AppText.Lyrics.titleBibleText : AppText.Lyrics.titleBibleTextChange
+        case .custom:
+            return sheetViewModel.sheetModel.isNew ? AppText.CustomSheetsEdit.title : AppText.CustomSheetsEdit.titleChange
+        }
+    }
     
-    init(error: LocalizedError? = nil, showingLoader: Bool = false, editModel: WrappedStruct<EditSheetOrThemeViewModel>) {
+    var rightNavigationBarButton: RightNavigationBarButton {
+        switch sheetViewModel.sheetEditType {
+        case .theme:
+            return .submitTheme
+        default:
+            return sheetViewModel.sheetModel.isNew ? .addNewSheet : .changeSheet
+        }
+    }
+    
+    init(error: LocalizedError? = nil, showingLoader: Bool = false, sheetViewModel: SheetViewModel) {
         self.error = error
         self.showingLoader = showingLoader
-        self.editModel = editModel
+        self._sheetViewModel = StateObject(wrappedValue: sheetViewModel)
     }
     
     func submitTheme() async {
         setIsLoading(true)
         do {
-            if let theme = try editModel.item.createThemeCodable() {
-                let result = try await SubmitUseCase(endpoint: .themes, requestMethod: .put, uploadObjects: [theme]).submit()
+            if let theme = try sheetViewModel.createThemeCodable() {
+                _ = try await SubmitUseCase(endpoint: .themes, requestMethod: .put, uploadObjects: [theme]).submit()
                 setIsLoading(false)
             }
         } catch {
@@ -37,7 +64,7 @@ protocol EditThemeOrSheetViewUIDelegate {
             self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
         }
     }
-    
+        
     private func setIsLoading(_ showingLoader: Bool) {
         withAnimation(.linear) {
             self.showingLoader = showingLoader
@@ -51,34 +78,56 @@ struct EditThemeOrSheetViewUI: View {
     
     let navigationTitle: String
     
-    let delegate: EditThemeOrSheetViewUIDelegate?
-    let isNew: Bool
+    let delegate: EditThemeOrSheetViewUIDelegate
     @State var isSectionGeneralExpanded = true
     @State var isSectionTitleExpanded = false
     @State var isSectionContentExpanded = false
     @State var isSectionImageExpanded = false
-    @ObservedObject var editSheetOrThemeModel: WrappedStruct<EditSheetOrThemeViewModel>
-    @StateObject var viewModel: ThemeEditorViewModel
+    @StateObject var viewModel: EditThemeOrSheetViewModel
     
+    @ViewBuilder var navigationBarButtonRight: some View {
+        HStack {
+            switch viewModel.rightNavigationBarButton {
+            case .addNewSheet, .changeSheet:
+                Button {
+                    delegate.dismissAndSave(model: viewModel.sheetViewModel)
+                } label: {
+                    if case .addNewSheet = viewModel.rightNavigationBarButton {
+                        Text(AppText.Actions.add)
+                    } else {
+                        Text(AppText.Actions.change)
+                    }
+                }
+                .tint(Color(uiColor: themeHighlighted))
+            case .submitTheme:
+                Button {
+                    Task {
+                       await viewModel.submitTheme()
+                    }
+                } label: {
+                    Text(AppText.Actions.save)
+                }
+                .tint(Color(uiColor: themeHighlighted))
+            }
+        }
+    }
+
     init(
         navigationTitle: String,
-        delegate: EditThemeOrSheetViewUIDelegate?,
-        isNew: Bool,
+        delegate: EditThemeOrSheetViewUIDelegate,
         isSectionGeneralExpanded: Bool = true,
         isSectionTitleExpanded: Bool = false,
         isSectionContentExpanded: Bool = false,
         isSectionImageExpanded: Bool = false,
-        editSheetOrThemeModel: WrappedStruct<EditSheetOrThemeViewModel>
+        sheetViewModel: SheetViewModel
     ) {
         self.navigationTitle = navigationTitle
         self.delegate = delegate
-        self.isNew = isNew
         self._isSectionGeneralExpanded = State(initialValue: isSectionGeneralExpanded)
         self._isSectionTitleExpanded = State(initialValue: isSectionTitleExpanded)
         self._isSectionContentExpanded = State(initialValue: isSectionContentExpanded)
         self._isSectionImageExpanded = State(initialValue: isSectionImageExpanded)
-        self.editSheetOrThemeModel = editSheetOrThemeModel
-        self._viewModel = StateObject(wrappedValue: ThemeEditorViewModel(editModel: editSheetOrThemeModel))
+        self._viewModel = StateObject(wrappedValue: EditThemeOrSheetViewModel(sheetViewModel: sheetViewModel))
     }
 
     var body: some View {
@@ -87,7 +136,7 @@ struct EditThemeOrSheetViewUI: View {
                     VStack(){
                         HStack {
                             Spacer(minLength: 0)
-                            SheetUIHelper.sheet(ratioOnHeight: false, maxWidth: 500, editSheetOrThemeModel: editSheetOrThemeModel, isForExternalDisplay: false)
+                            SheetUIHelper.sheet(sheetViewModel: viewModel.sheetViewModel, isForExternalDisplay: false)
                             Spacer(minLength: 0)
                         }
                         ScrollViewReader { proxy in
@@ -95,27 +144,27 @@ struct EditThemeOrSheetViewUI: View {
                                 EditThemeOrSheetGeneralViewUI(
                                     scrollViewProxy: proxy,
                                     isSectionGeneralExpanded: $isSectionGeneralExpanded,
-                                    editSheetOrThemeModel: editSheetOrThemeModel
+                                    sheetViewModel: viewModel.sheetViewModel
                                 )
                                 if !isEmptySheet {
                                     EditThemeOrSheetTitleViewUI(
                                         scrollViewProxy: proxy,
                                         isSectionTitleExpanded: $isSectionTitleExpanded,
-                                        editSheetOrThemeModel: editSheetOrThemeModel,
+                                        sheetViewModel: viewModel.sheetViewModel,
                                         selectedAlignmentValue: getAlignmentValue()
                                     )
                                     EditThemeOrSheetContentViewUI(
                                         scrollViewProxy: proxy,
                                         isSectionContentExpanded: $isSectionContentExpanded,
-                                        editSheetOrThemeModel: editSheetOrThemeModel,
-                                        contentColor: editSheetOrThemeModel.item.contentTextColorHex?.color ?? .black,
-                                        selectedAlignmentValue: EditThemeOrSheetContentViewUI.fontAlignmentPickerValues.first(where: { ($0.value as? (Int, String))?.0 ?? -1 == editSheetOrThemeModel.item.contentAlignmentNumber }) ?? EditThemeOrSheetContentViewUI.fontAlignmentPickerValues.first!)
+                                        sheetViewModel: viewModel.sheetViewModel,
+                                        contentColor: viewModel.sheetViewModel.themeModel.theme.contentTextColorHex?.color ?? .black,
+                                        selectedAlignmentValue: EditThemeOrSheetContentViewUI.fontAlignmentPickerValues.first(where: { ($0.value as? (Int, String))?.0 ?? -1 == viewModel.sheetViewModel.themeModel.theme.contentAlignmentNumber }) ?? EditThemeOrSheetContentViewUI.fontAlignmentPickerValues.first!)
                                 }
                                 if hasSheetImage() {
                                     EditThemeOrSheetSheetImageViewUI(
                                         scrollViewProxy: proxy,
                                         isSectionSheetImageExpanded: $isSectionImageExpanded,
-                                        editSheetOrThemeModel: editSheetOrThemeModel
+                                        sheetViewModel: viewModel.sheetViewModel
                                     )
                                 }
                             }
@@ -128,45 +177,25 @@ struct EditThemeOrSheetViewUI: View {
                 .padding()
                 .edgesIgnoringSafeArea([.bottom])
                 .navigationBarTitleDisplayMode(.inline)
-                .navigationBarTitle(editSheetOrThemeModel.item.editMode.isSheet ? AppText.NewSheetTitleImage.title : AppText.NewTheme.title)
+                .navigationBarTitle(viewModel.navigationBarTitle)
                 .toolbar(content: {
                     ToolbarItemGroup(placement: .navigationBarLeading) {
                         Button {
-                            delegate?.dismiss()
+                            delegate.dismiss()
                         } label: {
                             Text(AppText.Actions.cancel)
                         }
                         .tint(Color(uiColor: themeHighlighted))
                     }
                     ToolbarItemGroup(placement: .navigationBarTrailing) {
-                        if let delegate {
-                            Button {
-                                delegate.dismissAndSave(model: editSheetOrThemeModel.item)
-                            } label: {
-                                if isNew {
-                                    Text(AppText.Actions.add)
-                                } else {
-                                    Text(AppText.Actions.change)
-                                }
-                            }
-                            .tint(Color(uiColor: themeHighlighted))
-                        } else {
-                            Button {
-                                Task {
-                                   await viewModel.submitTheme()
-                                }
-                            } label: {
-                                Text(AppText.Actions.save)
-                            }
-                            .tint(Color(uiColor: themeHighlighted))
-                        }
+                        navigationBarButtonRight
                     }
                 })
             }
         .ignoresSafeArea()
         .onChange(of: viewModel.showingLoader) { newValue in
             if !newValue {
-                delegate?.dismiss()
+                delegate.dismiss()
             }
         }
     }
@@ -176,17 +205,6 @@ struct EditThemeOrSheetViewUI: View {
             .padding(EdgeInsets(5))
             .font(.title3)
             .foregroundColor(.black.opacity(0.8))
-    }
-    
-    @ViewBuilder func viewsForSheet(_ type: SheetMetaType) -> some View {
-        TextFieldViewUI(
-            textFieldViewModel: TextFieldViewModel(
-                label: AppText.NewTheme.descriptionTitle,
-                placeholder: AppText.NewTheme.descriptionTitlePlaceholder,
-                characterLimit: 80,
-                text: $editSheetOrThemeModel.item.title
-            )
-        )
     }
     
     @ViewBuilder var sectionTitle: some View {
@@ -218,7 +236,7 @@ struct EditThemeOrSheetViewUI: View {
     private func getAlignmentValue() -> PickerRepresentable {
         let titleAlignmentValue = EditThemeOrSheetTitleViewUI.fontAlignmentPickerValues.first { value in
             if let value = value.value as? (Int, String) {
-                if value.0 == editSheetOrThemeModel.item.titleAlignmentNumber {
+                if value.0 == viewModel.sheetViewModel.themeModel.theme.titleAlignmentNumber {
                     return true
                 }
                 return false
@@ -229,28 +247,22 @@ struct EditThemeOrSheetViewUI: View {
     }
         
     private func hasSheetImage() -> Bool {
-        [SheetType.SheetTitleImage, SheetType.SheetPastors].contains(where: { $0.rawValue == editSheetOrThemeModel.item.sheetType.rawValue })
+        [.SheetTitleImage, .SheetPastors].contains(viewModel.sheetViewModel.sheetModel.sheetType)
     }
     
     private var isEmptySheet: Bool {
-        switch editSheetOrThemeModel.item.editMode {
-        case .sheet(_, sheetType: let type):
-            switch type {
-            case .SheetEmpty: return true
-            case .SheetTitleContent, .SheetTitleImage, .SheetPastors, .SheetSplit, .SheetActivities: return false
-            }
-        case .theme: return false
+        switch viewModel.sheetViewModel.sheetModel.sheetType {
+        case .SheetEmpty:
+            return true
+        default: return false
         }
     }
-    
 }
 
-struct EditThemeOrSheetViewUI_Previews: PreviewProvider {
-    @State static var isShowingEditor = false
-    @State static var cluster = ClusterCodable.makeDefault()!
-    @State static var activities = SheetActivitiesCodable.makeDefault()
-    @State static var model = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .sheet((cluster, activities), sheetType: .SheetActivities), isUniversal: false, isBibleVers: false)!)
-    static var previews: some View {
-        EditThemeOrSheetViewUI(navigationTitle: "", delegate: nil, isNew: true, editSheetOrThemeModel: model)
+private struct EditThemeOrSheetViewUIDelegateObject: EditThemeOrSheetViewUIDelegate {
+    func dismissAndSave(model: SheetViewModel) {
+    }
+    
+    func dismiss() {
     }
 }

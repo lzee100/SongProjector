@@ -162,7 +162,7 @@ class SoundPlay: NSObject, AVAssetDownloadDelegate {
 		
 		var player = InstrumentPlayer()
         if let urlString = instrument.resourcePath {
-            let url = FileManager.getURLfor(name: urlString) 
+            let url = GetFileURLUseCase(fileName: urlString).getURL(location: .persitent)
 			do {
 				player = try InstrumentPlayer(contentsOf: url)
 				player.instrumentType = instrument.type

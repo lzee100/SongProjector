@@ -36,7 +36,7 @@ class SongServiceHeaderView: UIStackView {
     }()
     
     private let sectionTitleSpacerInstrumentsButtonsView = UIView()
-    private var isPortrait: Bool { UIDevice.current.orientation.isPortrait }
+    private var isPortrait: Bool { UIDeviceOrientation.isPortrait }
     private let isPad = UIDevice.current.userInterfaceIdiom == .pad
     private let cluster: VCluster
     private let pianoSoloAction: ActionButton.Action
@@ -51,9 +51,9 @@ class SongServiceHeaderView: UIStackView {
     init(sectionTitle: String?, title: String?, cluster: VCluster, isSelected: Bool, onSectionClick: @escaping ActionButton.Action, onPianoSoloClick: @escaping ActionButton.Action, isPianoSoloPlaying: Bool) {
         self.cluster = cluster
         self.pianoSoloAction = onPianoSoloClick
-        let rightInset: CGFloat = UIDevice.current.orientation.isPortrait ? 10 : -2
-        let leftInset: CGFloat = UIDevice.current.orientation.isPortrait ? 0 : -2
-        let sectionTitleInsets: UIEdgeInsets = UIDevice.current.userInterfaceIdiom == .pad && UIDevice.current.orientation.isLandscape ? .zero : UIEdgeInsets(top: 15, left: 30, bottom: 15, right: 20)
+        let rightInset: CGFloat = UIDeviceOrientation.isPortrait ? 10 : -2
+        let leftInset: CGFloat = UIDeviceOrientation.isPortrait ? 0 : -2
+        let sectionTitleInsets: UIEdgeInsets = UIDevice.current.userInterfaceIdiom == .pad && UIDeviceOrientation.isLandscape ? .zero : UIEdgeInsets(top: 15, left: 30, bottom: 15, right: 20)
         sectionAndTitleView = SongServiceSectionHeaderTitleStackView(sectionTitle: sectionTitle, title: title, insets: sectionTitleInsets)
         instrumentButtonsView = InstrumentsButtonsViewContainer(insets: UIEdgeInsets(top: 0, left: leftInset, bottom: 0, right: rightInset), instruments: cluster.hasInstruments)
         self.isPianoSoloPlaying = isPianoSoloPlaying
@@ -63,7 +63,7 @@ class SongServiceHeaderView: UIStackView {
         super.init(frame: .zero)
         sectionAndTitleView.action = didClickSection
         let hasPianoSolo = cluster.hasPianoSolo && cluster.hasLocalMusic
-        pianosoloButton.isHidden = !hasPianoSolo || UIDevice.current.orientation.isPortrait
+        pianosoloButton.isHidden = !hasPianoSolo || UIDeviceOrientation.isPortrait
         let hasInstruments = cluster.hasLocalMusic && !cluster.hasPianoSolo
         instrumentButtonsView.isHidden = !hasInstruments
         sectionTitleSpacerInstrumentsButtonsView.isHidden = sectionTitle == nil
@@ -72,7 +72,7 @@ class SongServiceHeaderView: UIStackView {
             addArrangedSubview(view)
         }
         
-        if UIDevice.current.orientation.isPortrait, hasPianoSolo {
+        if UIDeviceOrientation.isPortrait, hasPianoSolo {
             addSubview(pianosoloButton)
             pianosoloButton.translatesAutoresizingMaskIntoConstraints = false
             pianosoloButton.topAnchor.constraint(equalTo: sectionAndTitleView.titleLabel.topAnchor).isActive = true

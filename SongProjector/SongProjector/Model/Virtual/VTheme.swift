@@ -357,16 +357,6 @@ class VTheme: VEntity {
 		getPropertiesFrom(entity: theme, context: context)
 	}
 	
-    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-        if let entity: Theme = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
-            setPropertiesTo(entity: entity, context: context)
-            return entity
-        } else {
-            let entity: Theme = DataFetcher().createEntity(moc: context)
-            setPropertiesTo(entity: entity, context: context)
-            return entity
-        }
-    }
 }
 
 

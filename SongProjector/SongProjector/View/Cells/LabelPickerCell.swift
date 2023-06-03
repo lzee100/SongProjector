@@ -227,7 +227,7 @@ class LabelPickerCell: ChurchBeamCell, ThemeImplementation, DynamicHeightCell, S
         var predicates: [NSPredicate] = [.skipDeleted]
         predicates.append("isHidden", notEquals: true)
         predicates.append("isUniversal", equals: false)
-        themes = DataFetcher().getEntities(moc: moc, predicates: predicates, sort: NSSortDescriptor(key: "title", ascending: true)).compactMap { ThemeCodable(managedObject: $0, context: moc) }
+//        themes = DataFetcher().getEntities(moc: moc, predicates: predicates, sort: NSSortDescriptor(key: "title", ascending: true)).compactMap { ThemeCodable(managedObject: $0, context: moc) }
         pickerValues = themes.map({ ($0.id, $0.title ?? "") })
 	}
 	

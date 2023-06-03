@@ -18,7 +18,7 @@ struct SubmitUseCase<T: FileTransferable> {
     private let endpoint: String
     private let requestMethod: RequestMethod
     private let uploadObjects: [T]
-    private let managedObjectContextHandler = ManagedObjectContextHandler<T>()
+    private let managedObjectContextHandler = SaveCodableToCorDataUseCase<T>()
     private let deleteObjects: [DeleteObject]
     
     init(endpoint: EndPoint, requestMethod: RequestMethod, uploadObjects: [T], deleteObjects: [DeleteObject] = []) {
@@ -93,8 +93,10 @@ struct SubmitUseCase<T: FileTransferable> {
         var deletableFiles: [StorageReference] = []
         
         uploadObjects.forEach { uploadObject in
-            uploadObject.getDeleteObjects(forceDelete: self.requestMethod == .delete).forEach({ awsPath in
-                deletableFiles.append(Storage.storage().reference().child("images").child(awsPath))
+            uploadObject.getDeleteObjects(forceDelete: self.requestMethod == .delete).forEach({ deleteObject in
+                if let imagePathAWS = deleteObject.imagePathAWS {
+                    deletableFiles.append(Storage.storage().reference().child("images").child(imagePathAWS))
+                }
             })
         }
         self.deleteObjects.compactMap { $0.imagePathAWS }.forEach { awsPath in
@@ -114,8 +116,8 @@ struct SubmitUseCase<T: FileTransferable> {
     }
     
     private func deleteFilesLocally() {
-        deleteObjects.flatMap { [$0.imagePath, $0.thumbnailPath].compactMap { $0 } }.forEach { name in
-            try? FileManager.deleteFile(name: name)
+        deleteObjects.flatMap { [$0.imagePath, $0.imagePathThumbnail].compactMap { $0 } }.forEach { name in
+            try? DeleteFileAtURLUseCase(fileName: name)?.delete(location: .persitent)
         }
     }
     

@@ -63,13 +63,15 @@ public class VCluster: VEntity {
     var tagIds: [String] = []
     
     func hasTheme(moc: NSManagedObjectContext) -> VTheme? {
-        let theme: Theme? = DataFetcher().getEntity(moc: moc, predicates: [.get(id: themeId)])
-        return [theme].compactMap({ $0 }).map({ VTheme(entity: $0, context: moc) }).first
+        return nil
+//        let theme: Theme? = DataFetcher().getEntity(moc: moc, predicates: [.get(id: themeId)])
+//        return [theme].compactMap({ $0 }).map({ VTheme(entity: $0, context: moc) }).first
     }
     
     func hasTags(moc: NSManagedObjectContext) -> [Tag] {
-        let tags: [Tag] = tagIds.compactMap({ DataFetcher().getEntity(moc: moc, predicates: [.get(id: $0)]) })
-        return tags
+        []
+//        let tags: [Tag] = tagIds.compactMap({ DataFetcher().getEntity(moc: moc, predicates: [.get(id: $0)]) })
+//        return tags
     }
     
     public var isTypeSong: Bool {
@@ -212,87 +214,87 @@ public class VCluster: VEntity {
 
         return copy!
     }
-    
-    override func getPropertiesFrom(entity: Entity, context: NSManagedObjectContext) {
-        super.getPropertiesFrom(entity: entity, context: context)
-        if let cluster = entity as? Cluster {
-            
-            root = cluster.root
-            isLoop = cluster.isLoop
-            position = Int16(cluster.position)
-            time = cluster.time
-            themeId = cluster.themeId
-            lastShownAt = cluster.lastShownAt as Date?
-            instrumentIds = cluster.instrumentIds ?? ""
-            church = cluster.church
-            startTime = cluster.startTime
-            hasSheetPastors = cluster.hasSheetPastors
-            
-            func getSheets(sheets: [Sheet]) -> [VSheet] {
-                return sheets.map({
-                    if let sheet = $0 as? SheetTitleContentEntity {
-                        return VSheetTitleContent(entity: sheet, context: context) as VSheet
-                    } else if let sheet = $0 as? SheetTitleImageEntity {
-                        return VSheetTitleImage(entity: sheet, context: context) as VSheet
-                    } else if let sheet = $0 as? SheetSplitEntity {
-                        return VSheetSplit(entity: sheet, context: context) as VSheet
-                    } else if let sheet = $0 as? SheetPastorsEntity {
-                        return VSheetPastors(entity: sheet, context: context) as VSheet
-                    } else if let sheet = $0 as? SheetEmptyEntity {
-                        return VSheetEmpty(entity: sheet, context: context) as VSheet
-                    } else if let sheet = $0 as? SheetActivitiesEntity {
-                        return VSheetActivities(entity: sheet, context: context) as VSheet
-                    } else {
-                        return VSheet(entity: $0, context: context)
-                    }
-                })
-            }
-            
-            sheetIds = cluster.sheetIds.split(separator: ",").compactMap({ String($0) })
-            hasSheets = getSheets(sheets: cluster.hasSheets(moc: context)).sorted(by: { $0.position < $1.position })
-            hasInstruments = cluster.hasInstruments(moc: context).compactMap({ VInstrument(instrument: $0, context: context) }).sorted(by: { $0.type?.position ?? 0 < $1.type?.position ?? 0 })
-            tagIds = cluster.splitTagIds
-            
-        }
-    }
-    
-    override func setPropertiesTo(entity: Entity, context: NSManagedObjectContext) {
-        super.setPropertiesTo(entity: entity, context: context)
-        if let cluster = entity as? Cluster {
-            cluster.root = root
-            cluster.isLoop = isLoop
-            cluster.position = Int16(position)
-            cluster.time = time
-            cluster.themeId = themeId
-            cluster.church = church
-            cluster.startTime = startTime
-            cluster.lastShownAt = lastShownAt as NSDate?
-            cluster.hasSheetPastors = hasSheetPastors
-            let instruments = hasInstruments.compactMap({ $0.getManagedObject(context: context) })
-            cluster.instrumentIds = instruments.map({ $0.id }).joined(separator: ",")
-            let sheets = hasSheets.map({ $0.getManagedObject(context: context) })
-            cluster.sheetIds = sheets.compactMap({ $0.id }).joined(separator: ",")
-            let tags = hasTags(moc: context)
-            cluster.tagIds = tags.compactMap({ $0.id }).joined(separator: ",")
-        }
-    }
+//
+//    override func getPropertiesFrom(entity: Entity, context: NSManagedObjectContext) {
+//        super.getPropertiesFrom(entity: entity, context: context)
+//        if let cluster = entity as? Cluster {
+//
+//            root = cluster.root
+//            isLoop = cluster.isLoop
+//            position = Int16(cluster.position)
+//            time = cluster.time
+//            themeId = cluster.themeId
+//            lastShownAt = cluster.lastShownAt as Date?
+//            instrumentIds = cluster.instrumentIds ?? ""
+//            church = cluster.church
+//            startTime = cluster.startTime
+//            hasSheetPastors = cluster.hasSheetPastors
+//
+//            func getSheets(sheets: [Sheet]) -> [VSheet] {
+//                return sheets.map({
+//                    if let sheet = $0 as? SheetTitleContentEntity {
+//                        return VSheetTitleContent(entity: sheet, context: context) as VSheet
+//                    } else if let sheet = $0 as? SheetTitleImageEntity {
+//                        return VSheetTitleImage(entity: sheet, context: context) as VSheet
+//                    } else if let sheet = $0 as? SheetSplitEntity {
+//                        return VSheetSplit(entity: sheet, context: context) as VSheet
+//                    } else if let sheet = $0 as? SheetPastorsEntity {
+//                        return VSheetPastors(entity: sheet, context: context) as VSheet
+//                    } else if let sheet = $0 as? SheetEmptyEntity {
+//                        return VSheetEmpty(entity: sheet, context: context) as VSheet
+//                    } else if let sheet = $0 as? SheetActivitiesEntity {
+//                        return VSheetActivities(entity: sheet, context: context) as VSheet
+//                    } else {
+//                        return VSheet(entity: $0, context: context)
+//                    }
+//                })
+//            }
+//
+//            sheetIds = cluster.sheetIds.split(separator: ",").compactMap({ String($0) })
+//            hasSheets = getSheets(sheets: cluster.hasSheets(moc: context)).sorted(by: { $0.position < $1.position })
+//            hasInstruments = cluster.hasInstruments(moc: context).compactMap({ VInstrument(instrument: $0, context: context) }).sorted(by: { $0.type?.position ?? 0 < $1.type?.position ?? 0 })
+//            tagIds = cluster.splitTagIds
+//
+//        }
+//    }
+//
+//    override func setPropertiesTo(entity: Entity, context: NSManagedObjectContext) {
+//        super.setPropertiesTo(entity: entity, context: context)
+//        if let cluster = entity as? Cluster {
+//            cluster.root = root
+//            cluster.isLoop = isLoop
+//            cluster.position = Int16(position)
+//            cluster.time = time
+//            cluster.themeId = themeId
+//            cluster.church = church
+//            cluster.startTime = startTime
+//            cluster.lastShownAt = lastShownAt as NSDate?
+//            cluster.hasSheetPastors = hasSheetPastors
+//            let instruments = hasInstruments.compactMap({ $0.getManagedObject(context: context) })
+//            cluster.instrumentIds = instruments.map({ $0.id }).joined(separator: ",")
+//            let sheets = hasSheets.map({ $0.getManagedObject(context: context) })
+//            cluster.sheetIds = sheets.compactMap({ $0.id }).joined(separator: ",")
+//            let tags = hasTags(moc: context)
+//            cluster.tagIds = tags.compactMap({ $0.id }).joined(separator: ",")
+//        }
+//    }
     
     convenience init(cluster: Cluster, context: NSManagedObjectContext) {
         self.init()
         getPropertiesFrom(entity: cluster, context: context)
     }
     
-    @discardableResult
-    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-        if let entity: Cluster = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
-            setPropertiesTo(entity: entity, context: context)
-            return entity
-        } else {
-            let entity: Cluster = DataFetcher().createEntity(moc: context)
-            setPropertiesTo(entity: entity, context: context)
-            return entity
-        }
-    }
+//    @discardableResult
+//    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
+//        if let entity: Cluster = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
+//            setPropertiesTo(entity: entity, context: context)
+//            return entity
+//        } else {
+//            let entity: Cluster = DataFetcher().createEntity(moc: context)
+//            setPropertiesTo(entity: entity, context: context)
+//            return entity
+//        }
+//    }
 
 }
 
@@ -345,98 +347,98 @@ extension VCluster {
     }
     
     func setUploadValues(_ uploadObjects: [UploadObject]) throws {
-        let sheetThemes = hasSheets.compactMap({ $0.hasTheme })
-        let pastorsSheets = hasSheets.compactMap({ $0 as? VSheetPastors })
-        let titleImageSheets = hasSheets.compactMap({ $0 as? VSheetTitleImage })
-        
-        for upload in uploadObjects.compactMap({ $0 as UploadObject }) {
-            try sheetThemes.forEach { theme in
-                if theme.tempLocalImageName == upload.fileName {
-                    theme.imagePathAWS = upload.remoteURL?.absoluteString
-                    if let image = theme.tempSelectedImage {
-                        try theme.setBackgroundImage(image: image, imageName: theme.imagePath)
-                    }
-                }
-            }
-            try pastorsSheets.forEach { pastorSheet in
-                if pastorSheet.tempLocalImageName == upload.fileName {
-                    pastorSheet.imagePathAWS = upload.remoteURL?.absoluteString
-                }
-                if let image = pastorSheet.tempSelectedImage {
-                    try pastorSheet.set(image: image, imageName: pastorSheet.imagePath)
-                }
-            }
-            try titleImageSheets.forEach { titleImageSheet in
-                if titleImageSheet.tempLocalImageName == upload.fileName {
-                    titleImageSheet.imagePathAWS = upload.remoteURL?.absoluteString
-                }
-                if let image = titleImageSheet.tempSelectedImage {
-                    try titleImageSheet.set(image: image, imageName: titleImageSheet.imagePath)
-                }
-            }
-            hasInstruments.forEach { instrument in
-                if instrument.resourcePath == upload.fileName {
-                    instrument.resourcePathAWS = upload.remoteURL?.absoluteString
-                }
-            }
-        }
+//        let sheetThemes = hasSheets.compactMap({ $0.hasTheme })
+//        let pastorsSheets = hasSheets.compactMap({ $0 as? VSheetPastors })
+//        let titleImageSheets = hasSheets.compactMap({ $0 as? VSheetTitleImage })
+//
+//        for upload in uploadObjects.compactMap({ $0 as UploadObject }) {
+//            try sheetThemes.forEach { theme in
+//                if theme.tempLocalImageName == upload.fileName {
+//                    theme.imagePathAWS = upload.remoteURL?.absoluteString
+//                    if let image = theme.tempSelectedImage {
+//                        try theme.setBackgroundImage(image: image, imageName: theme.imagePath)
+//                    }
+//                }
+//            }
+//            try pastorsSheets.forEach { pastorSheet in
+//                if pastorSheet.tempLocalImageName == upload.fileName {
+//                    pastorSheet.imagePathAWS = upload.remoteURL?.absoluteString
+//                }
+//                if let image = pastorSheet.tempSelectedImage {
+//                    try pastorSheet.set(image: image, imageName: pastorSheet.imagePath)
+//                }
+//            }
+//            try titleImageSheets.forEach { titleImageSheet in
+//                if titleImageSheet.tempLocalImageName == upload.fileName {
+//                    titleImageSheet.imagePathAWS = upload.remoteURL?.absoluteString
+//                }
+//                if let image = titleImageSheet.tempSelectedImage {
+//                    try titleImageSheet.set(image: image, imageName: titleImageSheet.imagePath)
+//                }
+//            }
+//            hasInstruments.forEach { instrument in
+//                if instrument.resourcePath == upload.fileName {
+//                    instrument.resourcePathAWS = upload.remoteURL?.absoluteString
+//                }
+//            }
+//        }
     }
     
     func setDownloadValues(_ downloadObjects: [DownloadObject]) {
-        let sheetThemes = hasSheets.compactMap({ $0.hasTheme })
-        let pastorsSheets = hasSheets.compactMap({ $0 as? VSheetPastors })
-        let titleImageSheets = hasSheets.compactMap({ $0 as? VSheetTitleImage })
-        
-        for download in downloadObjects.compactMap({ $0 as DownloadObject }) {
-            sheetThemes.forEach { theme in
-                if theme.imagePathAWS == download.remoteURL.absoluteString {
-                    do {
-                        try theme.setBackgroundImage(image: download.image, imageName: download.filename)
-                    } catch {
-                        print(error)
-                    }
-                }
-            }
-            pastorsSheets.forEach { pastorSheet in
-                if pastorSheet.imagePathAWS == download.remoteURL.absoluteString {
-                    do {
-                        try pastorSheet.set(image: download.image, imageName: download.filename)
-                    } catch {
-                        print(error)
-                    }
-                }
-            }
-            titleImageSheets.forEach { titleImageSheet in
-                if titleImageSheet.imagePathAWS == download.remoteURL.absoluteString {
-                    do {
-                        try titleImageSheet.set(image: download.image, imageName: download.filename)
-                    } catch {
-                        print(error)
-                    }
-                }
-            }
-            hasInstruments.forEach { instrument in
-                if instrument.resourcePathAWS == download.remoteURL.absoluteString {
-                    instrument.resourcePath = download.localURL?.absoluteString
-                }
-            }
-        }
+//        let sheetThemes = hasSheets.compactMap({ $0.hasTheme })
+//        let pastorsSheets = hasSheets.compactMap({ $0 as? VSheetPastors })
+//        let titleImageSheets = hasSheets.compactMap({ $0 as? VSheetTitleImage })
+//
+//        for download in downloadObjects.compactMap({ $0 as DownloadObject }) {
+//            sheetThemes.forEach { theme in
+//                if theme.imagePathAWS == download.remoteURL.absoluteString {
+//                    do {
+//                        try theme.setBackgroundImage(image: download.image, imageName: download.filename)
+//                    } catch {
+//                        print(error)
+//                    }
+//                }
+//            }
+//            pastorsSheets.forEach { pastorSheet in
+//                if pastorSheet.imagePathAWS == download.remoteURL.absoluteString {
+//                    do {
+//                        try pastorSheet.set(image: download.image, imageName: download.filename)
+//                    } catch {
+//                        print(error)
+//                    }
+//                }
+//            }
+//            titleImageSheets.forEach { titleImageSheet in
+//                if titleImageSheet.imagePathAWS == download.remoteURL.absoluteString {
+//                    do {
+//                        try titleImageSheet.set(image: download.image, imageName: download.filename)
+//                    } catch {
+//                        print(error)
+//                    }
+//                }
+//            }
+//            hasInstruments.forEach { instrument in
+//                if instrument.resourcePathAWS == download.remoteURL.absoluteString {
+//                    instrument.resourcePath = download.localURL?.absoluteString
+//                }
+//            }
+//        }
     }
     
 }
 
-extension VCluster {
-    
-    func setLastShownAt() {
-        let lsa = Date()
-        lastShownAt = lsa
-        getManagedObject(context: moc)
-        do {
-            try moc.save()
-        } catch {}
-        
-        Firestore.firestore().collection("clusters").document(self.id).updateData(["lastShownAt" : lsa.intValue])
-        
-    }
-    
-}
+//extension VCluster {
+//
+//    func setLastShownAt() {
+//        let lsa = Date()
+//        lastShownAt = lsa
+//        getManagedObject(context: moc)
+//        do {
+//            try moc.save()
+//        } catch {}
+//
+//        Firestore.firestore().collection("clusters").document(self.id).updateData(["lastShownAt" : lsa.intValue])
+//
+//    }
+//
+//}

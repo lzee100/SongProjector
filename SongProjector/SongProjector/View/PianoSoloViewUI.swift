@@ -12,12 +12,23 @@ struct PianoSoloViewUI: View {
     
     @Binding var selectedSong: SongObjectUI?
     @State var isAnimating = false
-    @State var isPlaying = false
+    @State var song: SongObjectUI
+    @EnvironmentObject private var soundPlayer: SoundPlayer2
     @SwiftUI.Environment(\.horizontalSizeClass) var horizontalSizeClass
+    private var isPlayingPianoSolo: Bool {
+        soundPlayer.selectedSong?.id == song.id && soundPlayer.isPlayingPianoSolo
+    }
     
     var body: some View {
-        Group {
-            GeometryReader { ruler in
+        GeometryReader { ruler in
+            Button {
+                if isPlayingPianoSolo {
+                    soundPlayer.stop()
+                } else {
+                    selectedSong = nil
+                    soundPlayer.play(song: song, pianoSolo: true)
+                }
+            } label: {
                 if ruler.size.width < ruler.size.height || horizontalSizeClass == .compact {
                     contentPortrait
                 } else {
@@ -27,38 +38,34 @@ struct PianoSoloViewUI: View {
         }
         .background(Color(uiColor: .white))
         .cornerRadius(10)
-        .onTapGesture {
-            isPlaying.toggle()
-            isAnimating.toggle()
-            if isPlaying, selectedSong != nil {
-                withAnimation {
-                    selectedSong = nil
-                }
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
-                isAnimating.toggle()
-            })
-        }
-        
     }
     
     @ViewBuilder private var contentPortrait: some View {
         VStack(alignment: .center) {
-            Spacer()
-            if isPlaying {
+            Spacer(minLength: 0)
+            if isPlayingPianoSolo {
                 playAnimation
             } else {
-                pianoSoloImage
-                    .padding(EdgeInsets(top: 0, leading: 40, bottom: 0, trailing: 40))
+                HStack {
+                    Spacer()
+                    pianoSoloImage
+                        .padding(EdgeInsets(
+                            top: 0,
+                            leading: UIDevice.current.userInterfaceIdiom == .phone ? 20 : 40,
+                            bottom: 0,
+                            trailing: UIDevice.current.userInterfaceIdiom == .phone ? 20 : 40
+                        ))
+                    Spacer()
+                }
             }
-            Spacer()
+            Spacer(minLength: 0)
         }
     }
     
     @ViewBuilder private var contentLandscape: some View {
         HStack(alignment: .center) {
             Spacer()
-            if isPlaying {
+            if isPlayingPianoSolo {
                 playAnimation
             } else {
                 pianoSoloImage
@@ -75,22 +82,12 @@ struct PianoSoloViewUI: View {
     }
     
     @ViewBuilder private var playAnimation: some View {
-        GeometryReader { ruler in
-            SoundAnimationViewUI()
-                .foregroundColor(Color(uiColor: .softBlueGrey))
-                .padding(EdgeInsets(
-                    top: 0,
-                    leading: isCompactOrVertical(ruler: ruler) ? 80 : 0,
-                    bottom: 0,
-                    trailing: isCompactOrVertical(ruler: ruler) ? 80 : 0)
-                )
+        HStack {
+            Spacer()
+            SoundAnimationViewUI(animationColor: Color(uiColor: .softBlueGrey))
+            Spacer()
         }
     }
-    
-    private func isCompactOrVertical(ruler: GeometryProxy) -> Bool {
-        ruler.size.width < ruler.size.height || horizontalSizeClass == .compact
-    }
-
 }
 
 struct PianoSoloViewUI_Previews: PreviewProvider {
@@ -98,7 +95,7 @@ struct PianoSoloViewUI_Previews: PreviewProvider {
     @State static var selectedSong: SongObjectUI? = nil
     
     static var previews: some View {
-        PianoSoloViewUI(selectedSong: $selectedSong, isPlaying: false)
+        PianoSoloViewUI(selectedSong: $selectedSong, song: SongObjectUI(cluster: .makeDefault()!))
             .previewLayout(.sizeThatFits)
             .previewInterfaceOrientation(.portrait)
     }

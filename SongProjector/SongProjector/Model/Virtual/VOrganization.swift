@@ -64,36 +64,36 @@ class VOrganization: VEntity {
 
 	}
 	
-	override func setPropertiesTo(entity: Entity, context: NSManagedObjectContext) {
-		super.setPropertiesTo(entity: entity, context: context)
-		if let organization = entity as? Organization {
-			organization.hasRoles = NSSet(array: hasRoles.map({ $0.getManagedObject(context: context) }))
-			organization.hasContractLedgers = NSSet(array: hasContractLedgers.map({ $0.getManagedObject(context: context) }))
-		}
-	}
-	
-    override func getPropertiesFrom(entity: Entity, context: NSManagedObjectContext) {
-        super.getPropertiesFrom(entity: entity, context: context)
-		if let organization = entity as? Organization {
-            hasRoles = (organization.hasRoles?.allObjects as? [Role] ?? []).map({ VRole(entity: $0, context: context) })
-            hasContractLedgers = (organization.hasContractLedgers?.allObjects as? [ContractLedger] ?? []).map({ VContractLedger(entity: $0, context: context) })
-		}
-	}
+//	override func setPropertiesTo(entity: Entity, context: NSManagedObjectContext) {
+//		super.setPropertiesTo(entity: entity, context: context)
+//		if let organization = entity as? Organization {
+//			organization.hasRoles = NSSet(array: hasRoles.map({ $0.getManagedObject(context: context) }))
+//			organization.hasContractLedgers = NSSet(array: hasContractLedgers.map({ $0.getManagedObject(context: context) }))
+//		}
+//	}
+//
+//    override func getPropertiesFrom(entity: Entity, context: NSManagedObjectContext) {
+//        super.getPropertiesFrom(entity: entity, context: context)
+//		if let organization = entity as? Organization {
+//            hasRoles = (organization.hasRoles?.allObjects as? [Role] ?? []).map({ VRole(entity: $0, context: context) })
+//            hasContractLedgers = (organization.hasContractLedgers?.allObjects as? [ContractLedger] ?? []).map({ VContractLedger(entity: $0, context: context) })
+//		}
+//	}
 	
 	convenience init(organization: Organization, context: NSManagedObjectContext) {
 		self.init()
 		getPropertiesFrom(entity: organization, context: context)
 	}
 	
-    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-        if let entity: Organization = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
-            setPropertiesTo(entity: entity, context: context)
-            return entity
-        } else {
-            let entity: Organization = DataFetcher().createEntity(moc: context)
-            setPropertiesTo(entity: entity, context: context)
-            return entity
-        }
-    }
+//    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
+//        if let entity: Organization = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
+//            setPropertiesTo(entity: entity, context: context)
+//            return entity
+//        } else {
+//            let entity: Organization = DataFetcher().createEntity(moc: context)
+//            setPropertiesTo(entity: entity, context: context)
+//            return entity
+//        }
+//    }
 
 }

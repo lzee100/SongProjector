@@ -16,46 +16,61 @@ import CoreData
 let Store = STR()
 
 class STR {
-	lazy var persistentContainer: NSPersistentContainer = {
-		/*
-		The persistent container for the application. This implementation
-		creates and returns a container, having loaded the store for the
-		application to it. This property is optional since there are legitimate
-		error conditions that could cause the creation of the store to fail.
-		*/
-		let container = NSPersistentContainer(name: "SongProjector")
-		container.loadPersistentStores(completionHandler: { (storeDescription, error) in
-			if let error = error as NSError? {
-				// Replace this implementation with code to handle the error appropriately.
-				// fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+    
+    private let coreDataName = "SongProjector"
+    private(set) var persistentContainer: NSPersistentContainer
+    
+    init() {
+        let persistentContainer = NSPersistentContainer(name: coreDataName)
+        persistentContainer.loadPersistentStores(completionHandler: { (storeDescription, error) in
+            if let error = error as NSError? {
+                fatalError("Unresolved error \(error), \(error.userInfo)")
+            }
+        })
+        self.persistentContainer = persistentContainer
+    }
+    
+    func setup() {
+        // only for init to execute
+    }
+    
+    func reset() {
+        let storeContainer =
+        persistentContainer.persistentStoreCoordinator
 
-				/*
-				Typical reasons for an error here include:
-				* The parent directory does not exist, cannot be created, or disallows writing.
-				* The persistent store is not accessible, due to permissions or data protection when the device is locked.
-				* The device is out of space.
-				* The store could not be migrated to the current model version.
-				Check the error message to determine what the actual problem was.
-				*/
-				fatalError("Unresolved error \(error), \(error.userInfo)")
-			}
-		})
-		return container
-	}()
+        do {
+            for store in storeContainer.persistentStores {
+                try storeContainer.destroyPersistentStore(
+                    at: store.url!,
+                    ofType: store.type,
+                    options: nil
+                )
+            }
+        } catch {
+            print("could not delete core data container: \(error)")
+        }
+
+        persistentContainer = NSPersistentContainer(
+            name: coreDataName
+        )
+
+        persistentContainer.loadPersistentStores {
+            (store, error) in
+            print(error)
+        }
+    }
 }
 
-
-
-
-var moc: NSManagedObjectContext = {
+var moc: NSManagedObjectContext {
 	let context = Store.persistentContainer.viewContext
 	context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
 	return context
-}()
+}
 
 var newMOCBackground: NSManagedObjectContext {
     let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
     context.parent = moc
+    context.automaticallyMergesChangesFromParent = true
     context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
     return context
 }
@@ -77,103 +92,55 @@ extension NSPredicate {
     }
 }
 
-struct DataFetcher<T: Entity> {
+enum Predicate {
     
-    func getEntities(moc: NSManagedObjectContext, predicates: [NSPredicate] = [], sort: NSSortDescriptor? = nil, predicateCompoundType: NSCompoundPredicate.LogicalType = .and, fetchDeleted: Bool = false) -> [T] {
-        let Lock = NSRecursiveLock()
-        var entityName: String {  return T.classForCoder().description().deletingPrefix("ChurchBeam.") }
-        
-        Lock.lock()
-        
-        var predicates = predicates
-        if !fetchDeleted {
-            predicates.append(NSCompoundPredicate(andPredicateWithSubpredicates: predicates + [.skipDeleted, .skipRootDeleted]))
+    case skipDeleted
+    case skipRootDeleted
+    case skipHidden
+    case get(id: String)
+    case custom(format: String)
+    case customWithValue(format: String, value: String)
+    case compound(predicates: [Predicate], isOr: Bool)
+    
+    var predicate: NSPredicate {
+        switch self {
+        case .skipDeleted:
+            return NSPredicate(format: "deleteDate == nil")
+        case .skipRootDeleted:
+            return NSPredicate(format: "rootDeleteDate == nil")
+        case .skipHidden:
+            return NSPredicate(format: "isHidden == false")
+        case .get(id: let id):
+            return NSPredicate(format: "id = %@", id)
+        case .custom(let format):
+            return NSPredicate(format: format)
+        case .compound(predicates: let predicates, isOr: let isOr):
+            if isOr {
+                return NSCompoundPredicate(orPredicateWithSubpredicates: predicates.map { $0.predicate })
+            } else {
+                return NSCompoundPredicate(andPredicateWithSubpredicates: predicates.map { $0.predicate })
+            }
+        case .customWithValue(format: let format, value: let value):
+            return NSPredicate(format: "\(format)", value)
         }
-        
-        var entities: [T] = []
-        let request = NSFetchRequest<T>(entityName: entityName)
-//        request.returnsObjectsAsFaults = false
-        request.shouldRefreshRefetchedObjects = true
-        request.predicate = NSCompoundPredicate(type: predicateCompoundType, subpredicates: predicates)
-        
-        if let sortDiscriptor = sort {
-            request.sortDescriptors = [sortDiscriptor]
-        } else {
-            request.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: true)]
+    }
+}
+
+enum SortDescriptor {
+    
+    case position(asc: Bool)
+    case title(asc: Bool)
+    case updatedAt(asc: Bool)
+
+    var sortDescriptor: NSSortDescriptor {
+        switch self {
+        case .position(asc: let asc):
+            return NSSortDescriptor(key: "position", ascending: asc)
+        case .title(asc: let asc):
+            return NSSortDescriptor(key: "title", ascending: asc)
+        case .updatedAt(asc: let asc):
+            return NSSortDescriptor(key: "updatedAt", ascending: asc)
         }
-        
-        do {
-            let result = try moc.fetch(request)
-            entities = result
-        } catch {
-            print("Failed")
-            return []
-        }
-        
-        Lock.unlock()
-        
-        return entities
     }
     
-    func getEntity(moc: NSManagedObjectContext, predicates: [NSPredicate] = []) -> T? {
-        let Lock = NSRecursiveLock()
-        Lock.lock()
-        var entityName: String {  return T.classForCoder().description().deletingPrefix("ChurchBeam.") }
-        
-        
-        var entities: [T] = []
-        let request = NSFetchRequest<T>(entityName: entityName)
-        request.returnsObjectsAsFaults = false
-        request.predicate = NSCompoundPredicate(type: .and, subpredicates: predicates)
-                
-        do {
-            let result = try moc.fetch(request)
-            entities = result
-        } catch {
-            print("Failed")
-            return nil
-        }
-        
-        Lock.unlock()
-        
-        return entities.first
-        
-    }
-    
-    func getLastUpdated(moc: NSManagedObjectContext) -> T? {
-        let Lock = NSRecursiveLock()
-        var entityName: String {  return T.classForCoder().description().deletingPrefix("ChurchBeam.") }
-        
-        Lock.lock()
-        
-        var entities: [T] = []
-        let request = NSFetchRequest<T>(entityName: entityName)
-        request.returnsObjectsAsFaults = false
-        
-        request.sortDescriptors = [NSSortDescriptor(key: "updatedAt", ascending: false)]
-
-        do {
-            let result = try moc.fetch(request)
-            entities = result
-        } catch {
-            print("Failed")
-            return nil
-        }
-        
-        Lock.unlock()
-        
-        return entities.first
-        
-    }
-    
-    func createEntity(moc: NSManagedObjectContext) -> T {
-        var entityName: String {  return T.classForCoder().description().deletingPrefix("ChurchBeam.") }
-        let entityDes = NSEntityDescription.entity(forEntityName: entityName, in: moc)
-        let entity = NSManagedObject(entity: entityDes!, insertInto: moc) as! T
-        entity.id = "ChurchBeam-\(UUID().uuidString)"
-        return entity
-    }
-
-
-
 }

@@ -16,8 +16,7 @@ public struct SheetPastorsCodable: EntityCodableType, SheetMetaType {
     static func makeDefault() -> SheetPastorsCodable {
         SheetPastorsCodable(title: "Pastor John and Jessy Doe", content: "Pastoring in Almere city")
     }
-    init?(managedObject: NSManagedObject, context: NSManagedObjectContext) {
-        guard let entity = managedObject as? SheetPastorsEntity else { return nil }
+    init?(entity: SheetPastorsEntity) {
         id = entity.id
         userUID = entity.userUID
         title = entity.title
@@ -29,9 +28,6 @@ public struct SheetPastorsCodable: EntityCodableType, SheetMetaType {
         isEmptySheet = entity.isEmptySheet
         position = entity.position.intValue
         time = entity.time
-        if let theme = entity.hasTheme {
-            hasTheme = ThemeCodable(managedObject: theme, context: context)
-        }
         
         content = entity.content
         imagePath = entity.imagePath
@@ -45,7 +41,7 @@ public struct SheetPastorsCodable: EntityCodableType, SheetMetaType {
     init(id: String = "CHURCHBEAM" + UUID().uuidString,
          userUID: String = "",
          title: String? = nil,
-         createdAt: Date = Date().localDate(),
+         createdAt: Date = Date.localDate(),
          updatedAt: Date? = nil,
          deleteDate: Date? = nil,
          isTemp: Bool = false,
@@ -83,40 +79,7 @@ public struct SheetPastorsCodable: EntityCodableType, SheetMetaType {
         self.newSelectedSheetImageTempDirPath = newSelectedSheetImageTempDirPath
         self.isSheetImageDeleted = isSheetImageDeleted
     }
-    
-    func getManagedObjectFrom(_ context: NSManagedObjectContext) -> NSManagedObject {
         
-        if let entity: SheetPastorsEntity = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
-            setPropertiesTo(entity, context: context)
-            return entity
-        } else {
-            let entity: SheetPastorsEntity = DataFetcher().createEntity(moc: context)
-            setPropertiesTo(entity, context: context)
-            return entity
-        }
-    }
-    
-    private func setPropertiesTo(_ entity: SheetPastorsEntity, context: NSManagedObjectContext) {
-        entity.id = id
-        entity.userUID = userUID
-        entity.title = title
-        entity.createdAt = createdAt.nsDate
-        entity.updatedAt = updatedAt?.nsDate
-        entity.deleteDate = deleteDate?.nsDate
-        entity.rootDeleteDate = rootDeleteDate?.nsDate
-        
-        entity.isEmptySheet = isEmptySheet
-        entity.position = Int16(position)
-        entity.time = time
-        entity.hasTheme = hasTheme?.getManagedObjectFrom(context) as? Theme
-        
-        entity.content = content
-        entity.imagePath = imagePath
-        entity.thumbnailPath = thumbnailPath
-        entity.imagePathAWS = imagePathAWS
-    }
-
-    
     static var type: SheetType = .SheetPastors
     var sheetType: SheetType {
         .SheetPastors
@@ -125,7 +88,7 @@ public struct SheetPastorsCodable: EntityCodableType, SheetMetaType {
     var id: String = "CHURCHBEAM" + UUID().uuidString
     var userUID: String = ""
     var title: String? = nil
-    var createdAt: Date = Date().localDate()
+    var createdAt: Date = Date.localDate()
     var updatedAt: Date? = nil
     var deleteDate: Date? = nil
     var isTemp: Bool = false
@@ -266,18 +229,23 @@ extension SheetPastorsCodable: FileTransferable {
         if isSheetImageDeleted || forceDelete {
             imagePathAWS = nil
             // remove locally saved images
-            _ = try? UIImage.set(image: nil, imageName: imagePath, thumbNailName: thumbnailPath)
+            
+            try? DeleteFileAtURLUseCase(fileName: imagePath)?.delete()
+            try? DeleteFileAtURLUseCase(fileName: thumbnailPath)?.delete()
             imagePath = nil
             thumbnailPath = nil
         }
     }
     
-    func getDeleteObjects(forceDelete: Bool) -> [String] {
-        var fileNames: [String?] = []
-        if isSheetImageDeleted || forceDelete {
-            fileNames.append(imagePathAWS)
-        }
-        return fileNames.compactMap { $0 }
+    func getDeleteObjects(forceDelete: Bool) -> [DeleteObject] {
+        let deleteObjects = hasTheme?.getDeleteObjects(forceDelete: forceDelete) ?? []
+        
+        let deleteObject2 = DeleteObject(
+            imagePathAWS: imagePathAWS,
+            imagePath: imagePath,
+            imagePathThumbnail: thumbnailPath
+        )
+        return deleteObjects + [deleteObject2]
     }
     
     var uploadObjects: [TransferObject] {
@@ -297,26 +265,21 @@ extension SheetPastorsCodable: FileTransferable {
         for uploadObject in uploadObjects {
             if newSelectedSheetImageTempDirPath == uploadObject.fileName {
                 imagePathAWS = uploadObject.fileName
-                if let image = UIImage.getFromTempDir(imagePath: uploadObject.fileName) {
-                    let savedImage = try UIImage.set(image: image, imageName: uploadObject.fileName, thumbNailName: nil)
-                    imagePath = savedImage.imagePath
-                    thumbnailPath = savedImage.thumbPath
-                }
-                try FileManager.deleteTempFile(name: uploadObject.fileName)
+                imagePath = try MoveImageUseCase().moveImageFromTempToNewPersistantDirectory(uploadObject.fileName)
+                thumbnailPath = try SaveImageUseCase().createThumbAndSave(fileName: uploadObject.fileName)
                 newSelectedSheetImageTempDirPath = nil
             }
-            var theme = hasTheme
-            try theme?.setTransferObjects(transferObjects)
-            self.hasTheme = theme
         }
-        for download in downloadObjects.compactMap({ $0 as? DownloadObject }) {
-            if imagePathAWS == download.remoteURL.absoluteString {
+        
+        var theme = hasTheme
+        try theme?.setTransferObjects(transferObjects)
+        self.hasTheme = theme
+        
+        for download in transferObjects.compactMap({ $0 as? DownloadObject }) {
+            if imagePathAWS == download.filename {
                 try setBackgroundImage(image: download.image, imageName: download.filename)
             }
         }
-        var theme = self.hasTheme
-        try theme?.setTransferObjects(transferObjects)
-        self.hasTheme = theme
     }
     
     func setDeleteDate() -> FileTransferable {
@@ -331,7 +294,7 @@ extension SheetPastorsCodable: FileTransferable {
     
     func setUpdatedAt() -> FileTransferable {
         var modifiedDocument = self
-        modifiedDocument.updatedAt = Date()
+        modifiedDocument.updatedAt = Date.localDate()
         return modifiedDocument
     }
     
@@ -345,9 +308,11 @@ extension SheetPastorsCodable: FileTransferable {
     }
     
     private mutating func setBackgroundImage(image: UIImage?, imageName: String?) throws {
-        let savedImage = try UIImage.set(image: image, imageName: imageName ?? self.imagePath, thumbNailName: self.thumbnailPath)
-        self.imagePath = savedImage.imagePath
-        self.thumbnailPath = savedImage.thumbPath
+        if let image {
+            let imagePath = try SaveImageUseCase().saveImage(image: image, isThumb: false)
+            self.imagePath = imagePath
+            thumbnailPath = try SaveImageUseCase().createThumbAndSave(fileName: imagePath)
+        }
     }
 
 }

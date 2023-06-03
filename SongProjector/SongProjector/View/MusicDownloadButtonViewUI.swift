@@ -11,17 +11,18 @@ import SwiftUI
 @MainActor class MusicDownloadButtonViewModel: ObservableObject {
     
     @Published var error: LocalizedError? = nil
-    @Published private(set) var showingLoader = false
+    @Published var showingLoader = false
     
-    @State private var collection: ClusterCodable
+    @ObservedObject private(set) var collection: WrappedStruct<ClusterCodable>
     
-    init(collection: ClusterCodable) {
-        self._collection = State(initialValue: collection)
+    init(collection: WrappedStruct<ClusterCodable>) {
+        self._collection = ObservedObject(initialValue: collection)
     }
     
     func downloadMusic(manager: MusicDownloadManager) async {
         showingLoader = true
         do {
+            guard await !manager.isDownloading(for: collection) else { return }
             try await manager.downloadMusicFor(collection: collection)
             showingLoader = false
         } catch {
@@ -32,17 +33,15 @@ import SwiftUI
     func isDownloading(manager: MusicDownloadManager) async -> Bool {
         await manager.isDownloading(for: collection)
     }
-    
 }
 
 struct MusicDownloadButtonViewUI: View {
     
-    @State private var viewModel: MusicDownloadButtonViewModel
+    @StateObject private var viewModel: MusicDownloadButtonViewModel
     @EnvironmentObject private var musicDownloadManager: MusicDownloadManager
-    @State private var showingDownloading = false
     
-    init(collection: ClusterCodable) {
-        self._viewModel = State(initialValue: MusicDownloadButtonViewModel(collection: collection))
+    init(collection: WrappedStruct<ClusterCodable>) {
+        self._viewModel = StateObject(wrappedValue: MusicDownloadButtonViewModel(collection: collection))
     }
     
     var body: some View {
@@ -55,17 +54,18 @@ struct MusicDownloadButtonViewUI: View {
                 Image("DownloadIcon")
                     .resizable()
                     .renderingMode(.template)
-                    .foregroundColor(!showingDownloading ? .white : .black.opacity(0.8))
+                    .foregroundColor(viewModel.showingLoader ? .clear : .white)
                     .frame(width: 30, height: 30)
-                    .opacity(!showingDownloading ? 1 : 0)
                     .overlay {
-                        if showingDownloading {
+                        if viewModel.showingLoader {
                             ProgressView()
+                                .scaleEffect(x: 1.4, y: 1.4)
+                                .tint(Color(uiColor: .blackColor).opacity(0.8))
                         }
                     }
             }
             .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
-            .background(Color(uiColor: !showingDownloading ? .softBlueGrey : .clear))
+            .background(Color(uiColor: viewModel.showingLoader ? .clear : .softBlueGrey))
             .cornerRadius(8)
         }
         .buttonStyle(.plain)
@@ -74,12 +74,9 @@ struct MusicDownloadButtonViewUI: View {
             Task {
                 let isDownloading = await viewModel.isDownloading(manager: musicDownloadManager)
                 await MainActor.run(body: {
-                    self.showingDownloading = isDownloading
+                    viewModel.showingLoader = isDownloading
                 })
             }
-        }
-        .onChange(of: viewModel.showingLoader) { newValue in
-            showingDownloading = newValue
         }
     }
 }
@@ -87,6 +84,6 @@ struct MusicDownloadButtonViewUI: View {
 struct MusicDownloadButtonUI_Previews: PreviewProvider {
     @State static var viewModel = CollectionsViewModel()
     static var previews: some View {
-        MusicDownloadButtonViewUI(collection: .makeDefault()!)
+        MusicDownloadButtonViewUI(collection: WrappedStruct(withItem: .makeDefault()!))
     }
 }

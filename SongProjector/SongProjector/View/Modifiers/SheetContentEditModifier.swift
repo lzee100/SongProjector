@@ -13,9 +13,9 @@ struct SheetContentEditModifier: ViewModifier {
     
     let scaleFactor: CGFloat
     let multiLine: Bool
-    @ObservedObject var editViewModel: WrappedStruct<EditSheetOrThemeViewModel>
+    @ObservedObject var sheetViewModel: SheetViewModel
     private var alignment: TextAlignment {
-        switch editViewModel.item.contentAlignmentNumber {
+        switch sheetViewModel.themeModel.theme.contentAlignmentNumber {
         case 0: return .leading
         case 1: return .center
         case 2: return .trailing
@@ -23,10 +23,10 @@ struct SheetContentEditModifier: ViewModifier {
         }
     }
 
-    init(scaleFactor: CGFloat, multiLine: Bool, editViewModel: WrappedStruct<EditSheetOrThemeViewModel>) {
+    init(scaleFactor: CGFloat, multiLine: Bool, sheetViewModel: SheetViewModel) {
         self.scaleFactor = scaleFactor
         self.multiLine = multiLine
-        self.editViewModel = editViewModel
+        self.sheetViewModel = sheetViewModel
     }
     
     func body(content: Content) -> some View {

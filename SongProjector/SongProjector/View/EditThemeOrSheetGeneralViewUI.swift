@@ -10,15 +10,21 @@ import SwiftUI
 
 struct EditThemeOrSheetGeneralViewUI: View {
     
-    var scrollViewProxy: ScrollViewProxy? = nil
-    @Binding var isSectionGeneralExpanded: Bool
-    @ObservedObject var editSheetOrThemeModel: WrappedStruct<EditSheetOrThemeViewModel>
+    private let scrollViewProxy: ScrollViewProxy?
+    @Binding private var isSectionGeneralExpanded: Bool
+    @ObservedObject private var sheetViewModel: SheetViewModel
+    
+    init(scrollViewProxy: ScrollViewProxy? = nil, isSectionGeneralExpanded: Binding<Bool>, sheetViewModel: SheetViewModel) {
+        self.scrollViewProxy = scrollViewProxy
+        self._isSectionGeneralExpanded = isSectionGeneralExpanded
+        self.sheetViewModel = sheetViewModel
+    }
 
     var body: some View {
         GroupBox() {
             DisclosureGroup(isExpanded: $isSectionGeneralExpanded) {
                 Divider()
-                switch editSheetOrThemeModel.item.editMode {
+                switch sheetViewModel.sheetEditType {
                 case .theme:
                     VStack() {
                         titleInputView
@@ -33,8 +39,8 @@ struct EditThemeOrSheetGeneralViewUI: View {
                         backgroundColorAndImageView
                         dividerAndDisplayTime
                     }
-                case .sheet(_, let type):
-                    viewForSheet(type)
+                case .custom, .bibleStudy, .lyrics:
+                    viewForSheet(sheetViewModel.sheetModel.sheetType)
                 }
             } label: {
                 Text(AppText.NewTheme.sectionGeneral)
@@ -51,19 +57,22 @@ struct EditThemeOrSheetGeneralViewUI: View {
     
     @ViewBuilder var backgroundColorAndImageView: some View {
         VStack {
-            LabelColorPickerViewUI(label: AppText.NewTheme.descriptionBackgroundColor, defaultColor: .white, selectedColor: $editSheetOrThemeModel.item.backgroundColor)
+            LabelColorPickerViewUI(label: AppText.NewTheme.descriptionBackgroundColor, defaultColor: .white, selectedColor: sheetViewModel.themeModel.theme.backgroundColor?.color ?? .white) { color in
+                sheetViewModel.themeModel.theme.backgroundColor = color
+            }
             
             Divider()
             
-            LabelPhotoPickerViewUI(label: AppText.NewTheme.backgroundImage, selectedImageData: editSheetOrThemeModel.item.getThemeImageData(thumb: true), selectedImage: $editSheetOrThemeModel.item.newSelectedThemeImage) { image in
-                if image == nil {
-                    editSheetOrThemeModel.item.deleteThemeImage()
-                    editSheetOrThemeModel.item.backgroundTransparancyNumber = 1.0
+            LabelPhotoPickerViewUI(label: AppText.NewTheme.backgroundImage, selectedImage: sheetViewModel.themeModel.getImage(thumb: true)) { image in
+                if let image {
+                    sheetViewModel.themeModel.newSelectedImage = image
+                } else {
+                    sheetViewModel.themeModel.deleteThemeImage()
                 }
             }
             
-            if editSheetOrThemeModel.item.getThemeImage(thumb: true) != nil {
-                Slider(value: $editSheetOrThemeModel.item.backgroundTransparancyNumber, in: 0.0...1.0) {
+            if sheetViewModel.themeModel.getImage(thumb: true) != nil {
+                Slider(value: $sheetViewModel.themeModel.theme.backgroundTransparancyNumber, in: 0.0...1.0) {
                     Text(AppText.NewTheme.descriptionBackgroundTransparency)
                         .styleAs(font: .xNormal)
                 }
@@ -75,10 +84,10 @@ struct EditThemeOrSheetGeneralViewUI: View {
     @ViewBuilder var titleInputView: some View {
         TextFieldViewUI(
             textFieldViewModel: TextFieldViewModel(
-                label: editSheetOrThemeModel.item.editMode.isSheet ? AppText.NewSheetTitleImage.descriptionTitle : AppText.NewTheme.descriptionTitle,
+                label: AppText.NewTheme.sectionTitle,
                 placeholder: AppText.NewTheme.descriptionTitlePlaceholder,
                 characterLimit: 80,
-                text: $editSheetOrThemeModel.item.title
+                text: $sheetViewModel.title
             )
         )
     }
@@ -89,7 +98,7 @@ struct EditThemeOrSheetGeneralViewUI: View {
                 label: AppText.NewSheetTitleImage.descriptionContent,
                 placeholder: AppText.NewTheme.sampleLyrics,
                 characterLimit: 400,
-                text: $editSheetOrThemeModel.item.sheetContent
+                text: $sheetViewModel.sheetModel.content
             )
         )
     }
@@ -100,7 +109,7 @@ struct EditThemeOrSheetGeneralViewUI: View {
                 label: AppText.NewSheetTitleImage.descriptionTextLeft,
                 placeholder: AppText.NewTheme.sampleLyrics,
                 characterLimit: 400,
-                text: $editSheetOrThemeModel.item.sheetContent
+                text: $sheetViewModel.sheetModel.content
             )
         )
     }
@@ -111,36 +120,42 @@ struct EditThemeOrSheetGeneralViewUI: View {
                 label: AppText.NewSheetTitleImage.descriptionTextRight,
                 placeholder: AppText.NewTheme.sampleLyrics,
                 characterLimit: 400,
-                text: $editSheetOrThemeModel.item.sheetContentRight
+                text: $sheetViewModel.sheetModel.contentRight
             )
         )
     }
     
     @ViewBuilder var asThemeInputView: some View {
-        PickerViewUI(label: AppText.NewTheme.descriptionAsTheme, pickerValues: editSheetOrThemeModel.item.getPersistedThemes()) { value in
-            if let theme = value.value as? Theme {
-                editSheetOrThemeModel.item.styleAsTheme(theme)
+        PickerViewUI(
+            label: AppText.NewTheme.descriptionAsTheme,
+            getPickerValues: {
+                await GetThemesUseCase().fetch().map { $0.pickerRepresentable }
+            },
+            pickerValues: [],
+            selectedItem: nil) { value in
+                if let theme = value.value as? ThemeCodable {
+                    sheetViewModel.themeModel.styleAs(theme)
+                }
             }
-        }
     }
     
     @ViewBuilder var displayEmptySheetAndAsFirst: some View {
-        ToggleViewUI(label: AppText.NewTheme.descriptionHasEmptySheet, isOn: $editSheetOrThemeModel.item.hasEmptySheet)
+        ToggleViewUI(label: AppText.NewTheme.descriptionHasEmptySheet, isOn: $sheetViewModel.themeModel.theme.hasEmptySheet)
         
-                if editSheetOrThemeModel.item.hasEmptySheet {
+                if sheetViewModel.themeModel.theme.hasEmptySheet {
                     Divider()
-                    ToggleViewUI(label: AppText.NewTheme.descriptionPositionEmptySheet, isOn: $editSheetOrThemeModel.item.isEmptySheetFirst)
+                    ToggleViewUI(label: AppText.NewTheme.descriptionPositionEmptySheet, isOn: $sheetViewModel.themeModel.theme.isEmptySheetFirst)
                 }
     }
     
     @ViewBuilder var allSheetsHaveTitle: some View {
-        ToggleViewUI(label: AppText.NewTheme.descriptionAllTitle, isOn: $editSheetOrThemeModel.item.allHaveTitle)
+        ToggleViewUI(label: AppText.NewTheme.descriptionAllTitle, isOn: $sheetViewModel.themeModel.theme.allHaveTitle)
     }
     
     @ViewBuilder var dividerAndDisplayTime: some View {
         VStack {
             Divider()
-            ToggleViewUI(label: AppText.NewTheme.descriptionDisplayTime, isOn: $editSheetOrThemeModel.item.displayTime)
+            ToggleViewUI(label: AppText.NewTheme.descriptionDisplayTime, isOn: $sheetViewModel.themeModel.theme.displayTime)
         }
     }
     
@@ -193,12 +208,4 @@ struct EditThemeOrSheetGeneralViewUI: View {
         }
     }
 
-}
-
-struct EditThemeOrSheetGeneralViewUI_Previews: PreviewProvider {
-    @State static var editViewModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .theme(nil), isUniversal: false, isBibleVers: false)!)
-    @State static var isExpanded = true
-    static var previews: some View {
-        EditThemeOrSheetGeneralViewUI(isSectionGeneralExpanded: $isExpanded, editSheetOrThemeModel: editViewModel)
-    }
 }

@@ -119,44 +119,44 @@ class TagsController: ChurchBeamViewController, UITableViewDataSource, UITableVi
         return view
     }
     
-    override func requesterDidFinish(requester: RequesterBase, result: RequestResult, isPartial: Bool) {
-        self.navigationItem.rightBarButtonItems?.forEach({ $0.isEnabled = true })
-        self.hideLoader()
-        switch result {
-        case .failed(let error): self.show(error)
-        case .success(_):
-            if requester.id == TagSubmitter.id, let editingInfo = self.editingInfo {
-                if editingInfo.0 == .delete, let indexPath = editingInfo.1 {
-                    if let index = self.tags.firstIndex(where: { $0.id == self.filteredTags[indexPath.row].id }) {
-                        self.tags.remove(at: index)
-                    }
-                    self.filteredTags.remove(at: indexPath.row)
-                    self.tableView.deleteRows(at: [indexPath], with: .top)
-                    Queues.main.asyncAfter(deadline: .now() + 0.4) {
-                        self.tableView.reloadData()
-                    }
-                } else if editingInfo.0 == .put, let indexPath = editingInfo.1 {
-                    let tags: [Tag] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "position", ascending: true))
-                    self.tags = tags.map({ VTag(tag: $0, context: moc) })
-                    self.tableView.reloadRows(at: [indexPath], with: .fade)
-                } else {
-                    let tags: [Tag] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "position", ascending: true))
-                    self.tags = tags.map({ VTag(tag: $0, context: moc) })
-                    self.tableView.reloadData()
-                }
-            } else {
-                update()
-            }
-        }
-        self.editingInfo = nil
-    }
+//    override func requesterDidFinish(requester: RequesterBase, result: RequestResult, isPartial: Bool) {
+//        self.navigationItem.rightBarButtonItems?.forEach({ $0.isEnabled = true })
+//        self.hideLoader()
+//        switch result {
+//        case .failed(let error): self.show(error)
+//        case .success(_):
+//            if requester.id == TagSubmitter.id, let editingInfo = self.editingInfo {
+//                if editingInfo.0 == .delete, let indexPath = editingInfo.1 {
+//                    if let index = self.tags.firstIndex(where: { $0.id == self.filteredTags[indexPath.row].id }) {
+//                        self.tags.remove(at: index)
+//                    }
+//                    self.filteredTags.remove(at: indexPath.row)
+//                    self.tableView.deleteRows(at: [indexPath], with: .top)
+//                    Queues.main.asyncAfter(deadline: .now() + 0.4) {
+//                        self.tableView.reloadData()
+//                    }
+//                } else if editingInfo.0 == .put, let indexPath = editingInfo.1 {
+//                    let tags: [Tag] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "position", ascending: true))
+//                    self.tags = tags.map({ VTag(tag: $0, context: moc) })
+//                    self.tableView.reloadRows(at: [indexPath], with: .fade)
+//                } else {
+//                    let tags: [Tag] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "position", ascending: true))
+//                    self.tags = tags.map({ VTag(tag: $0, context: moc) })
+//                    self.tableView.reloadData()
+//                }
+//            } else {
+//                update()
+//            }
+//        }
+//        self.editingInfo = nil
+//    }
     
-    override func update() {
-        let tags: [Tag] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "position", ascending: true))
-        self.tags = tags.map({ VTag(tag: $0, context: moc) })
-        self.filteredTags = self.tags
-        self.tableView.reloadData()
-    }
+//    override func update() {
+//        let tags: [Tag] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "position", ascending: true))
+//        self.tags = tags.map({ VTag(tag: $0, context: moc) })
+//        self.filteredTags = self.tags
+//        self.tableView.reloadData()
+//    }
     
     
     

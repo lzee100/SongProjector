@@ -10,26 +10,34 @@ import SwiftUI
 
 struct EditThemeOrSheetContentViewUI: View {
     
-    var scrollViewProxy: ScrollViewProxy? = nil
-    @Binding var isSectionContentExpanded: Bool
-    @ObservedObject var editSheetOrThemeModel: WrappedStruct<EditSheetOrThemeViewModel>
-    @State var contentColor: Color = .black
-//    @State var contentBorderColor: Color = .black
-    @State var selectedAlignmentValue: PickerRepresentable
+    private let scrollViewProxy: ScrollViewProxy?
+    @Binding private var isSectionContentExpanded: Bool
+    @ObservedObject private var sheetViewModel: SheetViewModel
+    @State private var contentColor: Color = .black
+    @State private var selectedAlignmentValue: PickerRepresentable
+    
+    init(scrollViewProxy: ScrollViewProxy? = nil, isSectionContentExpanded: Binding<Bool>, sheetViewModel: SheetViewModel, contentColor: Color, selectedAlignmentValue: PickerRepresentable) {
+        self.scrollViewProxy = scrollViewProxy
+        self._isSectionContentExpanded = isSectionContentExpanded
+        self.sheetViewModel = sheetViewModel
+        self._contentColor = State(initialValue: contentColor)
+        self._selectedAlignmentValue = State(initialValue: selectedAlignmentValue)
+    }
     
     var body: some View {
         GroupBox() {
             DisclosureGroup(isExpanded: $isSectionContentExpanded) {
                 Divider()
-                switch editSheetOrThemeModel.item.editMode {
-                case .theme:
+                switch sheetViewModel.sheetEditType {
+                case .theme :
                     viewsPartOne(hasBackgroundColorAndAlignment: true)
                     viewsPartTwo
-                case .sheet(_, let type):
-                    viewFor(type)
+                default:
+                    viewFor(sheetViewModel.sheetModel.sheetType)
+
                 }
             } label: {
-                Text(editSheetOrThemeModel.item.editMode.isSheet ? AppText.NewSheetTitleImage.sectionContentTitle : AppText.NewTheme.sectionLyrics)
+                Text(AppText.NewSheetTitleImage.sectionContentTitle)
                     .styleAsSection
             }
             .accentColor(.black.opacity(0.8))
@@ -89,7 +97,7 @@ struct EditThemeOrSheetContentViewUI: View {
     @ViewBuilder private var contentFontPickerView: some View {
         PickerViewUI(label: AppText.NewTheme.fontFamilyDescription, pickerValues: fontNamePickerValues) { container in
             if let fontName = container.value as? String {
-                editSheetOrThemeModel.item.contentFontName = fontName
+                sheetViewModel.themeModel.theme.contentFontName = fontName
             }
         }
     }
@@ -97,7 +105,7 @@ struct EditThemeOrSheetContentViewUI: View {
     @ViewBuilder private var contentAlignmentView: some View {
         PickerViewUI(label: AppText.NewTheme.descriptionAlignment, pickerValues: Self.fontAlignmentPickerValues, selectedItem: $selectedAlignmentValue) { container in
             if let alignmentTuple = container.value as? (Int, String) {
-                editSheetOrThemeModel.item.contentAlignmentNumber = Int16(alignmentTuple.0)
+                sheetViewModel.themeModel.theme.contentAlignmentNumber = Int16(alignmentTuple.0)
             }
         }
     }
@@ -107,7 +115,7 @@ struct EditThemeOrSheetContentViewUI: View {
             return value > 4
         }, allowIncrement: { value in
             return value < 30
-        }, numberValue: $editSheetOrThemeModel.item.contentTextSize))
+        }, numberValue: $sheetViewModel.themeModel.theme.contentTextSize))
     }
     
 //    @ViewBuilder private var contentBorderSizeModifierView: some View {
@@ -119,9 +127,9 @@ struct EditThemeOrSheetContentViewUI: View {
 //    }
 
     @ViewBuilder private var contentForegroundColorView: some View {
-        LabelColorPickerViewUI(label: AppText.NewTheme.textColor, defaultColor: .black, colorDidChange: { newColor in
-            editSheetOrThemeModel.item.contentTextColorHex = newColor
-        }, selectedColor: $contentColor)
+        LabelColorPickerViewUI(label: AppText.NewTheme.textColor, defaultColor: .black, selectedColor: sheetViewModel.themeModel.theme.contentTextColorHex?.color ?? .black, colorDidChange: { newColor in
+            sheetViewModel.themeModel.theme.contentTextColorHex = newColor
+        })
     }
     
 //    @ViewBuilder private var contentBorderColorView: some View {
@@ -131,15 +139,15 @@ struct EditThemeOrSheetContentViewUI: View {
 //    }
     
     @ViewBuilder private var contentBoldToggleView: some View {
-        ToggleViewUI(label: AppText.NewTheme.bold, isOn: $editSheetOrThemeModel.item.isContentBold)
+        ToggleViewUI(label: AppText.NewTheme.bold, isOn: $sheetViewModel.themeModel.theme.isContentBold)
     }
 
     @ViewBuilder private var contentItalicToggleView: some View {
-        ToggleViewUI(label: AppText.NewTheme.italic, isOn: $editSheetOrThemeModel.item.isContentItalic)
+        ToggleViewUI(label: AppText.NewTheme.italic, isOn: $sheetViewModel.themeModel.theme.isContentItalic)
     }
 
     @ViewBuilder private var contentUnderlinedToggleView: some View {
-        ToggleViewUI(label: AppText.NewTheme.underlined, isOn: $editSheetOrThemeModel.item.isContentUnderlined)
+        ToggleViewUI(label: AppText.NewTheme.underlined, isOn: $sheetViewModel.themeModel.theme.isContentUnderlined)
     }
     
     private var fontNamePickerValues: [PickerRepresentable] {
@@ -149,13 +157,4 @@ struct EditThemeOrSheetContentViewUI: View {
     
     static let fontAlignmentPickerValues: [PickerRepresentable] =
     [(0, AppText.NewTheme.alignLeft), (1, AppText.NewTheme.alignCenter), (2, AppText.NewTheme.alignRight)].map { PickerRepresentable(value: $0, label: $0.1) }
-}
-
-struct EditThemeOrSheetContentViewUI_Previews: PreviewProvider {
-    @State static var editViewModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .theme(nil), isUniversal: false, isBibleVers: false)!)
-    @State static var selectedcontentAlignment = EditThemeOrSheetContentViewUI.fontAlignmentPickerValues.first!
-    @State static var isSectionExpanded = true
-    static var previews: some View {
-        EditThemeOrSheetContentViewUI(isSectionContentExpanded: $isSectionExpanded, editSheetOrThemeModel: editViewModel, selectedAlignmentValue: selectedcontentAlignment)
-    }
 }

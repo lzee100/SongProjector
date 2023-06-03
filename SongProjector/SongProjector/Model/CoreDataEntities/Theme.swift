@@ -73,9 +73,3 @@ extension Theme {
 	@NSManaged public func removeFromHasSheets(_ values: NSSet)
 	
 }
-
-extension Theme {
-    var pickerRepresentable: PickerRepresentable {
-        PickerRepresentable(value: self, label: self.title ?? "-")
-    }
-}

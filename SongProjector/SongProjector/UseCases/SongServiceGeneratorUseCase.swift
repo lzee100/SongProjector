@@ -74,8 +74,8 @@ actor SongServiceGeneratorUseCase {
     }
     
     private func filterOn(_ tagIds: [String], to clustersForSection: inout [ClusterCodable]) async {
-        let tags: [Tag] = DataFetcher().getEntities(moc: moc, predicates: tagIds.map { .get(id: $0) })
-        clustersForSection = await FilteredCollectionsUseCase().getCollections(searchText: nil, showDeleted: false, selectedTags: tags.compactMap { TagCodable(managedObject: $0, context: moc) })
+        let tags = await GetTagsUseCase().fetch(predicates: tagIds.map { .get(id: $0) }, sort: .position(asc: true), predicateCompoundPredicateType: .or)
+        clustersForSection = await FilteredCollectionsUseCase.getCollections(searchText: nil, showDeleted: false, selectedTags: tags)
     }
     
     private func filterOnPlayDate(_ clustersForSection: inout [ClusterCodable], numberOfSongs: Int) {
@@ -110,23 +110,20 @@ actor SongServiceGeneratorUseCase {
         return clusterComments
     }
     
-    func update(_ songServiceSectionWithSongs: [SongServiceSectionWithSongs]) -> [SongServiceSectionWithSongs] {
+    func update(_ songServiceSectionWithSongs: [SongServiceSectionWithSongs]) async -> [SongServiceSectionWithSongs] {
         
         var updatedSongServiceSectionWithSongs: [SongServiceSectionWithSongs] = []
-        songServiceSectionWithSongs.forEach { section in
+        
+        await songServiceSectionWithSongs.concurrentForEach { section in
             var clusterCodables: [ClusterComment] = []
             
-            section.cocList.forEach { clusterComment in
+            await section.cocList.concurrentForEach { clusterComment in
                 switch clusterComment {
                 case .cluster(let cluster):
-                    let cluster: Cluster? = DataFetcher().getEntity(moc: moc, predicates: [.get(id: cluster.id)])
-                    let codable = [cluster]
-                        .compactMap { $0 }
-                        .compactMap { ClusterCodable(managedObject: $0, context: moc) }
-                        .first
+                    let refreshedCluster = await GetClustersUseCase().fetch(predicates: [.get(id: cluster.id)]).first
                     
-                    if let codable {
-                        clusterCodables.append(.cluster(codable))
+                    if let refreshedCluster {
+                        clusterCodables.append(.cluster(refreshedCluster))
                     } else {
                         clusterCodables.append(.comment)
                     }

@@ -128,11 +128,12 @@ class SubmitTagOperation: UniversalClusterOperation {
     }
     
     private var hasTag: Bool {
-        var predicates: [NSPredicate] = []
-        predicates.append("isDeletable", equals: "NO")
-        let moc = newMOCBackground
-        let tag: Tag? = DataFetcher().getEntity(moc: moc, predicates: predicates)
-        return [tag].compactMap({ $0 }).map({ VTag(tag: $0, context: moc) }).count > 0
+        return false
+//        var predicates: [NSPredicate] = []
+//        predicates.append("isDeletable", equals: "NO")
+//        let moc = newMOCBackground
+//        let tag: Tag? = DataFetcher().getEntity(moc: moc, predicates: predicates)
+//        return [tag].compactMap({ $0 }).map({ VTag(tag: $0, context: moc) }).count > 0
     }
     
     override func requesterDidFinish(requester: RequesterBase, result: RequestResult, isPartial: Bool) {
@@ -173,10 +174,11 @@ class SubmitThemeOperation: UniversalClusterOperation {
     }
     
     private var hasTheme: Bool {
-        var predicates: [NSPredicate] = []
-        predicates.append("isDeletable", equals: "NO")
-        let theme: Theme? = DataFetcher().getEntity(moc: moc, predicates: predicates)
-        return theme != nil
+        return false
+//        var predicates: [NSPredicate] = []
+//        predicates.append("isDeletable", equals: "NO")
+//        let theme: Theme? = DataFetcher().getEntity(moc: moc, predicates: predicates)
+//        return theme != nil
     }
     
     override func requesterDidFinish(requester: RequesterBase, result: RequestResult, isPartial: Bool) {
@@ -213,10 +215,11 @@ class FetchThemeOperation: UniversalClusterOperation {
     }
     
     private var hasTheme: Bool {
-        var predicates: [NSPredicate] = []
-        predicates.append("isDeletable", equals: "NO")
-        let theme: Theme? = DataFetcher().getEntity(moc: moc, predicates: predicates)
-        return theme != nil
+        return false
+//        var predicates: [NSPredicate] = []
+//        predicates.append("isDeletable", equals: "NO")
+//        let theme: Theme? = DataFetcher().getEntity(moc: moc, predicates: predicates)
+//        return theme != nil
     }
 }
 
@@ -239,11 +242,12 @@ class FetchTagOperation: UniversalClusterOperation {
     }
     
     private var hasTag: Bool {
-        var predicates: [NSPredicate] = []
-        predicates.append("isDeletable", equals: "NO")
-        let moc = newMOCBackground
-        let tag: Tag? = DataFetcher().getEntity(moc: moc, predicates: predicates)
-        return [tag].compactMap({ $0 }).map({ VTag(tag: $0, context: moc) }).count > 0
+        return false
+//        var predicates: [NSPredicate] = []
+//        predicates.append("isDeletable", equals: "NO")
+//        let moc = newMOCBackground
+//        let tag: Tag? = DataFetcher().getEntity(moc: moc, predicates: predicates)
+//        return [tag].compactMap({ $0 }).map({ VTag(tag: $0, context: moc) }).count > 0
     }
     
 }
@@ -265,10 +269,11 @@ class FetchChurchOperation: UniversalClusterOperation {
     }
     
     private var hasChurch: Bool {
-        let context = newMOCBackground
-        let church: Church? = DataFetcher().getEntity(moc: context, predicates: [.skipDeleted])
-        let has = church != nil
-        return has
+        return false
+//        let context = newMOCBackground
+//        let church: Church? = DataFetcher().getEntity(moc: context, predicates: [.skipDeleted])
+//        let has = church != nil
+//        return has
     }
 }
 

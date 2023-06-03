@@ -17,8 +17,9 @@ public class VSongServiceSection: VEntity {
 	var hasSongServiceSettings: VSongServiceSettings? = nil
 
     func hasTags(moc: NSManagedObjectContext) -> [VTag] {
-        let persitentTags: [Tag] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted])
-        return persitentTags.filter({ tag in tagIds.contains(tag.id) }).compactMap({ VTag(tag: $0, context: moc) })
+        []
+//        let persitentTags: [Tag] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted])
+//        return persitentTags.filter({ tag in tagIds.contains(tag.id) }).compactMap({ VTag(tag: $0, context: moc) })
     }
     	
 	enum CodingKeysSongServiceSection: String, CodingKey
@@ -104,16 +105,5 @@ public class VSongServiceSection: VEntity {
         getPropertiesFrom(entity: songServiceSection, context: context)
 	}
 	
-    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-        if let entity: SongServiceSection = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
-            setPropertiesTo(entity: entity, context: context)
-            return entity
-        } else {
-            let entity: SongServiceSection = DataFetcher().createEntity(moc: context)
-            setPropertiesTo(entity: entity, context: context)
-            return entity
-        }
-    }
-
 	
 }

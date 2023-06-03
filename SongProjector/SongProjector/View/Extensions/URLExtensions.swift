@@ -10,6 +10,9 @@ import Foundation
 
 
 extension URL {
+    
+    static let churchbeamDirectory = URL.documentsDirectory.appending(component: "churchbeam", directoryHint: .isDirectory)
+    static let churchbeamDirectoryTemp = URL.temporaryDirectory.appending(component: "churchbeam", directoryHint: .isDirectory)
 	
 	static func fromString(_ url: String, parameters: [String: Any]?) -> URL? {
 		

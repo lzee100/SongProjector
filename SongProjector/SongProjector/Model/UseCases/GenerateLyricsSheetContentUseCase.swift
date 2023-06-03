@@ -10,49 +10,45 @@ import Foundation
 
 struct GenerateLyricsSheetContentUseCase {
     
-    static func getTitle(from text: String) -> String {
-        let start = text.index(text.startIndex, offsetBy: 0)
-        guard let end = text.range(of: "\n\n") else { return "" }
-
-        if let rangeTitle = text.range(of: "\n\n"){
-            let rangeSheetTitle = start..<rangeTitle.lowerBound
-            return String(text[rangeSheetTitle])
-        }
-        return ""
+    private enum Bound {
+        case lowerBound
+        case upperBound
     }
     
-    static func buildSheets(fromText: String, cluster: ClusterCodable) -> [EditSheetOrThemeViewModel] {
-        
-        var contentToDevide = fromText + "\n\n"
-        
-        // get title
-        if let range = contentToDevide.range(of: "\n\n") {
-            let start = contentToDevide.index(contentToDevide.startIndex, offsetBy: 0)
-            let rangeRemove = start..<range.upperBound
-            contentToDevide.removeSubrange(rangeRemove)
-        }
-        
-        var position = 0
-        var newSheets: [SheetTitleContentCodable] = []
-        // get sheets
-        while let range = contentToDevide.range(of: "\n\n") {
-            
-            // get content
-            let start = contentToDevide.index(contentToDevide.startIndex, offsetBy: 0)
-            let rangeSheet = start..<range.lowerBound
-            let rangeRemove = start..<range.upperBound
-            
-            let sheetLyrics = String(contentToDevide[rangeSheet])
-            
-            if let newSheet = SheetTitleContentCodable.makeDefault(position: position, title: nil, content: sheetLyrics) {
-                newSheets.append(newSheet)
-                position += 1
-            }
-            
-            contentToDevide.removeSubrange(rangeRemove)
-        }
-                
-        return newSheets.compactMap { EditSheetOrThemeViewModel(editMode: .sheet((cluster, $0), sheetType: $0.sheetType), isUniversal: uploadSecret != nil, isBibleVers: false) }
+    func getTitle(from text: String) -> String {
+        let contentToDevide = text.split(separator: "\n\n").map(String.init)
+        return contentToDevide.first ?? ""
     }
-
+        
+    func buildSheetsModels(from text: String, cluster: ClusterCodable) async throws -> [SheetViewModel] {
+                
+        let contentToDevide = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        var sheetContent = contentToDevide.split(separator: "\n\n", omittingEmptySubsequences: false).map(String.init)
+        guard sheetContent.filter({ !$0.isBlanc }).count > 0 else { return [] }
+        sheetContent.removeFirst() // removes the title
+        
+        var models: [SheetViewModel] = []
+        for (index, content) in sheetContent.enumerated() {
+            if let newSheet = SheetTitleContentCodable.makeDefault(position: index, title: nil, content: content) {
+                let defaultTheme = try await CreateThemeUseCase().create()
+                let model = try await SheetViewModel(
+                    cluster: cluster,
+                    theme: cluster.theme,
+                    defaultTheme: defaultTheme,
+                    sheet: newSheet,
+                    sheetType: newSheet.sheetType,
+                    sheetEditType: .lyrics
+                )
+                models.append(model)
+            }
+        }
+        return models
+    }
+    
+    func getTextFrom(cluster: ClusterCodable, models: [SheetViewModel]) -> String {
+                
+        let titleAndContent = [cluster.title] + models.map { $0.sheetModel.content }
+        
+        return titleAndContent.compactMap { $0 }.joined(separator: "\n\n")
+    }
 }

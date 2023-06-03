@@ -172,14 +172,11 @@ extension VTheme {
     }
 
     func setBackgroundImage(image: UIImage?, imageName: String?) throws {
-        let savedImage = try UIImage.set(image: image, imageName: imageName ?? self.imagePath, thumbNailName: self.imagePathThumbnail)
-        self.imagePath = savedImage.imagePath
-        self.imagePathThumbnail = savedImage.thumbPath
     }
 
     private(set) var backgroundImage: UIImage? {
         get {
-            UIImage.get(imagePath: self.imagePath)
+            return nil
         }
         set {
         }
@@ -187,7 +184,7 @@ extension VTheme {
 
     private(set) var backgroundImageAsImage: Image? {
         get {
-            UIImage.getImage(imagePath: self.imagePath)
+            return nil
         }
         set {
         }
@@ -195,7 +192,7 @@ extension VTheme {
 
     private(set) var thumbnail: UIImage? {
         get {
-            UIImage.get(imagePath: self.imagePathThumbnail)
+            return nil
         }
         set {
         }
@@ -203,7 +200,7 @@ extension VTheme {
 
     private(set) var thumbnailAsImage: Image? {
         get {
-            UIImage.getImage(imagePath: self.imagePathThumbnail)
+            return nil
         }
         set {
         }

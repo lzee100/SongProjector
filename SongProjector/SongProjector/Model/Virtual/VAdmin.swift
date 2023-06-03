@@ -45,14 +45,14 @@ public class VAdmin: VEntity {
         getPropertiesFrom(entity: Admin, context: context)
     }
     
-    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-        if let entity: Admin = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
-            setPropertiesTo(entity: entity, context: context)
-            return entity
-        } else {
-            let entity: Admin = DataFetcher().createEntity(moc: context)
-            setPropertiesTo(entity: entity, context: context)
-            return entity
-        }
-    }
+//    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
+//        if let entity: Admin = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
+//            setPropertiesTo(entity: entity, context: context)
+//            return entity
+//        } else {
+//            let entity: Admin = DataFetcher().createEntity(moc: context)
+//            setPropertiesTo(entity: entity, context: context)
+//            return entity
+//        }
+//    }
 }

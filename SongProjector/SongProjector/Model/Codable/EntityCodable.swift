@@ -11,19 +11,25 @@ import CoreData
 import UIKit
 import FirebaseAuth
 
+struct DeleteObject {
+    let imagePathAWS: String?
+    let imagePath: String?
+    let imagePathThumbnail: String?
+}
+
 protocol FileTransferable: EntityCodableType {
     var transferObjects: [TransferObject] { get }
     var uploadObjects: [TransferObject] { get }
     var downloadObjects: [TransferObject] { get }
     mutating func setTransferObjects(_ transferObjects: [TransferObject]) throws
     mutating func clearDataForDeletedObjects(forceDelete: Bool)
-    func getDeleteObjects(forceDelete: Bool) -> [String]
+    func getDeleteObjects(forceDelete: Bool) -> [DeleteObject]
     func setDeleteDate() -> FileTransferable
     func setUpdatedAt() -> FileTransferable
     func setUserUID() throws -> FileTransferable
 }
 
-protocol EntityCodableType: ManagedObjectCodable {
+protocol EntityCodableType: Codable {
     var id: String { get set }
     var userUID: String { get set }
     var title: String? { get }
@@ -35,34 +41,21 @@ protocol EntityCodableType: ManagedObjectCodable {
 
 public struct EntityCodable: EntityCodableType {
     
-    init?(managedObject: NSManagedObject, context: NSManagedObjectContext) {
+    init?(managedObject: NSManagedObject) {
         guard let entity = managedObject as? Entity else { return nil }
         id = entity.id
         userUID = entity.userUID
-        
+        title = entity.title
+        createdAt = entity.createdAt.date
+        updatedAt = entity.updatedAt?.date
+        deleteDate = entity.deleteDate?.date
+        rootDeleteDate = entity.rootDeleteDate?.date
     }
     
-    func getManagedObjectFrom(_ context: NSManagedObjectContext) -> NSManagedObject {
-        
-        if let entity: Entity = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
-            setPropertiesTo(entity, context: context)
-            return entity
-        } else {
-            let entity: Entity = DataFetcher().createEntity(moc: context)
-            setPropertiesTo(entity, context: context)
-            return entity
-        }
-    }
-    
-    private func setPropertiesTo(_ entity: Entity, context: NSManagedObjectContext) {
-        entity.id = id
-        entity.userUID = userUID
-    }
-
     var id: String = "CHURCHBEAM" + UUID().uuidString
     var userUID: String = ""
     var title: String? = nil
-    var createdAt: Date = Date().localDate()
+    var createdAt: Date = Date.localDate()
     var updatedAt: Date? = nil
     var deleteDate: Date? = nil
     var isTemp: Bool = false
@@ -133,7 +126,7 @@ extension EntityCodable: FileTransferable {
     mutating func clearDataForDeletedObjects(forceDelete: Bool) {
     }
     
-    func getDeleteObjects(forceDelete: Bool) -> [String] {
+    func getDeleteObjects(forceDelete: Bool) -> [DeleteObject] {
         []
     }
         
@@ -164,7 +157,7 @@ extension EntityCodable: FileTransferable {
     
     func setUpdatedAt() -> FileTransferable {
         var modifiedDocument = self
-        modifiedDocument.updatedAt = Date()
+        modifiedDocument.updatedAt = Date.localDate()
         return modifiedDocument
     }
     

@@ -760,9 +760,9 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 			case .asTheme:
 				let cell = cell as! LabelPickerCell
                 let id = cell.pickerValues[cell.selectedIndex].0
-                if let theme: Theme = DataFetcher().getEntity(moc: moc, predicates: [.get(id: id)]) {
-                    updateAsTheme(VTheme(theme: theme, context: moc))
-                }
+//                if let theme: Theme = DataFetcher().getEntity(moc: moc, predicates: [.get(id: id)]) {
+//                    updateAsTheme(VTheme(theme: theme, context: moc))
+//                }
 			default: break
 			}
 		}
@@ -837,8 +837,8 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 		switch modificationMode {
 			
 		case .newTheme:
-            let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "position", ascending: false))
-            let position = (themes.first?.position ?? 0) + 1
+//            let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "position", ascending: false))
+//            let position = (themes.first?.position ?? 0) + 1
 			
 			let sheet = VSheetTitleContent()
 			sheet.title = AppText.NewTheme.sampleTitle
@@ -856,7 +856,7 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 			theme.backgroundTransparancy = 100
 			theme.titleAlignmentNumber = 0
 			theme.contentAlignmentNumber = 0
-			theme.position = position
+			theme.position = 0
 			theme.backgroundColor = UIColor(hex: "FFFFFF")!.hexCode
 			self.theme = theme
 			
@@ -1044,20 +1044,20 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 	}
 	
 	private func set(image: UIImage?, for sheet: VSheet) {
-		if let sheet = sheet as? VSheetPastors {
-			do {
-                try sheet.set(image: image, imageName: nil)
-			} catch {
-				show(message: error.localizedDescription)
-			}
-		}
-		if let sheet = sheet as? VSheetTitleImage {
-			do {
-				try sheet.set(image: image, imageName: nil)
-			} catch {
-				show(message: error.localizedDescription)
-			}
-		}
+//		if let sheet = sheet as? VSheetPastors {
+//			do {
+//                try sheet.set(image: image, imageName: nil)
+//			} catch {
+//				show(message: error.localizedDescription)
+//			}
+//		}
+//		if let sheet = sheet as? VSheetTitleImage {
+//			do {
+//				try sheet.set(image: image, imageName: nil)
+//			} catch {
+//				show(message: error.localizedDescription)
+//			}
+//		}
 	}
 	
 	private func refineSheetRatio() {
@@ -1096,10 +1096,10 @@ class NewOrEditIphoneController: ChurchBeamViewController, UITableViewDelegate, 
 	
 	@IBAction func cancelPressed(_ sender: UIBarButtonItem) {
 		set(image: nil, for: sheet)
-        let theme: Theme? = DataFetcher().getEntity(moc: moc, predicates: [.get(id: self.theme.id)])
-		if let original = theme {
-            self.theme.getPropertiesFrom(entity: original, context: moc)
-		}
+//        let theme: Theme? = DataFetcher().getEntity(moc: moc, predicates: [.get(id: self.theme.id)])
+//		if let original = theme {
+//            self.theme.getPropertiesFrom(entity: original, context: moc)
+//		}
 		self.shutDownExternalDisplay()
 		self.dismiss(animated: true)
 	}

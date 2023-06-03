@@ -8,20 +8,20 @@
 
 import SwiftUI
 
-actor MusicDownloadManager: ObservableObject {
+@MainActor class MusicDownloadManager: ObservableObject {
     
     @Published private var musicDownloaders: [FetchMusicUseCase] = []
     
-    func downloadMusicFor(collection: ClusterCodable) async throws {
-        guard musicDownloaders.contains(where: { $0.id != collection.id }) else { return }
-        let fetchMusicUseCase = FetchMusicUseCase(cluster: collection)
+    func downloadMusicFor(collection: WrappedStruct<ClusterCodable>) async throws {
+        guard !musicDownloaders.contains(where: { $0.id == collection.item.id }) else { return }
+        let fetchMusicUseCase = FetchMusicUseCase(collection: collection)
         musicDownloaders.append(fetchMusicUseCase)
         try await fetchMusicUseCase.fetch()
-        musicDownloaders.removeAll(where: { $0.id == collection.id })
+        musicDownloaders.removeAll(where: { $0.id == collection.item.id })
     }
 
-    func isDownloading(for cluster: ClusterCodable) async -> Bool {
-        musicDownloaders.contains(where: { $0.id == cluster.id })
+    func isDownloading(for collection: WrappedStruct<ClusterCodable>) async -> Bool {
+        musicDownloaders.contains(where: { $0.id == collection.item.id })
     }
 
 }
@@ -37,15 +37,8 @@ actor MusicDownloadManager: ObservableObject {
     private var showDeleted = false
     private var selectedTags: [TagCodable] = []
     
-    
-    init() {
-        Task {
-            await reload()
-        }
-    }
-    
     func fetchCollections(searchText: String? = nil, showDeleted: Bool = false, selectedTags: [TagCodable] = []) async {
-        collections = await FilteredCollectionsUseCase().getCollections(searchText: searchText, showDeleted: showDeleted, selectedTags: selectedTags)
+        collections = await FilteredCollectionsUseCase.getCollections(searchText: searchText, showDeleted: showDeleted, selectedTags: selectedTags)
         self.searchText = searchText
         self.showDeleted = showDeleted
         self.selectedTags = selectedTags
@@ -53,12 +46,14 @@ actor MusicDownloadManager: ObservableObject {
     
     func reload() async {
         let searchText = self.searchText?.isBlanc ?? true ? nil : self.searchText
-        collections = await FilteredCollectionsUseCase().getCollections(searchText: searchText, showDeleted: showDeleted, selectedTags: selectedTags)
+        collections = await FilteredCollectionsUseCase.getCollections(searchText: searchText, showDeleted: showDeleted, selectedTags: selectedTags)
     }
     
     func fetchRemoteThemes() async {
         guard !showingLoader else { return }
+        
         showingLoader = true
+        
         await reload()
         do {
             let newThemes = try await FetchThemesUseCase(fetchAll: false).fetch()
@@ -77,6 +72,7 @@ actor MusicDownloadManager: ObservableObject {
     func fetchRemoteCollections() async {
         guard !showingLoader else { return }
         showingLoader = true
+        print("fetching remote collections")
         do {
             let newCollections = try await FetchCollectionsUseCase(fetchAll: false).fetch()
             if newCollections.count > 0 {
@@ -84,6 +80,7 @@ actor MusicDownloadManager: ObservableObject {
                 await fetchRemoteCollections()
             } else {
                 await reload()
+                print("done")
                 showingLoader = false
             }
         } catch {
@@ -159,8 +156,7 @@ struct CollectionsViewUI: View {
     }
     
     let editingSection: SongServiceSectionWithSongs?
-    @ObservedObject var songServiceEditorModel: WrappedOptionalStruct<SongServiceEditorModel>
-    @EnvironmentObject private var soundPlayer: SoundPlayer2
+    @ObservedObject var songServiceEditorModel: SongServiceEditorModel
     @State var showingCollectionsViewUI: Binding<Bool>? = nil
     @State var mandatoryTags: [TagCodable] = []
     @StateObject var viewModel = CollectionsViewModel()
@@ -172,9 +168,10 @@ struct CollectionsViewUI: View {
     @State private var showDeletedCollections = false
     @State private var searchText = ""
     @State private var alertMessage: AlertMessage? = nil
-    
+    @SwiftUI.Environment(\.colorScheme) var colorScheme
+
     private var allowsRowSelection: Bool {
-        if songServiceEditorModel.item != nil {
+        if songServiceEditorModel.sectionedSongs.count == 0 || songServiceEditorModel.customSelectedSongs.count == 0 {
             return editingSection == nil
         } else {
             return true
@@ -183,7 +180,7 @@ struct CollectionsViewUI: View {
     
     var body: some View {
         NavigationStack {
-            VStack {
+            VStack(spacing: 0) {
                 HStack {
                     TagSelectionScrollViewUI(viewModel: tagSelectionModel)
                     Button {
@@ -194,19 +191,19 @@ struct CollectionsViewUI: View {
                     .styleAsSelectionCapsuleButton(isSelected: showDeletedCollections)
                 }
                 .padding([.top, .leading, .trailing])
-                
-                if viewModel.showingLoader {
-                    ProgressView()
-                        .padding([.top, .leading, .trailing])
-                        .tint(Color(uiColor: .blackColor).opacity(0.8))
-                }
+            
+                ProgressView()
+                    .padding([.leading, .trailing])
+                    .tint(Color(uiColor: .blackColor).opacity(0.8))
+                    .transition(.scale)
+                    .opacity(viewModel.showingLoader ? 1 : 0)
 
                 List {
                     ForEach(viewModel.collections, id: \.id) { collection in
                         Button {
                             if let editingSection {
-                                songServiceEditorModel.item?.add(collection, to: editingSection)
-                            } else if let songServiceEditorModel = songServiceEditorModel.item {
+                                songServiceEditorModel.add(collection, to: editingSection)
+                            } else if songServiceEditorModel.isInUsage {
                                 songServiceEditorModel.didSelect(collection)
                             } else {
                                 showingCollectionEditor = .existing(collection)
@@ -215,8 +212,8 @@ struct CollectionsViewUI: View {
                             CollectionListViewUI(
                                 collectionsViewModel: viewModel,
                                 collection: collection,
-                                isSelectable: songServiceEditorModel.item != nil,
-                                isSelected: songServiceEditorModel.item?.isSelected(collection) ?? false
+                                isSelectable: songServiceEditorModel.isInUsage,
+                                isSelected: songServiceEditorModel.isInUsage ? songServiceEditorModel.isSelected(collection) : false
                             )
                             .frame(minHeight: 50)
                         }
@@ -235,7 +232,6 @@ struct CollectionsViewUI: View {
                         .allowsHitTesting(allowsRowSelection)
                     }
                 }
-                .padding([.top], 0)
                 .refreshable {
                     await viewModel.fetchRemoteCollections()
                 }
@@ -269,7 +265,7 @@ struct CollectionsViewUI: View {
                     
                 }
             }
-            .background(Color(uiColor: .systemGray6))
+            .background(Color(uiColor: colorScheme == .dark ? .black : .systemGray6))
             .searchable(text: $searchText).tint(Color(uiColor: themeHighlighted))
         }
         .task {
@@ -278,7 +274,7 @@ struct CollectionsViewUI: View {
         }
         .onChange(of: searchText, perform: { searchText in
             Task {
-                await viewModel.fetchCollections(searchText: searchText, showDeleted: showDeletedCollections, selectedTags: mandatoryTags + tagSelectionModel.selectedTags)
+                await viewModel.fetchCollections(searchText: searchText, showDeleted: showDeletedCollections, selectedTags: (mandatoryTags + tagSelectionModel.selectedTags).unique)
             }
         })
         .onChange(of: tagSelectionModel.selectedTags, perform: { selectedTags in
@@ -368,6 +364,6 @@ struct CollectionsViewUI: View {
 
 struct CollectionsViewUI_Previews: PreviewProvider {
     static var previews: some View {
-        CollectionsViewUI(editingSection: nil, songServiceEditorModel: WrappedOptionalStruct<SongServiceEditorModel>(withItem: nil))
+        CollectionsViewUI(editingSection: nil, songServiceEditorModel: SongServiceEditorModel())
     }
 }

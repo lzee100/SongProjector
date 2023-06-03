@@ -29,10 +29,10 @@ class CsterFetcher: Requester<VCluster> {
         }
     }
     
-    override func getLastUpdatedAt(moc: NSManagedObjectContext) -> Date? {
-        let cluster: Cluster? = DataFetcher().getLastUpdated(moc: moc)
-        return cluster?.updatedAt as Date?
-    }
+//    override func getLastUpdatedAt(moc: NSManagedObjectContext) -> Date? {
+//        let cluster: Cluster? = DataFetcher().getLastUpdated(moc: moc)
+//        return cluster?.updatedAt as Date?
+//    }
     
     override func additionalProcessing(_ context: NSManagedObjectContext, _ entities: [VCluster], completion: @escaping ((Requester<VCluster>.AdditionalProcessResult) -> Void)) {
         

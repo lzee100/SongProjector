@@ -12,37 +12,32 @@ import Foundation
 struct SoundAnimationViewUI: View {
     
     @EnvironmentObject private var soundPlayer: SoundPlayer2
-    var animationColor: Color = .white
+    @State var animationColor: Color = .white
     @State private var update = false
+    private let size = CGSize(width: 40, height: 40)
+    let timer = Timer.publish(every: 0.3, on: .main, in: .common).autoconnect()
     
     var body: some View {
-        GeometryReader { ruler in
-            Rectangle()
-                .mask {
-                    HStack(spacing: 4) {
-                        ForEach(0..<6) { _ in
-                            Rectangle()
-                                .fill(.black)
-                                .cornerRadius((((ruler.size.width * 0.4) - 20) / 6) / 2)
-                                .frame(height: ruler.size.height * Double.random(in: 0.3..<0.8))
-                                .scaleEffect(y: update ? Double.random(in: 0.1..<0.5) : 1.0)
-                                .animation(.linear.repeatForever(autoreverses: true).delay(Double.random(in: 0.1..<0.5)), value: update)
-                        }
+        Rectangle()
+            .frame(width: size.width, height: size.height)
+            .mask {
+                HStack(spacing: 4) {
+                    ForEach(0..<6) { _ in
+                        Rectangle()
+                            .fill(.black)
+                            .cornerRadius((((size.width * 0.4) - 20) / 6) / 2)
+                            .frame(height: size.height * Double.random(in: 0.3..<0.8))
+//                            .frame(height: size.height * 0.2)
+                            .scaleEffect(y: update ? Double.random(in: 0.1..<0.5) : 1.0)
+                            .animation(.linear.delay(Double.random(in: 0.1..<0.5)), value: update)
                     }
-//                    .frame(width: ruler.size.width * 0.2)
                 }
-                .tint(animationColor)
-        }
-        .onAppear {
-            update.toggle()
-            withAnimation(Animation.default.delay(0.5)) {
-                update.toggle()
-            }
-        }
-        .onChange(of: update) { value in
-            print(value)
-        }
+                .onReceive(timer) { _ in
+                    update.toggle()
+                }
 
+            }
+            .tint(animationColor)
     }
 }
 

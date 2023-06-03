@@ -13,9 +13,8 @@ import UIKit
 
 struct ThemeCodable: EntityCodableType, Identifiable, Equatable, Hashable {
     
-    static func makeDefault(isDeletable: Bool = true, isHidden: Bool = false) -> ThemeCodable? {
-        let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "position", ascending: false))
-        let position = ((themes.first?.position ?? 0) + 1).intValue
+    static func makeDefault(title: String = AppText.NewTheme.sampleTitle, isDeletable: Bool = true, isHidden: Bool = false) async throws -> ThemeCodable? {
+        let position = try await GetNewThemePositionUseCase().get()
         
         #if DEBUG
         let userId = "userid"
@@ -40,7 +39,7 @@ struct ThemeCodable: EntityCodableType, Identifiable, Equatable, Hashable {
             imagePath: nil,
             imagePathThumbnail: nil,
             isEmptySheetFirst: false,
-            isHidden: false,
+            isHidden: isHidden,
             isContentBold: false,
             isContentItalic: false,
             isContentUnderlined: false,
@@ -155,114 +154,11 @@ struct ThemeCodable: EntityCodableType, Identifiable, Equatable, Hashable {
         self.newSelectedThemeImageTempDirPath = newSelectedThemeImageTempDirPath
         self.isThemeImageDeleted = isThemeImageDeleted
     }
-    
-    init?(managedObject: NSManagedObject, context: NSManagedObjectContext) {
-        guard let entity = managedObject as? Theme else { return nil }
-        id = entity.id
-        userUID = entity.userUID
-        title = entity.title
-        createdAt = entity.createdAt.date
-        updatedAt = entity.updatedAt?.date
-        deleteDate = entity.deleteDate?.date
-        rootDeleteDate = entity.rootDeleteDate?.date
-        allHaveTitle = entity.allHaveTitle
         
-        backgroundColor = entity.backgroundColor
-        backgroundTransparancyNumber = entity.backgroundTransparancyNumber
-        displayTime = entity.displayTime
-        hasEmptySheet = entity.hasEmptySheet
-        imagePath = entity.imagePath
-        imagePathThumbnail = entity.imagePathThumbnail
-        isEmptySheetFirst = entity.isEmptySheetFirst
-        isHidden = entity.isHidden
-        isContentBold = entity.isContentBold
-        isContentItalic = entity.isContentItalic
-        isContentUnderlined = entity.isContentUnderlined
-        isTitleBold = entity.isTitleBold
-        isTitleItalic = entity.isTitleItalic
-        isTitleUnderlined = entity.isTitleUnderlined
-        contentAlignmentNumber = entity.contentAlignmentNumber
-        contentBorderColorHex = entity.contentBorderColorHex
-        contentBorderSize = entity.contentBorderSize
-        contentFontName = entity.contentFontName
-        contentTextColorHex = entity.contentTextColorHex
-        contentTextSize = entity.contentTextSize
-        position = entity.position.intValue
-        titleAlignmentNumber = entity.titleAlignmentNumber
-        titleBackgroundColor = entity.titleBackgroundColor
-        titleBorderColorHex = entity.titleBorderColorHex
-        titleBorderSize = entity.titleBorderSize
-        titleFontName = entity.titleFontName
-        titleTextColorHex = entity.titleTextColorHex
-        titleTextSize = entity.titleTextSize
-        imagePathAWS = entity.imagePathAWS
-        isUniversal = entity.isUniversal
-        isDeletable = entity.isDeletable
-        
-        uiImage = imagePath?.loadImage()
-        uiImageThumb = imagePathThumbnail?.loadImage()
-    }
-    
-    func getManagedObjectFrom(_ context: NSManagedObjectContext) -> NSManagedObject {
-        
-        if let entity: Theme = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
-            setPropertiesTo(entity, context: context)
-            return entity
-        } else {
-            let entity: Theme = DataFetcher().createEntity(moc: context)
-            setPropertiesTo(entity, context: context)
-            return entity
-        }
-    }
-    
-    private func setPropertiesTo(_ entity: Theme, context: NSManagedObjectContext) {
-        entity.id = id
-        entity.userUID = userUID
-        entity.title = title
-        entity.createdAt = createdAt.nsDate
-        entity.updatedAt = updatedAt?.nsDate
-        entity.deleteDate = deleteDate?.nsDate
-        entity.rootDeleteDate = rootDeleteDate?.nsDate
-
-        entity.allHaveTitle = allHaveTitle
-        entity.backgroundColor = backgroundColor
-        entity.backgroundTransparancyNumber = backgroundTransparancyNumber
-        entity.displayTime = displayTime
-        entity.hasEmptySheet = hasEmptySheet
-        entity.imagePath = imagePath
-        entity.imagePathThumbnail = imagePathThumbnail
-        entity.isEmptySheetFirst = isEmptySheetFirst
-        entity.isHidden = isHidden
-        entity.isContentBold = isContentBold
-        entity.isContentItalic = isContentItalic
-        entity.isContentUnderlined = isContentUnderlined
-        entity.isTitleBold = isTitleBold
-        entity.isTitleItalic = isTitleItalic
-        entity.isTitleUnderlined = isTitleUnderlined
-        entity.contentAlignmentNumber = contentAlignmentNumber
-        entity.contentBorderColorHex = contentBorderColorHex
-        entity.contentBorderSize = contentBorderSize
-        entity.contentFontName = contentFontName
-        entity.contentTextColorHex = contentTextColorHex
-        entity.contentTextSize = contentTextSize
-        entity.position = Int16(position)
-        entity.titleAlignmentNumber = titleAlignmentNumber
-        entity.titleBackgroundColor = titleBackgroundColor
-        entity.titleBorderColorHex = titleBorderColorHex
-        entity.titleBorderSize = titleBorderSize
-        entity.titleFontName = titleFontName
-        entity.titleTextColorHex = titleTextColorHex
-        entity.titleTextSize = titleTextSize
-        entity.imagePathAWS = imagePathAWS
-        entity.isUniversal = isUniversal
-        entity.isDeletable = isDeletable
-    }
-
-    
     var id: String = "CHURCHBEAM" + UUID().uuidString
     var userUID: String = ""
     var title: String? = nil
-    var createdAt: Date = Date().localDate()
+    var createdAt: Date = Date.localDate()
     var updatedAt: Date? = nil
     var deleteDate: Date? = nil
     var rootDeleteDate: Date? = nil
@@ -367,6 +263,52 @@ struct ThemeCodable: EntityCodableType, Identifiable, Equatable, Hashable {
         case imagePathAWS
         case isUniversal
         case isDeletable
+    }
+    
+    init(entity: Theme) {
+        id = entity.id
+        userUID = entity.userUID
+        title = entity.title
+        createdAt = entity.createdAt.date
+        updatedAt = entity.updatedAt?.date
+        deleteDate = entity.deleteDate?.date
+        rootDeleteDate = entity.rootDeleteDate?.date
+        allHaveTitle = entity.allHaveTitle
+        
+        backgroundColor = entity.backgroundColor
+        backgroundTransparancyNumber = entity.backgroundTransparancyNumber
+        displayTime = entity.displayTime
+        hasEmptySheet = entity.hasEmptySheet
+        imagePath = entity.imagePath
+        imagePathThumbnail = entity.imagePathThumbnail
+        isEmptySheetFirst = entity.isEmptySheetFirst
+        isHidden = entity.isHidden
+        isContentBold = entity.isContentBold
+        isContentItalic = entity.isContentItalic
+        isContentUnderlined = entity.isContentUnderlined
+        isTitleBold = entity.isTitleBold
+        isTitleItalic = entity.isTitleItalic
+        isTitleUnderlined = entity.isTitleUnderlined
+        contentAlignmentNumber = entity.contentAlignmentNumber
+        contentBorderColorHex = entity.contentBorderColorHex
+        contentBorderSize = entity.contentBorderSize
+        contentFontName = entity.contentFontName
+        contentTextColorHex = entity.contentTextColorHex
+        contentTextSize = entity.contentTextSize
+        position = entity.position.intValue
+        titleAlignmentNumber = entity.titleAlignmentNumber
+        titleBackgroundColor = entity.titleBackgroundColor
+        titleBorderColorHex = entity.titleBorderColorHex
+        titleBorderSize = entity.titleBorderSize
+        titleFontName = entity.titleFontName
+        titleTextColorHex = entity.titleTextColorHex
+        titleTextSize = entity.titleTextSize
+        imagePathAWS = entity.imagePathAWS
+        isUniversal = entity.isUniversal
+        isDeletable = entity.isDeletable
+        
+        uiImage = imagePath?.loadImage()
+        uiImageThumb = imagePathThumbnail?.loadImage()
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -476,23 +418,61 @@ struct ThemeCodable: EntityCodableType, Identifiable, Equatable, Hashable {
         }
     }
     
+    mutating func styleAsTheme(_ theme: ThemeCodable) -> UIImage? {
+        self.allHaveTitle = theme.allHaveTitle
+        self.backgroundColor = theme.backgroundColor?.color.toHex() ?? "FFFFFF"
+        self.backgroundTransparancyNumber = theme.backgroundTransparancyNumber
+        self.displayTime = theme.displayTime
+        self.hasEmptySheet = theme.hasEmptySheet
+        self.isEmptySheetFirst = theme.isEmptySheetFirst
+        self.isHidden = theme.isHidden
+        self.isContentBold = theme.isContentBold
+        self.isContentItalic = theme.isContentItalic
+        self.isContentUnderlined = theme.isContentUnderlined
+        self.isTitleBold = theme.isTitleBold
+        self.isTitleItalic = theme.isTitleItalic
+        self.isTitleUnderlined = theme.isTitleUnderlined
+        self.contentAlignmentNumber = theme.contentAlignmentNumber
+        self.contentBorderColorHex = theme.contentBorderColorHex
+        self.contentBorderSize = theme.contentBorderSize
+        self.contentFontName = theme.contentFontName
+        self.contentTextColorHex = theme.contentTextColorHex
+        self.contentTextSize = theme.contentTextSize
+        self.titleAlignmentNumber = theme.titleAlignmentNumber
+        self.titleBackgroundColor = theme.titleBackgroundColor
+        self.titleBorderColorHex = theme.titleBorderColorHex
+        self.titleBorderSize = theme.titleBorderSize
+        self.titleFontName = theme.titleFontName
+        self.titleTextColorHex = theme.titleTextColorHex
+        self.titleTextSize = theme.titleTextSize
+        
+        return theme.backgroundImage
+    }    
 }
 
 extension ThemeCodable: FileTransferable {
     
-    func getDeleteObjects(forceDelete: Bool) -> [String] {
-        var fileNames: [String?] = []
-        if isThemeImageDeleted || forceDelete {
-            fileNames.append(imagePathAWS)
+    func getDeleteObjects(forceDelete: Bool) -> [DeleteObject] {
+        var deleteObjects: [DeleteObject] = []
+        
+        let hasNewImageAndOldImage = newSelectedThemeImageTempDirPath != nil && imagePathAWS != nil
+        if isThemeImageDeleted || forceDelete || hasNewImageAndOldImage {
+            
+            deleteObjects.append(DeleteObject(
+                imagePathAWS: imagePathAWS,
+                imagePath: imagePath,
+                imagePathThumbnail: imagePathThumbnail
+            ))
         }
-        return fileNames.compactMap { $0 }
+        
+        return deleteObjects
     }
     
     mutating func clearDataForDeletedObjects(forceDelete: Bool) {
         if isThemeImageDeleted || forceDelete {
             imagePathAWS = nil
-            // remove locally saved images
-            _ = try? UIImage.set(image: nil, imageName: imagePath, thumbNailName: imagePathThumbnail)
+            try? DeleteFileAtURLUseCase(fileName: imagePath)?.delete()
+            try? DeleteFileAtURLUseCase(fileName: imagePathThumbnail)?.delete()
             imagePath = nil
             imagePathThumbnail = nil
         }
@@ -516,17 +496,13 @@ extension ThemeCodable: FileTransferable {
         for uploadObject in uploadObjects {
             if newSelectedThemeImageTempDirPath == uploadObject.fileName {
                 imagePathAWS = uploadObject.fileName
-                if let image = UIImage.getFromTempDir(imagePath: uploadObject.fileName) {
-                    let savedImage = try UIImage.set(image: image, imageName: uploadObject.fileName, thumbNailName: nil)
-                    imagePath = savedImage.imagePath
-                    imagePathThumbnail = savedImage.thumbPath
-                }
-                try FileManager.deleteTempFile(name: uploadObject.fileName)
+                imagePath = try MoveImageUseCase().moveImageFromTempToNewPersistantDirectory(uploadObject.fileName)
+                imagePathThumbnail = try SaveImageUseCase().createThumbAndSave(fileName: uploadObject.fileName)
                 newSelectedThemeImageTempDirPath = nil
             }
         }
         for download in transferObjects.compactMap({ $0 as? DownloadObject }) {
-            if imagePathAWS == download.remoteURL.absoluteString {
+            if imagePathAWS == download.filename {
                 try setBackgroundImage(image: download.image, imageName: download.filename)
             }
         }
@@ -544,7 +520,7 @@ extension ThemeCodable: FileTransferable {
     
     func setUpdatedAt() -> FileTransferable {
         var modifiedDocument = self
-        modifiedDocument.updatedAt = Date()
+        modifiedDocument.updatedAt = Date.localDate()
         return modifiedDocument
     }
     
@@ -558,8 +534,16 @@ extension ThemeCodable: FileTransferable {
     }
     
     private mutating func setBackgroundImage(image: UIImage?, imageName: String?) throws {
-        let savedImage = try UIImage.set(image: image, imageName: imageName ?? self.imagePath, thumbNailName: self.imagePathThumbnail)
-        self.imagePath = savedImage.imagePath
-        self.imagePathThumbnail = savedImage.thumbPath
+        if let image {
+            let imagePath = try SaveImageUseCase().saveImage(image: image, isThumb: false)
+            self.imagePath = imagePath
+            imagePathThumbnail = try SaveImageUseCase().createThumbAndSave(fileName: imagePath)
+        }
+    }
+}
+
+extension ThemeCodable {
+    var pickerRepresentable: PickerRepresentable {
+        PickerRepresentable(value: self, label: self.title ?? "-")
     }
 }

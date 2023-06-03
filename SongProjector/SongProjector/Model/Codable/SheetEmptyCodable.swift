@@ -12,7 +12,7 @@ import CoreData
 
 public struct SheetEmptyCodable: EntityCodableType, SheetMetaType {    
     
-    static func makeDefault() -> SheetEmptyCodable {
+    static func makeDefault() -> SheetEmptyCodable? {
         
 #if DEBUG
         let userId = "userid"
@@ -26,7 +26,7 @@ public struct SheetEmptyCodable: EntityCodableType, SheetMetaType {
             id: "CHURCHBEAM" + UUID().uuidString,
             userUID: userId,
             title: nil,
-            createdAt: Date().localDate(),
+            createdAt: Date.localDate(),
             updatedAt: nil,
             deleteDate: nil,
             rootDeleteDate: nil,
@@ -37,52 +37,6 @@ public struct SheetEmptyCodable: EntityCodableType, SheetMetaType {
         )
     }
     
-    init?(managedObject: NSManagedObject, context: NSManagedObjectContext) {
-        guard let entity = managedObject as? SheetEmptyEntity else { return nil }
-        id = entity.id
-        userUID = entity.userUID
-        title = entity.title
-        createdAt = entity.createdAt.date
-        updatedAt = entity.updatedAt?.date
-        deleteDate = entity.deleteDate?.date
-        rootDeleteDate = entity.rootDeleteDate?.date
-        
-        isEmptySheet = entity.isEmptySheet
-        position = Int(entity.position)
-        time = entity.time
-        if let theme = entity.hasTheme {
-            hasTheme = ThemeCodable(managedObject: theme, context: context)
-        }
-    }
-    
-    func getManagedObjectFrom(_ context: NSManagedObjectContext) -> NSManagedObject {
-        
-        if let entity: SheetEmptyEntity = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
-            setPropertiesTo(entity, context: context)
-            return entity
-        } else {
-            let entity: SheetEmptyEntity = DataFetcher().createEntity(moc: context)
-            setPropertiesTo(entity, context: context)
-            return entity
-        }
-    }
-    
-    private func setPropertiesTo(_ entity: SheetEmptyEntity, context: NSManagedObjectContext) {
-        entity.id = id
-        entity.userUID = userUID
-        entity.title = title
-        entity.createdAt = createdAt.nsDate
-        entity.updatedAt = updatedAt?.nsDate
-        entity.deleteDate = deleteDate?.nsDate
-        entity.rootDeleteDate = rootDeleteDate?.nsDate
-        
-        entity.isEmptySheet = isEmptySheet
-        entity.position = Int16(position)
-        entity.time = time
-        entity.hasTheme = hasTheme?.getManagedObjectFrom(context) as? Theme
-    }
-
-    
     static let type: SheetType = .SheetEmpty
     var sheetType: SheetType {
         .SheetEmpty
@@ -91,7 +45,7 @@ public struct SheetEmptyCodable: EntityCodableType, SheetMetaType {
     var id: String = "CHURCHBEAM" + UUID().uuidString
     var userUID: String = ""
     var title: String? = nil
-    var createdAt: Date = Date().localDate()
+    var createdAt: Date = Date.localDate()
     var updatedAt: Date? = nil
     var deleteDate: Date? = nil
     var rootDeleteDate: Date? = nil
@@ -144,7 +98,19 @@ public struct SheetEmptyCodable: EntityCodableType, SheetMetaType {
         self.hasTheme = hasTheme
     }
     
-
+    init?(entity: SheetEmptyEntity) {
+        id = entity.id
+        userUID = entity.userUID
+        title = entity.title
+        createdAt = entity.createdAt.date
+        updatedAt = entity.updatedAt?.date
+        deleteDate = entity.deleteDate?.date
+        rootDeleteDate = entity.rootDeleteDate?.date
+        
+        isEmptySheet = entity.isEmptySheet
+        position = Int(entity.position)
+        time = entity.time
+    }
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeysTheme.self)
@@ -218,8 +184,8 @@ extension SheetEmptyCodable: FileTransferable {
     mutating func clearDataForDeletedObjects(forceDelete: Bool) {
     }
     
-    func getDeleteObjects(forceDelete: Bool) -> [String] {
-        []
+    func getDeleteObjects(forceDelete: Bool) -> [DeleteObject] {
+        theme?.getDeleteObjects(forceDelete: forceDelete) ?? []
     }
 
     var uploadObjects: [TransferObject] {
@@ -252,7 +218,7 @@ extension SheetEmptyCodable: FileTransferable {
     
     func setUpdatedAt() -> FileTransferable {
         var modifiedDocument = self
-        modifiedDocument.updatedAt = Date()
+        modifiedDocument.updatedAt = Date.localDate()
         return modifiedDocument
     }
     

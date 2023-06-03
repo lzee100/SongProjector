@@ -71,14 +71,4 @@ public class VTag: VEntity {
 		getPropertiesFrom(entity: tag, context: context)
 	}
 	
-    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-        if let entity: Tag = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
-            setPropertiesTo(entity: entity, context: context)
-            return entity
-        } else {
-            let entity: Tag = DataFetcher().createEntity(moc: context)
-            setPropertiesTo(entity: entity, context: context)
-            return entity
-        }
-    }
 }

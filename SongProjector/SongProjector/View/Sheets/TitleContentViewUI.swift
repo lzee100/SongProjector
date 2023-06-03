@@ -49,30 +49,16 @@ struct TitleContentViewUI<T: BodyView>: View {
     }
 }
 
-struct TitleContentViewDisplayUI_Previews: PreviewProvider {
-    @State static var cluster = ClusterCodable.makeDefault()!
-    @State static var songServiceModel = WrappedStruct(withItem: SongServiceUI(songs: [SongObjectUI(cluster: .makeDefault()!)]))
-    @State static var imageSheet = SheetTitleImageCodable.makeDefault()
-    @State static var editModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .sheet((cluster, imageSheet), sheetType: .SheetTitleImage), isUniversal: false, isBibleVers: false)!)
-    
-    static var previews: some View {
-        TitleContentViewDisplayUI(songServiceModel: songServiceModel, sheet: SheetTitleImageCodable.makeDefault(), isForExternalDisplay: false, showSelectionCover: false)
-            .previewInterfaceOrientation(.portrait)
-            .previewLayout(.sizeThatFits)
-    }
-}
-
-
 struct TitleContentViewEditUI: View {
     
-    @State var sheetSize: CGSize
+    @State var sheetSize: CGSize = .zero
 
-    @ObservedObject private var editViewModel: WrappedStruct<EditSheetOrThemeViewModel>
+    @ObservedObject private var sheetViewModel: SheetViewModel
+    
     private let isForExternalDisplay: Bool
     
-    init(editViewModel: WrappedStruct<EditSheetOrThemeViewModel>, sheetSize: CGSize, isForExternalDisplay: Bool) {
-        self.sheetSize = sheetSize
-        self.editViewModel = editViewModel
+    init(sheetViewModel: SheetViewModel, isForExternalDisplay: Bool) {
+        self.sheetViewModel = sheetViewModel
         self.isForExternalDisplay = isForExternalDisplay
     }
     
@@ -80,29 +66,29 @@ struct TitleContentViewEditUI: View {
             VStack(spacing: 0) {
                 
                 HStack {
-                    Text(getTitleAttributedString(text: editViewModel.item.title, viewSize: sheetSize))
-                        .modifier(SheetTitleEditUIModifier(scaleFactor: getScaleFactor(width: sheetSize.width), editViewModel: editViewModel, frameWidth: .infinity))
+                    Text(getTitleAttributedString(text: sheetViewModel.title, viewSize: sheetSize))
+                        .modifier(SheetTitleEditUIModifier(scaleFactor: getScaleFactor(width: sheetSize.width), sheetViewModel: sheetViewModel, frameWidth: .infinity))
                         .lineLimit(1)
-                    if editViewModel.item.displayTime {
+                    if sheetViewModel.themeModel.theme.displayTime {
                         Spacer()
                         Text(getTitleAttributedString(text: Date().time, viewSize: sheetSize))
-                            .modifier(SheetTitleEditUIModifier(scaleFactor: getScaleFactor(width: sheetSize.width), editViewModel: editViewModel, frameWidth: .infinity))
+                            .modifier(SheetTitleEditUIModifier(scaleFactor: getScaleFactor(width: sheetSize.width), sheetViewModel: sheetViewModel, frameWidth: .infinity))
                             .lineLimit(1)
                     }
                 }
                 .frame(maxWidth: .infinity)
                 
-                HStack{
-                    if [1, 2].contains(editViewModel.item.theme.contentAlignmentNumber) {
+                HStack(spacing: 0) {
+                    if [1, 2].contains(sheetViewModel.themeModel.theme.contentAlignmentNumber) {
                         Spacer()
                     }
                     Text(getContentAttributedString(viewSize: sheetSize))
                         .modifier(SheetContentDisplayModifier(
                             scaleFactor: getScaleFactor(width: sheetSize.width),
                             multiLine: true,
-                            alignment: editViewModel.item.theme.contentAlignmentNumber.intValue
+                            alignment: sheetViewModel.themeModel.theme.contentAlignmentNumber.intValue
                         ))
-                    if [0, 1].contains(editViewModel.item.theme.contentAlignmentNumber) {
+                    if [0, 1].contains(sheetViewModel.themeModel.theme.contentAlignmentNumber) {
                         Spacer()
                     }
                 }
@@ -112,8 +98,8 @@ struct TitleContentViewEditUI: View {
             .onPreferenceChange(SizePreferenceKey.self, perform: { size in
                 sheetSize = size
             })
-            .setBackgroundImage(isForExternalDisplay: false, editModel: editViewModel)
-            .modifier(SheetBackgroundColorAndOpacityEditModifier(editViewModel: editViewModel))
+            .setBackgroundImage(isForExternalDisplay: false, sheetViewModel: sheetViewModel)
+            .modifier(SheetBackgroundColorAndOpacityEditModifier2(sheetViewModel: sheetViewModel))
             .cornerRadius(10)
             .aspectRatio(16 / 9, contentMode: .fit)
             .ignoresSafeArea()
@@ -122,24 +108,24 @@ struct TitleContentViewEditUI: View {
     private func getTitleAttributedString(text: String, viewSize: CGSize) -> AttributedString {
         AttributedString(NSAttributedString(
             string: text,
-            attributes: editViewModel.item.getTitleAttributes(getScaleFactor(width: viewSize.width))
+            attributes: sheetViewModel.themeModel.theme.getTitleAttributes(getScaleFactor(width: viewSize.width))
         ))
     }
     
     private func getContentAttributedString(viewSize: CGSize) -> AttributedString {
         AttributedString(NSAttributedString(
-            string: editViewModel.item.sheetContent,
-            attributes: editViewModel.item.getLyricsAttributes(getScaleFactor(width: viewSize.width))
+            string: sheetViewModel.sheetModel.content,
+            attributes: sheetViewModel.themeModel.theme.getLyricsAttributes(getScaleFactor(width: viewSize.width))
         ))
     }
 }
 
 struct SheetBackgroundColorAndOpacityEditModifier: ViewModifier {
     
-    @ObservedObject private var editViewModel: WrappedStruct<EditSheetOrThemeViewModel>
+    @ObservedObject private var sheetViewModel: SheetViewModel
     
-    init(editViewModel: WrappedStruct<EditSheetOrThemeViewModel>) {
-        self.editViewModel = editViewModel
+    init(sheetViewModel: SheetViewModel) {
+        self.sheetViewModel = sheetViewModel
     }
     
     func body(content: Content) -> some View {
@@ -149,19 +135,46 @@ struct SheetBackgroundColorAndOpacityEditModifier: ViewModifier {
     }
     
     func getOpacity() -> Double {
-        let transparancy = editViewModel.item.backgroundTransparancyNumber
-        if getColor() == nil || (editViewModel.item.imagePath == nil && editViewModel.item.newSelectedThemeImage == nil) {
+        let transparancy = sheetViewModel.themeModel.theme.backgroundTransparancyNumber
+        if getColor() == nil || (sheetViewModel.themeModel.getImage(thumb: true) == nil) {
             return 1.0
         }
         return transparancy
     }
     
     func getColor() -> Color? {
-        editViewModel.item.backgroundColor
+        sheetViewModel.themeModel.theme.backgroundColor?.color
     }
     
 }
 
+struct SheetBackgroundColorAndOpacityEditModifier2: ViewModifier {
+    
+    @ObservedObject private var sheetViewModel: SheetViewModel
+    
+    init(sheetViewModel: SheetViewModel) {
+        self.sheetViewModel = sheetViewModel
+    }
+    
+    func body(content: Content) -> some View {
+        content
+            .background(getColor() ?? .white)
+            .opacity(getOpacity())
+    }
+    
+    func getOpacity() -> Double {
+        let transparancy = sheetViewModel.themeModel.theme.backgroundTransparancyNumber
+        if getColor() == nil || (sheetViewModel.themeModel.theme.imagePath == nil && sheetViewModel.themeModel.newSelectedImage == nil) {
+            return 1.0
+        }
+        return transparancy
+    }
+    
+    func getColor() -> Color? {
+        sheetViewModel.themeModel.theme.backgroundColor?.color
+    }
+    
+}
 
 
 
@@ -215,7 +228,7 @@ struct TitleContentViewDisplayUI: View {
                 
                 if let content = getContentAttributedString(viewSize: proxy.size) {
                     
-                    HStack{
+                    HStack(spacing: 0) {
                         if [1, 2].contains(theme?.contentAlignmentNumber) {
                             Spacer()
                         }

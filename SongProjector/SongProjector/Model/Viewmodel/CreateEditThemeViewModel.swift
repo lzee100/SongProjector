@@ -64,17 +64,18 @@ class CreateEditThemeViewModel: CreateEditThemeViewModelProtocol {
         [.title(themeDraft.title ?? AppText.NewTheme.sampleTitle)]
     }
     private var generalRows: [NewOrEditIphoneController.Cell] {
-        let themes: [Theme] = DataFetcher().getEntities(moc: moc)
-        var cells: [NewOrEditIphoneController.Cell] = [.asTheme(themes.compactMap { ThemeCodable(managedObject: $0, context: moc) }), .hasEmptySheet(themeDraft.hasEmptySheet)]
-        if themeDraft.hasEmptySheet {
-            cells.append(.hasEmptySheetBeginning(themeDraft.isEmptySheetFirst))
-        }
-        cells.append(contentsOf: [.allHaveTitle(themeDraft.allHaveTitle), .backgroundColor(UIColor(hex: themeDraft.backgroundColor)), .backgroundImage(image: themeDraft.imageSelectionAction.image ?? themeDraft.thumbnail, imageName: themeDraft.imageSelectionAction.image != nil ? nil : themeDraft.imagePathThumbnail)])
-        if themeDraft.hasAnyImage() {
-            cells.append(.backgroundTransparancy(themeDraft.backgroundTransparancy))
-        }
-        cells.append(.displayTime(themeDraft.displayTime))
-        return cells
+        []
+//        let themes: [Theme] = DataFetcher().getEntities(moc: moc)
+//        var cells: [NewOrEditIphoneController.Cell] = [.asTheme(themes.compactMap { ThemeCodable(managedObject: $0, context: moc) }), .hasEmptySheet(themeDraft.hasEmptySheet)]
+//        if themeDraft.hasEmptySheet {
+//            cells.append(.hasEmptySheetBeginning(themeDraft.isEmptySheetFirst))
+//        }
+//        cells.append(contentsOf: [.allHaveTitle(themeDraft.allHaveTitle), .backgroundColor(UIColor(hex: themeDraft.backgroundColor)), .backgroundImage(image: themeDraft.imageSelectionAction.image ?? themeDraft.thumbnail, imageName: themeDraft.imageSelectionAction.image != nil ? nil : themeDraft.imagePathThumbnail)])
+//        if themeDraft.hasAnyImage() {
+//            cells.append(.backgroundTransparancy(themeDraft.backgroundTransparancy))
+//        }
+//        cells.append(.displayTime(themeDraft.displayTime))
+//        return cells
     }
     private var titleRows: [NewOrEditIphoneController.Cell] {
         [

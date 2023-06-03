@@ -13,23 +13,21 @@ actor FetchMusicUseCase: ObservableObject {
     
     nonisolated let id: String
     
-    private let cluster: ClusterCodable
-    private let managedObjectContextHandler = ManagedObjectContextHandler<ClusterCodable>()
+    private let collection: WrappedStruct<ClusterCodable>
     
-    init(cluster: ClusterCodable) {
-        self.id = cluster.id
-        self.cluster = cluster
+    init(collection: WrappedStruct<ClusterCodable>) {
+        self.id = collection.item.id
+        self.collection = collection
     }
     
     func fetch() async throws {
-        let downloadableFiles = self.cluster.hasInstruments
+        let downloadableFiles = self.collection.item.hasInstruments
             .filter({ $0.resourcePath == nil })
             .compactMap { URL(string: $0.resourcePathAWS) }
             .compactMap { DownloadObject(remoteURL: $0) }
         
-        var changeableCluster = cluster
-        changeableCluster = try await FileDownloadUseCase().startDownloadingFor(cluster)
+        collection.item = try await FileDownloadUseCase().startDownloadingFor(collection.item, downloadObjects: downloadableFiles)
         
-        try await managedObjectContextHandler.save(entities: [changeableCluster])
+        try await SaveCodableToCorDataUseCase().save(entities: [collection.item])
     }
 }

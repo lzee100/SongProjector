@@ -34,7 +34,7 @@ class ThemeDraft {
     private(set) var id: String = "CHURCHBEAM" + UUID().uuidString
     private(set) var userUID: String = ""
     var title: String? = nil
-    private(set) var createdAt: Date = Date().localDate()
+    private(set) var createdAt: Date = Date.localDate()
     private(set) var updatedAt: Date? = nil
     private(set) var deleteDate: Date? = nil
     private(set) var rootDeleteDate: Date? = nil
@@ -74,14 +74,14 @@ class ThemeDraft {
     
     private(set) var backgroundImage: UIImage? {
         get {
-            UIImage.get(imagePath: self.imagePath)
+            try? LoadImageUseCase(name: imagePath)?.loadImage()
         }
         set {
         }
     }
     private(set) var thumbnail: UIImage? {
         get {
-            UIImage.get(imagePath: self.imagePathThumbnail)
+            try? LoadImageUseCase(name: imagePathThumbnail)?.loadImage()
         }
         set {
         }
@@ -273,7 +273,6 @@ class ThemeDraft {
     
     func setImageSelectionAction(_ action: ImageSelectionAction, imageName: String?) {
         if let tempSavedImageName = tempSavedImageName {
-            UIImage.deleteTempFile(imageName: tempSavedImageName, thumbNailName: nil)
         }
         tempSavedImageName = imageName
         self.imageSelectionAction = action
@@ -307,10 +306,7 @@ class ThemeDraft {
         }
     }
     
-    func setBackgroundImage(image: UIImage?, imageName: String?) throws {
-        let savedImage = try UIImage.set(image: image, imageName: imageName ?? self.imagePath, thumbNailName: self.imagePathThumbnail)
-        self.imagePath = savedImage.imagePath
-        self.imagePathThumbnail = savedImage.thumbPath
+    func setBackgroundImage(image: UIImage?, imageName: String?) {
     }
     
     func update(_ cell: NewOrEditIphoneController.Cell) throws {

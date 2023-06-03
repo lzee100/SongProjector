@@ -15,23 +15,41 @@ import GoogleSignIn
 import FirebaseAuth
 import Network
 
-@main
-struct ChurchBeamApp: App {
+class Authentication: ObservableObject {
+    @Published var isRegistered = false
+}
+
+var store = ExternalDisplayConnector()
+
+struct ChurchBeamApp: View {
     
-    @StateObject var userAuth: UserAuthModel =  UserAuthModel()
-    @StateObject var soundPlayer = SoundPlayer2()
-    @StateObject var musicDownloadManager =  MusicDownloadManager()
+    enum AppState: Identifiable {
+        var id: String {
+            UUID().uuidString
+        }
+        case onboarding
+        case app
+    }
+    
+    let store: ExternalDisplayConnector
+    var userAuth: UserAuthModel =  UserAuthModel()
+    var soundPlayer = SoundPlayer2()
+    var musicDownloadManager =  MusicDownloadManager()
+    @State private var appState: AppState? = nil
     @State private var showApp = false
     @State private var showOnboarding = false
     @State private var handleFireStore: Any?
-    
-    init() {
+    @StateObject private var authentication = Authentication()
+
+    init(store: ExternalDisplayConnector) {
+        self.store = store
         initializeFireStore()
+        initializeLocalStorage()
+        initializeCoreData()
         setApplicationIdentifier()
     }
     
-    var body: some Scene {
-        WindowGroup {
+    var body: some View {
             ZStack {
                 Color(uiColor: .whiteColor).ignoresSafeArea()
                 ProgressView()
@@ -39,44 +57,61 @@ struct ChurchBeamApp: App {
             }
             .onAppear {
                 handleFireStore = Auth.auth().addStateDidChangeListener { auth, user in
-                    if auth.currentUser == nil {
-                        try? ResetCoreDataUseCase().reset(completion: {
-                            showOnboarding = auth.currentUser == nil
-                            showApp = auth.currentUser != nil
-                        })
-                    } else {
-                        showOnboarding = auth.currentUser == nil
-                        showApp = auth.currentUser != nil
+                    authentication.isRegistered = auth.currentUser != nil
+                    
+                    if !authentication.isRegistered {
+                        Task {
+                            try? await ResetCoreDataUseCase().reset()
+                        }
                     }
+                    if !showOnboarding, !showApp {
+                        showOnboarding = !authentication.isRegistered
+                        showApp = authentication.isRegistered
+                    }
+                    handleTransition()
                 }
             }
-            .fullScreenCover(isPresented: $showApp) {
-                TabViewUI()
-                    .environmentObject(soundPlayer)
-                    .environmentObject(musicDownloadManager)
-            }
-            .animation(.easeOut, value: showApp)
-            .fullScreenCover(isPresented: $showOnboarding) {
-                OnboardingViewUI()
-            }
-            .animation(.easeOut, value: showOnboarding)
+            .fullScreenCover(item: $appState, onDismiss: {
+                handleTransition()
+            }, content: { _ in
+                switch appState {
+                case .none:
+                    EmptyView()
+                case .onboarding:
+                    OnboardingViewUI()
+                case .app:
+                    TabViewUI()
+                        .environmentObject(soundPlayer)
+                        .environmentObject(musicDownloadManager)
+                        .environmentObject(store)
+                }
+            })
+    }
+    
+    private func handleTransition() {
+        if showOnboarding {
+            showOnboarding = !authentication.isRegistered
+            appState = showOnboarding ? .onboarding : .app
+        } else {
+            showApp = authentication.isRegistered
+            appState = showApp ? .app : .onboarding
         }
     }
     
     private func initializeFireStore() {
-//        ChurchBeamConfiguration.environment = .production
-//        ChurchBeamConfiguration.environment.loadGoogleFile()
-        if UserDefaults.standard.integer(forKey: "config.environment") != 0 {
-            ChurchBeamConfiguration.environment.loadGoogleFile()
-        } else {
-            switch AppConfiguration.mode {
-            case .TestFlight, .AppStore:
-                ChurchBeamConfiguration.environment = .production
-            case .Debug:
-                ChurchBeamConfiguration.environment = .dev
-            }
-            ChurchBeamConfiguration.environment.loadGoogleFile()
-        }
+        ChurchBeamConfiguration.environment = .production
+        ChurchBeamConfiguration.environment.loadGoogleFile()
+//        if UserDefaults.standard.integer(forKey: "config.environment") != 0 {
+//            ChurchBeamConfiguration.environment.loadGoogleFile()
+//        } else {
+//            switch AppConfiguration.mode {
+//            case .TestFlight, .AppStore:
+//                ChurchBeamConfiguration.environment = .production
+//            case .Debug:
+//                ChurchBeamConfiguration.environment = .dev
+//            }
+//            ChurchBeamConfiguration.environment.loadGoogleFile()
+//        }
         FirebaseConfiguration.shared.setLoggerLevel(.min)
     }
     
@@ -87,7 +122,130 @@ struct ChurchBeamApp: App {
             userDefaults.set(UUID, forKey: ApplicationIdentifier)
         }
     }
+    
+    private func initializeLocalStorage() {
+        try? CreateChurchBeamDirectoryUseCase(location: .temp).create()
+        try? CreateChurchBeamDirectoryUseCase(location: .persitent).create()
+    }
+    
+    private func initializeCoreData() {
+        Store.setup()
+    }
 }
+
+
+
+
+//struct ChurchBeamApp: App {
+//
+//    enum AppState: Identifiable {
+//        var id: String {
+//            UUID().uuidString
+//        }
+//        case onboarding
+//        case app
+//    }
+//
+//    var userAuth: UserAuthModel =  UserAuthModel()
+//    var soundPlayer = SoundPlayer2()
+//    var musicDownloadManager =  MusicDownloadManager()
+//    @State private var appState: AppState? = nil
+//    @State private var showApp = false
+//    @State private var showOnboarding = false
+//    @State private var handleFireStore: Any?
+//    @StateObject private var authentication = Authentication()
+//
+//    init() {
+//        initializeFireStore()
+//        initializeLocalStorage()
+//        initializeCoreData()
+//        setApplicationIdentifier()
+//    }
+//
+//    var body: some Scene {
+//        WindowGroup {
+//            ZStack {
+//                Color(uiColor: .whiteColor).ignoresSafeArea()
+//                ProgressView()
+//                    .tint(Color(uiColor: .blackColor))
+//            }
+//            .onAppear {
+//                handleFireStore = Auth.auth().addStateDidChangeListener { auth, user in
+//                    authentication.isRegistered = auth.currentUser != nil
+//
+//                    if !authentication.isRegistered {
+//                        Task {
+//                            try? await ResetCoreDataUseCase().reset()
+//                        }
+//                    }
+//                    if !showOnboarding, !showApp {
+//                        showOnboarding = !authentication.isRegistered
+//                        showApp = authentication.isRegistered
+//                    }
+//                    handleTransition()
+//                }
+//            }
+//            .fullScreenCover(item: $appState, onDismiss: {
+//                handleTransition()
+//            }, content: { _ in
+//                switch appState {
+//                case .none:
+//                    EmptyView()
+//                case .onboarding:
+//                    OnboardingViewUI()
+//                case .app:
+//                    TabViewUI()
+//                        .environmentObject(soundPlayer)
+//                        .environmentObject(musicDownloadManager)
+//                }
+//            })
+//        }
+//    }
+//
+//    private func handleTransition() {
+//        if showOnboarding {
+//            showOnboarding = !authentication.isRegistered
+//            appState = showOnboarding ? .onboarding : .app
+//        } else {
+//            showApp = authentication.isRegistered
+//            appState = showApp ? .app : .onboarding
+//        }
+//    }
+//
+//    private func initializeFireStore() {
+//        ChurchBeamConfiguration.environment = .production
+//        ChurchBeamConfiguration.environment.loadGoogleFile()
+////        if UserDefaults.standard.integer(forKey: "config.environment") != 0 {
+////            ChurchBeamConfiguration.environment.loadGoogleFile()
+////        } else {
+////            switch AppConfiguration.mode {
+////            case .TestFlight, .AppStore:
+////                ChurchBeamConfiguration.environment = .production
+////            case .Debug:
+////                ChurchBeamConfiguration.environment = .dev
+////            }
+////            ChurchBeamConfiguration.environment.loadGoogleFile()
+////        }
+//        FirebaseConfiguration.shared.setLoggerLevel(.min)
+//    }
+//
+//    private func setApplicationIdentifier() {
+//        let userDefaults = UserDefaults.standard
+//        if userDefaults.object(forKey: ApplicationIdentifier) == nil {
+//            let UUID = NSUUID().uuidString
+//            userDefaults.set(UUID, forKey: ApplicationIdentifier)
+//        }
+//    }
+//
+//    private func initializeLocalStorage() {
+//        try? CreateChurchBeamDirectoryUseCase(location: .temp).create()
+//        try? CreateChurchBeamDirectoryUseCase(location: .persitent).create()
+//    }
+//
+//    private func initializeCoreData() {
+//        Store.setup()
+//    }
+//}
 
 
 class UserAuthModel: ObservableObject {

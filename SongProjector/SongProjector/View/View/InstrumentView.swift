@@ -43,7 +43,7 @@ class InstrumentView: ActionButton {
         selectionView.heightAnchor.constraint(equalToConstant: 3).isActive = true
         selectionView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
         
-        if UIDevice.current.orientation.isPortrait {
+        if UIDeviceOrientation.isPortrait {
             updateConstraintsForPortrait()
         } else {
             updateConstraintsForLandschape()

@@ -210,6 +210,7 @@ class AppText: NSObject {
 	}
     
     struct Lyrics {
+        static let titleBibleTextChange = NSLocalizedString("Lyrics-titleBibleTextChange", comment: "")
         static let titleBibleText = NSLocalizedString("Lyrics-titleBibleText", comment: "")
         static let titleLyrics = NSLocalizedString("Lyrics-titleLyrics", comment: "")
         static let placeholderBibleText = NSLocalizedString("Lyrics-placeholderBibleText", comment: "")
@@ -257,6 +258,11 @@ class AppText: NSObject {
         static let universalSongEditErrorTitle = NSLocalizedString("CustomSheets-universalSongEditErrorTitle", comment: "")
         static let universalSongEditErrorMessage = NSLocalizedString("CustomSheets-universalSongEditErrorMessage", comment: "")
         static let errorChangeSheetGenerator = NSLocalizedString("CustomSheets-errorChangeSheetGenerator", comment: "")
+    }
+    
+    struct CustomSheetsEdit {
+        static let title = NSLocalizedString("CustomSheets-Edit-title", comment: "")
+        static let titleChange = NSLocalizedString("CustomSheets-Edit-titleChange", comment: "")
     }
     
 	struct SongServiceManagement {

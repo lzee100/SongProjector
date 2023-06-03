@@ -12,7 +12,7 @@ struct EditThemeOrSheetTitleViewUI: View {
     
     var scrollViewProxy: ScrollViewProxy? = nil
     @Binding var isSectionTitleExpanded: Bool
-    @ObservedObject var editSheetOrThemeModel: WrappedStruct<EditSheetOrThemeViewModel>
+    @ObservedObject var sheetViewModel: SheetViewModel
     @State var titleColor: Color = .black
     @State var titleBorderColor: Color = .black
     @State var selectedAlignmentValue: PickerRepresentable
@@ -21,12 +21,12 @@ struct EditThemeOrSheetTitleViewUI: View {
         GroupBox() {
             DisclosureGroup(isExpanded: $isSectionTitleExpanded) {
                 Divider()
-                switch editSheetOrThemeModel.item.editMode {
+                switch sheetViewModel.sheetEditType {
                 case .theme:
                     titleViewsPartOne(hasBackgroundColorAndAlignment: true)
                     titleViewsPartTwo
-                case .sheet(_ , let type):
-                    viewFor(type)
+                case .custom, .bibleStudy, .lyrics:
+                    viewFor(sheetViewModel.sheetModel.sheetType)
                 }
             } label: {
                 Text(AppText.NewTheme.sectionTitle)
@@ -89,7 +89,7 @@ struct EditThemeOrSheetTitleViewUI: View {
     @ViewBuilder private var titleFontPickerView: some View {
         PickerViewUI(label: AppText.NewTheme.fontFamilyDescription, pickerValues: fontNamePickerValues) { container in
             if let fontName = container.value as? String {
-                editSheetOrThemeModel.item.titleFontName = fontName
+                sheetViewModel.themeModel.theme.titleFontName = fontName
             }
         }
     }
@@ -97,7 +97,7 @@ struct EditThemeOrSheetTitleViewUI: View {
     @ViewBuilder private var titleAlignmentView: some View {
         PickerViewUI(label: AppText.NewTheme.descriptionAlignment, pickerValues: Self.fontAlignmentPickerValues, selectedItem: $selectedAlignmentValue) { container in
             if let alignmentTuple = container.value as? (Int, String) {
-                editSheetOrThemeModel.item.titleAlignmentNumber = Int16(alignmentTuple.0)
+                sheetViewModel.themeModel.theme.titleAlignmentNumber = Int16(alignmentTuple.0)
             }
         }
     }
@@ -107,7 +107,7 @@ struct EditThemeOrSheetTitleViewUI: View {
             return value > 4
         }, allowIncrement: { value in
             return value < 30
-        }, numberValue: $editSheetOrThemeModel.item.titleTextSize))
+        }, numberValue: $sheetViewModel.themeModel.theme.titleTextSize))
     }
     
     @ViewBuilder private var titleBorderSizeModifierView: some View {
@@ -115,31 +115,31 @@ struct EditThemeOrSheetTitleViewUI: View {
             return true
         }, allowIncrement: { value in
             return value <= 10
-        }, numberValue: $editSheetOrThemeModel.item.titleBorderSize))
+        }, numberValue: $sheetViewModel.themeModel.theme.titleBorderSize))
     }
 
     @ViewBuilder private var titleForegroundColorView: some View {
-        LabelColorPickerViewUI(label: AppText.NewTheme.textColor, defaultColor: .black, colorDidChange: { newColor in
-            editSheetOrThemeModel.item.titleTextColorHex = newColor
-        }, selectedColor: $titleColor)
+        LabelColorPickerViewUI(label: AppText.NewTheme.textColor, defaultColor: .black, selectedColor: sheetViewModel.themeModel.theme.titleTextColorHex?.color ?? .black, colorDidChange: { newColor in
+            sheetViewModel.themeModel.theme.titleTextColorHex = newColor
+        })
     }
     
     @ViewBuilder private var titleBorderColorView: some View {
-        LabelColorPickerViewUI(label: AppText.NewTheme.borderColor, defaultColor: .black, colorDidChange: { newColor in
-            editSheetOrThemeModel.item.titleBorderColorHex = newColor
-        }, selectedColor: $titleBorderColor)
+        LabelColorPickerViewUI(label: AppText.NewTheme.borderColor, defaultColor: .black, selectedColor: sheetViewModel.themeModel.theme.titleBorderColorHex?.color ?? .black, colorDidChange: { newColor in
+            sheetViewModel.themeModel.theme.titleBorderColorHex = newColor
+        })
     }
     
     @ViewBuilder private var titleBoldToggleView: some View {
-        ToggleViewUI(label: AppText.NewTheme.bold, isOn: $editSheetOrThemeModel.item.isTitleBold)
+        ToggleViewUI(label: AppText.NewTheme.bold, isOn: $sheetViewModel.themeModel.theme.isTitleBold)
     }
 
     @ViewBuilder private var titleItalicToggleView: some View {
-        ToggleViewUI(label: AppText.NewTheme.italic, isOn: $editSheetOrThemeModel.item.isTitleItalic)
+        ToggleViewUI(label: AppText.NewTheme.italic, isOn: $sheetViewModel.themeModel.theme.isTitleItalic)
     }
 
     @ViewBuilder private var titleUnderlinedToggleView: some View {
-        ToggleViewUI(label: AppText.NewTheme.underlined, isOn: $editSheetOrThemeModel.item.isTitleUnderlined)
+        ToggleViewUI(label: AppText.NewTheme.underlined, isOn: $sheetViewModel.themeModel.theme.isTitleUnderlined)
     }
     
     private var fontNamePickerValues: [PickerRepresentable] {
@@ -149,13 +149,4 @@ struct EditThemeOrSheetTitleViewUI: View {
     static let fontAlignmentPickerValues: [PickerRepresentable] =
     [(0, AppText.NewTheme.alignLeft), (1, AppText.NewTheme.alignCenter), (2, AppText.NewTheme.alignRight)].map { PickerRepresentable(value: $0, label: $0.1) }
 
-}
-
-struct EditThemeOrSheetTitleViewUI_Previews: PreviewProvider {
-    @State static var editViewModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .theme(nil), isUniversal: false, isBibleVers: false)!)
-    @State static var selectedTitleAlignment = EditThemeOrSheetTitleViewUI.fontAlignmentPickerValues.first!
-    @State static var isSectionExpanded = true
-    static var previews: some View {
-        EditThemeOrSheetTitleViewUI(isSectionTitleExpanded: $isSectionExpanded, editSheetOrThemeModel: editViewModel, selectedAlignmentValue: selectedTitleAlignment)
-    }
 }

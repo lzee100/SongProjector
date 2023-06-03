@@ -13,10 +13,10 @@ struct GoogleActivitiesViewEditUI: View {
     @State private var activityRowHeight: CGFloat = 1
     private let isForExternalDisplay: Bool
     
-    @ObservedObject private var editViewModel: WrappedStruct<EditSheetOrThemeViewModel>
+    @ObservedObject private var sheetViewModel: SheetViewModel
     
-    init(editViewModel: WrappedStruct<EditSheetOrThemeViewModel>, isForExternalDisplay: Bool) {
-        self.editViewModel = editViewModel
+    init(sheetViewModel: SheetViewModel, isForExternalDisplay: Bool) {
+        self.sheetViewModel = sheetViewModel
         self.isForExternalDisplay = isForExternalDisplay
     }
     
@@ -26,13 +26,13 @@ struct GoogleActivitiesViewEditUI: View {
                 VStack {
                     if !hasNoTitle {
                         HStack {
-                            Text(getTitleAttributedString(text: editViewModel.item.title, viewSize: proxy.size))
-                                .modifier(SheetTitleEditUIModifier(scaleFactor: getScaleFactor(width: proxy.size.width), editViewModel: editViewModel))
+                            Text(getTitleAttributedString(text: sheetViewModel.title, viewSize: proxy.size))
+                                .modifier(SheetTitleEditUIModifier(scaleFactor: getScaleFactor(width: proxy.size.width), sheetViewModel: sheetViewModel))
                                 .lineLimit(1)
-                            if editViewModel.item.displayTime {
+                            if sheetViewModel.themeModel.theme.displayTime {
                                 Spacer()
                                 Text(getTitleAttributedString(text: Date().time, viewSize: proxy.size))
-                                    .modifier(SheetTitleEditUIModifier(scaleFactor: getScaleFactor(width: proxy.size.width), editViewModel: editViewModel))
+                                    .modifier(SheetTitleEditUIModifier(scaleFactor: getScaleFactor(width: proxy.size.width), sheetViewModel:  sheetViewModel))
                                     .lineLimit(1)
                             }
                         }
@@ -51,8 +51,8 @@ struct GoogleActivitiesViewEditUI: View {
             }
         }
         .background(.gray)
-        .setBackgroundImage(isForExternalDisplay: isForExternalDisplay, editModel: editViewModel)
-        .modifier(SheetBackgroundColorAndOpacityEditModifier(editViewModel: editViewModel))
+        .setBackgroundImage(isForExternalDisplay: isForExternalDisplay, sheetViewModel: sheetViewModel)
+        .modifier(SheetBackgroundColorAndOpacityEditModifier(sheetViewModel: sheetViewModel))
         .cornerRadius(10)
         .aspectRatio(externalDisplayWindowRatioHeightWidth, contentMode: .fit)
         .ignoresSafeArea()
@@ -92,19 +92,19 @@ struct GoogleActivitiesViewEditUI: View {
     private func getTitleAttributedString(text: String, viewSize: CGSize) -> AttributedString {
         AttributedString(NSAttributedString(
             string: text,
-            attributes: editViewModel.item.getTitleAttributes(getScaleFactor(width: viewSize.width))
+            attributes: sheetViewModel.themeModel.theme.getTitleAttributes(getScaleFactor(width: viewSize.width))
         ))
     }
     
     private func getContentAttributedString(_ text: String, viewSize: CGSize) -> AttributedString {
         AttributedString(NSAttributedString(
             string: text,
-            attributes: editViewModel.item.getLyricsAttributes(getScaleFactor(width: viewSize.width))
+            attributes: sheetViewModel.themeModel.theme.getLyricsAttributes(getScaleFactor(width: viewSize.width))
         ))
     }
 
     private var hasNoTitle: Bool {
-        editViewModel.item.title.count == 0 && !editViewModel.item.displayTime
+        sheetViewModel.title.count == 0 && !sheetViewModel.themeModel.theme.displayTime
     }
     
     private func getSheetHeightFor(width: CGFloat) -> CGFloat {
@@ -112,7 +112,7 @@ struct GoogleActivitiesViewEditUI: View {
     }
     
     private var googleActivities: [GoogleActivityCodable] {
-        (editViewModel.item.sheet as? SheetActivitiesCodable)?.hasGoogleActivities ?? []
+        (sheetViewModel.sheetModel.sheet as? SheetActivitiesCodable)?.hasGoogleActivities ?? []
     }
     
     private func getMaxItemsFor(height: CGFloat, viewSize: CGSize) -> Int {
@@ -123,16 +123,6 @@ struct GoogleActivitiesViewEditUI: View {
         let one: Int = 1 // line outside of foreach to calculate height
         
         return max(0, Int(((height - bottomMargin) / rowHeight).rounded(.down)) - one)
-    }
-}
-
-struct GoogleActivitiesViewUI_Previews: PreviewProvider {
-    @State static var cluster = ClusterCodable.makeDefault()!
-    @State static var imageSheet = SheetTitleImageCodable.makeDefault()
-        @State static var editModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .sheet((cluster, imageSheet), sheetType: .SheetTitleImage), isUniversal: false, isBibleVers: false)!)
-
-    static var previews: some View {
-        GoogleActivitiesViewEditUI(editViewModel: editModel, isForExternalDisplay: false)
     }
 }
 

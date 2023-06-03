@@ -36,7 +36,7 @@ struct SheetBackgroundImageModifier: ViewModifier {
 }
 //
 //extension View {
-//    @ViewBuilder func setBackhgroundImage(isForExternalDisplay: Bool, displayModel: SheetDisplayViewModel?, editModel: WrappedStruct<EditSheetOrThemeViewModel>?) -> some View {
+//    @ViewBuilder func setBackhgroundImage(isForExternalDisplay: Bool, displayModel: SheetDisplayViewModel?, sheetViewModel: SheetViewModel?) -> some View {
 //
 //        let transparancy = displayModel?.sheetTheme.backgroundTransparancy ?? editModel?.item.backgroundTransparancyNumber ?? 100
 //

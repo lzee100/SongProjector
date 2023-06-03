@@ -15,7 +15,7 @@ struct SongServiceSectionViewUI: View {
     @Binding var selectedSong: SongObjectUI?
     var song: SongObjectUI
     @SwiftUI.Environment(\.horizontalSizeClass) var horizontalSizeClass
-
+    
     var body: some View {
         if isCompactOrVertical(viewSize: superViewSize) {
             contentPortrait
@@ -32,15 +32,18 @@ struct SongServiceSectionViewUI: View {
             }
             Spacer()
             if song.cluster.hasPianoSolo {
-                PianoSoloViewUI(selectedSong: $selectedSong)
+                PianoSoloViewUI(selectedSong: $selectedSong, song: song)
+                    .frame(maxWidth: UIDevice.current.userInterfaceIdiom == .phone ? 100 : 200, minHeight: 40, maxHeight: 100)
                     .padding()
-                    .frame(maxWidth: 200, minHeight: 0, maxHeight: 100)
             } else {
-                instrumentsView
+                if song.cluster.hasLocalMusic {
+                    instrumentsView
+                } else {
+                    EmptyView()
+                }
             }
         }
         .background(Color(uiColor: .softBlueGrey))
-        .aspectRatio(1.0, contentMode: .fit)
         .cornerRadius(10)
     }
     
@@ -58,7 +61,7 @@ struct SongServiceSectionViewUI: View {
                     VStack {
                         Spacer()
                         if song.cluster.hasPianoSolo {
-                            PianoSoloViewUI(selectedSong: $selectedSong)
+                            PianoSoloViewUI(selectedSong: $selectedSong, song: song)
                                 .frame(height: ruler.size.height * 0.25)
                         } else if song.cluster.hasLocalMusic {
                             instrumentsView

@@ -132,31 +132,21 @@ public class VSheet: VEntity {
 		}
 	}
 	
-	override func setPropertiesTo(entity: Entity, context: NSManagedObjectContext) {
-		super.setPropertiesTo(entity: entity, context: context)
-		if let sheet = entity as? Sheet {
-			sheet.isEmptySheet = isEmptySheet
-			sheet.position = Int16(position)
-			sheet.time = time
-			sheet.hasTheme = hasTheme?.getManagedObject(context: context) as? Theme
-		}
-	}
+//	override func setPropertiesTo(entity: Entity, context: NSManagedObjectContext) {
+//		super.setPropertiesTo(entity: entity, context: context)
+//		if let sheet = entity as? Sheet {
+//			sheet.isEmptySheet = isEmptySheet
+//			sheet.position = Int16(position)
+//			sheet.time = time
+//			sheet.hasTheme = hasTheme?.getManagedObject(context: context) as? Theme
+//		}
+//	}
 	
 	convenience init(sheet: Sheet, context: NSManagedObjectContext) {
 		self.init()
 		getPropertiesFrom(entity: sheet, context: context)
 	}
 	
-    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-        if let entity: Cluster = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
-            setPropertiesTo(entity: entity, context: context)
-            return entity
-        } else {
-            let entity: Cluster = DataFetcher().createEntity(moc: context)
-            setPropertiesTo(entity: entity, context: context)
-            return entity
-        }
-    }
 	
 	
 }

@@ -13,8 +13,14 @@ struct InstrumentViewUI: View {
     @State var isSelected: Bool = true
     @State private var orientation: Sticky.Alignment = .vertical
     var instrument: InstrumentCodable
+    var muteInstrumentUseCase: MuteInstrumentsUseCase
     @EnvironmentObject private var soundPlayer: SoundPlayer2
 
+    init(isSelected: Bool = true, instrument: InstrumentCodable) {
+        self._isSelected = State(initialValue: isSelected)
+        self.instrument = instrument
+        muteInstrumentUseCase = MuteInstrumentsUseCase(instrument: instrument)
+    }
     
     var body: some View {
         VStack(spacing: 2) {
@@ -30,21 +36,21 @@ struct InstrumentViewUI: View {
         }
         .onTapGesture {
             isSelected.toggle()
-            MuteInstrumentsUseCase().setMuteFor(instrument: instrument, isMuted: !isSelected)
+            muteInstrumentUseCase.update(isMuted: !isSelected)
             soundPlayer.updateVolumeForInstrumentForMuteChange(instrument: instrument)
         }
         .background(.black)
-        .cornerRadius(orientation.isVertical ? 10 : 0)
+        .cornerRadius([.piano, .drums].contains(instrument.type) ? 10 : 0, corners: instrument.type == .piano ? [.topLeft, .bottomLeft] : instrument.type == .drums ? [.topRight, .bottomRight] : [])
         .onAppear {
-            if UIDevice.current.orientation.isLandscape {
+            if UIDeviceOrientation.isPortrait {
                 self.orientation = .horizontal
             } else {
                 self.orientation = .vertical
             }
-            isSelected = !MuteInstrumentsUseCase().isMutedFor(instrument: instrument)
+            isSelected = !muteInstrumentUseCase.isMuted
         }
         .onRotate { orientation in
-            if UIDevice.current.orientation.isLandscape {
+            if UIDeviceOrientation.isLandscape {
                 self.orientation = .horizontal
             } else {
                 self.orientation = .vertical

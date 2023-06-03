@@ -33,21 +33,21 @@ import SwiftUI
         return .new
     }
 
-    func fetchSettings() {
-        let settings: [SongServiceSettings] = DataFetcher().getEntities(moc: moc)
-        songServiceSettings = settings.compactMap { SongServiceSettingsCodable(managedObject: $0, context: moc)}.first
+    func fetchSettings() async {
+        songServiceSettings = await GetSongServiceSettingsUseCase().fetch()
     }
     
     func fetchRemoteSettings() async {
         isLoading = true
-        fetchSettings()
+        await fetchSettings()
         do {
             let result = try await FetchSongServiceSettingsUseCase().fetch()
             if result.count > 0 {
-                fetchSettings()
+                await fetchSettings()
             }
             isLoading = false
         } catch {
+            isLoading = false
             self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
         }
     }
@@ -69,7 +69,7 @@ struct SongServiceSettingsViewUI: View {
                         VStack(alignment: .leading) {
                             Text(AppText.Tags.title)
                                 .styleAs(font: .xNormalBold)
-                            Text(section.hasTags(moc: moc).compactMap { $0.title }.joined(separator: ", "))
+                            Text(section.tags.compactMap { $0.title }.joined(separator: ", "))
                                 .styleAs(font: .xNormal)
                         }
                     }
@@ -103,7 +103,9 @@ struct SongServiceSettingsViewUI: View {
             }
             .errorAlert(error: $viewModel.error)
             .sheet(item: $showingSongServiceSettingsEditorView, onDismiss: {
-                viewModel.fetchSettings()
+                Task {
+                    await viewModel.fetchSettings()
+                }
             }, content: { settings in
                 SongServiceSettingsEditorViewUI(
                     showingSongServiceSettings: $showingSongServiceSettingsEditorView,
@@ -111,7 +113,9 @@ struct SongServiceSettingsViewUI: View {
                 )
             })
             .sheet(isPresented: $showingNewSongServiceSettingsView) {
-                viewModel.fetchSettings()
+                Task {
+                    await viewModel.fetchSettings()
+                }
             } content: {
                 NewSongServiceSettingsViewUI(showingNewSongServiceSettingsView: $showingNewSongServiceSettingsView)
             }

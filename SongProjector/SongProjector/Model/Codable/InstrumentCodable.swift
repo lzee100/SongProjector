@@ -22,55 +22,11 @@ public struct InstrumentCodable: EntityCodableType, Identifiable {
 #endif
         return InstrumentCodable(userUID: userId)
     }
-    
-    init?(managedObject: NSManagedObject, context: NSManagedObjectContext) {
-        guard let entity = managedObject as? Instrument else { return nil }
-        id = entity.id
-        userUID = entity.userUID
-        title = entity.title
-        createdAt = entity.createdAt.date
-        updatedAt = entity.updatedAt?.date
-        deleteDate = entity.deleteDate?.date
-        rootDeleteDate = entity.rootDeleteDate?.date
         
-        isLoop = entity.isLoop
-        resourcePath = entity.resourcePath
-        typeString = entity.typeString
-        resourcePathAWS = entity.resourcePathAWS
-    }
-    
-    func getManagedObjectFrom(_ context: NSManagedObjectContext) -> NSManagedObject {
-        
-        if let entity: Instrument = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
-            setPropertiesTo(entity, context: context)
-            return entity
-        } else {
-            let entity: Instrument = DataFetcher().createEntity(moc: context)
-            setPropertiesTo(entity, context: context)
-            return entity
-        }
-    }
-    
-    private func setPropertiesTo(_ entity: Instrument, context: NSManagedObjectContext) {
-        entity.id = id
-        entity.userUID = userUID
-        entity.title = title
-        entity.createdAt = createdAt.nsDate
-        entity.updatedAt = updatedAt?.nsDate
-        entity.deleteDate = deleteDate?.nsDate
-        entity.rootDeleteDate = rootDeleteDate?.nsDate
-        
-        entity.isLoop = isLoop
-        entity.resourcePath = resourcePath
-        entity.typeString = typeString
-        entity.resourcePathAWS = resourcePathAWS
-    }
-
-    
     public var id: String = "CHURCHBEAM" + UUID().uuidString
     var userUID: String = ""
     var title: String? = nil
-    var createdAt: Date = Date().localDate()
+    var createdAt: Date = Date.localDate()
     var updatedAt: Date? = nil
     var deleteDate: Date? = nil
     var isTemp: Bool = false
@@ -105,7 +61,7 @@ public struct InstrumentCodable: EntityCodableType, Identifiable {
         id: String = "CHURCHBEAM" + UUID().uuidString,
         userUID: String = "",
         title: String? = nil,
-        createdAt: Date = Date().localDate(),
+        createdAt: Date = Date.localDate(),
         updatedAt: Date? = nil,
         deleteDate: Date? = nil,
         rootDeleteDate: Date? = nil,
@@ -125,6 +81,21 @@ public struct InstrumentCodable: EntityCodableType, Identifiable {
         self.resourcePath = resourcePath
         self.typeString = typeString
         self.resourcePathAWS = resourcePathAWS
+    }
+    
+    init(entity: Instrument) {
+        id = entity.id
+        userUID = entity.userUID
+        title = entity.title
+        createdAt = entity.createdAt.date
+        updatedAt = entity.updatedAt?.date
+        deleteDate = entity.deleteDate?.date
+        rootDeleteDate = entity.rootDeleteDate?.date
+        
+        isLoop = entity.isLoop
+        resourcePath = entity.resourcePath
+        typeString = entity.typeString
+        resourcePathAWS = entity.resourcePathAWS
     }
     
     // MARK: - Decodable
@@ -190,10 +161,18 @@ extension InstrumentCodable: FileTransferable {
     mutating func clearDataForDeletedObjects(forceDelete: Bool) {
     }
     
-    func getDeleteObjects(forceDelete: Bool) -> [String] {
-        []
+    func getDeleteObjects(forceDelete: Bool) -> [DeleteObject] {
+        if forceDelete {
+            return [DeleteObject(
+                imagePathAWS: resourcePathAWS,
+                imagePath: resourcePath,
+                imagePathThumbnail: nil
+            )]
+        } else {
+            return []
+        }
     }
-    
+
     var uploadObjects: [TransferObject] {
         []
     }
@@ -231,7 +210,7 @@ extension InstrumentCodable: FileTransferable {
     
     func setUpdatedAt() -> FileTransferable {
         var modifiedDocument = self
-        modifiedDocument.updatedAt = Date()
+        modifiedDocument.updatedAt = Date.localDate()
         return modifiedDocument
     }
     

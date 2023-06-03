@@ -10,12 +10,12 @@ import UIKit
 
 extension UIDeviceOrientation {
     
-    var isPortrait: Bool {
+    static var isPortrait: Bool {
         let portraitOrientations: [UIDeviceOrientation] = [.faceDown, .faceDown, .portrait, .portraitUpsideDown]
         return portraitOrientations.contains(UIDevice.current.orientation)
     }
     
-    var isLandscape: Bool {
+    static var isLandscape: Bool {
         return !isPortrait
     }
 }

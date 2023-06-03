@@ -29,12 +29,14 @@ class VContractLedger: VEntity {
 	}
 	
     func hasOrganization(moc: NSManagedObjectContext) -> Organization? {
-        let org: Organization? = DataFetcher().getEntity(moc: moc, predicates: [.get(id: organizationId)])
-        return org
+        return nil
+//        let org: Organization? = DataFetcher().getEntity(moc: moc, predicates: [.get(id: organizationId)])
+//        return org
     }
     func hasContract(moc: NSManagedObjectContext) -> Contract? {
-        let contract: Contract? = DataFetcher().getEntity(moc: moc, predicates: [.get(id: contractId)])
-        return contract
+        return nil
+//        let contract: Contract? = DataFetcher().getEntity(moc: moc, predicates: [.get(id: contractId)])
+//        return contract
     }
 	
 	
@@ -105,15 +107,15 @@ class VContractLedger: VEntity {
         getPropertiesFrom(entity: contractLedger, context: context)
 	}
 	
-    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-        if let entity: ContractLedger = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
-            setPropertiesTo(entity: entity, context: context)
-            return entity
-        } else {
-            let entity: ContractLedger = DataFetcher().createEntity(moc: context)
-            setPropertiesTo(entity: entity, context: context)
-            return entity
-        }
-    }
+//    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
+//        if let entity: ContractLedger = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
+//            setPropertiesTo(entity: entity, context: context)
+//            return entity
+//        } else {
+//            let entity: ContractLedger = DataFetcher().createEntity(moc: context)
+//            setPropertiesTo(entity: entity, context: context)
+//            return entity
+//        }
+//    }
 
 }

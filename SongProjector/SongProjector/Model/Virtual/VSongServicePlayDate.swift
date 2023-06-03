@@ -15,18 +15,18 @@ public class VSongServicePlayDate: VEntity {
     var appInstallId: String?
     
     var allowedToPlay: Bool {
-        if let appInstallId = UserDefaults.standard.object(forKey: ApplicationIdentifier) as? String {
-            if appInstallId == self.appInstallId {
-                return true
-            } else {
-                // if someone else played, it should be 110 before this one
-                let user: User? = DataFetcher().getEntity(moc: moc, predicates: [.skipDeleted])
-                let vUser = [user].compactMap({ $0 }).map({ VUser(user: $0, context: moc) }).first
-                return (vUser?.isAdmin ?? false) || (playDate?.isBefore(Date().dateByAddingMinutes(70)) ?? true && UserDefaults.standard.string(forKey: ApplicationIdentifier) != appInstallId)
-            }
-        } else {
+//        if let appInstallId = UserDefaults.standard.object(forKey: ApplicationIdentifier) as? String {
+//            if appInstallId == self.appInstallId {
+//                return true
+//            } else {
+//                // if someone else played, it should be 110 before this one
+//                let user: User? = DataFetcher().getEntity(moc: moc, predicates: [.skipDeleted])
+//                let vUser = [user].compactMap({ $0 }).map({ VUser(user: $0, context: moc) }).first
+//                return (vUser?.isAdmin ?? false) || (playDate?.isBefore(Date().dateByAddingMinutes(70)) ?? true && UserDefaults.standard.string(forKey: ApplicationIdentifier) != appInstallId)
+//            }
+//        } else {
             return true
-        }
+//        }
     }
     
     enum CodingKeys: String, CodingKey {
@@ -82,15 +82,15 @@ public class VSongServicePlayDate: VEntity {
         getPropertiesFrom(entity: entity, context: context)
     }
     
-    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-        if let entity: SongServicePlayDate = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
-            setPropertiesTo(entity: entity, context: context)
-            return entity
-        } else {
-            let entity: SongServicePlayDate = DataFetcher().createEntity(moc: context)
-            setPropertiesTo(entity: entity, context: context)
-            return entity
-        }
-    }
+//    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
+//        if let entity: SongServicePlayDate = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
+//            setPropertiesTo(entity: entity, context: context)
+//            return entity
+//        } else {
+//            let entity: SongServicePlayDate = DataFetcher().createEntity(moc: context)
+//            setPropertiesTo(entity: entity, context: context)
+//            return entity
+//        }
+//    }
 
 }

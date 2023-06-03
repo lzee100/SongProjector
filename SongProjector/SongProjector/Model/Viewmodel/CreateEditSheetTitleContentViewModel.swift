@@ -49,20 +49,21 @@ class CreateEditSheetTitleContentViewModel: CreateEditSheetViewModelProtocol {
         ]
     }
     private var generalRows: [NewOrEditIphoneController.Cell] {
-        let themes: [Theme] = DataFetcher().getEntities(moc: moc)
-
-        let sheetCells: [NewOrEditIphoneController.Cell] = [
-            .asTheme(themes.compactMap { ThemeCodable(managedObject: $0, context: moc) }),
-            .backgroundColor(sheetDraft.hasThemeDraft.sheetBackgroundColor),
-            .backgroundImage(image: sheetDraft.hasThemeDraft.backgroundImage, imageName: sheetDraft.hasThemeDraft.imagePath)
-        ]
-        let sheetCellsTransBackground: [NewOrEditIphoneController.Cell] = [
-            .asTheme(themes.compactMap { ThemeCodable(managedObject: $0, context: moc) }),
-            .backgroundColor(sheetDraft.hasThemeDraft.sheetBackgroundColor),
-            .backgroundImage(image: sheetDraft.hasThemeDraft.backgroundImage, imageName: sheetDraft.hasThemeDraft.imagePath),
-            .backgroundTransparancy(sheetDraft.hasThemeDraft.backgroundTransparancy)
-        ]
-        return sheetDraft.hasAnyImage() ? sheetCellsTransBackground : sheetCells
+        return []
+//        let themes: [Theme] = DataFetcher().getEntities(moc: moc)
+//
+//        let sheetCells: [NewOrEditIphoneController.Cell] = [
+//            .asTheme(themes.compactMap { ThemeCodable(managedObject: $0, context: moc) }),
+//            .backgroundColor(sheetDraft.hasThemeDraft.sheetBackgroundColor),
+//            .backgroundImage(image: sheetDraft.hasThemeDraft.backgroundImage, imageName: sheetDraft.hasThemeDraft.imagePath)
+//        ]
+//        let sheetCellsTransBackground: [NewOrEditIphoneController.Cell] = [
+//            .asTheme(themes.compactMap { ThemeCodable(managedObject: $0, context: moc) }),
+//            .backgroundColor(sheetDraft.hasThemeDraft.sheetBackgroundColor),
+//            .backgroundImage(image: sheetDraft.hasThemeDraft.backgroundImage, imageName: sheetDraft.hasThemeDraft.imagePath),
+//            .backgroundTransparancy(sheetDraft.hasThemeDraft.backgroundTransparancy)
+//        ]
+//        return sheetDraft.hasAnyImage() ? sheetCellsTransBackground : sheetCells
     }
     private var titleRows: [NewOrEditIphoneController.Cell] {
         [

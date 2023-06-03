@@ -12,15 +12,15 @@ import UIKit
 extension SheetMetaType {
     
     func getTransferObjects() -> [TransferObject] {
-        if var sheetTitleContentCodable = self as? SheetTitleContentCodable {
+        if let sheetTitleContentCodable = self as? SheetTitleContentCodable {
             return sheetTitleContentCodable.transferObjects
-        } else if var sheetTitleImageCodable = self as? SheetTitleImageCodable {
+        } else if let sheetTitleImageCodable = self as? SheetTitleImageCodable {
             return sheetTitleImageCodable.transferObjects
-        } else if var sheetPastors = self as? SheetPastorsCodable {
+        } else if let sheetPastors = self as? SheetPastorsCodable {
             return sheetPastors.transferObjects
-        } else if var sheetTitleContentCodable = self as? SheetEmptyCodable {
+        } else if let sheetTitleContentCodable = self as? SheetEmptyCodable {
             return sheetTitleContentCodable.transferObjects
-        }else if var sheetTitleContentCodable = self as? SheetEmptyCodable {
+        }else if let sheetTitleContentCodable = self as? SheetEmptyCodable {
             return sheetTitleContentCodable.transferObjects
         }
         return []
@@ -90,52 +90,17 @@ extension SheetMetaType {
         return nil
     }
     
-    var deleteObjects: [DeleteObject] {
+    func getDeleteObjects(forceDelete: Bool) -> [DeleteObject] {
         if let sheet = self as? SheetTitleContentCodable {
-            let deleteObject = DeleteObject(
-                imagePathAWS: sheet.hasTheme?.imagePathAWS,
-                imagePath: sheet.hasTheme?.imagePath,
-                thumbnailPath: sheet.hasTheme?.imagePathThumbnail
-            )
-            return [deleteObject]
+            return sheet.getDeleteObjects(forceDelete: forceDelete)
         } else if let sheet = self as? SheetTitleImageCodable {
-            let deleteObject = DeleteObject(
-                imagePathAWS: sheet.hasTheme?.imagePathAWS,
-                imagePath: sheet.hasTheme?.imagePath,
-                thumbnailPath: sheet.hasTheme?.imagePathThumbnail
-            )
-            let deleteObject2 = DeleteObject(
-                imagePathAWS: sheet.imagePathAWS,
-                imagePath: sheet.imagePath,
-                thumbnailPath: sheet.thumbnailPath
-            )
-            return [deleteObject, deleteObject2]
+            return sheet.getDeleteObjects(forceDelete: forceDelete)
         } else if let sheet = self as? SheetPastorsCodable {
-            let deleteObject = DeleteObject(
-                imagePathAWS: sheet.hasTheme?.imagePathAWS,
-                imagePath: sheet.hasTheme?.imagePath,
-                thumbnailPath: sheet.hasTheme?.imagePathThumbnail
-            )
-            let deleteObject2 = DeleteObject(
-                imagePathAWS: sheet.imagePathAWS,
-                imagePath: sheet.imagePath,
-                thumbnailPath: sheet.thumbnailPath
-            )
-            return [deleteObject, deleteObject2]
+            return sheet.getDeleteObjects(forceDelete: forceDelete)
         } else if let sheet = self as? SheetSplitCodable {
-            let deleteObject = DeleteObject(
-                imagePathAWS: sheet.hasTheme?.imagePathAWS,
-                imagePath: sheet.hasTheme?.imagePath,
-                thumbnailPath: sheet.hasTheme?.imagePathThumbnail
-            )
-            return [deleteObject]
+            return sheet.getDeleteObjects(forceDelete: forceDelete)
         } else if let sheet = self as? SheetEmptyCodable {
-            let deleteObject = DeleteObject(
-                imagePathAWS: sheet.hasTheme?.imagePathAWS,
-                imagePath: sheet.hasTheme?.imagePath,
-                thumbnailPath: sheet.hasTheme?.imagePathThumbnail
-            )
-            return [deleteObject]
+            return sheet.getDeleteObjects(forceDelete: forceDelete)
         }
         return []
     }
@@ -202,67 +167,6 @@ extension SheetMetaType {
 
 extension Array where Element == SheetMetaType {
     
-    func updateWith(downloadObjects: [DownloadObject]) throws -> [SheetMetaType] {
-        var sheets: [SheetMetaType] = []
-        for sheet in self {
-            if var changeableSheet = sheet as? SheetTitleContentCodable {
-                if let downloadObject = downloadObjects.first(where: { $0.remoteURL.absoluteString == changeableSheet.hasTheme?.imagePathAWS }) {
-                    let savedImageInfo = try UIImage.set(image: downloadObject.image, imageName: downloadObject.filename, thumbNailName: nil)
-                    changeableSheet.hasTheme?.imagePath = savedImageInfo.imagePath
-                    changeableSheet.hasTheme?.imagePathThumbnail = savedImageInfo.thumbPath
-                }
-                sheets.append(changeableSheet)
-            } else if var changeableSheet = sheet as? SheetTitleImageCodable {
-                if let downloadObject = downloadObjects.first(where: { $0.remoteURL.absoluteString == changeableSheet.hasTheme?.imagePathAWS }) {
-                    let savedImageInfo = try UIImage.set(image: downloadObject.image, imageName: downloadObject.filename, thumbNailName: nil)
-                    changeableSheet.hasTheme?.imagePath = savedImageInfo.imagePath
-                    changeableSheet.hasTheme?.imagePathThumbnail = savedImageInfo.thumbPath
-                }
-                if let downloadObject = downloadObjects.first(where: { $0.remoteURL.absoluteString == changeableSheet.imagePathAWS }) {
-                    let savedImageInfo = try UIImage.set(image: downloadObject.image, imageName: downloadObject.filename, thumbNailName: nil)
-                    changeableSheet.imagePath = savedImageInfo.imagePath
-                    changeableSheet.thumbnailPath = savedImageInfo.thumbPath
-                }
-                
-                sheets.append(changeableSheet)
-            } else if var changeableSheet = sheet as? SheetPastorsCodable {
-                if let downloadObject = downloadObjects.first(where: { $0.remoteURL.absoluteString == changeableSheet.hasTheme?.imagePathAWS }) {
-                    let savedImageInfo = try UIImage.set(image: downloadObject.image, imageName: downloadObject.filename, thumbNailName: nil)
-                    changeableSheet.hasTheme?.imagePath = savedImageInfo.imagePath
-                    changeableSheet.hasTheme?.imagePathThumbnail = savedImageInfo.thumbPath
-                }
-                if let downloadObject = downloadObjects.first(where: { $0.remoteURL.absoluteString == changeableSheet.imagePathAWS }) {
-                    let savedImageInfo = try UIImage.set(image: downloadObject.image, imageName: downloadObject.filename, thumbNailName: nil)
-                    changeableSheet.imagePath = savedImageInfo.imagePath
-                    changeableSheet.thumbnailPath = savedImageInfo.thumbPath
-                }
-                sheets.append(changeableSheet)
-            } else if var changeableSheet = sheet as? SheetEmptyCodable {
-                if let downloadObject = downloadObjects.first(where: { $0.remoteURL.absoluteString == changeableSheet.hasTheme?.imagePathAWS }) {
-                    let savedImageInfo = try UIImage.set(image: downloadObject.image, imageName: downloadObject.filename, thumbNailName: nil)
-                    changeableSheet.hasTheme?.imagePath = savedImageInfo.imagePath
-                    changeableSheet.hasTheme?.imagePathThumbnail = savedImageInfo.thumbPath
-                }
-                sheets.append(changeableSheet)
-            } else if var changeableSheet = sheet as? SheetSplitCodable {
-                if let downloadObject = downloadObjects.first(where: { $0.remoteURL.absoluteString == changeableSheet.hasTheme?.imagePathAWS }) {
-                    let savedImageInfo = try UIImage.set(image: downloadObject.image, imageName: downloadObject.filename, thumbNailName: nil)
-                    changeableSheet.hasTheme?.imagePath = savedImageInfo.imagePath
-                    changeableSheet.hasTheme?.imagePathThumbnail = savedImageInfo.thumbPath
-                }
-                sheets.append(changeableSheet)
-            } else {
-                sheets.append(sheet)
-            }
-            
-        }
-        return sheets
-    }
-    
-}
-
-extension Array where Element == SheetMetaType {
-    
     var downloadObjects: [TransferObject] {
         let sheetDownloadObjects = self.map { sheet in
             if let sheetTitleContentCodable = sheet as? SheetTitleContentCodable {
@@ -280,7 +184,7 @@ extension Array where Element == SheetMetaType {
                 return empty
             }
         }
-        return self.map { $0.theme?.downloadObjects ?? [] }.flatMap { $0 } + sheetDownloadObjects.flatMap { $0 }
+        return sheetDownloadObjects.flatMap { $0 }
     }
     
     var uploadObjects: [TransferObject] {
@@ -303,13 +207,10 @@ extension Array where Element == SheetMetaType {
         return self.map { $0.theme?.uploadObjects ?? [] }.flatMap { $0 } + sheetUploadObjects
     }
     
-    var deleteObjects: [String] {
-        uploadObjects
-            .compactMap { $0 as? UploadObject }
-            .compactMap { $0.remoteURL?.absoluteString }
-            .compactMap { $0 }
+    func getDeleteObjects(forceDelete: Bool) -> [DeleteObject] {
+        flatMap { $0.getDeleteObjects(forceDelete: forceDelete) }
     }
-    
+
     
     func setObjects(transferObjects: [TransferObject]) throws -> [SheetMetaType] {
         try self.map { sheet in

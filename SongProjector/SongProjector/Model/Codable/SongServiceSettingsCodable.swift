@@ -23,50 +23,11 @@ public struct SongServiceSettingsCodable: EntityCodableType, Identifiable {
         
         return SongServiceSettingsCodable(userUID: userUID ?? userId)
     }
-
-    
-    init?(managedObject: NSManagedObject, context: NSManagedObjectContext) {
-        guard let entity = managedObject as? SongServiceSettings else { return nil }
-        id = entity.id
-        userUID = entity.userUID
-        title = entity.title
-        createdAt = entity.createdAt.date
-        updatedAt = entity.updatedAt?.date
-        deleteDate = entity.deleteDate?.date
-        rootDeleteDate = entity.rootDeleteDate?.date
-        
-        sections = entity.hasSections(moc: context).compactMap { SongServiceSectionCodable(managedObject: $0, context: context) }
-    }
-    
-    func getManagedObjectFrom(_ context: NSManagedObjectContext) -> NSManagedObject {
-        
-        if let entity: SongServiceSettings = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
-            setPropertiesTo(entity, context: context)
-            return entity
-        } else {
-            let entity: SongServiceSettings = DataFetcher().createEntity(moc: context)
-            setPropertiesTo(entity, context: context)
-            return entity
-        }
-    }
-    
-    private func setPropertiesTo(_ entity: SongServiceSettings, context: NSManagedObjectContext) {
-        entity.id = id
-        entity.userUID = userUID
-        entity.title = title
-        entity.createdAt = createdAt.nsDate
-        entity.updatedAt = updatedAt?.nsDate
-        entity.deleteDate = deleteDate?.nsDate
-        entity.rootDeleteDate = rootDeleteDate?.nsDate
-        
-        entity.sectionIds = sections.map { $0.id }.joined(separator: ",")
-        sections.forEach { $0.getManagedObjectFrom(context) }
-    }
     
     public var id: String = "CHURCHBEAM" + UUID().uuidString
     var userUID: String = ""
     var title: String? = nil
-    var createdAt: Date = Date().localDate()
+    var createdAt: Date = Date.localDate()
     var updatedAt: Date? = nil
     var deleteDate: Date? = nil
     var isTemp: Bool = false
@@ -91,7 +52,7 @@ public struct SongServiceSettingsCodable: EntityCodableType, Identifiable {
         id: String = "CHURCHBEAM" + UUID().uuidString,
         userUID: String = "",
         title: String? = nil,
-        createdAt: Date = Date().localDate(),
+        createdAt: Date = Date.localDate(),
         updatedAt: Date? = nil,
         deleteDate: Date? = nil,
         isTemp: Bool = false,
@@ -108,7 +69,17 @@ public struct SongServiceSettingsCodable: EntityCodableType, Identifiable {
         self.rootDeleteDate = rootDeleteDate
         self.sections = sections
     }
-
+    
+    init(entity: SongServiceSettings) {
+        id = entity.id
+        userUID = entity.userUID
+        title = entity.title
+        createdAt = entity.createdAt.date
+        updatedAt = entity.updatedAt?.date
+        deleteDate = entity.deleteDate?.date
+        rootDeleteDate = entity.rootDeleteDate?.date
+    }
+    
     
     // MARK: - Decodable
     
@@ -168,7 +139,7 @@ extension SongServiceSettingsCodable: FileTransferable {
     mutating func clearDataForDeletedObjects(forceDelete: Bool) {
     }
     
-    func getDeleteObjects(forceDelete: Bool) -> [String] {
+    func getDeleteObjects(forceDelete: Bool) -> [DeleteObject] {
         []
     }
     
@@ -199,7 +170,7 @@ extension SongServiceSettingsCodable: FileTransferable {
     
     func setUpdatedAt() -> FileTransferable {
         var modifiedDocument = self
-        modifiedDocument.updatedAt = Date()
+        modifiedDocument.updatedAt = Date.localDate()
         return modifiedDocument
     }
     

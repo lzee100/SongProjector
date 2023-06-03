@@ -40,7 +40,7 @@ struct FetchUseCaseAsync<T: FileTransferable, P: Entity> {
     }
     
     func fetch(snapshots: [QuerySnapshot] = []) async throws -> [T] {
-        let lastUpdatedAt = DataFetcher<P>().getLastUpdated(moc: moc)?.updatedAt?.date
+        let lastUpdatedAt = await GetLastUpdatedAtUseCase<P>().fetch()
         return  try await useCase.fetch(lastUpdatedAt: lastUpdatedAt)
     }
 }
@@ -65,7 +65,7 @@ actor FetchUseCaseAsyncTask<T: FileTransferable> {
     private let endpoint: EndPoint
     private let db = Firestore.firestore()
     private let fetchCount = 5
-    private let managedObjectContextHandler = ManagedObjectContextHandler<T>()
+    private let saveUseCase = SaveCodableToCorDataUseCase<T>()
     let lastUpdatedAtKey = "updatedAt"
     let createdAtKey = "createdAt"
     let userIdKey = "userUID"
@@ -86,7 +86,7 @@ actor FetchUseCaseAsyncTask<T: FileTransferable> {
         let snapshot = try await collection.getDocuments(source: .server)
         
         do {
-            if snapshot.documents.count != 0 {
+            if snapshot.count != 0 {
                 let decoded: [T] = try snapshot.decoded()
                 let lastUpdatedAt = self.getLastUpdatedAt(currentLastUpdatedAt: lastUpdatedAt, objects: decoded)
                 if self.fetchAll {
@@ -141,23 +141,28 @@ actor FetchUseCaseAsyncTask<T: FileTransferable> {
     
     private func downloadFiles(_ entities: [T]) async throws -> [T] {
         guard entities.count > 0 else { return [] }
-        return try await withThrowingTaskGroup(of: T.self) { group in
-            for entity in entities {
-                group.addTask {
-                    return try await FileDownloadUseCase().startDownloadingFor(entity)
+        do {
+            let downloadedEntities = try await withThrowingTaskGroup(of: T.self) { group in
+                for entity in entities {
+                    group.addTask {
+                        return try await FileDownloadUseCase().startDownloadingFor(entity)
+                    }
                 }
+                
+                var results: [T] = []
+                for try await (result) in group {
+                    results.append(result)
+                }
+                return results
+                
             }
-            
-            var results: [T] = []
-            for try await (result) in group {
-                results.append(result)
-            }
-            return results
-            
+            return downloadedEntities
+        } catch {
+            return entities
         }
     }
     
     private func save(_ entities: [T]) async throws -> [T] {
-        try await managedObjectContextHandler.save(entities: entities)
+        try await saveUseCase.save(entities: entities)
     }
 }

@@ -39,8 +39,7 @@ public struct SheetTitleContentCodable: EntityCodableType, SheetMetaType {
         )
     }
     
-    init?(managedObject: NSManagedObject, context: NSManagedObjectContext) {
-        guard let entity = managedObject as? SheetTitleContentEntity else { return nil }
+    init?(entity: SheetTitleContentEntity) {
         id = entity.id
         userUID = entity.userUID
         title = entity.title
@@ -55,40 +54,8 @@ public struct SheetTitleContentCodable: EntityCodableType, SheetMetaType {
         isEmptySheet = entity.isEmptySheet
         position = Int(entity.position)
         time = entity.time
-        hasTheme = entity.hasTheme == nil ? nil : ThemeCodable(managedObject: entity.hasTheme!, context: context)
     }
-    
-    func getManagedObjectFrom(_ context: NSManagedObjectContext) -> NSManagedObject {
-        
-        if let entity: SheetTitleContentEntity = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
-            setPropertiesTo(entity, context: context)
-            return entity
-        } else {
-            let entity: SheetTitleContentEntity = DataFetcher().createEntity(moc: context)
-            setPropertiesTo(entity, context: context)
-            return entity
-        }
-    }
-    
-    private func setPropertiesTo(_ entity: SheetTitleContentEntity, context: NSManagedObjectContext) {
-        entity.id = id
-        entity.userUID = userUID
-        entity.title = title
-        entity.createdAt = createdAt.nsDate
-        entity.updatedAt = updatedAt?.nsDate
-        entity.deleteDate = deleteDate?.nsDate
-        entity.rootDeleteDate = rootDeleteDate?.nsDate
-        
-        entity.content = content
-        entity.isBibleVers = isBibleVers
-        
-        entity.isEmptySheet = isEmptySheet
-        entity.position = Int16(position)
-        entity.time = time
-        
-        entity.hasTheme = hasTheme?.getManagedObjectFrom(context) as? Theme
-    }
-    
+
     static var type: SheetType = .SheetTitleContent
     
     var sheetType: SheetType {
@@ -98,7 +65,7 @@ public struct SheetTitleContentCodable: EntityCodableType, SheetMetaType {
     var id: String = "CHURCHBEAM" + UUID().uuidString
     var userUID: String = ""
     var title: String? = nil
-    var createdAt: Date = Date().localDate()
+    var createdAt: Date = Date.localDate()
     var updatedAt: Date? = nil
     var deleteDate: Date? = nil
     var rootDeleteDate: Date? = nil
@@ -133,7 +100,7 @@ public struct SheetTitleContentCodable: EntityCodableType, SheetMetaType {
         id: String = "CHURCHBEAM" + UUID().uuidString,
         userUID: String = "",
         title: String? = nil,
-        createdAt: Date = Date().localDate(),
+        createdAt: Date = Date.localDate(),
         updatedAt: Date? = nil,
         deleteDate: Date? = nil,
         rootDeleteDate: Date? = nil,
@@ -239,8 +206,8 @@ extension SheetTitleContentCodable: FileTransferable {
     mutating func clearDataForDeletedObjects(forceDelete: Bool) {
     }
     
-    func getDeleteObjects(forceDelete: Bool) -> [String] {
-        []
+    func getDeleteObjects(forceDelete: Bool) -> [DeleteObject] {
+        return hasTheme?.getDeleteObjects(forceDelete: forceDelete) ?? []
     }
     
     var uploadObjects: [TransferObject] {
@@ -273,7 +240,7 @@ extension SheetTitleContentCodable: FileTransferable {
     
     func setUpdatedAt() -> FileTransferable {
         var modifiedDocument = self
-        modifiedDocument.updatedAt = Date()
+        modifiedDocument.updatedAt = Date.localDate()
         return modifiedDocument
     }
     

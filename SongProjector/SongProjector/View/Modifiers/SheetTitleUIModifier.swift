@@ -13,9 +13,9 @@ struct SheetTitleEditUIModifier: ViewModifier {
     
     private let scaleFactor: CGFloat
     private let frameWidth: CGFloat?
-    @ObservedObject var editViewModel: WrappedStruct<EditSheetOrThemeViewModel>
+    @ObservedObject var sheetViewModel: SheetViewModel
     private var alignment: Alignment {
-        switch editViewModel.item.titleAlignmentNumber {
+        switch sheetViewModel.themeModel.theme.titleAlignmentNumber {
         case 0: return .leading
         case 1: return .center
         case 2: return .trailing
@@ -23,9 +23,9 @@ struct SheetTitleEditUIModifier: ViewModifier {
         }
     }
     
-    init(scaleFactor: CGFloat, editViewModel: WrappedStruct<EditSheetOrThemeViewModel>, frameWidth: CGFloat? = nil) {
+    init(scaleFactor: CGFloat, sheetViewModel: SheetViewModel, frameWidth: CGFloat? = nil) {
         self.scaleFactor = scaleFactor
-        self.editViewModel = editViewModel
+        self.sheetViewModel = sheetViewModel
         self.frameWidth = frameWidth
     }
     

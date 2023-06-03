@@ -16,7 +16,7 @@ class VUser: VEntity {
     private let productPilotDateKey = "productPilotDateKey"
 
     class func first(moc: NSManagedObjectContext, predicates: [NSPredicate] = []) -> VUser? {
-        let user: User? = DataFetcher().getEntity(moc: moc, predicates: predicates)
+        let user: User? = nil
         if let user = user {
             return VUser(entity: user, context: moc)
         }
@@ -24,7 +24,7 @@ class VUser: VEntity {
     }
     
     class func getUsers(moc: NSManagedObjectContext, predicates: [NSPredicate] = [], sort: NSSortDescriptor? = nil) -> [VUser] {
-        let users: [User] = DataFetcher().getEntities(moc: moc, predicates: predicates, sort: sort)
+        let users: [User] = []
         return users.map({ VUser(entity: $0, context: moc) })
     }
     
@@ -223,17 +223,5 @@ class VUser: VEntity {
 		self.init()
 		getPropertiesFrom(entity: user, context: context)
 	}
-	
-    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-        if let entity: User = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
-            setPropertiesTo(entity: entity, context: context)
-            return entity
-        } else {
-            let entity: User = DataFetcher().createEntity(moc: context)
-            setPropertiesTo(entity: entity, context: context)
-            return entity
-        }
-    }
-
 	
 }

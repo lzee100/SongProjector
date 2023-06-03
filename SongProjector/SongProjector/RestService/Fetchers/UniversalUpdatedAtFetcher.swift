@@ -20,16 +20,6 @@ class UiversalUpdatedAtFetcher: Requester<VUniversalUpdatedAt> {
         return "universalupdatedat"
     }
     
-    override func getLastUpdatedAt(moc: NSManagedObjectContext) -> Date? {
-        let cluster: Cluster? = DataFetcher().getEntity(moc: moc)
-        if uploadSecret != nil && cluster == nil {
-            return nil
-        } else {
-            let universalUpdatedAt: UniversalUpdatedAtEntity? = DataFetcher().getLastUpdated(moc: moc)
-            return universalUpdatedAt?.updatedAt as Date?
-        }
-    }
-    
     override var fetchAll: Bool {
         return false
     }

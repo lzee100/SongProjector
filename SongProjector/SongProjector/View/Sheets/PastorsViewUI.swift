@@ -11,10 +11,10 @@ import SwiftUI
 struct PastorsViewEditUI: View {
     private let isForExternalDisplay: Bool
     
-    @ObservedObject private var editViewModel: WrappedStruct<EditSheetOrThemeViewModel>
+    @ObservedObject private var sheetViewModel: SheetViewModel
     
-    init(editViewModel: WrappedStruct<EditSheetOrThemeViewModel>, isForExternalDisplay: Bool) {
-        self.editViewModel = editViewModel
+    init(sheetViewModel: SheetViewModel, isForExternalDisplay: Bool) {
+        self.sheetViewModel = sheetViewModel
         self.isForExternalDisplay = isForExternalDisplay
     }
     
@@ -40,8 +40,8 @@ struct PastorsViewEditUI: View {
                 .padding(EdgeInsets(top: 0, leading: getScaleFactor(width: proxy.size.width) * 15, bottom: 0, trailing: 0))
             }
             .padding(getScaleFactor(width: proxy.size.width) * 15)
-            .setBackgroundImage(isForExternalDisplay: isForExternalDisplay, editModel: editViewModel)
-            .modifier(SheetBackgroundColorAndOpacityEditModifier(editViewModel: editViewModel))
+            .setBackgroundImage(isForExternalDisplay: isForExternalDisplay, sheetViewModel: sheetViewModel)
+            .modifier(SheetBackgroundColorAndOpacityEditModifier(sheetViewModel: sheetViewModel))
             .cornerRadius(10)
             .aspectRatio(externalDisplayWindowRatioHeightWidth, contentMode: .fit)
             .ignoresSafeArea()
@@ -49,7 +49,7 @@ struct PastorsViewEditUI: View {
     }
     
     @ViewBuilder private func titleView(_ viewSize: CGSize) -> some View {
-        Text(getTitleAttributedString(editViewModel.item.title, viewSize: viewSize))
+        Text(getTitleAttributedString(sheetViewModel.title, viewSize: viewSize))
             .frame(maxWidth: .infinity, alignment: .leading)
             .lineLimit(2)
     }
@@ -78,23 +78,23 @@ struct PastorsViewEditUI: View {
     private func getTitleAttributedString(_ text: String, viewSize: CGSize) -> AttributedString {
         AttributedString(NSAttributedString(
             string: text,
-            attributes: editViewModel.item.getTitleAttributes(getScaleFactor(width: viewSize.width))
+            attributes: sheetViewModel.themeModel.theme.getTitleAttributes(getScaleFactor(width: viewSize.width))
         ))
     }
     
     private func getContentAttributedString(viewSize: CGSize) -> AttributedString {
         AttributedString(NSAttributedString(
-            string: editViewModel.item.sheetContent,
-            attributes: editViewModel.item.getLyricsAttributes(getScaleFactor(width: viewSize.width))
+            string: sheetViewModel.sheetModel.content,
+            attributes: sheetViewModel.themeModel.theme.getLyricsAttributes(getScaleFactor(width: viewSize.width))
         ))
     }
     
     private var hasNoTitle: Bool {
-        editViewModel.item.title.count == 0 && !editViewModel.item.displayTime
+        sheetViewModel.title.count == 0 && !sheetViewModel.themeModel.theme.displayTime
     }
     
     private var pastorsImage: UIImage? {
-        editViewModel.item.newSelectedSheetImage ?? editViewModel.item.getSheetImage(thumb: !isForExternalDisplay)
+        sheetViewModel.sheetModel.getImage(thumb: !isForExternalDisplay)
     }
 }
 
@@ -205,15 +205,5 @@ struct PastorsViewDisplayUI: View {
     
     private var pastorsImage: UIImage? {
         isForExternalDisplay ? sheet.sheetImage : sheet.sheetImageThumbnail
-    }
-}
-
-struct PastorsViewUI_Previews: PreviewProvider {
-    @State static var cluster = ClusterCodable.makeDefault()!
-    @State static var pastorsSheet = SheetPastorsCodable.makeDefault()
-    @State static var editModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .sheet((cluster, pastorsSheet), sheetType: .SheetPastors), isUniversal: false, isBibleVers: false)!)
-
-    static var previews: some View {
-        PastorsViewEditUI(editViewModel: editModel, isForExternalDisplay: false)
     }
 }

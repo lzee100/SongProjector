@@ -231,7 +231,7 @@ class Requester<T>: NSObject, RequesterBase where T: VEntity {
                                                 })
                                                 context.perform {
                                                     DispatchQueue.main.sync {
-                                                        result.forEach({ $0.getManagedObject(context: context) })
+//                                                        result.forEach({ $0.getManagedObject(context: context) })
                                                     }
                                                     do {
                                                         try context.save()
@@ -294,7 +294,7 @@ class Requester<T>: NSObject, RequesterBase where T: VEntity {
                                     self.requestFailed(error: error)
                                 case .succes(result: let result):
                                     if !(self is UiversalClusterFetcher) {
-                                        result.forEach({ $0.getManagedObject(context: backgroundContext) })
+//                                        result.forEach({ $0.getManagedObject(context: backgroundContext) })
                                         if backgroundContext.hasChanges {
                                             do {
                                                 try backgroundContext.save()

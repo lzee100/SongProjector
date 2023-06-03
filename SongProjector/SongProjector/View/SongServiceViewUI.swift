@@ -8,6 +8,7 @@
 
 import SwiftUI
 import UIKit
+private var idiom : UIUserInterfaceIdiom { UIDevice.current.userInterfaceIdiom }
 
 @MainActor class SongServiceViewModel: ObservableObject {
     
@@ -22,7 +23,6 @@ import UIKit
 
 struct SongServiceViewUI: View {
     
-    let dismiss: (() -> Void)
     private let alignment: Sticky.Alignment
     @EnvironmentObject private var soundPlayer: SoundPlayer2
     @State private var collectionCountDown: CollectionCountDown?
@@ -33,12 +33,11 @@ struct SongServiceViewUI: View {
     @State private var soundAndSheetPlayer: SoundWithSheetPlayer?
     @State private var showingSongServiceEditor = false
     @State private var countDownValue: Int? = nil
-    @StateObject var songService: WrappedStruct<SongServiceUI>
+    @StateObject var songService = SongServiceUI()
     @StateObject var viewModel = SongServiceViewModel()
+    @EnvironmentObject var store: ExternalDisplayConnector
 
-    init(songService: WrappedStruct<SongServiceUI>, dismiss: @escaping (() -> Void), alignment: Sticky.Alignment = .horizontal) {
-        self._songService = StateObject(wrappedValue: songService)
-        self.dismiss = dismiss
+    init(alignment: Sticky.Alignment = .horizontal) {
         self.alignment = alignment
     }
     
@@ -46,8 +45,8 @@ struct SongServiceViewUI: View {
         NavigationStack {
             GeometryReader { ruler in
                 VStack(alignment: .center, spacing: 0) {
-                    if songService.item.sectionedSongs.count != 0 {
-                            BeamerPreviewUI(songService: songService)
+                    if songService.sectionedSongs.count != 0 {
+                        BeamerPreviewUI(sendToExternalDisplayUseCase: SendToExternalDisplayUseCase(connector: store), songService: songService)
                                 .aspectRatio(externalDisplayWindowRatioHeightWidth, contentMode: .fit)
                                 .padding(EdgeInsets(top: 10, leading: 50, bottom: 0, trailing: 50))
                                 .allowsHitTesting(isUserInteractionEnabledForBeamer)
@@ -69,7 +68,7 @@ struct SongServiceViewUI: View {
                                     }
                                 }
                     } else {
-                        RoundedRectangle(cornerRadius: 20).fill(Color(uiColor: .grey1))
+                        RoundedRectangle(cornerRadius: 20).fill(Color(uiColor: .almostBlack))
                             .aspectRatio(externalDisplayWindowRatioHeightWidth, contentMode: .fit)
                             .padding(EdgeInsets(top: 10, leading: 50, bottom: 0, trailing: 50))
                             .overlay {
@@ -89,7 +88,7 @@ struct SongServiceViewUI: View {
                     }
                     Spacer()
                     SheetScrollViewUI(songServiceModel: songService, superViewSize: ruler.size, isSelectable: true)
-                        .frame(maxWidth: isCompactOrVertical(ruler: ruler) ? (ruler.size.width * 0.7) : .infinity, maxHeight: isCompactOrVertical(ruler: ruler) ? .infinity : 220)
+                        .frame(maxWidth: isCompactOrVertical(ruler: ruler) && !(idiom == .phone) ? (ruler.size.width * 0.7) : .infinity, maxHeight: isCompactOrVertical(ruler: ruler) ? .infinity : 220)
                 }
                 .background(.black)
                 .navigationBarTitleDisplayMode(.inline)
@@ -105,7 +104,7 @@ struct SongServiceViewUI: View {
                                 .frame(width: 30, height: 30)
                                 .tint(Color(uiColor: themeHighlighted))
                         }
-                        if songService.item.sectionedSongs.count > 0 {
+                        if songService.sectionedSongs.count > 0 {
                             Button {
                                 showingSongServiceEditor.toggle()
                             } label: {
@@ -128,22 +127,22 @@ struct SongServiceViewUI: View {
                 })
             }
             soundAndSheetPlayer = SoundWithSheetPlayer(soundPlayer: soundPlayer, collectionCountDown: collectionCountDown!) { id in
-                self.songService.item.selectedSheetId = id
+                self.songService.selectedSheetId = id
             }
-            let songService: [SongServiceSettings] = DataFetcher().getEntities(moc: moc)
-            if let songService = songService.first, let cod = SongServiceSettingsCodable(managedObject: songService, context: moc) {
-                Task {
-                    let service = await SongServiceGeneratorUseCase().generate(for: cod)
-                    await MainActor.run {
-                        self.songService.item.set(sectionedSongs: service)
-                    }
-                }
-            }
+//            Task {
+//                let songServiceSettingsCodable = await GetSongServiceSettingsUseCase().fetch()
+//                if let songServiceSettingsCodable {
+//                    let service = await SongServiceGeneratorUseCase().generate(for: songServiceSettingsCodable)
+//                    await MainActor.run {
+//                        self.songService.set(sectionedSongs: service)
+//                    }
+//                }
+//            }
         }
         .onChange(of: selectedSheet) { newValue in
-            songService.item.selectedSheetId = newValue
+            songService.selectedSheetId = newValue
         }
-        .onChange(of: songService.item.selectedSong) { newValue in
+        .onChange(of: songService.selectedSong) { newValue in
             guard let selectedSong = newValue else {
                 isUserInteractionEnabledForBeamer = true
                 return
@@ -157,7 +156,7 @@ struct SongServiceViewUI: View {
                 await viewModel.submitPlayDateFor(selectedSong)
             }
         }
-        .onChange(of: songService.item.selectedSong) { song in
+        .onChange(of: songService.selectedSong) { song in
             soundAndSheetPlayer?.stop()
             guard let song, let soundAndSheetPlayer else {
                 return
@@ -168,11 +167,11 @@ struct SongServiceViewUI: View {
             soundAndSheetPlayer.play(song: song)
         }
         .sheet(isPresented: $showingSongServiceEditor) {
-            SongServiceEditorViewUI(songService: songService, viewModel: SongServiceEditorModel(songServiceUI: songService.item), showingSongServiceEditorViewUI: $showingSongServiceEditor)
+            SongServiceEditorViewUI(songService: songService, viewModel: SongServiceEditorModel(songServiceUI: songService), showingSongServiceEditorViewUI: $showingSongServiceEditor)
         }
         .sheet(isPresented: $showingMixerView, content: {
             ZStack {
-                Color(uiColor: .black1).ignoresSafeArea(.all)
+                Color(uiColor: .almostBlack).ignoresSafeArea(.all)
                 MixerViewUI()
                     .presentationDetents([.height(400)])
                     .background(.clear)
@@ -186,9 +185,9 @@ struct SongServiceViewUI: View {
 }
 
 struct SongServiceUI_Previews: PreviewProvider {
-    @State static var songService = WrappedStruct(withItem: SongServiceUI())
+    @State static var songService = SongServiceUI()
     static var previews: some View {
-        SongServiceViewUI(songService: songService, dismiss: {})
+        SongServiceViewUI()
             .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch) (4th generation)"))
             .previewInterfaceOrientation(.portrait)
     }

@@ -28,19 +28,19 @@ public struct ClusterCodable: EntityCodableType, Identifiable, Equatable {
         id: String = "CHURCHBEAM" + UUID().uuidString,
         userUID: String = "",
         title: String? = nil,
-        createdAt: Date = Date().localDate(),
+        createdAt: Date = Date.localDate(),
         updatedAt: Date? = nil,
         deleteDate: Date? = nil,
         isTemp: Bool = false,
         rootDeleteDate: Date? = nil,
-hasSheets: [SheetMetaType] = [SheetTitleContentCodable.makeDefault()].compactMap { $0 },
+        hasSheets: [SheetMetaType] = [SheetTitleContentCodable.makeDefault()].compactMap { $0 },
         hasInstruments: [InstrumentCodable] = [],
         hasTags: [TagCodable] = [],
         root: String? = nil,
         isLoop: Bool = false,
         position: Int16 = 0,
         time: Double = 0,
-        themeId: String = UUID().uuidString,
+        themeId: String = "",
         lastShownAt: Date? = nil,
         instrumentIds: String = "",
         sheetIds: [String] = [],
@@ -72,110 +72,12 @@ hasSheets: [SheetMetaType] = [SheetTitleContentCodable.makeDefault()].compactMap
         self.startTime = startTime
         self.hasSheetPastors = hasSheetPastors
         self.tagIds = tagIds
-        
-        let persitedTheme: Theme? = DataFetcher().getEntity(moc: moc, predicates: [.get(id: themeId)])
-        if let persitedTheme {
-            self.theme = ThemeCodable(managedObject: persitedTheme, context: moc)
-        } else {
-            self.theme = nil
-        }
     }
-    
-    init?(managedObject: NSManagedObject, context: NSManagedObjectContext) {
-        guard let entity = managedObject as? Cluster else { return nil }
-        id = entity.id
-        userUID = entity.userUID
-        title = entity.title
-        createdAt = entity.createdAt.date
-        updatedAt = entity.updatedAt?.date
-        deleteDate = entity.deleteDate?.date
-        rootDeleteDate = entity.rootDeleteDate?.date
-        
-        root = entity.root
-        isLoop = entity.isLoop
-        position = Int16(entity.position)
-        time = entity.time
-        themeId = entity.themeId
-        lastShownAt = entity.lastShownAt as Date?
-        instrumentIds = entity.instrumentIds ?? ""
-        church = entity.church
-        startTime = entity.startTime
-        hasSheetPastors = entity.hasSheetPastors
-        
-        func getSheets() -> [SheetMetaType] {
-            guard sheetIds.count > 0 else { return [] }
-            let predicates: [NSPredicate] = sheetIds.map { .get(id: $0) }
-            let data: [Sheet] = DataFetcher().getEntities(moc: context, predicates: predicates, predicateCompoundType: .or)
-            return data.getSheets(context: context)
-        }
-        
-        sheetIds = entity.sheetIds.split(separator: ",").compactMap({ String($0) })
-        hasSheets = getSheets()
-        tagIds = entity.tagIds.split(separator: ",").compactMap({ String($0) })
-        if !instrumentIds.isBlanc {
-            let instruments: [Instrument] = DataFetcher()
-                .getEntities(moc: context, predicates: instrumentIds.split(separator: ",")
-                    .map(String.init)
-                    .map{ NSPredicate.get(id: $0) }, sort: nil, predicateCompoundType: .or)
-            hasInstruments = instruments.compactMap { InstrumentCodable(managedObject: $0, context: context) }.sorted(by: {$0.type?.position ?? 0 < $1.type?.position ?? 0 })
-        }
-        let predicates: [NSPredicate] = tagIds.map { .get(id: $0) }
-        let tags: [Tag] = DataFetcher().getEntities(moc: context, predicates: predicates, predicateCompoundType: .or)
-        hasTags = tags.compactMap { TagCodable(managedObject: $0, context: context) }
-        church = entity.church
-        startTime = entity.startTime
-        hasSheetPastors = entity.hasSheetPastors
-        
-        let theme: Theme? = DataFetcher().getEntity(moc: context, predicates: [.get(id: themeId)])
-        if let theme {
-            self.theme = ThemeCodable(managedObject: theme, context: context)
-        }
-    }
-    
-    func getManagedObjectFrom(_ context: NSManagedObjectContext) -> NSManagedObject {
-        
-        if let entity: Cluster = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
-            setPropertiesTo(entity, context: context)
-            return entity
-        } else {
-            let entity: Cluster = DataFetcher().createEntity(moc: context)
-            setPropertiesTo(entity, context: context)
-            return entity
-        }
-    }
-    
-    private func setPropertiesTo(_ entity: Cluster, context: NSManagedObjectContext) {
-        entity.id = id
-        entity.userUID = userUID
-        entity.title = title
-        entity.createdAt = createdAt.nsDate
-        entity.updatedAt = updatedAt?.nsDate
-        entity.deleteDate = deleteDate?.nsDate
-        entity.rootDeleteDate = rootDeleteDate?.nsDate
-        
-        entity.sheetIds = sheetIds.joined(separator: ",")
-        entity.instrumentIds = instrumentIds
-        entity.root = root
-        entity.isLoop = isLoop
-        entity.position = Int16(position)
-        entity.time = time
-        entity.themeId = theme?.id ?? themeId
-        entity.church = church
-        entity.startTime = startTime
-        entity.lastShownAt = lastShownAt as NSDate?
-        entity.hasSheetPastors = hasSheetPastors
-        entity.instrumentIds = instrumentIds
-        entity.sheetIds = hasSheets.map { $0.id }.joined(separator: ",")
-        entity.tagIds = tagIds.joined(separator: ",")
-        
-        hasSheets.forEach { _ = $0.getManagedObjectFrom(context) }
-        hasInstruments.forEach { _ = $0.getManagedObjectFrom(context) }
-    }
-    
+            
     public var id: String = "CHURCHBEAM" + UUID().uuidString
     var userUID: String = ""
     var title: String? = nil
-    var createdAt: Date = Date().localDate()
+    var createdAt: Date = Date.localDate()
     var updatedAt: Date? = nil
     var deleteDate: Date? = nil
     var isTemp: Bool = false
@@ -210,6 +112,7 @@ hasSheets: [SheetMetaType] = [SheetTitleContentCodable.makeDefault()].compactMap
     }
     
     public var hasPianoSolo: Bool {
+        guard hasLocalMusic else { return false }
         return hasInstruments.contains(where: { $0.type == .pianoSolo && $0.resourcePath != nil })
     }
     
@@ -218,9 +121,9 @@ hasSheets: [SheetMetaType] = [SheetTitleContentCodable.makeDefault()].compactMap
     }
     
     public var hasLocalMusic: Bool {
-           return hasInstruments.contains(where: { $0.resourcePath != nil })
-       }
-        
+        return hasInstruments.contains(where: { $0.resourcePath != nil })
+    }
+    
     enum CodingKeysCluster:String,CodingKey
     {
         case id
@@ -270,21 +173,48 @@ hasSheets: [SheetMetaType] = [SheetTitleContentCodable.makeDefault()].compactMap
         }
         try container.encode(userUID, forKey: .userUID)
 
-       try container.encode((createdAt ).intValue, forKey: .createdAt)
+       try container.encode(createdAt.intValue, forKey: .createdAt)
         if let updatedAt = updatedAt {
-            try container.encode((updatedAt ).intValue, forKey: .updatedAt)
+            try container.encode(updatedAt.intValue, forKey: .updatedAt)
         } else {
-            try container.encode((createdAt ).intValue, forKey: .updatedAt)
+            try container.encode(createdAt.intValue, forKey: .updatedAt)
         }
         if let deleteDate = deleteDate {
-            try container.encode((deleteDate ).intValue, forKey: .deleteDate)
+            try container.encode(deleteDate.intValue, forKey: .deleteDate)
         }
         if let rootDeleteDate = rootDeleteDate {
             try container.encode(rootDeleteDate.intValue, forKey: .rootDeleteDate)
         }
     }
     
-    
+    init?(managedObject: NSManagedObject) {
+        guard let entity = managedObject as? Cluster else { return nil }
+        id = entity.id
+        userUID = entity.userUID
+        title = entity.title
+        createdAt = entity.createdAt.date
+        updatedAt = entity.updatedAt?.date
+        deleteDate = entity.deleteDate?.date
+        rootDeleteDate = entity.rootDeleteDate?.date
+        
+        root = entity.root
+        isLoop = entity.isLoop
+        position = Int16(entity.position)
+        time = entity.time
+        themeId = entity.themeId
+        lastShownAt = entity.lastShownAt as Date?
+        instrumentIds = entity.instrumentIds ?? ""
+        church = entity.church
+        startTime = entity.startTime
+        hasSheetPastors = entity.hasSheetPastors
+        
+        sheetIds = entity.sheetIds.split(separator: ",").compactMap({ String($0) })
+        tagIds = entity.tagIds.split(separator: ",").compactMap({ String($0) })
+        instrumentIds = entity.instrumentIds ?? ""
+        church = entity.church
+        startTime = entity.startTime
+    }
+
     
     // MARK: - Decodable
     
@@ -355,8 +285,8 @@ extension ClusterCodable: FileTransferable {
         self.hasSheets = updatedSheets
     }
     
-    func getDeleteObjects(forceDelete: Bool) -> [String] {
-        hasSheets.deleteObjects
+    func getDeleteObjects(forceDelete: Bool) -> [DeleteObject] {
+        hasSheets.getDeleteObjects(forceDelete: forceDelete) + hasInstruments.flatMap { $0.getDeleteObjects(forceDelete: forceDelete) }
     }
     
     var uploadObjects: [TransferObject] {
@@ -372,10 +302,9 @@ extension ClusterCodable: FileTransferable {
     }
     
     mutating func setTransferObjects(_ transferObjects: [TransferObject]) throws {
-        var sheets = try hasSheets.setObjects(transferObjects: transferObjects)
+        let sheets = try hasSheets.setObjects(transferObjects: transferObjects)
         self.hasSheets = sheets
         
-        let downloadObjects = transferObjects.compactMap { $0 as? DownloadObject }
         var updatedInstruments: [InstrumentCodable] = []
         try hasInstruments.forEach { instrument in
             var changedInstrument = instrument
@@ -397,7 +326,7 @@ extension ClusterCodable: FileTransferable {
     
     func setUpdatedAt() -> FileTransferable {
         var modifiedDocument = self
-        modifiedDocument.updatedAt = Date()
+        modifiedDocument.updatedAt = Date.localDate()
         return modifiedDocument
     }
     

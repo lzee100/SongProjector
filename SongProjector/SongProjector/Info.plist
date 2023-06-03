@@ -115,6 +115,29 @@
 	<string>For selecting images as backgrounds</string>
 	<key>REVERSED_CLIENT_ID</key>
 	<string>com.googleusercontent.apps.1005753122128-dn4qrfc38m5udiag7rv35pfqo1bc38rf</string>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<true/>
+		<key>UISceneConfigurations</key>
+		<dict>
+			<key>UIWindowSceneSessionRoleApplication</key>
+			<array>
+				<dict>
+					<key>UISceneConfigurationName</key>
+					<string>Default</string>
+					<key>UISceneDelegateClassName</key>
+					<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
+				</dict>
+				<dict>
+					<key>UISceneConfigurationName</key>
+					<string>ExternalDisplay</string>
+					<key>UISceneDelegateClassName</key>
+					<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
+				</dict>
+			</array>
+		</dict>
+	</dict>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>

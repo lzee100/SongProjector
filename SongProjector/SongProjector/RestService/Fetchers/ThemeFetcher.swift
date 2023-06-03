@@ -20,10 +20,10 @@ class TemeFetcher: Requester<VTheme> {
         return "themes"
     }
     
-    override func getLastUpdatedAt(moc: NSManagedObjectContext) -> Date? {
-        let theme: Theme? = DataFetcher().getLastUpdated(moc: moc)
-        return theme?.updatedAt as Date?
-    }
+//    override func getLastUpdatedAt(moc: NSManagedObjectContext) -> Date? {
+//        let theme: Theme? = DataFetcher().getLastUpdated(moc: moc)
+//        return theme?.updatedAt as Date?
+//    }
     
     override func additionalProcessing(_ context: NSManagedObjectContext, _ entities: [VTheme], completion: @escaping ((Requester<VTheme>.AdditionalProcessResult) -> Void)) {
         let downloadObjects = entities.flatMap({ $0.downloadObjects }).unique { (lhs, rhs) -> Bool in

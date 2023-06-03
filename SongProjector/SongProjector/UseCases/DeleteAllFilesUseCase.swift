@@ -10,18 +10,10 @@ import Foundation
 
 struct DeleteAllFilesUseCase {
     
-    func delete() {
-        guard let documentsUrl =  FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-            return
-        }
-
-        do {
-            let fileURLs = try FileManager.default.contentsOfDirectory(at: documentsUrl,
-                                                                       includingPropertiesForKeys: nil,
-                                                                       options: .skipsHiddenFiles)
-            for fileURL in fileURLs {
-                try FileManager.default.removeItem(at: fileURL)
-            }
-        } catch  { print(error) }
+    private let churchbeamDirectory = "churchbeam"
+    
+    func delete() throws {
+        try FileManager.default.removeItem(at: URL.churchbeamDirectory)
+        try FileManager.default.removeItem(at: URL.churchbeamDirectoryTemp)
     }
 }

@@ -94,8 +94,8 @@ class TagSelectionController: ChurchBeamViewController, UITableViewDelegate, UIT
     }
 	
     override func update() {
-        let tags: [Tag] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "position", ascending: true))
-        self.tags = tags.map({ VTag(tag: $0, context: moc) })
+//        let tags: [Tag] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "position", ascending: true))
+//        self.tags = tags.map({ VTag(tag: $0, context: moc) })
         self.tableView.reloadData()
     }
 	

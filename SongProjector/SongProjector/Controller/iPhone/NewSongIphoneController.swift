@@ -144,10 +144,10 @@ class NewSongIphoneController: ChurchBeamViewController, UICollectionViewDataSou
 	// MARK: - Private Functions
 	
 	private func setup() {
-        var predicates: [NSPredicate] = [.skipDeleted]
-        predicates.append("isHidden", notEquals: true)
-        let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: predicates, sort: NSSortDescriptor(key: "position", ascending: true))
-        self.themes = themes.compactMap({ VTheme(theme: $0, context: moc) })
+//        var predicates: [NSPredicate] = [.skipDeleted]
+//        predicates.append("isHidden", notEquals: true)
+//        let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: predicates, sort: NSSortDescriptor(key: "position", ascending: true))
+//        self.themes = themes.compactMap({ VTheme(theme: $0, context: moc) })
         
 		if cluster == nil {
 			cluster = VCluster()
@@ -213,11 +213,11 @@ class NewSongIphoneController: ChurchBeamViewController, UICollectionViewDataSou
 	}
 	
 	private func databaseDidChange(_ notification: Notification) {
-		selectedTheme = nil
-        var predicates: [NSPredicate] = [.skipDeleted]
-        predicates.append("isHidden", notEquals: true)
-        let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: predicates, sort: NSSortDescriptor(key: "position", ascending: true))
-        self.themes = themes.compactMap({ VTheme(theme: $0, context: moc) })
+//		selectedTheme = nil
+//        var predicates: [NSPredicate] = [.skipDeleted]
+//        predicates.append("isHidden", notEquals: true)
+//        let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: predicates, sort: NSSortDescriptor(key: "position", ascending: true))
+//        self.themes = themes.compactMap({ VTheme(theme: $0, context: moc) })
 		update()
 	}
 	

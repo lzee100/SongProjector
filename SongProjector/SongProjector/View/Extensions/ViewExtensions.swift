@@ -29,13 +29,13 @@ extension View {
         return image
     }
     
-    func setBackgroundImage(isForExternalDisplay: Bool, editModel: WrappedStruct<EditSheetOrThemeViewModel>) -> some View {
+    func setBackgroundImage(isForExternalDisplay: Bool, sheetViewModel: SheetViewModel) -> some View {
         self.modifier(SheetBackgroundImageModifier(
-            image: editModel.item.getThemeImage(thumb: !isForExternalDisplay)?.image,
-            backgroundTransparancy: editModel.item.backgroundTransparancyNumber)
+            image: sheetViewModel.themeModel.getImage(thumb: !isForExternalDisplay)?.image,
+            backgroundTransparancy: sheetViewModel.themeModel.theme.backgroundTransparancyNumber)
         )
     }
-    
+        
     func setBackgroundImage(isForExternalDisplay: Bool, theme: ThemeCodable?) -> some View {
         self.modifier(SheetBackgroundImageModifier(
             image: isForExternalDisplay ? theme?.uiImage?.image : theme?.uiImageThumb?.image,

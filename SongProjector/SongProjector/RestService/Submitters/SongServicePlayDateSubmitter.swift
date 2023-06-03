@@ -22,16 +22,16 @@ class SngServicePlayDateSubmitter: Requester<VSongServicePlayDate>  {
     }
     
     func subMitPlayDate() {
-        if let appInstallId = UserDefaults.standard.object(forKey: ApplicationIdentifier) as? String {
-            DispatchQueue.main.async {
-                let playDate: SongServicePlayDate? = DataFetcher().getEntity(moc: moc, predicates: [.skipDeleted])
-                let playDateEntity = [playDate].compactMap({ $0 }).map({ VSongServicePlayDate(entity: $0, context: moc) }).first ?? VSongServicePlayDate()
-                playDateEntity.appInstallId = appInstallId
-                playDateEntity.userUID = Auth.auth().currentUser?.uid ?? ""
-                playDateEntity.playDate = Date()
-                self.submit([playDateEntity], requestMethod: .post)
-            }
-        }
+//        if let appInstallId = UserDefaults.standard.object(forKey: ApplicationIdentifier) as? String {
+//            DispatchQueue.main.async {
+//                let playDate: SongServicePlayDate? = DataFetcher().getEntity(moc: moc, predicates: [.skipDeleted])
+//                let playDateEntity = [playDate].compactMap({ $0 }).map({ VSongServicePlayDate(entity: $0, context: moc) }).first ?? VSongServicePlayDate()
+//                playDateEntity.appInstallId = appInstallId
+//                playDateEntity.userUID = Auth.auth().currentUser?.uid ?? ""
+//                playDateEntity.playDate = Date()
+//                self.submit([playDateEntity], requestMethod: .post)
+//            }
+//        }
     }
         
 }

@@ -19,9 +19,9 @@ class ClusterOrComment {
     }
     
     func refresh() {
-        if let id = self.id, let cluster: Cluster = DataFetcher().getEntity(moc: moc, predicates: [.get(id: id)]) {
-            moc.refresh(cluster, mergeChanges: false)
-            self.cluster = VCluster(cluster: cluster, context: moc)
-        }
+//        if let id = self.id, let cluster: Cluster = DataFetcher().getEntity(moc: moc, predicates: [.get(id: id)]) {
+//            moc.refresh(cluster, mergeChanges: false)
+//            self.cluster = VCluster(cluster: cluster, context: moc)
+//        }
     }
 }

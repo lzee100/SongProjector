@@ -18,12 +18,13 @@ public class SongServiceSettings: Entity {
     @NSManaged public var sectionIds: String?
 
     func hasSections(moc: NSManagedObjectContext) -> [SongServiceSection] {
-        let ids = sectionIds?.split(separator: ",").compactMap({ String($0) }) ?? []
-        let sections: [SongServiceSection] = ids.compactMap({ id in
-            let section: SongServiceSection? = DataFetcher().getEntity(moc: moc, predicates: [.get(id: id)])
-            return section
-        })
-        return sections.sorted(by: { $0.position < $1.position })
+        []
+//        let ids = sectionIds?.split(separator: ",").compactMap({ String($0) }) ?? []
+//        let sections: [SongServiceSection] = ids.compactMap({ id in
+//            let section: SongServiceSection? = DataFetcher().getEntity(moc: moc, predicates: [.get(id: id)])
+//            return section
+//        })
+//        return sections.sorted(by: { $0.position < $1.position })
     }
     
 }

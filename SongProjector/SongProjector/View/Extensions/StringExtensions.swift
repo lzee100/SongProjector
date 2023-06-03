@@ -109,7 +109,7 @@ extension String {
     }
     
     func loadImage() -> UIImage? {
-        UIImage.get(imagePath: self)
+        try? LoadImageUseCase(name: self)?.loadImage()
     }
     
     var color: Color {

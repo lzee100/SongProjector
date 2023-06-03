@@ -33,11 +33,6 @@ protocol CodableFetcherType {
     func getCodableObjectFrom(_ objects: [NSManagedObject], context: NSManagedObjectContext) -> [EntityCodableType]
 }
 
-protocol ManagedObjectCodable: Codable {
-    func getManagedObjectFrom(_ context: NSManagedObjectContext) -> NSManagedObject
-    init?(managedObject: NSManagedObject, context: NSManagedObjectContext)
-}
-
 protocol RequesterInfo {
     var path: String { get }
     var lastUpdatedAt: Int64? { get }
@@ -120,31 +115,31 @@ class RequesterCodable {
             
             var workload = self.requestResults
             var finishedWorkload: [(CodableFetcherType, [NSManagedObject])] = []
-            func handle(requester: CodableFetcherType, decodedEntities: [EntityCodableType]) {
-                let managedObjects: [NSManagedObject] = decodedEntities.map { $0.getManagedObjectFrom(self.managedContext) }
-                requester.additionalProcessing(decodedEntities: decodedEntities, managedObjects: managedObjects, context: managedContext) { result in
-                    switch result {
-                    case .success(let updatedManagedObjects):
-                        workload.removeFirst()
-                        finishedWorkload.append((requester, updatedManagedObjects))
-                        if let requestResult = workload.first {
-                            handle(requester: requestResult.requester, decodedEntities: requestResult.decodedEntities)
-                        } else {
-                            do {
-                                try self.managedContext.save()
-                                try moc.save()
-                                self.completion(.success(self.revertToCodable(workload: finishedWorkload, context: self.managedContext)))
-                            } catch {
-                                print("RequesterCodable startAdditionalProcessing \(error)")
-                            }
-                        }
-                    case .failure(let error):
-                        print(error)
-                    }
-                }
-            }
-            
-            handle(requester: firstRequestResult.requester, decodedEntities: firstRequestResult.decodedEntities)
+//            func handle(requester: CodableFetcherType, decodedEntities: [EntityCodableType]) {
+//                let managedObjects: [NSManagedObject] = decodedEntities.map { $0.getManagedObjectFrom(self.managedContext) }
+//                requester.additionalProcessing(decodedEntities: decodedEntities, managedObjects: managedObjects, context: managedContext) { result in
+//                    switch result {
+//                    case .success(let updatedManagedObjects):
+//                        workload.removeFirst()
+//                        finishedWorkload.append((requester, updatedManagedObjects))
+//                        if let requestResult = workload.first {
+//                            handle(requester: requestResult.requester, decodedEntities: requestResult.decodedEntities)
+//                        } else {
+//                            do {
+//                                try self.managedContext.save()
+//                                try moc.save()
+//                                self.completion(.success(self.revertToCodable(workload: finishedWorkload, context: self.managedContext)))
+//                            } catch {
+//                                print("RequesterCodable startAdditionalProcessing \(error)")
+//                            }
+//                        }
+//                    case .failure(let error):
+//                        print(error)
+//                    }
+//                }
+//            }
+//            
+//            handle(requester: firstRequestResult.requester, decodedEntities: firstRequestResult.decodedEntities)
         }
     }
     

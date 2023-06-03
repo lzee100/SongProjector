@@ -22,12 +22,14 @@ class ContractLedger: Entity {
 	@NSManaged public var hasApplePay: Bool
 
     func hasOrganization(moc: NSManagedObjectContext) -> Organization? {
-        let organization: Organization? = DataFetcher().getEntity(moc: moc, predicates: [.get(id: organizationId)])
-        return organization
+//        let organization: Organization? = DataFetcher().getEntity(moc: moc, predicates: [.get(id: organizationId)])
+//        return organization
+        return nil
     }
     func hasContract(moc: NSManagedObjectContext) -> Contract? {
-        let contract: Contract? = DataFetcher().getEntity(moc: moc, predicates: [.get(id: contractId)])
-        return contract
+//        let contract: Contract? = DataFetcher().getEntity(moc: moc, predicates: [.get(id: contractId)])
+//        return contract
+        return nil
     }
     
 }

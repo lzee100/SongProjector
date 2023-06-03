@@ -21,8 +21,9 @@ class IntroPageController2: PageController, UICollectionViewDataSource, UICollec
 	static let identifier = "IntroPageController2"
 	
     var hasContracts: [VContract] = {
-        let contracts: [Contract] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "id", ascending: true))
-        return contracts.compactMap({ VContract(contract: $0, context: moc) })
+        []
+//        let contracts: [Contract] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "id", ascending: true))
+//        return contracts.compactMap({ VContract(contract: $0, context: moc) })
     }()
     
 //    override var requesters: [RequesterBase] {

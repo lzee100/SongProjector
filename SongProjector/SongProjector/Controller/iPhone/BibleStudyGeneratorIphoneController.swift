@@ -139,8 +139,8 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 		tableView.register(cell: Cells.basicCellid)
 		tableView.keyboardDismissMode = .interactive
 		
-        let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "position", ascending: true))
-        self.themes = themes.map({ VTheme(theme: $0, context: moc) })
+//        let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "position", ascending: true))
+//        self.themes = themes.map({ VTheme(theme: $0, context: moc) })
 		
 		setSheetSize()
 
@@ -186,8 +186,8 @@ class BibleStudyGeneratorIphoneController: UIViewController, UICollectionViewDel
 	private func update() {
         var predicates: [NSPredicate] = [.skipDeleted]
 		predicates.append("isHidden", equals: 0)
-        let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: predicates, sort: NSSortDescriptor(key: "position", ascending: true))
-        self.themes = themes.map({ VTheme(theme: $0, context: moc) })
+//        let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: predicates, sort: NSSortDescriptor(key: "position", ascending: true))
+//        self.themes = themes.map({ VTheme(theme: $0, context: moc) })
 		collectionViewThemes.reloadData()
 		collectionViewSheets.reloadData()
 		tableView.reloadData()

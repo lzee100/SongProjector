@@ -23,12 +23,7 @@ class CurchFetcher: Requester<VChurch> {
     override var fetchUniversal: Bool {
         return true
     }
-    
-    override func getLastUpdatedAt(moc: NSManagedObjectContext) -> Date? {
-        let church: Church? = DataFetcher().getLastUpdated(moc: moc)
-        return church?.updatedAt as Date?
-    }
-    
+        
     override func addFetchingParamsFor(userId: String, context: NSManagedObjectContext, collection: inout Query) {
         let dateInt: Int64 = self.getLastUpdatedAt(moc: context)?.intValue ?? 1
         let newCollection = Firestore.firestore().collection(self.path).order(by: self.lastUpdatedAtKey, descending: false).whereField(self.lastUpdatedAtKey, isGreaterThan: dateInt).limit(to: self.fetchCount)

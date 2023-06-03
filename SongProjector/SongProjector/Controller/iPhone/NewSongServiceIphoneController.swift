@@ -44,22 +44,22 @@ class NewSongServiceIphoneController: ChurchBeamViewController, UIGestureRecogni
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        let songServiceSetting: SongServiceSettings? = DataFetcher().getEntities(moc: moc).first
-        
-        let needsPopUpShakeIphone = PopUpTimeManager(key: .shakeToGenerateSongService, numberOfTimes: 0, showAgainAfterHours: 24 * 30).needsTrigger { () -> Bool in
-            if let lastGeneratedSongService = UserDefaults.standard.value(forKey: "lastGeneratedSongService") as? Date {
-                return lastGeneratedSongService.daysFrom(Date()) < 30
-            }
-            return true
-        }
-        let needsPopupCreateSongService = PopUpTimeManager(key: PopUpTimeManager.Keys.createSongServiceSettings, numberOfTimes: 0, showAgainAfterHours: 24 * 7).needsTrigger()
-        
-        if songServiceSetting == nil, needsPopupCreateSongService {
-            let vc = Storyboard.MainStoryboard.instantiateViewController(identifier: PopupGenerateSongServiceSettings.identifier)
-            present(vc, animated: true)
-        } else if needsPopUpShakeIphone {
-            PopUpManager.present(AppText.NewSongService.shakeToGenerate, backgroundColor: .softBlueGrey, origin: .view(source: view, sourceRect: CGRect(x: 0, y: view.bounds.height / 2, width: 1, height: 1)), viewController: self)
-        }
+//        let songServiceSetting: SongServiceSettings? = DataFetcher().getEntities(moc: moc).first
+//
+//        let needsPopUpShakeIphone = PopUpTimeManager(key: .shakeToGenerateSongService, numberOfTimes: 0, showAgainAfterHours: 24 * 30).needsTrigger { () -> Bool in
+//            if let lastGeneratedSongService = UserDefaults.standard.value(forKey: "lastGeneratedSongService") as? Date {
+//                return lastGeneratedSongService.daysFrom(Date()) < 30
+//            }
+//            return true
+//        }
+//        let needsPopupCreateSongService = PopUpTimeManager(key: PopUpTimeManager.Keys.createSongServiceSettings, numberOfTimes: 0, showAgainAfterHours: 24 * 7).needsTrigger()
+//
+//        if songServiceSetting == nil, needsPopupCreateSongService {
+//            let vc = Storyboard.MainStoryboard.instantiateViewController(identifier: PopupGenerateSongServiceSettings.identifier)
+//            present(vc, animated: true)
+//        } else if needsPopUpShakeIphone {
+//            PopUpManager.present(AppText.NewSongService.shakeToGenerate, backgroundColor: .softBlueGrey, origin: .view(source: view, sourceRect: CGRect(x: 0, y: view.bounds.height / 2, width: 1, height: 1)), viewController: self)
+//        }
     }
     
 	override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
@@ -82,10 +82,10 @@ class NewSongServiceIphoneController: ChurchBeamViewController, UIGestureRecogni
 	override func handleRequestFinish(requesterId: String, result: Any?) {
         songserviceFetched = true
         updateBarButtons()
-        let settings: [SongServiceSettings] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "updatedAt", ascending: false))
-        if let settings = settings.first {
-            self.set(VSongServiceSettings(songserviceSettings: settings, context: moc))
-        }
+//        let settings: [SongServiceSettings] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "updatedAt", ascending: false))
+//        if let settings = settings.first {
+//            self.set(VSongServiceSettings(songserviceSettings: settings, context: moc))
+//        }
         self.update()
 	}
 	
@@ -148,65 +148,65 @@ class NewSongServiceIphoneController: ChurchBeamViewController, UIGestureRecogni
 	}
 	
     private func fetchSongserviceSettingsAndDisplay() {
-        if !songserviceFetched {
-            showLoader()
-            SongServiceSettingsFetcher.fetch()
-        } else if let settings = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "updatedAt", ascending: false)).first {
-            UserDefaults.standard.setValue(Date(), forKey: "lastGeneratedSongService")
-            Queues.main.async {
-                self.set(VSongServiceSettings(entity: settings, context: moc))
-            }
-        }
+//        if !songserviceFetched {
+//            showLoader()
+//            SongServiceSettingsFetcher.fetch()
+//        } else if let settings = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "updatedAt", ascending: false)).first {
+//            UserDefaults.standard.setValue(Date(), forKey: "lastGeneratedSongService")
+//            Queues.main.async {
+//                self.set(VSongServiceSettings(entity: settings, context: moc))
+//            }
+//        }
     }
     
     @objc private func createRandomSongService() {
-        let pSettings: [SongServiceSettings] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "updatedAt", ascending: false))
-        guard let settings = pSettings.first else {
-            return
-        }
-        let persitentClusters: [Cluster] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted, .skipRootDeleted], sort: NSSortDescriptor(key: "lastShownAt", ascending: true))
-        let allClusters = persitentClusters.compactMap({ VCluster(cluster: $0, context: moc) })
-        clusterModel.clusters = []
-        clusterModel.songServiceSettings = VSongServiceSettings(songserviceSettings: settings, context: moc)
-        var sectionedClusterOrComments: [[ClusterOrComment]] = []
-        for (position, section) in (clusterModel.songServiceSettings?.sections ?? []).enumerated() {
-            sectionedClusterOrComments.append([])
-            for songNumber in 1...section.numberOfSongs.intValue {
-                let allSelectedClusters = sectionedClusterOrComments.flatMap({ $0 }).compactMap({ $0.cluster })
-                let candidateSongs = allClusters.filter({ !allSelectedClusters.contains(entity: $0) }).filter({ cluster in
-                    var contains = false
-                    for tag in cluster.hasTags(moc: moc) {
-                        if section.tagIds.contains(tag.id) {
-                            contains = true
-                            break
-                        }
-                    }
-                    return contains
-                }).sorted(by: { ($0.lastShownAt ?? Date().dateByAddingYears(-1)) < ($1.lastShownAt ?? Date().dateByAddingYears(-1)) })
-                if candidateSongs.count > 0 {
-                    let value = (section.numberOfSongs.intValue - songNumber) + min(candidateSongs.count - (section.numberOfSongs.intValue - songNumber), 4)
-                    let maxValue = value >= candidateSongs.count ? 0 : value
-//                    let random = section.numberOfSongs - songNumber > 0 ? Int.random(in: 0..<Int(section.numberOfSongs - songNumber)) : 0
-                    let random = maxValue > 0 ? Int.random(in: 0..<maxValue) : 0
-                    if let sameNameAsSection = candidateSongs.first(where: { $0.title == section.title }) {
-                        sectionedClusterOrComments[position].append(ClusterOrComment(cluster: sameNameAsSection))
-                    } else {
-                        sectionedClusterOrComments[position].append(ClusterOrComment(cluster: candidateSongs[random]))
-                    }
-                } else if sectionedClusterOrComments[position].filter({ $0.cluster == nil }).count == 0 {
-                    sectionedClusterOrComments[position].append(ClusterOrComment(cluster: nil))
-                }
-            }
-        }
-        clusterModel.sectionedClusterOrComment = sectionedClusterOrComments
-        
-        var position: Int16 = 0
-        for section in clusterModel.sectionedClusterOrComment {
-            section.forEach { coc in
-                coc.cluster?.position = position
-                position += 1
-            }
-        }
+//        let pSettings: [SongServiceSettings] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "updatedAt", ascending: false))
+//        guard let settings = pSettings.first else {
+//            return
+//        }
+//        let persitentClusters: [Cluster] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted, .skipRootDeleted], sort: NSSortDescriptor(key: "lastShownAt", ascending: true))
+//        let allClusters = persitentClusters.compactMap({ VCluster(cluster: $0, context: moc) })
+//        clusterModel.clusters = []
+//        clusterModel.songServiceSettings = VSongServiceSettings(songserviceSettings: settings, context: moc)
+//        var sectionedClusterOrComments: [[ClusterOrComment]] = []
+//        for (position, section) in (clusterModel.songServiceSettings?.sections ?? []).enumerated() {
+//            sectionedClusterOrComments.append([])
+//            for songNumber in 1...section.numberOfSongs.intValue {
+//                let allSelectedClusters = sectionedClusterOrComments.flatMap({ $0 }).compactMap({ $0.cluster })
+//                let candidateSongs = allClusters.filter({ !allSelectedClusters.contains(entity: $0) }).filter({ cluster in
+//                    var contains = false
+//                    for tag in cluster.hasTags(moc: moc) {
+//                        if section.tagIds.contains(tag.id) {
+//                            contains = true
+//                            break
+//                        }
+//                    }
+//                    return contains
+//                }).sorted(by: { ($0.lastShownAt ?? Date().dateByAddingYears(-1)) < ($1.lastShownAt ?? Date().dateByAddingYears(-1)) })
+//                if candidateSongs.count > 0 {
+//                    let value = (section.numberOfSongs.intValue - songNumber) + min(candidateSongs.count - (section.numberOfSongs.intValue - songNumber), 4)
+//                    let maxValue = value >= candidateSongs.count ? 0 : value
+////                    let random = section.numberOfSongs - songNumber > 0 ? Int.random(in: 0..<Int(section.numberOfSongs - songNumber)) : 0
+//                    let random = maxValue > 0 ? Int.random(in: 0..<maxValue) : 0
+//                    if let sameNameAsSection = candidateSongs.first(where: { $0.title == section.title }) {
+//                        sectionedClusterOrComments[position].append(ClusterOrComment(cluster: sameNameAsSection))
+//                    } else {
+//                        sectionedClusterOrComments[position].append(ClusterOrComment(cluster: candidateSongs[random]))
+//                    }
+//                } else if sectionedClusterOrComments[position].filter({ $0.cluster == nil }).count == 0 {
+//                    sectionedClusterOrComments[position].append(ClusterOrComment(cluster: nil))
+//                }
+//            }
+//        }
+//        clusterModel.sectionedClusterOrComment = sectionedClusterOrComments
+//
+//        var position: Int16 = 0
+//        for section in clusterModel.sectionedClusterOrComment {
+//            section.forEach { coc in
+//                coc.cluster?.position = position
+//                position += 1
+//            }
+//        }
     }
 	
     private func set(_ songServiceSettings: VSongServiceSettings) {
@@ -256,28 +256,28 @@ class NewSongServiceIphoneController: ChurchBeamViewController, UIGestureRecogni
 	}
     
     private func updateBarButtons() {
-        let share: UIBarButtonItem?
-        let hasContent = clusterModel.sectionedClusterOrComment.flatMap({ $0 }).count > 0 || clusterModel.clusters.count > 0
-        if hasContent {
-            share = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareSongServicePressed(_:)))
-            share?.tintColor = themeHighlighted
-        } else {
-            share = nil
-        }
-        let generate: UIBarButtonItem?
-        let songServiceSettings: [SongServiceSettings] = DataFetcher().getEntities(moc: moc)
-        if !hasContent, songServiceSettings.count > 0 {
-            generate = UIBarButtonItem(image: UIImage(named: "MagicWand"), landscapeImagePhone: UIImage(named: "MagicWand"), style: .plain, target: self, action: #selector(generateSongService))
-            generate?.tintColor = themeHighlighted
-        } else {
-            generate = nil
-        }
-        
-        let type = clusterModel.songServiceSettings == nil ? UIBarButtonItem.SystemItem.add : UIBarButtonItem.SystemItem.cancel
-        let addOrCancel = UIBarButtonItem(barButtonSystemItem: type, target: self, action: #selector(addPressed(_:)))
-        addOrCancel.tag = clusterModel.songServiceSettings == nil ? 0 : 1
-        addOrCancel.tintColor = themeHighlighted
-        navigationItem.rightBarButtonItems = [addOrCancel, share, generate].compactMap({ $0 })
+//        let share: UIBarButtonItem?
+//        let hasContent = clusterModel.sectionedClusterOrComment.flatMap({ $0 }).count > 0 || clusterModel.clusters.count > 0
+//        if hasContent {
+//            share = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareSongServicePressed(_:)))
+//            share?.tintColor = themeHighlighted
+//        } else {
+//            share = nil
+//        }
+//        let generate: UIBarButtonItem?
+//        let songServiceSettings: [SongServiceSettings] = DataFetcher().getEntities(moc: moc)
+//        if !hasContent, songServiceSettings.count > 0 {
+//            generate = UIBarButtonItem(image: UIImage(named: "MagicWand"), landscapeImagePhone: UIImage(named: "MagicWand"), style: .plain, target: self, action: #selector(generateSongService))
+//            generate?.tintColor = themeHighlighted
+//        } else {
+//            generate = nil
+//        }
+//
+//        let type = clusterModel.songServiceSettings == nil ? UIBarButtonItem.SystemItem.add : UIBarButtonItem.SystemItem.cancel
+//        let addOrCancel = UIBarButtonItem(barButtonSystemItem: type, target: self, action: #selector(addPressed(_:)))
+//        addOrCancel.tag = clusterModel.songServiceSettings == nil ? 0 : 1
+//        addOrCancel.tintColor = themeHighlighted
+//        navigationItem.rightBarButtonItems = [addOrCancel, share, generate].compactMap({ $0 })
 
     }
     

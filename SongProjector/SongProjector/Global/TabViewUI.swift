@@ -11,17 +11,16 @@ import SwiftUI
 struct TabViewUI: View {
     @ObservedObject private var model = TabViewViewModel()
     @State private var selectedTab: Feature = .songService
-    private var songService = WrappedStruct(withItem: SongServiceUI(songs: []))
-    
+    @EnvironmentObject var externalDisplayConnector: ExternalDisplayConnector
+
     var body: some View {
         TabView(selection: $selectedTab) {
             ForEach(model.tabFeatures) { feature in
                 switch feature {
                 case .songService:
-                    tabView(SongServiceViewUI(songService: songService) {
-                    }, feature: feature)
+                    tabView(SongServiceViewUI(), feature: feature)
                 case .songs:
-                    tabView(CollectionsViewUI(editingSection: nil, songServiceEditorModel: WrappedOptionalStruct<SongServiceEditorModel>(withItem: nil)), feature: feature)
+                    tabView(CollectionsViewUI(editingSection: nil, songServiceEditorModel: SongServiceEditorModel()), feature: feature)
                 case .themes:
                     tabView(ThemesViewUI(), feature: feature)
                 case .tags:

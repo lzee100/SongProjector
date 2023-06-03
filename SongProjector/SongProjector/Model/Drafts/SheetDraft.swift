@@ -82,7 +82,7 @@ class SheetDraft {
     private(set) var id: String = "CHURCHBEAM" + UUID().uuidString
     private(set) var userUID: String = ""
     private(set) var title: String? = nil
-    private(set) var createdAt: Date = Date().localDate()
+    private(set) var createdAt: Date = Date.localDate()
     private(set) var updatedAt: Date? = nil
     private(set) var deleteDate: Date? = nil
     private(set) var isTemp: Bool = false
@@ -108,10 +108,10 @@ class SheetDraft {
     private(set) var tempSavedImageName: String?
 
     var sheetImage: UIImage? {
-        UIImage.get(imagePath: self.imagePath)
+        return nil
     }
     var sheetthumbnail: UIImage? {
-        UIImage.get(imagePath: self.thumbnailPath)
+        return nil
     }
     var sheetImageBorderColor: UIColor? {
         UIColor(hex: imageBorderColor)
@@ -133,11 +133,12 @@ class SheetDraft {
         self.hasTheme = sheetTitleContent.hasTheme
         self.content = sheetTitleContent.content
         self.isBibleVers = sheetTitleContent.isBibleVers
-        if isCustom {
-            hasThemeDraft = sheetTitleContent.hasTheme != nil ? ThemeDraft(theme: sheetTitleContent.hasTheme) : ThemeDraft(theme: ThemeCodable.makeDefault())
-        } else {
-            hasThemeDraft = ThemeDraft(theme: sheetTitleContent.hasTheme)
-        }
+        hasThemeDraft = ThemeDraft(theme: sheetTitleContent.hasTheme)
+//        if isCustom {
+//            hasThemeDraft = sheetTitleContent.hasTheme != nil ? ThemeDraft(theme: sheetTitleContent.hasTheme) : ThemeDraft(theme: ThemeCodable.makeDefault())
+//        } else {
+//            hasThemeDraft = ThemeDraft(theme: sheetTitleContent.hasTheme)
+//        }
     }
     
     init(sheetTitleImage: SheetTitleImageCodable) {
@@ -162,7 +163,8 @@ class SheetDraft {
         self.imagePath = sheetTitleImage.imagePath
         self.thumbnailPath = sheetTitleImage.thumbnailPath
         self.imagePathAWS = sheetTitleImage.imagePathAWS
-        hasThemeDraft = (sheetTitleImage.hasTheme != nil) ? ThemeDraft(theme: sheetTitleImage.hasTheme) : ThemeDraft(theme: .makeDefault())
+        hasThemeDraft = ThemeDraft(theme: sheetTitleImage.hasTheme)
+//        hasThemeDraft = (sheetTitleImage.hasTheme != nil) ? ThemeDraft(theme: sheetTitleImage.hasTheme) : ThemeDraft(theme: .makeDefault())
     }
     
     init(sheetEmpty: SheetEmptyCodable) {
@@ -178,7 +180,9 @@ class SheetDraft {
         self.position = sheetEmpty.position
         self.time = sheetEmpty.time
         self.hasTheme = sheetEmpty.hasTheme
-        hasThemeDraft = (sheetEmpty.hasTheme != nil) ? ThemeDraft(theme: sheetEmpty.hasTheme) : ThemeDraft(theme: .makeDefault())
+        hasThemeDraft = ThemeDraft(theme: sheetEmpty.hasTheme)
+
+//        hasThemeDraft = (sheetEmpty.hasTheme != nil) ? ThemeDraft(theme: sheetEmpty.hasTheme) : ThemeDraft(theme: .makeDefault())
     }
     
     init(sheetSplit: SheetSplitCodable) {
@@ -196,7 +200,8 @@ class SheetDraft {
         self.hasTheme = sheetSplit.hasTheme
         self.textLeft = sheetSplit.textLeft
         self.textRight = sheetSplit.textRight
-        hasThemeDraft = (sheetSplit.hasTheme != nil) ? ThemeDraft(theme: sheetSplit.hasTheme) : ThemeDraft(theme: .makeDefault())
+        hasThemeDraft = ThemeDraft(theme: sheetSplit.hasTheme)
+//        hasThemeDraft = (sheetSplit.hasTheme != nil) ? ThemeDraft(theme: sheetSplit.hasTheme) : ThemeDraft(theme: .makeDefault())
     }
     
     init(sheetPastors: SheetPastorsCodable) {
@@ -216,7 +221,8 @@ class SheetDraft {
         self.imagePath = sheetPastors.imagePath
         self.thumbnailPath = sheetPastors.thumbnailPath
         self.imagePathAWS = sheetPastors.imagePathAWS
-        hasThemeDraft = (sheetPastors.hasTheme != nil) ? ThemeDraft(theme: sheetPastors.hasTheme) : ThemeDraft(theme: .makeDefault())
+        hasThemeDraft = ThemeDraft(theme: sheetPastors.hasTheme)
+//        hasThemeDraft = (sheetPastors.hasTheme != nil) ? ThemeDraft(theme: sheetPastors.hasTheme) : ThemeDraft(theme: .makeDefault())
     }
     
     func update(_ cell: NewOrEditIphoneController.Cell) {
@@ -248,9 +254,6 @@ class SheetDraft {
     }
     
     func setImageSelectionAction(_ action: ImageSelectionAction, imageName: String?) {
-        if let tempSavedImageName = tempSavedImageName {
-            UIImage.deleteTempFile(imageName: tempSavedImageName, thumbNailName: nil)
-        }
         tempSavedImageName = imageName
         self.imageSelectionAction = action
     }

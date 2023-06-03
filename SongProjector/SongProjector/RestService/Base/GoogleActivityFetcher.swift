@@ -62,14 +62,14 @@ class GoogleActivityFetch: NSObject {
 	}
     
 	func fetchEvents() {
-        let users: [User] = DataFetcher().getEntities(moc: moc)
-        guard let calendarId = users.first?.googleCalendarId else { return }
-        let query = GTLRCalendarQuery_EventsList.query(withCalendarId: calendarId)
-		query.maxResults = 200
-		query.timeMin = GTLRDateTime(date: Date())
-		query.timeMax = GTLRDateTime(date: Date().addingTimeInterval(.days(21)))
-		query.singleEvents = true
-		query.orderBy = kGTLRCalendarOrderByStartTime
+//        let users: [User] = DataFetcher().getEntities(moc: moc)
+//        guard let calendarId = users.first?.googleCalendarId else { return }
+//        let query = GTLRCalendarQuery_EventsList.query(withCalendarId: calendarId)
+//		query.maxResults = 200
+//		query.timeMin = GTLRDateTime(date: Date())
+//		query.timeMax = GTLRDateTime(date: Date().addingTimeInterval(.days(21)))
+//		query.singleEvents = true
+//		query.orderBy = kGTLRCalendarOrderByStartTime
 //		calendarService?.executeQuery(
 //			query,
 //			delegate: self,
@@ -87,30 +87,30 @@ class GoogleActivityFetch: NSObject {
 			return
 		}
         
-        let mocBackground = newMOCBackground
-        mocBackground.performAndWait {
-            let activities: [GoogleActivity] = DataFetcher().getEntities(moc: mocBackground)
-            activities.forEach({ mocBackground.delete($0) })
-            
-            if let events = response.items, !events.isEmpty {
-                for event in events {
-                    let activity: GoogleActivity = DataFetcher().createEntity(moc: mocBackground)
-                    activity.id = UUID().uuidString
-                    activity.startDate = event.start?.dateTime?.date as NSDate?
-                    activity.endDate = event.end?.dateTime?.date as NSDate?
-                    activity.eventDescription = event.summary
-                    activity.createdAt = NSDate()
-                    activity.userUID = Auth.auth().currentUser?.uid ?? "-"
-                }
-            }
-            do {
-                try mocBackground.save()
-            } catch { }
-            
-        }
-        do {
-            try moc.save()
-        } catch { }
+//        let mocBackground = newMOCBackground
+//        mocBackground.performAndWait {
+//            let activities: [GoogleActivity] = DataFetcher().getEntities(moc: mocBackground)
+//            activities.forEach({ mocBackground.delete($0) })
+//
+//            if let events = response.items, !events.isEmpty {
+//                for event in events {
+//                    let activity: GoogleActivity = DataFetcher().createEntity(moc: mocBackground)
+//                    activity.id = UUID().uuidString
+//                    activity.startDate = event.start?.dateTime?.date as NSDate?
+//                    activity.endDate = event.end?.dateTime?.date as NSDate?
+//                    activity.eventDescription = event.summary
+//                    activity.createdAt = NSDate()
+//                    activity.userUID = Auth.auth().currentUser?.uid ?? "-"
+//                }
+//            }
+//            do {
+//                try mocBackground.save()
+//            } catch { }
+//
+//        }
+//        do {
+//            try moc.save()
+//        } catch { }
 	}
 
 }

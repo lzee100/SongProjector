@@ -12,22 +12,14 @@ import Foundation
 actor DeleteLocalMusicUseCase {
     
     private let cluster: ClusterCodable
+    private let context = newMOCBackground
     
     init(cluster: ClusterCodable) {
         self.cluster = cluster
     }
     
     func delete() async throws {
-        var instruments: [InstrumentCodable] = []
-        for instrument in cluster.hasInstruments {
-            var changeableInstrument = instrument
-            if let resourcePath = changeableInstrument.resourcePath {
-                try FileManager.deleteFile(name: resourcePath)
-            }
-            changeableInstrument.resourcePath = nil
-            instruments.append(changeableInstrument)
-        }
-        
-        try await ManagedObjectContextHandler<InstrumentCodable>().save(entities: instruments)
+        let deleteObjects = cluster.hasInstruments.flatMap { $0.getDeleteObjects(forceDelete: true) }
+        try await SubmitUseCase(endpoint: .clusters, requestMethod: .put, uploadObjects: [cluster], deleteObjects: deleteObjects).submit()
     }
 }

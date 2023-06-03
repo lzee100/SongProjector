@@ -41,24 +41,16 @@ actor FileFetcher: SingleTransferManagerProtocol {
             }
             
             let downloadFile = storageRef.child(subPath).child(downloadObject.filename)
-            let locURL: URL?
-            if downloadObject.isVideo {
-                locURL = FileManager.getURLfor(name: downloadObject.filename)
-            } else {
-                locURL = try FileManager.getUrlFor(fileName: downloadObject.filename)
-            }
-            guard let localURL = locURL else {
-                throw TransferError.noURLForDownloadingFile
-            }
+            let locURL = GetFileURLUseCase(fileName: downloadObject.filename).getURL(location: .persitent)
             
-            guard (try? await downloadFile.writeAsync(toFile: localURL)) != nil else {
+            guard (try? await downloadFile.writeAsync(toFile: locURL)) != nil else {
                 throw FileFetcherError.noFileOnAmazonStorageFound
             }
             
             if downloadObject.isVideo {
                 downloadObject.localURL = URL(string: downloadObject.filename)
             } else {
-                let data = try Data(contentsOf: localURL)
+                let data = try Data(contentsOf: locURL)
                 if let image = UIImage(data: data) {
                     downloadObject.image = image
                 } else {
@@ -67,8 +59,6 @@ actor FileFetcher: SingleTransferManagerProtocol {
             }
             return downloadObject
         } catch {
-            print("download error from aws")
-            print(downloadObject.remoteURL)
             print(error)
             throw error
         }

@@ -28,82 +28,83 @@ class TempClustersModel {
     private let defaults = UserDefaults.standard
 
     static func load() -> TempClustersModel? {
-        
-        func needsReset(date: Date) -> Bool {
-            
-            func getLastSunday() -> Date {
-                var date = Date().dayOfWeek == .sunday ? Date().dateByAddingDays(-1) : Date()
-                repeat {
-                    date = date.dateByAddingDays(-1)
-                } while date.dayOfWeek != .sunday
-                return date.dateMidnight
-            }
-            
-            let toSunday: [Weekday] = [.thursday, .friday, .saturday]
-            
-            if date.isBefore(getLastSunday()) {
-                return true
-            } else if (toSunday.contains(date.dayOfWeek) || (date.dayOfWeek == .sunday && date.hour < 12)) && Date().dayOfWeek == .sunday && Date().hour >= 12 {
-                return true
-            } else if date.dayOfWeek == .sunday && Date().dayOfWeek == .sunday && (Date().hour >= 20 && date.hour < 20) {
-                return true
-            } else if date.dayOfWeek == .sunday && date.hour >= 20 && toSunday.contains(Date().dayOfWeek) {
-                return true
-            } else {
-                return false
-            }
-        }
-        
-        let defaults = UserDefaults.standard
-        guard let saveDate = defaults.object(forKey: Constants.saveDate) as? Date, !needsReset(date: saveDate) else {
-            TempClustersModel.resetSavedValues()
-            return nil
-        }
-        if
-            let songserivceId = defaults.object(forKey: Constants.songServiceId) as? String,
-            let clusterOrComment = defaults.object(forKey: Constants.clusterOrComment) as? [String]
-        {
-            
-            
-            guard let s: SongServiceSettings = DataFetcher().getEntity(moc: moc, predicates: [.skipDeleted, .get(id: songserivceId)]) else {
-                TempClustersModel.resetSavedValues()
-                return nil
-            }
-            let songServiceSettings = VSongServiceSettings(songserviceSettings: s, context: moc)
-            let sectionedClusterOrComment: [[ClusterOrComment]] = clusterOrComment.map({
-                let clusterOrComments = $0.split(separator: ",").compactMap({ String($0) })
-                return clusterOrComments.compactMap { (coc) in
-                    if coc == Constants.comment {
-                        return ClusterOrComment(cluster: nil)
-                    } else if let cluster: Cluster = DataFetcher().getEntity(moc: moc, predicates: [.get(id: coc)]) {
-                        return ClusterOrComment(cluster: VCluster(cluster: cluster, context: moc))
-                    }
-                    return nil
-                }
-            })
-            var position: Int16 = 0
-            sectionedClusterOrComment.forEach { section in
-                section.forEach { coc in
-                    coc.cluster?.position = position
-                    position += 1
-                }
-            }
-            return TempClustersModel(songServiceSettings: songServiceSettings, sectionedClusterIdsWithComments: sectionedClusterOrComment)
-        } else if let clusterOrComments = defaults.object(forKey: Constants.clusterOrComment) as? [String] {
-            return TempClustersModel(clusters:
-                clusterOrComments.compactMap { (coc) in
-                    if coc == Constants.comment {
-                        return ClusterOrComment(cluster: nil)
-                    } else if let cluster: Cluster = DataFetcher().getEntity(moc: moc, predicates: [.get(id: coc)]) {
-                        return ClusterOrComment(cluster: VCluster(cluster: cluster, context: moc))
-                    }
-                    return nil
-                }
-            )
-        } else {
-            TempClustersModel.resetSavedValues()
-            return nil
-        }
+        return nil
+//
+//        func needsReset(date: Date) -> Bool {
+//
+//            func getLastSunday() -> Date {
+//                var date = Date().dayOfWeek == .sunday ? Date().dateByAddingDays(-1) : Date()
+//                repeat {
+//                    date = date.dateByAddingDays(-1)
+//                } while date.dayOfWeek != .sunday
+//                return date.dateMidnight
+//            }
+//
+//            let toSunday: [Weekday] = [.thursday, .friday, .saturday]
+//
+//            if date.isBefore(getLastSunday()) {
+//                return true
+//            } else if (toSunday.contains(date.dayOfWeek) || (date.dayOfWeek == .sunday && date.hour < 12)) && Date().dayOfWeek == .sunday && Date().hour >= 12 {
+//                return true
+//            } else if date.dayOfWeek == .sunday && Date().dayOfWeek == .sunday && (Date().hour >= 20 && date.hour < 20) {
+//                return true
+//            } else if date.dayOfWeek == .sunday && date.hour >= 20 && toSunday.contains(Date().dayOfWeek) {
+//                return true
+//            } else {
+//                return false
+//            }
+//        }
+//
+//        let defaults = UserDefaults.standard
+//        guard let saveDate = defaults.object(forKey: Constants.saveDate) as? Date, !needsReset(date: saveDate) else {
+//            TempClustersModel.resetSavedValues()
+//            return nil
+//        }
+//        if
+//            let songserivceId = defaults.object(forKey: Constants.songServiceId) as? String,
+//            let clusterOrComment = defaults.object(forKey: Constants.clusterOrComment) as? [String]
+//        {
+//
+//
+//            guard let s: SongServiceSettings = DataFetcher().getEntity(moc: moc, predicates: [.skipDeleted, .get(id: songserivceId)]) else {
+//                TempClustersModel.resetSavedValues()
+//                return nil
+//            }
+//            let songServiceSettings = VSongServiceSettings(songserviceSettings: s, context: moc)
+//            let sectionedClusterOrComment: [[ClusterOrComment]] = clusterOrComment.map({
+//                let clusterOrComments = $0.split(separator: ",").compactMap({ String($0) })
+//                return clusterOrComments.compactMap { (coc) in
+//                    if coc == Constants.comment {
+//                        return ClusterOrComment(cluster: nil)
+//                    } else if let cluster: Cluster = DataFetcher().getEntity(moc: moc, predicates: [.get(id: coc)]) {
+//                        return ClusterOrComment(cluster: VCluster(cluster: cluster, context: moc))
+//                    }
+//                    return nil
+//                }
+//            })
+//            var position: Int16 = 0
+//            sectionedClusterOrComment.forEach { section in
+//                section.forEach { coc in
+//                    coc.cluster?.position = position
+//                    position += 1
+//                }
+//            }
+//            return TempClustersModel(songServiceSettings: songServiceSettings, sectionedClusterIdsWithComments: sectionedClusterOrComment)
+//        } else if let clusterOrComments = defaults.object(forKey: Constants.clusterOrComment) as? [String] {
+//            return TempClustersModel(clusters:
+//                clusterOrComments.compactMap { (coc) in
+//                    if coc == Constants.comment {
+//                        return ClusterOrComment(cluster: nil)
+//                    } else if let cluster: Cluster = DataFetcher().getEntity(moc: moc, predicates: [.get(id: coc)]) {
+//                        return ClusterOrComment(cluster: VCluster(cluster: cluster, context: moc))
+//                    }
+//                    return nil
+//                }
+//            )
+//        } else {
+//            TempClustersModel.resetSavedValues()
+//            return nil
+//        }
     }
     
     init(clusters: [ClusterOrComment] = [], songServiceSettings: VSongServiceSettings? = nil, sectionedClusterIdsWithComments: [[ClusterOrComment]] = []) {

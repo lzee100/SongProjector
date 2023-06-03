@@ -9,14 +9,14 @@
 import Foundation
 import UIKit
 
-@MainActor class BibleStudyTextUseCase {
+actor BibleStudyTextUseCase {
     
     enum SheetContent {
         case titleContent(title: String?, content: String)
         case empty
     }
     
-    func generateSheetsFromText(_ text: String, parentViewSize: CGSize, theme: ThemeCodable, scaleFactor: CGFloat, cluster: ClusterCodable) -> [EditSheetOrThemeViewModel] {
+    func generateSheetsFromText(_ text: String, parentViewSize: CGSize, theme: ThemeCodable, scaleFactor: CGFloat, cluster: ClusterCodable) async throws -> [SheetViewModel] {
         
         let contentSize = calculateContentsize(parentViewSize: parentViewSize, theme: theme, scaleFactor: scaleFactor)
         let devided = text.components(separatedBy: "\n\n")
@@ -27,7 +27,7 @@ import UIKit
             splitOnReturns.removeFirst()
             return splitOnReturns.joined(separator: "\n")
         })
-        
+        print(contentSize)
         var position: Int = 0
         var sheetContent: [SheetContent] = []
         
@@ -36,11 +36,11 @@ import UIKit
             sheetContent += (sheets.map { .titleContent(title: $0.title, content: $0.content)} + [.empty])
         }
         
-        return makeEditModel(sheetContent, cluster: cluster, position: &position)
+        return try await makeEditModel(sheetContent, cluster: cluster, position: &position)
     }
     
-    func getTextFromSheets(models: [EditSheetOrThemeViewModel]) async -> String {
-        let bibleVersSheetsSplit = models.map { $0.sheet }.filter { $0.isBibleVers }.split(whereSeparator: { $0 is SheetEmptyCodable })
+    func getTextFromSheets(models: [SheetViewModel]) async -> String {
+        let bibleVersSheetsSplit = models.map { $0.sheetModel.sheet }.filter { $0.isBibleVers }.split(whereSeparator: { $0 is SheetEmptyCodable })
 
         let text = bibleVersSheetsSplit.compactMap { Array($0) as? [SheetTitleContentCodable] }.compactMap { sheets in
             var sheetContent = sheets.compactMap { $0.sheetContent }.joined(separator: "")
@@ -96,14 +96,15 @@ import UIKit
         return titleContentStrings
     }
     
-    private func makeEditModel(_ sheetValues: [SheetContent], cluster: ClusterCodable, position: inout Int) -> [EditSheetOrThemeViewModel] {
+    private func makeEditModel(_ sheetValues: [SheetContent], cluster: ClusterCodable, position: inout Int) async throws -> [SheetViewModel] {
         
-        sheetValues.compactMap { sheetContent in
+        let defaultTheme = try await CreateThemeUseCase().create()
+
+        return try await sheetValues.asyncMap { sheetContent in
             
-            func makeModel(sheet: SheetMetaType?, type: SheetType) -> EditSheetOrThemeViewModel? {
-                guard let sheet, let model = EditSheetOrThemeViewModel(editMode: .sheet((cluster, sheet), sheetType: type), isUniversal: uploadSecret != nil, isBibleVers: true) else {
-                    return nil
-                }
+            func makeModel(sheet: SheetMetaType?, type: SheetType) async throws -> SheetViewModel? {
+                guard let sheet else { return nil }
+                let model = try await SheetViewModel(cluster: cluster, theme: cluster.theme, defaultTheme: defaultTheme, sheet: sheet, sheetType: type, sheetEditType: .bibleStudy)
                 return model
             }
             
@@ -120,15 +121,15 @@ import UIKit
                 sheetType = .SheetTitleContent
             case .empty:
                 var emptySheet = SheetEmptyCodable.makeDefault()
-                emptySheet.isEmptySheet = true
-                emptySheet.position = position
+                emptySheet?.isEmptySheet = true
+                emptySheet?.position = position
                 sheet = emptySheet
                 sheetType = .SheetEmpty
             }
             
             position += 1
-            return makeModel(sheet: sheet, type: sheetType)
-        }
+            return try await makeModel(sheet: sheet, type: sheetType)
+        }.compactMap { $0 }
     }
     
     private func calculateContentsize(parentViewSize: CGSize, theme: ThemeCodable, scaleFactor: CGFloat) -> CGSize {
@@ -137,14 +138,14 @@ import UIKit
         let leadingTrailingMargins: CGFloat = 10 * scaleFactor * 2
         let topBottomMargin: CGFloat = 10 * scaleFactor
         let titleContentPadding: CGFloat = 10 * scaleFactor
-        let maxContentWidth = sheetSize.width - leadingTrailingMargins
+        let maxContentWidth = sheetSize.width - leadingTrailingMargins - 10
 
         let titleHeight = NSAttributedString(
             string: "k",
             attributes: theme.getTitleAttributes(scaleFactor)
         ).height(containerWidth: maxContentWidth)
-                
-        let contentHeight = sheetSize.height - topBottomMargin - titleHeight - titleContentPadding - topBottomMargin
+        
+        let contentHeight = sheetSize.height - topBottomMargin - titleHeight - titleContentPadding - topBottomMargin - 10
         
         return CGSize(width: maxContentWidth, height: contentHeight)
         

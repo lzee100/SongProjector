@@ -145,6 +145,10 @@ class SoundPlayer2: ObservableObject {
     private var playerLooper: AVPlayerLooper? = nil
     private var players: [InstrumentPlayer] = []
     
+    var isPlayingPianoSolo: Bool {
+        return players.contains(where: { $0.instrumentType == .pianoSolo })
+    }
+    
     init() {
         do {
             UIApplication.shared.beginReceivingRemoteControlEvents()
@@ -288,7 +292,7 @@ class SoundPlayer2: ObservableObject {
         
         var player = InstrumentPlayer()
         if let urlString = instrument.resourcePath {
-            let url = FileManager.getURLfor(name: urlString)
+            let url = GetFileURLUseCase(fileName: urlString).getURL(location: .persitent)
             do {
                 player = try InstrumentPlayer(contentsOf: url)
                 player.instrumentType = instrument.type

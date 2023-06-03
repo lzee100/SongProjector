@@ -81,8 +81,8 @@ class IntroAdminController: PageController, UITableViewDataSource, UITableViewDe
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let user: User? = DataFetcher().getEntity(moc: moc)
-        self.user = [user].compactMap({ $0 }).compactMap({ VUser(user: $0, context: moc) }).first
+//        let user: User? = DataFetcher().getEntity(moc: moc)
+//        self.user = [user].compactMap({ $0 }).compactMap({ VUser(user: $0, context: moc) }).first
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
         tableView.register(cells: [TextCell.identifier, AddButtonCell.identifier])
@@ -182,8 +182,8 @@ class IntroAdminController: PageController, UITableViewDataSource, UITableViewDe
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        let user: User? = DataFetcher().getEntity(moc: moc, predicates: [.skipDeleted])
-        self.user = [user].compactMap({ $0 }).map({ VUser(user: $0, context: moc) }).first
+//        let user: User? = DataFetcher().getEntity(moc: moc, predicates: [.skipDeleted])
+//        self.user = [user].compactMap({ $0 }).map({ VUser(user: $0, context: moc) }).first
         hasUser = user != nil
         if user == nil {
             let user = VUser()

@@ -41,6 +41,6 @@ struct TagCodableSubmitter: CodableFetcherType {
     }
     
     func getCodableObjectFrom(_ objects: [NSManagedObject], context: NSManagedObjectContext) -> [EntityCodableType] {
-        objects.compactMap { TagCodable(managedObject: $0, context: context) }
+        objects.compactMap { TagCodable(entity: $0 as! Tag) }
     }
 }

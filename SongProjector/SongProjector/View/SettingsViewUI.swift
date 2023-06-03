@@ -20,12 +20,9 @@ import FirebaseAuth
 
     let authentication = Auth.auth().currentUser
 
-    func fetchUser() {
-        let users: [User] = DataFetcher().getEntities(moc: moc)
-        self.user = users.compactMap { UserCodable(managedObject: $0, context: moc) }.first
-        if let googleAgendaId = user?.googleCalendarId {
-            self.googleAgendaId = googleAgendaId
-        }
+    func fetchUser() async {
+        user = await GetUserUseCase().get()
+        googleAgendaId = user?.googleCalendarId ?? ""
     }
     
     func fetchUserRemotely() async {
@@ -49,9 +46,8 @@ import FirebaseAuth
         }
     }
     
-    func resetMutes() {
-        MuteInstrumentsUseCase().resetMutes {
-        }
+    func resetMutes() async {
+        await MuteInstrumentsUseCase.resetMutes()
     }
 }
 
@@ -75,6 +71,10 @@ struct SettingsViewUI: View {
                 
                 Section(AppText.Settings.sectionAppSettings) {
                     resetInstrumentMutes
+                }
+            }.onAppear {
+                Task {
+                    try? await ResetCoreDataUseCase().reset()
                 }
             }
         }
@@ -116,7 +116,9 @@ struct SettingsViewUI: View {
     
     @ViewBuilder var resetInstrumentMutes: some View {
         Button {
-            viewModel.resetMutes()
+            Task {
+                await viewModel.resetMutes()
+            }
         } label: {
             Text(AppText.Settings.ResetMutes)
                 .styleAs(font: .xNormal, color: Color(uiColor: themeHighlighted))

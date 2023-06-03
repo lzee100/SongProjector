@@ -36,6 +36,7 @@ struct MixerViewUI: View {
         .frame(width: 400, height: 400)
         .background(.clear)
         .rotationEffect(.degrees(-90))
+        .padding([.top], 20)
         .onChange(of: pianoVolume) { newValue in
             volumeUseCase.set(volume: newValue, instrumentType: .piano)
             soundPlayer.setVolumeFor(.piano, volume: newValue)

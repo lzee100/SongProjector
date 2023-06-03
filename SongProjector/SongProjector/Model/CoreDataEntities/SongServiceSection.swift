@@ -22,12 +22,13 @@ public class SongServiceSection: Entity {
 	@NSManaged public var tagIds: String
 
     func hasTags(moc: NSManagedObjectContext) -> [Tag] {
-        let ids = tagIds.split(separator: ",").compactMap({ String($0) })
-        let tags: [Tag] = ids.compactMap({ id in
-            let tag: Tag? = DataFetcher().getEntity(moc: moc, predicates: [.skipDeleted, .get(id: id)])
-            return tag
-        })
-        return tags
+        []
+//        let ids = tagIds.split(separator: ",").compactMap({ String($0) })
+//        let tags: [Tag] = ids.compactMap({ id in
+//            let tag: Tag? = DataFetcher().getEntity(moc: moc, predicates: [.skipDeleted, .get(id: id)])
+//            return tag
+//        })
+//        return tags
     }
 	
 }

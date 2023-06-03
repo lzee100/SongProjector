@@ -205,9 +205,6 @@ class SheetPastors: SheetView {
     }
 	
 	override func updateSheetImage() {
-		if let sheet = sheet as? VSheetPastors {
-			imageViewPicture.image = isForExternalDispay ? sheet.image : sheet.thumbnail
-		}
 	}
 	
 

@@ -29,8 +29,8 @@ class SplashScreen: ChurchBeamViewController {
     }
     
     private var user: User? {
-        let user: User? = DataFetcher().getEntity(moc: moc, predicates: [.skipDeleted])
-        return user
+//        let user: User? = DataFetcher().getEntity(moc: moc, predicates: [.skipDeleted])
+        return nil
     }
     
     private var isRegistered: Bool {
@@ -70,37 +70,37 @@ class SplashScreen: ChurchBeamViewController {
     }
     
     @objc override func update() {
-        if isRegistered {
-            func after() {
-                guard self.presentedViewController == nil else { return }
-                introNav = nil
-                if Thread.isMainThread {
-                    self.performSegue(withIdentifier: "showApp", sender: nil)
-                } else {
-                    DispatchQueue.main.async {
-                        self.performSegue(withIdentifier: "showApp", sender: nil)
-                    }
-                }
-            }
-            if let introNav = introNav {
-                introNav.dismiss(animated: true, completion: {
-                    after()
-                })
-            } else {
-                after()
-            }
-        } else {
-            let entities: [Entity] = DataFetcher().getEntities(moc: moc)
-            entities.forEach({ moc.delete($0) })
-            do {
-                try moc.save()
-            } catch {
-                print(error)
-            }
-            
-            showIntro()
-            
-        }
+//        if isRegistered {
+//            func after() {
+//                guard self.presentedViewController == nil else { return }
+//                introNav = nil
+//                if Thread.isMainThread {
+//                    self.performSegue(withIdentifier: "showApp", sender: nil)
+//                } else {
+//                    DispatchQueue.main.async {
+//                        self.performSegue(withIdentifier: "showApp", sender: nil)
+//                    }
+//                }
+//            }
+//            if let introNav = introNav {
+//                introNav.dismiss(animated: true, completion: {
+//                    after()
+//                })
+//            } else {
+//                after()
+//            }
+//        } else {
+//            let entities: [Entity] = DataFetcher().getEntities(moc: moc)
+//            entities.forEach({ moc.delete($0) })
+//            do {
+//                try moc.save()
+//            } catch {
+//                print(error)
+//            }
+//
+//            showIntro()
+//
+//        }
     }
     
     func showIntro() {
@@ -116,7 +116,7 @@ class SplashScreen: ChurchBeamViewController {
 }
 
 extension Date {
-    func localDate() -> Date {
+    static func localDate() -> Date {
         let nowUTC = Date()
         let timeZoneOffset = Double(TimeZone.current.secondsFromGMT(for: nowUTC))
         guard let localDate = Calendar.current.date(byAdding: .second, value: Int(timeZoneOffset), to: nowUTC) else {return Date()}

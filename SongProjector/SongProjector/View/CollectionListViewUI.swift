@@ -12,9 +12,10 @@ struct CollectionListViewUI: View {
 
     let isSelectable: Bool
     let isSelected: Bool
-    private var collection: ClusterCodable
+    @StateObject var collection: WrappedStruct<ClusterCodable>
     @EnvironmentObject private var soundPlayer: SoundPlayer2
     @ObservedObject private var collectionsViewModel: CollectionsViewModel
+    @EnvironmentObject private var musicDownloadManager: MusicDownloadManager
 
     init(
         collectionsViewModel: CollectionsViewModel,
@@ -22,7 +23,7 @@ struct CollectionListViewUI: View {
         isSelectable: Bool,
         isSelected: Bool
     ) {
-        self.collection = collection
+        self._collection = StateObject(wrappedValue: WrappedStruct(withItem: collection))
         self.collectionsViewModel = collectionsViewModel
         self.isSelectable = isSelectable
         self.isSelected = isSelected
@@ -35,24 +36,27 @@ struct CollectionListViewUI: View {
                     .cornerRadius(5 / 2)
                     .frame(width: 5)
             }
-            Text(collection.title ?? "-")
+            Text(collection.item.title ?? "-")
                 .foregroundColor(Color(uiColor: isSelected ? .softBlueGrey : .blackColor.withAlphaComponent(0.8)))
                 .styleAs(font: .xNormal)
             Spacer()
-            if collection.hasInstruments.count > 0 && !collection.hasLocalMusic {
+            if collection.item.hasInstruments.count > 0 && !collection.item.hasLocalMusic {
                 MusicDownloadButtonViewUI(
                     collection: collection
                 )
-            } else if collection.hasLocalMusic {
-                if collection.hasPianoSolo {
+            } else if collection.item.hasLocalMusic {
+                if collection.item.hasPianoSolo {
                     pianoSoloImageView
                 }
-                if soundPlayer.selectedSong?.id == collection.id {
+                if soundPlayer.selectedSong?.id == collection.item.id {
                     soundAnimationView
                 } else {
                     playLocalMusicButton
                 }
             }
+        }
+        .onReceive(musicDownloadManager.objectWillChange) { _ in
+            
         }
     }
     
@@ -60,18 +64,18 @@ struct CollectionListViewUI: View {
             Image("Piano")
                 .resizable()
                 .frame(width: 30, height: 30)
-                .tint(.black)
+                .foregroundColor(Color(uiColor: .blackColor))
                 .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10))
     }
     
     @ViewBuilder var playLocalMusicButton: some View {
         Button {
-            soundPlayer.play(song: SongObjectUI(cluster: collection))
+            soundPlayer.play(song: SongObjectUI(cluster: collection.item))
         } label: {
             Image("Play")
                 .resizable()
                 .frame(width: 30, height: 30)
-                .tint(.black)
+                .foregroundColor(Color(uiColor: .blackColor))
                 .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10))
         }
         .buttonStyle(.plain)

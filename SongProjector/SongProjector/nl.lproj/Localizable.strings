@@ -145,7 +145,8 @@
 "NewSong-timeExplained" = "Het aantal seconden dat de\nvolgende dia automatisch wordt\nafgespeeld. Gaat automatisch naar\nvan de laatste dia naar de\neerste (eindeloze loop).";
 "NewSong-tagsExplained" = "De tags voor deze collectie. Wanneer je een zangdienst aanmaakt, dan kan je aangeven welke tags in welke sectie horen zodat de zangdienst generator automatisch een zangdienst kan genereren.";
 
-"Lyrics-titleBibleText" = "Voer bijbelteksten in";
+"Lyrics-titleBibleTextChange" = "Voer bijbelteksten in";
+"Lyrics-titleBibleText" = "Wijzig bijbelteksten";
 "Lyrics-titleLyrics" = "Voer tekst in";
 "Lyrics-placeholderBibleText" = "Genesis 1:1-16\nIn het begin maakte God de hemelen en de aarde. 2De aarde was woest en leeg en over de watermassa lag een diepe duisternis. Maar de Geest van God zweefde boven de watermassa.\n\nJohannes 3:16\nWant God heeft zoveel liefde voor de wereld dat Hij zijn enige Zoon heeft gegeven, zodat ieder die in Hem gelooft, niet verloren gaat maar eeuwig leven heeft.";
 "Lyrics-placeholderLyrics" = "Schrijf of plak hier de tekst van het liedje";
@@ -181,6 +182,9 @@
 "CustomSheets-errorLoseOtherSheets" = "Je hebt andere sheets tussen de bijbelteksten staan. Deze gaan verloren wanneer je de bijbelteksten aanpast en opnieuw laat genereren";
 "CustomSheets-universalSongEditErrorTitle" = "Kon tekst niet aanpassen";
 "CustomSheets-universalSongEditErrorMessage" = "Dit liedje heeft muziek en heeft een weergave tijdsduur bij elke dia. Het aanpassen van het AANTAL dia's zorgt ervoor dat de tijden niet meer kloppen. Corrigeer of annuleer de wijzigingen.";
+
+"CustomSheets-Edit-title" = "Maak nieuwe dia";
+"CustomSheets-Edit-titleChange" = "Wijig dia";
 
 "SongServiceManagement-title" = "Zangdienst schema";
 "SongServiceManagement-numberOfSections" = "Aantal secties";

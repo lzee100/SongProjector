@@ -37,7 +37,7 @@ class TemeSubmitter: Requester<VTheme> {
                         let uploadFile = Storage.storage().reference().child("images").child(name)
                         deletableFiles.append(uploadFile)
                     }
-                    theme.tempLocalImageName = try image.saveTemp()
+//                    theme.tempLocalImageName = try image.saveTemp()
                 }
             }
         } catch {
@@ -53,7 +53,6 @@ class TemeSubmitter: Requester<VTheme> {
         _ = uploadManager.$result.sink { result in
             switch result {
             case .failed(error: let error):
-                body.compactMap({ $0.tempLocalImageName }).forEach { try? FileManager.deleteFile(name: $0) }
                 completion(.failed(error: .failedUploadingMedia(requester: self.id, error: error)))
             case .success, .none:
                 

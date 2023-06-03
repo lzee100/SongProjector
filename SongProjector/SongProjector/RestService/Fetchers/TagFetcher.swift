@@ -20,10 +20,10 @@ class TgFetcher: Requester<VTag> {
         return "tags"
     }
     
-    override func getLastUpdatedAt(moc: NSManagedObjectContext) -> Date? {
-        let tag: Tag? = DataFetcher().getLastUpdated(moc: moc)
-        return tag?.updatedAt as Date?
-    }
+//    override func getLastUpdatedAt(moc: NSManagedObjectContext) -> Date? {
+//        let tag: Tag? = DataFetcher().getLastUpdated(moc: moc)
+//        return tag?.updatedAt as Date?
+//    }
 
         
 }

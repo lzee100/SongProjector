@@ -182,16 +182,16 @@ struct VolumeManager {
     }
     
     static func resetMutes(completion: @escaping (() -> Void)) {
-        DispatchQueue.global(qos: .userInitiated).async {
-            let moc = newMOCBackground
-            let instruments = DataFetcher<Cluster>().getEntities(moc: moc).flatMap({ $0.hasInstruments(moc: moc) })
-            instruments.forEach { instrument in
-                UserDefaults.standard.removeObject(forKey: self.instrument + instrument.id)
-            }
-            DispatchQueue.main.async {
-                completion()
-            }
-        }
+//        DispatchQueue.global(qos: .userInitiated).async {
+//            let moc = newMOCBackground
+//            let instruments = DataFetcher<Cluster>().getEntities(moc: moc).flatMap({ $0.hasInstruments(moc: moc) })
+//            instruments.forEach { instrument in
+//                UserDefaults.standard.removeObject(forKey: self.instrument + instrument.id)
+//            }
+//            DispatchQueue.main.async {
+//                completion()
+//            }
+//        }
     }
     
 }

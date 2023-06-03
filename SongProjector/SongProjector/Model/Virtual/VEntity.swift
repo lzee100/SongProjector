@@ -17,7 +17,7 @@ public class VEntity: NSObject, Identifiable, Codable {
     public var id: String = "CHURCHBEAM" + UUID().uuidString
     var userUID: String = ""
 	var title: String? = nil
-    var createdAt: NSDate = Date().localDate() as NSDate
+    var createdAt: NSDate = Date.localDate() as NSDate
     var updatedAt: NSDate? = nil
 	var deleteDate: NSDate? = nil
 	var isTemp: Bool = false
@@ -163,18 +163,18 @@ public class VEntity: NSObject, Identifiable, Codable {
 		getPropertiesFrom(entity: entity, context: context)
 	}
 
-	@discardableResult
-	func getManagedObject(context: NSManagedObjectContext) -> Entity {
-		
-        if let entity: Entity = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
-            setPropertiesTo(entity: entity, context: context)
-            return entity
-        } else {
-            let entity: Entity = DataFetcher().createEntity(moc: context)
-            setPropertiesTo(entity: entity, context: context)
-            return entity
-        }
-	}
+//	@discardableResult
+//	func getManagedObject(context: NSManagedObjectContext) -> Entity {
+//		
+//        if let entity: Entity = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
+//            setPropertiesTo(entity: entity, context: context)
+//            return entity
+//        } else {
+//            let entity: Entity = DataFetcher().createEntity(moc: context)
+//            setPropertiesTo(entity: entity, context: context)
+//            return entity
+//        }
+//	}
     
 	static func ==(lhs: VEntity, rhs: VEntity?) -> Bool {
 		if lhs.id == rhs?.id {

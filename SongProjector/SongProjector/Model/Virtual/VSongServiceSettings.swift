@@ -53,13 +53,13 @@ public class VSongServiceSettings: VEntity {
 		
 	}
 	
-	override func setPropertiesTo(entity: Entity, context: NSManagedObjectContext) {
-		super.setPropertiesTo(entity: entity, context: context)
-		if let songserviceSettings = entity as? SongServiceSettings {
-            sections.forEach({ _ = $0.getManagedObject(context: context) })
-            songserviceSettings.sectionIds = sections.map({ $0.id }).joined(separator: ",")
-		}
-	}
+//	override func setPropertiesTo(entity: Entity, context: NSManagedObjectContext) {
+//		super.setPropertiesTo(entity: entity, context: context)
+//		if let songserviceSettings = entity as? SongServiceSettings {
+//            sections.forEach({ _ = $0.getManagedObject(context: context) })
+//            songserviceSettings.sectionIds = sections.map({ $0.id }).joined(separator: ",")
+//		}
+//	}
 	
     override func getPropertiesFrom(entity: Entity, context: NSManagedObjectContext) {
         super.getPropertiesFrom(entity: entity, context: context)
@@ -73,16 +73,16 @@ public class VSongServiceSettings: VEntity {
         getPropertiesFrom(entity: songserviceSettings, context: context)
 	}
 	
-    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-        if let entity: SongServiceSettings = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
-            setPropertiesTo(entity: entity, context: context)
-            return entity
-        } else {
-            let entity: SongServiceSettings = DataFetcher().createEntity(moc: context)
-            setPropertiesTo(entity: entity, context: context)
-            return entity
-        }
-    }
+//    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
+//        if let entity: SongServiceSettings = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
+//            setPropertiesTo(entity: entity, context: context)
+//            return entity
+//        } else {
+//            let entity: SongServiceSettings = DataFetcher().createEntity(moc: context)
+//            setPropertiesTo(entity: entity, context: context)
+//            return entity
+//        }
+//    }
 
 	
 }

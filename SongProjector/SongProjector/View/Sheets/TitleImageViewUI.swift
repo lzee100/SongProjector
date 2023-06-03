@@ -11,10 +11,10 @@ import SwiftUI
 struct TitleImageEditViewUI: View {
     private let isForExternalDisplay: Bool
     
-    @ObservedObject private var editModel: WrappedStruct<EditSheetOrThemeViewModel>
+    @ObservedObject private var sheetViewModel: SheetViewModel
     
-    init(editViewModel: WrappedStruct<EditSheetOrThemeViewModel>, isForExternalDisplay: Bool) {
-        self.editModel = editViewModel
+    init(sheetViewModel: SheetViewModel, isForExternalDisplay: Bool) {
+        self.sheetViewModel = sheetViewModel
         self.isForExternalDisplay = isForExternalDisplay
     }
     
@@ -24,31 +24,31 @@ struct TitleImageEditViewUI: View {
                 
                 if !hasNoTitle {
                     HStack {
-                        Text(getTitleAttributedString(editModel.item.title, viewSize: proxy.size))
-                            .modifier(SheetTitleEditUIModifier(scaleFactor: getScaleFactor(width: proxy.size.width), editViewModel: editModel, frameWidth: .infinity))
+                        Text(getTitleAttributedString(sheetViewModel.title, viewSize: proxy.size))
+                            .modifier(SheetTitleEditUIModifier(scaleFactor: getScaleFactor(width: proxy.size.width), sheetViewModel: sheetViewModel, frameWidth: .infinity))
                             .lineLimit(1)
-                        if editModel.item.theme.displayTime {
+                        if sheetViewModel.themeModel.theme.displayTime {
                             Spacer()
                             Text(getTitleAttributedString(Date().time, viewSize: proxy.size))
-                                .modifier(SheetTitleEditUIModifier(scaleFactor: getScaleFactor(width: proxy.size.width), editViewModel: editModel))
+                                .modifier(SheetTitleEditUIModifier(scaleFactor: getScaleFactor(width: proxy.size.width), sheetViewModel: sheetViewModel))
                                 .lineLimit(1)
                         }
                     }
                     .frame(maxWidth: .infinity)
                 }
-                if editModel.item.sheetContent.count > 0 {
+                if sheetViewModel.sheetModel.content.count > 0 {
                     HStack{
-                        if [1, 2].contains(editModel.item.contentAlignmentNumber.intValue) {
+                        if [1, 2].contains(sheetViewModel.themeModel.theme.contentAlignmentNumber.intValue) {
                             Spacer()
                         }
                         Text(getContentAttributedString(viewSize: proxy.size))
-                            .modifier(SheetContentEditModifier(scaleFactor: getScaleFactor(width: proxy.size.width), multiLine: false, editViewModel: editModel))
-                        if [0, 1].contains(editModel.item.contentAlignmentNumber.intValue) {
+                            .modifier(SheetContentEditModifier(scaleFactor: getScaleFactor(width: proxy.size.width), multiLine: false, sheetViewModel: sheetViewModel))
+                        if [0, 1].contains(sheetViewModel.themeModel.theme.contentAlignmentNumber.intValue) {
                             Spacer()
                         }
                     }
                 }
-                if let uiImage = editModel.item.newSelectedSheetImage ?? editModel.item.sheetImagePath?.loadImage() {
+                if let uiImage = sheetViewModel.sheetModel.getImage(thumb: true) {
                     HStack {
                         Spacer()
                         Image(uiImage: uiImage)
@@ -56,13 +56,13 @@ struct TitleImageEditViewUI: View {
                             .aspectRatio(uiImage.size, contentMode: .fit)
                         Spacer()
                     }
-                    .padding(EdgeInsets(top: hasNoTitle && editModel.item.sheetContent.count == 0 ? 15 : 0, leading: 0, bottom: 15, trailing: 0))
+                    .padding(EdgeInsets(top: hasNoTitle && sheetViewModel.sheetModel.content.count == 0 ? 15 : 0, leading: 0, bottom: 15, trailing: 0))
                 } else {
                     Spacer()
                 }
             }
-            .setBackgroundImage(isForExternalDisplay: isForExternalDisplay, editModel: editModel)
-            .modifier(SheetBackgroundColorAndOpacityEditModifier(editViewModel: editModel))
+            .setBackgroundImage(isForExternalDisplay: isForExternalDisplay, sheetViewModel: sheetViewModel)
+            .modifier(SheetBackgroundColorAndOpacityEditModifier(sheetViewModel: sheetViewModel))
             .cornerRadius(10)
             .aspectRatio(externalDisplayWindowRatioHeightWidth, contentMode: .fit)
             .ignoresSafeArea()
@@ -72,32 +72,21 @@ struct TitleImageEditViewUI: View {
     private func getTitleAttributedString(_ text: String, viewSize: CGSize) -> AttributedString {
         AttributedString(NSAttributedString(
             string: text,
-            attributes: editModel.item.getTitleAttributes(getScaleFactor(width: viewSize.width))
+            attributes: sheetViewModel.themeModel.theme.getTitleAttributes(getScaleFactor(width: viewSize.width))
         ))
     }
     
     private func getContentAttributedString(viewSize: CGSize) -> AttributedString {
         AttributedString(NSAttributedString(
-            string: editModel.item.sheetContent,
-            attributes: editModel.item.getLyricsAttributes(getScaleFactor(width: viewSize.width))
+            string: sheetViewModel.sheetModel.content,
+            attributes: sheetViewModel.themeModel.theme.getLyricsAttributes(getScaleFactor(width: viewSize.width))
         ))
     }
     
     private var hasNoTitle: Bool {
-        editModel.item.title.count == 0 && !editModel.item.displayTime
+        sheetViewModel.title.count == 0 && !sheetViewModel.themeModel.theme.displayTime
     }
     
-}
-
-struct TitleImageViewUI_Previews: PreviewProvider {
-    @State static var cluster = ClusterCodable.makeDefault()!
-    @State static var imageSheet = SheetTitleImageCodable.makeDefault()
-    @State static var editModel = WrappedStruct(withItem: EditSheetOrThemeViewModel(editMode: .sheet((cluster, imageSheet), sheetType: .SheetTitleImage), isUniversal: false, isBibleVers: false)!)
-    static var previews: some View {
-        TitleImageEditViewUI(editViewModel: editModel, isForExternalDisplay: false)
-            .previewInterfaceOrientation(.portrait)
-            .previewLayout(.sizeThatFits)
-    }
 }
 
 struct TitleImageDisplayViewUI: View {

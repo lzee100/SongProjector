@@ -25,55 +25,10 @@ public struct SongServiceSectionCodable: EntityCodableType, Codable, Identifiabl
         return SongServiceSectionCodable(userUID: userId, title: title, position: position, numberOfSongs: numberOfSongs, tags: tags)
     }
     
-    
-    init?(managedObject: NSManagedObject, context: NSManagedObjectContext) {
-        guard let entity = managedObject as? SongServiceSection else { return nil }
-        id = entity.id
-        userUID = entity.userUID
-        title = entity.title
-        createdAt = entity.createdAt.date
-        updatedAt = entity.updatedAt?.date
-        deleteDate = entity.deleteDate?.date
-        rootDeleteDate = entity.rootDeleteDate?.date
-        
-        position = entity.position
-        numberOfSongs = entity.numberOfSongs
-        tagIds = entity.tagIds.split(separator: ",").map(String.init)
-        tags = entity.hasTags(moc: moc).compactMap { TagCodable(managedObject: $0, context: context) }
-    }
-    
-    func getManagedObjectFrom(_ context: NSManagedObjectContext) -> NSManagedObject {
-        
-        if let entity: SongServiceSection = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
-            setPropertiesTo(entity, context: context)
-            return entity
-        } else {
-            let entity: SongServiceSection = DataFetcher().createEntity(moc: context)
-            setPropertiesTo(entity, context: context)
-            return entity
-        }
-    }
-    
-    private func setPropertiesTo(_ entity: SongServiceSection, context: NSManagedObjectContext) {
-        entity.id = id
-        entity.userUID = userUID
-        entity.title = title
-        entity.createdAt = createdAt.nsDate
-        entity.updatedAt = updatedAt?.nsDate
-        entity.deleteDate = deleteDate?.nsDate
-        entity.rootDeleteDate = rootDeleteDate?.nsDate
-        
-        entity.position = position
-        entity.numberOfSongs = numberOfSongs
-        entity.tagIds = tags.compactMap({ $0.id }).joined(separator: ",")
-        tags.forEach { $0.getManagedObjectFrom(context) }
-
-    }
-    
     public var id: String = "CHURCHBEAM" + UUID().uuidString
     var userUID: String = ""
     var title: String? = nil
-    var createdAt: Date = Date().localDate()
+    var createdAt: Date = Date.localDate()
     var updatedAt: Date? = nil
     var deleteDate: Date? = nil
     var isTemp: Bool = false
@@ -83,11 +38,6 @@ public struct SongServiceSectionCodable: EntityCodableType, Codable, Identifiabl
     var numberOfSongs: Int16 = 0
     var tagIds: [String] = []
     var tags: [TagCodable] = []
-    
-    func hasTags(moc: NSManagedObjectContext) -> [VTag] {
-        let persitentTags: [Tag] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted])
-        return persitentTags.filter({ tag in tagIds.contains(tag.id) }).compactMap({ VTag(tag: $0, context: moc) })
-    }
 
     enum CodingKeys: String, CodingKey
     {
@@ -108,7 +58,7 @@ public struct SongServiceSectionCodable: EntityCodableType, Codable, Identifiabl
         id: String = "CHURCHBEAM" + UUID().uuidString,
         userUID: String = "",
         title: String? = nil,
-        createdAt: Date = Date().localDate(),
+        createdAt: Date = Date.localDate(),
         updatedAt: Date? = nil,
         deleteDate: Date? = nil,
         isTemp: Bool = false,
@@ -128,6 +78,20 @@ public struct SongServiceSectionCodable: EntityCodableType, Codable, Identifiabl
         self.position = Int16(position)
         self.numberOfSongs = Int16(numberOfSongs)
         self.tags = tags
+    }
+    
+    init(entity: SongServiceSection) {
+        id = entity.id
+        userUID = entity.userUID
+        title = entity.title
+        createdAt = entity.createdAt.date
+        updatedAt = entity.updatedAt?.date
+        deleteDate = entity.deleteDate?.date
+        rootDeleteDate = entity.rootDeleteDate?.date
+        
+        position = entity.position
+        numberOfSongs = entity.numberOfSongs
+        tagIds = entity.tagIds.split(separator: ",").map(String.init)
     }
     
     
@@ -194,7 +158,7 @@ extension SongServiceSectionCodable: FileTransferable {
     mutating func clearDataForDeletedObjects(forceDelete: Bool) {
     }
     
-    func getDeleteObjects(forceDelete: Bool) -> [String] {
+    func getDeleteObjects(forceDelete: Bool) -> [DeleteObject] {
         []
     }
     
@@ -225,7 +189,7 @@ extension SongServiceSectionCodable: FileTransferable {
     
     func setUpdatedAt() -> FileTransferable {
         var modifiedDocument = self
-        modifiedDocument.updatedAt = Date()
+        modifiedDocument.updatedAt = Date.localDate()
         return modifiedDocument
     }
     

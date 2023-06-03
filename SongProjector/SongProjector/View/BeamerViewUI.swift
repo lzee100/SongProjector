@@ -9,21 +9,23 @@
 import SwiftUI
 
 struct BeamerViewUI: View {
-    @State var songsService: WrappedStruct<SongServiceUI>
+    @ObservedObject var songsService: SongServiceUI
+    let sendToExternalDisplayUseCase: SendToExternalDisplayUseCase
     
-    init(songsService: WrappedStruct<SongServiceUI>) {
+    init(songsService: SongServiceUI, sendToExternalDisplayUseCase: SendToExternalDisplayUseCase) {
         self.songsService = songsService
+        self.sendToExternalDisplayUseCase = sendToExternalDisplayUseCase
     }
     
     var body: some View {
-        BeamerPreviewUI(songService: self.songsService)
+        BeamerPreviewUI(sendToExternalDisplayUseCase: sendToExternalDisplayUseCase, songService: self.songsService)
     }
 }
 
 struct BeamerViewUI_Previews: PreviewProvider {
-    @State static var songService = WrappedStruct(withItem: SongServiceUI())
+    @State static var songService = SongServiceUI()
 
     static var previews: some View {
-        BeamerViewUI(songsService: songService)
+        BeamerViewUI(songsService: songService, sendToExternalDisplayUseCase: SendToExternalDisplayUseCase(connector: ExternalDisplayConnector()))
     }
 }

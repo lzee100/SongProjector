@@ -216,7 +216,6 @@ class SheetTitleImage: SheetView {
 	
 	override func updateSheetImage() {
 		let sheet = self.sheet as! VSheetTitleImage
-        let image = isForExternalDispay ? sheet.tempSelectedImage ?? sheet.image : sheet.tempSelectedImageThumbNail ?? sheet.thumbnail
 		
 		if sheet.imageHasBorder {
 			self.image.isHidden = true
@@ -225,14 +224,12 @@ class SheetTitleImage: SheetView {
 			if let borderColor = sheet.imageBorderColor {
 				imageWithBorder.layer.borderColor = UIColor(hex: borderColor)?.cgColor
 			}
-			imageWithBorder.image = image
 			imageWithBorder.contentMode = .scaleAspectFill
 			imageWithBorder.clipsToBounds = true
 		} else {
 			self.image.isHidden = false
 			imageWithBorder.isHidden = true
             self.image.contentMode = ContentMode(rawValue: Int(sheet.imageContentMode)) ?? .scaleAspectFill
-			self.image.image = image
 			self.image.clipsToBounds = true
 
 		}

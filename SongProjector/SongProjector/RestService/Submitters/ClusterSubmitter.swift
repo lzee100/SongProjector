@@ -44,41 +44,41 @@ class CsterSubmitter: Requester<VCluster> {
             return
         }
         
-        var deletableFiles: [String] = body.flatMap({ $0.deletedSheetsImageURLs })
-        
-        // set new temp images
-        // deleted images will be removed locally when call is succesfull
-        do {
-            try body.forEach({ cluster in
-                try cluster.hasSheets.forEach({ sheet in
-                    if let image = sheet.hasTheme?.tempSelectedImage {
-                        if let url = sheet.hasTheme?.imagePathAWS {
-                            deletableFiles.append(url)
-                        }
-                        sheet.hasTheme?.tempLocalImageName = try image.saveTemp()
-                    }
-                })
-                try cluster.hasSheets.compactMap({ $0 as? VSheetTitleImage }).forEach({ sheet in
-                    if let image = sheet.tempSelectedImage {
-                        if let url = sheet.imagePathAWS {
-                            deletableFiles.append(url)
-                        }
-                        sheet.tempLocalImageName = try image.saveTemp()
-                    }
-                })
-                try cluster.hasSheets.compactMap({ $0 as? VSheetPastors }).forEach({ sheet in
-                    if let image = sheet.tempSelectedImage {
-                        if let url = sheet.imagePathAWS {
-                            deletableFiles.append(url)
-                        }
-                        sheet.tempLocalImageName = try image.saveTemp()
-                    }
-                })
-            })
-        } catch {
-            completion(.failed(error: .failedSavingImageLocallyBeforeSubmit(requester: self.id, error: error)))
-            return
-        }
+//        var deletableFiles: [String] = body.flatMap({ $0.deletedSheetsImageURLs })
+//
+//        // set new temp images
+//        // deleted images will be removed locally when call is succesfull
+//        do {
+//            try body.forEach({ cluster in
+//                try cluster.hasSheets.forEach({ sheet in
+//                    if let image = sheet.hasTheme?.tempSelectedImage {
+//                        if let url = sheet.hasTheme?.imagePathAWS {
+//                            deletableFiles.append(url)
+//                        }
+////                        sheet.hasTheme?.tempLocalImageName = try image.saveTemp()
+//                    }
+//                })
+//                try cluster.hasSheets.compactMap({ $0 as? VSheetTitleImage }).forEach({ sheet in
+//                    if let image = sheet.tempSelectedImage {
+//                        if let url = sheet.imagePathAWS {
+//                            deletableFiles.append(url)
+//                        }
+//                        sheet.tempLocalImageName = try image.saveTemp()
+//                    }
+//                })
+//                try cluster.hasSheets.compactMap({ $0 as? VSheetPastors }).forEach({ sheet in
+//                    if let image = sheet.tempSelectedImage {
+//                        if let url = sheet.imagePathAWS {
+//                            deletableFiles.append(url)
+//                        }
+//                        sheet.tempLocalImageName = try image.saveTemp()
+//                    }
+//                })
+//            })
+//        } catch {
+//            completion(.failed(error: .failedSavingImageLocallyBeforeSubmit(requester: self.id, error: error)))
+//            return
+//        }
        
         // get upload objects from temp directories
         let uploadObjects = body.filter({ $0.deleteDate == nil }).flatMap({ $0.uploadObjecs + (uploadMusic ? $0.uploadMusicObjects : []) }).unique { (lhs, rhs) -> Bool in
@@ -94,7 +94,7 @@ class CsterSubmitter: Requester<VCluster> {
             switch result {
             case .failed(error: let error): completion(.failed(error: .failedUploadingMedia(requester: self.id, error: error)))
             case .success, .none:
-                FileDeleter.delete(files: deletableFiles)
+//                FileDeleter.delete(files: deletableFiles)
                 do {
                     try body.forEach({
                         try $0.setUploadValues(uploadObjects)
@@ -136,23 +136,23 @@ class CsterSubmitter: Requester<VCluster> {
     }
     
     private func deleteFilesLocallyIfNeeded(body: [VCluster]) {
-        body.forEach({ cluster in
-            cluster.hasSheets.forEach({ sheet in
-                if sheet.hasTheme?.isTempSelectedImageDeleted ?? false {
-                    try? sheet.hasTheme?.setBackgroundImage(image: nil, imageName: nil)
-                }
-            })
-            cluster.hasSheets.compactMap({ $0 as? VSheetTitleImage }).forEach({ sheet in
-                if sheet.isTempSelectedImageDeleted {
-                    try? sheet.set(image: nil, imageName: nil)
-                }
-            })
-            cluster.hasSheets.compactMap({ $0 as? VSheetPastors }).forEach({ sheet in
-                if sheet.isTempSelectedImageDeleted {
-                    try? sheet.set(image: nil, imageName: nil)
-                }
-            })
-        })
+//        body.forEach({ cluster in
+//            cluster.hasSheets.forEach({ sheet in
+//                if sheet.hasTheme?.isTempSelectedImageDeleted ?? false {
+//                    try? sheet.hasTheme?.setBackgroundImage(image: nil, imageName: nil)
+//                }
+//            })
+//            cluster.hasSheets.compactMap({ $0 as? VSheetTitleImage }).forEach({ sheet in
+//                if sheet?.isTempSelectedImageDeleted {
+//                    try? sheet.set(image: nil, imageName: nil)
+//                }
+//            })
+//            cluster.hasSheets.compactMap({ $0 as? VSheetPastors }).forEach({ sheet in
+//                if sheet.isTempSelectedImageDeleted {
+//                    try? sheet.set(image: nil, imageName: nil)
+//                }
+//            })
+//        })
     }
     
 }

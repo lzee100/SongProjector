@@ -14,37 +14,44 @@ import SwiftUI
     @Published var error: LocalizedError?
     @Published var showingLoader = false
     
-    func fetchTags() {
-        let tags: [Tag] = DataFetcher().getEntities(moc: moc, sort: .positionAsc)
-        self.tags = tags.compactMap { TagCodable(managedObject: $0, context: moc) }
+    func fetchTags() async {
+        tags = await GetTagsUseCase().fetch()
     }
     
     func fetchTagsWithRemote() async {
-        fetchTags()
+        guard !showingLoader else { return }
+        showingLoader = true
+        await fetchTags()
         do {
             let result = try await FetchTagsUseCase().fetch()
             if result.count > 0 {
-                fetchTags()
+                await fetchTags()
+                showingLoader = false
+            } else {
+                showingLoader = false
             }
         } catch {
+            showingLoader = false
             self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
         }
     }
     
     func delete(tag: TagCodable) async {
+        showingLoader = true
         var changeableTag = tag
         changeableTag.deleteDate = Date()
         if uploadSecret != nil {
             changeableTag.rootDeleteDate = Date()
         }
         await submit([changeableTag])
+        showingLoader = false
     }
     
     func submit(_ tags: [TagCodable]) async {
         showingLoader = true
         do {
             _ = try await SubmitUseCase(endpoint: .tags, requestMethod: .put, uploadObjects: tags).submit()
-            fetchTags()
+            await fetchTags()
             showingLoader = false
         } catch {
             showingLoader = false
@@ -63,39 +70,37 @@ struct TagsViewUI: View {
     
     var body: some View {
         NavigationStack {
-            List(selection: $selectedTag, content: {
-                ForEach(viewModel.tags) { tag in
-                    Button {
-                        selectedTag = tag
-                    } label: {
-                        HStack {
-                            Text(tag.title ?? "")
-                                .styleAs(font: .xNormal)
-                            Spacer()
-                        }
-                    }
-                    .buttonStyle(.borderless)
-                    .swipeActions {
-                        Button(role: .destructive) {
-                            Task {
-                                await viewModel.delete(tag: tag)
-                            }
+            if viewModel.showingLoader {
+                ProgressView()
+            }
+            VStack {
+                List(selection: $selectedTag, content: {
+                    ForEach(viewModel.tags) { tag in
+                        Button {
+                            selectedTag = tag
                         } label: {
-                            Image(systemName: "trash")
-                                .tint(.white)
+                            HStack {
+                                Text(tag.title ?? "")
+                                    .styleAs(font: .xNormal)
+                                Spacer()
+                            }
                         }
-                        .tint(Color(uiColor: .red1))
-
+                        .buttonStyle(.borderless)
+                        .swipeActions {
+                            Button(role: .destructive) {
+                                Task {
+                                    await viewModel.delete(tag: tag)
+                                }
+                            } label: {
+                                Image(systemName: "trash")
+                                    .tint(.white)
+                            }
+                            .disabled(viewModel.showingLoader)
+                            .tint(Color(uiColor: .red1))
+                        }
                     }
-                }
-                .onMove(perform: move)
-            })
-            .blur(radius: viewModel.showingLoader ? 5 : 0)
-            .overlay {
-                if viewModel.showingLoader {
-                    ProgressView()
-                        .frame(width: 50, height: 50)
-                }
+                    .onMove(perform: move)
+                })
             }
             .navigationTitle(AppText.Tags.title)
             .toolbar {
@@ -106,17 +111,21 @@ struct TagsViewUI: View {
                         Image(systemName: "plus")
                             .tint(Color(uiColor: themeHighlighted))
                     }
-                    .allowsHitTesting(!viewModel.showingLoader)
+                    .disabled(viewModel.showingLoader)
                 }
             }
             .errorAlert(error: $viewModel.error)
             .sheet(isPresented: $showingNewTag, onDismiss: {
-                viewModel.fetchTags()
+                Task {
+                    await viewModel.fetchTags()
+                }
             }, content: {
                 NewTagViewUI(showingNewTagViewUI: $showingNewTag)
             })
             .sheet(item: $selectedTag, onDismiss: {
-                viewModel.fetchTags()
+                Task {
+                    await viewModel.fetchTags()
+                }
             }, content: { selectedTag in
                 TagEditorViewUI(
                     isShowingTagEditor: $selectedTag,
@@ -137,7 +146,7 @@ struct TagsViewUI: View {
         movableTags = []
         for (index, tag) in tagsEnumerated.enumerated() {
             var changableTag = tag
-            changableTag.position = Int16(index)
+            changableTag.position = index
             movableTags.append(changableTag)
         }
         Task {

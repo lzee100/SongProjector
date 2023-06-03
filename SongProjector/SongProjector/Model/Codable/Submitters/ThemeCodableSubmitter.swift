@@ -45,7 +45,6 @@ struct ThemeCodableSubmitter: CodableFetcherType {
         _ = uploadManager.$result.sink(receiveValue: { result in
             switch result {
             case .failed(error: let error):
-                body.compactMap({ $0.tempSavedImageName }).forEach { UIImage.deleteTempFile(imageName: $0, thumbNailName: nil) }
                 completion(.failure(CodableError.uploadingImage(error: error)))
             case .success, .none:
                 self.deleteLocalImages()
@@ -54,8 +53,6 @@ struct ThemeCodableSubmitter: CodableFetcherType {
                 for theme in body {
                     do {
                         if let image = theme.imageSelectionAction.image {
-                            try theme.setBackgroundImage(image: image, imageName: theme.imagePath)
-                            UIImage.deleteTempFile(imageName: theme.tempSavedImageName, thumbNailName: nil)
                         }
                     } catch let error {
                         failed = true
@@ -80,7 +77,7 @@ struct ThemeCodableSubmitter: CodableFetcherType {
         observer?.requesterDidStart()
         prepareForSubmit { result in
             switch result {
-            case .success(let themes):
+            case .success:
 //                let submitter = SubmitCodablePerformer<ThemeCodable>(body: (themes as? [ThemeCodable] ?? []), requestMethod: requestMethod, requesterInfo: ThemeRequesterInfo())
 //
 //                submitter.performSubmit { result in
@@ -103,7 +100,7 @@ struct ThemeCodableSubmitter: CodableFetcherType {
     }
     
     func getCodableObjectFrom(_ objects: [NSManagedObject], context: NSManagedObjectContext) -> [EntityCodableType] {
-        objects.compactMap { TagCodable(managedObject: $0, context: context) }
+        objects.compactMap { TagCodable(entity: $0 as! Tag) }
     }
     
     private func makeDeleteFiles() throws -> [StorageReference] {
@@ -117,7 +114,7 @@ struct ThemeCodableSubmitter: CodableFetcherType {
                 let uploadFile = Storage.storage().reference().child("images").child(awsPath)
                 deletableFiles.append(uploadFile)
             }
-            theme.tempSavedImageName = try theme.imageSelectionAction.image?.saveTemp()
+//            theme.tempSavedImageName = try theme.imageSelectionAction.image?.saveTemp()
         }
         
         return deletableFiles

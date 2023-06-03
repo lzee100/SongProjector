@@ -10,26 +10,25 @@ import Foundation
 
 struct MuteInstrumentsUseCase {
     
-    private let instrument = "instrument"
+    private static let instrumentKey = "instrument"
+    private let instrument: InstrumentCodable
     
-    func setMuteFor(instrument: InstrumentCodable, isMuted: Bool) {
-        UserDefaults.standard.setValue(isMuted, forKey: self.instrument + instrument.id)
+    var isMuted: Bool {
+        UserDefaults.standard.bool(forKey: Self.instrumentKey + instrument.id)
     }
     
-    func isMutedFor(instrument: InstrumentCodable) -> Bool {
-        UserDefaults.standard.bool(forKey: self.instrument + instrument.id)
+    init(instrument: InstrumentCodable) {
+        self.instrument = instrument
     }
     
-    func resetMutes(completion: @escaping (() -> Void)) {
-        DispatchQueue.global(qos: .userInitiated).async {
-            let moc = newMOCBackground
-            let instruments = DataFetcher<Cluster>().getEntities(moc: moc).flatMap({ $0.hasInstruments(moc: moc) })
-            instruments.forEach { instrument in
-                UserDefaults.standard.removeObject(forKey: self.instrument + instrument.id)
-            }
-            DispatchQueue.main.async {
-                completion()
-            }
+    func update(isMuted: Bool) {
+        UserDefaults.standard.setValue(isMuted, forKey: Self.instrumentKey + instrument.id)
+    }
+    
+    static func resetMutes() async {
+        let instruments = await GetClustersUseCase().fetch().flatMap { $0.hasInstruments }
+        instruments.forEach { instrument in
+            UserDefaults.standard.removeObject(forKey: Self.instrumentKey + instrument.id)
         }
     }
 }

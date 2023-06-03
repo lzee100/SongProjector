@@ -30,7 +30,8 @@ class PickerRepresentable: Identifiable {
 struct PickerViewUI<T: PickerRepresentable>: View {
     
     let label: String
-    var pickerValues: [T] = []
+    var getPickerValues: (() async -> [T])?
+    @State var pickerValues: [T] = []
     var selectedItem: Binding<T>?
     var didSelectItem: ((T) -> Void) = { _ in }
         
@@ -58,6 +59,12 @@ struct PickerViewUI<T: PickerRepresentable>: View {
                     Text((selectedItem?.wrappedValue.labelValue ?? "").prefix(20))
                         .styleAs(font: .xNormal)
                         .lineLimit(1)
+                }
+            }.onAppear {
+                Task {
+                    if let getPickerValues {
+                        pickerValues = await getPickerValues()
+                    }
                 }
             }
     }

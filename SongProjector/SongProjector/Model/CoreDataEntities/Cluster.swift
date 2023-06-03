@@ -29,12 +29,14 @@ public class Cluster: Entity {
 	@NSManaged var tagIds: String
     
     func hasTheme(moc: NSManagedObjectContext) -> Theme? {
-        let theme: Theme? = DataFetcher().getEntity(moc: moc, predicates: [.get(id: themeId)])
-        return theme
+//        let theme: Theme? = DataFetcher().getEntity(moc: moc, predicates: [.get(id: themeId)])
+//        return theme
+        return nil
     }
     func hasTags(moc: NSManagedObjectContext) -> [Tag] {
-        let tags: [Tag] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted])
-        return tags.filter({ tag in splitTagIds.contains(tag.id) })
+//        let tags: [Tag] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted])
+//        return tags.filter({ tag in splitTagIds.contains(tag.id) })
+        return []
     }
 
     var splitTagIds: [String] {
@@ -42,15 +44,17 @@ public class Cluster: Entity {
     }
 	
     func hasSheets(moc: NSManagedObjectContext) -> [Sheet] {
-        let splitSheetIds = sheetIds.split(separator: ",").compactMap({ String($0) })
-        let sheets: [Sheet] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted])
-        return sheets.filter({ sheet in splitSheetIds.contains(sheet.id) })
+//        let splitSheetIds = sheetIds.split(separator: ",").compactMap({ String($0) })
+//        let sheets: [Sheet] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted])
+//        return sheets.filter({ sheet in splitSheetIds.contains(sheet.id) })
+        return []
     }
 
     func hasInstruments(moc: NSManagedObjectContext) -> [Instrument] {
-        let splitInstrumentIds = (instrumentIds ?? "").split(separator: ",").compactMap({ String($0) })
-        let instruments: [Instrument] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted])
-        return instruments.filter({ instrument in splitInstrumentIds.contains(instrument.id) })
+//        let splitInstrumentIds = (instrumentIds ?? "").split(separator: ",").compactMap({ String($0) })
+//        let instruments: [Instrument] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted])
+//        return instruments.filter({ instrument in splitInstrumentIds.contains(instrument.id) })
+        return []
     }
     
 }

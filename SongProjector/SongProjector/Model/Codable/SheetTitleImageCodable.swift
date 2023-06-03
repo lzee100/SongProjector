@@ -13,7 +13,7 @@ import UIKit
 
 public struct SheetTitleImageCodable: EntityCodableType, SheetMetaType {
     
-    static func makeDefault() -> SheetTitleImageCodable {
+    static func makeDefault() async throws -> SheetTitleImageCodable? {
 #if DEBUG
         let userId = "userid"
 #else
@@ -33,7 +33,7 @@ public struct SheetTitleImageCodable: EntityCodableType, SheetMetaType {
             isEmptySheet: false,
             position: 0,
             time: 0,
-            hasTheme: ThemeCodable.makeDefault(),
+            hasTheme: try await ThemeCodable.makeDefault(isHidden: true),
             content: "Content image sheet",
             hasTitle: false,
             imageBorderColor: nil,
@@ -48,73 +48,6 @@ public struct SheetTitleImageCodable: EntityCodableType, SheetMetaType {
         )
     }
     
-    init?(managedObject: NSManagedObject, context: NSManagedObjectContext) {
-        guard let entity = managedObject as? SheetTitleImageEntity else { return nil }
-        id = entity.id
-        userUID = entity.userUID
-        title = entity.title
-        createdAt = entity.createdAt.date
-        updatedAt = entity.updatedAt?.date
-        deleteDate = entity.deleteDate?.date
-        rootDeleteDate = entity.rootDeleteDate?.date
-        
-        isEmptySheet = entity.isEmptySheet
-        position = Int(entity.position)
-        time = entity.time
-        if let theme = entity.hasTheme {
-            hasTheme = ThemeCodable(managedObject: theme, context: context)
-        }
-        content = entity.content
-        hasTitle = entity.hasTitle
-        imageBorderColor = entity.imageBorderColor
-        imageBorderSize = entity.imageBorderSize
-        imageContentMode = entity.imageContentMode
-        imageHasBorder = entity.imageHasBorder
-        imagePath = entity.imagePath
-        thumbnailPath = entity.thumbnailPath
-        imagePathAWS = entity.imagePathAWS
-        
-        uiImage = imagePath?.loadImage()
-        uiImageThumb = thumbnailPath?.loadImage()
-    }
-    
-    func getManagedObjectFrom(_ context: NSManagedObjectContext) -> NSManagedObject {
-        
-        if let entity: SheetTitleImageEntity = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
-            setPropertiesTo(entity, context: context)
-            return entity
-        } else {
-            let entity: SheetTitleImageEntity = DataFetcher().createEntity(moc: context)
-            setPropertiesTo(entity, context: context)
-            return entity
-        }
-    }
-    
-    private func setPropertiesTo(_ entity: SheetTitleImageEntity, context: NSManagedObjectContext) {
-        entity.id = id
-        entity.userUID = userUID
-        entity.title = title
-        entity.createdAt = createdAt.nsDate
-        entity.updatedAt = updatedAt?.nsDate
-        entity.deleteDate = deleteDate?.nsDate
-        entity.rootDeleteDate = rootDeleteDate?.nsDate
-        
-        entity.isEmptySheet = isEmptySheet
-        entity.position = Int16(position)
-        entity.time = time
-        entity.hasTheme = hasTheme?.getManagedObjectFrom(context) as? Theme
-        
-        entity.content = content
-        entity.hasTitle = hasTitle
-        entity.imageBorderColor = imageBorderColor
-        entity.imageBorderSize = imageBorderSize
-        entity.imageContentMode = imageContentMode
-        entity.imageHasBorder = imageHasBorder
-        entity.imagePath = imagePath
-        entity.thumbnailPath = thumbnailPath
-        entity.imagePathAWS = imagePathAWS
-    }
-    
     static var type: SheetType = .SheetTitleImage
     var sheetType: SheetType {
         .SheetTitleImage
@@ -123,7 +56,7 @@ public struct SheetTitleImageCodable: EntityCodableType, SheetMetaType {
     var id: String = "CHURCHBEAM" + UUID().uuidString
     var userUID: String = ""
     var title: String? = nil
-    var createdAt: Date = Date().localDate()
+    var createdAt: Date = Date.localDate()
     var updatedAt: Date? = nil
     var deleteDate: Date? = nil
     var rootDeleteDate: Date? = nil
@@ -238,6 +171,32 @@ public struct SheetTitleImageCodable: EntityCodableType, SheetMetaType {
         self.isSheetImageDeleted = isSheetImageDeleted
     }
     
+    init?(entity: SheetTitleImageEntity) {
+        id = entity.id
+        userUID = entity.userUID
+        title = entity.title
+        createdAt = entity.createdAt.date
+        updatedAt = entity.updatedAt?.date
+        deleteDate = entity.deleteDate?.date
+        rootDeleteDate = entity.rootDeleteDate?.date
+        
+        isEmptySheet = entity.isEmptySheet
+        position = Int(entity.position)
+        time = entity.time
+        content = entity.content
+        hasTitle = entity.hasTitle
+        imageBorderColor = entity.imageBorderColor
+        imageBorderSize = entity.imageBorderSize
+        imageContentMode = entity.imageContentMode
+        imageHasBorder = entity.imageHasBorder
+        imagePath = entity.imagePath
+        thumbnailPath = entity.thumbnailPath
+        imagePathAWS = entity.imagePathAWS
+        
+        uiImage = imagePath?.loadImage()
+        uiImageThumb = thumbnailPath?.loadImage()
+    }
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeysSheetTitleImage.self)
         
@@ -328,19 +287,23 @@ extension SheetTitleImageCodable: FileTransferable {
     mutating func clearDataForDeletedObjects(forceDelete: Bool) {
         if isSheetImageDeleted || forceDelete {
             imagePathAWS = nil
-            // remove locally saved images
-            _ = try? UIImage.set(image: nil, imageName: imagePath, thumbNailName: thumbnailPath)
+            
+            try? DeleteFileAtURLUseCase(fileName: imagePath)?.delete()
+            try? DeleteFileAtURLUseCase(fileName: thumbnailPath)?.delete()
             imagePath = nil
             thumbnailPath = nil
         }
     }
     
-    func getDeleteObjects(forceDelete: Bool) -> [String] {
-        var fileNames: [String?] = []
-        if isSheetImageDeleted || forceDelete {
-            fileNames.append(imagePathAWS)
-        }
-        return fileNames.compactMap { $0 }
+    func getDeleteObjects(forceDelete: Bool) -> [DeleteObject] {
+        let deleteObjects = hasTheme?.getDeleteObjects(forceDelete: forceDelete) ?? []
+        
+        let deleteObject2 = DeleteObject(
+            imagePathAWS: imagePathAWS,
+            imagePath: imagePath,
+            imagePathThumbnail: thumbnailPath
+        )
+        return deleteObjects + [deleteObject2]
     }
     
     var uploadObjects: [TransferObject] {
@@ -360,26 +323,21 @@ extension SheetTitleImageCodable: FileTransferable {
         for uploadObject in uploadObjects {
             if newSelectedSheetImageTempDirPath == uploadObject.fileName {
                 imagePathAWS = uploadObject.fileName
-                if let image = UIImage.getFromTempDir(imagePath: uploadObject.fileName) {
-                    let savedImage = try UIImage.set(image: image, imageName: uploadObject.fileName, thumbNailName: nil)
-                    imagePath = savedImage.imagePath
-                    thumbnailPath = savedImage.thumbPath
-                }
-                try FileManager.deleteTempFile(name: uploadObject.fileName)
+                imagePath = try MoveImageUseCase().moveImageFromTempToNewPersistantDirectory(uploadObject.fileName)
+                thumbnailPath = try SaveImageUseCase().createThumbAndSave(fileName: uploadObject.fileName)
                 newSelectedSheetImageTempDirPath = nil
             }
-            var theme = hasTheme
-            try theme?.setTransferObjects(transferObjects)
-            self.hasTheme = theme
         }
-        for download in downloadObjects.compactMap({ $0 as? DownloadObject }) {
-            if imagePathAWS == download.remoteURL.absoluteString {
+        
+        var theme = hasTheme
+        try theme?.setTransferObjects(transferObjects)
+        self.hasTheme = theme
+        
+        for download in transferObjects.compactMap({ $0 as? DownloadObject }) {
+            if imagePathAWS == download.filename {
                 try setBackgroundImage(image: download.image, imageName: download.filename)
             }
         }
-        var theme = self.theme
-        try theme?.setTransferObjects(transferObjects)
-        self.hasTheme = theme
     }
 
     func setDeleteDate() -> FileTransferable {
@@ -394,7 +352,7 @@ extension SheetTitleImageCodable: FileTransferable {
     
     func setUpdatedAt() -> FileTransferable {
         var modifiedDocument = self
-        modifiedDocument.updatedAt = Date()
+        modifiedDocument.updatedAt = Date.localDate()
         return modifiedDocument
     }
     
@@ -408,9 +366,10 @@ extension SheetTitleImageCodable: FileTransferable {
     }
     
     private mutating func setBackgroundImage(image: UIImage?, imageName: String?) throws {
-        let savedImage = try UIImage.set(image: image, imageName: imageName ?? self.imagePath, thumbNailName: self.thumbnailPath)
-        self.imagePath = savedImage.imagePath
-        self.thumbnailPath = savedImage.thumbPath
+        if let image {
+            let imagePath = try SaveImageUseCase().saveImage(image: image, isThumb: false)
+            self.imagePath = imagePath
+            thumbnailPath = try SaveImageUseCase().createThumbAndSave(fileName: imagePath)
+        }
     }
-    
 }

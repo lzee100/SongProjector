@@ -73,7 +73,7 @@ class InstrumentsButtonsViewContainer: UIView {
         instrumentButtonsView.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: insets.top).isActive = true
         instrumentButtonsView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: insets.left).isActive = true
         instrumentButtonsView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -insets.right).isActive = true
-        if UIDevice.current.orientation.isLandscape {
+        if UIDeviceOrientation.isLandscape {
             instrumentButtonsView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -insets.bottom).isActive = true
         } else {
             instrumentButtonsView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -insets.bottom).isActive = true
@@ -198,7 +198,7 @@ class SongServiceSectionHeaderTitleStackView: UIStackView {
         sectionTitleLabel.numberOfLines = 1
         actionButton.setContentHuggingPriority(UILayoutPriority(100), for: .horizontal)
         actionButton.setContentHuggingPriority(UILayoutPriority(100), for: .vertical)
-        titleLabel.textAlignment = UIDevice.current.orientation.isLandscape ? .center : .left
+        titleLabel.textAlignment = UIDeviceOrientation.isLandscape ? .center : .left
         titleLabel.font = .normalBold
         titleLabel.numberOfLines = 0
         titleLabel.setContentHuggingPriority(UILayoutPriority(300), for: .vertical)

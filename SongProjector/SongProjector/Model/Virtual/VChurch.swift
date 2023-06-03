@@ -39,14 +39,4 @@ public class VChurch: VEntity {
         getPropertiesFrom(entity: church, context: context)
     }
     
-    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-        if let entity: Church = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
-            setPropertiesTo(entity: entity, context: context)
-            return entity
-        } else {
-            let entity: Church = DataFetcher().createEntity(moc: context)
-            setPropertiesTo(entity: entity, context: context)
-            return entity
-        }
-    }
 }

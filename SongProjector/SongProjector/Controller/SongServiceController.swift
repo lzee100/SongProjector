@@ -143,7 +143,7 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        UniversalClusterFetcher.initialFetch()
+//        UniversalClusterFetcher.initialFetch()
         GoogleActivityFetcher.fetch(force: true)
         SongServicePlayDateFetcher.fetch()
     }
@@ -198,7 +198,7 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        if UIDevice.current.orientation.isPortrait {
+        if UIDeviceOrientation.isPortrait {
             return UIEdgeInsets(top: 0, left: 0, bottom: 10, right: 0)
         } else {
             return UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
@@ -256,7 +256,7 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
     @objc func startSwiftUI() {
         
 //        let bla = (cluster: ClusterCodable.makeDefault()!, sheet: SheetTitleContentCodable.makeDefault()!)
-//        let model = EditSheetOrThemeViewModel(editMode: .sheet(bla, sheetType: .SheetTitleContent), isUniversal: false)!
+//        let model = SheetViewModel(editMode: .sheet(bla, sheetType: .SheetTitleContent), isUniversal: false)!
 //
 //        let editView = EditThemeOrSheetViewUI(dismiss: { dismissPresenting in
 //            self.presentedViewController?.dismiss(animated: true)
@@ -278,25 +278,25 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 
         var songObjects: [SongObjectUI] = []
 
-        for (index, clusterOrCommentArray) in temptSwiftUIModel.sectionedClusterOrComment.enumerated() {
-            let sectionTitle = temptSwiftUIModel.songServiceSettings?.sections[index].title
-            let clusters = clusterOrCommentArray.compactMap { $0.cluster }.compactMap { ClusterCodable(managedObject: $0.getManagedObject(context: moc), context: moc) }
-
-            for (index, cluster) in clusters.enumerated() {
-                if index == 0 {
-                    songObjects.append(SongObjectUI(cluster: cluster, sectionHeader: sectionTitle))
-                } else {
-                    songObjects.append(SongObjectUI(cluster: cluster, sectionHeader: nil))
-                }
-            }
-        }
-
-        let songServiceUI = WrappedStruct(withItem: SongServiceUI(songs: songObjects))
-        let controller = UIHostingController(rootView: SongServiceViewUI(songService: songServiceUI, dismiss: {
-            self.presentedViewController?.dismiss(animated: true)
-        }))
-        controller.modalPresentationStyle = .fullScreen
-        present(controller, animated: true)
+//        for (index, clusterOrCommentArray) in temptSwiftUIModel.sectionedClusterOrComment.enumerated() {
+//            let sectionTitle = temptSwiftUIModel.songServiceSettings?.sections[index].title
+//            let clusters = clusterOrCommentArray.compactMap { $0.cluster }.compactMap { ClusterCodable(managedObject: $0.getManagedObject(context: moc), context: moc) }
+//
+//            for (index, cluster) in clusters.enumerated() {
+//                if index == 0 {
+//                    songObjects.append(SongObjectUI(cluster: cluster, sectionHeader: sectionTitle))
+//                } else {
+//                    songObjects.append(SongObjectUI(cluster: cluster, sectionHeader: nil))
+//                }
+//            }
+//        }
+//
+//        let songServiceUI = WrappedStruct(withItem: SongServiceUI(songs: songObjects))
+//        let controller = UIHostingController(rootView: SongServiceViewUI(songService: songServiceUI, dismiss: {
+//            self.presentedViewController?.dismiss(animated: true)
+//        }))
+//        controller.modalPresentationStyle = .fullScreen
+//        present(controller, animated: true)
 
 
         // SONGSERVICE UI
@@ -434,7 +434,7 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 
         let attributes = self.songCollectionView.collectionViewLayout.layoutAttributesForSupplementaryView(ofKind: kind, at: indexPath)
         if songService.selectedSong != nil {
-            if UIDevice.current.orientation.isPortrait {
+            if UIDeviceOrientation.isPortrait {
                 self.songCollectionView.setContentOffset(CGPoint(x: 0, y: attributes!.frame.origin.y - self.songCollectionView.contentInset.top), animated: true)
             } else {
                 self.songCollectionView.setContentOffset(CGPoint(x: attributes!.frame.origin.x - self.songCollectionView.contentInset.left, y: 0), animated: true)
@@ -689,11 +689,11 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
 		songService.selectedSheet = nil
 		songService.selectedSection = nil
 		
-        if songService.songs.count > 0 {
-            let clusters: [Cluster] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted, .skipRootDeleted])
-            let filteredClusters = clusters.filter({ cluster in songService.songs.contains(where: { song in song.cluster.id == cluster.id }) })
-            songService.songs = filteredClusters.map({ SongObject(cluster: VCluster(cluster: $0, context: moc), headerTitle: nil) })
-        }
+//        if songService.songs.count > 0 {
+//            let clusters: [Cluster] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted, .skipRootDeleted])
+//            let filteredClusters = clusters.filter({ cluster in songService.songs.contains(where: { song in song.cluster.id == cluster.id }) })
+//            songService.songs = filteredClusters.map({ SongObject(cluster: VCluster(cluster: $0, context: moc), headerTitle: nil) })
+//        }
 	}
 	
 	func externalDisplayDidChange(_ notification: Notification) {
@@ -751,12 +751,12 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
             view.removeConstraint(constraint)
         }
         sheetDisplayerHeightConstraint.isActive = false
-        if UIDevice.current.orientation.isLandscape {
+        if UIDeviceOrientation.isLandscape {
             let heightConstraint = NSLayoutConstraint(item: sheetDisplaySwipeView!, attribute: .height, relatedBy: .equal, toItem: view!, attribute: .height, multiplier: 0.65, constant: 0)
             sheetDisplayerWipeViewEqualHeightConstraint = heightConstraint
             heightConstraint.isActive = true
             view.addConstraint(heightConstraint)
-        } else if UIDevice.current.orientation.isPortrait {
+        } else if UIDeviceOrientation.isPortrait {
             let heightConstraint = NSLayoutConstraint(item: sheetDisplaySwipeView!, attribute: .height, relatedBy: .equal, toItem: view!, attribute: .height, multiplier: 0.3, constant: 0)
             sheetDisplayerWipeViewEqualHeightConstraint = heightConstraint
             heightConstraint.isActive = true

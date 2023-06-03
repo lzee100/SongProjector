@@ -88,12 +88,6 @@ protocol TransferObjectDelegate {
     func transferDidFinish()
 }
 
-struct DeleteObject {
-    let imagePathAWS: String?
-    let imagePath: String?
-    let thumbnailPath: String?
-}
-
 class TransferObject {
     
 }
@@ -188,7 +182,7 @@ class FileSubmitter: SingleTransferManagerProtocol {
         }
         
         let uploadFile = storageRef.child(subPath).child(uploadObject.fileName)
-        let localURL = FileManager.getTempURLFor(name: uploadObject.fileName)
+        let localURL = try GetFileURLUseCase(fileName: uploadObject.fileName).getURL(location: .temp)
         let data = try Data(contentsOf: localURL)
         let metadata = try await uploadFile.putDataAsync(data)
         let url = try await uploadFile.downloadURL()

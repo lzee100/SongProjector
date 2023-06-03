@@ -234,7 +234,7 @@ class UploadUniversalSongController: ChurchBeamViewController, UITableViewDelega
 	
 	override func handleRequestFinish(requesterId: String, result: Any?) {
         if requesterId == ChurchFetcher.id {
-            let churches: [Church] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted])
+            let churches: [Church] = []
             self.churches = churches.map({ VChurch(church: $0, context: moc) })
             update()
         } else {
@@ -274,18 +274,17 @@ class UploadUniversalSongController: ChurchBeamViewController, UITableViewDelega
 		guard let selectedUrl = urls.first else { return }
 		if let controller = controller as? InstrumentSongDocumentPicker {
 			do {
-				let name = UUID().uuidString + "." + selectedUrl.pathExtension
-                if let newPath = try FileManager.getUrlFor(fileName: name) {
-                    try FileManager.default.moveItem(at: selectedUrl, to: newPath)
-					controller.instrumentUploadObject?.localURL = newPath
-                    player = AVPlayer(url: newPath)
-                    player?.play()
-                    tableView.visibleCells.compactMap({ $0 as? SoundPickerCell }).first(where: { $0.uploadObject == controller.instrumentUploadObject })?.isSelectedImageView.isHidden = false
-				}
-
-
-			} catch {
-				show(message: error.localizedDescription)
+                
+                let name = UUID().uuidString + "." + selectedUrl.pathExtension
+                let newPath = GetFileURLUseCase(fileName: name).getURL(location: .persitent)
+                try FileManager.default.moveItem(at: selectedUrl, to: newPath)
+                controller.instrumentUploadObject?.localURL = newPath
+                player = AVPlayer(url: newPath)
+                player?.play()
+                tableView.visibleCells.compactMap({ $0 as? SoundPickerCell }).first(where: { $0.uploadObject == controller.instrumentUploadObject })?.isSelectedImageView.isHidden = false
+                
+            } catch {
+                show(message: error.localizedDescription)
 			}
 		}
 	}
@@ -302,9 +301,6 @@ class UploadUniversalSongController: ChurchBeamViewController, UITableViewDelega
             instrument.instrument = allInstruments[index]
 			sounds.append(instrument)
 		}
-        if let church: Church = DataFetcher().getEntity(moc: moc, predicates: [.skipDeleted]) {
-            selectedChurch = VChurch(church: church, context: moc)
-        }
         
         NotificationCenter.default.addObserver(forName: .didFinishRequester, object: nil, queue: .main) { (not) in
             if

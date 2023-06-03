@@ -20,9 +20,9 @@ class UerFetcher: Requester<VUser> {
         return "users"
     }
     
-    override func getLastUpdatedAt(moc: NSManagedObjectContext) -> Date? {
-        let user: User? = DataFetcher().getLastUpdated(moc: moc)
-        return user?.updatedAt as Date?
-    }
+//    override func getLastUpdatedAt(moc: NSManagedObjectContext) -> Date? {
+//        let user: User? = DataFetcher().getLastUpdated(moc: moc)
+//        return user?.updatedAt as Date?
+//    }
     
 }

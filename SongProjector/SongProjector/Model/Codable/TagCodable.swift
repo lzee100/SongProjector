@@ -25,54 +25,16 @@ public struct TagCodable: EntityCodableType, Identifiable, Equatable, Hashable {
         return TagCodable(id: id ?? "CHURCHBEAM" + UUID().uuidString)
     }
     
-    
-    init?(managedObject: NSManagedObject, context: NSManagedObjectContext) {
-        guard let entity = managedObject as? Tag else { return nil }
-        id = entity.id
-        userUID = entity.userUID
-        title = entity.title
-        createdAt = entity.createdAt.date
-        updatedAt = entity.updatedAt?.date
-        deleteDate = entity.deleteDate?.date
-        rootDeleteDate = entity.rootDeleteDate?.date
-        position = entity.position
-        isDeletable = entity.isDeletable
-    }
-    
-    func getManagedObjectFrom(_ context: NSManagedObjectContext) -> NSManagedObject {
-        
-        if let entity: Tag = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
-            setPropertiesTo(entity, context: context)
-            return entity
-        } else {
-            let entity: Tag = DataFetcher().createEntity(moc: context)
-            setPropertiesTo(entity, context: context)
-            return entity
-        }
-    }
-    
-    private func setPropertiesTo(_ entity: Tag, context: NSManagedObjectContext) {
-        entity.id = id
-        entity.userUID = userUID
-        entity.title = title
-        entity.createdAt = createdAt.nsDate
-        entity.updatedAt = updatedAt?.nsDate
-        entity.deleteDate = deleteDate?.nsDate
-        entity.rootDeleteDate = rootDeleteDate?.nsDate
-        entity.position = position
-        entity.isDeletable = isDeletable
-    }
-    
     public var id: String = "CHURCHBEAM" + UUID().uuidString
     var userUID: String = ""
     var title: String? = nil
-    var createdAt: Date = Date().localDate()
+    var createdAt: Date = Date.localDate()
     var updatedAt: Date? = nil
     var deleteDate: Date? = nil
     var isTemp: Bool = false
     var rootDeleteDate: Date? = nil
     
-    var position: Int16 = 0
+    var position: Int = 0
     var isDeletable = true
     
     enum CodingKeys: String, CodingKey
@@ -93,12 +55,12 @@ public struct TagCodable: EntityCodableType, Identifiable, Equatable, Hashable {
         id: String = "CHURCHBEAM" + UUID().uuidString,
         userUID: String = "",
         title: String? = nil,
-        createdAt: Date = Date().localDate(),
+        createdAt: Date = Date.localDate(),
         updatedAt: Date? = nil,
         deleteDate: Date? = nil,
         isTemp: Bool = false,
         rootDeleteDate: Date? = nil,
-        position: Int16 = 0,
+        position: Int = 0,
         isDeletable: Bool = true
     ) {
         self.id = id
@@ -113,6 +75,18 @@ public struct TagCodable: EntityCodableType, Identifiable, Equatable, Hashable {
         self.isDeletable = isDeletable
     }
     
+    init?(entity: Tag) {
+        id = entity.id
+        userUID = entity.userUID
+        title = entity.title
+        createdAt = entity.createdAt.date
+        updatedAt = entity.updatedAt?.date
+        deleteDate = entity.deleteDate?.date
+        rootDeleteDate = entity.rootDeleteDate?.date
+        position = entity.position.intValue
+        isDeletable = entity.isDeletable
+    }
+
     // MARK: - Decodable
     
     public init(from decoder: Decoder) throws {
@@ -137,7 +111,7 @@ public struct TagCodable: EntityCodableType, Identifiable, Equatable, Hashable {
             rootDeleteDate = Date(timeIntervalSince1970: TimeInterval(rootdeleteDateInt))
         }
         
-        position = try container.decodeIfPresent(Int16.self, forKey: .position) ?? 0
+        position = try container.decodeIfPresent(Int.self, forKey: .position) ?? 0
         isDeletable = try Bool(truncating: (container.decodeIfPresent(Int.self, forKey: .isDeletable) ?? 0) as NSNumber)
     }
     
@@ -173,7 +147,7 @@ extension TagCodable: FileTransferable {
     mutating func clearDataForDeletedObjects(forceDelete: Bool) {
     }
     
-    func getDeleteObjects(forceDelete: Bool) -> [String] {
+    func getDeleteObjects(forceDelete: Bool) -> [DeleteObject] {
         []
     }
     
@@ -204,7 +178,7 @@ extension TagCodable: FileTransferable {
     
     func setUpdatedAt() -> FileTransferable {
         var modifiedDocument = self
-        modifiedDocument.updatedAt = Date()
+        modifiedDocument.updatedAt = Date.localDate()
         return modifiedDocument
     }
     

@@ -375,20 +375,6 @@ class CreateEditThemeSheetViewController: ChurchBeamViewController, UITableViewD
     }
     
     private func set(image: UIImage?, for sheet: VSheet) {
-        if let sheet = sheet as? VSheetPastors {
-            do {
-                try sheet.set(image: image, imageName: nil)
-            } catch {
-                show(message: error.localizedDescription)
-            }
-        }
-        if let sheet = sheet as? VSheetTitleImage {
-            do {
-                try sheet.set(image: image, imageName: nil)
-            } catch {
-                show(message: error.localizedDescription)
-            }
-        }
     }
     
     private func refineSheetRatio() {

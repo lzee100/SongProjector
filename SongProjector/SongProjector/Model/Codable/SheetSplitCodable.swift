@@ -12,57 +12,6 @@ import CoreData
 
 public struct SheetSplitCodable: EntityCodableType, SheetMetaType {
     
-    init?(managedObject: NSManagedObject, context: NSManagedObjectContext) {
-        guard let entity = managedObject as? SheetSplitEntity else { return nil }
-        id = entity.id
-        userUID = entity.userUID
-        title = entity.title
-        createdAt = entity.createdAt.date
-        updatedAt = entity.updatedAt?.date
-        deleteDate = entity.deleteDate?.date
-        rootDeleteDate = entity.rootDeleteDate?.date
-        
-        isEmptySheet = entity.isEmptySheet
-        position = Int(entity.position)
-        time = entity.time
-        if let theme = entity.hasTheme {
-            hasTheme = ThemeCodable(managedObject: theme, context: context)
-        }
-        textLeft = entity.textLeft
-        textRight = entity.textRight
-    }
-    
-    func getManagedObjectFrom(_ context: NSManagedObjectContext) -> NSManagedObject {
-        
-        if let entity: SheetSplitEntity = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
-            setPropertiesTo(entity, context: context)
-            return entity
-        } else {
-            let entity: SheetSplitEntity = DataFetcher().createEntity(moc: context)
-            setPropertiesTo(entity, context: context)
-            return entity
-        }
-    }
-    
-    private func setPropertiesTo(_ entity: SheetSplitEntity, context: NSManagedObjectContext) {
-        entity.id = id
-        entity.userUID = userUID
-        entity.title = title
-        entity.createdAt = createdAt.nsDate
-        entity.updatedAt = updatedAt?.nsDate
-        entity.deleteDate = deleteDate?.nsDate
-        entity.rootDeleteDate = rootDeleteDate?.nsDate
-        
-        entity.isEmptySheet = isEmptySheet
-        entity.position = Int16(position)
-        entity.time = time
-        entity.hasTheme = hasTheme?.getManagedObjectFrom(context) as? Theme
-        
-        entity.textLeft = textLeft
-        entity.textRight = textRight
-    }
-
-    
     static let type: SheetType = .SheetSplit
     var sheetType: SheetType {
         .SheetSplit
@@ -71,7 +20,7 @@ public struct SheetSplitCodable: EntityCodableType, SheetMetaType {
     var id: String = "CHURCHBEAM" + UUID().uuidString
     var userUID: String = ""
     var title: String? = nil
-    var createdAt: Date = Date().localDate()
+    var createdAt: Date = Date.localDate()
     var updatedAt: Date? = nil
     var deleteDate: Date? = nil
     var isTemp: Bool = false
@@ -135,6 +84,23 @@ public struct SheetSplitCodable: EntityCodableType, SheetMetaType {
         self.hasTheme = hasTheme
         self.textLeft = textLeft
         self.textRight = textRight
+    }
+    
+    init?(entity: SheetSplitEntity) {
+        id = entity.id
+        userUID = entity.userUID
+        title = entity.title
+        createdAt = entity.createdAt.date
+        updatedAt = entity.updatedAt?.date
+        deleteDate = entity.deleteDate?.date
+        rootDeleteDate = entity.rootDeleteDate?.date
+        
+        isEmptySheet = entity.isEmptySheet
+        position = Int(entity.position)
+        time = entity.time
+
+        textLeft = entity.textLeft
+        textRight = entity.textRight
     }
     
     public init(from decoder: Decoder) throws {
@@ -218,10 +184,10 @@ extension SheetSplitCodable: FileTransferable {
     mutating func clearDataForDeletedObjects(forceDelete: Bool) {
     }
     
-    func getDeleteObjects(forceDelete: Bool) -> [String] {
-        []
+    func getDeleteObjects(forceDelete: Bool) -> [DeleteObject] {
+        return hasTheme?.getDeleteObjects(forceDelete: forceDelete) ?? []
     }
-    
+
     var uploadObjects: [TransferObject] {
        [hasTheme].compactMap { $0?.newSelectedThemeImageTempDirPath }.compactMap { UploadObject(fileName: $0) }
     }
@@ -252,7 +218,7 @@ extension SheetSplitCodable: FileTransferable {
     
     func setUpdatedAt() -> FileTransferable {
         var modifiedDocument = self
-        modifiedDocument.updatedAt = Date()
+        modifiedDocument.updatedAt = Date.localDate()
         return modifiedDocument
     }
     

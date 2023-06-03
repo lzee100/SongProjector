@@ -192,12 +192,12 @@ class IntroPageController22: PageController {
     }
     
     private func fetchUser() {
-        let entities: [Entity] = DataFetcher().getEntities(moc: moc)
-        entities.forEach({ moc.delete($0) })
-        do {
-            try moc.save()
-        } catch { }
-        UserFetcher.fetch()
+//        let entities: [Entity] = DataFetcher().getEntities(moc: moc)
+//        entities.forEach({ moc.delete($0) })
+//        do {
+//            try moc.save()
+//        } catch { }
+//        UserFetcher.fetch()
     }
     
     private func submitUser() {

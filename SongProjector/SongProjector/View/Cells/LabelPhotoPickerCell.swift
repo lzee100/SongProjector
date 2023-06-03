@@ -152,12 +152,12 @@ class LabelPhotoPickerCell: ChurchBeamCell, ThemeImplementation, SheetImplementa
 			default: return
 			}
 		}
-		if let sheet = sheet as? VSheetTitleImage {
-            setImage(image: sheet.tempSelectedImageThumbNail ?? sheet.thumbnail)
-		}
-		if let sheet = sheet as? VSheetPastors {
-			setImage(image: sheet.tempSelectedImageThumbNail ?? sheet.thumbnail)
-		}
+//		if let sheet = sheet as? VSheetTitleImage {
+//            setImage(image: sheet.tempSelectedImageThumbNail ?? sheet.thumbnail)
+//		}
+//		if let sheet = sheet as? VSheetPastors {
+//			setImage(image: sheet.tempSelectedImageThumbNail ?? sheet.thumbnail)
+//		}
 	}
 	
 	func applyCellValueToTheme() throws {
@@ -199,7 +199,7 @@ class LabelPhotoPickerCell: ChurchBeamCell, ThemeImplementation, SheetImplementa
 		if let pickedImage = info[.originalImage] as? UIImage {
             let url = info[.imageURL] as? URL
             let imageName = url?.lastPathComponent
-            UIImage.deleteTempFile(imageName: imageName, thumbNailName: nil)
+            try? DeleteFileAtURLUseCase(fileName: imageName)?.delete(location: .temp)
 			DispatchQueue.main.async {
                 self.setThumbImage(pickedImage)
 				

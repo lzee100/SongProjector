@@ -155,7 +155,7 @@ class EditSongIphoneController: ChurchBeamViewController, UICollectionViewDataSo
 	// MARK: - Private Functions
 	
 	private func setup() {
-        let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "position", ascending: true))
+        let themes: [Theme] = []
             
         self.themes = themes.map({ VTheme(theme: $0, context: moc) })
 		
@@ -308,7 +308,7 @@ class EditSongIphoneController: ChurchBeamViewController, UICollectionViewDataSo
 	
 	private func databaseDidChange(_ notification: Notification) {
 		selectedTheme = nil
-        let themes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: [.skipDeleted], sort: NSSortDescriptor(key: "position", ascending: true))
+        let themes: [Theme] = []
         self.themes = themes.map({ VTheme(theme: $0, context: moc) })
 		update()
 	}

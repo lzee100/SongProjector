@@ -10,13 +10,14 @@ import Foundation
 import FirebaseAuth
 import UIKit
 
-struct SongServiceUI {
+@MainActor class SongServiceUI: ObservableObject {
     
     var selectedSong: SongObjectUI? {
         didSet {
             setSectionIndex()
             setSelectedTheme()
             selectedSheetId = selectedSong?.sheets.first?.id
+            updateSelectedSongSheetViewModels()
         }
         
     }
@@ -32,14 +33,49 @@ struct SongServiceUI {
          return selectedSongIndex + (selectedSong?.sheets.firstIndex(where: { $0.id == selectedSheetId }) ?? 0)
     }
     
-    private(set) var songs: [SongObjectUI] = []
-    private(set) var selectedSection: Int?
-    private(set) var selectedSheetIndex: Int?
-    private(set) var selectedSongTheme: ThemeCodable?
-    private(set) var selectedSheetTheme: ThemeCodable?
-    private(set) var sectionedSongs: [SongServiceSectionWithSongs] = []
+    @Published private(set) var songs: [SongObjectUI] = []
+    @Published private(set) var selectedSection: Int?
+    @Published private(set) var selectedSheetIndex: Int?
+    @Published private(set) var selectedSongTheme: ThemeCodable?
+    @Published private(set) var selectedSheetTheme: ThemeCodable?
+    @Published private(set) var sectionedSongs: [SongServiceSectionWithSongs] = []
+    @Published private(set) var selectedSongSheetViewModels: [SheetViewModel] = []
+    @Published private(set) var songsFirstSheetModel: [SheetViewModel] = []
+
+    init(selectedSong: SongObjectUI? = nil, selectedSheetId: String? = nil, songs: [SongObjectUI] = [], selectedSection: Int? = nil, selectedSheetIndex: Int? = nil, selectedSongTheme: ThemeCodable? = nil, selectedSheetTheme: ThemeCodable? = nil, sectionedSongs: [SongServiceSectionWithSongs] = [], selectedSongSheetViewModels: [SheetViewModel] = []) {
+        self.selectedSong = selectedSong
+        self.selectedSheetId = selectedSheetId
+        self.songs = songs
+        self.selectedSection = selectedSection
+        self.selectedSheetIndex = selectedSheetIndex
+        self.selectedSongTheme = selectedSongTheme
+        self.selectedSheetTheme = selectedSheetTheme
+        self.sectionedSongs = sectionedSongs
+        self.selectedSongSheetViewModels = selectedSongSheetViewModels
+        
+        defer {
+            Task {
+                do {
+                    let models = try await songs.asyncMap({ song in
+                        let defaultTheme = try await CreateThemeUseCase().create()
+                        return try await SheetViewModel(
+                            cluster: song.cluster,
+                            theme: nil,
+                            defaultTheme: defaultTheme,
+                            sheet: song.sheets.first!,
+                            sheetType: song.sheets.first!.sheetType,
+                            sheetEditType: .for(song.cluster, sheet: song.sheets.first!)
+                        )
+                    })
+                    self.selectedSongSheetViewModels = models
+                } catch {
+                    print(error)
+                }
+            }
+        }
+    }
     
-    mutating func set(sectionedSongs: [SongServiceSectionWithSongs]) {
+    func set(sectionedSongs: [SongServiceSectionWithSongs]) {
         self.sectionedSongs = sectionedSongs
         self.songs = sectionedSongs.flatMap { $0.songs }
         selectedSong  = nil
@@ -62,16 +98,32 @@ struct SongServiceUI {
         return nil
     }
     
-    mutating private func setSectionIndex() {
+    private func setSectionIndex() {
         selectedSection = songs.firstIndex(where: { $0.cluster.id == selectedSong?.cluster.id })
     }
     
-    mutating private func setSelectedTheme() {
+    private func setSelectedTheme() {
         guard let cluster = selectedSong?.cluster else {
             return selectedSongTheme = nil
         }
         if let theme = cluster.theme {
             selectedSongTheme = theme
+        }
+    }
+    
+    private func updateSelectedSongSheetViewModels() {
+        if let selectedSong {
+            Task {
+                do {
+                    let models = try await selectedSong.sheets.asyncMap({ sheet in
+                        let defaultTheme = try await CreateThemeUseCase().create()
+                        return try await SheetViewModel(cluster: selectedSong.cluster, theme: nil, defaultTheme: defaultTheme, sheet: sheet, sheetType: sheet.sheetType, sheetEditType: .for(selectedSong.cluster, sheet: sheet))
+                    })
+                    self.selectedSongSheetViewModels = models
+                } catch {
+                    print(error)
+                }
+            }
         }
     }
     
@@ -180,8 +232,9 @@ class SongService: ObservableObject {
 	
     init(delegate: SongServiceDelegate?) {
         self.delegate = delegate
-        let user: User? = DataFetcher().getEntity(moc: moc, predicates: [.skipDeleted])
-        self.sheetTimeOffset = [user].compactMap({ $0 }).map({ VUser(user: $0, context: moc) }).first?.sheetTimeOffset ?? 0
+        sheetTimeOffset = 0
+//        let user: User? = DataFetcher().getEntity(moc: moc, predicates: [.skipDeleted])
+//        self.sheetTimeOffset = [user].compactMap({ $0 }).map({ VUser(user: $0, context: moc) }).first?.sheetTimeOffset ?? 0
 	}
     
     enum SelectAction {
@@ -508,9 +561,8 @@ struct SongObjectUI: Equatable {
         self.sectionHeader = sectionHeader
         self.cluster = cluster
         
-        let theme: Theme? = DataFetcher().getEntity(moc: moc, predicates: [.get(id: cluster.themeId)])
-        if let theme = theme, theme.hasEmptySheet {
-            var sheetEmpty = SheetEmptyCodable.makeDefault()
+        if let theme = cluster.theme, theme.hasEmptySheet {
+            var sheetEmpty = SheetEmptyCodable.makeDefault()!
             sheetEmpty.isEmptySheet = true
             let sortedSheets = cluster.hasSheets.sorted(by: { $0.position < $1.position })
             let sheets = theme.isEmptySheetFirst ? [sheetEmpty] + cluster.hasSheets : cluster.hasSheets + [sheetEmpty]

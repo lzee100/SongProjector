@@ -127,18 +127,5 @@ class VSheetPastors: VSheet, VSheetMetaType {
 		self.init()
         getPropertiesFrom(entity: sheet, context: context)
 	}
-	
-    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-        if let entity: SheetPastorsEntity = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
-            setPropertiesTo(entity: entity, context: context)
-            return entity
-        } else {
-            let entity: SheetPastorsEntity = DataFetcher().createEntity(moc: context)
-            setPropertiesTo(entity: entity, context: context)
-            return entity
-        }
-    }
-
-	
 
 }

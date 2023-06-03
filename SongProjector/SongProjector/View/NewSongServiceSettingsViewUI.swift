@@ -127,20 +127,24 @@ struct NewSongServiceSettingsViewUI: View {
             }
             .navigationTitle(AppText.SongServiceManagement.titleNewSongServiceSchema)
             .toolbar {
+                ToolbarItemGroup(placement: .navigationBarLeading) {
+                    Button {
+                        showingNewSongServiceSettingsView.toggle()
+                    } label: {
+                        Text(AppText.Actions.cancel)
+                            .tint(Color(uiColor: themeHighlighted))
+                    }
+                }
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button {
                         Task {
                             await viewModel.saveSettings()
+                            showingNewSongServiceSettingsView.toggle()
                         }
                     } label: {
                         Text(AppText.Actions.save)
                             .tint(Color(uiColor: themeHighlighted))
                     }
-                }
-            }
-            .onChange(of: viewModel.isLoading) { isLoading in
-                if !isLoading, viewModel.error == nil {
-                    showingNewSongServiceSettingsView.toggle()
                 }
             }
         }

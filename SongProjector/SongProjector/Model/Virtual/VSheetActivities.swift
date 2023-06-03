@@ -42,12 +42,12 @@ class VSheetActivities: VSheet, VSheetMetaType {
 		return copy
 	}
 	
-	override func setPropertiesTo(entity: Entity, context: NSManagedObjectContext) {
-		super.setPropertiesTo(entity: entity, context: context)
-		if let sheetActivities = entity as? SheetActivitiesEntity {
-			sheetActivities.hasGoogleActivity = NSSet(array: hasGoogleActivity.map({ $0.getManagedObject(context: context) }))
-		}
-	}
+//	override func setPropertiesTo(entity: Entity, context: NSManagedObjectContext) {
+//		super.setPropertiesTo(entity: entity, context: context)
+//		if let sheetActivities = entity as? SheetActivitiesEntity {
+//			sheetActivities.hasGoogleActivity = NSSet(array: hasGoogleActivity.map({ $0.getManagedObject(context: context) }))
+//		}
+//	}
 	
     override func getPropertiesFrom(entity: Entity, context: NSManagedObjectContext) {
 		super.getPropertiesFrom(entity: entity, context: context)
@@ -61,17 +61,6 @@ class VSheetActivities: VSheet, VSheetMetaType {
         getPropertiesFrom(entity: sheetActivities, context: context)
 	}
 	
-    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-        if let entity: SheetActivitiesEntity = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
-            setPropertiesTo(entity: entity, context: context)
-            return entity
-        } else {
-            let entity: SheetActivitiesEntity = DataFetcher().createEntity(moc: context)
-            setPropertiesTo(entity: entity, context: context)
-            return entity
-        }
-    }
-
 }
 
 

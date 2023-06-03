@@ -36,8 +36,9 @@ import SwiftUI
     }
         
     func fetchTags() {
-        let persitedThemes: [Tag] = DataFetcher().getEntities(moc: moc, sort: NSSortDescriptor(key: "position", ascending: true))
-        tags = persitedThemes.compactMap { TagCodable(managedObject: $0, context: moc) }
+        Task {
+            tags = await GetTagsUseCase().fetch()
+        }
     }
     
     func fetchRemoteTags() async {

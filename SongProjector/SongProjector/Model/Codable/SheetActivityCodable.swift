@@ -12,7 +12,7 @@ import CoreData
 
 public struct SheetActivitiesCodable: EntityCodableType, SheetMetaType {
     
-    static func makeDefault() -> SheetActivitiesCodable {
+    static func makeDefault() -> SheetActivitiesCodable? {
             
     #if DEBUG
             let userId = "userid"
@@ -25,7 +25,7 @@ public struct SheetActivitiesCodable: EntityCodableType, SheetMetaType {
                 id: "CHURCHBEAM" + UUID().uuidString,
                 userUID: userId,
                 title: "Google activities sheet",
-                createdAt: Date().localDate(),
+                createdAt: Date.localDate(),
                 updatedAt: nil,
                 deleteDate: nil,
                 rootDeleteDate: nil,
@@ -36,7 +36,7 @@ public struct SheetActivitiesCodable: EntityCodableType, SheetMetaType {
     init(id: String = "CHURCHBEAM" + UUID().uuidString,
          userUID: String,
          title: String? = nil,
-         createdAt: Date = Date().localDate(),
+         createdAt: Date = Date.localDate(),
          updatedAt: Date? = nil,
          deleteDate: Date? = nil,
          rootDeleteDate: Date? = nil,
@@ -53,48 +53,6 @@ public struct SheetActivitiesCodable: EntityCodableType, SheetMetaType {
         self.position = position
         self.hasGoogleActivities = hasGoogleActivities
     }
-
-    
-    init?(managedObject: NSManagedObject, context: NSManagedObjectContext) {
-        guard let entity = managedObject as? SheetActivitiesEntity else { return nil }
-        id = entity.id
-        userUID = entity.userUID
-        title = entity.title
-        createdAt = entity.createdAt.date
-        updatedAt = entity.updatedAt?.date
-        deleteDate = entity.deleteDate?.date
-        rootDeleteDate = entity.rootDeleteDate?.date
-        self.position = entity.position.intValue
-        
-        if let activities = entity.hasGoogleActivity {
-            hasGoogleActivities = (activities.allObjects as? [GoogleActivity])?.compactMap { GoogleActivityCodable(managedObject: $0, context: context) } ?? []
-        }
-    }
-    
-    func getManagedObjectFrom(_ context: NSManagedObjectContext) -> NSManagedObject {
-        
-        if let entity: SheetActivitiesEntity = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
-            setPropertiesTo(entity, context: context)
-            return entity
-        } else {
-            let entity: SheetActivitiesEntity = DataFetcher().createEntity(moc: context)
-            setPropertiesTo(entity, context: context)
-            return entity
-        }
-    }
-    
-    private func setPropertiesTo(_ entity: SheetActivitiesEntity, context: NSManagedObjectContext) {
-        entity.id = id
-        entity.userUID = userUID
-        entity.title = title
-        entity.createdAt = createdAt.nsDate
-        entity.updatedAt = updatedAt?.nsDate
-        entity.deleteDate = deleteDate?.nsDate
-        entity.rootDeleteDate = rootDeleteDate?.nsDate
-        
-        entity.hasGoogleActivity = NSSet(array: hasGoogleActivities.compactMap { $0.getManagedObjectFrom(context) as? GoogleActivity })
-    }
-
     
     static let type: SheetType = .SheetActivities
     var sheetType: SheetType {
@@ -104,7 +62,7 @@ public struct SheetActivitiesCodable: EntityCodableType, SheetMetaType {
     var id: String = "CHURCHBEAM" + UUID().uuidString
     var userUID: String = ""
     var title: String? = nil
-    var createdAt: Date = Date().localDate()
+    var createdAt: Date = Date.localDate()
     var updatedAt: Date? = nil
     var deleteDate: Date? = nil
     var rootDeleteDate: Date? = nil
@@ -121,6 +79,17 @@ public struct SheetActivitiesCodable: EntityCodableType, SheetMetaType {
         case deleteDate = "deletedAt"
         case rootDeleteDate
         case position
+    }
+    
+    init?(entity: SheetActivitiesEntity) {
+        id = entity.id
+        userUID = entity.userUID
+        title = entity.title
+        createdAt = entity.createdAt.date
+        updatedAt = entity.updatedAt?.date
+        deleteDate = entity.deleteDate?.date
+        rootDeleteDate = entity.rootDeleteDate?.date
+        self.position = entity.position.intValue
     }
     
     // MARK: - Decodable
@@ -183,7 +152,7 @@ extension SheetActivitiesCodable: FileTransferable {
     mutating func clearDataForDeletedObjects(forceDelete: Bool) {
     }
     
-    func getDeleteObjects(forceDelete: Bool) -> [String] {
+    func getDeleteObjects(forceDelete: Bool) -> [DeleteObject] {
         []
     }
     
@@ -214,7 +183,7 @@ extension SheetActivitiesCodable: FileTransferable {
     
     func setUpdatedAt() -> FileTransferable {
         var modifiedDocument = self
-        modifiedDocument.updatedAt = Date()
+        modifiedDocument.updatedAt = Date.localDate()
         return modifiedDocument
     }
     

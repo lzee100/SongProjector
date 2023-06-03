@@ -62,8 +62,8 @@
             filePath = "SongProjector/RestService/Base/UniversalClusterOperations.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "157"
-            endingLineNumber = "157"
+            startingLineNumber = "158"
+            endingLineNumber = "158"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -78,8 +78,8 @@
             filePath = "SongProjector/RestService/Base/UniversalClusterOperations.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "158"
-            endingLineNumber = "158"
+            startingLineNumber = "159"
+            endingLineNumber = "159"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -141,63 +141,47 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "BFE2FEC4-0957-4782-8134-DED5B37C676F"
+            uuid = "59E369FB-08C7-4BA4-B351-54D6DEA89F62"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SongProjector/View/Extensions/ImageExtensions.swift"
+            filePath = "SongProjector/Model/Codable/SheetSplitCodable.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "236"
-            endingLineNumber = "236"
-            landmarkName = "set(image:imageName:thumbNailName:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "B6A6B2A3-B97E-43AF-8CF5-7E06E6DF9DFE"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SongProjector/Model/Viewmodel/EditSheetOrThemeViewModel.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "588"
-            endingLineNumber = "588"
-            landmarkName = "createSheetCodable()"
-            landmarkType = "7">
+            startingLineNumber = "15"
+            endingLineNumber = "15"
+            landmarkName = "SheetSplitCodable"
+            landmarkType = "14">
             <Locations>
                <Location
-                  uuid = "B6A6B2A3-B97E-43AF-8CF5-7E06E6DF9DFE - 9ee8cd90b4c30bcc"
+                  uuid = "59E369FB-08C7-4BA4-B351-54D6DEA89F62 - 2699031367f424db"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "ChurchBeam.EditSheetOrThemeViewModel.createSheetCodable() throws -&gt; Swift.Optional&lt;ChurchBeam.SheetMetaType&gt;"
+                  symbolName = "one-time initialization function for type"
                   moduleName = "SongProjector"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Viewmodel/EditSheetOrThemeViewModel.swift"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/SheetSplitCodable.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "587"
-                  endingLineNumber = "587"
-                  offsetFromSymbolStart = "46136">
+                  startingLineNumber = "15"
+                  endingLineNumber = "15"
+                  offsetFromSymbolStart = "8">
                </Location>
                <Location
-                  uuid = "B6A6B2A3-B97E-43AF-8CF5-7E06E6DF9DFE - 9ee8cd90b4c30b2b"
+                  uuid = "59E369FB-08C7-4BA4-B351-54D6DEA89F62 - 8b2569383b5a89e1"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "ChurchBeam.EditSheetOrThemeViewModel.createSheetCodable() throws -&gt; Swift.Optional&lt;ChurchBeam.SheetMetaType&gt;"
+                  symbolName = "ChurchBeam.SheetSplitCodable.type.unsafeMutableAddressor : ChurchBeam.SheetType"
                   moduleName = "SongProjector"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Viewmodel/EditSheetOrThemeViewModel.swift"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/SheetSplitCodable.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "588"
-                  endingLineNumber = "588"
-                  offsetFromSymbolStart = "46912">
+                  startingLineNumber = "15"
+                  endingLineNumber = "15"
+                  offsetFromSymbolStart = "16">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -205,97 +189,97 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "8D657665-31B6-46EA-B685-EAC96DFBE01A"
+            uuid = "6E2E16A4-B989-4E94-9823-144B72BB24F4"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SongProjector/Model/Viewmodel/CollectionEditorViewModel.swift"
+            filePath = "SongProjector/View/NewSongServiceSettingsViewUI.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "197"
-            endingLineNumber = "197"
-            landmarkName = "saveCluster()"
+            startingLineNumber = "88"
+            endingLineNumber = "88"
+            landmarkName = "createSongServiceSettings()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "8D657665-31B6-46EA-B685-EAC96DFBE01A - a31fb3186e40deb4"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for ChurchBeam.CollectionEditorViewModel.saveCluster() async -&gt; Swift.Bool"
-                  moduleName = "SongProjector"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Viewmodel/CollectionEditorViewModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "197"
-                  endingLineNumber = "197"
-                  offsetFromSymbolStart = "6840">
-               </Location>
-               <Location
-                  uuid = "8D657665-31B6-46EA-B685-EAC96DFBE01A - a31fb3186e40deb4"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for ChurchBeam.CollectionEditorViewModel.saveCluster() async -&gt; Swift.Bool"
-                  moduleName = "SongProjector"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Viewmodel/CollectionEditorViewModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "197"
-                  endingLineNumber = "197"
-                  offsetFromSymbolStart = "2476">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "A77CF1C5-7966-4222-821C-5A4409747612"
+            uuid = "D262A829-1B78-4158-9547-4E3BADA620BA"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SongProjector/Model/Viewmodel/CollectionEditorViewModel.swift"
+            filePath = "SongProjector/UseCases/SaveSongServiceSettingsUseCase.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "208"
-            endingLineNumber = "208"
-            landmarkName = "saveCluster()"
+            startingLineNumber = "22"
+            endingLineNumber = "22"
+            landmarkName = "save(entities:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "A77CF1C5-7966-4222-821C-5A4409747612 - a31fb3186e40d021"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for ChurchBeam.CollectionEditorViewModel.saveCluster() async -&gt; Swift.Bool"
-                  moduleName = "SongProjector"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Viewmodel/CollectionEditorViewModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "208"
-                  endingLineNumber = "208"
-                  offsetFromSymbolStart = "2860">
-               </Location>
-               <Location
-                  uuid = "A77CF1C5-7966-4222-821C-5A4409747612 - 8871a20e976e4c14"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "deleteObjects.getter : Swift.Array&lt;ChurchBeam.DeleteObject&gt;"
-                  moduleName = "SongProjector"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Viewmodel/CollectionEditorViewModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "209"
-                  endingLineNumber = "209"
-                  offsetFromSymbolStart = "448">
-               </Location>
-            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "631DE73B-B506-4DA2-8753-FD1C2015D0EB"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SongProjector/UseCases/SaveSongServiceSettingsUseCase.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "67"
+            endingLineNumber = "67"
+            landmarkName = "get(_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "DBB82BB9-66EB-4D3E-9D56-A5EB455899FA"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SongProjector/UseCases/SaveClustersUseCase.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "32"
+            endingLineNumber = "32"
+            landmarkName = "save(entities:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9C0A50AE-707D-4B9E-94F9-79A6C20B65D0"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SongProjector/View/Extensions/SheetMetaTypeExtensions.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "222"
+            endingLineNumber = "222"
+            landmarkName = "setObjects(transferObjects:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C74B69BC-FF5D-4A91-93D8-6BF68FE8A5CE"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SongProjector/Global/EmailController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "17"
+            endingLineNumber = "17"
+            landmarkName = "sendEmail(subject:body:to:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

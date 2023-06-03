@@ -143,7 +143,7 @@
 "NewSong-timeExplained" = "The number of seconds the next slide\nis automatically shown. Automatically\nmoves from the last slide to the first\n(endless loop).";
 "NewSong-tagsExplained" = "The tags for this collection. When\nyou create a song service, you can\nindicate which tags belong in which\nsection so that the song service\ngenerator can automatically\ngenerate a song service.";
 
-
+"Lyrics-titleBibleTextChange" = "Change scriptures";
 "Lyrics-titleBibleText" = "Enter scriptures";
 "Lyrics-titleLyrics" = "Enter text";
 "Lyrics-placeholderBibleText" = "Genesis 1:1-16\nIn the beginning God created the heavens and the earth. 2The earth was without form, and void; and darkness was on the face of the deep. And the Spirit of God was hovering over the face of the waters.\n\nJohn 3:16\nFor God so loved the world that He gave His only begotten Son, that whoever believes in Him should not perish but have everlasting life.";
@@ -181,6 +181,9 @@
 "CustomSheets-errorLoseOtherSheets" = "You have other sheets between the bible texts. These are lost when you modify the bible texts and have them regenerated";
 "CustomSheets-universalSongEditErrorTitle" = "Couldn't edit text";
 "CustomSheets-universalSongEditErrorMessage" = "This track has music and has a playback time with each slide. Adjusting the NUMBER of slides causes the times to be incorrect. Correct or cancel the changes";
+
+"CustomSheets-Edit-title" = "Create new sheet";
+"CustomSheets-Edit-titleChange" = "Change sheet";
 
 "SongServiceManagement-title" = "Manage song service";
 "SongServiceManagement-numberOfSections" = "Number of sections";

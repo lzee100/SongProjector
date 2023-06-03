@@ -20,10 +20,5 @@ class SngServicePlayDateFetcher: Requester<VSongServicePlayDate> {
         return "songserviceplaydate"
     }
     
-    override func getLastUpdatedAt(moc: NSManagedObjectContext) -> Date? {
-        let playDate: SongServicePlayDate? = DataFetcher().getLastUpdated(moc: moc)
-        return playDate?.updatedAt as Date?
-    }
-
     
 }

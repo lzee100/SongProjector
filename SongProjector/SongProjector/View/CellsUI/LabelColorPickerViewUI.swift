@@ -12,8 +12,8 @@ struct LabelColorPickerViewUI: View {
     
     let label: String
     var defaultColor: Color? = nil
+    @State var selectedColor: Color
     var colorDidChange: ((String) -> Void) = { _ in }
-    @Binding var selectedColor: Color
     
     var body: some View {
         HStack() {
@@ -41,6 +41,6 @@ struct LabelColorPickerViewUI: View {
 struct LabelColorPickerViewUI_Previews: PreviewProvider {
     @State static var selectedColor: Color = .blue
     static var previews: some View {
-        LabelColorPickerViewUI(label: "Label", selectedColor: $selectedColor)
+        LabelColorPickerViewUI(label: "Label", selectedColor: selectedColor)
     }
 }

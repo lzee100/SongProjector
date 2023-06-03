@@ -12,15 +12,16 @@ struct SheetScrollViewUI: View {
     
     @State private var orientation: UIDeviceOrientation = .unknown
     @State private var frames: [CGRect] = []
-    @ObservedObject private(set) var songServiceModel: WrappedStruct<SongServiceUI>
+    @ObservedObject private(set) var songServiceModel: SongServiceUI
     @State private var nextSelectedSong: SongObjectUI? = nil
+    @State private var defaultTheme: ThemeCodable?
     var superViewSize: CGSize
     
     let isSelectable: Bool
     @SwiftUI.Environment(\.horizontalSizeClass) var horizontalSizeClass
     
     var body: some View {
-        if !songServiceModel.item.songs.isEmpty {
+        if !songServiceModel.songs.isEmpty {
             GeometryReader { ruler in
                 
                 ScrollViewReader { value in
@@ -39,8 +40,8 @@ struct SheetScrollViewUI: View {
                     .onPreferenceChange(FramePreference.self, perform: {
                         frames = $0
                     })
-                    .onChange(of: songServiceModel.item.selectedSheetId) { newValue in
-                        guard let selectedSheetId = songServiceModel.item.selectedSheetId else { return }
+                    .onChange(of: songServiceModel.selectedSheetId) { newValue in
+                        guard let selectedSheetId = songServiceModel.selectedSheetId else { return }
                         
                         withAnimation {
                             value.scrollTo(selectedSheetId, anchor: .center)
@@ -51,44 +52,56 @@ struct SheetScrollViewUI: View {
                     }
                 }
             }
+            .onAppear {
+                Task {
+                    let defaultTheme = try? await CreateThemeUseCase().create()
+                    await MainActor.run {
+                        self.defaultTheme = defaultTheme
+                    }
+                }
+            }
         } else {
             EmptyView()
         }
     }
     
     @ViewBuilder func scrollViewItemsLandscape() -> some View {
-        ForEach(Array(songServiceModel.item.sectionedSongs.enumerated()), id: \.offset) { offset, songObjectsPerSection in
-            VStack {
-                Text(songObjectsPerSection.title)
-                    .styleAs(font: .xNormalBold, color: .white)
-                HStack(spacing: 10) {
-                    ForEach(Array(songObjectsPerSection.songs.enumerated()), id: \.offset) { index, songObject in
-                        Section {
-                            if let selectedSong = songServiceModel.item.selectedSong,  songObject.cluster.id == selectedSong.id {
-                                HStack {
-                                    ForEach(Array(selectedSong.sheets.enumerated()), id: \.offset) { sheetIndex, sheet in
-                                        SheetUIHelper.sheet(ratioOnHeight: true, songServiceModel: songServiceModel, sheet: sheet, isForExternalDisplay: false, showSelectionCover: true)
-                                            .id(sheet.id)
+        if let defaultTheme {
+            ForEach(Array(songServiceModel.sectionedSongs.enumerated()), id: \.offset) { offset, songObjectsPerSection in
+                VStack {
+                    Text(songObjectsPerSection.title)
+                        .styleAs(font: .xNormalBold, color: .white)
+                    HStack(spacing: 10) {
+                        ForEach(Array(songObjectsPerSection.songs.enumerated()), id: \.offset) { index, songObject in
+                            Section {
+                                if let selectedSong = songServiceModel.selectedSong,  songObject.cluster.id == selectedSong.id {
+                                    HStack {
+                                        ForEach(Array(songServiceModel.selectedSongSheetViewModels.enumerated()), id: \.offset) { sheetIndex, model in
+                                            SheetUIHelper.sheet(sheetViewModel: model, isForExternalDisplay: false)
+                                                .id(model.sheetModel.id)
+                                        }
                                     }
                                 }
+                            } header: {
+                                SongServiceSectionViewUI(superViewSize: superViewSize, selectedSong: $songServiceModel.selectedSong, song: songObject)
+                                    .sticky(frames, alignment: .horizontal)
+                                    .onTapGesture {
+                                        songServiceModel.selectedSong = songServiceModel.selectedSong?.id == songObject.id ? nil : songObject
+                                    }
+                                    .id(songObject.id)
                             }
-                        } header: {
-                            SongServiceSectionViewUI(superViewSize: superViewSize, selectedSong: $songServiceModel.item.selectedSong, song: songObject)
-                                .sticky(frames, alignment: .horizontal)
-                                .onTapGesture {
-                                    songServiceModel.item.selectedSong = songServiceModel.item.selectedSong?.id == songObject.id ? nil : songObject
-                                }
-                                .id(songObject.id)
                         }
                     }
                 }
+                .styleAsSectionBackground(edgeInsets: EdgeInsets(top: 10, leading: 10, bottom: 5, trailing: 10))
             }
-            .styleAsSectionBackground(edgeInsets: EdgeInsets(top: 10, leading: 10, bottom: 5, trailing: 10))
+        } else {
+            EmptyView()
         }
     }
     
     @ViewBuilder func scrollViewItemsPortrait(viewSize: CGSize) -> some View {
-        ForEach(Array(songServiceModel.item.sectionedSongs.enumerated()), id: \.offset) { offset, songObjectsPerSection in
+        ForEach(Array(songServiceModel.sectionedSongs.enumerated()), id: \.offset) { offset, songObjectsPerSection in
             VStack(spacing: 10) {
                 Text(songObjectsPerSection.title)
                     .styleAs(font: .xNormalBold, color: .white)
@@ -103,38 +116,38 @@ struct SheetScrollViewUI: View {
     }
     
     @ViewBuilder func sectionedItemsFor(viewSize: CGSize, index: Int, songObject: SongObjectUI) -> some View {
-        SongServiceSectionViewUI(superViewSize: viewSize, selectedSong: $songServiceModel.item.selectedSong, song: songObject)
+        SongServiceSectionViewUI(superViewSize: viewSize, selectedSong: $songServiceModel.selectedSong, song: songObject)
             .sticky(frames, alignment: .horizontal)
             .onTapGesture {
-                songServiceModel.item.selectedSong = songServiceModel.item.selectedSong?.id == songObject.id ? nil : songObject
+                songServiceModel.selectedSong = songServiceModel.selectedSong?.id == songObject.id ? nil : songObject
             }
-            .id(index)
-        
-        if let selectedCluster = songServiceModel.item.selectedSong?.cluster,  songObject.cluster.id == selectedCluster.id {
+            .id(songObject.id)
+
+        if let selectedCluster = songServiceModel.selectedSong?.cluster,  songObject.cluster.id == selectedCluster.id {
             listViewItems(viewSize: viewSize)
         }
     }
         
     @ViewBuilder func listViewItems(viewSize: CGSize) -> some View {
-        if let selectedSong = songServiceModel.item.selectedSong {
+        if let selectedSong = songServiceModel.selectedSong {
             VStack(spacing: 0) {
                 let sheets = Array(selectedSong.sheets.enumerated())
                 ForEach(sheets, id: \.offset) { index, sheet in
                     HStack() {
                         Text(sheet.title ?? "")
-                            .foregroundColor(songServiceModel.item.selectedSheetId == sheet.id ? Color(uiColor: .softBlueGrey) : .black)
+                            .foregroundColor(songServiceModel.selectedSheetId == sheet.id ? Color(uiColor: .softBlueGrey) : Color(uiColor: .blackColor).opacity(0.8))
                             .lineLimit(2)
-                            .font(.title)
+                            .styleAs(font: songServiceModel.selectedSheetId == sheet.id ? .xNormalBold : .xNormal)
                             .padding()
-                            .padding([.leading], 30)
                         Spacer()
                     }
                     .background(Color(uiColor: .whiteColor))
                     .onTapGesture {
-                        guard let selectedSong = songServiceModel.item.selectedSong?.cluster else { return }
+                        guard let selectedSong = songServiceModel.selectedSong?.cluster else { return }
                         guard selectedSong.time == 0 && !selectedSong.isTypeSong else { return }
-                        songServiceModel.item.selectedSheetId = sheet.id
+                        songServiceModel.selectedSheetId = sheet.id
                     }
+                    .id(sheet.id)
                     Divider()
                 }
             }
@@ -154,7 +167,7 @@ struct SheetScrollViewUI: View {
 }
 
 struct SheetScrollViewUI_Previews: PreviewProvider {
-    @State static var songService = WrappedStruct(withItem: SongServiceUI(songs: []))
+    @State static var songService = SongServiceUI(songs: [])
 
     static var previews: some View {
         SheetScrollViewUI(songServiceModel: songService, superViewSize: .zero, isSelectable: true)

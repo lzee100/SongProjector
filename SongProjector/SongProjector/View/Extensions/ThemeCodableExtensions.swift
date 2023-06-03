@@ -181,7 +181,7 @@ extension ThemeCodable {
     
     private(set) var backgroundImage: UIImage? {
         get {
-            UIImage.get(imagePath: self.imagePath)
+            try? LoadImageUseCase(name: imagePath)?.loadImage()
         }
         set {
         }
@@ -189,7 +189,7 @@ extension ThemeCodable {
     
     private(set) var thumbnail: UIImage? {
         get {
-            UIImage.get(imagePath: self.imagePathThumbnail)
+            try? LoadImageUseCase(name: imagePathThumbnail)?.loadImage()
         }
         set {
         }

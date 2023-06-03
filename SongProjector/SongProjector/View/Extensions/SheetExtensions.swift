@@ -41,10 +41,10 @@ public enum SheetType: String, Codable {
 		}
 	}
     
-    func  makeDefault() -> SheetMetaType? {
+    func makeDefault() async -> SheetMetaType? {
         switch self {
         case .SheetTitleContent: return SheetTitleContentCodable.makeDefault()
-        case .SheetTitleImage: return SheetTitleImageCodable.makeDefault()
+        case .SheetTitleImage: return try? await SheetTitleImageCodable.makeDefault()
         case .SheetEmpty: return SheetEmptyCodable.makeDefault()
         case .SheetSplit: return SheetTitleContentCodable.makeDefault()
         case .SheetPastors: return SheetPastorsCodable.makeDefault()
@@ -254,24 +254,39 @@ extension Sheet {
 
 extension Array where Element == Sheet {
     
-    func getSheets(context: NSManagedObjectContext) -> [SheetMetaType] {
+    func getSheets() -> [SheetMetaType] {
         let results: [SheetMetaType] = self.compactMap { sheet in
-            if let sheet = sheet as? SheetTitleContentEntity, let mapped = SheetTitleContentCodable(managedObject: sheet, context: context) {
+            if let sheet = sheet as? SheetTitleContentEntity, var mapped = SheetTitleContentCodable(entity: sheet) {
+                if let theme = sheet.hasTheme {
+                    mapped.hasTheme = ThemeCodable(entity: theme)
+                }
                 return mapped
             }
-            if let sheet = sheet as? SheetTitleImageEntity, let mapped = SheetTitleImageCodable(managedObject: sheet, context: context) {
+            if let sheet = sheet as? SheetTitleImageEntity, var mapped = SheetTitleImageCodable(entity: sheet) {
+                if let theme = sheet.hasTheme {
+                    mapped.hasTheme = ThemeCodable(entity: theme)
+                }
                 return mapped
             }
-            if let sheet = sheet as? SheetEmptyEntity, let mapped = SheetEmptyCodable(managedObject: sheet, context: context) {
+            if let sheet = sheet as? SheetEmptyEntity, var mapped = SheetEmptyCodable(entity: sheet) {
+                if let theme = sheet.hasTheme {
+                    mapped.hasTheme = ThemeCodable(entity: theme)
+                }
                 return mapped
             }
-            if let sheet = sheet as? SheetSplitEntity, let mapped = SheetSplitCodable(managedObject: sheet, context: context) {
+            if let sheet = sheet as? SheetSplitEntity, var mapped = SheetSplitCodable(entity: sheet) {
+                if let theme = sheet.hasTheme {
+                    mapped.hasTheme = ThemeCodable(entity: theme)
+                }
                 return mapped
             }
-            if let sheet = sheet as? SheetPastorsEntity, let mapped = SheetPastorsCodable(managedObject: sheet, context: context) {
+            if let sheet = sheet as? SheetPastorsEntity, var mapped = SheetPastorsCodable(entity: sheet) {
+                if let theme = sheet.hasTheme {
+                    mapped.hasTheme = ThemeCodable(entity: theme)
+                }
                 return mapped
             }
-            if let sheet = sheet as? SheetActivitiesEntity, let mapped = SheetActivitiesCodable(managedObject: sheet, context: context) {
+            if let sheet = sheet as? SheetActivitiesEntity, var mapped = SheetActivitiesCodable(entity: sheet) {
                 return mapped
             }
             return nil

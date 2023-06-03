@@ -37,19 +37,19 @@ class NewOrEditThemeController: ChurchBeamViewController, UITextFieldDelegate {
 	}
 	
 	@IBAction func saveButtonPressed(_ sender: UIButton) {
-		if inputField.text != "" {
-            let theme: Theme = DataFetcher().createEntity(moc: moc)
-			theme.title = inputField.text
-            do {
-                try moc.save()
-                delegate?.hasNewTheme()
-                dismiss(animated: true)
-            } catch {
-                show(message: error.localizedDescription)
-            }
-		} else {
-			errorDescription.text = AppText.NewTheme.errorMessage
-		}
+//		if inputField.text != "" {
+//            let theme: Theme = DataFetcher().createEntity(moc: moc)
+//			theme.title = inputField.text
+//            do {
+//                try moc.save()
+//                delegate?.hasNewTheme()
+//                dismiss(animated: true)
+//            } catch {
+//                show(message: error.localizedDescription)
+//            }
+//		} else {
+//			errorDescription.text = AppText.NewTheme.errorMessage
+//		}
 	}
 	
 	func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {

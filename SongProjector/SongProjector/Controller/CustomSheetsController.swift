@@ -406,8 +406,8 @@ class CustomSheetsController: ChurchBeamViewController, UICollectionViewDelegate
         collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: bottomEdge, right: 0)
         var predicates: [NSPredicate] = [.skipDeleted]
         predicates.append("isHidden", notEquals: true)
-        let checkthemes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: predicates)
-        self.themes = checkthemes.map({ VTheme(theme: $0, context: moc) })
+//        let checkthemes: [Theme] = DataFetcher().getEntities(moc: moc, predicates: predicates)
+//        self.themes = checkthemes.map({ VTheme(theme: $0, context: moc) })
 
         if let cluster = cluster {
             selectedTheme = cluster.hasTheme(moc: moc)
@@ -828,39 +828,39 @@ extension CustomSheetsController: UIPopoverPresentationControllerDelegate {
 extension CustomSheetsController: SheetPickerMenuControllerDelegate {
     
     func didSelectOption(option: SheetPickerMenuOption) {
-        presentedViewController?.dismiss(animated: false)
-        switch option {
-        case .lyrics:
-            isBibleStudySheetGenerator = false
-            Queues.main.async {
-                self.performSegue(withIdentifier: "ChangeLyricsSegue", sender: self)
-            }
-        case .SheetTitleContent: show(mode: .sheet(nil, sheetType: .SheetTitleContent))
-        case .SheetTitleImage: show(mode: .sheet(nil, sheetType: .SheetTitleImage))
-        case .SheetPastors: show(mode: .sheet(nil, sheetType: .SheetPastors))
-        case .SheetSplit: show(mode: .sheet(nil, sheetType: .SheetSplit))
-        case .SheetEmpty: show(mode: .sheet(nil, sheetType: .SheetEmpty))
-        case .SheetActivities: show(mode: .sheet(nil, sheetType: .SheetActivities))
-        case .bibleStudy:
-            showBibleStudyInputController()
-        }
-    }
-    
-    private func show(mode: EditSheetOrThemeViewModel.EditMode) {
-//        guard let editModel = EditSheetOrThemeViewModel(editMode: mode, isUniversal: uploadSecret != nil) else { return }
-
-//        let controllerView = EditThemeOrSheetViewUI(dismiss: { [weak self] dismissPresenting in
-//            if dismissPresenting {
-//                self?.dismiss(animated: true)
-//            } else {
-//                self?.presentedViewController?.dismiss(animated: true)
+//        presentedViewController?.dismiss(animated: false)
+//        switch option {
+//        case .lyrics:
+//            isBibleStudySheetGenerator = false
+//            Queues.main.async {
+//                self.performSegue(withIdentifier: "ChangeLyricsSegue", sender: self)
 //            }
-//        }, navigationTitle: AppText.NewSheetTitleImage.title, editSheetOrThemeModel: WrappedStruct(withItem: editModel))
-//
-//        present(UIHostingController(rootView: controllerView), animated: true)
-
+//        case .SheetTitleContent: show(mode: .sheet(nil, sheetType: .SheetTitleContent))
+//        case .SheetTitleImage: show(mode: .sheet(nil, sheetType: .SheetTitleImage))
+//        case .SheetPastors: show(mode: .sheet(nil, sheetType: .SheetPastors))
+//        case .SheetSplit: show(mode: .sheet(nil, sheetType: .SheetSplit))
+//        case .SheetEmpty: show(mode: .sheet(nil, sheetType: .SheetEmpty))
+//        case .SheetActivities: show(mode: .sheet(nil, sheetType: .SheetActivities))
+//        case .bibleStudy:
+//            showBibleStudyInputController()
+//        }
     }
     
+//    private func show(mode: SheetViewModel.EditMode) {
+////        guard let editModel = SheetViewModel(editMode: mode, isUniversal: uploadSecret != nil) else { return }
+//
+////        let controllerView = EditThemeOrSheetViewUI(dismiss: { [weak self] dismissPresenting in
+////            if dismissPresenting {
+////                self?.dismiss(animated: true)
+////            } else {
+////                self?.presentedViewController?.dismiss(animated: true)
+////            }
+////        }, navigationTitle: AppText.NewSheetTitleImage.title, editSheetOrThemeModel: WrappedStruct(withItem: editModel))
+////
+////        present(UIHostingController(rootView: controllerView), animated: true)
+//
+//    }
+//    
 }
 
 private extension VSheet {

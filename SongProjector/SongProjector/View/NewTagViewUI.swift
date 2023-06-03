@@ -17,7 +17,10 @@ import SwiftUI
     func submitTagWith(title: String) async {
         showingLoader = true
         do {
-            let tag = try createTagWith(title: title)
+            guard let tag = await CreateTagUseCase().create(with: title) else {
+                showingLoader = false
+                return
+            }
             let createdTags = try await SubmitUseCase<TagCodable>.init(endpoint: .tags, requestMethod: .put, uploadObjects: [tag]).submit()
             if let createdTag = createdTags.first {
                 self.newTag = createdTag
@@ -29,15 +32,10 @@ import SwiftUI
         }
     }
     
-    private func createTagWith(title: String) throws -> TagCodable {
+    private func createTagWith(title: String) async throws -> TagCodable {
         var tag = TagCodable.makeDefault()
         tag?.title = title
-        let tags: [Tag] = DataFetcher().getEntities(moc: moc, sort: .positionDesc)
-        if let persitedTagPosition = tags.first?.position {
-            tag?.position = persitedTagPosition + 1
-        } else {
-            tag?.position = 0
-        }
+        tag?.position = try await GetNewTagPositionUseCase().get()
         if let tag {
             return tag
         } else {

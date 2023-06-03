@@ -62,15 +62,4 @@ public class VUniversalUpdatedAt: VEntity {
         self.init()
         getPropertiesFrom(entity: universalUpdatedAt, context: context)
     }
-    
-    override func getManagedObject(context: NSManagedObjectContext) -> Entity {
-        if let entity: UniversalUpdatedAtEntity = DataFetcher().getEntity(moc: context, predicates: [.get(id: id)]) {
-            setPropertiesTo(entity: entity, context: context)
-            return entity
-        } else {
-            let entity: UniversalUpdatedAtEntity = DataFetcher().createEntity(moc: context)
-            setPropertiesTo(entity: entity, context: context)
-            return entity
-        }
-    }
 }

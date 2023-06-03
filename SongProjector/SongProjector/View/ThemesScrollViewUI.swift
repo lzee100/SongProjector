@@ -8,6 +8,30 @@
 
 import SwiftUI
 
+@MainActor class ThemesSelectionModel: ObservableObject {
+    
+    @Published private(set) var selectedTheme: ThemeCodable?
+    @Published private(set) var themes: [ThemeCodable] = []
+    
+    init(selectedTheme: ThemeCodable?) {
+        self.selectedTheme = selectedTheme
+        
+        defer {
+            Task {
+                let themes = await GetThemesUseCase().fetch()
+                await MainActor.run {
+                    self.themes = themes
+                }
+            }
+        }
+    }
+    
+    func didSelect(theme: ThemeCodable?) {
+        selectedTheme = selectedTheme?.id == theme?.id ? nil : theme
+    }
+    
+}
+
 struct ThemesScrollViewUI: View {
     
     @StateObject var model: ThemesSelectionModel
