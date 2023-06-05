@@ -33,14 +33,19 @@ struct SongServiceSectionWithSongs: Identifiable {
         return title + cocList.map({ $0.id }).joined()
     }
     let title: String
-    let cocList: [ClusterComment]
+    var cocList: [ClusterComment]
     let songs: [SongObjectUI]
+    var indexToChange: Int? = nil
+    var selectedCollectionIds: [String] {
+        return cocList.compactMap { $0.cluster?.id }
+    }
     
     init(title: String, cocList: [ClusterComment]) {
         self.title = title
         self.cocList = cocList
         songs = cocList.compactMap { $0.cluster }.map { SongObjectUI(cluster: $0) }
     }
+    
 }
 
 actor SongServiceGeneratorUseCase {
@@ -58,17 +63,17 @@ actor SongServiceGeneratorUseCase {
         }
     }
     
-    func generateShareTextOnlyTitles(_ clusters: [ClusterCodable]) -> (title: String, content: String)? {
+    func generateShareForCustomSelection(_ clusters: [ClusterCodable]) -> (title: String, content: String)? {
         let title = generateTitle()
-        let content = clusters.map { generateTextForCluster($0) }.joined(separator: "\n\n")
+        let content = clusters.map { generateTextForCluster($0, withContent: false) }.joined(separator: "\n\n")
         return (title, content)
     }
-    
-    func generateShareTextTitleAndContent(_ sections: [SongServiceSectionWithSongs]) -> (title: String, content: String)? {
+
+    func generateShareForSongServiceSettings(_ sections: [SongServiceSectionWithSongs], withContent: Bool) -> (title: String, content: String)? {
         
         let title = generateTitle()
         
-        let sectionedText = sections.map { generateTextForSection($0) }.joined(separator: "\n\n")
+        let sectionedText = sections.map { generateTextForSection($0, withContent: withContent) }.joined(separator: "\n\n")
         
         return (title, sectionedText)
     }
@@ -150,26 +155,26 @@ actor SongServiceGeneratorUseCase {
         return AppText.NewSongService.shareSongServiceText(date: fullDateString)
     }
     
-    private func generateTextForSection(_ section: SongServiceSectionWithSongs) -> String {
+    private func generateTextForSection(_ section: SongServiceSectionWithSongs, withContent: Bool) -> String {
         
         var sectionTitle = [line + line]
         sectionTitle += [section.title]
         sectionTitle += [line + line]
         
-        let clusterText = section.cocList.compactMap { $0.cluster }.map { generateTextForCluster($0) }.joined(separator: "\n\n")
+        let clusterText = section.cocList.compactMap { $0.cluster }.map { generateTextForCluster($0, withContent: withContent) }.joined(separator: "\n\n")
         
         return [sectionTitle.joined(separator: "\n"), clusterText].joined(separator: "\n\n")
         
     }
     
-    private func generateTextForCluster(_ cluster: ClusterCodable) -> String {
+    private func generateTextForCluster(_ cluster: ClusterCodable, withContent: Bool) -> String {
         let titleAndTime = ([cluster.title] + [String(cluster.startTime)]).compactMap({ $0 }).joined(separator: "\n")
             
         let formattedTitle = line + line + "\n" + titleAndTime + "\n" + line + line
         
-        let sheetText = cluster.hasSheets.compactMap { $0.sheetContent }.joined(separator: "\n\n")
+        let sheetText = withContent ? cluster.hasSheets.compactMap { $0.sheetContent }.joined(separator: "\n\n") : nil
         
-        return [formattedTitle, sheetText].joined(separator: "\n\n")
+        return [formattedTitle, sheetText].compactMap { $0 }.joined(separator: "\n\n")
     }
     
 }

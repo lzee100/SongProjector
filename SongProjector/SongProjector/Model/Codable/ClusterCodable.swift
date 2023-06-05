@@ -73,7 +73,8 @@ public struct ClusterCodable: EntityCodableType, Identifiable, Equatable {
         self.hasSheetPastors = hasSheetPastors
         self.tagIds = tagIds
     }
-            
+    
+    var listViewID = ""
     public var id: String = "CHURCHBEAM" + UUID().uuidString
     var userUID: String = ""
     var title: String? = nil
@@ -196,7 +197,7 @@ public struct ClusterCodable: EntityCodableType, Identifiable, Equatable {
         updatedAt = entity.updatedAt?.date
         deleteDate = entity.deleteDate?.date
         rootDeleteDate = entity.rootDeleteDate?.date
-        
+                
         root = entity.root
         isLoop = entity.isLoop
         position = Int16(entity.position)

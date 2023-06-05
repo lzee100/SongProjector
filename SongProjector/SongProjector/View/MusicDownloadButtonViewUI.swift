@@ -37,11 +37,11 @@ import SwiftUI
 
 struct MusicDownloadButtonViewUI: View {
     
-    @StateObject private var viewModel: MusicDownloadButtonViewModel
+    @ObservedObject private var viewModel: MusicDownloadButtonViewModel
     @EnvironmentObject private var musicDownloadManager: MusicDownloadManager
     
     init(collection: WrappedStruct<ClusterCodable>) {
-        self._viewModel = StateObject(wrappedValue: MusicDownloadButtonViewModel(collection: collection))
+        self._viewModel = ObservedObject(initialValue: MusicDownloadButtonViewModel(collection: collection))
     }
     
     var body: some View {
@@ -82,7 +82,7 @@ struct MusicDownloadButtonViewUI: View {
 }
 
 struct MusicDownloadButtonUI_Previews: PreviewProvider {
-    @State static var viewModel = CollectionsViewModel()
+    @State static var viewModel = CollectionsViewModel(tagSelectionModel: TagSelectionModel(mandatoryTags: []), customSelectedSongsForSongService: [], customSelectionDelegate: nil)
     static var previews: some View {
         MusicDownloadButtonViewUI(collection: WrappedStruct(withItem: .makeDefault()!))
     }

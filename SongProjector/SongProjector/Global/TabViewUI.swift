@@ -20,7 +20,15 @@ struct TabViewUI: View {
                 case .songService:
                     tabView(SongServiceViewUI(), feature: feature)
                 case .songs:
-                    tabView(CollectionsViewUI(editingSection: nil, songServiceEditorModel: SongServiceEditorModel()), feature: feature)
+                    CollectionsViewUI(
+                        editingSection: Binding.constant(nil),
+                        songServiceEditorModel: SongServiceEditorModel(),
+                        mandatoryTags: []
+                    )
+                    tabView(CollectionsViewUI(
+                        editingSection: Binding.constant(nil),
+                        songServiceEditorModel: SongServiceEditorModel(),
+                        mandatoryTags: []), feature: feature)
                 case .themes:
                     tabView(ThemesViewUI(), feature: feature)
                 case .tags:
@@ -41,9 +49,10 @@ struct TabViewUI: View {
         view
             .tabItem {
                 Label {
-                    Text(feature.titel)
+                    Text(feature.titleForDisplay)
                 } icon: {
                     Image(uiImage: feature.image.normal)
+                        .resizable()
                 }
             }
             .tag(feature)

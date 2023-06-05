@@ -13,11 +13,11 @@ actor SaveInstrumentsUseCase {
     
     private let context = newMOCBackground
     
-    func save(entities: [InstrumentCodable]) async throws {
+    func save(entities: [InstrumentCodable], deleteLocalResourcePath: Bool = false) async throws {
         
         try await context.perform {
             try entities.forEach { instrument in
-                try self.getInstrument(instrument)
+                try self.getInstrument(instrument, deleteLocalResourcePath: deleteLocalResourcePath)
             }
             try self.context.save()
         }
@@ -27,21 +27,21 @@ actor SaveInstrumentsUseCase {
     }
     
     @discardableResult
-    func getInstrument(_ instrument: InstrumentCodable) throws -> NSManagedObject {
+    func getInstrument(_ instrument: InstrumentCodable, deleteLocalResourcePath: Bool) throws -> NSManagedObject {
         
         let instrumentsEmpty: [Instrument] = try FetchPersistantEntitiesUseCase.fetchPersistend(context: context, predicates: [.get(id: instrument.id)], fetchDeleted: true)
         
         if let entity = instrumentsEmpty.first {
-            try setProperties(fromInstrument: instrument, to: entity)
+            try setProperties(fromInstrument: instrument, to: entity, deleteLocalResourcePath: deleteLocalResourcePath)
             return entity
         } else {
             let entity: Instrument = CreatePersistentEntityUseCase.create(context: context)
-            try setProperties(fromInstrument: instrument, to: entity)
+            try setProperties(fromInstrument: instrument, to: entity, deleteLocalResourcePath: deleteLocalResourcePath)
             return entity
         }
     }
     
-    private func setProperties(fromInstrument instrument: InstrumentCodable, to entity: Instrument) throws {
+    private func setProperties(fromInstrument instrument: InstrumentCodable, to entity: Instrument, deleteLocalResourcePath: Bool) throws {
         entity.id = instrument.id
         entity.userUID = instrument.userUID
         entity.title = instrument.title
@@ -51,7 +51,13 @@ actor SaveInstrumentsUseCase {
         entity.rootDeleteDate = instrument.rootDeleteDate?.nsDate
         
         entity.isLoop = instrument.isLoop
-        entity.resourcePath = instrument.resourcePath
+        
+        if deleteLocalResourcePath {
+            entity.resourcePath = nil
+        } else if let resourcePath = instrument.resourcePath {
+            entity.resourcePath = resourcePath
+        }
+        
         entity.typeString = instrument.typeString
         entity.resourcePathAWS = instrument.resourcePathAWS
     }

@@ -42,7 +42,7 @@ struct PastorsViewEditUI: View {
             .padding(getScaleFactor(width: proxy.size.width) * 15)
             .setBackgroundImage(isForExternalDisplay: isForExternalDisplay, sheetViewModel: sheetViewModel)
             .modifier(SheetBackgroundColorAndOpacityEditModifier(sheetViewModel: sheetViewModel))
-            .cornerRadius(10)
+            .cornerRadius(isForExternalDisplay ? 0 : 10)
             .aspectRatio(externalDisplayWindowRatioHeightWidth, contentMode: .fit)
             .ignoresSafeArea()
         }

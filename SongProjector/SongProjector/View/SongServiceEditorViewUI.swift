@@ -56,14 +56,14 @@ protocol SongServiceEditorViewDelegate {
     }
     
     var editButtons: [EditButtons] {
-       if songServiceSettings == nil, customSelectedSongs.count == 0 {
-           return [.generateSongService, .add]
-       } else if songServiceSettings != nil {
-           return [.share, .delete]
-       } else {
-           return [.share, .delete, .add]
-       }
-   }
+        if songServiceSettings == nil, customSelectedSongs.count == 0 {
+            return [.generateSongService, .add]
+        } else if songServiceSettings != nil {
+            return [.share, .delete]
+        } else {
+            return [.share, .delete, .add]
+        }
+    }
     
     func reset() {
         songServiceSettings = nil
@@ -105,31 +105,43 @@ protocol SongServiceEditorViewDelegate {
         }
     }
     
+    func setCustomSelectedSongs(_ collections: [ClusterCodable]) {
+        self.customSelectedSongs = collections
+    }
+    
     func delete(_ collection: ClusterCodable) {
         if let index = customSelectedSongs.firstIndex(where: { $0.id == collection.id }) {
             customSelectedSongs.remove(at: index)
         }
     }
     
-    func add(_ collection: ClusterCodable, to section: SongServiceSectionWithSongs) {
-        guard let songServiceSettings, let index = sectionedSongs.firstIndex(where: { $0.id == section.id }) else { return }
+    func change(_ collection: ClusterCodable, to section: SongServiceSectionWithSongs) {
+        guard let songServiceSettings, let sectionIndex = sectionedSongs.firstIndex(where: { $0.id == section.id }) else { return }
         
-        sectionedSongs.remove(at: index)
+        sectionedSongs.remove(at: sectionIndex)
         
-        var clusterComments: [ClusterComment] = [.cluster(collection)] + section.cocList.compactMap({ $0.cluster }).map({ .cluster($0) })
-        if clusterComments.count < songServiceSettings.sections[index].numberOfSongs.intValue {
-            clusterComments.append(.comment)
+        if let index = section.indexToChange {
+            var updatedSection = section
+            updatedSection.cocList.remove(at: index)
+            updatedSection.cocList.insert(ClusterComment.cluster(collection), at: index)
+            sectionedSongs.insert(updatedSection, at: sectionIndex)
+        } else {
+            var clusterComments: [ClusterComment] = [.cluster(collection)] + section.cocList.compactMap({ $0.cluster }).map({ .cluster($0) })
+            if clusterComments.count < songServiceSettings.sections[sectionIndex].numberOfSongs.intValue {
+                clusterComments.append(.comment)
+            }
+            
+            sectionedSongs.append(SongServiceSectionWithSongs(title: section.title, cocList: clusterComments))
         }
         
-        sectionedSongs.append(SongServiceSectionWithSongs(title: section.title, cocList: clusterComments))
     }
     
-    func getShareInfo() async -> (title: String, content: String)? {
-        return await SongServiceGeneratorUseCase().generateShareTextOnlyTitles(customSelectedSongs)
-    }
-    
-    func getShareInfoTitlesOnly() async -> (title: String, content: String)? {
-        return await SongServiceGeneratorUseCase().generateShareTextTitleAndContent(sectionedSongs)
+    func getShareInfo(withContent: Bool) async -> (title: String, content: String)? {
+        if sectionedSongs.count > 0 {
+            return await SongServiceGeneratorUseCase().generateShareForSongServiceSettings(sectionedSongs, withContent: withContent)
+        } else {
+            return await SongServiceGeneratorUseCase().generateShareForCustomSelection(customSelectedSongs)
+        }
     }
     
     private func generateSongServiceSettingsRows() async {
@@ -143,7 +155,7 @@ struct SongServiceEditorViewUI: View {
     
     @ObservedObject var songService: SongServiceUI
     @ObservedObject var viewModel: SongServiceEditorModel
-    @State private var showingCollectionsView = false
+    @State private var showingCustomSelectionSongsCollectionOverView: Bool = false
     @State private var editingSection: SongServiceSectionWithSongs? = nil
     @Binding var showingSongServiceEditorViewUI: Bool
 
@@ -178,17 +190,22 @@ struct SongServiceEditorViewUI: View {
                 }
             }
         }
-        .sheet(isPresented: $showingCollectionsView, content: {
-            CollectionsViewUI(editingSection: nil, songServiceEditorModel: viewModel, showingCollectionsViewUI: $showingCollectionsView)
+        .sheet(isPresented: $showingCustomSelectionSongsCollectionOverView, content: {
+            CollectionsViewUI(
+                editingSection: Binding.constant(nil),
+                songServiceEditorModel: viewModel,
+                customSelectedSongsForSongService: viewModel.customSelectedSongs,
+                customSelectionDelegate: self,
+                mandatoryTags: []
+            )
         })
         .sheet(item: $editingSection) { editingSection in
             if let sectionIndex = viewModel.sectionedSongs.firstIndex(where: { $0.id == editingSection.id }) {
                 let mandatoryTags = viewModel.songServiceSettings?.sections[sectionIndex].tags ?? []
                 CollectionsViewUI(
-                    editingSection: editingSection,
+                    editingSection: $editingSection,
                     songServiceEditorModel: viewModel,
-                    mandatoryTags: mandatoryTags,
-                    tagSelectionModel: TagSelectionModel(mandatoryTags: mandatoryTags)
+                    mandatoryTags: mandatoryTags
                 )
             }
         }
@@ -199,8 +216,10 @@ struct SongServiceEditorViewUI: View {
             ForEach(viewModel.sectionedSongs) { section in
                 Section(section.title) {
                     List {
-                        ForEach(section.cocList) { coc in
+                        ForEach(Array(zip(section.cocList.indices, section.cocList)), id: \.0) { index, coc in
                             Button {
+                                var section = section
+                                section.indexToChange = index
                                 editingSection = section
                             } label: {
                                 HStack {
@@ -247,7 +266,7 @@ struct SongServiceEditorViewUI: View {
     
     @ViewBuilder var addButton: some View {
         Button {
-            showingCollectionsView.toggle()
+            showingCustomSelectionSongsCollectionOverView = true
         } label: {
             Label {
                 Text(AppText.Actions.add)
@@ -277,7 +296,7 @@ struct SongServiceEditorViewUI: View {
         Menu {
             Button {
                 Task {
-                    guard let shareInfo = await viewModel.getShareInfoTitlesOnly() else { return }
+                    guard let shareInfo = await viewModel.getShareInfo(withContent: false) else { return }
                     EmailController.shared.sendEmail(subject: shareInfo.title, body: shareInfo.content)
                 }
             } label: {
@@ -285,7 +304,7 @@ struct SongServiceEditorViewUI: View {
             }
             Button {
                 Task {
-                    guard let shareInfo = await viewModel.getShareInfo() else { return }
+                    guard let shareInfo = await viewModel.getShareInfo(withContent: true) else { return }
                     await MainActor.run(body: {
                         EmailController.shared.sendEmail(subject: shareInfo.title, body: shareInfo.content)
                     })
@@ -322,6 +341,13 @@ struct SongServiceEditorViewUI: View {
         .tint(Color(uiColor: themeMainColor))
     }
 
+}
+
+extension SongServiceEditorViewUI: CollectionsViewCustomSelectionDelegate {
+    func didFinishCustomSelection(collections: [ClusterCodable]) {
+        showingCustomSelectionSongsCollectionOverView = false
+        viewModel.setCustomSelectedSongs(collections)
+    }
 }
 
 struct SongServiceEditorViewUI_Previews: PreviewProvider {

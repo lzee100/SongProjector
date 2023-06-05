@@ -147,6 +147,11 @@ import UIKit
         }
         return nil
     }
+    
+    func isSheetSelectable(sheetViewModel: SheetViewModel) -> Bool {
+        guard let selectedSong = selectedSong?.cluster else { return true }
+        return !selectedSong.isTypeSong
+    }
 
 }
 

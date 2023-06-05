@@ -15,7 +15,6 @@ struct CollectionListViewUI: View {
     @StateObject var collection: WrappedStruct<ClusterCodable>
     @EnvironmentObject private var soundPlayer: SoundPlayer2
     @ObservedObject private var collectionsViewModel: CollectionsViewModel
-    @EnvironmentObject private var musicDownloadManager: MusicDownloadManager
 
     init(
         collectionsViewModel: CollectionsViewModel,
@@ -39,6 +38,7 @@ struct CollectionListViewUI: View {
             Text(collection.item.title ?? "-")
                 .foregroundColor(Color(uiColor: isSelected ? .softBlueGrey : .blackColor.withAlphaComponent(0.8)))
                 .styleAs(font: .xNormal)
+                .multilineTextAlignment(.leading)
             Spacer()
             if collection.item.hasInstruments.count > 0 && !collection.item.hasLocalMusic {
                 MusicDownloadButtonViewUI(
@@ -54,9 +54,6 @@ struct CollectionListViewUI: View {
                     playLocalMusicButton
                 }
             }
-        }
-        .onReceive(musicDownloadManager.objectWillChange) { _ in
-            
         }
     }
     
@@ -94,8 +91,12 @@ struct CollectionListViewUI: View {
 }
 
 struct CollectionListViewUI_Previews: PreviewProvider {
+    static private let collectionsViewModel = CollectionsViewModel(
+        tagSelectionModel: TagSelectionModel(mandatoryTags: []),
+        customSelectedSongsForSongService: [],
+        customSelectionDelegate: nil)
     static var previews: some View {
-        CollectionListViewUI(collectionsViewModel: CollectionsViewModel(), collection: .makeDefault()!, isSelectable: false, isSelected: false)
+        CollectionListViewUI(collectionsViewModel: collectionsViewModel, collection: .makeDefault()!, isSelectable: false, isSelected: false)
             .previewLayout(.sizeThatFits)
     }
 }

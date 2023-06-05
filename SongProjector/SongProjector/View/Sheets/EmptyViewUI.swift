@@ -22,7 +22,7 @@ struct EmptyViewEditUI: View {
         Rectangle().fill(.clear)
             .setBackgroundImage(isForExternalDisplay: isForExternalDisplay, sheetViewModel: sheetViewModel)
             .modifier(SheetBackgroundColorAndOpacityEditModifier(sheetViewModel: sheetViewModel))
-            .cornerRadius(10)
+            .cornerRadius(isForExternalDisplay ? 0 : 10)
             .aspectRatio(externalDisplayWindowRatioHeightWidth, contentMode: .fit)
             .ignoresSafeArea()
     }

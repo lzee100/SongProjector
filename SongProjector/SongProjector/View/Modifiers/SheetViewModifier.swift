@@ -10,7 +10,8 @@ import Foundation
 import SwiftUI
 
 struct SheetRatioAndShadowModifier: ViewModifier {
-        
+    
+    
     func body(content: Content) -> some View {
         content
             .aspectRatio(externalDisplayWindowRatioHeightWidth, contentMode: .fit)

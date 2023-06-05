@@ -19,7 +19,6 @@ actor DeleteLocalMusicUseCase {
     }
     
     func delete() async throws {
-        let deleteObjects = cluster.hasInstruments.flatMap { $0.getDeleteObjects(forceDelete: true) }
-        try await SubmitUseCase(endpoint: .clusters, requestMethod: .put, uploadObjects: [cluster], deleteObjects: deleteObjects).submit()
+        try await SaveInstrumentsUseCase().save(entities: cluster.hasInstruments, deleteLocalResourcePath: true)
     }
 }

@@ -11,7 +11,7 @@ import UIKit
 import SwiftUI
 import FirebaseAuth
 
-class SheetViewModel: ObservableObject, Identifiable {
+class SheetViewModel: ObservableObject, Identifiable, Equatable {
     
     enum SheetEditType {
         case theme
@@ -100,6 +100,10 @@ class SheetViewModel: ObservableObject, Identifiable {
         default: theme = nil
         }
         return try sheetModel.createSheetCodable(with: theme)
+    }
+    
+    static func == (lhs: SheetViewModel, rhs: SheetViewModel) -> Bool {
+        lhs.id == rhs.id
     }
 }
 

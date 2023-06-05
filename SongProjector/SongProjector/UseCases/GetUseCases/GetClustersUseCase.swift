@@ -18,7 +18,12 @@ actor GetClustersUseCase {
         await fetch(predicates: [], sort: .title(asc: true), predicateCompoundPredicateType: .and, fetchDeleted: false)
     }
     
-    func fetch(predicates: [Predicate] = [], sort: SortDescriptor? = nil, predicateCompoundPredicateType: NSCompoundPredicate.LogicalType = .and, fetchDeleted: Bool = false) async -> [ClusterCodable] {
+    func fetch(
+        predicates: [Predicate] = [],
+        sort: SortDescriptor? = .title(asc: true),
+        predicateCompoundPredicateType: NSCompoundPredicate.LogicalType = .and,
+        fetchDeleted: Bool = false) async -> [ClusterCodable]
+    {
 
         let request: NSFetchRequest<Cluster> = GetCoreDataRequestUseCase.get(predicates: predicates, sort: sort, predicateCompoundPredicateType: predicateCompoundPredicateType, fetchDeleted: fetchDeleted)
         
@@ -51,6 +56,8 @@ actor GetClustersUseCase {
                     clusterCodable?.hasSheets = sheetCodables
                     clusterCodable?.hasInstruments = instrumentCodables.compactMap { $0 }
                     clusterCodable?.hasTags = tagsCodable
+                    let listViewID = ([clusterCodable?.id] + (clusterCodable?.hasInstruments.map { $0.id } ?? [])).compactMap { $0 }.joined()
+                    clusterCodable?.listViewID = listViewID
                     return clusterCodable
                 }
                 return clusterCodables

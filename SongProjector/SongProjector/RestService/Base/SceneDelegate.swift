@@ -21,12 +21,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
           return
         }
         
-        window = UIWindow(windowScene: scene)
         if session.role == UISceneSession.Role.windowExternalDisplayNonInteractive {
+            let window = UIWindow(windowScene: scene)
+            
             let content = ExternalDisplayView(externalDisplayConnector: appDelegate.store)
-            window?.rootViewController = UIHostingController(rootView: content)
-            window?.isHidden = false
+            content.edgesIgnoringSafeArea(.all)
+            window.rootViewController = UIHostingController(rootView: content)
+            window.isHidden = false
+            externalDisplayWindow = window
         } else {
+            window = UIWindow(windowScene: scene)
             let content = ChurchBeamApp(store: appDelegate.store)
             window?.rootViewController = UIHostingController(rootView: content)
             window?.makeKeyAndVisible()

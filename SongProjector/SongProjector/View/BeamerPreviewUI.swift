@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct SendToExternalDisplayUseCase {
     
@@ -16,8 +17,8 @@ struct SendToExternalDisplayUseCase {
         self.connector = connector
     }
     
-    func send(view: AnyView?) {
-        connector.toExternalDisplayView = view
+    func send(sheetViewModel: SheetViewModel?) {
+        connector.sheetViewModel = sheetViewModel
     }
 
 }
@@ -73,6 +74,9 @@ struct BeamerPreviewUI: View {
                         self.selection = index
                     })
                 }
+                .onChange(of: songService.selectedSongSheetViewModels, perform: { newValue in
+                    sendToExtenalDisplay()
+                })
                 .onChange(of: songService.selectedSong) { _ in
                     guard let selectedSongIndex = songService.selectedSection, selection != selectedSongIndex else {
                         return
@@ -130,17 +134,15 @@ struct BeamerPreviewUI: View {
     
     private func sendToExtenalDisplay() {
         let sheetId = songService.selectedSheetId
-        if let sheet = songService.selectedSongSheetViewModels.first(where: { $0.id == sheetId }) {
-            sendToExternalDisplayUseCase.send(
-                view: AnyView(externalDisplaySheet(sheetModel: sheet))
-            )
+        if let sheetViewModel = songService.selectedSongSheetViewModels.first(where: { $0.id == sheetId }) {
+            sendToExternalDisplayUseCase.send(sheetViewModel: sheetViewModel)
         } else {
-            sendToExternalDisplayUseCase.send(view: AnyView(EmptyView()))
+            sendToExternalDisplayUseCase.send(sheetViewModel: nil)
         }
     }
     
     @ViewBuilder private func externalDisplaySheet(sheetModel: SheetViewModel) -> some View {
-        SheetUIHelper.sheet(sheetViewModel: sheetModel, isForExternalDisplay: false)
+        SheetUIHelper.sheet(sheetViewModel: sheetModel, isForExternalDisplay: true)
     }
 }
 

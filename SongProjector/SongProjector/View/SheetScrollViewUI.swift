@@ -66,37 +66,41 @@ struct SheetScrollViewUI: View {
     }
     
     @ViewBuilder func scrollViewItemsLandscape() -> some View {
-        if let defaultTheme {
-            ForEach(Array(songServiceModel.sectionedSongs.enumerated()), id: \.offset) { offset, songObjectsPerSection in
-                VStack {
-                    Text(songObjectsPerSection.title)
-                        .styleAs(font: .xNormalBold, color: .white)
-                    HStack(spacing: 10) {
-                        ForEach(Array(songObjectsPerSection.songs.enumerated()), id: \.offset) { index, songObject in
-                            Section {
-                                if let selectedSong = songServiceModel.selectedSong,  songObject.cluster.id == selectedSong.id {
-                                    HStack {
-                                        ForEach(Array(songServiceModel.selectedSongSheetViewModels.enumerated()), id: \.offset) { sheetIndex, model in
+        ForEach(Array(songServiceModel.sectionedSongs.enumerated()), id: \.offset) { offset, songObjectsPerSection in
+            VStack {
+                Text(songObjectsPerSection.title)
+                    .styleAs(font: .xNormalBold, color: .white)
+                HStack(spacing: 10) {
+                    ForEach(Array(songObjectsPerSection.songs.enumerated()), id: \.offset) { index, songObject in
+                        Section {
+                            if let selectedSong = songServiceModel.selectedSong,  songObject.cluster.id == selectedSong.id {
+                                HStack {
+                                    ForEach(Array(songServiceModel.selectedSongSheetViewModels.enumerated()), id: \.offset) { sheetIndex, model in
+                                        Button {
+                                            songServiceModel.selectedSheetId = model.id
+                                        } label: {
                                             SheetUIHelper.sheet(sheetViewModel: model, isForExternalDisplay: false)
-                                                .id(model.sheetModel.id)
+                                                .overlay(
+                                                    RoundedRectangle(cornerRadius: 8).fill(.black.opacity(songServiceModel.selectedSheetId == model.id ? 0 : 0.4))
+                                                )
                                         }
+                                        .id(model.id)
+                                        .disabled(!songServiceModel.isSheetSelectable(sheetViewModel: model))
                                     }
                                 }
-                            } header: {
-                                SongServiceSectionViewUI(superViewSize: superViewSize, selectedSong: $songServiceModel.selectedSong, song: songObject)
-                                    .sticky(frames, alignment: .horizontal)
-                                    .onTapGesture {
-                                        songServiceModel.selectedSong = songServiceModel.selectedSong?.id == songObject.id ? nil : songObject
-                                    }
-                                    .id(songObject.id)
                             }
+                        } header: {
+                            SongServiceSectionViewUI(superViewSize: superViewSize, selectedSong: $songServiceModel.selectedSong, song: songObject)
+                                .sticky(frames, alignment: .horizontal)
+                                .onTapGesture {
+                                    songServiceModel.selectedSong = songServiceModel.selectedSong?.id == songObject.id ? nil : songObject
+                                }
+                                .id(songObject.id)
                         }
                     }
                 }
-                .styleAsSectionBackground(edgeInsets: EdgeInsets(top: 10, leading: 10, bottom: 5, trailing: 10))
             }
-        } else {
-            EmptyView()
+            .styleAsSectionBackground(edgeInsets: EdgeInsets(top: 10, leading: 10, bottom: 5, trailing: 10))
         }
     }
     
@@ -122,12 +126,12 @@ struct SheetScrollViewUI: View {
                 songServiceModel.selectedSong = songServiceModel.selectedSong?.id == songObject.id ? nil : songObject
             }
             .id(songObject.id)
-
+        
         if let selectedCluster = songServiceModel.selectedSong?.cluster,  songObject.cluster.id == selectedCluster.id {
             listViewItems(viewSize: viewSize)
         }
     }
-        
+    
     @ViewBuilder func listViewItems(viewSize: CGSize) -> some View {
         if let selectedSong = songServiceModel.selectedSong {
             VStack(spacing: 0) {
@@ -152,23 +156,20 @@ struct SheetScrollViewUI: View {
                 }
             }
             .background(Color(uiColor: .whiteColor))
-                .cornerRadius(10)
+            .cornerRadius(10)
         } else {
             EmptyView()
         }
     }
     
     private func isCompactOrVertical(viewSize: CGSize) -> Bool {
-//        viewSize.width < viewSize.height || horizontalSizeClass == .compact
-        print(viewSize.width < viewSize.height || horizontalSizeClass == .compact ? "portrait" : "landscape")
         return viewSize.width < viewSize.height || horizontalSizeClass == .compact
     }
-
 }
 
 struct SheetScrollViewUI_Previews: PreviewProvider {
     @State static var songService = SongServiceUI(songs: [])
-
+    
     static var previews: some View {
         SheetScrollViewUI(songServiceModel: songService, superViewSize: .zero, isSelectable: true)
             .previewLayout(.sizeThatFits)

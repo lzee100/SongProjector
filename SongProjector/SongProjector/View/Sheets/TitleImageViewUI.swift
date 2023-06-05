@@ -63,7 +63,7 @@ struct TitleImageEditViewUI: View {
             }
             .setBackgroundImage(isForExternalDisplay: isForExternalDisplay, sheetViewModel: sheetViewModel)
             .modifier(SheetBackgroundColorAndOpacityEditModifier(sheetViewModel: sheetViewModel))
-            .cornerRadius(10)
+            .cornerRadius(isForExternalDisplay ? 0 : 10)
             .aspectRatio(externalDisplayWindowRatioHeightWidth, contentMode: .fit)
             .ignoresSafeArea()
         }

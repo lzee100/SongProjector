@@ -29,12 +29,6 @@ actor SaveClustersUseCase {
         try await self.context.parent?.perform {
             try self.context.parent?.save()
         }
-        let lastUpdatedAt = await GetLastUpdatedAtUseCase<Cluster>().fetch()
-        print(lastUpdatedAt)
-        print(lastUpdatedAt?.intValue)
-        print("---")
-        let items = await GetClustersUseCase().fetch()
-        print(items.compactMap { $0.updatedAt })
     }
     
     func getManagedObjectFrom(cluster: ClusterCodable) throws -> NSManagedObject? {

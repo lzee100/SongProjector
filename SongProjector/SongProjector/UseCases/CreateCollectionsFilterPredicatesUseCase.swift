@@ -10,6 +10,27 @@ import Foundation
 
 struct FilteredCollectionsUseCase {
     
+    static func getCollectionsIn(collections: [ClusterCodable], searchText: String?, selectedTags: [TagCodable]) async -> [ClusterCodable] {
+        
+        collections.filter { collection in
+            
+            func containsTagId(collection: ClusterCodable) -> Bool {
+                guard selectedTags.count > 0 else {
+                    return true
+                }
+                return collection.tagIds.map { id in selectedTags.map { $0.id}.contains(id) }.filter { $0 }.count > 0
+            }
+            if let searchText {
+                if collection.title?.localizedCaseInsensitiveContains(searchText) ?? false {
+                    return containsTagId(collection: collection)
+                }
+                return false
+            } else {
+                return containsTagId(collection: collection)
+            }
+        }.sorted(by: { $0.title ?? "" < $1.title ?? "" })
+    }
+    
     static func getCollections(searchText: String?, showDeleted: Bool, selectedTags: [TagCodable]) async -> [ClusterCodable] {
         let predicates = predicatesFor(searchText: searchText, showDeleted: showDeleted, selectedTags: selectedTags)
         

@@ -80,7 +80,7 @@ struct SongServiceViewUI: View {
                                             .resizable()
                                             .frame(width: 40, height: 40)
                                         Text(AppText.SongService.startNew)
-                                            .styleAs(font: .xxNormal, color: Color(uiColor: .blackColor).opacity(0.5))
+                                            .styleAs(font: .xxNormal, color: .white.opacity(0.5))
                                             .shadow(color: .white.opacity(0.3), radius: 2)
                                     }
                                 }

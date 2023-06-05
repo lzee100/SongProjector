@@ -40,7 +40,7 @@ struct InstrumentViewUI: View {
             soundPlayer.updateVolumeForInstrumentForMuteChange(instrument: instrument)
         }
         .background(.black)
-        .cornerRadius([.piano, .drums].contains(instrument.type) ? 10 : 0, corners: instrument.type == .piano ? [.topLeft, .bottomLeft] : instrument.type == .drums ? [.topRight, .bottomRight] : [])
+        .cornerRadius(8, corners: cornersForInstrument)
         .onAppear {
             if UIDeviceOrientation.isPortrait {
                 self.orientation = .horizontal
@@ -55,6 +55,24 @@ struct InstrumentViewUI: View {
             } else {
                 self.orientation = .vertical
             }
+        }
+    }
+    
+    private var cornersForInstrument: UIRectCorner {
+        switch instrument.type {
+        case .piano:
+            if UIDeviceOrientation.isLandscape {
+                return .bottomLeft
+            } else {
+                return [.topLeft, .bottomLeft]
+            }
+        case .drums:
+            if UIDeviceOrientation.isLandscape {
+                return .bottomRight
+            } else {
+                return [.topRight, .bottomRight]
+            }
+        default: return []
         }
     }
 }

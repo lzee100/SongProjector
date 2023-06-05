@@ -128,7 +128,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        }
 //        FirebaseConfiguration.shared.setLoggerLevel(.min)
 //
-        setupAirPlay()
+//        setupAirPlay()
 
 //        UNUserNotificationCenter.current().delegate = self
 //
@@ -227,8 +227,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     frame: screen.bounds
                 )
                 externalDisplayWindow?.screen = screen
-                let content = ExternalDisplayView(externalDisplayConnector: store)
-                externalDisplayWindow?.rootViewController = UIHostingController(rootView: content)
+//                let content = ExternalDisplayView(externalDisplayConnector: store)
+//                externalDisplayWindow?.rootViewController = UIHostingController(rootView: content)
 
                 NotificationCenter.default.post(name: .externalDisplayDidChange, object: nil, userInfo: nil)
                 externalDisplayWindow?.isHidden = false

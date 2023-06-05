@@ -72,11 +72,12 @@ struct SettingsViewUI: View {
                 Section(AppText.Settings.sectionAppSettings) {
                     resetInstrumentMutes
                 }
-            }.onAppear {
-                Task {
-                    try? await ResetCoreDataUseCase().reset()
-                }
             }
+//            .onAppear {
+//                Task {
+//                    try? await ResetCoreDataUseCase().reset()
+//                }
+//            }
         }
     }
     

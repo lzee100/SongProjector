@@ -9,7 +9,7 @@
 import Foundation
 import SwiftUI
 
-actor FetchMusicUseCase: ObservableObject {
+@MainActor class FetchMusicUseCase: ObservableObject {
     
     nonisolated let id: String
     

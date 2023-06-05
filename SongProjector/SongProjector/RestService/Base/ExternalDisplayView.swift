@@ -9,10 +9,10 @@
 import SwiftUI
 
 final class ExternalDisplayConnector: ObservableObject {
-    @Published var toExternalDisplayView: AnyView?
+    @Published var sheetViewModel: SheetViewModel?
     
-    init(_ toExternalDisplayView: AnyView? = nil) {
-        self.toExternalDisplayView = toExternalDisplayView
+    init(_ sheetViewModel: SheetViewModel? = nil) {
+        self.sheetViewModel = sheetViewModel
     }
 }
 
@@ -21,11 +21,12 @@ struct ExternalDisplayView: View {
     @ObservedObject var externalDisplayConnector: ExternalDisplayConnector
 
     var body: some View {
-        if let view = externalDisplayConnector.toExternalDisplayView {
-            Text("yeah")
-                .styleAs(font: .largeTitle, color: .white)
+        if let sheetViewModel = externalDisplayConnector.sheetViewModel {
+            SheetUIHelper.sheet(sheetViewModel: sheetViewModel, isForExternalDisplay: true)
+                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                .ignoresSafeArea(.all)
         } else {
-            EmptyView()
+            Rectangle().fill(.black)
         }
     }
 }
