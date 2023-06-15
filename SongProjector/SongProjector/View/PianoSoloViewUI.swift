@@ -22,11 +22,13 @@ struct PianoSoloViewUI: View {
     var body: some View {
         GeometryReader { ruler in
             Button {
-                if isPlayingPianoSolo {
-                    soundPlayer.stop()
-                } else {
-                    selectedSong = nil
-                    soundPlayer.play(song: song, pianoSolo: true)
+                withAnimation {
+                    if isPlayingPianoSolo {
+                        soundPlayer.stop()
+                    } else {
+                        selectedSong = nil
+                        soundPlayer.play(song: song, pianoSolo: true)
+                    }
                 }
             } label: {
                 if ruler.size.width < ruler.size.height || horizontalSizeClass == .compact {
@@ -44,7 +46,11 @@ struct PianoSoloViewUI: View {
         VStack(alignment: .center) {
             Spacer(minLength: 0)
             if isPlayingPianoSolo {
-                playAnimation
+                HStack {
+                    Spacer()
+                    playAnimation
+                    Spacer()
+                }
             } else {
                 HStack {
                     Spacer()
@@ -66,7 +72,11 @@ struct PianoSoloViewUI: View {
         HStack(alignment: .center) {
             Spacer()
             if isPlayingPianoSolo {
-                playAnimation
+                VStack {
+                    Spacer()
+                    playAnimation
+                    Spacer()
+                }
             } else {
                 pianoSoloImage
             }
@@ -82,11 +92,7 @@ struct PianoSoloViewUI: View {
     }
     
     @ViewBuilder private var playAnimation: some View {
-        HStack {
-            Spacer()
-            SoundAnimationViewUI(animationColor: Color(uiColor: .softBlueGrey))
-            Spacer()
-        }
+        SoundAnimationViewUI(animationColor: Color(uiColor: .softBlueGrey))
     }
 }
 

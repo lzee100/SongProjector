@@ -11,16 +11,22 @@ import UIKit
 
 struct SongServiceSectionViewUI: View {
     
+    @State private var orientation: UIDeviceOrientation = UIDevice.current.orientation
     var superViewSize: CGSize
     @Binding var selectedSong: SongObjectUI?
     var song: SongObjectUI
     @SwiftUI.Environment(\.horizontalSizeClass) var horizontalSizeClass
     
     var body: some View {
-        if isCompactOrVertical(viewSize: superViewSize) {
-            contentPortrait
-        } else {
-            contentLandscape
+        Group {
+            if orientation.isPortrait {
+                contentPortrait
+            } else {
+                contentLandscape
+            }
+        }
+        .onRotate { orientation in
+            self.orientation = orientation
         }
     }
     
@@ -80,7 +86,7 @@ struct SongServiceSectionViewUI: View {
     
     @ViewBuilder var titleView: some View {
         Text(song.cluster.title ?? "")
-            .font(.xxNormal)
+            .font(UIDevice.current.userInterfaceIdiom == .phone ? .normal : .xxNormal)
             .foregroundColor(.white)
             .lineLimit(2)
             .padding()
@@ -88,7 +94,7 @@ struct SongServiceSectionViewUI: View {
     
     @ViewBuilder var instrumentsView: some View {
         InstrumentsViewUI(instruments: song.cluster.hasInstruments)
-            .padding(isCompactOrVertical(viewSize: superViewSize) ? .all : .top)
+            .padding(orientation.isPortrait ? .all : .top)
     }
     
     private func isCompactOrVertical(viewSize: CGSize) -> Bool {

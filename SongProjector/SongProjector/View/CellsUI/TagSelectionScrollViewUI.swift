@@ -17,11 +17,13 @@ import SwiftUI
     @Published var error: LocalizedError? = nil
     private var isLoading = false
     private var fetchRemoteTags: Bool
+    private let addDeleteTag: Bool
     
-    init(mandatoryTags: [TagCodable], selectedTags: [TagCodable] = [], fetchRemoteTags: Bool = true) {
+    init(mandatoryTags: [TagCodable], selectedTags: [TagCodable] = [], fetchRemoteTags: Bool = true, addDeleteTag: Bool = false) {
         self.mandatoryTags = mandatoryTags
         self.selectedTags = (mandatoryTags + selectedTags).unique.sorted(by: { $0.position < $1.position})
         self.fetchRemoteTags = fetchRemoteTags
+        self.addDeleteTag = addDeleteTag
         defer {
             fetchTags()
         }
@@ -34,16 +36,17 @@ import SwiftUI
             selectedTags.append(tag)
         }
     }
-        
+    
     func fetchTags() {
         Task {
             tags = await GetTagsUseCase().fetch()
+            addDeleteTagIfNeeded()
         }
     }
     
     func fetchRemoteTags() async {
+        fetchTags()
         guard fetchRemoteTags else {
-            fetchTags()
             return
         }
         isLoading = true
@@ -53,6 +56,13 @@ import SwiftUI
             fetchTags()
         } catch {
             self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
+        }
+    }
+    
+    private func addDeleteTagIfNeeded() {
+        if addDeleteTag {
+            let deleteTag = TagCodable(title: AppText.Tags.deletedClusters, isDeletable: false)
+            tags.append(deleteTag)
         }
     }
 }
@@ -77,17 +87,14 @@ struct TagSelectionScrollViewUI: View {
                     }
                 }
             }
-            .task {
-                await viewModel.fetchRemoteTags()
-                await MainActor.run(body: {
-                    if let mandatoryTagId = viewModel.mandatoryTags.first?.id {
-                        reader.scrollTo(mandatoryTagId)
-                    }
-                    else if let selectedTagId = viewModel.selectedTags.first?.id {
-                        reader.scrollTo(selectedTagId)
-                    }
-                })
-            }
+            .onChange(of: viewModel.tags, perform: { _ in
+                if let mandatoryTagId = viewModel.mandatoryTags.first?.id {
+                    reader.scrollTo(mandatoryTagId)
+                }
+                else if let selectedTagId = viewModel.selectedTags.first?.id {
+                    reader.scrollTo(selectedTagId)
+                }
+            })
             .errorAlert(error: $viewModel.error)
         }
     }

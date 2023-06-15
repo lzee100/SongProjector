@@ -38,6 +38,8 @@
 "Actions-share" = "Share";
 "Actions-change" = "Change";
 
+"Start-syncingAccountData" = "Syncing account data...";
+
 "Intro-introHalloTitle" = "Hello";
 "Intro-introHalloContent" = "Welcome to Churchbeam. This app supports the entire song service in your church.";
 "Intro-featureIntro" = "For %@ per month you get unlimited access to:";
@@ -140,14 +142,19 @@
 "NewSong-changeLyrics" = "Change song service";
 "NewSong-newLyrics" = "New song service";
 "NewSong-changeTitleTime" = "Change title & length of time";
-"NewSong-timeExplained" = "The number of seconds the next slide\nis automatically shown. Automatically\nmoves from the last slide to the first\n(endless loop).";
+"NewSong-timeExplained" = "These are the number of seconds between\neach slide. When you make a selection,\nthe next slide will be played automatically\nevery x seconds. If the last slide has been\nplayed, the first slide will be played again\n(endless loop).";
 "NewSong-tagsExplained" = "The tags for this collection. When\nyou create a song service, you can\nindicate which tags belong in which\nsection so that the song service\ngenerator can automatically\ngenerate a song service.";
+
+"NewSong-menu-Sheets" = "Sheets";
+"NewSong-menu-changeTimes" = "Edit sheet times";
+"NewSong-menu-showPreview" = "Test changes";
+"NewSong-menu-upload" = "Upload";
 
 "Lyrics-titleBibleTextChange" = "Change scriptures";
 "Lyrics-titleBibleText" = "Enter scriptures";
 "Lyrics-titleLyrics" = "Enter text";
-"Lyrics-placeholderBibleText" = "Genesis 1:1-16\nIn the beginning God created the heavens and the earth. 2The earth was without form, and void; and darkness was on the face of the deep. And the Spirit of God was hovering over the face of the waters.\n\nJohn 3:16\nFor God so loved the world that He gave His only begotten Son, that whoever believes in Him should not perish but have everlasting life.";
-"Lyrics-placeholderLyrics" = "Write or paste the lyrics of the song here";
+"Lyrics-placeholderBibleText" = "Genesis 1:1-2\nIn the beginning God created the heavens and the earth. 2The earth was without form, and void; and darkness was on the face of the deep. And the Spirit of God was hovering over the face of the waters.\n\nJohn 3:16\nFor God so loved the world that He gave His only begotten Son, that whoever believes in Him should not perish but have everlasting life.";
+"Lyrics-placeholderLyrics" = "Follow this format: Song title\n\nSheet text\nSheet text\nSheet text\nSheet text\n\nNext sheet text\nSheet text\nSheet text\nSheet text";
 
 "Themes-title" = "Themes";
 "Themes-searchBarPlaceholderText" = "Search themes";
@@ -185,7 +192,7 @@
 "CustomSheets-Edit-title" = "Create new sheet";
 "CustomSheets-Edit-titleChange" = "Change sheet";
 
-"SongServiceManagement-title" = "Manage song service";
+"SongServiceManagement-title" = "Church service scheme";
 "SongServiceManagement-numberOfSections" = "Number of sections";
 "SongServiceManagement-section" = "Section";
 "SongServiceManagement-nameSection" = "Name section";
@@ -325,6 +332,7 @@
 "UploadUniversalSong-startTime" = "Start time";
 "UploadUniversalSong-defaultTheme" = "Basic theme";
 "UploadUniversalSong-shareSheetTimes" = "Share sheet times";
+"UploadUniversalSong-saveClusterConformationQuestion" = "Are you sure you want to save?";
 
 "AboutController-title" = "Contact info";
 "AboutController-sectionAbout" = "About the developer";
@@ -337,6 +345,8 @@
 
 "SingInGoogleController-title" = "Sign-in calendar";
 "SingInGoogleController-infoText" = "To retrieve the activities from your church calendar, you need to log in to Google calendar. Click below to sign in (again) at Google.";
+
+"RequesterErrors-noUID" = "We could not find a user. Please log-out / login again";
 
 "RequesterErrors-failedSavingImageLocallyBeforeSubmit" = "Could not save media to device for %@: %@";
 "RequesterErrors-failedDownloadingMedia" = "Could not download media for %@: %@";

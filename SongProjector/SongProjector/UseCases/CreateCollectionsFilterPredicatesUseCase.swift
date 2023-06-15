@@ -10,9 +10,23 @@ import Foundation
 
 struct FilteredCollectionsUseCase {
     
-    static func getCollectionsIn(collections: [ClusterCodable], searchText: String?, selectedTags: [TagCodable]) async -> [ClusterCodable] {
+    static func getCollectionsIn(collections: [ClusterCodable], searchText: String?, selectedTags: [TagCodable], showDeleted: Bool) async -> [ClusterCodable] {
         
-        collections.filter { collection in
+        var showDeleted = showDeleted
+        var selectedTags = selectedTags
+        if let index = selectedTags.firstIndex(where: { !$0.isDeletable && $0.title == AppText.Tags.deletedClusters }) {
+            selectedTags.remove(at: index)
+            showDeleted = true
+        }
+        
+        return collections.filter { collection in
+            
+            func isDeleted(collection: ClusterCodable) -> Bool {
+                if uploadSecret != nil {
+                    return collection.rootDeleteDate != nil
+                }
+                return collection.deleteDate != nil
+            }
             
             func containsTagId(collection: ClusterCodable) -> Bool {
                 guard selectedTags.count > 0 else {
@@ -22,16 +36,20 @@ struct FilteredCollectionsUseCase {
             }
             if let searchText {
                 if collection.title?.localizedCaseInsensitiveContains(searchText) ?? false {
-                    return containsTagId(collection: collection)
+                    return containsTagId(collection: collection) && (showDeleted ? isDeleted(collection: collection) : !isDeleted(collection: collection))
                 }
                 return false
             } else {
-                return containsTagId(collection: collection)
+                func isDeleted(collection: ClusterCodable) -> Bool {
+                    return collection.deleteDate != nil || collection.rootDeleteDate != nil
+                }
+                return containsTagId(collection: collection) && (showDeleted ? isDeleted(collection: collection) : !isDeleted(collection: collection))
             }
         }.sorted(by: { $0.title ?? "" < $1.title ?? "" })
     }
     
     static func getCollections(searchText: String?, showDeleted: Bool, selectedTags: [TagCodable]) async -> [ClusterCodable] {
+                
         let predicates = predicatesFor(searchText: searchText, showDeleted: showDeleted, selectedTags: selectedTags)
         
         return await GetClustersUseCase().fetch(predicates: predicates, fetchDeleted: showDeleted)

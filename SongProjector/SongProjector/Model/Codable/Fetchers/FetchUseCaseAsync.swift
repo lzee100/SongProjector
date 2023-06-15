@@ -24,19 +24,10 @@ enum FetUseCaseAsyncError: LocalizedError {
 
 struct FetchUseCaseAsync<T: FileTransferable, P: Entity> {
 
-    private let endpoint: EndPoint
-    private let db = Firestore.firestore()
-    private let fetchCount = 5
     private let useCase: FetchUseCaseAsyncTask<T>
-    private let lastUpdatedAtKey = "updatedAt"
-    private let createdAtKey = "createdAt"
-    private let userIdKey = "userUID"
-    private let fetchAll: Bool
     
-    init(endpoint: EndPoint, fetchAll: Bool = true) {
-        self.endpoint = endpoint
-        self.fetchAll = fetchAll
-        useCase = FetchUseCaseAsyncTask<T>(endpoint: endpoint, fetchAll: fetchAll)
+    init(endpoint: EndPoint, fetchAll: Bool = true, saveData: Bool = true) {
+        useCase = FetchUseCaseAsyncTask<T>(endpoint: endpoint, fetchAll: fetchAll, saveData: saveData)
     }
     
     func fetch(snapshots: [QuerySnapshot] = []) async throws -> [T] {
@@ -70,10 +61,12 @@ actor FetchUseCaseAsyncTask<T: FileTransferable> {
     let createdAtKey = "createdAt"
     let userIdKey = "userUID"
     let fetchAll: Bool
-    
-    init(endpoint: EndPoint, fetchAll: Bool = true) {
+    let saveData: Bool
+
+    init(endpoint: EndPoint, fetchAll: Bool = true, saveData: Bool) {
         self.endpoint = endpoint
         self.fetchAll = fetchAll
+        self.saveData = saveData
     }
     
     func fetch(snapshots: [QuerySnapshot] = [], lastUpdatedAt: Date? = nil) async throws -> [T] {
@@ -163,6 +156,7 @@ actor FetchUseCaseAsyncTask<T: FileTransferable> {
     }
     
     private func save(_ entities: [T]) async throws -> [T] {
-        try await saveUseCase.save(entities: entities)
+        guard saveData else { return entities }
+        return try await saveUseCase.save(entities: entities)
     }
 }

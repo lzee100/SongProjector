@@ -19,24 +19,31 @@ struct MixerViewUI: View {
     @State private var drumsVolume: Float = 0
     
     var body: some View {
-        HStack {
-            VStack {
+        VStack {
+            HStack {
                 style(Image("Piano"))
-                style(Image("Guitar"))
-                style(Image("BassGuitar"))
-                style(Image("Drums"))
-            }
-            VStack {
                 pianoSlider
+            }
+            Spacer()
+            HStack {
+                style(Image("Guitar"))
                 guitar
+            }
+            Spacer()
+            HStack {
+                style(Image("BassGuitar"))
                 bassGuitar
+            }
+            Spacer()
+            HStack {
+                style(Image("Drums"))
                 drums
             }
         }
         .frame(width: 400, height: 400)
         .background(.clear)
         .rotationEffect(.degrees(-90))
-        .padding([.top], 20)
+        .padding([.top], 50)
         .onChange(of: pianoVolume) { newValue in
             volumeUseCase.set(volume: newValue, instrumentType: .piano)
             soundPlayer.setVolumeFor(.piano, volume: newValue)
@@ -72,8 +79,9 @@ struct MixerViewUI: View {
     private func style(_ view: Image) -> some View {
         view
             .resizable()
-            .foregroundColor(.white)
             .aspectRatio(1, contentMode: .fit)
+            .frame(width: 40)
+            .foregroundColor(.white)
             .padding()
             .rotationEffect(.degrees(90))
     }

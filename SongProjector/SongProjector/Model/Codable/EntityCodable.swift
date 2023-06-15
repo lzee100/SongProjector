@@ -39,6 +39,14 @@ protocol EntityCodableType: Codable {
     var rootDeleteDate: Date? { get set }
 }
 
+enum EntityCodableError: LocalizedError {
+    case noUID
+    
+    var errorDescription: String? {
+        return AppText.RequesterErrors.noUID
+    }
+}
+
 public struct EntityCodable: EntityCodableType {
     
     init?(managedObject: NSManagedObject) {
@@ -157,10 +165,9 @@ extension EntityCodable: FileTransferable {
     
     func setUpdatedAt() -> FileTransferable {
         var modifiedDocument = self
-        modifiedDocument.updatedAt = Date.localDate()
+        modifiedDocument.updatedAt = Date()
         return modifiedDocument
-    }
-    
+    }    
     func setUserUID() throws -> FileTransferable {
         var modifiedDocument = self
         guard let userUID = Auth.auth().currentUser?.uid else {

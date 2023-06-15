@@ -24,7 +24,6 @@ enum Feature : String, Identifiable {
 	case tags = "Tags"
 	case songServiceManagement = "SongServiceManagement"
 	case settings = "Settings"
-	case uploadUniversalSong = "UploadUniversalSong"
     case about = "About"
 	
     var id: String {
@@ -33,7 +32,7 @@ enum Feature : String, Identifiable {
 	
 	// MARK: - Properties
 	
-    static let all = [songService, songs, themes, tags, songServiceManagement, settings, uploadUniversalSong, about]
+    static let all = [songService, songs, themes, tags, songServiceManagement, settings, about]
 
 	var titel : String {
 		return rawValue
@@ -57,7 +56,6 @@ enum Feature : String, Identifiable {
 			return AppText.Settings.title
 		case .more:
 			return AppText.More.title
-		case .uploadUniversalSong: return AppText.UploadUniversalSong.title
         case .about:
             return AppText.AboutController.title
 		}
@@ -67,7 +65,7 @@ enum Feature : String, Identifiable {
 		switch self {
 		case .songService, .more:
 			return UIDevice.current.userInterfaceIdiom == .pad ? Storyboard.Ipad : Storyboard.MainStoryboard
-        case .themes, .tags, .songs, .bibleStudy, .songServiceManagement, .uploadUniversalSong, .settings, .about:
+        case .themes, .tags, .songs, .bibleStudy, .songServiceManagement, .settings, .about:
 			return Storyboard.MainStoryboard
 		}
 	}
@@ -86,7 +84,7 @@ enum Feature : String, Identifiable {
 		switch self {
         case .songService, .songs, .more, .themes, .settings, .tags, .about:
 			return true
-        case .bibleStudy, .songServiceManagement, .uploadUniversalSong:
+        case .bibleStudy, .songServiceManagement:
 			return false
 		}
 	}
@@ -96,7 +94,7 @@ enum Feature : String, Identifiable {
 	var isActief : Bool {
 		
 		switch self {
-        case .bibleStudy, .uploadUniversalSong: return uploadSecret != nil
+        case .bibleStudy: return uploadSecret != nil
 		default: return true
 		}
 		
@@ -122,8 +120,6 @@ enum Feature : String, Identifiable {
 			return (UIImage(named: "SongServiceSettings")!, UIImage(named: "SongServiceSettings")!, UIImage(named: "SongServiceSettings")!)
 		case .settings:
             return (UIImage(named: "Settings")!, UIImage(named: "Settings")!, UIImage(named: "Settings")!)
-		case .uploadUniversalSong:
-			return (#imageLiteral(resourceName: "Bullet"), #imageLiteral(resourceName: "BulletSelected"), #imageLiteral(resourceName: "Bullet"))
         case .about:
             return (UIImage(named: "Contact")!, UIImage(named: "Contact")!, UIImage(named: "Contact")!)
 		}

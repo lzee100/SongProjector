@@ -11,6 +11,7 @@ import SwiftUI
 struct TabViewUI: View {
     @ObservedObject private var model = TabViewViewModel()
     @State private var selectedTab: Feature = .songService
+    @State private var showingSongServiceView = true
     @EnvironmentObject var externalDisplayConnector: ExternalDisplayConnector
 
     var body: some View {
@@ -18,13 +19,8 @@ struct TabViewUI: View {
             ForEach(model.tabFeatures) { feature in
                 switch feature {
                 case .songService:
-                    tabView(SongServiceViewUI(), feature: feature)
+                    tabView(SongServiceViewUI(showingSongServiceView: $showingSongServiceView), feature: feature)
                 case .songs:
-                    CollectionsViewUI(
-                        editingSection: Binding.constant(nil),
-                        songServiceEditorModel: SongServiceEditorModel(),
-                        mandatoryTags: []
-                    )
                     tabView(CollectionsViewUI(
                         editingSection: Binding.constant(nil),
                         songServiceEditorModel: SongServiceEditorModel(),
@@ -51,8 +47,7 @@ struct TabViewUI: View {
                 Label {
                     Text(feature.titleForDisplay)
                 } icon: {
-                    Image(uiImage: feature.image.normal)
-                        .resizable()
+                    Image(uiImage: feature.image.normal).font(.system(size: 26))
                 }
             }
             .tag(feature)

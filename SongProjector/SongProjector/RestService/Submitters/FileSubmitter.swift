@@ -182,7 +182,7 @@ class FileSubmitter: SingleTransferManagerProtocol {
         }
         
         let uploadFile = storageRef.child(subPath).child(uploadObject.fileName)
-        let localURL = try GetFileURLUseCase(fileName: uploadObject.fileName).getURL(location: .temp)
+        let localURL = GetFileURLUseCase(fileName: uploadObject.fileName).getURL(location: .temp)
         let data = try Data(contentsOf: localURL)
         let metadata = try await uploadFile.putDataAsync(data)
         let url = try await uploadFile.downloadURL()

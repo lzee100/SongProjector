@@ -163,6 +163,23 @@ extension SheetMetaType {
         return nil
     }
     
+    func set(sheetTime: Double?) -> SheetMetaType {
+        if var sheetTitleContentCodable = self as? SheetTitleContentCodable {
+            sheetTitleContentCodable.time = sheetTime ?? 0.0
+            return sheetTitleContentCodable
+        } else if var sheetTitleImageCodable = self as? SheetTitleImageCodable {
+            sheetTitleImageCodable.time = sheetTime ?? 0.0
+            return sheetTitleImageCodable
+        } else if var sheetPastors = self as? SheetPastorsCodable {
+            sheetPastors.time = sheetTime ?? 0.0
+            return sheetPastors
+        } else if var sheetSplit = self as? SheetSplitCodable {
+            sheetSplit.time = sheetTime ?? 0.0
+            return sheetSplit
+        }
+        return self
+    }
+    
 }
 
 extension Array where Element == SheetMetaType {

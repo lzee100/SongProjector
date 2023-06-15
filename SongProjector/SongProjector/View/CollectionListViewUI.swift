@@ -12,7 +12,7 @@ struct CollectionListViewUI: View {
 
     let isSelectable: Bool
     let isSelected: Bool
-    @StateObject var collection: WrappedStruct<ClusterCodable>
+    let collection: ClusterCodable
     @EnvironmentObject private var soundPlayer: SoundPlayer2
     @ObservedObject private var collectionsViewModel: CollectionsViewModel
 
@@ -22,7 +22,7 @@ struct CollectionListViewUI: View {
         isSelectable: Bool,
         isSelected: Bool
     ) {
-        self._collection = StateObject(wrappedValue: WrappedStruct(withItem: collection))
+        self.collection = collection
         self.collectionsViewModel = collectionsViewModel
         self.isSelectable = isSelectable
         self.isSelected = isSelected
@@ -35,20 +35,20 @@ struct CollectionListViewUI: View {
                     .cornerRadius(5 / 2)
                     .frame(width: 5)
             }
-            Text(collection.item.title ?? "-")
+            Text(collection.title ?? "-")
                 .foregroundColor(Color(uiColor: isSelected ? .softBlueGrey : .blackColor.withAlphaComponent(0.8)))
                 .styleAs(font: .xNormal)
                 .multilineTextAlignment(.leading)
             Spacer()
-            if collection.item.hasInstruments.count > 0 && !collection.item.hasLocalMusic {
+            if collection.hasInstruments.count > 0 && !collection.hasLocalMusic {
                 MusicDownloadButtonViewUI(
                     collection: collection
                 )
-            } else if collection.item.hasLocalMusic {
-                if collection.item.hasPianoSolo {
+            } else if collection.hasLocalMusic {
+                if collection.hasPianoSolo {
                     pianoSoloImageView
                 }
-                if soundPlayer.selectedSong?.id == collection.item.id {
+                if soundPlayer.selectedSong?.id == collection.id {
                     soundAnimationView
                 } else {
                     playLocalMusicButton
@@ -67,7 +67,7 @@ struct CollectionListViewUI: View {
     
     @ViewBuilder var playLocalMusicButton: some View {
         Button {
-            soundPlayer.play(song: SongObjectUI(cluster: collection.item))
+            soundPlayer.play(song: SongObjectUI(cluster: collection))
         } label: {
             Image("Play")
                 .resizable()

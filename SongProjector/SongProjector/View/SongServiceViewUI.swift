@@ -12,8 +12,11 @@ private var idiom : UIUserInterfaceIdiom { UIDevice.current.userInterfaceIdiom }
 
 @MainActor class SongServiceViewModel: ObservableObject {
     
+    @Binding var showingSongServiceView: Bool
     
-    
+    init(showingSongServiceView: Binding<Bool>) {
+        self._showingSongServiceView = showingSongServiceView
+    }
     func submitPlayDateFor(_ song: SongObjectUI) async {
         var cluster = song.cluster
         cluster.lastShownAt = Date()
@@ -34,11 +37,15 @@ struct SongServiceViewUI: View {
     @State private var showingSongServiceEditor = false
     @State private var countDownValue: Int? = nil
     @StateObject var songService = SongServiceUI()
-    @StateObject var viewModel = SongServiceViewModel()
+    @StateObject var viewModel: SongServiceViewModel
     @EnvironmentObject var store: ExternalDisplayConnector
-
-    init(alignment: Sticky.Alignment = .horizontal) {
+    @State private var orientation: UIDeviceOrientation = UIDevice.current.orientation
+    private let previewSong: ClusterCodable?
+    
+    init(alignment: Sticky.Alignment = .horizontal, previewSong: ClusterCodable? = nil, showingSongServiceView: Binding<Bool>) {
         self.alignment = alignment
+        self.previewSong = previewSong
+        self._viewModel = StateObject(wrappedValue: SongServiceViewModel(showingSongServiceView: showingSongServiceView))
     }
     
     var body: some View {
@@ -46,7 +53,9 @@ struct SongServiceViewUI: View {
             GeometryReader { ruler in
                 VStack(alignment: .center, spacing: 0) {
                     if songService.sectionedSongs.count != 0 {
-                        BeamerPreviewUI(sendToExternalDisplayUseCase: SendToExternalDisplayUseCase(connector: store), songService: songService)
+                        HStack {
+                            Spacer()
+                            BeamerPreviewUI(sendToExternalDisplayUseCase: SendToExternalDisplayUseCase(connector: store), songService: songService)
                                 .aspectRatio(externalDisplayWindowRatioHeightWidth, contentMode: .fit)
                                 .padding(EdgeInsets(top: 10, leading: 50, bottom: 0, trailing: 50))
                                 .allowsHitTesting(isUserInteractionEnabledForBeamer)
@@ -67,33 +76,56 @@ struct SongServiceViewUI: View {
                                         }
                                     }
                                 }
+                            Spacer()
+                        }
                     } else {
-                        RoundedRectangle(cornerRadius: 20).fill(Color(uiColor: .almostBlack))
-                            .aspectRatio(externalDisplayWindowRatioHeightWidth, contentMode: .fit)
-                            .padding(EdgeInsets(top: 10, leading: 50, bottom: 0, trailing: 50))
-                            .overlay {
-                                Button {
-                                    showingSongServiceEditor.toggle()
-                                } label: {
-                                    VStack(spacing: 20) {
-                                        Image(systemName: "plus")
-                                            .resizable()
-                                            .frame(width: 40, height: 40)
-                                        Text(AppText.SongService.startNew)
-                                            .styleAs(font: .xxNormal, color: .white.opacity(0.5))
-                                            .shadow(color: .white.opacity(0.3), radius: 2)
+                        HStack {
+                            Spacer()
+                            RoundedRectangle(cornerRadius: 20).fill(Color(uiColor: .almostBlack))
+                                .aspectRatio(externalDisplayWindowRatioHeightWidth, contentMode: .fit)
+                                .padding(EdgeInsets(top: 10, leading: 50, bottom: 0, trailing: 50))
+                                .overlay {
+                                    Button {
+                                        showingSongServiceEditor.toggle()
+                                    } label: {
+                                        VStack(spacing: 20) {
+                                            Image(systemName: "plus")
+                                                .resizable()
+                                                .frame(width: 40, height: 40)
+                                                .tint(Color(uiColor: themeHighlighted))
+                                            Text(AppText.SongService.startNew)
+                                                .styleAs(font: .xxNormal, color: .white.opacity(0.5))
+                                                .shadow(color: .white.opacity(0.3), radius: 2)
+                                        }
                                     }
                                 }
-                            }
+                            Spacer()
+                        }
                     }
                     Spacer()
                     SheetScrollViewUI(songServiceModel: songService, superViewSize: ruler.size, isSelectable: true)
-                        .frame(maxWidth: isCompactOrVertical(ruler: ruler) && !(idiom == .phone) ? (ruler.size.width * 0.7) : .infinity, maxHeight: isCompactOrVertical(ruler: ruler) ? .infinity : 220)
+                        .frame(maxWidth: UIDevice.current.userInterfaceIdiom != .phone && orientation.isPortrait ? (ruler.size.width * 0.7) : .infinity, maxHeight: orientation.isPortrait ? .infinity : 220)
                 }
+                .onRotate { orientation in
+                    self.orientation = orientation
+                }
+                .padding([.bottom], 1)
                 .background(.black)
                 .navigationBarTitleDisplayMode(.inline)
                 .navigationBarTitle(AppText.SongService.title)
                 .toolbar {
+                    
+                    if previewSong != nil {
+                        ToolbarItemGroup(placement: .navigationBarLeading) {
+                            Button {
+                                viewModel.showingSongServiceView = false
+                            } label: {
+                                Text(AppText.Actions.close)
+                                    .tint(Color(uiColor: themeHighlighted))
+                            }
+                        }
+                    }
+                    
                     ToolbarItemGroup(placement: .navigationBarTrailing) {
                         Button {
                             showingMixerView.toggle()
@@ -121,6 +153,9 @@ struct SongServiceViewUI: View {
             }
         }
         .onAppear {
+            if let previewSong {
+                songService.set(sectionedSongs: [SongServiceSectionWithSongs(title: "", cocList: [.cluster(previewSong)])])
+            }
             if collectionCountDown == nil {
                 collectionCountDown = CollectionCountDown(countDownDidChange: { countDown in
                     countDownValue = countDown
@@ -147,7 +182,7 @@ struct SongServiceViewUI: View {
                 isUserInteractionEnabledForBeamer = true
                 return
             }
-            if selectedSong.cluster.hasLocalMusic || selectedSong.cluster.time > 0 {
+            if selectedSong.cluster.hasLocalMusic {
                 isUserInteractionEnabledForBeamer = false
             } else {
                 isUserInteractionEnabledForBeamer = true
@@ -186,8 +221,9 @@ struct SongServiceViewUI: View {
 
 struct SongServiceUI_Previews: PreviewProvider {
     @State static var songService = SongServiceUI()
+    @State static var showingSongServiceView = true
     static var previews: some View {
-        SongServiceViewUI()
+        SongServiceViewUI(showingSongServiceView: $showingSongServiceView)
             .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch) (4th generation)"))
             .previewInterfaceOrientation(.portrait)
     }

@@ -49,7 +49,6 @@ extension QuerySnapshot {
             let objects: [Type] = try documents.map({ try $0.decoded() })
             return objects
         } catch {
-            print(error)
             throw error
         }
     }

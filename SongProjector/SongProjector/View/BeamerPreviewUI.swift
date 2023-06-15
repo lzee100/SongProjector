@@ -20,7 +20,7 @@ struct SendToExternalDisplayUseCase {
     func send(sheetViewModel: SheetViewModel?) {
         connector.sheetViewModel = sheetViewModel
     }
-
+    
 }
 
 struct BeamerPreviewUI: View {
@@ -33,75 +33,75 @@ struct BeamerPreviewUI: View {
     private let displayerId = "DisplayerView"
     
     var body: some View {
-        GeometryReader { screenProxy in
+        HStack {
             if let defaultTheme {
                 TabView(selection: $selection) {
                     getTabView(defaultTheme: defaultTheme)
                 }
                 .coordinateSpace(name: displayerId)
                 .tabViewStyle(.page(indexDisplayMode: .always))
-                .onAppear {
-                    UIPageControl.appearance().currentPageIndicatorTintColor = themeHighlighted
-                    UIPageControl.appearance().pageIndicatorTintColor = .black.withAlphaComponent(0.2)
-                }
-                .onDisappear {
-                    UIPageControl.appearance().currentPageIndicatorTintColor = nil
-                    UIPageControl.appearance().pageIndicatorTintColor = nil
-                }
-                .onChange(of: selection, perform: { newValue in
-                    
-                    guard let selectedSongIndex = songService.selectedSection, let selectedSong = songService.selectedSong else { return }
-                    guard selectedSongIndex + (songService.selectedSheetIndex ?? 0) != newValue else { return }
-                    if newValue >= selectedSongIndex + selectedSong.cluster.hasSheets.count {
-                        songService.selectedSong = songService.songs[safe: selectedSongIndex + 1]
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
-                            self.selection = selectedSongIndex + 1
-                        })
-                    } else if newValue < selectedSongIndex {
-                        songService.selectedSong = songService.songs[safe: selectedSongIndex - 1]
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
-                            self.selection = selectedSongIndex - 1
-                        })
-                    } else {
-                        songService.selectedSheetId = songService.selectedSong?.sheets[safe: newValue - selectedSongIndex]?.id
-                    }
-                    
-                })
-                .onChange(of: songService.selectedSheetId) { _ in
-                    sendToExtenalDisplay()
-                    guard let index = songService.displayerSelectionIndex, selection != index else { return }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
-                        self.selection = index
-                    })
-                }
-                .onChange(of: songService.selectedSongSheetViewModels, perform: { newValue in
-                    sendToExtenalDisplay()
-                })
-                .onChange(of: songService.selectedSong) { _ in
-                    guard let selectedSongIndex = songService.selectedSection, selection != selectedSongIndex else {
-                        return
-                    }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
-                        self.selection = selectedSongIndex
-                    })
-                }
             }
         }
         .onAppear {
-            Task {
-                do {
-                    let defaultTheme = try await CreateThemeUseCase().create()
-                    await MainActor.run {
-                        self.defaultTheme = defaultTheme
-                    }
+            UIPageControl.appearance().currentPageIndicatorTintColor = themeHighlighted
+            UIPageControl.appearance().pageIndicatorTintColor = .black.withAlphaComponent(0.2)
+        }
+        .onDisappear {
+            UIPageControl.appearance().currentPageIndicatorTintColor = nil
+            UIPageControl.appearance().pageIndicatorTintColor = nil
+        }
+        .onChange(of: selection, perform: { newValue in
+            
+            guard let selectedSongIndex = songService.selectedSection, let selectedSong = songService.selectedSong else { return }
+            guard selectedSongIndex + (songService.selectedSheetIndex ?? 0) != newValue else { return }
+            if newValue >= selectedSongIndex + selectedSong.cluster.hasSheets.count {
+                songService.selectedSong = songService.songs[safe: selectedSongIndex + 1]
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
+                    self.selection = selectedSongIndex + 1
+                })
+            } else if newValue < selectedSongIndex {
+                songService.selectedSong = songService.songs[safe: selectedSongIndex - 1]
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
+                    self.selection = selectedSongIndex - 1
+                })
+            } else {
+                songService.selectedSheetId = songService.selectedSong?.sheets[safe: newValue - selectedSongIndex]?.id
+            }
+            
+        })
+        .onChange(of: songService.selectedSheetId) { _ in
+            sendToExtenalDisplay()
+            guard let index = songService.displayerSelectionIndex, selection != index else { return }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
+                self.selection = index
+            })
+        }
+        .onChange(of: songService.selectedSongSheetViewModels, perform: { newValue in
+            sendToExtenalDisplay()
+        })
+        .onChange(of: songService.selectedSong) { _ in
+            guard let selectedSongIndex = songService.selectedSection, selection != selectedSongIndex else {
+                return
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
+                self.selection = selectedSongIndex
+            })
+        }
+        .task {
+            do {
+                let defaultTheme = try await CreateThemeUseCase().create()
+                await MainActor.run {
+                    self.defaultTheme = defaultTheme
                 }
+            } catch {
+                
             }
         }
     }
+
+@ViewBuilder private func getTabView(defaultTheme: ThemeCodable) -> some View {
     
-    @ViewBuilder private func getTabView(defaultTheme: ThemeCodable) -> some View {
-        
-        if songService.selectedSong == nil {
+    if songService.selectedSong == nil {
             EmptyView()
         } else {
             

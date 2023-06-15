@@ -13,10 +13,10 @@ import SwiftUI
     @Published var error: LocalizedError? = nil
     @Published var showingLoader = false
     
-    @ObservedObject private(set) var collection: WrappedStruct<ClusterCodable>
+    private(set) var collection: ClusterCodable
     
-    init(collection: WrappedStruct<ClusterCodable>) {
-        self._collection = ObservedObject(initialValue: collection)
+    init(collection: ClusterCodable) {
+        self.collection = collection
     }
     
     func downloadMusic(manager: MusicDownloadManager) async {
@@ -40,7 +40,7 @@ struct MusicDownloadButtonViewUI: View {
     @ObservedObject private var viewModel: MusicDownloadButtonViewModel
     @EnvironmentObject private var musicDownloadManager: MusicDownloadManager
     
-    init(collection: WrappedStruct<ClusterCodable>) {
+    init(collection: ClusterCodable) {
         self._viewModel = ObservedObject(initialValue: MusicDownloadButtonViewModel(collection: collection))
     }
     
@@ -59,7 +59,7 @@ struct MusicDownloadButtonViewUI: View {
                     .overlay {
                         if viewModel.showingLoader {
                             ProgressView()
-                                .scaleEffect(x: 1.4, y: 1.4)
+                                .scaleEffect(1.4)
                                 .tint(Color(uiColor: .blackColor).opacity(0.8))
                         }
                     }
@@ -84,6 +84,6 @@ struct MusicDownloadButtonViewUI: View {
 struct MusicDownloadButtonUI_Previews: PreviewProvider {
     @State static var viewModel = CollectionsViewModel(tagSelectionModel: TagSelectionModel(mandatoryTags: []), customSelectedSongsForSongService: [], customSelectionDelegate: nil)
     static var previews: some View {
-        MusicDownloadButtonViewUI(collection: WrappedStruct(withItem: .makeDefault()!))
+        MusicDownloadButtonViewUI(collection: .makeDefault()!)
     }
 }

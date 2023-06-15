@@ -11,6 +11,7 @@ import Foundation
 actor FetchSongServiceSettingsUseCase {
     private let useCase = FetchUseCaseAsync<SongServiceSettingsCodable, SongServiceSettings>(endpoint: .songservicesettings)
     
+    @discardableResult
     func fetch() async throws -> [SongServiceSettingsCodable] {
         try await useCase.fetch()
     }

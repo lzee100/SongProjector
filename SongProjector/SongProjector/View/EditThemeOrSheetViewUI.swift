@@ -23,7 +23,7 @@ protocol EditThemeOrSheetViewUIDelegate {
     
     @Published var error: LocalizedError?
     @Published private(set) var showingLoader = false
-    @StateObject var sheetViewModel: SheetViewModel
+    @ObservedObject var sheetViewModel: SheetViewModel
     var navigationBarTitle: String {
         switch sheetViewModel.sheetEditType {
         case .theme:
@@ -49,7 +49,7 @@ protocol EditThemeOrSheetViewUIDelegate {
     init(error: LocalizedError? = nil, showingLoader: Bool = false, sheetViewModel: SheetViewModel) {
         self.error = error
         self.showingLoader = showingLoader
-        self._sheetViewModel = StateObject(wrappedValue: sheetViewModel)
+        self._sheetViewModel = ObservedObject(initialValue: sheetViewModel)
     }
     
     func submitTheme() async {
@@ -85,33 +85,6 @@ struct EditThemeOrSheetViewUI: View {
     @State var isSectionImageExpanded = false
     @StateObject var viewModel: EditThemeOrSheetViewModel
     
-    @ViewBuilder var navigationBarButtonRight: some View {
-        HStack {
-            switch viewModel.rightNavigationBarButton {
-            case .addNewSheet, .changeSheet:
-                Button {
-                    delegate.dismissAndSave(model: viewModel.sheetViewModel)
-                } label: {
-                    if case .addNewSheet = viewModel.rightNavigationBarButton {
-                        Text(AppText.Actions.add)
-                    } else {
-                        Text(AppText.Actions.change)
-                    }
-                }
-                .tint(Color(uiColor: themeHighlighted))
-            case .submitTheme:
-                Button {
-                    Task {
-                       await viewModel.submitTheme()
-                    }
-                } label: {
-                    Text(AppText.Actions.save)
-                }
-                .tint(Color(uiColor: themeHighlighted))
-            }
-        }
-    }
-
     init(
         navigationTitle: String,
         delegate: EditThemeOrSheetViewUIDelegate,
@@ -172,6 +145,12 @@ struct EditThemeOrSheetViewUI: View {
                     }
                     .blur(radius: viewModel.showingLoader ? 5 : 0)
                     .disabled(viewModel.showingLoader)
+                    .overlay {
+                        if viewModel.showingLoader {
+                            ProgressView()
+                                .scaleEffect(1.4)
+                        }
+                    }
                 }
                 .errorAlert(error: $viewModel.error)
                 .padding()
@@ -186,9 +165,11 @@ struct EditThemeOrSheetViewUI: View {
                             Text(AppText.Actions.cancel)
                         }
                         .tint(Color(uiColor: themeHighlighted))
+                        .disabled(viewModel.showingLoader)
                     }
                     ToolbarItemGroup(placement: .navigationBarTrailing) {
                         navigationBarButtonRight
+                            .disabled(viewModel.showingLoader)
                     }
                 })
             }
@@ -196,6 +177,33 @@ struct EditThemeOrSheetViewUI: View {
         .onChange(of: viewModel.showingLoader) { newValue in
             if !newValue {
                 delegate.dismiss()
+            }
+        }
+    }
+    
+    @ViewBuilder var navigationBarButtonRight: some View {
+        HStack {
+            switch viewModel.rightNavigationBarButton {
+            case .addNewSheet, .changeSheet:
+                Button {
+                    delegate.dismissAndSave(model: viewModel.sheetViewModel)
+                } label: {
+                    if case .addNewSheet = viewModel.rightNavigationBarButton {
+                        Text(AppText.Actions.add)
+                    } else {
+                        Text(AppText.Actions.change)
+                    }
+                }
+                .tint(Color(uiColor: themeHighlighted))
+            case .submitTheme:
+                Button {
+                    Task {
+                       await viewModel.submitTheme()
+                    }
+                } label: {
+                    Text(AppText.Actions.save)
+                }
+                .tint(Color(uiColor: themeHighlighted))
             }
         }
     }

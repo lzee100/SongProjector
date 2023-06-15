@@ -15,15 +15,21 @@ protocol LyricsOrBibleStudyInputViewModelDelegate {
 @MainActor class LyricsOrBibleStudyInputViewModel: ObservableObject {
     
     let originalContent: String
+
     @State var font: UIFont.TextStyle = .body
     @Published var showingNumberOfSheetsError = false
     @Binding var content: String
     @State var error: LocalizedError?
 
     private let lyricsUseCase = GenerateLyricsSheetContentUseCase()
+    private let delegate: LyricsOrBibleStudyInputViewModelDelegate?
     @State private var cluster: ClusterCodable
     @State private var collectionType: CollectionEditorViewModel.CollectionType
     @Binding private var sheetPresentMode: CollectionEditorViewUI.SheetPresentMode?
+    
+    var textViewPlaceholder: String {
+        collectionType == .lyrics ? AppText.Lyrics.placeholderLyrics : AppText.Lyrics.placeholderBibleText
+    }
     
     init(
         originalContent: String,
@@ -31,9 +37,11 @@ protocol LyricsOrBibleStudyInputViewModelDelegate {
         cluster: ClusterCodable,
         font: UIFont.TextStyle,
         collectionType: CollectionEditorViewModel.CollectionType,
+        delegate: LyricsOrBibleStudyInputViewModelDelegate?,
         sheetPresentMode: Binding<CollectionEditorViewUI.SheetPresentMode?>
     ) {
         self.originalContent = originalContent
+        self.delegate = delegate
         self._content = content
         self.cluster = cluster
         self._sheetPresentMode = sheetPresentMode
@@ -44,19 +52,19 @@ protocol LyricsOrBibleStudyInputViewModelDelegate {
         sheetPresentMode = nil
     }
     
-    func save(newContent: String) async {
+    func save(changedContent: String) async {
         do {
             if collectionType == .lyrics {
                 let numberOfSheetsOriginal = try await lyricsUseCase.buildSheetsModels(from: originalContent, cluster: cluster).count
-                let numberOfSheetsNew = try await lyricsUseCase.buildSheetsModels(from: newContent, cluster: cluster).count
+                let numberOfSheetsNew = try await lyricsUseCase.buildSheetsModels(from: changedContent, cluster: cluster).count
                 if numberOfSheetsOriginal != 0 && (numberOfSheetsNew != numberOfSheetsOriginal) {
                     showingNumberOfSheetsError.toggle()
                 } else {
-                    content = newContent
+                    delegate?.didSave(content: changedContent)
                     sheetPresentMode = nil
                 }
             } else {
-                content = newContent
+                delegate?.didSave(content: changedContent)
                 sheetPresentMode = nil
             }
         } catch {
@@ -68,29 +76,22 @@ protocol LyricsOrBibleStudyInputViewModelDelegate {
 struct LyricsOrBibleStudyInputViewUI: View {
     
     @ObservedObject var viewModel: LyricsOrBibleStudyInputViewModel
-    @State var changedContent: String = ""
-
+    @State private var changedContent: String = ""
+    
     var body: some View {
         NavigationStack {
             GeometryReader { proxy in
-                TextView(text: $changedContent, textStyle: $viewModel.font)
+                TextView(text: $changedContent, textStyle: $viewModel.font, placeholder: viewModel.textViewPlaceholder)
                     .padding()
                     .navigationBarTitleDisplayMode(.inline)
                     .navigationBarTitle(AppText.NewSong.title)
                     .toolbar(content: {
                         ToolbarItemGroup(placement: .navigationBarLeading) {
-                            Button(AppText.Actions.close) {
-                                viewModel.close()
-                            }
-                            .tint(Color(uiColor: themeHighlighted))
+                            closeButton
                         }
                         ToolbarItemGroup(placement: .navigationBarTrailing) {
-                            Button(AppText.Actions.save) {
-                                Task {
-                                    await viewModel.save(newContent: changedContent)
-                                }
-                            }
-                            .tint(Color(uiColor: themeHighlighted))
+                            deleteContentButton
+                            saveButton
                         }
                     })
                     .alert(Text(AppText.CustomSheets.universalSongEditErrorMessage), isPresented: $viewModel.showingNumberOfSheetsError) {
@@ -104,12 +105,37 @@ struct LyricsOrBibleStudyInputViewUI: View {
             }
         }
     }
+    
+    @ViewBuilder private var closeButton: some View {
+        Button(AppText.Actions.close) {
+            viewModel.close()
+        }
+        .tint(Color(uiColor: themeHighlighted))
+    }
+    
+    @ViewBuilder private var saveButton: some View {
+        Button(AppText.Actions.save) {
+            Task {
+                await viewModel.save(changedContent: changedContent)
+            }
+        }
+        .tint(Color(uiColor: themeHighlighted))
+    }
+    
+    @ViewBuilder var deleteContentButton: some View {
+        Button(action: {
+            changedContent = ""
+        }, label: {
+            Image(systemName: "trash")
+        })
+        .tint(Color(uiColor: themeHighlighted))
+    }
 }
 
 struct LyricsOrBibleStudyInputViewUI_Previews: PreviewProvider {
     @State static var isShowingBibleStudy: CollectionEditorViewUI.SheetPresentMode? = nil
     @State static var content: String = ""
     static var previews: some View {
-        LyricsOrBibleStudyInputViewUI(viewModel: LyricsOrBibleStudyInputViewModel(originalContent: "", content: $content, cluster: .makeDefault()!, font: .callout, collectionType: .lyrics, sheetPresentMode: $isShowingBibleStudy))
+        LyricsOrBibleStudyInputViewUI(viewModel: LyricsOrBibleStudyInputViewModel(originalContent: "", content: $content, cluster: .makeDefault()!, font: .callout, collectionType: .lyrics, delegate: nil, sheetPresentMode: $isShowingBibleStudy))
     }
 }

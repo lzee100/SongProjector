@@ -16,6 +16,7 @@ struct DeviceRotationViewModifier: ViewModifier {
         content
             .onAppear()
             .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
+                guard UIDevice.current.orientation.isValidInterfaceOrientation else { return }
                 action(UIDevice.current.orientation)
             }
     }

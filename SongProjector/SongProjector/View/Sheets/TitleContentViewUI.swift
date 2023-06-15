@@ -8,51 +8,8 @@
 
 import SwiftUI
 
-protocol BodyView: View where Body: View {
-    
-    var content: Body { get }
-
-}
-
-extension BodyView {
-    @ViewBuilder
-    var body: some View {
-        content
-    }
-}
-
-struct PPP<T: BodyView>: View {
-    
-    private let content: T
-    
-    init(content: T) {
-        self.content = content
-    }
-    
-    @ViewBuilder
-    var body: some View {
-        content
-    }
-}
-
-struct TitleContentViewUI<T: BodyView>: View {
-    
-    private let content: T
-    
-    init(content: T) {
-        self.content = content
-    }
-    
-    @ViewBuilder
-    var body: some View {
-        content
-    }
-}
-
 struct TitleContentViewEditUI: View {
     
-    @State var sheetSize: CGSize = .zero
-
     @ObservedObject private var sheetViewModel: SheetViewModel
     
     private let isForExternalDisplay: Bool
@@ -63,16 +20,16 @@ struct TitleContentViewEditUI: View {
     }
     
     var body: some View {
+        GeometryReader { proxy in
             VStack(spacing: 0) {
-                
                 HStack {
-                    Text(getTitleAttributedString(text: sheetViewModel.title, viewSize: sheetSize))
-                        .modifier(SheetTitleEditUIModifier(scaleFactor: getScaleFactor(width: sheetSize.width), sheetViewModel: sheetViewModel, frameWidth: .infinity))
+                    Text(getTitleAttributedString(text: sheetViewModel.title, viewSize: proxy.size))
+                        .modifier(SheetTitleEditUIModifier(scaleFactor: getScaleFactor(width: proxy.size.width), sheetViewModel: sheetViewModel, frameWidth: .infinity))
                         .lineLimit(1)
                     if sheetViewModel.themeModel.theme.displayTime {
                         Spacer()
-                        Text(getTitleAttributedString(text: Date().time, viewSize: sheetSize))
-                            .modifier(SheetTitleEditUIModifier(scaleFactor: getScaleFactor(width: sheetSize.width), sheetViewModel: sheetViewModel, frameWidth: .infinity))
+                        Text(getTitleAttributedString(text: Date().time, viewSize: proxy.size))
+                            .modifier(SheetTitleEditUIModifier(scaleFactor: getScaleFactor(width: proxy.size.width), sheetViewModel: sheetViewModel, frameWidth: .infinity))
                             .lineLimit(1)
                     }
                 }
@@ -82,9 +39,9 @@ struct TitleContentViewEditUI: View {
                     if [1, 2].contains(sheetViewModel.themeModel.theme.contentAlignmentNumber) {
                         Spacer()
                     }
-                    Text(getContentAttributedString(viewSize: sheetSize))
+                    Text(getContentAttributedString(viewSize: proxy.size))
                         .modifier(SheetContentDisplayModifier(
-                            scaleFactor: getScaleFactor(width: sheetSize.width),
+                            scaleFactor: getScaleFactor(width: proxy.size.width),
                             multiLine: true,
                             alignment: sheetViewModel.themeModel.theme.contentAlignmentNumber.intValue
                         ))
@@ -94,19 +51,16 @@ struct TitleContentViewEditUI: View {
                 }
                 Spacer()
             }
-            .observeViewSize()
-            .onPreferenceChange(SizePreferenceKey.self, perform: { size in
-                sheetSize = size
-            })
-            .setBackgroundImage(isForExternalDisplay: false, sheetViewModel: sheetViewModel)
-            .modifier(SheetBackgroundColorAndOpacityEditModifier2(sheetViewModel: sheetViewModel))
-            .cornerRadius(isForExternalDisplay ? 0 : 10)
-            .aspectRatio(16 / 9, contentMode: .fit)
-            .ignoresSafeArea()
+        }
+        .setBackgroundImage(isForExternalDisplay: false, sheetViewModel: sheetViewModel)
+        .modifier(SheetBackgroundColorAndOpacityEditModifier2(sheetViewModel: sheetViewModel))
+        .cornerRadius(isForExternalDisplay ? 0 : 10)
+        .aspectRatio(16 / 9, contentMode: .fit)
+        .ignoresSafeArea()
     }
     
     private func getTitleAttributedString(text: String, viewSize: CGSize) -> AttributedString {
-        AttributedString(NSAttributedString(
+        return AttributedString(NSAttributedString(
             string: text,
             attributes: sheetViewModel.themeModel.theme.getTitleAttributes(getScaleFactor(width: viewSize.width))
         ))

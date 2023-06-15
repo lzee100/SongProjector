@@ -10,7 +10,7 @@ import SwiftUI
 
 struct SheetScrollViewUI: View {
     
-    @State private var orientation: UIDeviceOrientation = .unknown
+    @State private var orientation = UIDevice.current.orientation
     @State private var frames: [CGRect] = []
     @ObservedObject private(set) var songServiceModel: SongServiceUI
     @State private var nextSelectedSong: SongObjectUI? = nil
@@ -22,11 +22,9 @@ struct SheetScrollViewUI: View {
     
     var body: some View {
         if !songServiceModel.songs.isEmpty {
-            GeometryReader { ruler in
-                
                 ScrollViewReader { value in
-                    ScrollView(isCompactOrVertical(viewSize: superViewSize) ? .vertical : .horizontal) {
-                        if isCompactOrVertical(viewSize: superViewSize) {
+                    ScrollView(orientation.isPortrait ? .vertical : .horizontal) {
+                        if orientation.isPortrait {
                             VStack(spacing: 10) {
                                 scrollViewItemsPortrait(viewSize: superViewSize)
                             }
@@ -51,8 +49,8 @@ struct SheetScrollViewUI: View {
                         self.orientation = orientation
                     }
                 }
-            }
             .onAppear {
+                orientation = UIDevice.current.orientation
                 Task {
                     let defaultTheme = try? await CreateThemeUseCase().create()
                     await MainActor.run {
@@ -148,7 +146,7 @@ struct SheetScrollViewUI: View {
                     .background(Color(uiColor: .whiteColor))
                     .onTapGesture {
                         guard let selectedSong = songServiceModel.selectedSong?.cluster else { return }
-                        guard selectedSong.time == 0 && !selectedSong.isTypeSong else { return }
+                        guard !selectedSong.isTypeSong else { return }
                         songServiceModel.selectedSheetId = sheet.id
                     }
                     .id(sheet.id)

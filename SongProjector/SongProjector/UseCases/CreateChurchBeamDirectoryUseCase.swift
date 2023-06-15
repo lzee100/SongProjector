@@ -10,20 +10,18 @@ import Foundation
 
 struct CreateChurchBeamDirectoryUseCase {
     
-    private let location: GetFileURLUseCase.Location
+    private let churchbeamFolder = "churchbeam"
     
-    init(location: GetFileURLUseCase.Location) {
-        self.location = location
-    }
-    
-    func create() throws {
-        let directory = "churchbeam"
-        let url: URL
-        switch location {
-        case .temp: url = URL.churchbeamDirectoryTemp
-        case .persitent: url = URL.churchbeamDirectory
+    func setup() {
+        do {
+            let tempFolderURL = URL.temporaryDirectory.appending(component: churchbeamFolder, directoryHint: .isDirectory)
+            let persistentFolderURL = URL.documentsDirectory.appending(component: churchbeamFolder, directoryHint: .isDirectory)
+            
+            try FileManager.default.createDirectory(at: tempFolderURL, withIntermediateDirectories: true)
+            try FileManager.default.createDirectory(at: persistentFolderURL, withIntermediateDirectories: true)
+        } catch {
+            print("error CreateChurchBeamDirectoryUseCase: \(error)")
         }
-        try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
     }
     
 }

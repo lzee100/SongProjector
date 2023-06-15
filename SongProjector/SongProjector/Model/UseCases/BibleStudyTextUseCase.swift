@@ -27,7 +27,6 @@ actor BibleStudyTextUseCase {
             splitOnReturns.removeFirst()
             return splitOnReturns.joined(separator: "\n")
         })
-        print(contentSize)
         var position: Int = 0
         var sheetContent: [SheetContent] = []
         

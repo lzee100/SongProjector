@@ -71,11 +71,16 @@ protocol SongServiceEditorViewDelegate {
         sectionedSongs = []
     }
     
-    func fetchSongServiceSettingsRemotely() async {
+    private func fetchCollections() async throws {
         guard !showingLoader else { return }
         showingLoader = true
+        try await FetchCollectionsUseCase(fetchAll: true).fetch()
+    }
+    
+    func fetchSongServiceSettingsRemotely() async {
         do {
-            let result = try await FetchSongServiceSettingsUseCase().fetch()
+            try await fetchCollections()
+            try await FetchSongServiceSettingsUseCase().fetch()
             await setFirstSongServiceSettings()
         } catch {
             showingLoader = false
@@ -209,6 +214,9 @@ struct SongServiceEditorViewUI: View {
                 )
             }
         }
+        .task {
+            
+        }
     }
     
     @ViewBuilder var songServiceView: some View {
@@ -274,7 +282,7 @@ struct SongServiceEditorViewUI: View {
                 Image(systemName: "plus")
             }
         }
-        .tint(Color(uiColor: themeMainColor))
+        .tint(Color(uiColor: themeHighlighted))
     }
     
     @ViewBuilder var generateSongServiceButton: some View {
@@ -289,7 +297,7 @@ struct SongServiceEditorViewUI: View {
                 Image("MagicWand")
             }
         }
-        .tint(Color(uiColor: themeMainColor))
+        .tint(Color(uiColor: themeHighlighted))
     }
 
     @ViewBuilder var shareButon: some View {
@@ -305,9 +313,7 @@ struct SongServiceEditorViewUI: View {
             Button {
                 Task {
                     guard let shareInfo = await viewModel.getShareInfo(withContent: true) else { return }
-                    await MainActor.run(body: {
-                        EmailController.shared.sendEmail(subject: shareInfo.title, body: shareInfo.content)
-                    })
+                    EmailController.shared.sendEmail(subject: shareInfo.title, body: shareInfo.content)
                 }
             } label: {
                 Text(AppText.NewSongService.shareOptionTitlesWithSections)
@@ -315,7 +321,7 @@ struct SongServiceEditorViewUI: View {
         } label: {
             Image(systemName: "square.and.arrow.up")
         }
-        .tint(Color(uiColor: themeMainColor))
+        .tint(Color(uiColor: themeHighlighted))
     }
 
     @ViewBuilder var deleteButton: some View {
@@ -324,7 +330,7 @@ struct SongServiceEditorViewUI: View {
         } label: {
             Image(systemName: "trash")
         }
-        .tint(Color(uiColor: themeMainColor))
+        .tint(Color(uiColor: themeHighlighted))
     }
     
     @ViewBuilder var doneButton: some View {
@@ -338,7 +344,7 @@ struct SongServiceEditorViewUI: View {
         } label: {
             Text(AppText.Actions.done)
         }
-        .tint(Color(uiColor: themeMainColor))
+        .tint(Color(uiColor: themeHighlighted))
     }
 
 }

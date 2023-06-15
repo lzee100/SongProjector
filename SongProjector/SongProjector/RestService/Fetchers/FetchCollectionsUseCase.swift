@@ -13,9 +13,10 @@ actor FetchCollectionsUseCase {
     private let useCase: FetchUseCaseAsync<ClusterCodable, Cluster>
 
     init(fetchAll: Bool) {
-        useCase = FetchUseCaseAsync<ClusterCodable, Cluster>(endpoint: .clusters, fetchAll: fetchAll)
+        useCase = FetchUseCaseAsync<ClusterCodable, Cluster>(endpoint: uploadSecret == nil ? .clusters : .universalclusters, fetchAll: fetchAll)
     }
     
+    @discardableResult
     func fetch() async throws -> [ClusterCodable] {
         try await useCase.fetch()
     }

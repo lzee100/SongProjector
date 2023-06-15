@@ -291,7 +291,11 @@ extension ClusterCodable: FileTransferable {
     }
     
     var uploadObjects: [TransferObject] {
-        hasSheets.uploadObjects
+        let instrumentsUploadObjects = hasInstruments
+            .filter { $0.resourcePathAWS == nil }
+            .compactMap { $0.resourcePath }
+            .compactMap { UploadObject(fileName: $0) }
+        return hasSheets.uploadObjects + instrumentsUploadObjects
     }
     
     var downloadObjects: [TransferObject] {
@@ -327,7 +331,7 @@ extension ClusterCodable: FileTransferable {
     
     func setUpdatedAt() -> FileTransferable {
         var modifiedDocument = self
-        modifiedDocument.updatedAt = Date.localDate()
+        modifiedDocument.updatedAt = Date()
         return modifiedDocument
     }
     

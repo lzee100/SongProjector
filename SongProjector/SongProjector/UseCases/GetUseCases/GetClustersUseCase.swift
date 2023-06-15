@@ -42,7 +42,7 @@ actor GetClustersUseCase {
                 let clusterCodables: [ClusterCodable] = clusterWithAllInfo.compactMap { info in
                     let (cluster, sheets, theme, instruments, tags) = info
                     var clusterCodable = ClusterCodable(managedObject: cluster)
-                    var sheetCodables = sheets.getSheets()
+                    let sheetCodables = sheets.getSheets()
                     
                     var themeCodable: ThemeCodable? {
                         if let theme {
@@ -56,7 +56,8 @@ actor GetClustersUseCase {
                     clusterCodable?.hasSheets = sheetCodables
                     clusterCodable?.hasInstruments = instrumentCodables.compactMap { $0 }
                     clusterCodable?.hasTags = tagsCodable
-                    let listViewID = ([clusterCodable?.id] + (clusterCodable?.hasInstruments.map { $0.id } ?? [])).compactMap { $0 }.joined()
+                    let deleteString = [clusterCodable?.deleteDate?.toString, clusterCodable?.rootDeleteDate?.toString]
+                    let listViewID = ([clusterCodable?.id] + deleteString + (clusterCodable?.hasInstruments.map { $0.id } ?? [])).compactMap { $0 }.joined()
                     clusterCodable?.listViewID = listViewID
                     return clusterCodable
                 }

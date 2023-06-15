@@ -33,12 +33,13 @@ class SheetViewModel: ObservableObject, Identifiable, Equatable {
     public var id: String {
         return sheetModel.sheet.id
     }
-
+    
     let sheetEditType: SheetEditType
     @Published var themeModel: ThemeEditModel
     @Published var sheetModel: SheetEditModel
     
     @Published var title: String = ""
+    @Published var sheetTime: String = ""
     
     init(cluster: ClusterCodable?, theme: ThemeCodable?, defaultTheme: ThemeCodable, sheet: SheetMetaType?, sheetType: SheetType, sheetEditType: SheetEditType) async throws {
         
@@ -63,6 +64,9 @@ class SheetViewModel: ObservableObject, Identifiable, Equatable {
             )!
         } else {
             themeModel = ThemeEditModel(theme: defaultTheme, isNew: true)!
+        }
+        if let sheetTime = sheet?.sheetTime, sheetTime != 0.0 {
+            self.sheetTime = "\(sheetTime)"
         }
         let fallBackDefaultSheet = await sheetType.makeDefault()!
         sheetModel = SheetEditModel(cluster: cluster, sheet: sheet ?? fallBackDefaultSheet, isNew: sheet == nil, sheetType: sheetType)!
@@ -99,7 +103,7 @@ class SheetViewModel: ObservableObject, Identifiable, Equatable {
             sheetModel.title = title
         default: theme = nil
         }
-        return try sheetModel.createSheetCodable(with: theme)
+        return try sheetModel.createSheetCodable(with: theme, sheetTime: sheetTime)
     }
     
     static func == (lhs: SheetViewModel, rhs: SheetViewModel) -> Bool {
@@ -248,11 +252,11 @@ struct SheetEditModel: Identifiable {
         return getImage(thumb: thumb)?.jpegData(compressionQuality: 0.4)
     }
     
-    func createSheetCodable(with theme: ThemeCodable?) throws -> SheetMetaType? {
-        let saveImageUseCase = SaveImageUseCase()
+    func createSheetCodable(with theme: ThemeCodable?, sheetTime: String) throws -> SheetMetaType? {
+        
         var newSelectedImageTempDirPath: String? = nil
         if let newSelectedImage {
-            let sheetImagePath = try saveImageUseCase.saveImageTemp(newSelectedImage)
+            let sheetImagePath = try SaveImageUseCase().saveImageTemp(newSelectedImage)
             newSelectedImageTempDirPath = sheetImagePath
         }
         
@@ -264,6 +268,7 @@ struct SheetEditModel: Identifiable {
             sheet.title = title.isBlanc ? nil : title
             sheet.content = content
             sheet.isBibleVers = isBibleVers
+            sheet.time = Double(sheetTime) ?? 0
             return sheet
         case .SheetTitleImage:
             guard var sheet = self.sheet as? SheetTitleImageCodable else { return nil }
@@ -271,6 +276,7 @@ struct SheetEditModel: Identifiable {
             sheet.content = content
             sheet.hasTheme = theme
             sheet.title = title.isBlanc ? nil : title
+            sheet.time = Double(sheetTime) ?? 0
             if let title = sheet.title {
                 sheet.hasTitle = !title.isBlanc
             } else {
@@ -287,6 +293,7 @@ struct SheetEditModel: Identifiable {
             sheet.hasTheme = theme
             sheet.newSelectedSheetImageTempDirPath = newSelectedImageTempDirPath
             sheet.isSheetImageDeleted = isImageDeleted
+            sheet.time = Double(sheetTime) ?? 0
             return sheet
         case .SheetSplit:
             guard var sheet = self.sheet as? SheetTitleContentCodable else { return nil }
@@ -295,12 +302,14 @@ struct SheetEditModel: Identifiable {
             sheet.content = content
             sheet.hasTheme = theme
             sheet.isBibleVers = isBibleVers
+            sheet.time = Double(sheetTime) ?? 0
             return sheet
         case .SheetEmpty:
             guard var sheet = self.sheet as? SheetEmptyCodable else { return nil }
             sheet.title = title.isBlanc ? nil : title
             sheet.position = position
             sheet.hasTheme = theme
+            sheet.time = Double(sheetTime) ?? 0
             return sheet
         case .SheetActivities:
             return sheet

@@ -70,7 +70,7 @@ import FirebaseFirestoreSwift
             theme.rootDeleteDate = Date()
         }
         do {
-            try await SubmitUseCase(endpoint: .themes, requestMethod: .put, uploadObjects: [theme]).submit()
+            try await SubmitUseCase(endpoint: .themes, requestMethod: .delete, uploadObjects: [theme]).submit()
             await reload()
         } catch {
             setIsLoading(false)
@@ -116,7 +116,9 @@ struct ThemesViewUI: View {
                             }
                             .buttonStyle(.borderless)
                             .swipeActions {
-                                deleteButton(theme)
+                                if theme.isDeletable {
+                                    deleteButton(theme)
+                                }
                             }
                         }
                     }

@@ -11,7 +11,7 @@ import SwiftUI
 struct InstrumentViewUI: View {
     
     @State var isSelected: Bool = true
-    @State private var orientation: Sticky.Alignment = .vertical
+    @State private var orientation = UIDevice.current.orientation
     var instrument: InstrumentCodable
     var muteInstrumentUseCase: MuteInstrumentsUseCase
     @EnvironmentObject private var soundPlayer: SoundPlayer2
@@ -42,35 +42,26 @@ struct InstrumentViewUI: View {
         .background(.black)
         .cornerRadius(8, corners: cornersForInstrument)
         .onAppear {
-            if UIDeviceOrientation.isPortrait {
-                self.orientation = .horizontal
-            } else {
-                self.orientation = .vertical
-            }
             isSelected = !muteInstrumentUseCase.isMuted
         }
         .onRotate { orientation in
-            if UIDeviceOrientation.isLandscape {
-                self.orientation = .horizontal
-            } else {
-                self.orientation = .vertical
-            }
+            self.orientation = orientation
         }
     }
     
     private var cornersForInstrument: UIRectCorner {
         switch instrument.type {
         case .piano:
-            if UIDeviceOrientation.isLandscape {
-                return .bottomLeft
-            } else {
+            if orientation.isPortrait {
                 return [.topLeft, .bottomLeft]
+            } else {
+                return .bottomLeft
             }
         case .drums:
-            if UIDeviceOrientation.isLandscape {
-                return .bottomRight
-            } else {
+            if orientation.isPortrait {
                 return [.topRight, .bottomRight]
+            } else {
+                return .bottomRight
             }
         default: return []
         }

@@ -54,8 +54,6 @@ class ProgressController: UIViewController {
         print(percentage)
         progressView.setProgress(percentage: percentage * 100)
         progressLabel.text = "\(Double(percentage * 100).oneDecimal)"
-        print(percentage)
-        print("\(Double(percentage).oneDecimal)")
     }
     
     fileprivate func finishAnimation(succes: Bool, completion: @escaping (() -> Void)) {

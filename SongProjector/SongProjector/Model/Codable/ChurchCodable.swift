@@ -32,6 +32,16 @@ public struct ChurchCodable: EntityCodableType, Codable {
         case rootDeleteDate
     }
     
+    init?(entity: Church) {
+        id = entity.id
+        userUID = entity.userUID
+        title = entity.title
+        createdAt = entity.createdAt.date
+        updatedAt = entity.updatedAt?.date
+        deleteDate = entity.deleteDate?.date
+        rootDeleteDate = entity.rootDeleteDate?.date
+    }
+    
     // MARK: - Decodable
     
     public init(from decoder: Decoder) throws {
@@ -116,10 +126,9 @@ extension ChurchCodable: FileTransferable {
     
     func setUpdatedAt() -> FileTransferable {
         var modifiedDocument = self
-        modifiedDocument.updatedAt = Date.localDate()
+        modifiedDocument.updatedAt = Date()
         return modifiedDocument
-    }
-    
+    }    
     func setUserUID() throws -> FileTransferable {
         var modifiedDocument = self
         guard let userUID = Auth.auth().currentUser?.uid else {

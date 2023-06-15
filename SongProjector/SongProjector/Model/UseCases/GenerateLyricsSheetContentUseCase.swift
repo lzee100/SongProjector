@@ -29,7 +29,7 @@ struct GenerateLyricsSheetContentUseCase {
         
         var models: [SheetViewModel] = []
         for (index, content) in sheetContent.enumerated() {
-            if let newSheet = SheetTitleContentCodable.makeDefault(position: index, title: nil, content: content) {
+            if var newSheet = SheetTitleContentCodable.makeDefault(position: index, title: nil, content: content) {
                 let defaultTheme = try await CreateThemeUseCase().create()
                 let model = try await SheetViewModel(
                     cluster: cluster,

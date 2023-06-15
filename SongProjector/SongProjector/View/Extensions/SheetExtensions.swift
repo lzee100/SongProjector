@@ -241,7 +241,6 @@ extension Sheet {
 //		sheet.time = time
 //		sheet.position = position
 //		sheet.isEmptySheet = isEmptySheet
-//		print("merged sheet")
 //	}
 	
 	public func isEqualTo(_ object: Any?) -> Bool {

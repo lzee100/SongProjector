@@ -195,6 +195,9 @@ extension InstrumentCodable: FileTransferable {
             if uploadObject.fileName == resourcePath {
                 self.resourcePathAWS = uploadObject.remoteURL?.absoluteString
             }
+            let tempPath = GetFileURLUseCase(fileName: uploadObject.fileName).getURL(location: .temp)
+            let persistentPath = GetFileURLUseCase(fileName: uploadObject.fileName).getURL(location: .persitent)
+            try? FileManager.default.moveItem(at: tempPath, to: persistentPath)
         })
     }
     
@@ -210,10 +213,9 @@ extension InstrumentCodable: FileTransferable {
     
     func setUpdatedAt() -> FileTransferable {
         var modifiedDocument = self
-        modifiedDocument.updatedAt = Date.localDate()
+        modifiedDocument.updatedAt = Date()
         return modifiedDocument
-    }
-    
+    }    
     func setUserUID() throws -> FileTransferable {
         var modifiedDocument = self
         guard let userUID = Auth.auth().currentUser?.uid else {

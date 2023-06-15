@@ -51,8 +51,6 @@ class ChurchBeamTableViewController: UITableViewController, RequesterObserver1 {
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		requesters.forEach({ $0.addObserver(self) })
-		print("################")
-		print(self)
 	}
 	
 	override func viewWillDisappear(_ animated: Bool) {

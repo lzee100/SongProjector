@@ -38,6 +38,8 @@
 "Actions-share" = "Deel";
 "Actions-change" = "Verander";
 
+"Start-syncingAccountData" = "Synchroniseren van account data...";
+
 "Intro-introHalloTitle" = "Hallo";
 "Intro-introHalloContent" = "Welkom bij Churchbeam. Deze app ondersteund de gehele voordienst in jouw kerk.";
 "Intro-featureIntro" = "Voor %@ per maand krijg je onbeperkt toegang tot:";
@@ -142,14 +144,20 @@
 "NewSong-changeLyrics" = "Wijzig zangtekst";
 "NewSong-newLyrics" = "Nieuwe zangtekst";
 "NewSong-changeTitleTime" = "Wijzig titel & tijdsduur";
-"NewSong-timeExplained" = "Het aantal seconden dat de\nvolgende dia automatisch wordt\nafgespeeld. Gaat automatisch naar\nvan de laatste dia naar de\neerste (eindeloze loop).";
-"NewSong-tagsExplained" = "De tags voor deze collectie. Wanneer je een zangdienst aanmaakt, dan kan je aangeven welke tags in welke sectie horen zodat de zangdienst generator automatisch een zangdienst kan genereren.";
+"NewSong-timeExplained" = "Dit zijn het aantal seconden tussen\nelke dia. Wanneer je een selectie maakt,\nzal er bij het afspelen automatisch om\nde x seconden de volgende dia worden\nafgespeeld. Is de laatste dia geweest,\ndan zal de eerste dia weer worden\nafgespeeld (eindeloze loop).";
+"NewSong-tagsExplained" = "De tags voor deze collectie. Wanneer\nje een zangdienst aanmaakt, dan kan\nje aangeven welke tags in welke\nsectie horen zodat de zangdienst\ngenerator automatisch een zangdienst\nkan genereren.";
+
+"NewSong-menu-Sheets" = "Dia's";
+"NewSong-menu-changeTimes" = "Bewerk dia tijden";
+"NewSong-menu-showPreview" = "Test wijzigingen";
+"NewSong-menu-upload" = "Upload";
 
 "Lyrics-titleBibleTextChange" = "Voer bijbelteksten in";
 "Lyrics-titleBibleText" = "Wijzig bijbelteksten";
 "Lyrics-titleLyrics" = "Voer tekst in";
-"Lyrics-placeholderBibleText" = "Genesis 1:1-16\nIn het begin maakte God de hemelen en de aarde. 2De aarde was woest en leeg en over de watermassa lag een diepe duisternis. Maar de Geest van God zweefde boven de watermassa.\n\nJohannes 3:16\nWant God heeft zoveel liefde voor de wereld dat Hij zijn enige Zoon heeft gegeven, zodat ieder die in Hem gelooft, niet verloren gaat maar eeuwig leven heeft.";
+"Lyrics-placeholderBibleText" = "Genesis 1:1-2\nIn het begin maakte God de hemelen en de aarde. 2De aarde was woest en leeg en over de watermassa lag een diepe duisternis. Maar de Geest van God zweefde boven de watermassa.\n\nJohannes 3:16\nWant God heeft zoveel liefde voor de wereld dat Hij zijn enige Zoon heeft gegeven, zodat ieder die in Hem gelooft, niet verloren gaat maar eeuwig leven heeft.";
 "Lyrics-placeholderLyrics" = "Schrijf of plak hier de tekst van het liedje";
+"Lyrics-placeholderLyrics" = "Volg het volgende formaat: Lied titel\n\nDia tekst\nDia tekst\nDia tekst\nDia tekst\n\nDia tekst\nDia tekst\nDia tekst\nDia tekst";
 
 "Themes-title" = "Thema's";
 "Themes-searchBarPlaceholderText" = "Zoek thema's";
@@ -186,7 +194,7 @@
 "CustomSheets-Edit-title" = "Maak nieuwe dia";
 "CustomSheets-Edit-titleChange" = "Wijig dia";
 
-"SongServiceManagement-title" = "Zangdienst schema";
+"SongServiceManagement-title" = "Kerkdienst schema";
 "SongServiceManagement-numberOfSections" = "Aantal secties";
 "SongServiceManagement-section" = "Sectie";
 "SongServiceManagement-nameSection" = "Naam sectie";
@@ -325,6 +333,7 @@
 "UploadUniversalSong-startTime" = "Start tijd";
 "UploadUniversalSong-defaultTheme" = "Basis thema";
 "UploadUniversalSong-shareSheetTimes" = "Deel sheettijden";
+"UploadUniversalSong-saveClusterConformationQuestion" = "Weet je zeker dat je het wil opslaan?";
 
 "AboutController-title" = "Contactinformatie";
 "AboutController-sectionAbout" = "Over de ontwikkelaar";
@@ -337,6 +346,8 @@
 
 "SingInGoogleController-title" = "Inloggen Agenda";
 "SingInGoogleController-infoText" = "Om de activiteiten op te halen uit je kerk agenda is het nodig om in te loggen bij Google agenda. Klik hieronder om (opnieuw) in te loggen bij Google.";
+
+"RequesterErrors-noUID" = "We konden geen gebruiker vinden. Log opnieuw uit / uit.";
 
 "RequesterErrors-errorParsing" = "Er ging iets mis met het verwerken van de data: %@";
 "RequesterErrors-failedSavingImageLocallyBeforeSubmit" = "Kon media niet op apparaat opslaan voor %@: %@";

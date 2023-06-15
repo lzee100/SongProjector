@@ -69,12 +69,13 @@ import SwiftUI
         }
     }
     
-    var lyricsOrBibleStudyText: String = ""
+    @Published var lyricsOrBibleStudyText: String = ""
     @Published var themeSelectionModel: ThemesSelectionModel
     @Published var tagsSelectionModel: TagSelectionModel
 
     @Published private(set) var collectionType: CollectionType = .none
     @Published var cluster: ClusterCodable
+    @Published var clusterStartTime: String = ""
     @Published var isNew = false
     @Published var title: String = ""
     
@@ -84,12 +85,13 @@ import SwiftUI
     @Published var clusterTime: Int = 0
     @Published var error: LocalizedError?
     @Published var showingLoader = false
-    
+    @Published var instrumentsModel = InstrumentsModel()
+
     var hasOtherSheetTypes: Bool {
         sheets.filter { $0.themeModel.theme.isHidden }.count > 0
     }
     var showTimePickerScrollView: Bool {
-        ![.bibleStudy, .lyrics].contains(collectionType)
+        ![.bibleStudy, .lyrics].contains(collectionType) || uploadSecret == nil || !sheets.contains(where: { !$0.sheetTime.isBlanc }) || !instrumentsModel.instruments.contains(where: { $0.resourcePath != nil })
     }
     var canDeleteSheets: Bool {
         ![.bibleStudy, .lyrics].contains(collectionType)
@@ -148,7 +150,8 @@ import SwiftUI
                                 sheetEditType: collectionType == .lyrics ? .lyrics : collectionType == .bibleStudy ? .bibleStudy : .custom
                             )
                             
-                        }
+                        }.sorted(by: { $0.sheetModel.position < $1.sheetModel.position })
+                        
                         switch collectionType {
                         case .lyrics:
                             lyricsOrBibleStudyText = GenerateLyricsSheetContentUseCase().getTextFrom(cluster: unwrappedCluster, models: sheets)
@@ -173,7 +176,11 @@ import SwiftUI
         switch collectionType {
         case .bibleStudy:
             Task {
-                await bibleStudyTextDidChange(updateExistingSheets: false, parentViewSize: sheetSize)
+                await bibleStudyTextDidChange(
+                    lyricsOrBibleStudytext: self.lyricsOrBibleStudyText,
+                    updateExistingSheets: false,
+                    parentViewSize: sheetSize
+                )
                 await updateCustomSheets()
             }
         case .lyrics:
@@ -187,15 +194,18 @@ import SwiftUI
         }
     }
     
-    func bibleStudyTextDidChange(updateExistingSheets: Bool, parentViewSize: CGSize) async {
-        var sheetsWithIndex = [(Int ,SheetViewModel)]()
+    func bibleStudyTextDidChange(lyricsOrBibleStudytext: String, updateExistingSheets: Bool, parentViewSize: CGSize) async {
+        var sheetsWithIndex: [(Int ,SheetViewModel)] = []
         for (index, sheet) in sheets.enumerated() {
             if !sheet.sheetModel.isBibleVers {
                 sheetsWithIndex.append((index, sheet))
             }
         }
-        let text = updateExistingSheets ? await getBibleStudyString() : lyricsOrBibleStudyText
-        if text.count > 0, let theme = themeSelectionModel.selectedTheme {
+        let text = updateExistingSheets ? await getBibleStudyString() : lyricsOrBibleStudytext
+        if text.count == 0 {
+            self.deletedSheets = sheets
+            sheets = []
+        } else if text.count > 0, let theme = themeSelectionModel.selectedTheme {
             Task {
                 let bibleStudyTitleContent = try await BibleStudyTextUseCase().generateSheetsFromText(
                     text,
@@ -208,13 +218,14 @@ import SwiftUI
                 var updatedSheets = bibleStudyTitleContent
                 for indexWithSheet in sheetsWithIndex {
                     let (index, sheet) = indexWithSheet
-                    updatedSheets.insert(sheet, at: index)
+                    print(index)
+                    updatedSheets.insert(sheet, at: min(index, updatedSheets.count))
                 }
                 self.sheets = updatedSheets
             }
         }
     }
-        
+    
     func lyricsTextDidChange(screenWidth: CGFloat) async {
         do {
             let lyrics = lyricsOrBibleStudyText
@@ -222,6 +233,9 @@ import SwiftUI
                 title = GenerateLyricsSheetContentUseCase().getTitle(from: lyrics)
                 cluster.title = title
                 let models = try await GenerateLyricsSheetContentUseCase().buildSheetsModels(from: lyrics, cluster: cluster)
+                for (index, model) in models.enumerated() {
+                    model.sheetTime = sheets[safe: index]?.sheetTime ?? ""
+                }
                 sheets = models
             }
         } catch {
@@ -236,7 +250,7 @@ import SwiftUI
     func getLyricsString() -> String {
         return GenerateLyricsSheetContentUseCase().getTextFrom(cluster: cluster, models: sheets)
     }
-
+    
     func delete(model: SheetViewModel) {
         guard let index = sheets.firstIndex(where: { $0.sheetModel.sheet.id == model.sheetModel.sheet.id }) else { return }
         if !model.sheetModel.isNew {
@@ -260,7 +274,6 @@ import SwiftUI
     }
     
     func add(_ model: SheetViewModel) {
-        var model = model
         if let index = sheets.firstIndex(where: { $0.sheetModel.sheet.id == model.sheetModel.sheet.id }) {
             sheets.remove(at: index)
             model.sheetModel.position = index
@@ -283,18 +296,18 @@ import SwiftUI
         }
     }
     
-    func saveCluster() async -> Bool {
-        showingLoader = true
+    func generatePreviewCluster() throws -> ClusterCodable {
+        var updatedCluster = cluster
         guard let selectedTheme = themeSelectionModel.selectedTheme else {
             error = Error.noThemeSelected
             showingLoader = false
-            return false
+            throw Error.noThemeSelected
         }
         
         guard !title.isBlanc else {
             error = Error.noTitle
             showingLoader = false
-            return false
+            throw Error.noTitle
         }
         
         do {
@@ -307,26 +320,102 @@ import SwiftUI
                 }
             }
             
-            cluster.title = title
-            cluster.time = showTimePickerScrollView ? Double(clusterTime) : 0
-            cluster.hasTags = tagsSelectionModel.selectedTags
-            cluster.tagIds = tagsSelectionModel.selectedTags.compactMap { $0.id }
-            cluster.theme = selectedTheme
-            cluster.themeId = selectedTheme.id
-            cluster.hasSheets = codableSheets
+            updatedCluster.title = title
+            updatedCluster.startTime = Double(clusterStartTime) ?? 0.0
+            updatedCluster.time = showTimePickerScrollView ? Double(clusterTime) : 0
+            updatedCluster.hasTags = tagsSelectionModel.selectedTags
+            updatedCluster.tagIds = tagsSelectionModel.selectedTags.compactMap { $0.id }
+            updatedCluster.theme = selectedTheme
+            updatedCluster.themeId = selectedTheme.id
+            updatedCluster.hasSheets = codableSheets
+            updatedCluster.hasInstruments = instrumentsModel.instruments.compactMap({ instrument in
+                if let resourcePath = instrument.resourcePath?.absoluteString {
+                    return InstrumentCodable(resourcePath: resourcePath)
+                }
+                return nil
+            })
+            return updatedCluster
             
+        } catch {
+            let locError = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
+            self.error = locError
+            throw locError
+        }
+    }
+    
+    func saveCluster() async -> Bool {
+        var updatedCluster = cluster
+        showingLoader = true
+        guard let selectedTheme = themeSelectionModel.selectedTheme else {
+            error = Error.noThemeSelected
+            showingLoader = false
+            return false
+        }
+        
+        guard !title.isBlanc else {
+            error = Error.noTitle
+            showingLoader = false
+            return false
+        }
+
+        do {
+            var codableSheets: [SheetMetaType] = []
+            for (index, sheet) in sheets.enumerated() {
+                if var createdSheet = try sheet.createSheetCodable() {
+                    createdSheet.position = index
+                    codableSheets.append(createdSheet)
+
+                }
+            }
+            
+            let church = await GetChurchUseCase().get()?.title ?? "De Deur Zwolle"
+            
+            updatedCluster.title = title
+            updatedCluster.church = church
+            updatedCluster.startTime = Double(clusterStartTime) ?? 0.0
+            updatedCluster.time = showTimePickerScrollView ? Double(clusterTime) : 0
+            updatedCluster.hasTags = tagsSelectionModel.selectedTags
+            updatedCluster.tagIds = tagsSelectionModel.selectedTags.compactMap { $0.id }
+            updatedCluster.theme = selectedTheme
+            updatedCluster.themeId = selectedTheme.id
+            updatedCluster.hasSheets = codableSheets
+            updatedCluster.hasInstruments = try instrumentsModel.instruments
+                .compactMap { instrument in
+                    guard let resourcePath = instrument.resourcePath else { return nil }
+                    let fileName = GetFileNameUseCase(pathExtension: resourcePath.pathExtension).getFileName()
+                    let tempURL = GetFileURLUseCase(fileName: fileName).getURL(location: .temp)
+                    try FileManager.default.copyItem(at: resourcePath, to: tempURL)
+                    return InstrumentCodable(resourcePath: fileName, typeString: instrument.instrumentType.rawValue)
+                }
             var deleteObjects: [DeleteObject] {
                 deletedSheets.compactMap { $0.sheetModel.sheet }.flatMap { $0.getDeleteObjects(forceDelete: true) }
             }
+
+            try await SubmitUseCase(endpoint: uploadSecret != nil ? .universalclusters : .clusters, requestMethod: isNew ? .post : .put, uploadObjects: [updatedCluster], deleteObjects: deleteObjects).submit()
             
-            try await SubmitUseCase(endpoint: .clusters, requestMethod: isNew ? .post : .put, uploadObjects: [cluster], deleteObjects: deleteObjects).submit()
             showingLoader = false
             return true
-            
+
         } catch {
             showingLoader = false
             self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
             return false
+        }
+    }
+    
+    func canDelete(sheetViewModel: SheetViewModel) -> Bool {
+        if sheetViewModel.sheetModel.sheet.isBibleVers {
+            return false
+        } else if (sheetViewModel.sheetModel.sheet as? SheetEmptyCodable)?.theme == nil {
+            return false
+        }
+        return true
+    }
+    
+    func move(from source: IndexSet, to destination: Int) {
+        sheets.move(fromOffsets: source, toOffset: destination)
+        for (index, sheet) in sheets.enumerated() {
+            sheet.sheetModel.position = index
         }
     }
     
@@ -346,11 +435,14 @@ import SwiftUI
             let theme = try await CreateThemeUseCase().create()
             sheets = try await sheets.concurrentCompactMap({ model in
                 guard !model.sheetModel.isBibleVers else { return model }
-                return try await SheetViewModel(cluster: self.cluster, theme: model.themeModel.theme, defaultTheme: theme, sheet: model.sheetModel.sheet, sheetType: model.sheetModel.sheetType, sheetEditType: model.sheetEditType)
-            })
+                let updatedSheet = model.sheetModel.sheet.set(sheetTime: Double(model.sheetTime) ?? 0.0)
+                let newModel = try await SheetViewModel(cluster: self.cluster, theme: model.themeModel.theme, defaultTheme: theme, sheet: updatedSheet, sheetType: model.sheetModel.sheetType, sheetEditType: model.sheetEditType)
+                newModel.title = model.title
+                newModel.sheetModel.position = model.sheetModel.position
+                return newModel
+            }).sorted(by: { $0.sheetModel.position < $1.sheetModel.position })
         } catch {
             self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
         }
     }
-    
 }

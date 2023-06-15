@@ -16,6 +16,10 @@ class AppText: NSObject {
 		static let development = NSLocalizedString("Environments-development", comment: "")
 		static let production = NSLocalizedString("Environments-production", comment: "")
 	}
+    
+    struct Start {
+        static let syncingAccountData = NSLocalizedString("Start-syncingAccountData", comment: "")
+    }
 	
 	struct Generic {
 		static let from = NSLocalizedString("Generic-from", comment: "")
@@ -207,6 +211,13 @@ class AppText: NSObject {
 		static let changeTitleTime = NSLocalizedString("NewSong-changeTitleTime", comment: "")
         static let timeExplained = NSLocalizedString("NewSong-timeExplained", comment: "")
         static let tagsExplained = NSLocalizedString("NewSong-tagsExplained", comment: "")
+        
+        struct Menu {
+            static let sheets = NSLocalizedString("NewSong-menu-Sheets", comment: "")
+            static let changeTimes = NSLocalizedString("NewSong-menu-changeTimes", comment: "")
+            static let showPreview = NSLocalizedString("NewSong-menu-showPreview", comment: "")
+            static let upload = NSLocalizedString("NewSong-menu-upload", comment: "")
+        }
 	}
     
     struct Lyrics {
@@ -441,6 +452,7 @@ class AppText: NSObject {
         static let startTime = NSLocalizedString("UploadUniversalSong-startTime", comment: "")
         static let defaultTheme = NSLocalizedString("UploadUniversalSong-defaultTheme", comment: "")
         static let shareSheetTimes = NSLocalizedString("UploadUniversalSong-shareSheetTimes", comment: "")
+        static let saveClusterConformationQuestion = NSLocalizedString("UploadUniversalSong-saveClusterConformationQuestion", comment: "")
 	}
     
     struct AboutController {
@@ -459,6 +471,8 @@ class AppText: NSObject {
     }
     
     struct RequesterErrors {
+        static let noUID = NSLocalizedString("RequesterErrors-noUID", comment: "")
+        
         static func errorParsing(_ error: Error) -> String {
             return String(format: NSLocalizedString("RequesterErrors-errorParsing", comment: ""),  error.localizedDescription)
         }

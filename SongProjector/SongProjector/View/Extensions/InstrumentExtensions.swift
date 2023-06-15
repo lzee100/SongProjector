@@ -31,6 +31,8 @@ enum InstrumentType : String {
 	case unKnown
 	
 	// MARK: - Construction
+    
+    static let all = [guitar, bassGuitar, drums, piano, pianoSolo]
 	
 	init(_ string: String?) {
 		

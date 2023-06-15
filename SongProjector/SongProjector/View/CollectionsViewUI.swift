@@ -10,18 +10,18 @@ import SwiftUI
 
 @MainActor class MusicDownloadManager: ObservableObject {
     
-    @Published private var musicDownloaders: [FetchMusicUseCase] = []
+    @Published private(set) var musicDownloaders: [FetchMusicUseCase] = []
     
-    func downloadMusicFor(collection: WrappedStruct<ClusterCodable>) async throws {
-        guard !musicDownloaders.contains(where: { $0.id == collection.item.id }) else { return }
+    func downloadMusicFor(collection: ClusterCodable) async throws {
+        guard !musicDownloaders.contains(where: { $0.id == collection.id }) else { return }
         let fetchMusicUseCase = FetchMusicUseCase(collection: collection)
         musicDownloaders.append(fetchMusicUseCase)
         try await fetchMusicUseCase.fetch()
-        musicDownloaders.removeAll(where: { $0.id == collection.item.id })
+        musicDownloaders.removeAll(where: { $0.id == collection.id })
     }
-
-    func isDownloading(for collection: WrappedStruct<ClusterCodable>) async -> Bool {
-        musicDownloaders.contains(where: { $0.id == collection.item.id })
+    
+    func isDownloading(for collection: ClusterCodable) async -> Bool {
+        musicDownloaders.contains(where: { $0.id == collection.id })
     }
 
 }
@@ -32,13 +32,12 @@ import SwiftUI
     
     @Published var error: LocalizedError?
     @Published var showDeletedCollections = false
-    @Published private(set) var collections: [WrappedStruct<ClusterCodable>] = []
+    @Published private(set) var collections: [ClusterCodable] = []
     private var unfilteredCollections: [ClusterCodable] = []
     @Published private(set) var showingLoader = false
     @ObservedObject var tagSelectionModel: TagSelectionModel = TagSelectionModel(mandatoryTags: [])
-    private var showDeleted = false
     private let customSelectionDelegate: CollectionsViewCustomSelectionDelegate?
-    @Published private var customSelectedSongsForSongService: [WrappedStruct<ClusterCodable>] = []
+    @Published private var customSelectedSongsForSongService: [ClusterCodable] = []
     var hasCustomSelectedSongsForSongService: Bool {
         return customSelectionDelegate != nil
     }
@@ -48,25 +47,25 @@ import SwiftUI
         customSelectionDelegate: CollectionsViewCustomSelectionDelegate?
     ) {
         self.tagSelectionModel = tagSelectionModel
-        self.customSelectedSongsForSongService = customSelectedSongsForSongService.map { WrappedStruct(withItem: $0) }
+        self.customSelectedSongsForSongService = customSelectedSongsForSongService
         self.customSelectionDelegate = customSelectionDelegate
     }
     
     func fetchCollections(searchText: String? = nil) async {
-        let searchText = searchText?.isBlanc ?? true ? nil : searchText
+        let searchText = searchText?.isBlanc ?? true ? self.searchText.isBlanc ? nil : self.searchText : searchText
         self.searchText = searchText ?? ""
         if unfilteredCollections.count > 0 {
-            collections = await FilteredCollectionsUseCase.getCollectionsIn(collections: unfilteredCollections, searchText: searchText, selectedTags: (tagSelectionModel.selectedTags + tagSelectionModel.mandatoryTags).unique).map { WrappedStruct(withItem: $0) }
+            collections = await FilteredCollectionsUseCase.getCollectionsIn(collections: unfilteredCollections, searchText: searchText, selectedTags: (tagSelectionModel.selectedTags + tagSelectionModel.mandatoryTags).unique, showDeleted: showDeletedCollections)
             return
         }
-        collections = await FilteredCollectionsUseCase.getCollections(searchText: searchText, showDeleted: showDeleted, selectedTags: (tagSelectionModel.selectedTags +  tagSelectionModel.mandatoryTags).unique).map { WrappedStruct(withItem: $0) }
+        collections = await FilteredCollectionsUseCase.getCollections(searchText: searchText, showDeleted: showDeletedCollections, selectedTags: (tagSelectionModel.selectedTags +  tagSelectionModel.mandatoryTags).unique)
     }
     
     func reload() async {
         let searchText = self.searchText.isBlanc ? nil : self.searchText
-        unfilteredCollections = await FilteredCollectionsUseCase.getCollections(searchText: nil, showDeleted: false, selectedTags: [])
+        unfilteredCollections = await FilteredCollectionsUseCase.getCollections(searchText: nil, showDeleted: true, selectedTags: [])
 
-        collections = await FilteredCollectionsUseCase.getCollectionsIn(collections: unfilteredCollections, searchText: searchText, selectedTags: (tagSelectionModel.selectedTags +  tagSelectionModel.mandatoryTags).unique)
+        collections = await FilteredCollectionsUseCase.getCollectionsIn(collections: unfilteredCollections, searchText: searchText, selectedTags: (tagSelectionModel.selectedTags +  tagSelectionModel.mandatoryTags).unique, showDeleted: showDeletedCollections)
     }
     
     func fetchRemoteThemes() async {
@@ -142,7 +141,7 @@ import SwiftUI
         showingLoader = true
         var collection = collection
         collection.deleteDate = Date()
-        if uploadSecret == nil {
+        if uploadSecret != nil {
             collection.rootDeleteDate = Date()
         }
         do {
@@ -156,19 +155,19 @@ import SwiftUI
     }
     
     func didSelectCustomSongForSongService(collection: ClusterCodable) {
-        if let index = customSelectedSongsForSongService.firstIndex(where: { $0.item.id == collection.id }) {
+        if let index = customSelectedSongsForSongService.firstIndex(of: collection) {
             customSelectedSongsForSongService.remove(at: index)
         } else {
-            customSelectedSongsForSongService.append(WrappedStruct(withItem: collection))
+            customSelectedSongsForSongService.append(collection)
         }
     }
     
     func isCustomSelectionSelected(_ collection: ClusterCodable) -> Bool {
-        customSelectedSongsForSongService.contains(where: { $0.item.id == collection.id })
+        customSelectedSongsForSongService.contains(collection)
     }
 
     func didSelectFinishCustomSelectionSongsForSongService() {
-        customSelectionDelegate?.didFinishCustomSelection(collections: customSelectedSongsForSongService.map { $0.item })
+        customSelectionDelegate?.didFinishCustomSelection(collections: customSelectedSongsForSongService)
     }
 }
 
@@ -214,6 +213,7 @@ struct CollectionsViewUI: View {
     @State var showingCollectionEditor: CollectionEditor?
     @State var alertMessage: AlertMessage? = nil
     @State var showingTrailingButtonAlertMessage = false
+    @EnvironmentObject var musicDownloadManager: MusicDownloadManager
 
     @State private var selectedCollectionForTrailingActions: ClusterCodable? = nil
     @SwiftUI.Environment(\.colorScheme) var colorScheme
@@ -227,7 +227,7 @@ struct CollectionsViewUI: View {
     ) {
         self._editingSection = editingSection
         self.songServiceEditorModel = songServiceEditorModel
-        let model = TagSelectionModel(mandatoryTags: mandatoryTags)
+        let model = TagSelectionModel(mandatoryTags: mandatoryTags, addDeleteTag: UIDevice.current.userInterfaceIdiom == .phone)
         _tagSelectionModel = StateObject(wrappedValue: model)
         self._viewModel = StateObject(wrappedValue: CollectionsViewModel(
             tagSelectionModel: model,
@@ -241,21 +241,17 @@ struct CollectionsViewUI: View {
             VStack(spacing: 0) {
                 HStack {
                     TagSelectionScrollViewUI(viewModel: viewModel.tagSelectionModel)
-                    Button {
-                        viewModel.showDeletedCollections.toggle()
-                    } label: {
-                        Text(AppText.Tags.deletedClusters)
+                    if UIDevice.current.userInterfaceIdiom == .pad {
+                        Button {
+                            viewModel.showDeletedCollections.toggle()
+                        } label: {
+                            Text(AppText.Tags.deletedClusters)
+                        }
+                        .styleAsSelectionCapsuleButton(isSelected: viewModel.showDeletedCollections)
                     }
-                    .styleAsSelectionCapsuleButton(isSelected: viewModel.showDeletedCollections)
                 }
-                .padding([.top, .leading, .trailing])
-            
-                ProgressView()
-                    .padding([.leading, .trailing])
-                    .tint(Color(uiColor: .blackColor).opacity(0.8))
-                    .transition(.scale)
-                    .opacity(viewModel.showingLoader ? 1 : 0)
-
+                .padding()
+                
                 List {
                     ForEach(viewModel.collections, id: \.listViewID) { collection in
                         Button {
@@ -293,7 +289,6 @@ struct CollectionsViewUI: View {
                 .refreshable {
                     await viewModel.fetchRemoteCollections()
                 }
-
             }
             .errorAlert(error: $viewModel.error)
             .navigationBarTitleDisplayMode(.inline)
@@ -318,6 +313,11 @@ struct CollectionsViewUI: View {
                     }
                 }
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    
+                    ProgressView()
+                        .tint(Color(uiColor: .blackColor).opacity(0.8))
+                        .opacity(viewModel.showingLoader ? 1 : 0)
+                    
                     Button {
                         showingCollectionEditor = .new
                     } label: {
@@ -378,6 +378,11 @@ struct CollectionsViewUI: View {
                 CollectionEditorViewUI(cluster: cluster, showingCollectionEditor: $showingCollectionEditor)
             }
         })
+        .onReceive(musicDownloadManager.$musicDownloaders) { _ in
+            Task {
+                await viewModel.reload()
+            }
+        }
     }
     
     @ViewBuilder private func deleteLocalMusicButton(collection: ClusterCodable) -> some View {

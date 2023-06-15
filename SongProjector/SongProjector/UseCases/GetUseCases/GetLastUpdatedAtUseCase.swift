@@ -24,11 +24,8 @@ actor GetLastUpdatedAtUseCase<T: Entity> {
         return await context.perform {
             do {
                 let result = try self.context.fetch(request)
-                print(result.first?.updatedAt)
-                print(result.first?.updatedAt?.date)
                 return result.first?.updatedAt?.date
             } catch {
-                print("Failed")
                 return nil
             }
         }

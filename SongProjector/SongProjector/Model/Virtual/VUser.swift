@@ -33,6 +33,7 @@ class VUser: VEntity {
     var adminCode: String? = nil
     var adminInstallTokenId: String? = nil
     var googleCalendarId: String? = nil
+    
     var productExpireDate: Date? {
         set {
             if let date = newValue {
@@ -48,6 +49,7 @@ class VUser: VEntity {
             return nil
         }
     }
+    
     var pilotStartDate: Date? {
         set {
             if let date = newValue {
@@ -63,6 +65,7 @@ class VUser: VEntity {
             return nil
         }
     }
+    
     var productId: String? {
         set {
             if let id = newValue {
@@ -75,6 +78,7 @@ class VUser: VEntity {
             return KeychainService.loadItem(serviceKey: productIdKey)
         }
     }
+    
     var hasActiveBeamContract: Bool {
         guard let expDate = productExpireDate, let productId = productId, let product = IAPProduct(productId), expDate.isAfter(Date()) else {
             return false
@@ -84,6 +88,7 @@ class VUser: VEntity {
         case .song: return false
         }
     }
+    
     var hasActiveSongContract: Bool {
         guard let expDate = productExpireDate, let productId = productId, let product = IAPProduct(productId), expDate.isAfter(Date()) else {
             return false

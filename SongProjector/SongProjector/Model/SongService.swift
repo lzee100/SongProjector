@@ -18,8 +18,12 @@ import UIKit
             setSelectedTheme()
             selectedSheetId = selectedSong?.sheets.first?.id
             updateSelectedSongSheetViewModels()
+            if let selectedSong {
+                Task {
+                    await LastShownAtSubmitterUseCase(collection: selectedSong.cluster).setPlayDate()
+                }
+            }
         }
-        
     }
     var selectedSheetId: String? {
         didSet {
@@ -202,7 +206,7 @@ class SongService: ObservableObject {
 				selectedSheet = selectedSong?.sheets.first
                 #if (!DEBUG)
                 if !isForPreviewUniversalSongEditing {
-                    selectedSong?.cluster.setLastShownAt()
+//                    selectedSong?.cluster.setLastShownAt()
                 }
                 SongServicePlayDateSubmitter.subMitPlayDate()
                 #endif  

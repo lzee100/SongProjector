@@ -128,10 +128,9 @@ extension ContractCodable: FileTransferable {
     
     func setUpdatedAt() -> FileTransferable {
         var modifiedDocument = self
-        modifiedDocument.updatedAt = Date.localDate()
+        modifiedDocument.updatedAt = Date()
         return modifiedDocument
-    }
-    
+    }    
     func setUserUID() throws -> FileTransferable {
         var modifiedDocument = self
         guard let userUID = Auth.auth().currentUser?.uid else {

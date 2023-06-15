@@ -10,7 +10,16 @@ import Foundation
 import FirebaseAuth
 import CoreData
 
-public struct UniversalUpdatedAtCodable: EntityCodableType, Codable {
+public struct UniversalUpdatedAtCodable: FileTransferable, Codable {
+    
+    static func makeDefault(id: String? = nil) throws -> UniversalUpdatedAtCodable {
+    #if DEBUG
+            let userId = "userid"
+    #else
+        throw EntityCodableError.noUID
+    #endif
+        return UniversalUpdatedAtCodable(id: id ?? "CHURCHBEAM" + UUID().uuidString)
+    }
     
     var id: String = "CHURCHBEAM" + UUID().uuidString
     var userUID: String = ""
@@ -18,7 +27,6 @@ public struct UniversalUpdatedAtCodable: EntityCodableType, Codable {
     var createdAt: Date = Date.localDate()
     var updatedAt: Date? = nil
     var deleteDate: Date? = nil
-    var isTemp: Bool = false
     var rootDeleteDate: Date? = nil
     
     var universalUpdatedAt: Date?
@@ -34,6 +42,38 @@ public struct UniversalUpdatedAtCodable: EntityCodableType, Codable {
         case rootDeleteDate
         
         case universalUpdatedAt
+    }
+    
+    init(
+        id: String = "CHURCHBEAM" + UUID().uuidString,
+        userUID: String = "",
+        title: String? = nil,
+        createdAt: Date = Date.localDate(),
+        updatedAt: Date? = nil,
+        deleteDate: Date? = nil,
+        isTemp: Bool = false,
+        rootDeleteDate: Date? = nil,
+        universalUpdatedAt: Date? = nil
+    ) {
+        self.id = id
+        self.userUID = userUID
+        self.title = title
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.deleteDate = deleteDate
+        self.rootDeleteDate = rootDeleteDate
+        self.universalUpdatedAt = universalUpdatedAt
+    }
+    
+    init?(entity: UniversalUpdatedAtEntity) {
+        id = entity.id
+        userUID = entity.userUID
+        title = entity.title
+        createdAt = entity.createdAt.date
+        updatedAt = entity.updatedAt?.date
+        deleteDate = entity.deleteDate?.date
+        rootDeleteDate = entity.rootDeleteDate?.date
+        universalUpdatedAt = entity.universalUpdatedAt?.date
     }
     
     // MARK: - Decodable
@@ -90,4 +130,45 @@ public struct UniversalUpdatedAtCodable: EntityCodableType, Codable {
             try container.encode(upAt.intValue, forKey: .universalUpdatedAt)
         }
     }
+    
+    var transferObjects: [TransferObject] = []
+    
+    var uploadObjects: [TransferObject] = []
+    
+    var downloadObjects: [TransferObject] = []
+    
+    mutating func setTransferObjects(_ transferObjects: [TransferObject]) throws {
+    }
+    
+    mutating func clearDataForDeletedObjects(forceDelete: Bool) {
+    }
+    
+    func getDeleteObjects(forceDelete: Bool) -> [DeleteObject] {
+        []
+    }
+    
+    func setDeleteDate() -> FileTransferable {
+        var modifiedDocument = self
+        if uploadSecret != nil {
+            modifiedDocument.rootDeleteDate = Date()
+        } else {
+            modifiedDocument.deleteDate = Date()
+        }
+        return modifiedDocument
+    }
+    
+    func setUpdatedAt() -> FileTransferable {
+        var modifiedDocument = self
+        modifiedDocument.updatedAt = Date()
+        return modifiedDocument
+    }    
+    func setUserUID() throws -> FileTransferable {
+        var modifiedDocument = self
+        guard let userUID = Auth.auth().currentUser?.uid else {
+            throw RequestError.unAuthorizedNoUser(requester: String(describing: self))
+        }
+        modifiedDocument.userUID = userUID
+        return modifiedDocument
+    }
+
 }

@@ -18,7 +18,6 @@ public struct AdminCodable: EntityCodableType, Codable {
     var createdAt: Date = Date.localDate()
     var updatedAt: Date? = nil
     var deleteDate: Date? = nil
-    var isTemp: Bool = false
     var rootDeleteDate: Date? = nil
     
     enum CodingKeys: String, CodingKey
@@ -30,6 +29,16 @@ public struct AdminCodable: EntityCodableType, Codable {
         case updatedAt
         case deleteDate = "deletedAt"
         case rootDeleteDate
+    }
+    
+    init?(entity: Admin) {
+        id = entity.id
+        userUID = entity.userUID
+        title = entity.title
+        createdAt = entity.createdAt.date
+        updatedAt = entity.updatedAt?.date
+        deleteDate = entity.deleteDate?.date
+        rootDeleteDate = entity.rootDeleteDate?.date
     }
     
     // MARK: - Decodable
@@ -59,6 +68,7 @@ public struct AdminCodable: EntityCodableType, Codable {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
         try container.encodeIfPresent(title, forKey: .title)
         guard let userUID = Auth.auth().currentUser?.uid else {
             throw RequestError.unAuthorizedNoUser(requester: String(describing: self))
@@ -116,10 +126,9 @@ extension AdminCodable: FileTransferable {
     
     func setUpdatedAt() -> FileTransferable {
         var modifiedDocument = self
-        modifiedDocument.updatedAt = Date.localDate()
+        modifiedDocument.updatedAt = Date()
         return modifiedDocument
-    }
-    
+    }    
     func setUserUID() throws -> FileTransferable {
         var modifiedDocument = self
         guard let userUID = Auth.auth().currentUser?.uid else {

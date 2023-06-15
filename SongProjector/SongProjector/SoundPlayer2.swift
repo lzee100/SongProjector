@@ -291,8 +291,8 @@ class SoundPlayer2: ObservableObject {
     private func loadSongAudioFor(instrument: InstrumentCodable) {
         
         var player = InstrumentPlayer()
-        if let urlString = instrument.resourcePath {
-            let url = GetFileURLUseCase(fileName: urlString).getURL(location: .persitent)
+        if let urlString = instrument.resourcePath, let url = urlString.contains(where: { $0 == "/"}) ? URL(string: urlString) :
+            GetFileURLUseCase(fileName: urlString).getURL(location: .persitent) {
             do {
                 player = try InstrumentPlayer(contentsOf: url)
                 player.instrumentType = instrument.type
