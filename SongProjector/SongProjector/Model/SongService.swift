@@ -156,7 +156,7 @@ import UIKit
         guard let selectedSong = selectedSong?.cluster else { return true }
         return !selectedSong.isTypeSong
     }
-
+    
 }
 
 var isForPreviewUniversalSongEditing = false
@@ -562,6 +562,7 @@ struct SongObjectUI: Equatable {
     let sectionHeader: String?
     let cluster: ClusterCodable
     let sheets: [SheetMetaType]
+    let sheetTitles: [String?]
     var id: String {
         cluster.id
     }
@@ -573,7 +574,6 @@ struct SongObjectUI: Equatable {
         if let theme = cluster.theme, theme.hasEmptySheet {
             var sheetEmpty = SheetEmptyCodable.makeDefault()!
             sheetEmpty.isEmptySheet = true
-            let sortedSheets = cluster.hasSheets.sorted(by: { $0.position < $1.position })
             let sheets = theme.isEmptySheetFirst ? [sheetEmpty] + cluster.hasSheets : cluster.hasSheets + [sheetEmpty]
             var positionedSheets: [SheetMetaType] = []
             for (index, sheet) in sheets.enumerated() {
@@ -584,6 +584,33 @@ struct SongObjectUI: Equatable {
             self.sheets = positionedSheets
         } else {
             self.sheets = cluster.hasSheets.sorted(by: { $0.position < $1.position })
+        }
+        
+        var titles: [String?] = []
+        if cluster.hasBibleVerses {
+            var currentTitle: String? = nil
+            var part: Int = 2
+            for sheet in sheets {
+                if let sheetEmpty = sheet as? SheetEmptyCodable, sheetEmpty.isEmptySheet {
+                    titles.append(nil)
+                } else if let title = sheet.title {
+                    if sheet.isBibleVers {
+                        currentTitle = title
+                    } else {
+                        currentTitle = nil
+                    }
+                    part = 2
+                    titles.append(title)
+                } else if let currentTitle {
+                    titles.append(currentTitle + " (\(AppText.SongService.part) \(part))")
+                    part += 1
+                } else {
+                    titles.append(nil)
+                }
+            }
+            self.sheetTitles = titles
+        } else {
+            sheetTitles = sheets.map { $0.title }
         }
     }
     

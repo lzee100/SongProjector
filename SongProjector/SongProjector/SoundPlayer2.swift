@@ -71,8 +71,13 @@ class SheetPlayer {
         selectedSong = song
         if song.cluster.time > 0 {
             setCollectionTimer()
-        } else {
-            setSheetTimers()
+        } else if let times = selectedSong?.sheets.compactMap({ $0.sheetTime }) {
+                let sortedTimes = times.sorted(by: <)
+            if times == sortedTimes {
+                setSheetTimersV2()
+            } else {
+                setSheetTimers()
+            }
         }
     }
     
@@ -104,6 +109,20 @@ class SheetPlayer {
                 }
             }
             timers.append(timer)
+        }
+    }
+    
+    private func setSheetTimersV2() {
+        guard let selectedSong else { return }
+        for (index, sheet) in selectedSong.cluster.hasSheets.enumerated() {
+            if let time = sheet.sheetTime {
+                let timer = Timer.scheduledTimer(withTimeInterval: time, repeats: false) { [weak self] _ in
+                    if let sheetId = selectedSong.sheets[safe: index + 1]?.id {
+                        self?.didSelectSheet?(sheetId)
+                    }
+                }
+                timers.append(timer)
+            }
         }
     }
 

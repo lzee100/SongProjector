@@ -13,10 +13,12 @@ actor SyncUniversalCollectionsUseCase: ObservableObject {
     
     @Published private(set) var isFetching = false
     
+//    private let endpoint = "https://us-central1-churchbeam-7a169.cloudfunctions.net/fetchUniversalClustersWithUID"
+
 #if DEBUG
     private let endpoint = "http://127.0.0.1:5001/churchbeamtest/us-central1/fetchUniversalClustersWithUID"
 #else
-    private let endpoint = "https://us-central1-churchbeamtest.cloudfunctions.net/fetchUniversalClustersWithUID"
+    private let endpoint = "https://us-central1-churchbeam-7a169.cloudfunctions.net/fetchUniversalClustersWithUID"
 #endif
 
     enum AuthError: Error {

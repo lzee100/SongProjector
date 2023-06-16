@@ -25,11 +25,12 @@ struct GenerateLyricsSheetContentUseCase {
         let contentToDevide = text.trimmingCharacters(in: .whitespacesAndNewlines)
         var sheetContent = contentToDevide.split(separator: "\n\n", omittingEmptySubsequences: false).map(String.init)
         guard sheetContent.filter({ !$0.isBlanc }).count > 0 else { return [] }
-        sheetContent.removeFirst() // removes the title
+        let title = sheetContent.removeFirst() // removes the title
         
         var models: [SheetViewModel] = []
         for (index, content) in sheetContent.enumerated() {
-            if var newSheet = SheetTitleContentCodable.makeDefault(position: index, title: nil, content: content) {
+            let sheetTitle = content.components(separatedBy: "\n").first ?? ""
+            if let newSheet = SheetTitleContentCodable.makeDefault(position: index, title: sheetTitle.isBlanc ? title : sheetTitle, content: content) {
                 let defaultTheme = try await CreateThemeUseCase().create()
                 let model = try await SheetViewModel(
                     cluster: cluster,

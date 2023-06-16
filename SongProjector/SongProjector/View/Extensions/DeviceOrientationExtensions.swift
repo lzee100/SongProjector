@@ -20,11 +20,11 @@ extension UIDeviceOrientation {
     }
     
     var isPortrait: Bool {
-        ![.landscapeLeft, .landscapeRight].contains(self)
+        [.portrait, .portraitUpsideDown].contains(self)
     }
     
     var isLandscape: Bool {
-        [.landscapeLeft, .landscapeRight].contains(self)
+        !isPortrait
     }
 
 }

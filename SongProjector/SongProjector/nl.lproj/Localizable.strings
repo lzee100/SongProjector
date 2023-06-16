@@ -87,6 +87,8 @@
 "SongService-titleTableSheets" = "Dia's";
 "SongService-warnCannotPlay" = "Het lijkt erop dat een andere gebruiker de zangdienst gestart is met dit account. Er kunnen geen twee zangdiensten tegelijk actief zijn. Je kan de zangdienst eventueel starten vanaf het admin account.";
 "SongService-startNew" = "Begin een nieuwe zangdienst";
+"SongService-part" = "deel";
+
 
 "NewSongService-title" = "Nieuwe zangdienst";
 "NewSongService-selectedSongsDescription" = "Hieronder staan de geselecteerde liedjes voor de zangdienst";

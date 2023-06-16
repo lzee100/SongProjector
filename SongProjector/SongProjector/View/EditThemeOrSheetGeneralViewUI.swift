@@ -65,7 +65,7 @@ struct EditThemeOrSheetGeneralViewUI: View {
             
             LabelPhotoPickerViewUI(label: AppText.NewTheme.backgroundImage, selectedImage: sheetViewModel.themeModel.getImage(thumb: true)) { image in
                 if let image {
-                    sheetViewModel.themeModel.newSelectedImage = image
+                    sheetViewModel.themeModel.setNewThemeImage(image)
                 } else {
                     sheetViewModel.themeModel.deleteThemeImage()
                 }

@@ -128,6 +128,7 @@ class AppText: NSObject {
 		static let titleTableSheets = NSLocalizedString("SongService-titleTableSheets", comment: "")
         static let warnCannotPlay = NSLocalizedString("SongService-warnCannotPlay", comment: "")
         static let startNew = NSLocalizedString("SongService-startNew", comment: "")
+        static let part = NSLocalizedString("SongService-part", comment: "")
 	}
 	
 	struct NewSongService {

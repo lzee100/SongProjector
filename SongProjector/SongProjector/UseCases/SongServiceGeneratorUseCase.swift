@@ -59,7 +59,7 @@ actor SongServiceGeneratorUseCase {
             var clustersForSection: [ClusterCodable] = []
             await filterOn(section.tagIds, to: &clustersForSection)
             filterOnPlayDate(&clustersForSection, numberOfSongs: section.numberOfSongs.intValue)
-            return SongServiceSectionWithSongs(title: section.title ?? "", cocList: map(clustersForSection, numberOfSongs: section.numberOfSongs.intValue, position: &position))
+            return SongServiceSectionWithSongs(title: section.title ?? "", cocList: map(clustersForSection, sectionName: section.title, numberOfSongs: section.numberOfSongs.intValue, position: &position))
         }
     }
     
@@ -100,10 +100,14 @@ actor SongServiceGeneratorUseCase {
         }
     }
     
-    private func map(_ clustersForSection: [ClusterCodable], numberOfSongs: Int, position: inout Int16) -> [ClusterComment] {
+    private func map(_ clustersForSection: [ClusterCodable], sectionName: String?, numberOfSongs: Int, position: inout Int16) -> [ClusterComment] {
         var clusterComments: [ClusterComment] = []
         for index in 0..<numberOfSongs {
-            if let cluster = clustersForSection[safe: index] {
+            if index == 0, var cluster = clustersForSection.first(where: { $0.title == sectionName }) {
+                cluster.position = position
+                clusterComments.append(.cluster(cluster))
+                position += 1
+            } else if let cluster = clustersForSection[safe: index] {
                 var changeableCluster = cluster
                 changeableCluster.position = position
                 clusterComments.append(.cluster(changeableCluster))

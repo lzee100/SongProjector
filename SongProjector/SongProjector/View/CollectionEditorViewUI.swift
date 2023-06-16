@@ -167,7 +167,8 @@ struct CollectionEditorViewUI: View {
                     font: .body,
                     collectionType: viewModel.collectionType,
                     delegate: self,
-                    sheetPresentMode: $sheetPresentMode
+                    sheetPresentMode: $sheetPresentMode,
+                    isNewSong: uploadSecret != nil
                 ))
             }
         })

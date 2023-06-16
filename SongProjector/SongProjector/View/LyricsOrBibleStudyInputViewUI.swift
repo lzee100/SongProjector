@@ -23,6 +23,7 @@ protocol LyricsOrBibleStudyInputViewModelDelegate {
 
     private let lyricsUseCase = GenerateLyricsSheetContentUseCase()
     private let delegate: LyricsOrBibleStudyInputViewModelDelegate?
+    private let isNewSong: Bool
     @State private var cluster: ClusterCodable
     @State private var collectionType: CollectionEditorViewModel.CollectionType
     @Binding private var sheetPresentMode: CollectionEditorViewUI.SheetPresentMode?
@@ -38,13 +39,15 @@ protocol LyricsOrBibleStudyInputViewModelDelegate {
         font: UIFont.TextStyle,
         collectionType: CollectionEditorViewModel.CollectionType,
         delegate: LyricsOrBibleStudyInputViewModelDelegate?,
-        sheetPresentMode: Binding<CollectionEditorViewUI.SheetPresentMode?>
+        sheetPresentMode: Binding<CollectionEditorViewUI.SheetPresentMode?>,
+        isNewSong: Bool
     ) {
         self.originalContent = originalContent
         self.delegate = delegate
         self._content = content
         self.cluster = cluster
         self._sheetPresentMode = sheetPresentMode
+        self.isNewSong = isNewSong
         self._collectionType = State(initialValue: collectionType)
     }
     
@@ -57,7 +60,7 @@ protocol LyricsOrBibleStudyInputViewModelDelegate {
             if collectionType == .lyrics {
                 let numberOfSheetsOriginal = try await lyricsUseCase.buildSheetsModels(from: originalContent, cluster: cluster).count
                 let numberOfSheetsNew = try await lyricsUseCase.buildSheetsModels(from: changedContent, cluster: cluster).count
-                if numberOfSheetsOriginal != 0 && (numberOfSheetsNew != numberOfSheetsOriginal) {
+                if !isNewSong, numberOfSheetsOriginal != 0 && (numberOfSheetsNew != numberOfSheetsOriginal) {
                     showingNumberOfSheetsError.toggle()
                 } else {
                     delegate?.didSave(content: changedContent)
@@ -136,6 +139,6 @@ struct LyricsOrBibleStudyInputViewUI_Previews: PreviewProvider {
     @State static var isShowingBibleStudy: CollectionEditorViewUI.SheetPresentMode? = nil
     @State static var content: String = ""
     static var previews: some View {
-        LyricsOrBibleStudyInputViewUI(viewModel: LyricsOrBibleStudyInputViewModel(originalContent: "", content: $content, cluster: .makeDefault()!, font: .callout, collectionType: .lyrics, delegate: nil, sheetPresentMode: $isShowingBibleStudy))
+        LyricsOrBibleStudyInputViewUI(viewModel: LyricsOrBibleStudyInputViewModel(originalContent: "", content: $content, cluster: .makeDefault()!, font: .callout, collectionType: .lyrics, delegate: nil, sheetPresentMode: $isShowingBibleStudy, isNewSong: true))
     }
 }

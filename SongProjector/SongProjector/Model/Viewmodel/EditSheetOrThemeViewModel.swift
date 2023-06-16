@@ -139,7 +139,6 @@ struct ThemeEditModel: Identifiable {
     mutating func setNewThemeImage(_ image: UIImage) {
         isImageDeleted = false
         newSelectedImage = image
-        newSelectedImageThumb = image.resized(withPercentage: 0.4)
     }
     
     mutating func deleteThemeImage() {

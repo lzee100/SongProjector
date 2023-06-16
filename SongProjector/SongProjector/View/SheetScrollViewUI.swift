@@ -136,7 +136,7 @@ struct SheetScrollViewUI: View {
                 let sheets = Array(selectedSong.sheets.enumerated())
                 ForEach(sheets, id: \.offset) { index, sheet in
                     HStack() {
-                        Text(sheet.title ?? "")
+                        Text(songServiceModel.selectedSong?.sheetTitles[index] ?? sheet.title ?? "")
                             .foregroundColor(songServiceModel.selectedSheetId == sheet.id ? Color(uiColor: .softBlueGrey) : Color(uiColor: .blackColor).opacity(0.8))
                             .lineLimit(2)
                             .styleAs(font: songServiceModel.selectedSheetId == sheet.id ? .xNormalBold : .xNormal)

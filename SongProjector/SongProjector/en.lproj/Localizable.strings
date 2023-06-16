@@ -86,6 +86,7 @@
 "SongService-titleTableSheets" = "Sheets";
 "SongService-warnCannotPlay" = "It seems that another user started the song service with this account. Two song services cannot be active at the same time. You can start the song service from the admin account.";
 "SongService-startNew" = "Start a new song service";
+"SongService-part" = "part";
 
 "NewSongService-title" = "New song service";
 "NewSongService-selectedSongsDescription" = "Below are the selected songs for the song service";

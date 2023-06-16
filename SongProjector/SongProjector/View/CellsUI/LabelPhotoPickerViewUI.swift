@@ -59,6 +59,7 @@ struct LabelPhotoPickerViewUI: View {
                                     .padding()
                                     .onTapGesture {
                                         self.selectedItem = nil
+                                        self.selectedImage = nil
                                         self.didSelectItem(nil)
                                     }
                             )

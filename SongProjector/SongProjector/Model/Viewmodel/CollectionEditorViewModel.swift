@@ -132,6 +132,7 @@ import SwiftUI
         self.collectionType = Self.editControllerType(for: cluster)
         self.isNew = cluster == nil
         self.title = cluster?.title ?? ""
+        self.clusterStartTime = String(unwrappedCluster.startTime)
         self.isUniversalSong = uploadSecret != nil
         
         defer {
@@ -379,14 +380,17 @@ import SwiftUI
             updatedCluster.theme = selectedTheme
             updatedCluster.themeId = selectedTheme.id
             updatedCluster.hasSheets = codableSheets
-            updatedCluster.hasInstruments = try instrumentsModel.instruments
-                .compactMap { instrument in
-                    guard let resourcePath = instrument.resourcePath else { return nil }
-                    let fileName = GetFileNameUseCase(pathExtension: resourcePath.pathExtension).getFileName()
-                    let tempURL = GetFileURLUseCase(fileName: fileName).getURL(location: .temp)
-                    try FileManager.default.copyItem(at: resourcePath, to: tempURL)
-                    return InstrumentCodable(resourcePath: fileName, typeString: instrument.instrumentType.rawValue)
-                }
+            
+            if instrumentsModel.instruments.filter({ $0.resourcePath != nil }).count > 0 {
+                updatedCluster.hasInstruments = try instrumentsModel.instruments
+                    .compactMap { instrument in
+                        guard let resourcePath = instrument.resourcePath else { return nil }
+                        let fileName = GetFileNameUseCase(pathExtension: resourcePath.pathExtension).getFileName()
+                        let tempURL = GetFileURLUseCase(fileName: fileName).getURL(location: .temp)
+                        try FileManager.default.copyItem(at: resourcePath, to: tempURL)
+                        return InstrumentCodable(resourcePath: fileName, typeString: instrument.instrumentType.rawValue)
+                    }
+            }
             var deleteObjects: [DeleteObject] {
                 deletedSheets.compactMap { $0.sheetModel.sheet }.flatMap { $0.getDeleteObjects(forceDelete: true) }
             }
