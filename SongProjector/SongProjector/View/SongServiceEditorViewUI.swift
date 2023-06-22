@@ -127,8 +127,7 @@ protocol SongServiceEditorViewDelegate {
         
         if let index = section.indexToChange {
             var updatedSection = section
-            updatedSection.cocList.remove(at: index)
-            updatedSection.cocList.insert(ClusterComment.cluster(collection), at: index)
+            updatedSection.change(collection: collection, at: index)
             sectionedSongs.insert(updatedSection, at: sectionIndex)
         } else {
             var clusterComments: [ClusterComment] = [.cluster(collection)] + section.cocList.compactMap({ $0.cluster }).map({ .cluster($0) })

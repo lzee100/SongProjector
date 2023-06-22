@@ -15,13 +15,13 @@ actor FetchUserUseCase {
         case noOauthToken
     }
     
-//    private let endpoint = URL(string: "https://us-central1-churchbeam-7a169.cloudfunctions.net/fetchUser")!
-//
-#if DEBUG
-    private let endpoint = URL(string: "http://127.0.0.1:5001/churchbeamtest/us-central1/fetchUser")!
-#else
     private let endpoint = URL(string: "https://us-central1-churchbeam-7a169.cloudfunctions.net/fetchUser")!
-#endif
+
+//#if DEBUG
+//    private let endpoint = URL(string: "http://127.0.0.1:5000/churchbeamtest/us-central1/fetchUser")!
+//#else
+//    private let endpoint = URL(string: "https://us-central1-churchbeam-7a169.cloudfunctions.net/fetchUser")!
+//#endif
     
     private(set) var isFetching = false
 

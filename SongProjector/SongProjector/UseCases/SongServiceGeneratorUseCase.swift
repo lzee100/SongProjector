@@ -33,8 +33,8 @@ struct SongServiceSectionWithSongs: Identifiable {
         return title + cocList.map({ $0.id }).joined()
     }
     let title: String
-    var cocList: [ClusterComment]
-    let songs: [SongObjectUI]
+    private(set) var cocList: [ClusterComment]
+    private(set) var songs: [SongObjectUI]
     var indexToChange: Int? = nil
     var selectedCollectionIds: [String] {
         return cocList.compactMap { $0.cluster?.id }
@@ -43,6 +43,12 @@ struct SongServiceSectionWithSongs: Identifiable {
     init(title: String, cocList: [ClusterComment]) {
         self.title = title
         self.cocList = cocList
+        songs = cocList.compactMap { $0.cluster }.map { SongObjectUI(cluster: $0) }
+    }
+    
+    mutating func change(collection: ClusterCodable, at index: Int) {
+        cocList.remove(at: index)
+        cocList.insert(ClusterComment.cluster(collection), at: index)
         songs = cocList.compactMap { $0.cluster }.map { SongObjectUI(cluster: $0) }
     }
     

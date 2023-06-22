@@ -12,6 +12,8 @@ struct EmptyViewEditUI: View {
     private let isForExternalDisplay: Bool
     
     @ObservedObject private var sheetViewModel: SheetViewModel
+    @State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    @State private var time = Date().time
     
     init(sheetViewModel: SheetViewModel, isForExternalDisplay: Bool) {
         self.sheetViewModel = sheetViewModel
@@ -19,13 +21,54 @@ struct EmptyViewEditUI: View {
     }
     
     var body: some View {
-        Rectangle().fill(.clear)
-            .setBackgroundImage(isForExternalDisplay: isForExternalDisplay, sheetViewModel: sheetViewModel)
-            .modifier(SheetBackgroundColorAndOpacityEditModifier(sheetViewModel: sheetViewModel))
-            .cornerRadius(isForExternalDisplay ? 0 : 10)
+        GeometryReader { proxy in
+            VStack(spacing: 0) {
+                HStack {
+                    if sheetViewModel.displayTime {
+                        Spacer()
+                        Text(getTitleAttributedString(text: time, viewSize: proxy.size))
+                            .padding(EdgeInsets(
+                                top: getScaledValue(10, width: proxy.size.width),
+                                leading: getScaledValue(10, width: proxy.size.width),
+                                bottom: getScaledValue(5, width: proxy.size.width),
+                                trailing: getScaledValue(10, width: proxy.size.width))
+                            )
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                            .lineLimit(1)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                Spacer()
+            }
+            .setBackgroundImage(isForExternalDisplay: isForExternalDisplay, theme: sheetViewModel.themeModel.theme)
+            .modifier(SheetBackgroundColorAndOpacityModifier(sheetTheme: sheetViewModel.themeModel.theme))
+            .cornerRadius(10)
             .aspectRatio(externalDisplayWindowRatioHeightWidth, contentMode: .fit)
             .ignoresSafeArea()
+            .onReceive(timer) { _ in
+                if sheetViewModel.displayTime {
+                    time = Date().time
+                    if Date().minute == 0 {
+                        timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
+                    }
+                } else {
+                    self.timer.upstream.connect().cancel()
+                }
+            }
+        }
     }
+    
+    private func getScaledValue(_ factor: CGFloat, width: CGFloat) -> CGFloat {
+        factor * getScaleFactor(width: width)
+    }
+    
+    private func getTitleAttributedString(text: String, viewSize: CGSize) -> AttributedString {
+        return AttributedString(NSAttributedString(
+            string: text,
+            attributes: sheetViewModel.themeModel.theme.getTitleAttributes(getScaleFactor(width: viewSize.width))
+        ))
+    }
+
 }
 
 
@@ -36,7 +79,9 @@ struct EmptyViewDisplayUI: View {
     private let sheet: SheetMetaType
     private let showSelectionCover: Bool
     private var theme: ThemeCodable?
-    
+    @State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    @State private var time = Date().time
+
     init(serviceModel: WrappedStruct<SongServiceUI>, sheet: SheetMetaType, isForExternalDisplay: Bool, showSelectionCover: Bool) {
         _songServiceModel = ObservedObject(initialValue: serviceModel)
         self.isForExternalDisplay = isForExternalDisplay
@@ -46,7 +91,25 @@ struct EmptyViewDisplayUI: View {
     }
     
     var body: some View {
-        Rectangle().fill(theme?.sheetBackgroundColor?.color ?? .clear)
+        GeometryReader { proxy in
+            VStack(spacing: 0) {
+                HStack {
+                    if theme?.displayTime ?? false {
+                        Spacer()
+                        Text(getTitleAttributedString(text: time, viewSize: proxy.size))
+                            .padding(EdgeInsets(
+                                top: getScaledValue(10, width: proxy.size.width),
+                                leading: getScaledValue(10, width: proxy.size.width),
+                                bottom: getScaledValue(5, width: proxy.size.width),
+                                trailing: getScaledValue(10, width: proxy.size.width))
+                            )
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                            .lineLimit(1)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                
+            }
             .setBackgroundImage(isForExternalDisplay: isForExternalDisplay, theme: theme)
             .modifier(SheetBackgroundColorAndOpacityModifier(sheetTheme: theme))
             .cornerRadius(10)
@@ -59,5 +122,28 @@ struct EmptyViewDisplayUI: View {
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
+            .onReceive(timer) { _ in
+                if theme?.displayTime ?? false {
+                    time = Date().time
+                    if Date().minute == 0 {
+                        timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
+                    }
+                } else {
+                    self.timer.upstream.connect().cancel()
+                }
+            }
+        }
     }
+    
+    private func getScaledValue(_ factor: CGFloat, width: CGFloat) -> CGFloat {
+        factor * getScaleFactor(width: width)
+    }
+    
+    private func getTitleAttributedString(text: String, viewSize: CGSize) -> AttributedString {
+        return AttributedString(NSAttributedString(
+            string: text,
+            attributes: theme?.getTitleAttributes(getScaleFactor(width: viewSize.width))
+        ))
+    }
+    
 }

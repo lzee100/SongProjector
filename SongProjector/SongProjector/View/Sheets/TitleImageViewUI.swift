@@ -9,10 +9,13 @@
 import SwiftUI
 
 struct TitleImageEditViewUI: View {
-    private let isForExternalDisplay: Bool
     
     @ObservedObject private var sheetViewModel: SheetViewModel
     
+    private let isForExternalDisplay: Bool
+    @State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    @State private var time = Date().time
+
     init(sheetViewModel: SheetViewModel, isForExternalDisplay: Bool) {
         self.sheetViewModel = sheetViewModel
         self.isForExternalDisplay = isForExternalDisplay
@@ -27,9 +30,9 @@ struct TitleImageEditViewUI: View {
                         Text(getTitleAttributedString(sheetViewModel.title, viewSize: proxy.size))
                             .modifier(SheetTitleEditUIModifier(scaleFactor: getScaleFactor(width: proxy.size.width), sheetViewModel: sheetViewModel, frameWidth: .infinity))
                             .lineLimit(1)
-                        if sheetViewModel.themeModel.theme.displayTime {
+                        if sheetViewModel.displayTime {
                             Spacer()
-                            Text(getTitleAttributedString(Date().time, viewSize: proxy.size))
+                            Text(getTitleAttributedString(time, viewSize: proxy.size))
                                 .modifier(SheetTitleEditUIModifier(scaleFactor: getScaleFactor(width: proxy.size.width), sheetViewModel: sheetViewModel))
                                 .lineLimit(1)
                         }
@@ -66,6 +69,16 @@ struct TitleImageEditViewUI: View {
             .cornerRadius(isForExternalDisplay ? 0 : 10)
             .aspectRatio(externalDisplayWindowRatioHeightWidth, contentMode: .fit)
             .ignoresSafeArea()
+            .onReceive(timer) { _ in
+                if sheetViewModel.themeModel.theme.displayTime {
+                    time = Date().time
+                    if Date().minute == 0 {
+                        timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
+                    }
+                } else {
+                    self.timer.upstream.connect().cancel()
+                }
+            }
         }
     }
     

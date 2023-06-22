@@ -13,7 +13,9 @@ struct TitleContentViewEditUI: View {
     @ObservedObject private var sheetViewModel: SheetViewModel
     
     private let isForExternalDisplay: Bool
-    
+    @State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    @State private var time = Date().time
+
     init(sheetViewModel: SheetViewModel, isForExternalDisplay: Bool) {
         self.sheetViewModel = sheetViewModel
         self.isForExternalDisplay = isForExternalDisplay
@@ -26,10 +28,10 @@ struct TitleContentViewEditUI: View {
                     Text(getTitleAttributedString(text: sheetViewModel.title, viewSize: proxy.size))
                         .modifier(SheetTitleEditUIModifier(scaleFactor: getScaleFactor(width: proxy.size.width), sheetViewModel: sheetViewModel, frameWidth: .infinity))
                         .lineLimit(1)
-                    if sheetViewModel.themeModel.theme.displayTime {
+                    if sheetViewModel.displayTime {
                         Spacer()
-                        Text(getTitleAttributedString(text: Date().time, viewSize: proxy.size))
-                            .modifier(SheetTitleEditUIModifier(scaleFactor: getScaleFactor(width: proxy.size.width), sheetViewModel: sheetViewModel, frameWidth: .infinity))
+                        Text(getTitleAttributedString(text: time, viewSize: proxy.size))
+                            .modifier(SheetTitleEditUIModifier(scaleFactor: getScaleFactor(width: proxy.size.width), sheetViewModel: sheetViewModel))
                             .lineLimit(1)
                     }
                 }
@@ -57,6 +59,16 @@ struct TitleContentViewEditUI: View {
         .cornerRadius(isForExternalDisplay ? 0 : 10)
         .aspectRatio(16 / 9, contentMode: .fit)
         .ignoresSafeArea()
+        .onReceive(timer) { _ in
+            if sheetViewModel.themeModel.theme.displayTime {
+                time = Date().time
+                if Date().minute == 0 {
+                    timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
+                }
+            } else {
+                self.timer.upstream.connect().cancel()
+            }
+        }
     }
     
     private func getTitleAttributedString(text: String, viewSize: CGSize) -> AttributedString {

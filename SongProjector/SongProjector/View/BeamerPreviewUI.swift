@@ -54,7 +54,7 @@ struct BeamerPreviewUI: View {
             
             guard let selectedSongIndex = songService.selectedSection, let selectedSong = songService.selectedSong else { return }
             guard selectedSongIndex + (songService.selectedSheetIndex ?? 0) != newValue else { return }
-            if newValue >= selectedSongIndex + selectedSong.cluster.hasSheets.count {
+            if newValue >= selectedSongIndex + selectedSong.sheets.count {
                 songService.selectedSong = songService.songs[safe: selectedSongIndex + 1]
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
                     self.selection = selectedSongIndex + 1

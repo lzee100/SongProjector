@@ -68,6 +68,16 @@ import SwiftUI
         collections = await FilteredCollectionsUseCase.getCollectionsIn(collections: unfilteredCollections, searchText: searchText, selectedTags: (tagSelectionModel.selectedTags +  tagSelectionModel.mandatoryTags).unique, showDeleted: showDeletedCollections)
     }
     
+    func fetchRemoteTags() async {
+        guard !showingLoader else { return }
+        
+        showingLoader = true
+        
+        await reload()
+        await tagSelectionModel.fetchRemoteTags()
+        showingLoader = false
+    }
+    
     func fetchRemoteThemes() async {
         guard !showingLoader else { return }
         
@@ -76,11 +86,9 @@ import SwiftUI
         await reload()
         do {
             let newThemes = try await FetchThemesUseCase(fetchAll: false).fetch()
+            showingLoader = false
             if newThemes.count > 0 {
-                showingLoader = false
                 await fetchRemoteThemes()
-            } else {
-                self.showingLoader = false
             }
         } catch {
             self.showingLoader = false
@@ -336,6 +344,7 @@ struct CollectionsViewUI: View {
             .autocorrectionDisabled()
         }
         .task {
+            await viewModel.fetchRemoteTags()
             await viewModel.fetchRemoteThemes()
             await viewModel.fetchRemoteCollections()
         }

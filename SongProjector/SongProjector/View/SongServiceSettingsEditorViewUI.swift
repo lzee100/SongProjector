@@ -69,7 +69,7 @@ import SwiftUI
         changeableSettings.sections = newSections
         return changeableSettings
     }
-
+    
 }
 
 struct SongServiceSettingsEditorViewUI: View {

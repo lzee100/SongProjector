@@ -35,6 +35,7 @@ class SheetViewModel: ObservableObject, Identifiable, Equatable {
     }
     
     let sheetEditType: SheetEditType
+    let displayTime: Bool
     @Published var themeModel: ThemeEditModel
     @Published var sheetModel: SheetEditModel
     
@@ -44,6 +45,8 @@ class SheetViewModel: ObservableObject, Identifiable, Equatable {
     init(cluster: ClusterCodable?, theme: ThemeCodable?, defaultTheme: ThemeCodable, sheet: SheetMetaType?, sheetType: SheetType, sheetEditType: SheetEditType) async throws {
         
         self.sheetEditType = sheetEditType
+        
+        self.displayTime = cluster?.theme?.displayTime ?? false
                 
         let themeForModel: ThemeCodable?
         switch sheetEditType {

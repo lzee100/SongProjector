@@ -13,13 +13,13 @@ actor SyncUniversalCollectionsUseCase: ObservableObject {
     
     @Published private(set) var isFetching = false
     
-//    private let endpoint = "https://us-central1-churchbeam-7a169.cloudfunctions.net/fetchUniversalClustersWithUID"
-
-#if DEBUG
-    private let endpoint = "http://127.0.0.1:5001/churchbeamtest/us-central1/fetchUniversalClustersWithUID"
-#else
     private let endpoint = "https://us-central1-churchbeam-7a169.cloudfunctions.net/fetchUniversalClustersWithUID"
-#endif
+
+//#if DEBUG
+//    private let endpoint = "http://localhost:5000/churchbeamtest/us-central1/fetchUniversalClustersWithUID"
+//#else
+//    private let endpoint = "https://us-central1-churchbeam-7a169.cloudfunctions.net/fetchUniversalClustersWithUID"
+//#endif
 
     enum AuthError: Error {
         case noOauthToken
@@ -35,11 +35,14 @@ actor SyncUniversalCollectionsUseCase: ObservableObject {
         do {
             var request = URLRequest(url: URL(string: endpoint)!)
             request.addValue(token, forHTTPHeaderField: "Authorization")
-            try await URLSession.shared.data(for: request)
+            let (result, error) = try await URLSession.shared.data(for: request)
+            print(error)
+            let json = try JSONSerialization.jsonObject(with: result, options: []) as? [String : Any]
+            print(json)
             isFetching = false
         } catch {
             isFetching = false
-            throw error
+            throw error 
         }
     }
 
