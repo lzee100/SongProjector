@@ -185,7 +185,7 @@ protocol CollectionsViewCustomSelectionDelegate{
 struct CollectionsViewUI: View {
     
     enum CollectionEditor: Identifiable {
-        case new
+        case new(type: CollectionEditorViewModel.CollectionType)
         case existing(ClusterCodable)
         
         var id: String {
@@ -326,16 +326,7 @@ struct CollectionsViewUI: View {
                         .tint(Color(uiColor: .blackColor).opacity(0.8))
                         .opacity(viewModel.showingLoader ? 1 : 0)
                     
-                    Button {
-                        showingCollectionEditor = .new
-                    } label: {
-                        Label {
-                            Text(AppText.Actions.add)
-                        } icon: {
-                            Image(systemName: "plus")
-                        }
-                        .tint(Color(uiColor: themeHighlighted))
-                    }
+                   menu
 
                 }
             }
@@ -381,10 +372,10 @@ struct CollectionsViewUI: View {
             }
         }, content: { editor in
             switch editor {
-            case .new:
-                CollectionEditorViewUI(cluster: nil, showingCollectionEditor: $showingCollectionEditor)
+            case .new(let collectionType):
+                CollectionEditorViewUI(cluster: nil, collectionType: collectionType, showingCollectionEditor: $showingCollectionEditor)
             case .existing(let cluster):
-                CollectionEditorViewUI(cluster: cluster, showingCollectionEditor: $showingCollectionEditor)
+                CollectionEditorViewUI(cluster: cluster, collectionType: cluster.collectionType, showingCollectionEditor: $showingCollectionEditor)
             }
         })
         .onReceive(musicDownloadManager.$musicDownloaders) { _ in
@@ -430,5 +421,32 @@ struct CollectionsViewUI: View {
             Text(AppText.Actions.restore)
         }
         .tint(Color(uiColor: .green1))
+    }
+    
+    @ViewBuilder private var menu: some View {
+        Menu {
+            ForEach(CollectionEditorViewModel.CollectionType.allCases, id: \.self) { collectionType in
+                Button {
+                    showingCollectionEditor = .new(type: collectionType)
+                } label: {
+                    Text(collectionType.title)
+                }
+            }
+        } label: {
+            Image(systemName: "plus")
+                .tint(Color(uiColor: themeHighlighted))
+        }
+    }
+    
+}
+
+fileprivate extension ClusterCodable {
+    var collectionType: CollectionEditorViewModel.CollectionType {
+        if self.isTypeSong {
+            return .lyrics
+        } else if self.hasBibleVerses {
+            return .bibleStudy
+        }
+        return .custom
     }
 }

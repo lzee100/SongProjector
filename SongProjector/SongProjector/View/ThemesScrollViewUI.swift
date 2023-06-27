@@ -30,6 +30,11 @@ import SwiftUI
         selectedTheme = selectedTheme?.id == theme?.id ? nil : theme
     }
     
+    func selectFirstthemeIfNeeded() {
+        if selectedTheme == nil {
+            selectedTheme = themes.first
+        }
+    }
 }
 
 struct ThemesScrollViewUI: View {

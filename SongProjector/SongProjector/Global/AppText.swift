@@ -198,6 +198,7 @@ class AppText: NSObject {
 		static let headerLyrics = NSLocalizedString("NewSong-headerLyrics", comment: "")
 		static let noTitleForSheet = NSLocalizedString("NewSong-noTitleForSheet", comment: "")
 		static let sheet = NSLocalizedString("NewSong-sheet", comment: "")
+        static let emptySheetAfterBibleStudyText = NSLocalizedString("NewSong-emptySheetAfterBibleStudyText", comment: "")
 		static let searchThemePlaceHolder = NSLocalizedString("NewSong-searchThemePlaceHolder", comment: "")
         static let errorTitleNoTheme = NSLocalizedString("NewSong-errorTitleNoTheme", comment: "")
         static let errorNoTitle = NSLocalizedString("NewSong-errorNoTitle", comment: "")
@@ -248,6 +249,12 @@ class AppText: NSObject {
 	}
 	
     struct CustomSheets {
+        
+        struct Menu {
+            static let Lyrics = NSLocalizedString("CustomSheets-CollectionType-Lyrics", comment: "")
+            static let BibleSheets = NSLocalizedString("CustomSheets-CollectionType-BibleSheets", comment: "")
+            static let Custom = NSLocalizedString("CustomSheets-CollectionType-Custom", comment: "")
+        }
         static let title = NSLocalizedString("CustomSheets-title", comment: "")
         static let namePlaceHolder = NSLocalizedString("CustomSheets-namePlaceHolder", comment: "")
         static let errorTitle = NSLocalizedString("CustomSheets-errorTitle", comment: "")
@@ -469,6 +476,12 @@ class AppText: NSObject {
     struct SingInGoogleController {
         static let title = NSLocalizedString("SingInGoogleController-title", comment: "")
         static let infoText = NSLocalizedString("SingInGoogleController-infoText", comment: "")
+    }
+    
+    struct UnknownError {
+        static func error(_ error: Error) -> String {
+            return String(format: NSLocalizedString("Error-unknownError", comment: ""),  error.localizedDescription)
+        }
     }
     
     struct RequesterErrors {

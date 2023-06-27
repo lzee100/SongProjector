@@ -135,6 +135,7 @@
 "NewSong-noTitleForSheet" = "Geen titel gevonden";
 "NewSong-sheet" = "Dia ";
 "NewSong-searchThemePlaceHolder" = "Zoek thema";
+"NewSong-emptySheetAfterBibleStudyText" = "Lege dia na bijbeltekst";
 "NewSong-errorTitleNoTheme" = "Fout";
 "NewSong-erorrMessageNoTheme" = "Selecteer een thema";
 "NewSong-errorNoTitle" = "De titel mag niet leeg zijn";
@@ -172,6 +173,10 @@
 "Tags-deletedClusters" = "Verwijderde items";
 "Tags-errorEmptyTitle" = "De titel mag niet leeg zijn";
 "Tags-editTag" = "Wijzig tag";
+
+"CustomSheets-CollectionType-Lyrics" = "Liedtekst dia's";
+"CustomSheets-CollectionType-BibleSheets" = "Bijbeltekst dia's";
+"CustomSheets-CollectionType-Custom" = "Overige dia's";
 
 "CustomSheets-title" = "Wijzig dia's";
 "CustomSheets-namePlaceHolder" = "Voer titel in (voor zoeken)";
@@ -348,6 +353,8 @@
 
 "SingInGoogleController-title" = "Inloggen Agenda";
 "SingInGoogleController-infoText" = "Om de activiteiten op te halen uit je kerk agenda is het nodig om in te loggen bij Google agenda. Klik hieronder om (opnieuw) in te loggen bij Google.";
+
+"Error-unknownError" = "Er ging iets mis: %@";
 
 "RequesterErrors-noUID" = "We konden geen gebruiker vinden. Log opnieuw uit / uit.";
 

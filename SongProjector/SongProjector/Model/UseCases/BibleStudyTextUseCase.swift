@@ -16,7 +16,14 @@ actor BibleStudyTextUseCase {
         case empty
     }
     
-    func generateSheetsFromText(_ text: String, parentViewSize: CGSize, theme: ThemeCodable, scaleFactor: CGFloat, cluster: ClusterCodable) async throws -> [SheetViewModel] {
+    func generateSheetsFromText(
+        _ text: String,
+        parentViewSize: CGSize,
+        theme: ThemeCodable,
+        scaleFactor: CGFloat,
+        cluster: ClusterCodable,
+        addEmptySheetAfterBibleStudyText: Bool
+    ) async throws -> [SheetViewModel] {
         
         let contentSize = calculateContentsize(parentViewSize: parentViewSize, theme: theme, scaleFactor: scaleFactor)
         let devided = text.components(separatedBy: "\n\n")
@@ -32,21 +39,41 @@ actor BibleStudyTextUseCase {
         
         for (index, title) in allTitles.enumerated() {
             let sheets = splitContentIntoSheets((title, onlyScriptures[index]), contentSize: contentSize, theme: theme, scaleFactor: scaleFactor)
-            sheetContent += (sheets.map { .titleContent(title: $0.title, content: $0.content)} + [.empty])
+            sheetContent += (sheets.map { .titleContent(title: $0.title, content: $0.content)} + (addEmptySheetAfterBibleStudyText ? [.empty] : []))
         }
         
         return try await makeEditModel(sheetContent, cluster: cluster, position: &position)
     }
     
     func getTextFromSheets(models: [SheetViewModel]) async -> String {
-        let bibleVersSheetsSplit = models.map { $0.sheetModel.sheet }.filter { $0.isBibleVers }.split(whereSeparator: { $0 is SheetEmptyCodable })
-
-        let text = bibleVersSheetsSplit.compactMap { Array($0) as? [SheetTitleContentCodable] }.compactMap { sheets in
-            var sheetContent = sheets.compactMap { $0.sheetContent }.joined(separator: "")
-            sheetContent = sheetContent.replacingOccurrences(of: ("\n\(sheets.first?.title ?? "")"), with: "")
-            return (title: sheets.first?.title ?? "", content: sheetContent.trimmingCharacters(in: .whitespacesAndNewlines))
+        let sheets = models.compactMap { $0.sheetModel.sheet.isBibleVers ? $0.sheetModel.sheet : nil }
+        let titles = sheets.map { $0.title }
+        
+        var sheetsSplitOnTitle = [[SheetMetaType]]()
+        var currentArray = [SheetMetaType]()
+        
+        for sheet in sheets {
+            if currentArray.count == 0 || sheet.title == nil {
+                currentArray.append(sheet)
+            } else {
+                sheetsSplitOnTitle.append(currentArray)
+                currentArray = []
+                currentArray.append(sheet)
+            }
         }
-        return text.compactMap({ [$0.title, $0.content].joined(separator: "\n")}).joined(separator: "\n\n")
+        if currentArray.count > 0 {
+            sheetsSplitOnTitle.append(currentArray)
+        }
+        let sheetsPerText = sheetsSplitOnTitle.map { sheets in
+            let title = sheets.compactMap { $0.title }.first
+            let content = sheets.compactMap { $0.sheetContent }.compactMap { content in
+                content.replacingOccurrences(of: ("\n\(title ?? "")"), with: "")
+            }.joined()
+            
+            return [title, content].compactMap { $0 }.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        
+        return sheetsPerText.joined(separator: "\n\n")
     }
 
     private func splitContentIntoSheets(_ titleContent: (title: String, contentWithTitle: String), contentSize: CGSize, theme: ThemeCodable, scaleFactor: CGFloat) -> [(title: String?, content: String)] {

@@ -143,6 +143,7 @@
 		E32C31402A39BDA2002D362E /* FetchUserUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32C313F2A39BDA2002D362E /* FetchUserUseCase.swift */; };
 		E32C31422A39CF5E002D362E /* FetchNeedsUpdateUniversalClustersUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32C31412A39CF5E002D362E /* FetchNeedsUpdateUniversalClustersUseCase.swift */; };
 		E32C31442A3A67E5002D362E /* LastShownAtSubmitterUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32C31432A3A67E5002D362E /* LastShownAtSubmitterUseCase.swift */; };
+		E32C31482A44F3D8002D362E /* ErrorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32C31472A44F3D8002D362E /* ErrorExtensions.swift */; };
 		E32D4D6520017E0100ED81A7 /* EditSongIphoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32D4D6420017E0100ED81A7 /* EditSongIphoneController.swift */; };
 		E32DB8DC2221E29600277C45 /* Contract.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32DB8DB2221E29600277C45 /* Contract.swift */; };
 		E32DB8E02230283A00277C45 /* ContractLedger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32DB8DF2230283A00277C45 /* ContractLedger.swift */; };
@@ -659,6 +660,7 @@
 		E32C313F2A39BDA2002D362E /* FetchUserUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchUserUseCase.swift; sourceTree = "<group>"; };
 		E32C31412A39CF5E002D362E /* FetchNeedsUpdateUniversalClustersUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchNeedsUpdateUniversalClustersUseCase.swift; sourceTree = "<group>"; };
 		E32C31432A3A67E5002D362E /* LastShownAtSubmitterUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastShownAtSubmitterUseCase.swift; sourceTree = "<group>"; };
+		E32C31472A44F3D8002D362E /* ErrorExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorExtensions.swift; sourceTree = "<group>"; };
 		E32D4D6420017E0100ED81A7 /* EditSongIphoneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSongIphoneController.swift; sourceTree = "<group>"; };
 		E32DB8DB2221E29600277C45 /* Contract.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contract.swift; sourceTree = "<group>"; };
 		E32DB8DF2230283A00277C45 /* ContractLedger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContractLedger.swift; sourceTree = "<group>"; };
@@ -1408,6 +1410,7 @@
 				E33BFE9629E85C3500912B4E /* UIViewExtensions.swift */,
 				E33CFCFC2A1437FC00F5D217 /* NSSortDescriptorExtensions.swift */,
 				E332ED2D2A1B8531003DCE68 /* SequenceExtensions.swift */,
+				E32C31472A44F3D8002D362E /* ErrorExtensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -2497,6 +2500,7 @@
 				E34B570D2A16A219004DF83D /* NumberScrollViewUI.swift in Sources */,
 				E30B8ED6224DFBE900F121D9 /* TagSelectionController.swift in Sources */,
 				E37FFC9F2A22CC23005DD5BF /* SaveCodableToCorDataUseCase.swift in Sources */,
+				E32C31482A44F3D8002D362E /* ErrorExtensions.swift in Sources */,
 				E33CFCF72A14087500F5D217 /* TagEditorViewUI.swift in Sources */,
 				E351AB802A308E4B00163A46 /* DocumentPickerViewUI.swift in Sources */,
 				E3896A3521E3F0E3008CB5A5 /* AccountStore.swift in Sources */,

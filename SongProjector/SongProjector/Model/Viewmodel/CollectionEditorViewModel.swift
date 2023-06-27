@@ -11,12 +11,13 @@ import SwiftUI
 
 @MainActor class CollectionEditorViewModel: ObservableObject {
     
-    enum EditAction: Identifiable {
+    enum MenuItem: Identifiable {
         var id: String {
             return UUID().uuidString
         }
         case add
         case change
+        case menu
         case save
     }
     
@@ -34,46 +35,29 @@ import SwiftUI
         }
     }
     
-    enum CollectionType: Equatable {
-        case none
+    enum CollectionType: Equatable, CaseIterable, Identifiable {
+        var id: String {
+            return UUID().uuidString
+        }
         case lyrics
         case bibleStudy
-        case customSheet(type: SheetType)
+        case custom
         
-        func sheet() async -> SheetMetaType? {
+        var title: String {
             switch self {
-            case .customSheet(type: let type):
-                return await type.makeDefault()
-            default: return nil
-            }
-        }
-        
-        var sheetType: SheetType? {
-            switch self {
-            case .customSheet(type: let type):
-                return type
-            default: return nil
-            }
-        }
-        var isBibleStudy: Bool {
-            switch self {
-            case .bibleStudy: return true
-            case .none, .lyrics, .customSheet: return false
-            }
-        }
-        var isCustomType: Bool {
-            switch self {
-            case .customSheet: return true
-            default: return false
+            case .lyrics: return AppText.CustomSheets.Menu.Lyrics
+            case .bibleStudy: return AppText.CustomSheets.Menu.BibleSheets
+            case .custom: return AppText.CustomSheets.Menu.Custom
             }
         }
     }
     
+    let collectionType: CollectionType
+
     @Published var lyricsOrBibleStudyText: String = ""
     @Published var themeSelectionModel: ThemesSelectionModel
     @Published var tagsSelectionModel: TagSelectionModel
 
-    @Published private(set) var collectionType: CollectionType = .none
     @Published var cluster: ClusterCodable
     @Published var clusterStartTime: String = ""
     @Published var isNew = false
@@ -81,60 +65,52 @@ import SwiftUI
     
     @Published var isUniversalSong = false // has no save option
     @Published var sheets: [SheetViewModel] = []
-    private var deletedSheets: [SheetViewModel] = []
     @Published var clusterTime: Int = 0
     @Published var error: LocalizedError?
     @Published var showingLoader = false
     @Published var instrumentsModel = InstrumentsModel()
+    @Published var addEmptySheetAfterBibleStudyText = true
+
+    private var deletedSheets: [SheetViewModel] = []
 
     var hasOtherSheetTypes: Bool {
         sheets.filter { $0.themeModel.theme.isHidden }.count > 0
     }
     var showTimePickerScrollView: Bool {
-        ![.bibleStudy, .lyrics].contains(collectionType) || uploadSecret == nil || !sheets.contains(where: { !$0.sheetTime.isBlanc }) || !instrumentsModel.instruments.contains(where: { $0.resourcePath != nil })
+        ![.bibleStudy, .lyrics].contains(collectionType) && !sheets.contains(where: { !$0.sheetTime.isBlanc }) && !instrumentsModel.instruments.contains(where: { $0.resourcePath != nil })
     }
     var canDeleteSheets: Bool {
         ![.bibleStudy, .lyrics].contains(collectionType)
     }
-    var editActions: [EditAction] {
-        let optionalSaveAction: [EditAction] = sheets.count > 0 ? [.save] : []
-        if case .lyrics = collectionType {
-            return optionalSaveAction + [.change]
-        } else {
-            return optionalSaveAction + [.add]
+    var editActions: [MenuItem] {
+        switch collectionType {
+        case .lyrics: return sheets.count > 0 ? [.save, .change] : [.add]
+        case .custom, .bibleStudy: return sheets.count > 0 ? [.save, .menu] : [.menu]
         }
     }
     
-    func customSheetsEditModel(collectionType: CollectionType) async -> SheetViewModel? {
-        do {
-            let defaultTheme = try await CreateThemeUseCase().create(isHidden: true)
-            var sheet = await collectionType.sheet()
-            sheet = sheet?.set(theme: defaultTheme)
-            if let type = collectionType.sheetType, let sheet = sheet {
-                return try await SheetViewModel(cluster: cluster, theme: sheet.theme, defaultTheme: defaultTheme, sheet: sheet, sheetType: type, sheetEditType: .custom)
-            } else {
-                return nil
-            }
-        } catch {
-            self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
-            return nil
-        }
-    }
-
-    init?(cluster: ClusterCodable?, themeSelectionModel: ThemesSelectionModel, tagsSelectionModel: TagSelectionModel) {
+    init?(
+        cluster: ClusterCodable?,
+        themeSelectionModel: ThemesSelectionModel,
+        tagsSelectionModel: TagSelectionModel,
+        collectionType: CollectionType
+    ) {
         guard let unwrappedCluster = cluster ?? .makeDefault() else {
             return nil
         }
         self.cluster = unwrappedCluster
         self.themeSelectionModel = themeSelectionModel
         self.tagsSelectionModel = tagsSelectionModel
+        self.collectionType = collectionType
         self.clusterTime = cluster?.time.intValue ?? 0
-        self.collectionType = Self.editControllerType(for: cluster)
         self.isNew = cluster == nil
         self.title = cluster?.title ?? ""
         self.clusterStartTime = String(unwrappedCluster.startTime)
         self.isUniversalSong = uploadSecret != nil
         
+        if cluster != nil {
+            addEmptySheetAfterBibleStudyText = unwrappedCluster.hasBibleVerses && unwrappedCluster.hasSheets.contains(where: { $0 is SheetEmptyCodable })
+        }
         defer {
             Task {
                 do {
@@ -158,7 +134,7 @@ import SwiftUI
                             lyricsOrBibleStudyText = GenerateLyricsSheetContentUseCase().getTextFrom(cluster: unwrappedCluster, models: sheets)
                         case .bibleStudy:
                             lyricsOrBibleStudyText = await BibleStudyTextUseCase().getTextFromSheets(models: sheets)
-                        case .none, .customSheet:
+                        case .custom:
                             break
                         }
                     } else {
@@ -188,9 +164,7 @@ import SwiftUI
             Task {
                 await lyricsTextDidChange(screenWidth: sheetSize.width)
             }
-        case .customSheet:
-            return
-        case .none:
+        case .custom:
             return
         }
     }
@@ -213,7 +187,8 @@ import SwiftUI
                     parentViewSize: parentViewSize,
                     theme: theme,
                     scaleFactor: getScaleFactor(width: parentViewSize.width),
-                    cluster: cluster
+                    cluster: cluster,
+                    addEmptySheetAfterBibleStudyText: addEmptySheetAfterBibleStudyText
                 )
                 
                 var updatedSheets = bibleStudyTitleContent
@@ -284,19 +259,7 @@ import SwiftUI
             sheets.append(model)
         }
     }
-    
-    func update(collectionType: CollectionType) {
-        guard collectionType != self.collectionType else { return }
-        if case .customSheet = collectionType, self.collectionType == .bibleStudy {
-            // dont change when custom sheet is added to biblestudy
-        } else if [.bibleStudy, .lyrics].contains(collectionType) {
-            self.collectionType = collectionType
-            deletedSheets += sheets
-        } else {
-            self.collectionType = collectionType
-        }
-    }
-    
+        
     func generatePreviewCluster() throws -> ClusterCodable {
         var updatedCluster = cluster
         guard let selectedTheme = themeSelectionModel.selectedTheme else {
@@ -416,21 +379,14 @@ import SwiftUI
         return true
     }
     
+    func canMove(_ sheetModel: SheetViewModel) -> Bool {
+        Double(sheetModel.sheetTime) ?? 0 > 0
+    }
     func move(from source: IndexSet, to destination: Int) {
         sheets.move(fromOffsets: source, toOffset: destination)
         for (index, sheet) in sheets.enumerated() {
             sheet.sheetModel.position = index
         }
-    }
-    
-    private static func editControllerType(for cluster: ClusterCodable?) -> CollectionType {
-        guard let cluster else { return .none }
-        if cluster.isTypeSong {
-            return .lyrics
-        } else if cluster.hasBibleVerses {
-            return .bibleStudy
-        }
-        return .none
     }
     
     private func updateCustomSheets() async {

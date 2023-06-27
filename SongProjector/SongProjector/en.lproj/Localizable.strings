@@ -131,6 +131,7 @@
 "NewSong-headerLyrics" = "Enter text for the song here";
 "NewSong-noTitleForSheet" = "No title found";
 "NewSong-sheet" = "Sheet ";
+"NewSong-emptySheetAfterBibleStudyText" = "Empty sheet after bible text";
 "NewSong-searchThemePlaceHolder" = "Search theme";
 "NewSong-errorTitleNoTheme" = "Error";
 "NewSong-erorrMessageNoTheme" = "Select a theme";
@@ -169,6 +170,9 @@
 "Tags-errorEmptyTitle" = "Title can not be empty";
 "Tags-editTag" = "Change tag";
 
+"CustomSheets-CollectionType-Lyrics" = "Lyrics sheets";
+"CustomSheets-CollectionType-BibleSheets" = "Bible text sheets";
+"CustomSheets-CollectionType-Custom" = "Custom sheets";
 
 "CustomSheets-title" = "Change sheets";
 "CustomSheets-namePlaceHolder" = "Enter title (for searching)";
@@ -346,6 +350,8 @@
 
 "SingInGoogleController-title" = "Sign-in calendar";
 "SingInGoogleController-infoText" = "To retrieve the activities from your church calendar, you need to log in to Google calendar. Click below to sign in (again) at Google.";
+
+"Error-unknownError" = "Something went wrong: %@";
 
 "RequesterErrors-noUID" = "We could not find a user. Please log-out / login again";
 
