@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="3e2e80b3-a88f-4d50-9315-1cdc65c1f138" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/CreateChurchBeamDirectoryUseCase.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/CreateEntityUsecases/CreateTagUseCase.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/CreateEntityUsecases/CreateThemeUseCase.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/CreatePersistentEntityUseCase.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/DeleteFileAtURLUseCase.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/FetchPersistantEntitiesUseCase.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/GetFileURLUseCase.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/GetUseCases/DeleteAllEntitiesUseCase.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/GetUseCases/GetClustersUseCase.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/GetUseCases/GetCoreDataRequestUseCase.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/GetUseCases/GetLastUpdatedAtUseCase.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/GetUseCases/GetNewTagPositionUseCase.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/GetUseCases/GetNewThemePositionUseCase.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/GetUseCases/GetSheetsUseCase.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/GetUseCases/GetSongServiceSettingsUseCase.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/GetUseCases/GetTagEntitiesUseCase.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/GetUseCases/GetTagsUseCase.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/GetUseCases/GetThemeUseCase.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/GetUseCases/GetThemesUseCase.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/GetUseCases/GetUserUseCase.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/LoadImageUseCase.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/MoveImageUseCase.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/SaveImageUseCase.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/SaveUsecases/SaveAdminUseCase.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/SaveUsecases/SaveChurchUseCase.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/SaveUsecases/SaveClustersUseCase.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/SaveUsecases/SaveCodableToCorDataUseCase.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/SaveUsecases/SaveContractCodable.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/SaveUsecases/SaveInstrumentsUseCase.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/SaveUsecases/SaveSheetsUseCase.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/SaveUsecases/SaveSongServicePlayDateUseCase.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/SaveUsecases/SaveSongServiceSettingsUseCase.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/SaveUsecases/SaveUniversalUpdatedAtUseCase.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/SaveUsecases/SaveUsersUseCase.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Modifiers/SheetViewModifier.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/ChurchBeam.xcodeproj/project.pbxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/ChurchBeam.xcodeproj/project.pbxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/ChurchBeam.xcodeproj/xcuserdata/leovanderzee.xcuserdatad/xcschemes/SongProjector.xcscheme" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/ChurchBeam.xcodeproj/xcuserdata/leovanderzee.xcuserdatad/xcschemes/SongProjector.xcscheme" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/ChurchBeam.xcworkspace/contents.xcworkspacedata" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/ChurchBeam.xcworkspace/contents.xcworkspacedata" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/ChurchBeam.xcworkspace/xcuserdata/leovanderzee.xcuserdatad/UserInterfaceState.xcuserstate" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/ChurchBeam.xcworkspace/xcuserdata/leovanderzee.xcuserdatad/UserInterfaceState.xcuserstate" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/ChurchBeam.xcworkspace/xcuserdata/leovanderzee.xcuserdatad/xcdebugger/Breakpoints_v2.xcbkptlist" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/ChurchBeam.xcworkspace/xcuserdata/leovanderzee.xcuserdatad/xcdebugger/Breakpoints_v2.xcbkptlist" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/Pods/Pods.xcodeproj/project.pbxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/Pods/Pods.xcodeproj/project.pbxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/Pods/Pods.xcodeproj/xcuserdata/leovanderzee.xcuserdatad/xcschemes/VerticalSlider.xcscheme" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/Pods/Target Support Files/VerticalSlider/VerticalSlider-Info.plist" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/Pods/Target Support Files/VerticalSlider/VerticalSlider-dummy.m" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/Pods/Target Support Files/VerticalSlider/VerticalSlider-prefix.pch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/Pods/Target Support Files/VerticalSlider/VerticalSlider-umbrella.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/Pods/Target Support Files/VerticalSlider/VerticalSlider.modulemap" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/Pods/VerticalSlider/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/Pods/VerticalSlider/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/Pods/VerticalSlider/VerticalSlider/Classes/VerticalSlider.swift" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/CustomSheetsController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/CustomSheetsController.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/IntroAdminController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/IntroAdminController.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/IntroPageController2.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/IntroPageController2.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/IntroPageController22.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/IntroPageController22.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/LoadingBibleController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/LoadingBibleController.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/ManageSongServiceController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/ManageSongServiceController.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/MenuController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/MenuController.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/NewOrEditTagController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/NewOrEditTagController.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/SaveNewSongTitleTimeVC.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/SaveNewSongTitleTimeVC.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/SongServiceController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/SongServiceController.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/SongsController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/SongsController.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/SplashScreen.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/SplashScreen.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/TagSelectionController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/TagSelectionController.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/TagsController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/TagsController.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/UploadUniversalSongController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/UploadUniversalSongController.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/iPhone/BibleStudyGeneratorIphoneController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/iPhone/BibleStudyGeneratorIphoneController.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/iPhone/BibleStudyIphoneController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/iPhone/BibleStudyIphoneController.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/iPhone/CreateEditThemeSheetViewController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/iPhone/CreateEditThemeSheetViewController.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/iPhone/EditSongIphoneController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/iPhone/EditSongIphoneController.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/iPhone/ImportBibleController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/iPhone/ImportBibleController.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/iPhone/NewOrEditIphoneController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/iPhone/NewOrEditIphoneController.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/iPhone/NewSongIphoneController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/iPhone/NewSongIphoneController.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/iPhone/NewSongServiceIphoneController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/iPhone/NewSongServiceIphoneController.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/iPhone/SettingsController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/iPhone/SettingsController.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/iPhone/ThemesIphoneController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Controller/iPhone/ThemesIphoneController.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Global/App.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Global/App.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Global/AppDelegate.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Global/AppDelegate.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Global/AppText.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Global/AppText.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Global/ManagedObjectContextHandlerUseCase.swift" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Global/TabViewUI.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Global/TabViewUI.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/ClusterOrComment.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/ClusterOrComment.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/AdminCodable.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/AdminCodable.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/ChurchCodable.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/ChurchCodable.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/ClusterCodable.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/ClusterCodable.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/ContractCodable.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/ContractCodable.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/ContractLedgerCodable.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/ContractLedgerCodable.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/Endpoints.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/Endpoints.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/EntityCodable.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/EntityCodable.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/Fetchers/FetchMusicUseCase.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/Fetchers/FetchMusicUseCase.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/Fetchers/FetchUseCaseAsync.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/Fetchers/FileDownloadUseCase.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/Fetchers/FileDownloadUseCase.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/Fetchers/RequesterCodable.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/Fetchers/RequesterCodable.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/GoogleActivityCodable.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/GoogleActivityCodable.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/InstrumentCodable.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/InstrumentCodable.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/OrganisatieCodable.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/OrganisatieCodable.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/RoleCodable.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/RoleCodable.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/SheetActivityCodable.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/SheetActivityCodable.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/SheetCodable.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/SheetCodable.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/SheetEmptyCodable.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/SheetEmptyCodable.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/SheetPastorsCodable.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/SheetPastorsCodable.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/SheetSplitCodable.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/SheetSplitCodable.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/SheetTitleContentCodable.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/SheetTitleContentCodable.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/SheetTitleImageCodable.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/SheetTitleImageCodable.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/SongServicePlayDateCodable.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/SongServicePlayDateCodable.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/SongServiceSectionCodable.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/SongServiceSectionCodable.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/SongServiceSettingsCodable.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/SongServiceSettingsCodable.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/Submitters/SubmitUseCase.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/Submitters/SubmitUseCase.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/Submitters/TagCodableSubmitter.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/Submitters/TagCodableSubmitter.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/Submitters/ThemeCodableSubmitter.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/Submitters/ThemeCodableSubmitter.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/TagCodable.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/TagCodable.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/ThemeCodable.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/ThemeCodable.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/UniversalUpdatedAtCodable.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/UniversalUpdatedAtCodable.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/UserCodable.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Codable/UserCodable.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/CoreDataEntities/Cluster.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/CoreDataEntities/Cluster.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/CoreDataEntities/ContractLedger.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/CoreDataEntities/ContractLedger.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/CoreDataEntities/SongServiceSection.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/CoreDataEntities/SongServiceSection.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/CoreDataEntities/SongServiceSettings.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/CoreDataEntities/SongServiceSettings.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/CoreDataEntities/Theme.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/CoreDataEntities/Theme.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/CoreDataManager.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/CoreDataManager.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Drafts/SheetDraft.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Drafts/SheetDraft.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Drafts/ThemeDraft.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Drafts/ThemeDraft.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/SongService.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/SongService.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/TempClusterModel.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/TempClusterModel.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/UseCases/BibleStudyTextUseCase.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/UseCases/BibleStudyTextUseCase.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/UseCases/GenerateLyricsSheetContentUseCase.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/UseCases/GenerateLyricsSheetContentUseCase.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Viewmodel/CollectionEditorViewModel.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Viewmodel/CollectionEditorViewModel.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Viewmodel/CreateEditSheetEmptyViewModel.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Viewmodel/CreateEditSheetEmptyViewModel.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Viewmodel/CreateEditSheetPastorsViewModel.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Viewmodel/CreateEditSheetPastorsViewModel.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Viewmodel/CreateEditSheetSplitViewModel.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Viewmodel/CreateEditSheetSplitViewModel.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Viewmodel/CreateEditSheetTitleContentViewModel.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Viewmodel/CreateEditSheetTitleContentViewModel.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Viewmodel/CreateEditSheetTitleImageViewModel.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Viewmodel/CreateEditSheetTitleImageViewModel.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Viewmodel/CreateEditThemeViewModel.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Viewmodel/CreateEditThemeViewModel.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Viewmodel/EditSheetOrThemeViewModel.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Viewmodel/EditSheetOrThemeViewModel.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Viewmodel/TagsSelectorViewModel.swift" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VAdmin.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VAdmin.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VChurch.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VChurch.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VCluster.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VCluster.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VContract.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VContract.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VContractLedger.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VContractLedger.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VEntity.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VEntity.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VGoogleActivity.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VGoogleActivity.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VInstrument.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VInstrument.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VOrganization.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VOrganization.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VRole.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VRole.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VSheet.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VSheet.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VSheetActivities.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VSheetActivities.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VSheetEmpty.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VSheetEmpty.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VSheetPastors.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VSheetPastors.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VSheetSplit.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VSheetSplit.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VSheetTitleContent.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VSheetTitleContent.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VSheetTitleImage.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VSheetTitleImage.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VSongServicePlayDate.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VSongServicePlayDate.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VSongServiceSection.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VSongServiceSection.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VSongServiceSettings.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VSongServiceSettings.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VTag.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VTag.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VTheme.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VTheme.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VUniversalUpdatedAtEntity.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VUniversalUpdatedAtEntity.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VUser.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/Model/Virtual/VUser.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/RestService/Base/GoogleActivityFetcher.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/RestService/Base/GoogleActivityFetcher.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/RestService/Base/UniversalClusterOperations.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/RestService/Base/UniversalClusterOperations.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/RestService/Fetchers/ChurchFetcher.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/RestService/Fetchers/ChurchFetcher.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/RestService/Fetchers/ClusterFetcher.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/RestService/Fetchers/ClusterFetcher.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/RestService/Fetchers/FileFetcher.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/RestService/Fetchers/FileFetcher.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/RestService/Fetchers/SongServicePlayDateFetcher.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/RestService/Fetchers/SongServicePlayDateFetcher.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/RestService/Fetchers/SongServiceSettingsFetcher.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/RestService/Fetchers/SongServiceSettingsFetcher.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/RestService/Fetchers/TagFetcher.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/RestService/Fetchers/TagFetcher.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/RestService/Fetchers/ThemeFetcher.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/RestService/Fetchers/ThemeFetcher.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/RestService/Fetchers/UniversalClusterFetcher.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/RestService/Fetchers/UniversalClusterFetcher.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/RestService/Fetchers/UniversalUpdatedAtFetcher.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/RestService/Fetchers/UniversalUpdatedAtFetcher.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/RestService/Fetchers/UserFetcher.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/RestService/Fetchers/UserFetcher.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/RestService/NewBase/Requester.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/RestService/NewBase/Requester.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/RestService/Submitters/ClusterSubmitter.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/RestService/Submitters/ClusterSubmitter.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/RestService/Submitters/FileSubmitter.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/RestService/Submitters/FileSubmitter.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/RestService/Submitters/SongServicePlayDateSubmitter.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/RestService/Submitters/SongServicePlayDateSubmitter.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/RestService/Submitters/ThemeSubmitter.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/RestService/Submitters/ThemeSubmitter.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/SoundPlayer.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/SoundPlayer.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/SoundPlayer2.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/SoundPlayer2.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/CreateCollectionsFilterPredicatesUseCase.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/CreateCollectionsFilterPredicatesUseCase.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/DeleteAllFilesUseCase.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/DeleteAllFilesUseCase.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/DeleteLocalMusicUseCase.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/DeleteLocalMusicUseCase.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/MuteInstrumentsUseCase.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/MuteInstrumentsUseCase.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/ResetCoreDataUseCase.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/ResetCoreDataUseCase.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/SongServiceGeneratorUseCase.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/UseCases/SongServiceGeneratorUseCase.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/BeamerPreviewUI.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/BeamerPreviewUI.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/BeamerViewUI.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/BeamerViewUI.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Cells/LabelPhotoPickerCell.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Cells/LabelPhotoPickerCell.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Cells/LabelPickerCell.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Cells/LabelPickerCell.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/CellsUI/LabelColorPickerViewUI.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/CellsUI/LabelColorPickerViewUI.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/CellsUI/LabelPhotoPickerViewUI.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/CellsUI/LabelPhotoPickerViewUI.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/CellsUI/PickerViewUI.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/CellsUI/PickerViewUI.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/CellsUI/TagSelectionScrollViewUI.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/CellsUI/TagSelectionScrollViewUI.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/CollectionEditorViewUI.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/CollectionEditorViewUI.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/CollectionsViewUI.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/CollectionsViewUI.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/EditThemeOrSheetContentViewUI.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/EditThemeOrSheetContentViewUI.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/EditThemeOrSheetGeneralViewUI.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/EditThemeOrSheetGeneralViewUI.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/EditThemeOrSheetSheetImageViewUI.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/EditThemeOrSheetSheetImageViewUI.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/EditThemeOrSheetTitleViewUI.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/EditThemeOrSheetTitleViewUI.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/EditThemeOrSheetViewUI.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/EditThemeOrSheetViewUI.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Extensions/ClusterExtensions.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Extensions/ClusterExtensions.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Extensions/DeviceOrientationExtensions.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Extensions/DeviceOrientationExtensions.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Extensions/FileManagerExtensions.swift" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Extensions/ImageExtensions.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Extensions/ImageExtensions.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Extensions/SequenceExtensions.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Extensions/SequenceExtensions.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Extensions/SheetExtensions.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Extensions/SheetExtensions.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Extensions/SheetMetaTypeExtensions.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Extensions/SheetMetaTypeExtensions.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Extensions/SheetPastorsEntityExtensions.swift" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Extensions/SheetPastorsExtensions.swift" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Extensions/SheetTitleImageExtensions.swift" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Extensions/StringExtensions.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Extensions/StringExtensions.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Extensions/ThemeCodableExtensions.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Extensions/ThemeCodableExtensions.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Extensions/ThemeExtensions.swift" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Extensions/URLExtensions.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Extensions/URLExtensions.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Extensions/VThemeExtensions.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Extensions/VThemeExtensions.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Extensions/ViewExtensions.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Extensions/ViewExtensions.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/InstrumentViewUI.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/InstrumentViewUI.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/LyricsOrBibleStudyInputViewUI.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/LyricsOrBibleStudyInputViewUI.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Modifiers/SheetBackgroundImageModifier.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Modifiers/SheetBackgroundImageModifier.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Modifiers/SheetContentEditModifier.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Modifiers/SheetContentEditModifier.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Modifiers/SheetTitleUIModifier.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Modifiers/SheetTitleUIModifier.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/MusicDownloadButtonViewUI.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/MusicDownloadButtonViewUI.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/NewSongServiceSettingsViewUI.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/NewSongServiceSettingsViewUI.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/NewTagViewUI.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/NewTagViewUI.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/PianoSoloViewUI.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/PianoSoloViewUI.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/SettingsViewUI.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/SettingsViewUI.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/SheetScrollViewUI.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/SheetScrollViewUI.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Sheets/EmptyViewUI.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Sheets/EmptyViewUI.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Sheets/GoogleActivitiesViewUI.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Sheets/GoogleActivitiesViewUI.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Sheets/PastorsViewUI.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Sheets/PastorsViewUI.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Sheets/SheetUIHelper.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Sheets/SheetUIHelper.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Sheets/TitleContentViewUI.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Sheets/TitleContentViewUI.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Sheets/TitleImageViewUI.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/Sheets/TitleImageViewUI.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/SongServiceEditorViewUI.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/SongServiceEditorViewUI.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/SongServiceSectionViewUI.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/SongServiceSectionViewUI.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/SongServiceSettingsViewUI.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/SongServiceSettingsViewUI.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/SongServiceViewUI.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/SongServiceViewUI.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/SoundAnimationViewUI.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/SoundAnimationViewUI.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/TagsViewUI.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/TagsViewUI.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/ThemesScrollViewUI.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/ThemesScrollViewUI.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/ThemesViewUI.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/ThemesViewUI.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/View/InstrumentView.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/View/InstrumentView.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/View/MixerView.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/View/MixerView.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/View/SheetActivitiesView.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/View/SheetActivitiesView.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/View/SheetPastors.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/View/SheetPastors.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/View/SheetTitleImage.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/View/SheetTitleImage.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/View/SongServiceHeaderCollectionReusableView.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/View/SongServiceHeaderCollectionReusableView.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/View/View/SongServiceSectionHeaderTitleStackView.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/View/View/SongServiceSectionHeaderTitleStackView.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/en.lproj/Localizable.strings" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/en.lproj/Localizable.strings" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SongProjector/SongProjector/nl.lproj/Localizable.strings" beforeDir="false" afterPath="$PROJECT_DIR$/../SongProjector/SongProjector/nl.lproj/Localizable.strings" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2QAHxRVIkBPGxiowoEzbf6nPzYW" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "cidr.known.project.marker": "true",
+    "dart.analysis.tool.window.visible": "false",
+    "last_opened_file_path": "/Users/leovanderzee/development/songprojector/firebase-fuctions",
+    "show.migrate.to.gradle.popup": "false"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="3e2e80b3-a88f-4d50-9315-1cdc65c1f138" name="Changes" comment="" />
+      <created>1684789711173</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1684789711173</updated>
+    </task>
+    <servers />
+  </component>
+</project>
