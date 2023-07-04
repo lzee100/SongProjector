@@ -84,7 +84,7 @@ class GoogleSignedInCell: ChurchBeamCell {
 	
 	func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
 		if error == nil {
-            GoogleActivityFetcher.fetch(force: true)
+//            GoogleActivityFetcher.fetch(force: true)
 		}
 	}
 	

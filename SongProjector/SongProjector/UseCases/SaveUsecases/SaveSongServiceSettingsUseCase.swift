@@ -82,8 +82,28 @@ actor SaveSongServiceSettingsUseCase {
         entity.position = codable.position
         entity.numberOfSongs = codable.numberOfSongs
         entity.tagIds = codable.tags.compactMap({ $0.id }).joined(separator: ",")
-        
+        try codable.pinnableTags.map { try get($0) }.forEach { entity.addToHasPinnableTags($0) }
         try codable.tags.forEach { try GetTagEntitiesUseCase.get($0, context: context) }
     }
     
+    @discardableResult
+    private func get(_ pinnableTag: PinnableTagCodable) throws -> PinnableTag {
+        
+        let pinnableTags: [PinnableTag] = try FetchPersistantEntitiesUseCase.fetchPersistend(context: context, predicates: [.get(id: pinnableTag.id)], fetchDeleted: true)
+        
+        if let entity = pinnableTags.first {
+            try setProperties(from: pinnableTag, to: entity)
+            return entity
+        } else {
+            let entity: PinnableTag = CreatePersistentEntityUseCase.create(context: context)
+            try setProperties(from: pinnableTag, to: entity)
+            return entity
+        }
+    }
+    
+    private func setProperties(from codable: PinnableTagCodable, to entity: PinnableTag) throws {
+        entity.id = codable.id
+        entity.position = Int16(codable.position)
+        entity.isPinned = codable.isPinned
+    }
 }

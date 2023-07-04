@@ -80,7 +80,7 @@ class GoogleCell: UITableViewCell {
 	func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
 		if error == nil, let token = user.idToken?.tokenString, let email = user.profile?.email {
             delegate?.didSuccesfullyLogin(googleIdToken: token, userName: email)
-            GoogleActivityFetcher.fetch(force: true)
+//            GoogleActivityFetcher.fetch(force: true)
 		}
 	}
 	

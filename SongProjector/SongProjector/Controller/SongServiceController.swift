@@ -144,7 +144,7 @@ class SongServiceController: ChurchBeamViewController, UITableViewDataSource, UI
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 //        UniversalClusterFetcher.initialFetch()
-        GoogleActivityFetcher.fetch(force: true)
+//        GoogleActivityFetcher.fetch(force: true)
         SongServicePlayDateFetcher.fetch()
     }
 

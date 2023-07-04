@@ -9,24 +9,27 @@
 import SwiftUI
 import FirebaseAuth
 
-@MainActor class SongServiceSettingsSection: Identifiable {
-    var title = ""
-    var numberOfSongs: Int = 1
-    let tagSelectionModel = TagSelectionModel(mandatoryTags: [], fetchRemoteTags: false)
+class SongServiceSettingsSection {
+    
+    public let id = UUID().uuidString
+    let songServiceSection: SongServiceSectionCodable?
+    @Published var title = ""
+    @Published var numberOfSongs: Int = 1
+    @Published var pinnableTags: [WrappedStruct<PinnableTagCodable>] = []
+    
     var isValid: Bool {
-        return !title.isBlanc && tagSelectionModel.selectedTags.count > 0 && numberOfSongs > 0
+        return !title.isBlanc && pinnableTags.count > 0 && numberOfSongs > 0
     }
     
-    init(songServiceSection: SongServiceSectionCodable) {
-        title = songServiceSection.title ?? ""
-        numberOfSongs = songServiceSection.numberOfSongs.intValue
-        
-        defer {
-            songServiceSection.tags.forEach { tagSelectionModel.didSelectTag($0) }
+    init(songServiceSection: SongServiceSectionCodable? = nil) {
+        self.songServiceSection = songServiceSection
+        title = songServiceSection?.title ?? ""
+        if songServiceSection?.pinnableTags.count ?? 0 > 0 {
+            pinnableTags = songServiceSection?.pinnableTags.map { WrappedStruct(withItem: $0)} ?? []
+        } else {
+            pinnableTags = songServiceSection?.tags.map { WrappedStruct(withItem: PinnableTagCodable(tag: $0)) } ?? []
         }
-    }
-    
-    init() {
+        numberOfSongs = songServiceSection?.numberOfSongs.intValue ?? 1
     }
     
 }
@@ -80,7 +83,7 @@ import FirebaseAuth
     private func createSongServiceSettings() -> SongServiceSettingsCodable {
         var newSections: [SongServiceSectionCodable] = []
         for (index, section) in sections.enumerated() {
-            newSections.append(SongServiceSectionCodable(title: section.title, position: index, numberOfSongs: section.numberOfSongs, tags: section.tagSelectionModel.selectedTags))
+            newSections.append(SongServiceSectionCodable(position: index, numberOfSongs: section.numberOfSongs, tags: [], pinnableTags: section.pinnableTags.map { $0.item }))
         }
         var changeableSettings = SongServiceSettingsCodable.makeDefault(userUID: (Auth.auth().currentUser?.uid)!)!
         
@@ -181,10 +184,14 @@ struct NewSongServiceSettingsViewUI: View {
             .frame(height: 35)
             .padding([.bottom], 3)
             
-            HStack {
-                Text(AppText.Tags.title)
-                    .styleAs(font: .xNormal)
-                TagSelectionScrollViewUI(viewModel: viewModel.sections[index].tagSelectionModel)
+            Group {
+                Button {
+                    
+                } label: {
+                    Text(AppText.SongServiceManagement.addTags)
+                        .tint(Color(uiColor: themeHighlighted))
+                }
+                
             }
             .padding([.bottom], 20)
             

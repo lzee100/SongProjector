@@ -423,6 +423,9 @@
 		E3B1EAC124B4948400304A2D /* UICollectionViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B1EAC024B4948400304A2D /* UICollectionViewExtensions.swift */; };
 		E3B494C523BEA7C200DB2A7F /* VUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B494C423BEA7C200DB2A7F /* VUser.swift */; };
 		E3B494C723BEAB2500DB2A7F /* VContract.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B494C623BEAB2500DB2A7F /* VContract.swift */; };
+		E3B683462A536225007E6859 /* TagSelectionListForSectionViewUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B683452A536225007E6859 /* TagSelectionListForSectionViewUI.swift */; };
+		E3B683482A536762007E6859 /* EntitySelectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B683472A536762007E6859 /* EntitySelectionModel.swift */; };
+		E3B6834A2A53864C007E6859 /* PinnableTagCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B683492A53864B007E6859 /* PinnableTagCodable.swift */; };
 		E3BA5BEB24EF1AA400BB7BAD /* GoogleService-Info-Test.plist in Resources */ = {isa = PBXBuildFile; fileRef = E3BA5BEA24EF1AA400BB7BAD /* GoogleService-Info-Test.plist */; };
 		E3BBB55D25459CAD00F18DCC /* IAPManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3BBB55C25459CAD00F18DCC /* IAPManager.swift */; };
 		E3BC6BB71FFEBE350039E0CA /* HeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3BC6BB61FFEBE350039E0CA /* HeaderView.xib */; };
@@ -944,6 +947,10 @@
 		E3B1EAC024B4948400304A2D /* UICollectionViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UICollectionViewExtensions.swift; sourceTree = "<group>"; };
 		E3B494C423BEA7C200DB2A7F /* VUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VUser.swift; sourceTree = "<group>"; };
 		E3B494C623BEAB2500DB2A7F /* VContract.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VContract.swift; sourceTree = "<group>"; };
+		E3B683362A52DFC3007E6859 /* SongProjector 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "SongProjector 2.xcdatamodel"; sourceTree = "<group>"; };
+		E3B683452A536225007E6859 /* TagSelectionListForSectionViewUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagSelectionListForSectionViewUI.swift; sourceTree = "<group>"; };
+		E3B683472A536762007E6859 /* EntitySelectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitySelectionModel.swift; sourceTree = "<group>"; };
+		E3B683492A53864B007E6859 /* PinnableTagCodable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PinnableTagCodable.swift; sourceTree = "<group>"; };
 		E3BA5BEA24EF1AA400BB7BAD /* GoogleService-Info-Test.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Test.plist"; sourceTree = "<group>"; };
 		E3BBB55C25459CAD00F18DCC /* IAPManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPManager.swift; sourceTree = "<group>"; };
 		E3BC6BB61FFEBE350039E0CA /* HeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HeaderView.xib; sourceTree = "<group>"; };
@@ -1124,6 +1131,7 @@
 				B37EFE9A293749AF005F7D4F /* UniversalUpdatedAtCodable.swift */,
 				B37EFE9C293749BF005F7D4F /* ChurchCodable.swift */,
 				B37EFE9E293749D1005F7D4F /* SongServicePlayDateCodable.swift */,
+				E3B683492A53864B007E6859 /* PinnableTagCodable.swift */,
 			);
 			path = Codable;
 			sourceTree = "<group>";
@@ -1250,6 +1258,7 @@
 				E3E78B832519409F00AF9284 /* TempClusterModel.swift */,
 				E3E78B912520825E00AF9284 /* SheetTypesMenu.swift */,
 				E33CFD002A143F1E00F5D217 /* TextBindingManager.swift */,
+				E3B683472A536762007E6859 /* EntitySelectionModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1301,6 +1310,7 @@
 				E33CFD042A1458BE00F5D217 /* SongServiceSettingsViewUI.swift */,
 				E33CFD062A14EAE200F5D217 /* NewSongServiceSettingsViewUI.swift */,
 				E34B57012A152AA1004DF83D /* SongServiceSettingsEditorViewUI.swift */,
+				E3B683452A536225007E6859 /* TagSelectionListForSectionViewUI.swift */,
 				E34B57142A16E1FE004DF83D /* SettingsViewUI.swift */,
 				E3B126ED29FC7E060085E230 /* TextView.swift */,
 				E311714A1FE5A04A008D9D51 /* Extensions */,
@@ -2065,16 +2075,10 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-SongProjector/Pods-SongProjector-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/GTMOAuth2/GTMOAuth2.framework",
-				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
-				"${BUILT_PRODUCTS_DIR}/GoogleAPIClientForREST/GoogleAPIClientForREST.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftKeychainWrapper/SwiftKeychainWrapper.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMOAuth2.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleAPIClientForREST.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftKeychainWrapper.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2241,6 +2245,7 @@
 				E34B57022A152AA1004DF83D /* SongServiceSettingsEditorViewUI.swift in Sources */,
 				E399EA89202F73D700E8CE0E /* CustomSheetsController.swift in Sources */,
 				E3B1EABE24B4937500304A2D /* SongServiceHeaderCollectionReusableView.swift in Sources */,
+				E3B683482A536762007E6859 /* EntitySelectionModel.swift in Sources */,
 				E30B8EC9224A192C00F121D9 /* Tag.swift in Sources */,
 				E3896A3921E3F17C008CB5A5 /* HTTPError.swift in Sources */,
 				E3F8C9D4201690FC00C94292 /* BibleStudyIphoneController.swift in Sources */,
@@ -2333,6 +2338,7 @@
 				E3DFF24A2524D78000DA26C1 /* AppConfiguration.swift in Sources */,
 				E31171771FE5A1A0008D9D51 /* NewSongSheetCell.swift in Sources */,
 				E35099F120DD4FA7005CA984 /* SaveNewSongTitleTimeVC.swift in Sources */,
+				E3B683462A536225007E6859 /* TagSelectionListForSectionViewUI.swift in Sources */,
 				E37938EC21271EC90091698D /* PickerCell.swift in Sources */,
 				E3812DED201CE1D300F10B2C /* GoogleActivityFetcher.swift in Sources */,
 				E3635A0B217CAF98002758D5 /* MixerAnimationView.swift in Sources */,
@@ -2365,6 +2371,7 @@
 				E32B881729C483DA00DFF9D8 /* SheetScrollViewUI.swift in Sources */,
 				E31F0B6D20F4F3D100C22FD1 /* SheetPastors.swift in Sources */,
 				E3AA96C529F070740061C63C /* SizePreferenceKey.swift in Sources */,
+				E3B6834A2A53864C007E6859 /* PinnableTagCodable.swift in Sources */,
 				E399445F2A0D0DEE0018EE38 /* SongServiceEditorViewUI.swift in Sources */,
 				E3314B6620077DD100F470C0 /* SheetExtensions.swift in Sources */,
 				E3EED5002494E21E00AE47BC /* UniversalClusterUpdatedAtSubmitter.swift in Sources */,
@@ -2841,9 +2848,10 @@
 		E31171371FE59DA3008D9D51 /* SongProjector.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				E3B683362A52DFC3007E6859 /* SongProjector 2.xcdatamodel */,
 				E31171381FE59DA3008D9D51 /* SongProjector.xcdatamodel */,
 			);
-			currentVersion = E31171381FE59DA3008D9D51 /* SongProjector.xcdatamodel */;
+			currentVersion = E3B683362A52DFC3007E6859 /* SongProjector 2.xcdatamodel */;
 			path = SongProjector.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

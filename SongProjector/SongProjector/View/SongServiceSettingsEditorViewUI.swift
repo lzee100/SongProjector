@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import Combine
 
 
 @MainActor class SongServiceSettingsEditorViewModel: ObservableObject {
@@ -16,10 +17,20 @@ import SwiftUI
     @Published private(set) var isLoading = false
     @Published var errorMessage: String?
     @Published var error: LocalizedError?
-
+    @Published var showingTagSelectorView = false
+    var selectedSectionForTagSelection: SongServiceSectionCodable?
+    let pinnableTags = PassthroughSubject<[PinnableTagCodable], Never>()
+    private var cancables: [AnyCancellable] = []
+    
     init(songServiceSettings: SongServiceSettingsCodable) {
         self.songServiceSettings = songServiceSettings
         self.sections = songServiceSettings.sections.map { SongServiceSettingsSection(songServiceSection: $0) }
+        pinnableTags.sink { [weak self] tags in
+            guard let self, let selectedSectionForTagSelection = self.selectedSectionForTagSelection else { return }
+            if let index = self.sections.firstIndex(where: { $0.songServiceSection?.id == selectedSectionForTagSelection.id }) {
+                self.sections[index].pinnableTags = tags.map { WrappedStruct(withItem: $0) }
+            }
+        }.store(in: &cancables)
     }
     
     var evaluatedErrorMessage: String? {
@@ -44,7 +55,7 @@ import SwiftUI
     func appendSection() {
         sections.append(SongServiceSettingsSection())
     }
-        
+    
     func saveSettings() async {
         if let evaluatedErrorMessage {
             self.errorMessage = evaluatedErrorMessage
@@ -55,15 +66,21 @@ import SwiftUI
                 isLoading = false
             } catch {
                 isLoading = false
-                self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
+                self.error = error.forcedLocalizedError
             }
         }
+    }
+    
+    func getPinnableTagsForSelectedSection() -> [PinnableTagCodable] {
+        guard let selectedSectionForTagSelection, let index = sections.firstIndex(where: { $0.songServiceSection?.id == selectedSectionForTagSelection.id }) else { return [] }
+        let selectedItems = sections[index].pinnableTags.map { $0.item }
+        return selectedItems.count == 0 ? sections[index].songServiceSection?.tags.map { PinnableTagCodable(tag: $0) } ?? [] : selectedItems
     }
     
     private func updateSongServiceSettings() -> SongServiceSettingsCodable {
         var newSections: [SongServiceSectionCodable] = []
         for (index, section) in sections.enumerated() {
-            newSections.append(SongServiceSectionCodable(title: section.title, position: index, numberOfSongs: section.numberOfSongs, tags: section.tagSelectionModel.selectedTags))
+            newSections.append(SongServiceSectionCodable(title: section.title, position: index, numberOfSongs: section.numberOfSongs, tags: [],  pinnableTags: section.pinnableTags.map { $0.item } ))
         }
         var changeableSettings = songServiceSettings
         changeableSettings.sections = newSections
@@ -136,6 +153,15 @@ struct SongServiceSettingsEditorViewUI: View {
                     .allowsHitTesting(!viewModel.isLoading)
                 }
             }
+            .sheet(isPresented: $viewModel.showingTagSelectorView, content: {
+                TagSelectionListForSectionViewUI(
+                    songServiceSectionCodable: viewModel.selectedSectionForTagSelection!,
+                    pinnableTags: viewModel.getPinnableTagsForSelectedSection(),
+                    showingTagSelectionListForSectionViewUI: $viewModel.showingTagSelectorView,
+                    pinnableTagsPassThrough: viewModel.pinnableTags
+                )
+                .presentationDetents([.medium, .large])
+            })
             .onChange(of: viewModel.isLoading) { isLoading in
                 if !isLoading {
                     showingSongServiceSettings = nil
@@ -178,13 +204,53 @@ struct SongServiceSettingsEditorViewUI: View {
             .frame(height: 30)
             .padding([.bottom], 5)
 
-            HStack {
-                Text(AppText.Tags.title)
-                    .styleAs(font: .xNormal)
-                TagSelectionScrollViewUI(viewModel: viewModel.sections[index].tagSelectionModel)
+            Group {
+                VStack(alignment: .leading) {
+                    Text("Tags")
+                        .styleAs(font: .xxNormalBold)
+                    ForEach(Array(zip(viewModel.sections[index].pinnableTags.indices, viewModel.sections[safe: index]!.pinnableTags)), id: \.0) { tagIndex, tag in
+                        Toggle(isOn: $viewModel.sections[safe: index]!.pinnableTags[tagIndex].item.isPinned) {
+                            HStack {
+                                Button(action: {
+                                    
+                                }, label: {
+                                    Text(tag.item.title ?? "")
+                                })
+                                .styleAsSelectionCapsuleButton(isSelected: false)
+                                .disabled(true)
+                                Spacer()
+                                Button {
+                                    print("pressed question mark")
+                                } label: {
+                                    HStack(alignment: .top) {
+                                        Text("Mandatory")
+                                            .styleAs(font: .small)
+                                        Image(systemName: "questionmark")
+                                            .frame(width: 5, height: 5)
+                                            .foregroundColor(Color(uiColor: themeHighlighted))
+                                            .padding(EdgeInsets(top: 2, leading: 2, bottom: 2, trailing: 2))
+                                    }
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                    }
+                }
+                HStack {
+                    Spacer()
+                    Button {
+                        viewModel.selectedSectionForTagSelection = viewModel.sections[index].songServiceSection
+                        viewModel.showingTagSelectorView = true
+                    } label: {
+                        Text(AppText.SongServiceManagement.addTags)
+                            .tint(Color(uiColor: themeHighlighted))
+                    }
+                    .buttonStyle(.borderless)
+                    Spacer()
+                }
             }
             .padding([.bottom], 20)
-            
+
         }
     }
 

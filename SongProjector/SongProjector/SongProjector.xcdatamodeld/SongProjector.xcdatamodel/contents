@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19206" systemVersion="20F71" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21513" systemVersion="22F66" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Admin" representedClassName="Admin" parentEntity="Entity" syncable="YES" codeGenerationType="class"/>
     <entity name="Book" representedClassName=".Book" parentEntity="Entity" syncable="YES" codeGenerationType="class">
         <attribute name="name" attributeType="String"/>
@@ -153,29 +153,4 @@
         <attribute name="text" attributeType="String"/>
         <relationship name="hasChapter" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Chapter" inverseName="hasVerses" inverseEntity="Chapter"/>
     </entity>
-    <elements>
-        <element name="Admin" positionX="0" positionY="0" width="128" height="43"/>
-        <element name="Book" positionX="0" positionY="0" width="128" height="73"/>
-        <element name="Chapter" positionX="0" positionY="0" width="128" height="88"/>
-        <element name="Church" positionX="0" positionY="0" width="128" height="43"/>
-        <element name="Cluster" positionX="0" positionY="0" width="128" height="209"/>
-        <element name="Entity" positionX="0" positionY="0" width="128" height="163"/>
-        <element name="GoogleActivity" positionX="0" positionY="0" width="128" height="103"/>
-        <element name="Instrument" positionX="0" positionY="0" width="128" height="103"/>
-        <element name="Sheet" positionX="0" positionY="0" width="128" height="103"/>
-        <element name="SheetActivitiesEntity" positionX="0" positionY="0" width="128" height="58"/>
-        <element name="SheetEmptyEntity" positionX="0" positionY="0" width="128" height="43"/>
-        <element name="SheetPastorsEntity" positionX="0" positionY="0" width="128" height="118"/>
-        <element name="SheetSplitEntity" positionX="0" positionY="0" width="128" height="73"/>
-        <element name="SheetTitleContentEntity" positionX="0" positionY="0" width="128" height="73"/>
-        <element name="SheetTitleImageEntity" positionX="0" positionY="0" width="128" height="178"/>
-        <element name="SongServicePlayDate" positionX="0" positionY="0" width="128" height="73"/>
-        <element name="SongServiceSection" positionX="0" positionY="0" width="128" height="103"/>
-        <element name="SongServiceSettings" positionX="0" positionY="0" width="128" height="58"/>
-        <element name="Tag" positionX="0" positionY="0" width="128" height="88"/>
-        <element name="Theme" positionX="0" positionY="0" width="128" height="568"/>
-        <element name="UniversalUpdatedAtEntity" positionX="0" positionY="0" width="128" height="58"/>
-        <element name="User" positionX="0" positionY="0" width="128" height="118"/>
-        <element name="Vers" positionX="0" positionY="0" width="128" height="88"/>
-    </elements>
 </model>

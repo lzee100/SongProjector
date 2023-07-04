@@ -1,40 +1,16 @@
 PODS:
-  - GoogleAPIClientForREST (1.2.1):
-    - GoogleAPIClientForREST/Core (= 1.2.1)
-    - GTMSessionFetcher (>= 1.1.7)
-  - GoogleAPIClientForREST/Calendar (1.2.1):
-    - GoogleAPIClientForREST/Core
-    - GTMSessionFetcher (>= 1.1.7)
-  - GoogleAPIClientForREST/Core (1.2.1):
-    - GTMSessionFetcher (>= 1.1.7)
-  - GTMOAuth2 (1.1.6):
-    - GTMSessionFetcher (~> 1.1)
-  - GTMSessionFetcher (1.7.2):
-    - GTMSessionFetcher/Full (= 1.7.2)
-  - GTMSessionFetcher/Core (1.7.2)
-  - GTMSessionFetcher/Full (1.7.2):
-    - GTMSessionFetcher/Core (= 1.7.2)
   - SwiftKeychainWrapper (4.0.1)
 
 DEPENDENCIES:
-  - GoogleAPIClientForREST
-  - GoogleAPIClientForREST/Calendar (~> 1.2.1)
-  - GTMOAuth2 (~> 1.1.0)
   - SwiftKeychainWrapper
 
 SPEC REPOS:
   trunk:
-    - GoogleAPIClientForREST
-    - GTMOAuth2
-    - GTMSessionFetcher
     - SwiftKeychainWrapper
 
 SPEC CHECKSUMS:
-  GoogleAPIClientForREST: a8b95a252014ce2e618df6b75dc72eca2c00b4af
-  GTMOAuth2: e8b6512c896235149df975c41d9a36c868ab7fba
-  GTMSessionFetcher: 5595ec75acf5be50814f81e9189490412bad82ba
   SwiftKeychainWrapper: 807ba1d63c33a7d0613288512399cd1eda1e470c
 
-PODFILE CHECKSUM: e03c7b868b1241ecd6965c58afa1c66929c5d3b6
+PODFILE CHECKSUM: 6338a5bd1b25ad8ac4541405ad27b7fdd57fcc1d
 
 COCOAPODS: 1.12.1

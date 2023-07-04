@@ -9,7 +9,6 @@
 import Foundation
 import FirebaseAuth
 import CoreData
-import CoreData
 
 public struct TagCodable: EntityCodableType, Identifiable, Equatable, Hashable {
     

@@ -30,6 +30,7 @@ actor GetSongServiceSettingsUseCase {
                     if tagIds.count > 0 {
                         let tags = try self.getTags(with: tagIds)
                         sectionCodable.tags = tags.compactMap { TagCodable(entity: $0) }
+                        sectionCodable.pinnableTags = try self.getPinnableTags(with: tagIds).map { PinnableTagCodable(entity: $0) }
                     }
                     return sectionCodable
                 }
@@ -73,6 +74,22 @@ actor GetSongServiceSettingsUseCase {
         let predicates: [Predicate] = ids.map { .get(id: $0) }
         
         let request: NSFetchRequest<Tag> = GetCoreDataRequestUseCase.get(
+            predicates: predicates,
+            sort: .position(asc: true),
+            predicateCompoundPredicateType: .or,
+            fetchDeleted: false
+        )
+        
+        return try context.fetch(request)
+    }
+    
+    private func getPinnableTags(with ids: [String]) throws -> [PinnableTag] {
+        
+        guard ids.count > 0 else { return [] }
+        
+        let predicates: [Predicate] = ids.map { .get(id: $0) }
+        
+        let request: NSFetchRequest<PinnableTag> = GetCoreDataRequestUseCase.get(
             predicates: predicates,
             sort: .position(asc: true),
             predicateCompoundPredicateType: .or,
