@@ -69,7 +69,6 @@ import SwiftUI
     @Published var error: LocalizedError?
     @Published var showingLoader = false
     @Published var instrumentsModel = InstrumentsModel()
-    @Published var addEmptySheetAfterBibleStudyText = true
 
     private var deletedSheets: [SheetViewModel] = []
 
@@ -107,10 +106,6 @@ import SwiftUI
         self.title = cluster?.title ?? ""
         self.clusterStartTime = String(unwrappedCluster.startTime)
         self.isUniversalSong = uploadSecret != nil
-        
-        if cluster != nil {
-            addEmptySheetAfterBibleStudyText = unwrappedCluster.hasBibleVerses && unwrappedCluster.hasSheets.contains(where: { $0 is SheetEmptyCodable })
-        }
         defer {
             Task {
                 do {
@@ -188,7 +183,7 @@ import SwiftUI
                     theme: theme,
                     scaleFactor: getScaleFactor(width: parentViewSize.width),
                     cluster: cluster,
-                    addEmptySheetAfterBibleStudyText: addEmptySheetAfterBibleStudyText
+                    addEmptySheetAfterBibleStudyText: cluster.showEmptySheetBibleText
                 )
                 
                 var updatedSheets = bibleStudyTitleContent
@@ -343,6 +338,7 @@ import SwiftUI
             updatedCluster.theme = selectedTheme
             updatedCluster.themeId = selectedTheme.id
             updatedCluster.hasSheets = codableSheets
+            updatedCluster.hasSheetPastors = sheets.contains(where: { $0.sheetModel.sheetType == .SheetPastors })
             
             if instrumentsModel.instruments.filter({ $0.resourcePath != nil }).count > 0 {
                 updatedCluster.hasInstruments = try instrumentsModel.instruments
@@ -357,7 +353,6 @@ import SwiftUI
             var deleteObjects: [DeleteObject] {
                 deletedSheets.compactMap { $0.sheetModel.sheet }.flatMap { $0.getDeleteObjects(forceDelete: true) }
             }
-
             try await SubmitUseCase(endpoint: uploadSecret != nil ? .universalclusters : .clusters, requestMethod: isNew ? .post : .put, uploadObjects: [updatedCluster], deleteObjects: deleteObjects).submit()
             
             showingLoader = false

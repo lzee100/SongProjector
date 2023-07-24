@@ -37,6 +37,10 @@ struct GetTagEntitiesUseCase {
         entity.rootDeleteDate = tag.rootDeleteDate?.nsDate
         
         entity.position = Int16(tag.position)
+        if let positionInScheme = tag.positionInScheme {
+            entity.positionInScheme = Int16(positionInScheme)
+        }
+        entity.isPinned = tag.isPinned
     }
 
 }

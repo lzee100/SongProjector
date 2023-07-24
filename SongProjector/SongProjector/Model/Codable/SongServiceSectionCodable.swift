@@ -13,7 +13,7 @@ import CoreData
 
 public struct SongServiceSectionCodable: EntityCodableType, Codable, Identifiable {
     
-    static func makeDefault(title: String, position: Int, numberOfSongs: Int, tags: [TagCodable], pinnableTags: [PinnableTagCodable]) -> SongServiceSectionCodable? {
+    static func makeDefault(title: String, position: Int, numberOfSongs: Int, tags: [TagCodable]) -> SongServiceSectionCodable? {
 #if DEBUG
         let userId = "userid"
 #else
@@ -22,7 +22,7 @@ public struct SongServiceSectionCodable: EntityCodableType, Codable, Identifiabl
         }
 #endif
         
-        return SongServiceSectionCodable(userUID: userId, title: title, position: position, numberOfSongs: numberOfSongs, tags: tags, pinnableTags: pinnableTags)
+        return SongServiceSectionCodable(userUID: userId, title: title, position: position, numberOfSongs: numberOfSongs, tags: tags)
     }
     
     public var id: String = "CHURCHBEAM" + UUID().uuidString
@@ -38,7 +38,6 @@ public struct SongServiceSectionCodable: EntityCodableType, Codable, Identifiabl
     var numberOfSongs: Int16 = 0
     var tagIds: [String] = []
     var tags: [TagCodable] = []
-    var pinnableTags: [PinnableTagCodable] = []
 
     enum CodingKeys: String, CodingKey
     {
@@ -53,7 +52,6 @@ public struct SongServiceSectionCodable: EntityCodableType, Codable, Identifiabl
         case position
         case numberOfSongs
         case tags
-        case pinnableTags
     }
     
     init(
@@ -67,8 +65,7 @@ public struct SongServiceSectionCodable: EntityCodableType, Codable, Identifiabl
         rootDeleteDate: Date? = nil,
         position: Int,
         numberOfSongs: Int,
-        tags: [TagCodable],
-        pinnableTags: [PinnableTagCodable]
+        tags: [TagCodable]
     ) {
         self.id = id
         self.userUID = userUID
@@ -81,7 +78,6 @@ public struct SongServiceSectionCodable: EntityCodableType, Codable, Identifiabl
         self.position = Int16(position)
         self.numberOfSongs = Int16(numberOfSongs)
         self.tags = tags
-        self.pinnableTags = pinnableTags
     }
     
     init(entity: SongServiceSection) {
@@ -127,11 +123,6 @@ public struct SongServiceSectionCodable: EntityCodableType, Codable, Identifiabl
         numberOfSongs = try container.decode(Int16.self, forKey: .numberOfSongs)
         tags = try container.decodeIfPresent([TagCodable].self, forKey: .tags) ?? []
         tagIds = tags.compactMap({ $0.id })
-        
-        pinnableTags = try container.decodeIfPresent([PinnableTagCodable].self, forKey: .pinnableTags) ?? []
-        if pinnableTags.count > 0 {
-            tagIds = pinnableTags.compactMap({ $0.id })
-        }
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -159,10 +150,6 @@ public struct SongServiceSectionCodable: EntityCodableType, Codable, Identifiabl
         try container.encode(position, forKey: .position)
         try container.encode(numberOfSongs, forKey: .numberOfSongs)
         try container.encode(tags, forKey: .tags)
-        
-        if pinnableTags.count > 0 {
-            try container.encode(pinnableTags, forKey: .pinnableTags)
-        }
     }
 }
 

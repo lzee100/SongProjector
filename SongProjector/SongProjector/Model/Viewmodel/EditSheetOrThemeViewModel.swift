@@ -124,7 +124,7 @@ struct ThemeEditModel: Identifiable {
     private var uiImageThumb: UIImage?
     private var isImageDeleted: Bool = false
 
-    var newSelectedImage: UIImage? { // binding
+    private var newSelectedImage: UIImage? { // binding
         didSet {
             newSelectedImageThumb = newSelectedImage?.resized(withPercentage: 0.4)
         }

@@ -324,6 +324,7 @@ class AppText: NSObject {
         static let appversion = NSLocalizedString("Settings-appversion", comment: "")
         static let AppSettings = NSLocalizedString("Settings-sectionAppSettings", comment: "")
         static let ResetMutes = NSLocalizedString("Settings-resetMutes", comment: "")
+        static let contactId = NSLocalizedString("Settings-contactId", comment: "")
 	}
 	
 	struct NewTheme {

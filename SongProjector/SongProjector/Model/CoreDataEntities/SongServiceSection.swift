@@ -20,7 +20,6 @@ public class SongServiceSection: Entity {
 	@NSManaged public var position: Int16
 	@NSManaged public var numberOfSongs: Int16
 	@NSManaged public var tagIds: String
-    @NSManaged public var hasPinnableTags: NSSet?
 
     func hasTags(moc: NSManagedObjectContext) -> [Tag] {
         []
@@ -49,21 +48,4 @@ extension SongServiceSection {
 	@objc(removeHasTags:)
 	@NSManaged public func removeFromHasTags(_ values: NSSet)
 	
-}
-
-// MARK: Generated accessors for hasPinnableTags
-extension SongServiceSection {
-
-    @objc(addHasPinnableTagsObject:)
-    @NSManaged public func addToHasPinnableTags(_ value: PinnableTag)
-
-    @objc(removeHasPinnableTagsObject:)
-    @NSManaged public func removeFromHasPinnableTags(_ value: PinnableTag)
-
-    @objc(addHasPinnableTags:)
-    @NSManaged public func addToHasPinnableTags(_ values: NSSet)
-
-    @objc(removeHasPinnableTags:)
-    @NSManaged public func removeFromHasPinnableTags(_ values: NSSet)
-
 }

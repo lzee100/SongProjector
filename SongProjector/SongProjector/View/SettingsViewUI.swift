@@ -69,15 +69,14 @@ struct SettingsViewUI: View {
                     googleAgendaIdView
                 }
                 
+//                Section(AppText.Settings.contactId) {
+//                    contactReferenceIDView
+//                }
+//
                 Section(AppText.Settings.sectionAppSettings) {
                     resetInstrumentMutes
                 }
             }
-//            .onAppear {
-//                Task {
-//                    try? await ResetCoreDataUseCase().reset()
-//                }
-//            }
         }
     }
     
@@ -115,6 +114,15 @@ struct SettingsViewUI: View {
         }
     }
     
+//    @ViewBuilder var contactReferenceIDView: some View {
+//        VStack {
+//            Text(viewModel.authentication?.uid ?? "-")
+//                .styleAs(font: .xNormal)
+//                .textFieldStyle(.roundedBorder)
+//                .padding()
+//        }
+//    }
+//
     @ViewBuilder var resetInstrumentMutes: some View {
         Button {
             Task {

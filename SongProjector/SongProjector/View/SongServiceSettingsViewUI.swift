@@ -34,7 +34,10 @@ import SwiftUI
     }
 
     func fetchSettings() async {
-        songServiceSettings = await GetSongServiceSettingsUseCase().fetch()
+        let settings = await GetSongServiceSettingsUseCase().fetch()
+        print(settings)
+        songServiceSettings = settings
+//        songServiceSettings = await GetSongServiceSettingsUseCase().fetch()
     }
     
     func fetchRemoteSettings() async {
@@ -69,12 +72,11 @@ struct SongServiceSettingsViewUI: View {
                         VStack(alignment: .leading) {
                             Text(AppText.Tags.title)
                                 .styleAs(font: .xNormalBold)
-                            Text(section.tags.compactMap { $0.title }.joined(separator: ", "))
-                                .styleAs(font: .xNormal)
+                            tagsListView(section: section)
+                            }
                         }
                     }
                 }
-            }
             .blur(radius: viewModel.isLoading ? 5 : 0)
             .allowsHitTesting(!viewModel.isLoading)
             .overlay {
@@ -82,7 +84,7 @@ struct SongServiceSettingsViewUI: View {
                     ProgressView()
                 }
             }
-            .task {                
+            .task {
                 await viewModel.fetchRemoteSettings()
             }
             .navigationTitle(AppText.SongServiceManagement.title)
@@ -91,7 +93,7 @@ struct SongServiceSettingsViewUI: View {
                     Button {
                         switch viewModel.editBarButton {
                         case .new:
-                            showingNewSongServiceSettingsView.toggle()
+                            self.showingSongServiceSettingsEditorView = .makeDefault()
                         case .edit(let settings):
                             self.showingSongServiceSettingsEditorView = settings
                         }
@@ -112,14 +114,29 @@ struct SongServiceSettingsViewUI: View {
                     viewModel: SongServiceSettingsEditorViewModel(songServiceSettings: settings)
                 )
             })
-            .sheet(isPresented: $showingNewSongServiceSettingsView) {
-                Task {
-                    await viewModel.fetchSettings()
+        }
+    }
+    
+    @ViewBuilder func tagsListView(section: SongServiceSectionCodable) -> some View {
+        ForEach(section.tags) { tag in
+            tagView(title: tag.title ?? "", isPinned: tag.isPinned)
+        }
+    }
+    
+    @ViewBuilder func tagView(title: String, isPinned: Bool) -> some View {
+        HStack(spacing: 10) {
+            Button() {
+            } label: {
+                HStack {
+                    Text(title)
+                    if isPinned {
+                        Image(systemName: "pin.fill")
+                    }
                 }
-            } content: {
-                NewSongServiceSettingsViewUI(showingNewSongServiceSettingsView: $showingNewSongServiceSettingsView)
             }
-
+            .styleAsSelectionCapsuleButton(isSelected: false)
+            .disabled(true)
+            Spacer()
         }
     }
 }

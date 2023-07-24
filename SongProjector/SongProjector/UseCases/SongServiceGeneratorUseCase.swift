@@ -65,7 +65,7 @@ actor SongServiceGeneratorUseCase {
             var clustersForSection: [ClusterCodable] = []
             await filterOn(section.tagIds, to: &clustersForSection)
             filterOnPlayDate(&clustersForSection, numberOfSongs: section.numberOfSongs.intValue)
-            return SongServiceSectionWithSongs(title: section.title ?? "", cocList: map(clustersForSection, sectionName: section.title, numberOfSongs: section.numberOfSongs.intValue, position: &position))
+            return SongServiceSectionWithSongs(title: section.title ?? "", cocList: mapToClusterOrComment(section: section, clusters: clustersForSection, position: &position))
         }
     }
     
@@ -92,17 +92,59 @@ actor SongServiceGeneratorUseCase {
     private func filterOnPlayDate(_ clustersForSection: inout [ClusterCodable], numberOfSongs: Int) {
         
         clustersForSection.sort(by: { $0.lastShownAt ?? .distantPast < $1.lastShownAt ?? .distantPast })
-        
+        let clustersForSectionToUse = clustersForSection.prefix(numberOfSongs + 3).shuffled()
         if clustersForSection.count >= numberOfSongs {
             
             var randomClusters: [ClusterCodable] = []
             
-            for _ in 0..<numberOfSongs {
-                if let cluster = clustersForSection.prefix(5).randomElement() {
-                    randomClusters.append(cluster)
-                }
+            for index in 0..<numberOfSongs {
+                randomClusters.append(clustersForSectionToUse[index])
             }
             
+        }
+    }
+    
+    private func mapToClusterOrComment(section: SongServiceSectionCodable, clusters: [ClusterCodable], position: inout Int16) -> [ClusterComment] {
+        
+        var clustersToPick = clusters
+        var clusterComments: [ClusterComment] = []
+        var positionInSection = 0
+        // pinned
+        // unpinned
+        // unpinned
+        // pinned
+        
+        if section.tags.count > 0 {
+                        
+            let pinnedTags = section.tags.filter({ $0.isPinned })
+            let unPinnedTagIds = section.tags .filter({ !$0.isPinned }).map { $0.id }
+
+            repeat {
+                if let pinnedTag = pinnedTags.first(where: { $0.position == positionInSection }) {
+                    if var cluster = clustersToPick.first(where: { $0.tagIds.contains(where: { pinnedTag.id == $0 }) }) {
+                        cluster.position = position
+                        clusterComments.append(.cluster(cluster))
+                        position += 1
+                        clustersToPick.removeAll(where: { $0.id == cluster.id })
+                    } else {
+                        clusterComments.append(.comment)
+                    }
+                } else {
+                    if var cluster = clustersToPick.first(where: { $0.tagIds.contains(where: { unPinnedTagIds.contains($0) }) }) {
+                        cluster.position = position
+                        clusterComments.append(.cluster(cluster))
+                        position += 1
+                        clustersToPick.removeAll(where: { $0.id == cluster.id })
+                    } else {
+                        clusterComments.append(.comment)
+                    }
+                }
+                positionInSection += 1
+            } while clusterComments.count != section.numberOfSongs.intValue
+            
+            return clusterComments
+        } else {
+            return map(clusters, sectionName: section.title, numberOfSongs: section.numberOfSongs.intValue, position: &position)
         }
     }
     

@@ -35,11 +35,11 @@ extension View {
             backgroundTransparancy: sheetViewModel.themeModel.theme.backgroundTransparancyNumber)
         )
     }
-        
-    func setBackgroundImage(isForExternalDisplay: Bool, theme: ThemeCodable?) -> some View {
+    
+    func setBackgroundImage(image: UIImage?, backgroundTransparancy: CGFloat = 100) -> some View {
         self.modifier(SheetBackgroundImageModifier(
-            image: isForExternalDisplay ? theme?.uiImage?.image : theme?.uiImageThumb?.image,
-            backgroundTransparancy: theme?.backgroundTransparancy ?? 100)
+            image: image?.image,
+            backgroundTransparancy: backgroundTransparancy)
         )
     }
     

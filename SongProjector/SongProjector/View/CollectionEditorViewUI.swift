@@ -92,7 +92,7 @@ struct CollectionEditorViewUI: View {
                     tagSelectionRowView
 
                     if viewModel.collectionType == .bibleStudy {
-                        Toggle(AppText.NewSong.emptySheetAfterBibleStudyText, isOn: $viewModel.addEmptySheetAfterBibleStudyText)
+                        Toggle(AppText.NewSong.emptySheetAfterBibleStudyText, isOn: $viewModel.cluster.showEmptySheetBibleText)
                     }
 
                     if viewModel.showTimePickerScrollView {
@@ -223,7 +223,7 @@ struct CollectionEditorViewUI: View {
                 }
             }
         }
-        .onChange(of: viewModel.addEmptySheetAfterBibleStudyText, perform: { _ in
+        .onChange(of: viewModel.cluster.showEmptySheetBibleText, perform: { _ in
             Task {
                 await viewModel.bibleStudyTextDidChange(lyricsOrBibleStudytext: viewModel.lyricsOrBibleStudyText, updateExistingSheets: false, parentViewSize: sheetSizeClass.sheetSize)
             }

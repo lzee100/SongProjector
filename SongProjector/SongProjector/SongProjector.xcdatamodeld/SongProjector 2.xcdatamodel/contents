@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21513" systemVersion="22F66" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21754" systemVersion="22F66" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Admin" representedClassName="Admin" parentEntity="Entity" syncable="YES" codeGenerationType="class"/>
     <entity name="Book" representedClassName=".Book" parentEntity="Entity" syncable="YES" codeGenerationType="class">
         <attribute name="name" attributeType="String"/>
@@ -20,6 +20,7 @@
         <attribute name="position" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="root" optional="YES" attributeType="String"/>
         <attribute name="sheetIds" optional="YES" attributeType="String"/>
+        <attribute name="showEmptySheetBibleText" optional="YES" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
         <attribute name="startTime" attributeType="Double" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="tagIds" optional="YES" attributeType="String"/>
         <attribute name="themeId" attributeType="String"/>
@@ -46,10 +47,6 @@
         <attribute name="resourcePath" optional="YES" attributeType="String"/>
         <attribute name="resourcePathAWS" optional="YES" attributeType="String"/>
         <attribute name="typeString" attributeType="String" defaultValueString="Piano"/>
-    </entity>
-    <entity name="PinnableTag" representedClassName="PinnableTag" parentEntity="Entity" syncable="YES" codeGenerationType="class">
-        <attribute name="isPinned" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="position" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
     </entity>
     <entity name="Sheet" representedClassName=".Sheet" parentEntity="Entity" syncable="YES">
         <attribute name="isEmptySheet" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
@@ -95,7 +92,6 @@
         <attribute name="numberOfSongs" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="position" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="tagIds" optional="YES" attributeType="String" valueTransformerName="NSSecureUnarchiveFromData"/>
-        <relationship name="hasPinnableTags" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PinnableTag"/>
         <relationship name="hasTags" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tag" inverseName="hasSongServiceSections" inverseEntity="Tag"/>
     </entity>
     <entity name="SongServiceSettings" representedClassName=".SongServiceSettings" parentEntity="Entity" syncable="YES">
@@ -103,7 +99,9 @@
     </entity>
     <entity name="Tag" representedClassName=".Tag" parentEntity="Entity" syncable="YES">
         <attribute name="isDeletable" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
+        <attribute name="isPinned" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="position" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="positionInScheme" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="hasSongServiceSections" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SongServiceSection" inverseName="hasTags" inverseEntity="SongServiceSection"/>
     </entity>
     <entity name="Theme" representedClassName=".Theme" parentEntity="Entity" syncable="YES">

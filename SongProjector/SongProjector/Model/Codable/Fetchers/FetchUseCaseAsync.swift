@@ -55,7 +55,7 @@ actor FetchUseCaseAsyncTask<T: FileTransferable> {
     
     private let endpoint: EndPoint
     private let db = Firestore.firestore()
-    private let fetchCount = 5
+    private let fetchCount = 15
     private let saveUseCase = SaveCodableToCorDataUseCase<T>()
     let lastUpdatedAtKey = "updatedAt"
     let createdAtKey = "createdAt"
@@ -134,26 +134,47 @@ actor FetchUseCaseAsyncTask<T: FileTransferable> {
     
     private func downloadFiles(_ entities: [T]) async throws -> [T] {
         guard entities.count > 0 else { return [] }
-        do {
-            let downloadedEntities = try await withThrowingTaskGroup(of: T.self) { group in
+            let downloadedEntities = await withTaskGroup(of: [T].self, body: { group in
                 for entity in entities {
                     group.addTask {
-                        return try await FileDownloadUseCase().startDownloadingFor(entity)
+                        if let result = try? await FileDownloadUseCase().startDownloadingFor(entity) {
+                            return [result]
+                        }
+                        return []
                     }
                 }
                 
                 var results: [T] = []
-                for try await (result) in group {
-                    results.append(result)
+                for await (result) in group {
+                    results.append(contentsOf: result)
                 }
                 return results
-                
-            }
-            return downloadedEntities
-        } catch {
-            return entities
-        }
+            })
+        return downloadedEntities
     }
+    
+//    private func downloadFiles(_ entities: [T]) async throws -> [T] {
+//        guard entities.count > 0 else { return [] }
+//        do {
+//            let downloadedEntities = try await withThrowingTaskGroup(of: T.self) { group in
+//                for entity in entities {
+//                    group.addTask {
+//                        return try await FileDownloadUseCase().startDownloadingFor(entity)
+//                    }
+//                }
+//
+//                var results: [T] = []
+//                for try await (result) in group {
+//                    results.append(result)
+//                }
+//                return results
+//
+//            }
+//            return downloadedEntities
+//        } catch {
+//            return entities
+//        }
+//    }
     
     private func save(_ entities: [T]) async throws -> [T] {
         guard saveData else { return entities }

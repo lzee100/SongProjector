@@ -24,12 +24,12 @@ admin.initializeApp({
 var db = admin.firestore();
 
 // The Firebase Admin SDK to access Firestore.
-const { initializeApp } = require("firebase-admin/app");
-const { getFirestore } = require("firebase-admin/firestore");
+// const { initializeApp } = require("firebase-admin/app");
+// const { getFirestore } = require("firebase-admin/firestore");
 
-exports.fetchUniversalClustersWithUID = functions.https.onRequest(async (request, response) => {
+exports.fetchUniversalClustersWithUID = functions.region('europe-west1').https.onRequest(async (request, response) => {
 
-    const token = request.header('authorization');;
+    const token = request.header('authorization');
     const tokenId = await admin
         .auth()
         .verifyIdToken(token)
@@ -56,7 +56,7 @@ exports.fetchUniversalClustersWithUID = functions.https.onRequest(async (request
 
 });
 
-exports.fetchUser = functions.https.onRequest(async (request, response) => {
+exports.fetchUser = functions.region('europe-west1').https.onRequest(async (request, response) => {
 
     const token = request.header('authorization');
     const installToken = request.header('installTokenId');
@@ -81,7 +81,7 @@ exports.fetchUser = functions.https.onRequest(async (request, response) => {
 
 });
 
-exports.hasNewUniversalClusters = functions.https.onRequest(async (request, response) => {
+exports.hasNewUniversalClusters = functions.region('europe-west1').https.onRequest(async (request, response) => {
 
     const token = request.header('authorization');
     const userUID = await admin
@@ -145,16 +145,13 @@ class GetUniversalClustersUseCase {
         return snapshot.docs.length > 0;
     }
 
-    static async getUniversalClusters(userUID, translator) {
-        translator.setErrorValue("line 149");
+    static async getUniversalClusters(userUID, errorValue) {
         const universalUpdatedAt = await this.getUniversalUpdatedAt(userUID);
         var defaultTheme = await this.createDefaultThemeIfNeeded(userUID);
         let snapshot = await db.collection('universalclusters').where('updatedAt', '>', universalUpdatedAt).get();
-        translator.setErrorValue("line 153");
-
-        await this.updateUniversalClusters(userUID, snapshot.docs, translator);
-
-        translator.setErrorValue("line 157");
+        errorValue.setErrorValue("line 152");
+        await this.updateUniversalClusters(userUID, snapshot.docs, errorValue);
+        errorValue.setErrorValue("line 154")
 
         const updatedUniversalClusters = snapshot.docs.map(doc => {
             const universalCluster = doc.data();
@@ -183,8 +180,7 @@ class GetUniversalClustersUseCase {
                 return sheet
             });
             universalCluster.sheets = updatedSheets;
-
-            translator.setErrorValue("line 187");
+            errorValue.setErrorValue("line 183");
 
             const updatedInstruments = instruments.map(instrument => {
                 instrument.id = "CHURCHBEAM" + uuidv4();
@@ -193,56 +189,51 @@ class GetUniversalClustersUseCase {
                 instrument.updatedAt = new Date().getTime();
                 return instrument
             });
-            translator.setErrorValue("line 196");
+            errorValue.setErrorValue("line 192");
 
             universalCluster.instruments = updatedInstruments;
             return universalCluster
         })
+        errorValue.setErrorValue("line 197");
 
         await Promise.all(updatedUniversalClusters.map(async (cluster) => {
             await db.collection('clusters').doc(cluster.id).set(cluster);
         }));
 
-        translator.setErrorValue("line 206");
-
-        await this.setUniversalUpdatedAt(userUID, translator);
-
-        translator.setErrorValue("line 210");
-
-        errorValue +=" line 210";
+        await this.setUniversalUpdatedAt(userUID);
+        errorValue.setErrorValue("line 204");
 
         return updatedUniversalClusters;
-
     };
 
-    static async updateUniversalClusters(userUID, docs, translator) {
-        translator.setErrorValue("line 217");
+    static async updateUniversalClusters(userUID, docs, errorValue) {
         return await Promise.all(docs.map(async (doc) => {
-            translator.setErrorValue("line 219");
             const clusterData = doc.data();
-            translator.setErrorValue("line 221");
             let rootId = clusterData.id;
-            translator.setErrorValue("line 223");
-
+            errorValue.setErrorValue("line 213");
             let userClusters = await db.collection('clusters').where('userUID', '==', userUID).where('root', '==', rootId).get();
-            translator.setErrorValue("line 226");
 
             if (userClusters.docs.length > 0) {
                 let userCluster = userClusters.docs[0].data();
-                translator.setErrorValue("line 232");
 
+                var id = doc.id;
+                if (userCluster.id == null) {
+                    userCluster.id = id
+                }
+
+                errorValue.setErrorValue("line 217");
                 if (clusterData.rootDeleteDate != null) {
+                    errorValue.setErrorValue("line 220");
                     userCluster.deletedAt = clusterData.rootDeleteDate;
                     userCluster.rootDeleteDate = clusterData.rootDeleteDate;
                 }
+                errorValue.setErrorValue("line 224");
                 userCluster.updatedAt = new Date().getTime();
 
-                translator.setErrorValue("line 240");
                 await db.collection('clusters').doc(userCluster.id).set(userCluster);
-                translator.setErrorValue("line 242");
+                errorValue.setErrorValue("line 228");
                 return userCluster;
             }
-            translator.setErrorValue("line 245");
         }));
     };
 
@@ -304,20 +295,16 @@ class GetUniversalClustersUseCase {
         }
     }
 
-    static async setUniversalUpdatedAt(userUID, translator) {
+    static async setUniversalUpdatedAt(userUID) {
         const data = await db.collection('universalupdatedat').where('userUID', '==', userUID).get();
-        translator.setErrorValue("line 309");
         if (data.docs.length > 0) {
-            translator.setErrorValue("line 311");
             var uua = data.docs[0].data();
             uua.universalUpdatedAt = new Date().getTime();
-            translator.setErrorValue(uua);
             var id = data.docs[0].id;
             if (uua.id == null) {
                 uua.id = data.docs[0].id
             }
             await db.collection('universalupdatedat').doc(id).set(uua);
-            translator.setErrorValue("line 316");
             return uua;
         } else {
             const id = "CHURCHBEAM" + uuidv4();

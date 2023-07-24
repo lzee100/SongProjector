@@ -47,7 +47,8 @@ public struct ClusterCodable: EntityCodableType, Identifiable, Equatable {
         church: String? = nil,
         startTime: Double = 0.0,
         hasSheetPastors: Bool = false,
-        tagIds: [String] = []
+        tagIds: [String] = [],
+        showEmptySheetBibleText: Bool = true
     ) {
         self.id = id
         self.userUID = userUID
@@ -100,6 +101,7 @@ public struct ClusterCodable: EntityCodableType, Identifiable, Equatable {
     var startTime: Double = 0.0
     var hasSheetPastors = false
     var tagIds: [String] = []
+    var showEmptySheetBibleText = true
     
     public var isTypeSong: Bool {
         if hasSheets.contains(where: { $0.theme?.isHidden ?? false }) {
@@ -148,6 +150,7 @@ public struct ClusterCodable: EntityCodableType, Identifiable, Equatable {
         case church
         case startTime
         case hasSheetPastors
+        case showEmptySheetBibleText
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -166,6 +169,7 @@ public struct ClusterCodable: EntityCodableType, Identifiable, Equatable {
         try container.encode(tagIds.joined(separator: ","), forKey: .tagids)
         try container.encode(String(startTime), forKey: .startTime)
         try container.encode(Int(truncating: NSNumber(value: hasSheetPastors)), forKey: .hasSheetPastors)
+        try container.encode(Int(truncating: NSNumber(value: showEmptySheetBibleText)), forKey: .showEmptySheetBibleText)
         
         try container.encodeIfPresent(id, forKey: .id)
         try container.encodeIfPresent(title, forKey: .title)
@@ -214,6 +218,7 @@ public struct ClusterCodable: EntityCodableType, Identifiable, Equatable {
         instrumentIds = entity.instrumentIds ?? ""
         church = entity.church
         startTime = entity.startTime
+        showEmptySheetBibleText = entity.showEmptySheetBibleText
     }
 
     
@@ -242,6 +247,7 @@ public struct ClusterCodable: EntityCodableType, Identifiable, Equatable {
         hasInstruments = try container.decodeIfPresent([InstrumentCodable].self, forKey: .hasInstruments) ?? []
         instrumentIds = hasInstruments.compactMap({ $0.id }).joined(separator: ",")
         hasSheetPastors = try Bool(truncating: (container.decodeIfPresent(Int16.self, forKey: .hasSheetPastors) ?? 0) as NSNumber)
+        showEmptySheetBibleText = try Bool(truncating: (container.decodeIfPresent(Int16.self, forKey: .showEmptySheetBibleText) ?? 1) as NSNumber)
         
         id  = try container.decode(String.self, forKey: .id)
         title = try container.decodeIfPresent(String.self, forKey: .title)

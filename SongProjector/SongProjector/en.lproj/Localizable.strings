@@ -230,6 +230,7 @@
 "Settings-appversion" = "Version: ";
 "Settings-sectionAppSettings" = "App settings";
 "Settings-resetMutes" = "Reset saved mutes for instruments";
+"Settings-contactId" = "Contact reference ID";
 
 "EditTheme-title" = "Edit theme";
 

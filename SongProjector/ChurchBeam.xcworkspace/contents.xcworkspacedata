@@ -2,9 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:/Users/leovanderzee/development/songprojector/SongProjector/SongProjector/UseCases/GetUseCases/GetNewTagPositionUseCase.swift">
-   </FileRef>
-   <FileRef
       location = "group:ChurchBeam.xcodeproj">
    </FileRef>
    <FileRef

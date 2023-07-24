@@ -99,7 +99,6 @@ import SwiftUI
     func fetchRemoteCollections() async {
         guard !showingLoader else { return }
         showingLoader = true
-        print("fetching remote collections")
         do {
             let newCollections = try await FetchCollectionsUseCase(fetchAll: false).fetch()
             if newCollections.count > 0 {

@@ -233,6 +233,9 @@
 "Settings-appversion" = "Versie: ";
 "Settings-sectionAppSettings" = "App instellingen";
 "Settings-resetMutes" = "Reset opgeslagen mutes voor instrument";
+"Settings-contactId" = "Contact referentie ID";
+
+
 
 "EditTheme-title" = "Wijzig thema";
 

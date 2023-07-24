@@ -334,7 +334,7 @@ extension SheetTitleImageCodable: FileTransferable {
         self.hasTheme = theme
         
         for download in transferObjects.compactMap({ $0 as? DownloadObject }) {
-            if imagePathAWS == download.filename {
+            if imagePathAWS == download.filename  || URL(string: imagePathAWS)?.pathComponents.last == download.filename {
                 try setBackgroundImage(image: download.image, imageName: download.filename)
             }
         }

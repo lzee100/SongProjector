@@ -67,6 +67,7 @@ actor SaveClustersUseCase {
         entity.instrumentIds = clusterCodable.hasInstruments.compactMap { $0.id }.joined(separator: ",")
         entity.sheetIds = clusterCodable.hasSheets.map { $0.id }.joined(separator: ",")
         entity.tagIds = clusterCodable.tagIds.joined(separator: ",")
+        entity.showEmptySheetBibleText = clusterCodable.showEmptySheetBibleText
     }
     
 }

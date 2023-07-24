@@ -207,6 +207,7 @@ struct ThemesViewUI_Previews: PreviewProvider {
         ThemesViewUI()
     }
 }
+
 extension View {
     func errorAlert(error: Binding<LocalizedError?>, buttonTitle: String = "OK") -> some View {
         let localizedAlertError = LocalizedAlertError(error: error.wrappedValue)
@@ -219,6 +220,7 @@ extension View {
         }
     }
 }
+
 struct LocalizedAlertError: LocalizedError {
     let underlyingError: LocalizedError
     var errorDescription: String? {

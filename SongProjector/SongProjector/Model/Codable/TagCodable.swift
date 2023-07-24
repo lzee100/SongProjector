@@ -35,6 +35,8 @@ public struct TagCodable: EntityCodableType, Identifiable, Equatable, Hashable {
     
     var position: Int = 0
     var isDeletable = true
+    var isPinned = false
+    var positionInScheme: Int?
     
     enum CodingKeys: String, CodingKey
     {
@@ -48,6 +50,8 @@ public struct TagCodable: EntityCodableType, Identifiable, Equatable, Hashable {
         
         case position
         case isDeletable
+        case positionInScheme
+        case isPinned
     }
     
     init(
@@ -60,7 +64,9 @@ public struct TagCodable: EntityCodableType, Identifiable, Equatable, Hashable {
         isTemp: Bool = false,
         rootDeleteDate: Date? = nil,
         position: Int = 0,
-        isDeletable: Bool = true
+        isDeletable: Bool = true,
+        isPinned: Bool = false,
+        positionInScheme: Int? = nil
     ) {
         self.id = id
         self.userUID = userUID
@@ -72,6 +78,8 @@ public struct TagCodable: EntityCodableType, Identifiable, Equatable, Hashable {
         self.rootDeleteDate = rootDeleteDate
         self.position = position
         self.isDeletable = isDeletable
+        self.isPinned = isPinned
+        self.positionInScheme = positionInScheme
     }
     
     init?(entity: Tag) {
@@ -84,6 +92,8 @@ public struct TagCodable: EntityCodableType, Identifiable, Equatable, Hashable {
         rootDeleteDate = entity.rootDeleteDate?.date
         position = entity.position.intValue
         isDeletable = entity.isDeletable
+        positionInScheme = entity.positionInScheme.intValue
+        isPinned = entity.isPinned
     }
 
     // MARK: - Decodable
@@ -112,6 +122,9 @@ public struct TagCodable: EntityCodableType, Identifiable, Equatable, Hashable {
         
         position = try container.decodeIfPresent(Int.self, forKey: .position) ?? 0
         isDeletable = try Bool(truncating: (container.decodeIfPresent(Int.self, forKey: .isDeletable) ?? 0) as NSNumber)
+        positionInScheme = try container.decodeIfPresent(Int.self, forKey: .positionInScheme)
+        isPinned = try Bool(truncating: (container.decodeIfPresent(Int.self, forKey: .isPinned) ?? 0) as NSNumber)
+
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -138,6 +151,8 @@ public struct TagCodable: EntityCodableType, Identifiable, Equatable, Hashable {
         
         try container.encode(position, forKey: .position)
         try container.encode(Int(truncating: NSNumber(value: isDeletable)), forKey: .isDeletable)
+        try container.encode(Int(truncating: NSNumber(value: isPinned)), forKey: .isPinned)
+        try container.encode(positionInScheme, forKey: .positionInScheme)
     }
 }
 
