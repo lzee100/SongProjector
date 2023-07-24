@@ -120,7 +120,7 @@ class MenuController: UITabBarController {
 		tabBar.barTintColor = UIColor(hex: "#2E2C2C")
         
         switch ChurchBeamConfiguration.environment {
-        case .dev: tabBar.barTintColor = UIColor(hex: "#891938")
+        case .dev, .devLocalHost: tabBar.barTintColor = UIColor(hex: "#891938")
         case .production: tabBar.barTintColor = UIColor(hex: "2E2C2C")
         }
 

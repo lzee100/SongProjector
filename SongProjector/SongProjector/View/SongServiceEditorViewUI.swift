@@ -71,15 +71,14 @@ protocol SongServiceEditorViewDelegate {
         sectionedSongs = []
     }
     
-    private func fetchCollections() async throws {
+    func fetchSongServiceSettingsRemotely() async {
         guard !showingLoader else { return }
         showingLoader = true
-        try await FetchCollectionsUseCase(fetchAll: true).fetch()
-    }
-    
-    func fetchSongServiceSettingsRemotely() async {
+
         do {
-            try await fetchCollections()
+            try await FetchThemesUseCase(fetchAll: true).fetch()
+            try await FetchTagsUseCase(fetchAll: true).fetch()
+            try await FetchCollectionsUseCase(fetchAll: true).fetch()
             try await FetchSongServiceSettingsUseCase().fetch()
             await setFirstSongServiceSettings()
         } catch {

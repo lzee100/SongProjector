@@ -24,6 +24,7 @@ class Config: NSObject {
 		static let AppStoreIdentifier = "AppStoreIdentifier"
 		static let RESTServiceVersion = "RESTServiceVersion"
 		static let BundleName = "CFBundleName"
+        static let cloudFunctionsEndpoint = "cloudFunctionsEndpoint"
 	}
 	
 	lazy var appVersion: String = {
@@ -82,15 +83,19 @@ class Config: NSObject {
 		let urls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
 		return urls[urls.count - 1]
 	}()
-		
 }
 
-enum Environment: Int {
-	
-	static let allValues = [dev, production]
+enum Environment: Int, Identifiable {
+    
+    var id: String {
+        UUID().uuidString
+    }
+    
+	static let allValues = [devLocalHost, dev, production]
 	
 	case dev = 1
 	case production = 2
+    case devLocalHost = 3
 	
 	var name: String {
 		switch self {
@@ -98,11 +103,21 @@ enum Environment: Int {
 			return AppText.environments.development
 		case .production:
 			return AppText.environments.production
+        case .devLocalHost:
+            return AppText.environments.localHost
 		}
 	}
     
     var next: Environment {
         return self == .dev ? .production : .dev
+    }
+    
+    var cloudFunctionsEndpoint: String {
+        switch self {
+        case .dev: return "https://europe-west1-churchbeamtest.cloudfunctions.net/"
+        case .devLocalHost: return "http://localhost:5000/churchbeamtest/us-central1/"
+        case .production: return "https://europe-west1-churchbeam-7a169.cloudfunctions.net/"
+        }
     }
 }
 
@@ -118,7 +133,7 @@ extension Environment {
             }
 //            FirebaseApp.configure(options: fileopts)
             FirebaseApp.configure()
-        case .dev:
+        case .dev, .devLocalHost:
             let filePath = Bundle.main.path(forResource: "GoogleService-Info-Test", ofType: "plist")
             guard let fileopts = FirebaseOptions(contentsOfFile: filePath!) else {
                 assert(false, "Couldn't load config file")

@@ -12,16 +12,8 @@ import FirebaseAuth
 actor SyncUniversalCollectionsUseCase: ObservableObject {
     
     @Published private(set) var isFetching = false
-
-    private let endpoint = "https://europe-west1-churchbeam-7a169.cloudfunctions.net/fetchUniversalClustersWithUID"
-
-//#if DEBUG
-//    private let endpoint = "https://europe-west1-churchbeamtest.cloudfunctions.net/fetchUniversalClustersWithUID"
-////    private let endpoint = "http://localhost:5000/churchbeamtest/us-central1/fetchUniversalClustersWithUID"
-//#else
-//    private let endpoint = "https://europe-west1-churchbeam-7a169.cloudfunctions.net/fetchUniversalClustersWithUID"
-//#endif
-
+    private let endpoint = "fetchUniversalClustersWithUID"
+    
     enum AuthError: Error {
         case noOauthToken
     }
@@ -34,7 +26,7 @@ actor SyncUniversalCollectionsUseCase: ObservableObject {
             throw AuthError.noOauthToken
         }
         do {
-            var request = URLRequest(url: URL(string: endpoint)!)
+            var request = URLRequest(url: URL(string: ChurchBeamConfiguration.environment.cloudFunctionsEndpoint + endpoint)!)
             request.addValue(token, forHTTPHeaderField: "Authorization")
             let (result, error) = try await URLSession.shared.data(for: request)
             print(error)

@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct OnboardingWelcomeViewUI: View {
+    @State private var isShowingEnvironmentPicker = false
     var body: some View {
         ZStack {
             Color(uiColor: themeHighlighted).edgesIgnoringSafeArea(.all)
@@ -25,9 +26,26 @@ struct OnboardingWelcomeViewUI: View {
                         .styleAs(font: .xxNormalLight, color: .white)
                     Spacer()
                 }
-                
+#if DEBUG
+                Button(action: {
+                    isShowingEnvironmentPicker.toggle()
+                }, label: {
+                    Text("Choose environment")
+                        .padding()
+                })
+                .buttonStyle(.bordered)
+                .tint(.white)
+                .padding(.top, 30)
+#endif
             }
             .padding([.leading, .trailing], 50)
+        }
+        .alert(Text("Choose environment"), isPresented: $isShowingEnvironmentPicker) {
+            ForEach(Environment.allValues) { environment in
+                Button(environment.name, role: environment == ChurchBeamConfiguration.environment ? .destructive : nil) {
+                    ChurchBeamConfiguration.environment = environment
+                }
+            }
         }
     }
 }

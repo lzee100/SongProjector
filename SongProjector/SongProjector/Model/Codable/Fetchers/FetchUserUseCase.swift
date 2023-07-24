@@ -14,18 +14,9 @@ actor FetchUserUseCase {
     enum AuthError: Error {
         case noOauthToken
     }
-    
-    private let endpoint = URL(string: "https://europe-west1-churchbeam-7a169.cloudfunctions.net/fetchUser")!
-
-//#if DEBUG
-//    private let endpoint = URL(string: "https://europe-west1-churchbeamtest.cloudfunctions.net/us-central1/fetchUser")!
-////    private let endpoint = URL(string: "http://127.0.0.1:5000/churchbeamtest/us-central1/fetchUser")!
-//#else
-//    private let endpoint = URL(string: "https://europe-west1-churchbeam-7a169.cloudfunctions.net/fetchUser")!
-//#endif
-    
+    private let endpoint = "fetchUser"
     private(set) var isFetching = false
-
+    
     func fetch(installTokenId: String) async throws {
         guard !isFetching else { return }
         isFetching = true
@@ -34,7 +25,7 @@ actor FetchUserUseCase {
             throw AuthError.noOauthToken
         }
         do {
-            var request = URLRequest(url: endpoint)
+            var request = URLRequest(url: URL(string: ChurchBeamConfiguration.environment.cloudFunctionsEndpoint + endpoint)!)
             request.addValue(token, forHTTPHeaderField: "Authorization")
             request.addValue(installTokenId, forHTTPHeaderField: "installTokenId")
             let (userData, _) = try await URLSession.shared.data(for: request)
