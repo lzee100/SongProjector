@@ -69,8 +69,6 @@ struct SaveImageUseCase {
         return getURLUseCase.fileName
     }
     
-
-    
 }
 
 private extension UIImage {

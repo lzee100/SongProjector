@@ -41,6 +41,7 @@ struct GetTagEntitiesUseCase {
             entity.positionInScheme = Int16(positionInScheme)
         }
         entity.isPinned = tag.isPinned
+        entity.isDeletable = tag.isDeletable
     }
 
 }

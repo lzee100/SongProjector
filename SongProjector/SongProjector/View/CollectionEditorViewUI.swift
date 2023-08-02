@@ -38,7 +38,8 @@ struct CollectionEditorViewUI: View {
         
         case bibleStudySheets(content: String)
     }
-    
+    @EnvironmentObject var musicDownloadManager: MusicDownloadManager
+
     @StateObject private var viewModel: CollectionEditorViewModel
     @StateObject private var themeSelectionModel: ThemesSelectionModel
     @StateObject private var tagsSelectionModel: TagSelectionModel
@@ -138,42 +139,43 @@ struct CollectionEditorViewUI: View {
                     }
                 }
             })
-        }
-        .interactiveDismissDisabled()
-        .sheet(item: $sheetPresentMode, content: { sheetPresenter in
-            switch sheetPresenter {
-            case .bibleStudySheets(let content):
-                LyricsOrBibleStudyInputViewUI(viewModel: LyricsOrBibleStudyInputViewModel(
-                    originalContent: content,
-                    content: $viewModel.lyricsOrBibleStudyText,
-                    cluster: viewModel.cluster,
-                    font: .body,
-                    collectionType: viewModel.collectionType,
+            .sheet(item: $sheetPresentMode, content: { sheetPresenter in
+                switch sheetPresenter {
+                case .bibleStudySheets(let content):
+                    LyricsOrBibleStudyInputViewUI(viewModel: LyricsOrBibleStudyInputViewModel(
+                        originalContent: content,
+                        content: $viewModel.lyricsOrBibleStudyText,
+                        cluster: viewModel.cluster,
+                        font: .body,
+                        collectionType: viewModel.collectionType,
+                        delegate: self,
+                        sheetPresentMode: $sheetPresentMode,
+                        isNewSong: uploadSecret != nil
+                    ))
+                }
+            })
+            .sheet(item: $selectedSheetModel, content: { model in
+                EditThemeOrSheetViewUI(
+                    navigationTitle: AppText.SheetPickerMenu.pickCustom,
                     delegate: self,
-                    sheetPresentMode: $sheetPresentMode,
-                    isNewSong: uploadSecret != nil
-                ))
-            }
-        })
-        .sheet(item: $selectedSheetModel, content: { model in
-            EditThemeOrSheetViewUI(
-                navigationTitle: AppText.SheetPickerMenu.pickCustom,
-                delegate: self,
-                sheetViewModel: model
-            )
-        })
-        .sheet(isPresented: $showingSheetTimesEditorView, content: {
-            SheetTimesEditViewUI(
-                sheetTimesEditorStringValue: viewModel.sheets.compactMap { $0.sheetTime.isBlanc ? nil : $0.sheetTime }.joined(separator: "\n"),
-                showingSheetTimesEditView: $showingSheetTimesEditorView,
-                delegate: self)
-        })
-        .fullScreenCover(isPresented: $showingSongServicePreview, content: {
-            SongServiceViewUI(
-                previewSong: try? viewModel.generatePreviewCluster(),
-                showingSongServiceView: $showingSongServicePreview
-            )
-        })
+                    sheetViewModel: model
+                )
+            })
+            .sheet(isPresented: $showingSheetTimesEditorView, content: {
+                SheetTimesEditViewUI(
+                    sheetTimesEditorStringValue: viewModel.sheets.compactMap { $0.sheetTime.isBlanc ? nil : $0.sheetTime }.joined(separator: "\n"),
+                    showingSheetTimesEditView: $showingSheetTimesEditorView,
+                    delegate: self)
+            })
+            .fullScreenCover(isPresented: $showingSongServicePreview, content: {
+                return SongServiceViewUI(
+                    previewSong: try? viewModel.generatePreviewCluster(), // FIXME: if error, this is shown while prezenting this screen, this goes totally wrong. TODO: ...
+                    showingSongServiceView: $showingSongServicePreview
+                )
+            })
+        }
+        .environmentObject(musicDownloadManager)
+        .interactiveDismissDisabled()
         .alert(AppText.UploadUniversalSong.saveClusterConformationQuestion, isPresented: $showingConfirmUploadUniversalClusterAlert, actions: {
             Button(role: .destructive) {
                 Task {
@@ -566,18 +568,13 @@ struct CollectionEditorViewUI: View {
 
 extension CollectionEditorViewUI: SheetTimesEditViewDelegate {
     func didUpdateSheetTimes(value: String) {
-        do {
-            let times = try GetSheetTimesEditUseCase.getTimesFrom(value, sheetViewModels: viewModel.sheets)
-            for index in 0..<times.count {
+        let times = GetSheetTimesEditUseCase.getTimesFrom(value, sheetViewModels: viewModel.sheets)
+        for index in 0..<times.count {
+            if index < viewModel.sheets.count {
                 viewModel.sheets[index].sheetTime = times[index]
             }
-            showingSheetTimesEditorView = false
-        } catch {
-            showingSheetTimesEditorView = false
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: {
-                self.viewModel.error = error as? LocalizedError
-            })
         }
+        showingSheetTimesEditorView = false
     }
 }
 

@@ -81,6 +81,14 @@ struct SheetScrollViewUI: View {
                                                 .overlay(
                                                     RoundedRectangle(cornerRadius: 8).fill(.black.opacity(songServiceModel.selectedSheetId == model.id ? 0 : 0.4))
                                                 )
+#if DEBUG
+                                                .overlay(
+                                                    Text("\(sheetIndex + 1)")
+                                                        .styleAs(font: .xxxLarge)
+                                                        .foregroundColor(.black)
+                                                    )
+#endif
+
                                         }
                                         .id(model.id)
                                         .disabled(!songServiceModel.isSheetSelectable(sheetViewModel: model))

@@ -323,7 +323,6 @@ import SwiftUI
                 if var createdSheet = try sheet.createSheetCodable() {
                     createdSheet.position = index
                     codableSheets.append(createdSheet)
-
                 }
             }
             

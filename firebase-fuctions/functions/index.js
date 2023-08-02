@@ -14,6 +14,8 @@
 // RUN IN TERMINAL TO START: firebase serve --only functions
 // RUN IN TERMINAL: firebase deploy --only functions
 
+// https://firebasestorage.googleapis.com/v0/b/churchbeamtest.appspot.com/o/images%2F20230615193300439B762A2B-DCB0-4AA3-A0A8-5F8CABE97555.jpg?alt=media&token=6fdd5d9f-e5b0-4ab7-850e-37fd30d35ae1
+
 const { v4: uuidv4 } = require('uuid');
 
 const functions = require("firebase-functions");
@@ -151,7 +153,9 @@ class GetUniversalClustersUseCase {
         let snapshot = await db.collection('universalclusters').where('updatedAt', '>', universalUpdatedAt).get();
         errorValue.setErrorValue("line 152");
         await this.updateUniversalClusters(userUID, snapshot.docs, errorValue);
-        errorValue.setErrorValue("line 154")
+        errorValue.setErrorValue("line 156")
+        let defaultTag = await this.createDefaultTagIfNeeded(userUID, errorValue);
+        errorValue.setErrorValue(`line 205`);
 
         const updatedUniversalClusters = snapshot.docs.map(doc => {
             const universalCluster = doc.data();
@@ -161,6 +165,7 @@ class GetUniversalClustersUseCase {
             universalCluster.theme_id = defaultTheme.id;
             universalCluster.id = "CHURCHBEAM" + uuidv4();
             universalCluster.updatedAt = new Date().getTime();
+            universalCluster.tagids = defaultTag.id;
 
             const sheets = universalCluster.sheets;
             const instruments = universalCluster.instruments;
@@ -194,9 +199,10 @@ class GetUniversalClustersUseCase {
             universalCluster.instruments = updatedInstruments;
             return universalCluster
         })
-        errorValue.setErrorValue("line 197");
+        errorValue.setErrorValue(`line 202`);
 
         await Promise.all(updatedUniversalClusters.map(async (cluster) => {
+            errorValue.setErrorValue(`line 205 ${cluster}`);
             await db.collection('clusters').doc(cluster.id).set(cluster);
         }));
 
@@ -210,8 +216,9 @@ class GetUniversalClustersUseCase {
         return await Promise.all(docs.map(async (doc) => {
             const clusterData = doc.data();
             let rootId = clusterData.id;
-            errorValue.setErrorValue("line 213");
+            errorValue.setErrorValue("217");
             let userClusters = await db.collection('clusters').where('userUID', '==', userUID).where('root', '==', rootId).get();
+            errorValue.setErrorValue("219");
 
             if (userClusters.docs.length > 0) {
                 let userCluster = userClusters.docs[0].data();
@@ -221,17 +228,17 @@ class GetUniversalClustersUseCase {
                     userCluster.id = id
                 }
 
-                errorValue.setErrorValue("line 217");
+                errorValue.setErrorValue("line 228");
                 if (clusterData.rootDeleteDate != null) {
-                    errorValue.setErrorValue("line 220");
+                    errorValue.setErrorValue("line 230");
                     userCluster.deletedAt = clusterData.rootDeleteDate;
                     userCluster.rootDeleteDate = clusterData.rootDeleteDate;
                 }
-                errorValue.setErrorValue("line 224");
+                errorValue.setErrorValue("line 234");
                 userCluster.updatedAt = new Date().getTime();
 
                 await db.collection('clusters').doc(userCluster.id).set(userCluster);
-                errorValue.setErrorValue("line 228");
+                errorValue.setErrorValue("line 238");
                 return userCluster;
             }
         }));
@@ -285,6 +292,33 @@ class GetUniversalClustersUseCase {
             return defaultThemes.docs[0].data();
         }
     }
+
+    static async createDefaultTagIfNeeded(userUID, errorValue) {
+        errorValue.setErrorValue("line 294");
+
+        const defaultTags = await db.collection('tags').where('userUID', '==', userUID).where('isDeletable', "==", 0).get();
+
+        if (defaultTags.docs.length == 0) {
+            errorValue.setErrorValue("line 299");
+            const id = "CHURCHBEAM" + uuidv4();
+            const defaultTag = {
+                createdAt: new Date().getTime(),
+                updatedAt: new Date().getTime(),
+                id: id,
+                isDeletable: 0,
+                position: defaultTags.docs.length,
+                title: "Nieuw",
+                userUID: userUID
+            };
+            errorValue.setErrorValue("line 310");
+            await db.collection('tags').doc(id).set(defaultTag);
+            return defaultTag;
+        } else {
+            errorValue.setErrorValue("line 314");
+            return defaultTags.docs[0].data();
+        }
+    }
+
 
     static async getUniversalUpdatedAt(userUID) {
         const data = await db.collection('universalupdatedat').where('userUID', '==', userUID).get();

@@ -87,16 +87,18 @@ struct TagsViewUI: View {
                         }
                         .buttonStyle(.borderless)
                         .swipeActions {
-                            Button(role: .destructive) {
-                                Task {
-                                    await viewModel.delete(tag: tag)
+                            if tag.isDeletable {
+                                Button(role: .destructive) {
+                                    Task {
+                                        await viewModel.delete(tag: tag)
+                                    }
+                                } label: {
+                                    Image(systemName: "trash")
+                                        .tint(.white)
                                 }
-                            } label: {
-                                Image(systemName: "trash")
-                                    .tint(.white)
+                                .disabled(viewModel.showingLoader)
+                                .tint(Color(uiColor: .red1))
                             }
-                            .disabled(viewModel.showingLoader)
-                            .tint(Color(uiColor: .red1))
                         }
                     }
                     .onMove(perform: move)

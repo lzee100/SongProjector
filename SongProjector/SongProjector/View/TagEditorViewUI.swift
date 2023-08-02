@@ -10,19 +10,18 @@ import SwiftUI
 
 @MainActor class TagEditorViewModel: ObservableObject {
     
+    @Published var tagTitle: String
     @Published private(set) var tag: TagCodable
     @Published private(set) var error: Error?
     @Published private(set) var showingLoader = false
 
     init(tag: TagCodable) {
         self.tag = tag
-    }
-    
-    func set(title: String) {
-        tag.title = title
+        self.tagTitle = tag.title ?? ""
     }
     
     func update() async {
+        tag.title = tagTitle
         showingLoader = true
         do {
             let updatedTags = try await SubmitUseCase<TagCodable>.init(endpoint: .tags, requestMethod: .put, uploadObjects: [tag]).submit()
@@ -43,14 +42,13 @@ struct TagEditorViewUI: View {
     @Binding var isShowingTagEditor: TagCodable?
     @StateObject var viewModel: TagEditorViewModel
     
-    @State private var tagTitle = TextBindingManager()
     @State private var showingTitleIsBlancError = false
 
     var body: some View {
         NavigationStack {
             Form {
                 Section {
-                    TextField(AppText.Tags.name, text: $tagTitle.text)
+                    TextField(AppText.Tags.name, text: $viewModel.tagTitle)
                         .textFieldStyle(.roundedBorder)
                         .padding([.top, .bottom], 20)
                 }
@@ -61,12 +59,6 @@ struct TagEditorViewUI: View {
                     ProgressView()
                 }
             }
-            .onAppear {
-                tagTitle.text = viewModel.tag.title ?? ""
-            }
-            .onChange(of: tagTitle.text, perform: { title in
-                viewModel.set(title: title)
-            })
             .alert(AppText.Tags.errorEmptyTitle, isPresented: $showingTitleIsBlancError) {
                 Button(AppText.Actions.ok, role: .cancel) {
                 }
@@ -83,7 +75,7 @@ struct TagEditorViewUI: View {
                 }
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button {
-                        if tagTitle.text.isBlanc {
+                        if viewModel.tagTitle.isBlanc {
                             showingTitleIsBlancError.toggle()
                         } else {
                             Task {

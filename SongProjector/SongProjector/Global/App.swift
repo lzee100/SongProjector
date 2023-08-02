@@ -32,9 +32,9 @@ struct ChurchBeamApp: View {
     }
     
     let store: ExternalDisplayConnector
-    var userAuth: UserAuthModel =  UserAuthModel()
+    var userAuth: UserAuthModel = UserAuthModel()
     var soundPlayer = SoundPlayer2()
-    var musicDownloadManager =  MusicDownloadManager()
+    @StateObject var musicDownloadManager = MusicDownloadManager()
     var universalClusterRequester = SyncUniversalCollectionsUseCase()
     @State private var appState: AppState? = nil
     @State private var showApp = false
@@ -199,19 +199,19 @@ struct ChurchBeamApp: View {
     }
     
     private func initializeFireStore() {
-        ChurchBeamConfiguration.environment = .production
-        ChurchBeamConfiguration.environment.loadGoogleFile()
-//                if UserDefaults.standard.integer(forKey: "config.environment") != 0 {
-//                    ChurchBeamConfiguration.environment.loadGoogleFile()
-//                } else {
-//                    switch AppConfiguration.mode {
-//                    case .TestFlight, .AppStore:
-//                        ChurchBeamConfiguration.environment = .production
-//                    case .Debug:
-//                        ChurchBeamConfiguration.environment = .dev
-//                    }
-//                    ChurchBeamConfiguration.environment.loadGoogleFile()
-//                }
+//        ChurchBeamConfiguration.environment = .production
+//        ChurchBeamConfiguration.environment.loadGoogleFile()
+                if UserDefaults.standard.integer(forKey: "config.environment") != 0 {
+                    ChurchBeamConfiguration.environment.loadGoogleFile()
+                } else {
+                    switch AppConfiguration.mode {
+                    case .TestFlight, .AppStore:
+                        ChurchBeamConfiguration.environment = .production
+                    case .Debug:
+                        ChurchBeamConfiguration.environment = .dev
+                    }
+                    ChurchBeamConfiguration.environment.loadGoogleFile()
+                }
         FirebaseConfiguration.shared.setLoggerLevel(.min)
     }
     

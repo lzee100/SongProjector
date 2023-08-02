@@ -161,6 +161,7 @@ struct SongServiceEditorViewUI: View {
     @State private var showingCustomSelectionSongsCollectionOverView: Bool = false
     @State private var editingSection: SongServiceSectionWithSongs? = nil
     @Binding var showingSongServiceEditorViewUI: Bool
+    @EnvironmentObject var musicDownloadManager: MusicDownloadManager
 
     var body: some View {
         NavigationStack {
@@ -192,29 +193,27 @@ struct SongServiceEditorViewUI: View {
                     }
                 }
             }
-        }
-        .sheet(isPresented: $showingCustomSelectionSongsCollectionOverView, content: {
-            CollectionsViewUI(
-                editingSection: Binding.constant(nil),
-                songServiceEditorModel: viewModel,
-                customSelectedSongsForSongService: viewModel.customSelectedSongs,
-                customSelectionDelegate: self,
-                mandatoryTags: []
-            )
-        })
-        .sheet(item: $editingSection) { editingSection in
-            if let sectionIndex = viewModel.sectionedSongs.firstIndex(where: { $0.id == editingSection.id }) {
-                let mandatoryTags = viewModel.songServiceSettings?.sections[sectionIndex].tags ?? []
+            .sheet(isPresented: $showingCustomSelectionSongsCollectionOverView, content: {
                 CollectionsViewUI(
-                    editingSection: $editingSection,
+                    editingSection: Binding.constant(nil),
                     songServiceEditorModel: viewModel,
-                    mandatoryTags: mandatoryTags
+                    customSelectedSongsForSongService: viewModel.customSelectedSongs,
+                    customSelectionDelegate: self,
+                    mandatoryTags: []
                 )
+            })
+            .sheet(item: $editingSection) { editingSection in
+                if let sectionIndex = viewModel.sectionedSongs.firstIndex(where: { $0.id == editingSection.id }) {
+                    let mandatoryTags = viewModel.songServiceSettings?.sections[sectionIndex].tags ?? []
+                    CollectionsViewUI(
+                        editingSection: $editingSection,
+                        songServiceEditorModel: viewModel,
+                        mandatoryTags: mandatoryTags
+                    )
+                }
             }
         }
-        .task {
-            
-        }
+        .environmentObject(musicDownloadManager)
     }
     
     @ViewBuilder var songServiceView: some View {

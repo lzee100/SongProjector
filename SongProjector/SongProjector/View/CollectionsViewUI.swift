@@ -332,6 +332,18 @@ struct CollectionsViewUI: View {
             .background(Color(uiColor: colorScheme == .dark ? .black : .systemGray6))
             .searchable(text: $viewModel.searchText).tint(Color(uiColor: themeHighlighted))
             .autocorrectionDisabled()
+            .sheet(item: $showingCollectionEditor, onDismiss: {
+                Task {
+                    await viewModel.reload()
+                }
+            }, content: { editor in
+                switch editor {
+                case .new(let collectionType):
+                    CollectionEditorViewUI(cluster: nil, collectionType: collectionType, showingCollectionEditor: $showingCollectionEditor)
+                case .existing(let cluster):
+                    CollectionEditorViewUI(cluster: cluster, collectionType: cluster.collectionType, showingCollectionEditor: $showingCollectionEditor)
+                }
+            })
         }
         .task {
             await viewModel.fetchRemoteTags()
@@ -364,18 +376,6 @@ struct CollectionsViewUI: View {
             }), secondaryButton: Alert.Button.cancel({
                 alertMessage = nil
             }))
-        })
-        .sheet(item: $showingCollectionEditor, onDismiss: {
-            Task {
-                await viewModel.reload()
-            }
-        }, content: { editor in
-            switch editor {
-            case .new(let collectionType):
-                CollectionEditorViewUI(cluster: nil, collectionType: collectionType, showingCollectionEditor: $showingCollectionEditor)
-            case .existing(let cluster):
-                CollectionEditorViewUI(cluster: cluster, collectionType: cluster.collectionType, showingCollectionEditor: $showingCollectionEditor)
-            }
         })
         .onReceive(musicDownloadManager.$musicDownloaders) { _ in
             Task {

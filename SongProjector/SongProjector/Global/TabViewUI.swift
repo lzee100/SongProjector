@@ -9,22 +9,23 @@
 import SwiftUI
 
 struct TabViewUI: View {
-    @ObservedObject private var model = TabViewViewModel()
+    @StateObject private var model = TabViewViewModel()
     @State private var selectedTab: Feature = .songService
     @State private var showingSongServiceView = true
     @EnvironmentObject var externalDisplayConnector: ExternalDisplayConnector
+    @EnvironmentObject var musicDownloadManager: MusicDownloadManager
 
     var body: some View {
         TabView(selection: $selectedTab) {
             ForEach(model.tabFeatures) { feature in
                 switch feature {
                 case .songService:
-                    tabView(SongServiceViewUI(showingSongServiceView: $showingSongServiceView), feature: feature)
+                    tabView(SongServiceViewUI(showingSongServiceView: $showingSongServiceView).environmentObject(musicDownloadManager), feature: feature)
                 case .songs:
                     tabView(CollectionsViewUI(
                         editingSection: Binding.constant(nil),
                         songServiceEditorModel: SongServiceEditorModel(),
-                        mandatoryTags: []), feature: feature)
+                        mandatoryTags: []).environmentObject(musicDownloadManager), feature: feature)
                 case .themes:
                     tabView(ThemesViewUI(), feature: feature)
                 case .tags:
@@ -63,13 +64,9 @@ struct TabViewUI_Previews: PreviewProvider {
 class TabViewViewModel: ObservableObject {
     
     @Published private(set) var tabFeatures: [Feature]
-//    @Published private(set) var moreTabFeatures: [Feature]
     
     init() {
         tabFeatures = Feature.all.filter{ $0.isActief }
-//        let standardFeatures = Array(activeFeatures.prefix(4))
-//        self.tabFeatures = standardFeatures
-//        self.moreTabFeatures = Array(activeFeatures.suffix(activeFeatures.count - standardFeatures.count))
     }
     
 }

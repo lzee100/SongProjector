@@ -28,6 +28,8 @@ struct SongServiceViewUI: View {
     
     private let alignment: Sticky.Alignment
     @EnvironmentObject private var soundPlayer: SoundPlayer2
+    @EnvironmentObject var musicDownloadManager: MusicDownloadManager
+    @EnvironmentObject var store: ExternalDisplayConnector
     @State private var collectionCountDown: CollectionCountDown?
     @SwiftUI.Environment(\.horizontalSizeClass) var horizontalSizeClass
     @State var selectedSheet: String?
@@ -38,7 +40,6 @@ struct SongServiceViewUI: View {
     @State private var countDownValue: Int? = nil
     @StateObject var songService = SongServiceUI()
     @StateObject var viewModel: SongServiceViewModel
-    @EnvironmentObject var store: ExternalDisplayConnector
     @State private var orientation: UIDeviceOrientation = UIDevice.current.orientation
     private let previewSong: ClusterCodable?
     
@@ -151,7 +152,19 @@ struct SongServiceViewUI: View {
                 .toolbarColorScheme(.dark, for: .tabBar)
                 .toolbarBackground(.black, for: .tabBar)
             }
+            .sheet(isPresented: $showingSongServiceEditor) {
+                SongServiceEditorViewUI(songService: songService, viewModel: SongServiceEditorModel(songServiceUI: songService), showingSongServiceEditorViewUI: $showingSongServiceEditor)
+            }
+            .sheet(isPresented: $showingMixerView, content: {
+                ZStack {
+                    Color(uiColor: .almostBlack).ignoresSafeArea(.all)
+                    MixerViewUI()
+                        .presentationDetents([.height(400)])
+                        .background(.clear)
+                }
+            })
         }
+        .environmentObject(musicDownloadManager)
         .onAppear {
             if let previewSong {
                 songService.set(sectionedSongs: [SongServiceSectionWithSongs(title: "", cocList: [.cluster(previewSong)])])
@@ -201,17 +214,6 @@ struct SongServiceViewUI: View {
             }
             soundAndSheetPlayer.play(song: song)
         }
-        .sheet(isPresented: $showingSongServiceEditor) {
-            SongServiceEditorViewUI(songService: songService, viewModel: SongServiceEditorModel(songServiceUI: songService), showingSongServiceEditorViewUI: $showingSongServiceEditor)
-        }
-        .sheet(isPresented: $showingMixerView, content: {
-            ZStack {
-                Color(uiColor: .almostBlack).ignoresSafeArea(.all)
-                MixerViewUI()
-                    .presentationDetents([.height(400)])
-                    .background(.clear)
-            }
-        })
     }
     
     func isCompactOrVertical(ruler: GeometryProxy) -> Bool {
