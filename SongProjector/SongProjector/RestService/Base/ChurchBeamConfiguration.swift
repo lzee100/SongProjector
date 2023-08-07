@@ -108,6 +108,15 @@ enum Environment: Int, Identifiable {
 		}
 	}
     
+    var appleServerValue: String {
+        switch self {
+        case .dev, .devLocalHost:
+            return "Sandbox"
+        case .production:
+            return "Production"
+        }
+    }
+    
     var next: Environment {
         return self == .dev ? .production : .dev
     }

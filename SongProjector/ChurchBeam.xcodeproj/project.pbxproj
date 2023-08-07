@@ -52,6 +52,10 @@
 		B38A1D102925880500565BDA /* SongServiceDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38A1D0F2925880500565BDA /* SongServiceDataSource.swift */; };
 		B38A1D122926EA1400565BDA /* SongServiceCollectionViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38A1D112926EA1400565BDA /* SongServiceCollectionViewDataSource.swift */; };
 		B38C18E827B331A0006DA1A7 /* NSAttributedStringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38C18E727B331A0006DA1A7 /* NSAttributedStringExtensions.swift */; };
+		E30163E32A7A5AF30014CBDA /* SubscriptionsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E30163E22A7A5AF30014CBDA /* SubscriptionsManager.swift */; };
+		E30163E72A7A7FBE0014CBDA /* SubscriptionTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E30163E62A7A7FBE0014CBDA /* SubscriptionTabView.swift */; };
+		E30163E92A7B97180014CBDA /* VerifyPurachaseTransactionUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E30163E82A7B97180014CBDA /* VerifyPurachaseTransactionUseCase.swift */; };
+		E30163EB2A7CEDE10014CBDA /* StoreKitTestCertificate.cer in Resources */ = {isa = PBXBuildFile; fileRef = E30163EA2A7CEDE10014CBDA /* StoreKitTestCertificate.cer */; };
 		E305BB9123CF6D8500A753A2 /* SoundPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E305BB8F23CF6D8500A753A2 /* SoundPickerCell.swift */; };
 		E305BB9223CF6D8500A753A2 /* SoundPickerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E305BB9023CF6D8500A753A2 /* SoundPickerCell.xib */; };
 		E306BF9C29DDC929005DF761 /* BeamerViewUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = E306BF9B29DDC929005DF761 /* BeamerViewUI.swift */; };
@@ -580,6 +584,11 @@
 		B38A1D0F2925880500565BDA /* SongServiceDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongServiceDataSource.swift; sourceTree = "<group>"; };
 		B38A1D112926EA1400565BDA /* SongServiceCollectionViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongServiceCollectionViewDataSource.swift; sourceTree = "<group>"; };
 		B38C18E727B331A0006DA1A7 /* NSAttributedStringExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSAttributedStringExtensions.swift; sourceTree = "<group>"; };
+		E30163E12A7A5A0C0014CBDA /* ChurchBeam.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = ChurchBeam.storekit; sourceTree = "<group>"; };
+		E30163E22A7A5AF30014CBDA /* SubscriptionsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionsManager.swift; sourceTree = "<group>"; };
+		E30163E62A7A7FBE0014CBDA /* SubscriptionTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionTabView.swift; sourceTree = "<group>"; };
+		E30163E82A7B97180014CBDA /* VerifyPurachaseTransactionUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifyPurachaseTransactionUseCase.swift; sourceTree = "<group>"; };
+		E30163EA2A7CEDE10014CBDA /* StoreKitTestCertificate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = StoreKitTestCertificate.cer; sourceTree = "<group>"; };
 		E305BB8F23CF6D8500A753A2 /* SoundPickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundPickerCell.swift; sourceTree = "<group>"; };
 		E305BB9023CF6D8500A753A2 /* SoundPickerCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SoundPickerCell.xib; sourceTree = "<group>"; };
 		E306BF9B29DDC929005DF761 /* BeamerViewUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeamerViewUI.swift; sourceTree = "<group>"; };
@@ -1147,6 +1156,7 @@
 				B37EFEA029380CAD005F7D4F /* RequesterCodable.swift */,
 				E33CFCF82A14106A00F5D217 /* FetchUseCaseAsync.swift */,
 				E351AB792A2F9D7700163A46 /* SyncUniversalCollectionsUseCase.swift */,
+				E30163E82A7B97180014CBDA /* VerifyPurachaseTransactionUseCase.swift */,
 				E32C313F2A39BDA2002D362E /* FetchUserUseCase.swift */,
 				E32C31412A39CF5E002D362E /* FetchNeedsUpdateUniversalClustersUseCase.swift */,
 			);
@@ -1201,6 +1211,8 @@
 		E31171241FE59DA3008D9D51 = {
 			isa = PBXGroup;
 			children = (
+				E30163E12A7A5A0C0014CBDA /* ChurchBeam.storekit */,
+				E30163EA2A7CEDE10014CBDA /* StoreKitTestCertificate.cer */,
 				E311712F1FE59DA3008D9D51 /* SongProjector */,
 				E311712E1FE59DA3008D9D51 /* Products */,
 				9E801383107459EF5C7A7BE0 /* Pods */,
@@ -1304,6 +1316,7 @@
 				E34B570C2A16A219004DF83D /* NumberScrollViewUI.swift */,
 				E330A07529FC5EE300E227AD /* LyricsOrBibleStudyInputViewUI.swift */,
 				E3B126FB2A09302C0085E230 /* CollectionsViewUI.swift */,
+				E30163E62A7A7FBE0014CBDA /* SubscriptionTabView.swift */,
 				E3B126FD2A0936220085E230 /* CollectionListViewUI.swift */,
 				E3B127012A0971FE0085E230 /* MusicDownloadButtonViewUI.swift */,
 				E399445E2A0D0DEE0018EE38 /* SongServiceEditorViewUI.swift */,
@@ -1449,6 +1462,7 @@
 				E3B127312A0CD6F10085E230 /* App.swift */,
 				E3B127332A0CD7A90085E230 /* TabViewUI.swift */,
 				E39944622A0D69060018EE38 /* EmailController.swift */,
+				E30163E22A7A5AF30014CBDA /* SubscriptionsManager.swift */,
 			);
 			path = Global;
 			sourceTree = "<group>";
@@ -2054,6 +2068,7 @@
 				E330A039253119180014DB44 /* BasicHeaderView.xib in Resources */,
 				E344A0B424F674FF005588CE /* CountDownView.xib in Resources */,
 				E305BB9223CF6D8500A753A2 /* SoundPickerCell.xib in Resources */,
+				E30163EB2A7CEDE10014CBDA /* StoreKitTestCertificate.cer in Resources */,
 				E3F99647201209F100634C5E /* LabelNumberPickerCell.xib in Resources */,
 				E3FA3DF9200DE8570038C97B /* LabelTextViewCell.xib in Resources */,
 				E34EA3A621CECCA100A65719 /* SongServiceSettingsCell.xib in Resources */,
@@ -2213,6 +2228,7 @@
 				E33BFE7229E6AA0400912B4E /* EditSheetOrThemeViewModel.swift in Sources */,
 				E3C13F1024C772CB00BE3C35 /* CalendarIdExplainController.swift in Sources */,
 				E32C313E2A392830002D362E /* GetDelayFunctionUseCase.swift in Sources */,
+				E30163E32A7A5AF30014CBDA /* SubscriptionsManager.swift in Sources */,
 				B37EFE7B2936B7E1005F7D4F /* SheetTitleImageCodable.swift in Sources */,
 				E39B6A102216236A002B53B1 /* IntroPageViewContainer.swift in Sources */,
 				E330A07229F9497400E227AD /* BibleStudyTextUseCase.swift in Sources */,
@@ -2387,6 +2403,7 @@
 				B37EFEBC29492945005F7D4F /* ThemeDraft.swift in Sources */,
 				E30B30EA24CF82A900C8E9A4 /* PopUpManager.swift in Sources */,
 				E35E7CFE23BA34E20071DCC8 /* VContractLedger.swift in Sources */,
+				E30163E72A7A7FBE0014CBDA /* SubscriptionTabView.swift in Sources */,
 				E34B570F2A16D38E004DF83D /* OnboardingViewUI.swift in Sources */,
 				E37FFCB72A22D86E005DD5BF /* GetCoreDataRequestUseCase.swift in Sources */,
 				E37FFCB32A22D46E005DD5BF /* SaveUniversalUpdatedAtUseCase.swift in Sources */,
@@ -2465,6 +2482,7 @@
 				E345C488254F61E10031DCF1 /* SubscriptionsSettings.swift in Sources */,
 				E3B1270F2A0BDC8A0085E230 /* MuteInstrumentsUseCase.swift in Sources */,
 				E3FA3DF8200DE8570038C97B /* LabelTextViewCell.swift in Sources */,
+				E30163E92A7B97180014CBDA /* VerifyPurachaseTransactionUseCase.swift in Sources */,
 				E351AB7A2A2F9D7700163A46 /* SyncUniversalCollectionsUseCase.swift in Sources */,
 				E32B881329C3263600DFF9D8 /* ColorExtensions.swift in Sources */,
 				B37F43E628C673BF007970DD /* EdgeInsetsExtension.swift in Sources */,
@@ -2661,7 +2679,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -2718,7 +2736,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -2741,7 +2759,7 @@
 				INFOPLIST_FILE = SongProjector/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Churchbeam;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2768,7 +2786,7 @@
 				INFOPLIST_FILE = SongProjector/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Churchbeam;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

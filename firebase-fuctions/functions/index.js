@@ -7,33 +7,93 @@
  * See a full list of supported triggers at https://firebase.google.com/docs/functions
  */
 
+import { applicationDefault } from "firebase-admin/app";
+
 // const {onRequest} = require("firebase-functions/v2/https");
 // const logger = require("firebase-functions/logger");
 
+
+// RUN IN TERMINAL:
+// see current active project: firebase projects:list 
+// set project: firebase use <PROJECT ID>
 // RUN IN TERMINAL TO START: firebase emulators:start
 // RUN IN TERMINAL TO START: firebase serve --only functions
 // RUN IN TERMINAL: firebase deploy --only functions
 
 // https://firebasestorage.googleapis.com/v0/b/churchbeamtest.appspot.com/o/images%2F20230615193300439B762A2B-DCB0-4AA3-A0A8-5F8CABE97555.jpg?alt=media&token=6fdd5d9f-e5b0-4ab7-850e-37fd30d35ae1
 
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = 'uuid';
 
-const functions = require("firebase-functions");
-const admin = require('firebase-admin');
-admin.initializeApp({
-    credential: admin.credential.applicationDefault()
-});
-var db = admin.firestore();
 
-// The Firebase Admin SDK to access Firestore.
-// const { initializeApp } = require("firebase-admin/app");
-// const { getFirestore } = require("firebase-admin/firestore");
+// const { AppStoreServerAPI, Environment, decodeRenewalInfo, decodeTransaction, decodeTransactions } = require("app-store-server-api")
+// const KEY =
+// `-----BEGIN PRIVATE KEY-----
+// MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgACsPzsNtu9Z+U4+e
+// ikELOKY3abn6ZfDRbmwXkeDvgDCgCgYIKoZIzj0DAQehRANCAAR2zXj3upwnmaaY
+// t5zxV1RTyhjLpNnOo87/MnKM/MgGZu3abWj7fF/hOnsRwC+Av7l/x+3gKf/ooUeB
+// TyQiROV6
+// -----END PRIVATE KEY-----`
+// const KEY_ID = "B746FJ858B"
+// const ISSUER_ID = "1b6cd344-c8cb-4322-a0d7-7a6560667d1b"
+// const APP_BUNDLE_ID = "com.iozee.ChurchBeam"
+// const api = new AppStoreServerAPI(
+//     KEY, KEY_ID, ISSUER_ID, APP_BUNDLE_ID, Environment.Sandbox
+//   )
 
-exports.fetchUniversalClustersWithUID = functions.region('europe-west1').https.onRequest(async (request, response) => {
+// import { config, validate } from 'node-apple-receipt-verify';
+// config({
+//   secret: KEY,
+//   environment: [process.env.Sandbox],
+//   excludeOldTransactions: true,
+// });
+
+const { region } = "firebase-functions";
+const { initializeApp, credential, firestore, auth } = 'firebase-admin';
+// initializeApp({
+//     credential: applicationDefault
+// });
+var db = firestore();
+
+// export const verifyAppleReceipt = region('europe-west1').https.onRequest(async (request, response) => {
+   
+//     const token = request.header('authorization');
+//     const userUID = await auth()
+//         .verifyIdToken(token)
+//         .then(function (decodedToken) {
+//             var uid = decodedToken.uid;
+//             return uid;
+//         })
+//         .catch(function (error) {
+//             console.log("error ->", error);
+//             response.status(500).send({ error: 'Something failed!' })
+//         });
+
+//     const { body } = req;
+//     const { environment, receipt } = body;
+
+//     try {
+//         const products = await validate({
+//           excludeOldTransactions: true,
+//           receipt: receipt
+//         });
+
+//         if (Array.isArray(products)) {
+          
+//           let { expirationDate } = products[0];
+//           let { productId } = products[0];
+
+//           response.status(200).send({ transactionInfo: { expDate: expirationDate, productId: productId} });
+
+//        }
+//       } catch(e) {
+//         response.status(404).send({ error: 'validation error' });
+//     }
+// });
+
+export const fetchUniversalClustersWithUID = region('europe-west1').https.onRequest(async (request, response) => {
 
     const token = request.header('authorization');
-    const tokenId = await admin
-        .auth()
+    const tokenId = await auth()
         .verifyIdToken(token)
         .then(function (decodedToken) {
             var uid = decodedToken.uid;
@@ -58,12 +118,11 @@ exports.fetchUniversalClustersWithUID = functions.region('europe-west1').https.o
 
 });
 
-exports.fetchUser = functions.region('europe-west1').https.onRequest(async (request, response) => {
+export const fetchUser = region('europe-west1').https.onRequest(async (request, response) => {
 
     const token = request.header('authorization');
     const installToken = request.header('installTokenId');
-    const userUID = await admin
-        .auth()
+    const userUID = await auth()
         .verifyIdToken(token)
         .then(function (decodedToken) {
             var uid = decodedToken.uid;
@@ -83,11 +142,10 @@ exports.fetchUser = functions.region('europe-west1').https.onRequest(async (requ
 
 });
 
-exports.hasNewUniversalClusters = functions.region('europe-west1').https.onRequest(async (request, response) => {
+export const hasNewUniversalClusters = region('europe-west1').https.onRequest(async (request, response) => {
 
     const token = request.header('authorization');
-    const userUID = await admin
-    .auth()
+    const userUID = await auth()
     .verifyIdToken(token)
     .then(function (decodedToken) {
         var uid = decodedToken.uid;
@@ -297,6 +355,7 @@ class GetUniversalClustersUseCase {
         errorValue.setErrorValue("line 294");
 
         const defaultTags = await db.collection('tags').where('userUID', '==', userUID).where('isDeletable', "==", 0).get();
+        const position = await db.collection('tags').where('userUID', '==', userUID).get().length;
 
         if (defaultTags.docs.length == 0) {
             errorValue.setErrorValue("line 299");
@@ -306,7 +365,7 @@ class GetUniversalClustersUseCase {
                 updatedAt: new Date().getTime(),
                 id: id,
                 isDeletable: 0,
-                position: defaultTags.docs.length,
+                position: position,
                 title: "Nieuw",
                 userUID: userUID
             };

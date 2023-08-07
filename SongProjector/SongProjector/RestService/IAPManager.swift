@@ -59,7 +59,7 @@ enum IAPProduct: String, CaseIterable {
     }
 }
 
-class IAPManager : NSObject{
+class IAPManager : NSObject {
     
     private var sharedSecret = ""
     private(set) var products : Array<SKProduct>?

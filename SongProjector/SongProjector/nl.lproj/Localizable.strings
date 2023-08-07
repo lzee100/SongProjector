@@ -229,6 +229,7 @@
 "Settings-sectionSongServiceSettings" = "Zangdienst instellingen";
 "Settings-sectionGmailAccount" = "Gmail account";
 "Settings-sectionCalendarId" = "Google agenda ID";
+"Settings-sectionManageSubscriptions" = "Beheer je abonnement";
 "Settings-calendarIdPlaceHolder" = "Google agenda id";
 "Settings-appversion" = "Versie: ";
 "Settings-sectionAppSettings" = "App instellingen";

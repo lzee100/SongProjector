@@ -321,6 +321,7 @@ class AppText: NSObject {
         static let sectionCalendarId = NSLocalizedString("Settings-sectionCalendarId", comment: "")
         static let calendarIdPlaceHolder = NSLocalizedString("Settings-calendarIdPlaceHolder", comment: "")
         static let sectionAppSettings = NSLocalizedString("Settings-sectionAppSettings", comment: "")
+        static let sectionManageSubscriptions = NSLocalizedString("Settings-sectionManageSubscriptions", comment: "")
         static let appversion = NSLocalizedString("Settings-appversion", comment: "")
         static let AppSettings = NSLocalizedString("Settings-sectionAppSettings", comment: "")
         static let ResetMutes = NSLocalizedString("Settings-resetMutes", comment: "")

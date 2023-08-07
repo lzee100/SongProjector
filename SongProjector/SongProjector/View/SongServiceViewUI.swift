@@ -42,6 +42,7 @@ struct SongServiceViewUI: View {
     @StateObject var viewModel: SongServiceViewModel
     @State private var orientation: UIDeviceOrientation = UIDevice.current.orientation
     private let previewSong: ClusterCodable?
+    @State private var showingSubscriptions = false
     
     init(alignment: Sticky.Alignment = .horizontal, previewSong: ClusterCodable? = nil, showingSongServiceView: Binding<Bool>) {
         self.alignment = alignment
@@ -163,9 +164,13 @@ struct SongServiceViewUI: View {
                         .background(.clear)
                 }
             })
+//            .sheet(isPresented: $showingSubscriptions, content: {
+//                SubscriptionTabView(subscriptionsManager: SubscriptionsManager(), showingSubscriptions: $showingSubscriptions)
+//            })
         }
         .environmentObject(musicDownloadManager)
         .onAppear {
+            showingSubscriptions = true
             if let previewSong {
                 songService.set(sectionedSongs: [SongServiceSectionWithSongs(title: "", cocList: [.cluster(previewSong)])])
             }

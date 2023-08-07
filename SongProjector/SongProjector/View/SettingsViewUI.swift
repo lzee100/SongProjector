@@ -11,12 +11,14 @@ import FirebaseAuth
 
 @MainActor class SettingsViewModel: ObservableObject {
     
+    private let subscriptionsManager = SubscriptionsManager()
     @Published var googleAgendaId: String = ""
     
     @Published private(set) var user: UserCodable?
     @Published private(set) var error: LocalizedError?
     @Published private(set) var showingLoader = false
     @Published private(set) var profilePictureData: Data?
+    @Published var showingSubscriptions = false
 
     let authentication = Auth.auth().currentUser
 
@@ -46,8 +48,26 @@ import FirebaseAuth
         }
     }
     
+    func showSubscriptions() {
+        showingSubscriptions.toggle()
+    }
+    
     func resetMutes() async {
         await MuteInstrumentsUseCase.resetMutes()
+    }
+    
+    func updateUser() async {
+        showingLoader = true
+        do {
+            guard var user = await GetUserUseCase().get() else { return }
+            try await subscriptionsManager.requestProducts()
+            user.productId = subscriptionsManager.purchasedSubscriptions.first?.id
+            try await SubmitUseCase(endpoint: .users, requestMethod: .put, uploadObjects: [user]).submit()
+            showingLoader = false
+        } catch {
+            showingLoader = false
+            self.error = error.forcedLocalizedError
+        }
     }
 }
 
@@ -65,9 +85,15 @@ struct SettingsViewUI: View {
                     }
                 }
                 
-                Section(AppText.Settings.sectionCalendarId) {
-                    googleAgendaIdView
-                }
+//                if let id = viewModel.user?.productId, !id.isBlanc {
+                    Section(AppText.Settings.sectionManageSubscriptions) {
+                        subscriptionsButtonView
+                    }
+//                }
+                
+//                Section(AppText.Settings.sectionCalendarId) {
+//                    googleAgendaIdView
+//                }
                 
 //                Section(AppText.Settings.contactId) {
 //                    contactReferenceIDView
@@ -75,6 +101,14 @@ struct SettingsViewUI: View {
 //
                 Section(AppText.Settings.sectionAppSettings) {
                     resetInstrumentMutes
+                }
+            }
+            .manageSubscriptionsSheet(isPresented: $viewModel.showingSubscriptions)
+            .onChange(of: viewModel.showingSubscriptions) { newValue in
+                if !newValue {
+                    Task {
+                        await viewModel.updateUser()
+                    }
                 }
             }
         }
@@ -105,6 +139,16 @@ struct SettingsViewUI: View {
         }
     }
     
+    @ViewBuilder var subscriptionsButtonView: some View {
+        Button {
+            viewModel.showSubscriptions()
+        } label: {
+            Text(AppText.Settings.sectionManageSubscriptions)
+                .styleAs(font: .xNormal, color: Color(uiColor: themeHighlighted))
+        }
+
+    }
+
     @ViewBuilder var googleAgendaIdView: some View {
         VStack {
             TextField(AppText.Settings.sectionCalendarId, text: $viewModel.googleAgendaId)

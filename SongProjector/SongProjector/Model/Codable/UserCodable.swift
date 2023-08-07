@@ -40,9 +40,51 @@ public struct UserCodable: FileTransferable, Codable {
     var adminCode: String? = nil
     var adminInstallTokenId: String? = nil
     var googleCalendarId: String? = nil
-    private var productExpireDate: Date?
-    private var pilotStartDate: Date?
-    private var productId: String?
+    
+    var productId: String? {
+        set {
+            if let id = newValue {
+                KeychainService.updateItem(id, serviceKey: productIdKey)
+            } else {
+                KeychainService.removeItem(serviceKey: productIdKey)
+            }
+        }
+        get {
+            return KeychainService.loadItem(serviceKey: productIdKey)
+        }
+    }
+    
+    var productExpireDate: Date? {
+        set {
+            if let date = newValue {
+                KeychainService.updateItem(date.intValue.stringValue, serviceKey: productExpireDateKey)
+            } else {
+                KeychainService.removeItem(serviceKey: productExpireDateKey)
+            }
+        }
+        get {
+            if let item = KeychainService.loadItem(serviceKey: productExpireDateKey), let time = Int64(item) {
+                return Date(timeIntervalSince1970: TimeInterval(time) / 1000)
+            }
+            return nil
+        }
+    }
+    
+    var pilotStartDate: Date? {
+        set {
+            if let date = newValue {
+                KeychainService.updateItem(date.intValue.stringValue, serviceKey: productPilotDateKey)
+            } else {
+                KeychainService.removeItem(serviceKey: productPilotDateKey)
+            }
+        }
+        get {
+            if let item = KeychainService.loadItem(serviceKey: productPilotDateKey), let time = Int64(item) {
+                return Date(timeIntervalSince1970: TimeInterval(time) / 1000)
+            }
+            return nil
+        }
+    }
     
     enum CodingKeys: String, CodingKey
     {

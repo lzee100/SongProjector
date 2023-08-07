@@ -226,6 +226,7 @@
 "Settings-sectionSongServiceSettings" = "Song service settings";
 "Settings-sectionGmailAccount" = "Gmail account";
 "Settings-sectionCalendarId" = "Google calendar ID";
+"Settings-sectionManageSubscriptions" = "Manage subscription";
 "Settings-calendarIdPlaceHolder" = "Google calendar id";
 "Settings-appversion" = "Version: ";
 "Settings-sectionAppSettings" = "App settings";
