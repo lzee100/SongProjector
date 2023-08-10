@@ -289,7 +289,11 @@ import SwiftUI
             updatedCluster.hasSheets = codableSheets
             updatedCluster.hasInstruments = instrumentsModel.instruments.compactMap({ instrument in
                 if let resourcePath = instrument.resourcePath?.absoluteString {
-                    return InstrumentCodable(resourcePath: resourcePath)
+                    return InstrumentCodable(
+                        isLoop: instrument.instrumentType == .pianoSolo,
+                        resourcePath: resourcePath,
+                        typeString: instrument.instrumentType.rawValue
+                    )
                 }
                 return nil
             })

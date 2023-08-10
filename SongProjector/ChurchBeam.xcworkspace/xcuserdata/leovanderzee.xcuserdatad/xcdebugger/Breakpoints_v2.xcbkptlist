@@ -46,8 +46,8 @@
             filePath = "SongProjector/Model/Viewmodel/CollectionEditorViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "355"
-            endingLineNumber = "355"
+            startingLineNumber = "359"
+            endingLineNumber = "359"
             landmarkName = "saveCluster()"
             landmarkType = "7">
             <Locations>
@@ -139,8 +139,8 @@
             filePath = "SongProjector/Model/Viewmodel/CollectionEditorViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "352"
-            endingLineNumber = "352"
+            startingLineNumber = "356"
+            endingLineNumber = "356"
             landmarkName = "saveCluster()"
             landmarkType = "7">
             <Locations>
@@ -367,218 +367,143 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "D2B24423-EECE-4156-AD4E-F385C17DB164"
+            uuid = "19C3C17C-1C61-4775-A198-EC3E52FE15CB"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SongProjector/Global/TabViewUI.swift"
+            filePath = "SongProjector/Model/Codable/Fetchers/VerifyPurachaseTransactionUseCase.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "25"
-            endingLineNumber = "25"
-            landmarkName = "body"
-            landmarkType = "24">
-            <Locations>
-               <Location
-                  uuid = "D2B24423-EECE-4156-AD4E-F385C17DB164 - eba8923d6cd910eb"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (ChurchBeam.Feature) -&gt; SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0&gt;, SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0&gt;&gt;, SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0&gt;, &lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0&gt;&gt; in closure #1 () -&gt; SwiftUI.ForEach&lt;Swift.Array&lt;ChurchBeam.Feature&gt;, Swift.String, SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0&gt;, SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0&gt;&gt;, SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0&gt;, &lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0&gt;&gt;&gt; in ChurchBeam.TabViewUI.body.getter : some"
-                  moduleName = "SongProjector"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Global/TabViewUI.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "25"
-                  endingLineNumber = "25"
-                  offsetFromSymbolStart = "2908">
-               </Location>
-               <Location
-                  uuid = "D2B24423-EECE-4156-AD4E-F385C17DB164 - eba8923d6cd910eb"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (ChurchBeam.Feature) -&gt; SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0&gt;, SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0&gt;&gt;, SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0&gt;, &lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0&gt;&gt; in closure #1 () -&gt; SwiftUI.ForEach&lt;Swift.Array&lt;ChurchBeam.Feature&gt;, Swift.String, SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0&gt;, SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0&gt;&gt;, SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0&gt;, &lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0&gt;&gt;&gt; in ChurchBeam.TabViewUI.body.getter : some"
-                  moduleName = "SongProjector"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Global/TabViewUI.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "25"
-                  endingLineNumber = "25"
-                  offsetFromSymbolStart = "2268">
-               </Location>
-            </Locations>
+            startingLineNumber = "87"
+            endingLineNumber = "87"
+            landmarkName = "request(transaction:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "1185F5DB-FDE6-4709-AAC8-1B140A55ABAA"
+            uuid = "4CFD9A90-7B78-44F7-AD17-45620FEDB395"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SongProjector/Global/TabViewUI.swift"
+            filePath = "SongProjector/Model/Codable/Fetchers/VerifyPurachaseTransactionUseCase.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "19"
-            endingLineNumber = "19"
-            landmarkName = "body"
-            landmarkType = "24">
-            <Locations>
-               <Location
-                  uuid = "1185F5DB-FDE6-4709-AAC8-1B140A55ABAA - 67596416e9acbb6f"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ChurchBeam.TabViewUI.body.getter : some"
-                  moduleName = "SongProjector"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Global/TabViewUI.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "19"
-                  endingLineNumber = "19"
-                  offsetFromSymbolStart = "444">
-               </Location>
-               <Location
-                  uuid = "1185F5DB-FDE6-4709-AAC8-1B140A55ABAA - 4a3236ce97aeff9b"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 () -&gt; SwiftUI.ForEach&lt;Swift.Array&lt;ChurchBeam.Feature&gt;, Swift.String, SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0&gt;, SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0&gt;&gt;, SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0&gt;, &lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0&gt;&gt;&gt; in ChurchBeam.TabViewUI.body.getter : some"
-                  moduleName = "SongProjector"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Global/TabViewUI.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "20"
-                  endingLineNumber = "20"
-                  offsetFromSymbolStart = "176">
-               </Location>
-               <Location
-                  uuid = "1185F5DB-FDE6-4709-AAC8-1B140A55ABAA - 67596416e9acbb6f"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ChurchBeam.TabViewUI.body.getter : some"
-                  moduleName = "SongProjector"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Global/TabViewUI.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "19"
-                  endingLineNumber = "19"
-                  offsetFromSymbolStart = "380">
-               </Location>
-               <Location
-                  uuid = "1185F5DB-FDE6-4709-AAC8-1B140A55ABAA - 4a3236ce97aeff9b"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 () -&gt; SwiftUI.ForEach&lt;Swift.Array&lt;ChurchBeam.Feature&gt;, Swift.String, SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0&gt;, SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0&gt;&gt;, SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0&gt;, &lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0&gt;&gt;&gt; in ChurchBeam.TabViewUI.body.getter : some"
-                  moduleName = "SongProjector"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Global/TabViewUI.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "20"
-                  endingLineNumber = "20"
-                  offsetFromSymbolStart = "136">
-               </Location>
-               <Location
-                  uuid = "1185F5DB-FDE6-4709-AAC8-1B140A55ABAA - 67596416e9acbb6f"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ChurchBeam.TabViewUI.body.getter : some"
-                  moduleName = "SongProjector"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Global/TabViewUI.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "19"
-                  endingLineNumber = "19"
-                  offsetFromSymbolStart = "412">
-               </Location>
-               <Location
-                  uuid = "1185F5DB-FDE6-4709-AAC8-1B140A55ABAA - 4a3236ce97aeff9b"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 () -&gt; SwiftUI.ForEach&lt;Swift.Array&lt;ChurchBeam.Feature&gt;, Swift.String, SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0&gt;, SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0&gt;&gt;, SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0&gt;, &lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0&gt;&gt;&gt; in ChurchBeam.TabViewUI.body.getter : some"
-                  moduleName = "SongProjector"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Global/TabViewUI.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "20"
-                  endingLineNumber = "20"
-                  offsetFromSymbolStart = "132">
-               </Location>
-               <Location
-                  uuid = "1185F5DB-FDE6-4709-AAC8-1B140A55ABAA - 67596416e9acbb6f"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ChurchBeam.TabViewUI.body.getter : some"
-                  moduleName = "SongProjector"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Global/TabViewUI.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "19"
-                  endingLineNumber = "19"
-                  offsetFromSymbolStart = "428">
-               </Location>
-               <Location
-                  uuid = "1185F5DB-FDE6-4709-AAC8-1B140A55ABAA - 67596416e9acbb6f"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ChurchBeam.TabViewUI.body.getter : some"
-                  moduleName = "SongProjector"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Global/TabViewUI.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "19"
-                  endingLineNumber = "19"
-                  offsetFromSymbolStart = "476">
-               </Location>
-               <Location
-                  uuid = "1185F5DB-FDE6-4709-AAC8-1B140A55ABAA - 4a3236ce97aeff9b"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 () -&gt; SwiftUI.ForEach&lt;Swift.Array&lt;ChurchBeam.Feature&gt;, Swift.String, SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0&gt;, SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0&gt;&gt;, SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0&gt;, &lt;&lt;opaque return type of ChurchBeam.TabViewUI.tabView&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: &#x3c4;_0_0, feature: ChurchBeam.Feature) -&gt; some&gt;&gt;.0&gt;&gt;&gt; in ChurchBeam.TabViewUI.body.getter : some"
-                  moduleName = "SongProjector"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Global/TabViewUI.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "20"
-                  endingLineNumber = "20"
-                  offsetFromSymbolStart = "180">
-               </Location>
-            </Locations>
+            startingLineNumber = "89"
+            endingLineNumber = "89"
+            landmarkName = "request(transaction:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "335479C8-9A43-40B6-BB01-756075F24FD1"
+            uuid = "53E37D7B-5DAC-486D-A25F-A1D4EE1AD136"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SongProjector/Global/TabViewUI.swift"
+            filePath = "SongProjector/Model/Codable/Fetchers/VerifyPurachaseTransactionUseCase.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "29"
-            endingLineNumber = "29"
-            landmarkName = "body"
-            landmarkType = "24">
+            startingLineNumber = "23"
+            endingLineNumber = "23"
+            landmarkName = "request(transaction:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "1B80A398-C0F9-4302-89F3-4214DE4293F6"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SongProjector/Model/Codable/Fetchers/VerifyPurachaseTransactionUseCase.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "57"
+            endingLineNumber = "57"
+            landmarkName = "request(transaction:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "82C90F1D-4DE6-4A05-95BB-81192EFF3916"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SongProjector/Model/Codable/Fetchers/VerifyPurachaseTransactionUseCase.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "63"
+            endingLineNumber = "63"
+            landmarkName = "request(transaction:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "82C90F1D-4DE6-4A05-95BB-81192EFF3916 - af64ee5e6ca63fdd"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for ChurchBeam.VerifyPurachaseTransactionUseCase.request(transaction: StoreKit.Transaction) async throws -&gt; ()"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/VerifyPurachaseTransactionUseCase.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "63"
+                  endingLineNumber = "63"
+                  offsetFromSymbolStart = "3564">
+               </Location>
+               <Location
+                  uuid = "82C90F1D-4DE6-4A05-95BB-81192EFF3916 - 944e029d96f183df"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for ChurchBeam.VerifyPurachaseTransactionUseCase.request(transaction: StoreKit.Transaction) async throws -&gt; ()"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/VerifyPurachaseTransactionUseCase.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "63"
+                  endingLineNumber = "63"
+                  offsetFromSymbolStart = "3220">
+               </Location>
+               <Location
+                  uuid = "82C90F1D-4DE6-4A05-95BB-81192EFF3916 - fd37a7dbd800c7d9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(5) suspend resume partial function for ChurchBeam.VerifyPurachaseTransactionUseCase.request(transaction: StoreKit.Transaction) async throws -&gt; ()"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/VerifyPurachaseTransactionUseCase.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "63"
+                  endingLineNumber = "63"
+                  offsetFromSymbolStart = "1932">
+               </Location>
+               <Location
+                  uuid = "82C90F1D-4DE6-4A05-95BB-81192EFF3916 - e5e1d81902520bdb"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(7) suspend resume partial function for ChurchBeam.VerifyPurachaseTransactionUseCase.request(transaction: StoreKit.Transaction) async throws -&gt; ()"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Codable/Fetchers/VerifyPurachaseTransactionUseCase.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "63"
+                  endingLineNumber = "63"
+                  offsetFromSymbolStart = "512">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
