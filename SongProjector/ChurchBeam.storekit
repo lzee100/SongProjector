@@ -1,0 +1,79 @@
+{
+  "identifier" : "1B466760",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+
+  ],
+  "settings" : {
+    "_applicationInternalID" : "1533095472",
+    "_developerTeamID" : "4RH34LGMLA",
+    "_lastSynchronizedDate" : 712661519.90784299
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "20702484",
+      "localizations" : [
+
+      ],
+      "name" : "Song-Beam",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "9.99",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "1537267394",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Onbeperkt aantal nummers (zonder muziek)",
+              "displayName" : "Dia's",
+              "locale" : "nl"
+            }
+          ],
+          "productID" : "beam",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "beam",
+          "subscriptionGroupID" : "20702484",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "23.49",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "1537267286",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Onbeperkt aantal nummers en muziek+mengpaneel",
+              "displayName" : "Muziek",
+              "locale" : "nl"
+            }
+          ],
+          "productID" : "song",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "song",
+          "subscriptionGroupID" : "20702484",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 2,
+    "minor" : 0
+  }
+}
