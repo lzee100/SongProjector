@@ -32,6 +32,7 @@ var db = admin.firestore();
 exports.fetchUniversalClustersWithUID = functions.region('europe-west1').https.onRequest(async (request, response) => {
 
     const token = request.header('authorization');
+    const universalClusterVersion = request.query.universalClusterVersion;
     const tokenId = await admin
         .auth()
         .verifyIdToken(token)
@@ -50,7 +51,7 @@ exports.fetchUniversalClustersWithUID = functions.region('europe-west1').https.o
             setErrorValue : function(value) {errorValue = value;}
          };
     try {
-        let clusters = await GetUniversalClustersUseCase.getUniversalClusters(tokenId, translator);
+        let clusters = await GetUniversalClustersUseCase.getUniversalClusters(tokenId, translator, universalClusterVersion);
         response.send({ success: clusters });
     } catch (error) {
         response.status(500).send({ error: errorValue });
@@ -86,6 +87,7 @@ exports.fetchUser = functions.region('europe-west1').https.onRequest(async (requ
 exports.hasNewUniversalClusters = functions.region('europe-west1').https.onRequest(async (request, response) => {
 
     const token = request.header('authorization');
+    const universalClusterVersion = request.query.universalClusterVersion;
     const userUID = await admin
     .auth()
     .verifyIdToken(token)
@@ -99,10 +101,10 @@ exports.hasNewUniversalClusters = functions.region('europe-west1').https.onReque
     });
 
     try {
-        const hasNewUniversalClusters = await GetUniversalClustersUseCase.hasUniversalClusters(userUID);
+        const hasNewUniversalClusters = await GetUniversalClustersUseCase.hasUniversalClusters(userUID, universalClusterVersion);
         response.send({hasNewUniversalClusters: hasNewUniversalClusters});
     } catch (error) {
-        response.status(500).send({ error: errorValue });
+        response.status(500).send({ error: error });
     };
 });
 
@@ -139,18 +141,25 @@ class CreateUserIfNeeded {
 
 class GetUniversalClustersUseCase {
 
-    static async hasUniversalClusters(userUID) {
+    static async hasUniversalClusters(userUID, universalClusterVersion) {
 
         const universalUpdatedAt = await this.getUniversalUpdatedAt(userUID);
-        let snapshot = await db.collection('universalclusters').where('updatedAt', '>', universalUpdatedAt).get();
-
+        var endPoint = "universalclusters";
+        if (universalClusterVersion == "universalClusterVersionNEW") {
+            endPoint = "universalclusterszwolledutch"
+        }
+        let snapshot = await db.collection(endPoint).where('updatedAt', '>', universalUpdatedAt).get();
         return snapshot.docs.length > 0;
     }
 
-    static async getUniversalClusters(userUID, errorValue) {
+    static async getUniversalClusters(userUID, errorValue, universalClusterVersion) {
         const universalUpdatedAt = await this.getUniversalUpdatedAt(userUID);
         var defaultTheme = await this.createDefaultThemeIfNeeded(userUID);
-        let snapshot = await db.collection('universalclusters').where('updatedAt', '>', universalUpdatedAt).get();
+        var endPoint = "universalclusters";
+        if (universalClusterVersion == "universalClusterVersionNEW") {
+            endPoint = "universalclusterszwolledutch"
+        }
+        let snapshot = await db.collection(endPoint).where('updatedAt', '>', universalUpdatedAt).get();
         errorValue.setErrorValue("line 152");
         await this.updateUniversalClusters(userUID, snapshot.docs, errorValue);
         errorValue.setErrorValue("line 156")

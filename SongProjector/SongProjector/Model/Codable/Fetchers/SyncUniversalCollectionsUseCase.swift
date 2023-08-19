@@ -13,7 +13,8 @@ actor SyncUniversalCollectionsUseCase: ObservableObject {
     
     @Published private(set) var isFetching = false
     private let endpoint = "fetchUniversalClustersWithUID"
-    
+    private let universalClusterVersionKey = "universalClusterVersion"
+
     enum AuthError: Error {
         case noOauthToken
     }
@@ -26,7 +27,9 @@ actor SyncUniversalCollectionsUseCase: ObservableObject {
             throw AuthError.noOauthToken
         }
         do {
-            var request = URLRequest(url: URL(string: ChurchBeamConfiguration.environment.cloudFunctionsEndpoint + endpoint)!)
+            var url = URL(string: ChurchBeamConfiguration.environment.cloudFunctionsEndpoint + endpoint)!
+            url.append(queryItems: [URLQueryItem(name: universalClusterVersionKey, value: ChurchBeamConfiguration.universalClusterVersion)])
+            var request = URLRequest(url: url)
             request.addValue(token, forHTTPHeaderField: "Authorization")
             let (result, error) = try await URLSession.shared.data(for: request)
             print(error)

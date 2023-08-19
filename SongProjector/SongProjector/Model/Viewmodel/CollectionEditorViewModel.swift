@@ -356,7 +356,8 @@ import SwiftUI
             var deleteObjects: [DeleteObject] {
                 deletedSheets.compactMap { $0.sheetModel.sheet }.flatMap { $0.getDeleteObjects(forceDelete: true) }
             }
-            try await SubmitUseCase(endpoint: uploadSecret != nil ? .universalclusters : .clusters, requestMethod: isNew ? .post : .put, uploadObjects: [updatedCluster], deleteObjects: deleteObjects).submit()
+            let universalClustersEndpoint = ChurchBeamConfiguration.universalClusterVersion == Config.PublicKeys.universalClusterVersionOLD ? EndPoint.universalclusters : EndPoint.universalclusterszwolledutch
+            try await SubmitUseCase(endpoint: uploadSecret != nil ? universalClustersEndpoint : .clusters, requestMethod: isNew ? .post : .put, uploadObjects: [updatedCluster], deleteObjects: deleteObjects).submit()
             
             showingLoader = false
             return true

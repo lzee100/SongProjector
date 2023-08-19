@@ -15,6 +15,7 @@ actor FetchNeedsUpdateUniversalClustersUseCase {
         case noOauthToken
     }
     private let endpoint = "hasNewUniversalClusters"
+    private let universalClusterVersionKey = "universalClusterVersion"
     private(set) var isFetching = false
     
     func fetch() async throws -> Bool {
@@ -24,13 +25,19 @@ actor FetchNeedsUpdateUniversalClustersUseCase {
             isFetching = false
             throw AuthError.noOauthToken
         }
+        guard let user = await GetUserUseCase().get() else {
+            isFetching = false
+            return false
+        }
         do {
-            var request = URLRequest(url: URL(string: ChurchBeamConfiguration.environment.cloudFunctionsEndpoint + endpoint)!)
+            var url = URL(string: ChurchBeamConfiguration.environment.cloudFunctionsEndpoint + endpoint)!
+            url.append(queryItems: [URLQueryItem(name: universalClusterVersionKey, value: ChurchBeamConfiguration.universalClusterVersion)])
+            var request = URLRequest(url: url)
             request.addValue(token, forHTTPHeaderField: "Authorization")
             let (needsToken, _) = try await URLSession.shared.data(for: request)
             
-//            let json = try JSONSerialization.jsonObject(with: needsToken, options: []) as? [String : Any]
-
+            let json = try JSONSerialization.jsonObject(with: needsToken, options: []) as? [String : Any]
+            print(json)
             guard let json = try JSONSerialization.jsonObject(with: needsToken, options: []) as? [String : Bool] else {
                 isFetching = false
                 return false
@@ -40,6 +47,7 @@ actor FetchNeedsUpdateUniversalClustersUseCase {
             return json["hasNewUniversalClusters"] ?? false
         } catch {
             isFetching = false
+            print(error)
             throw error
         }
     }
