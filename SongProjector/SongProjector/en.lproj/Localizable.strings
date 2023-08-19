@@ -226,11 +226,20 @@
 "Settings-sectionSongServiceSettings" = "Song service settings";
 "Settings-sectionGmailAccount" = "Gmail account";
 "Settings-sectionCalendarId" = "Google calendar ID";
+"Settings-sectionMotherChurch" = "Mother church content";
 "Settings-calendarIdPlaceHolder" = "Google calendar id";
 "Settings-appversion" = "Version: ";
 "Settings-sectionAppSettings" = "App settings";
 "Settings-resetMutes" = "Reset saved mutes for instruments";
 "Settings-contactId" = "Contact reference ID";
+"Settings-MotherChurch-explain" = "Select a mother church to subscribe to it. The app will automatically stay in sync with the available content from this church.";
+"Settings-MotherChurch-areUSure" = "Are you sure you want to set the mother church to %@? At this moment you can not change this once selected.";
+"Settings-MotherChurch-zwolleDutch" = "The Door Zwolle (Dutch)";
+"Settings-MotherChurch-zwolleEnglish" = "The Door Zwolle (English)";
+"Settings-MotherChurch-zwolleMandarin" = "The Door Zwolle (Mandarin)";
+"Settings-MotherChurch-taiwan" = "The Door Taiwan";
+"Settings-MotherChurch-tempeArizona" = "The Door Tempe";
+
 
 "EditTheme-title" = "Edit theme";
 

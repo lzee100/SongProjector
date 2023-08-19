@@ -20,6 +20,7 @@ public struct UserCodable: FileTransferable, Codable {
         updatedAt = entity.updatedAt?.date
         deleteDate = entity.deleteDate?.date
         rootDeleteDate = entity.rootDeleteDate?.date
+        motherChurch = entity.motherChurch
     }
 
     private let productExpireDateKey = "churchbeamProductExpireDateKey"
@@ -40,6 +41,7 @@ public struct UserCodable: FileTransferable, Codable {
     var adminCode: String? = nil
     var adminInstallTokenId: String? = nil
     var googleCalendarId: String? = nil
+    var motherChurch: String? = nil
     private var productExpireDate: Date?
     private var pilotStartDate: Date?
     private var productId: String?
@@ -63,6 +65,7 @@ public struct UserCodable: FileTransferable, Codable {
         case googleCalendarId
         case productExpireDate
         case productId
+        case motherChurch
     }
     
     // MARK: - Decodable
@@ -100,6 +103,9 @@ public struct UserCodable: FileTransferable, Codable {
         if let productExpireDateInt = try container.decodeIfPresent(Int64.self, forKey: .productExpireDate) {
             productExpireDate = Date(timeIntervalSince1970: TimeInterval(productExpireDateInt) / 1000)
         }
+        if let motherChurch = try container.decodeIfPresent(String.self, forKey: .motherChurch) {
+            self.motherChurch = motherChurch
+        }
 
         adminCode = try container.decodeIfPresent(String.self, forKey: .adminCode)
         adminInstallTokenId = try container.decodeIfPresent(String.self, forKey: .adminInstallTokenId)
@@ -134,6 +140,8 @@ public struct UserCodable: FileTransferable, Codable {
         if let pilotStartDate = pilotStartDate {
             try container.encode(pilotStartDate.intValue, forKey: .pilotStartDate)
         }
+        try container.encode(motherChurch, forKey: .motherChurch)
+        
         try container.encode(adminCode, forKey: .adminCode)
         try container.encode(adminInstallTokenId, forKey: .adminInstallTokenId)
         try container.encode(googleCalendarId, forKey: .googleCalendarId)

@@ -16,6 +16,11 @@ actor FetchNeedsUpdateUniversalClustersUseCase {
     }
     private let endpoint = "hasNewUniversalClusters"
     private(set) var isFetching = false
+    private let motherChurch: MotherChurch
+    
+    init(motherChurch: MotherChurch) {
+        self.motherChurch = motherChurch
+    }
     
     func fetch() async throws -> Bool {
         guard !isFetching else { return false }
@@ -25,7 +30,9 @@ actor FetchNeedsUpdateUniversalClustersUseCase {
             throw AuthError.noOauthToken
         }
         do {
-            var request = URLRequest(url: URL(string: ChurchBeamConfiguration.environment.cloudFunctionsEndpoint + endpoint)!)
+            var url = URL(string: ChurchBeamConfiguration.environment.cloudFunctionsEndpoint + endpoint)!
+            url.append(queryItems: [URLQueryItem(name: MotherChurch.key, value: motherChurch.rawValue)])
+            var request = URLRequest(url: url)
             request.addValue(token, forHTTPHeaderField: "Authorization")
             let (needsToken, _) = try await URLSession.shared.data(for: request)
             

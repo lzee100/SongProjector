@@ -12,12 +12,14 @@ import FirebaseAuth
 @MainActor class SettingsViewModel: ObservableObject {
     
     @Published var googleAgendaId: String = ""
+    @Published var showingSetRegio = false
     
     @Published private(set) var user: UserCodable?
     @Published private(set) var error: LocalizedError?
     @Published private(set) var showingLoader = false
     @Published private(set) var profilePictureData: Data?
-
+    var motherChurch: MotherChurch?
+    
     let authentication = Auth.auth().currentUser
 
     func fetchUser() async {
@@ -49,6 +51,20 @@ import FirebaseAuth
     func resetMutes() async {
         await MuteInstrumentsUseCase.resetMutes()
     }
+    
+    func set(_ motherChurch: MotherChurch) async {
+        guard var user = await GetUserUseCase().get() else { return }
+        user.motherChurch = motherChurch.rawValue
+        do {
+            showingLoader = true
+            let result = try await SubmitUseCase(endpoint: .users, requestMethod: .put, uploadObjects: [user]).submit()
+            await fetchUser()
+            showingLoader = false
+        } catch {
+            showingLoader = false
+            self.error = error.forcedLocalizedError
+        }
+    }
 }
 
 struct SettingsViewUI: View {
@@ -69,6 +85,18 @@ struct SettingsViewUI: View {
                     googleAgendaIdView
                 }
                 
+                Section(AppText.Settings.sectionRegion) {
+                    if let region = viewModel.user?.motherChurch {
+                        Button {
+                        } label: {
+                            Text(region)
+                        }
+                        .disabled(true)
+                    } else {
+                        sectionRegion
+                    }
+                }
+                
 //                Section(AppText.Settings.contactId) {
 //                    contactReferenceIDView
 //                }
@@ -77,6 +105,18 @@ struct SettingsViewUI: View {
                     resetInstrumentMutes
                 }
             }
+            .alert(Text(AppText.Settings.motherChurchAreYouSure(viewModel.motherChurch ?? MotherChurch.zwolleDutch)), isPresented: $viewModel.showingSetRegio, presenting: nil, actions: {
+                Button {
+                    if let motherChurch = viewModel.motherChurch {
+                        Task {
+                            await viewModel.set(motherChurch)
+                        }
+                    }
+                } label: {
+                    Text(AppText.Actions.change)
+                }
+                Button(AppText.Actions.cancel, role: .cancel, action: {})
+            })
         }
     }
     
@@ -125,13 +165,32 @@ struct SettingsViewUI: View {
 //
     @ViewBuilder var resetInstrumentMutes: some View {
         Button {
-            Task {
-                await viewModel.resetMutes()
-            }
+            viewModel.showingSetRegio.toggle()
         } label: {
             Text(AppText.Settings.ResetMutes)
                 .styleAs(font: .xNormal, color: Color(uiColor: themeHighlighted))
         }
+    }
+    
+    @ViewBuilder var sectionRegion: some View {
+        VStack {
+            Text(AppText.Settings.motherChurchExplain)
+                .styleAs(font: .xNormal)
+                .padding(.bottom)
+            ForEach(MotherChurch.allCases) { church in
+                motherChurchButton(church)
+            }
+        }
+    }
+    
+    @ViewBuilder func motherChurchButton(_ motherChurch: MotherChurch) -> some View {
+        Button {
+            viewModel.motherChurch = motherChurch
+            viewModel.showingSetRegio.toggle()
+        } label: {
+            Text(motherChurch.displayName)
+        }
+        .disabled(viewModel.showingLoader && viewModel.user?.motherChurch != nil)
     }
     
 }

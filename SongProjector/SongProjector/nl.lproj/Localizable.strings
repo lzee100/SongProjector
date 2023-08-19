@@ -229,13 +229,21 @@
 "Settings-sectionSongServiceSettings" = "Zangdienst instellingen";
 "Settings-sectionGmailAccount" = "Gmail account";
 "Settings-sectionCalendarId" = "Google agenda ID";
+"Settings-sectionMotherChurch" = "Mother church content";
+"Settings-sectionMotherChurchPrayer" = "Mother church prayer sheets";
+"Settings-sectionMotherChurchPrayer-explain" = "Synchroniseer dia's met p";
 "Settings-calendarIdPlaceHolder" = "Google agenda id";
 "Settings-appversion" = "Versie: ";
 "Settings-sectionAppSettings" = "App instellingen";
 "Settings-resetMutes" = "Reset opgeslagen mutes voor instrument";
 "Settings-contactId" = "Contact referentie ID";
-
-
+"Settings-MotherChurch-explain" = "Selecteer een moederkerk om je hierop te abboneren. De app zal automatisch in sync blijven met de beschikbare content vanuit deze kerk.";
+"Settings-MotherChurch-areUSure" = "Weet je zeker dat je de moederkerk wil zetten naar %@? Op dit moment kan je dit niet wijzigen wanneer je dit hebt geselecteerd.";
+"Settings-MotherChurch-zwolleDutch" = "De Deur Zwolle (Dutch)";
+"Settings-MotherChurch-zwolleEnglish" = "De Deur Zwolle (English)";
+"Settings-MotherChurch-zwolleMandarin" = "De Deur Zwolle (Mandarijn)";
+"Settings-MotherChurch-taiwan" = "De Deur Taiwan";
+"Settings-MotherChurch-tempeArizona" = "De Deur Tempe";
 
 "EditTheme-title" = "Wijzig thema";
 

@@ -21,5 +21,6 @@ class User: Entity {
     @NSManaged public var adminCode: String?
     @NSManaged public var adminInstallTokenId: String?
     @NSManaged public var googleCalendarId: String?
-    
+    @NSManaged public var motherChurch: String?
+
 }

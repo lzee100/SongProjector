@@ -319,12 +319,22 @@ class AppText: NSObject {
         static let sectionSongServiceSettings = NSLocalizedString("Settings-sectionSongServiceSettings", comment: "")
         static let sectionGmailAccount = NSLocalizedString("Settings-sectionGmailAccount", comment: "")
         static let sectionCalendarId = NSLocalizedString("Settings-sectionCalendarId", comment: "")
+        static let sectionMotherChurch = NSLocalizedString("Settings-sectionMotherChurch", comment: "")
         static let calendarIdPlaceHolder = NSLocalizedString("Settings-calendarIdPlaceHolder", comment: "")
         static let sectionAppSettings = NSLocalizedString("Settings-sectionAppSettings", comment: "")
         static let appversion = NSLocalizedString("Settings-appversion", comment: "")
         static let AppSettings = NSLocalizedString("Settings-sectionAppSettings", comment: "")
         static let ResetMutes = NSLocalizedString("Settings-resetMutes", comment: "")
         static let contactId = NSLocalizedString("Settings-contactId", comment: "")
+        
+        static let motherChurchExplain = NSLocalizedString("Settings-MotherChurch-explain", comment: "")
+        static func motherChurchAreYouSure(_ motherChurch: MotherChurch) -> String {
+            return String(format: NSLocalizedString("Settings-MotherChurch-areUSure", comment: ""),  motherChurch.rawValue)
+        }
+        static let motherChurchZwolleDutch = NSLocalizedString("Settings-MotherChurch-zwolleDutch", comment: "")
+        static let motherChurchZwolleEnglish = NSLocalizedString("Settings-MotherChurch-zwolleEnglish", comment: "")
+        static let motherChurchZwolleMandarin = NSLocalizedString("Settings-MotherChurch-zwolleMandarin", comment: "")
+        static let motherChurchTempe = NSLocalizedString("Settings-MotherChurch-tempe", comment: "")
 	}
 	
 	struct NewTheme {

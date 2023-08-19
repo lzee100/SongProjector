@@ -155,8 +155,9 @@ struct ChurchBeamApp: View {
         await getAdminUserAndChurch()
         let admin = await GetAdminUseCase().get()
         guard admin == nil else { return }
+        let user = await GetUserUseCase().get()
         
-        let hasNewUniversalClusters = try await FetchNeedsUpdateUniversalClustersUseCase().fetch()
+        let hasNewUniversalClusters = try await FetchNeedsUpdateUniversalClustersUseCase(motherChurch: .zwolleDutch).fetch()
         if hasNewUniversalClusters {
             showingPreparingAccount = true
             do {

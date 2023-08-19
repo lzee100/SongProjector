@@ -149,6 +149,7 @@
         <attribute name="adminInstallTokenId" optional="YES" attributeType="String"/>
         <attribute name="appInstallTokens" optional="YES" attributeType="String"/>
         <attribute name="googleCalendarId" optional="YES" attributeType="String"/>
+        <attribute name="region" optional="YES" attributeType="String"/>
         <attribute name="sheetTimeOffset" attributeType="String" defaultValueString="0"/>
     </entity>
     <entity name="Vers" representedClassName=".Vers" parentEntity="Entity" syncable="YES" codeGenerationType="class">

@@ -14,7 +14,7 @@ actor SaveUsersUseCase {
     private let context = newMOCBackground
     
     func save(entities: [UserCodable]) async throws {
-                
+        
         try await context.perform {
             try entities.forEach { user in
                 try self.get(user)
@@ -49,5 +49,6 @@ actor SaveUsersUseCase {
         entity.updatedAt = codable.updatedAt?.nsDate
         entity.deleteDate = codable.deleteDate?.nsDate
         entity.rootDeleteDate = codable.rootDeleteDate?.nsDate
+        entity.motherChurch = codable.motherChurch
     }
 }
