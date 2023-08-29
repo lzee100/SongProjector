@@ -10,14 +10,17 @@ import Foundation
 
 actor FetchCollectionsUseCase {
     
-    private let useCase: FetchUseCaseAsync<ClusterCodable, Cluster>
-
+    private let fetchAll: Bool
+    
     init(fetchAll: Bool) {
-        useCase = FetchUseCaseAsync<ClusterCodable, Cluster>(endpoint: uploadSecret == nil ? .clusters : .universalclusters, fetchAll: fetchAll)
+        self.fetchAll = fetchAll
     }
     
     @discardableResult
     func fetch() async throws -> [ClusterCodable] {
-        try await useCase.fetch()
+        let endpoint = await GetCollectionsEndpointUseCase().get()
+        let useCase = FetchUseCaseAsync<ClusterCodable, Cluster>(endpoint: endpoint, fetchAll: fetchAll)
+
+        return try await useCase.fetch()
     }
 }

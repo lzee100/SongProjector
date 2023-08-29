@@ -10,7 +10,6 @@ import SwiftUI
 
 struct OnboardingWelcomeViewUI: View {
     @State private var isShowingEnvironmentPicker = false
-    @State private var isShowingVersionPicker = false
 
     var body: some View {
         ZStack {
@@ -28,15 +27,6 @@ struct OnboardingWelcomeViewUI: View {
                         .styleAs(font: .xxNormalLight, color: .white)
                     Spacer()
                 }
-                Button(action: {
-                    isShowingVersionPicker.toggle()
-                }, label: {
-                    Text("Choose version")
-                        .padding()
-                })
-                .buttonStyle(.bordered)
-                .tint(.white)
-                .padding(.top, 30)
 
 #if DEBUG
                 Button(action: {
@@ -58,14 +48,6 @@ struct OnboardingWelcomeViewUI: View {
                     ChurchBeamConfiguration.environment = environment
                 }
             }
-        }
-        .alert(Text("Choose version"), isPresented: $isShowingVersionPicker) {
-            Button("Old", role: ChurchBeamConfiguration.universalClusterVersion == Config.PublicKeys.universalClusterVersionOLD ? .destructive : .none) {
-                ChurchBeamConfiguration.universalClusterVersion = Config.PublicKeys.universalClusterVersionOLD
-                }
-            Button("New", role: ChurchBeamConfiguration.universalClusterVersion == Config.PublicKeys.universalClusterVersionNEW ? .destructive : .none) {
-                ChurchBeamConfiguration.universalClusterVersion = Config.PublicKeys.universalClusterVersionNEW
-                }
         }
     }
 }

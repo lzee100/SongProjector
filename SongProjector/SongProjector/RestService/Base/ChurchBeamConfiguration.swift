@@ -64,21 +64,7 @@ class Config: NSObject {
 		}
 		return nil
 	}()
-    
-    var universalClusterVersion: String {
-        get {
-            if let version = UserDefaults.standard.string(forKey: Keys.universalClusterVersion) {
-                return version
-            }
-            return PublicKeys.universalClusterVersionOLD
-        }
-        set {
-            if universalClusterVersion != newValue {
-                UserDefaults.standard.set(newValue, forKey: Keys.universalClusterVersion)
-            }
-        }
-    }
-	
+    	
 	var environment: Environment {
 		get {
 			let int = UserDefaults.standard.integer(forKey: Keys.Environment)

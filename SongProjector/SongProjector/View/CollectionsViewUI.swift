@@ -125,7 +125,7 @@ import SwiftUI
             showingLoader = false
         }
     }
-        
+    
     func restore(_ collection: ClusterCodable) async {
         showingLoader = true
         var collection = collection
@@ -133,8 +133,10 @@ import SwiftUI
         if uploadSecret == nil {
             collection.rootDeleteDate = nil
         }
+        let endpoint = await GetCollectionsEndpointUseCase().get()
+
         do {
-            try await SubmitUseCase(endpoint: .clusters, requestMethod: .put, uploadObjects: [collection]).submit()
+            try await SubmitUseCase(endpoint: endpoint, requestMethod: .put, uploadObjects: [collection]).submit()
             await reload()
             showingLoader = false
         } catch {
@@ -151,8 +153,11 @@ import SwiftUI
         if uploadSecret != nil {
             collection.rootDeleteDate = Date()
         }
+        
+        let endpoint = await GetCollectionsEndpointUseCase().get()
+        
         do {
-            try await SubmitUseCase(endpoint: uploadSecret == nil ? .clusters : .universalclusters, requestMethod: .delete, uploadObjects: [collection]).submit()
+            try await SubmitUseCase(endpoint: endpoint, requestMethod: .delete, uploadObjects: [collection]).submit()
             await reload()
             showingLoader = false
         } catch {

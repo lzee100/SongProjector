@@ -60,7 +60,7 @@ actor SaveClustersUseCase {
         entity.position = Int16(clusterCodable.position)
         entity.time = clusterCodable.time
         entity.themeId = clusterCodable.theme?.id ?? clusterCodable.themeId
-        entity.church = clusterCodable.church
+        entity.contentPackage = clusterCodable.contentPackage?.rawValue ?? ContentPackage.user.rawValue
         entity.startTime = clusterCodable.startTime
         entity.lastShownAt = clusterCodable.lastShownAt as NSDate?
         entity.hasSheetPastors = clusterCodable.hasSheetPastors

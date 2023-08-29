@@ -19,6 +19,9 @@ enum EndPoint: String {
     case themes
     case universalclusters
     case universalclusterszwolledutch
+    case universalclusterszwolleenglish
+    case universalclusterszwollemandarin
+    case universalclusterszwollebabychurches
     case universalupdatedat
     case users
 }

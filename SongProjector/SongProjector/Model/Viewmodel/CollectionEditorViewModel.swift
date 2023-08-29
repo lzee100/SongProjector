@@ -309,6 +309,10 @@ import SwiftUI
     func saveCluster() async -> Bool {
         var updatedCluster = cluster
         showingLoader = true
+        guard let user = await GetUserUseCase().get() else {
+            showingLoader = false
+            return false
+        }
         guard let selectedTheme = themeSelectionModel.selectedTheme else {
             error = Error.noThemeSelected
             showingLoader = false
@@ -329,11 +333,8 @@ import SwiftUI
                     codableSheets.append(createdSheet)
                 }
             }
-            
-            let church = await GetChurchUseCase().get()?.title ?? "De Deur Zwolle"
-            
+                        
             updatedCluster.title = title
-            updatedCluster.church = church
             updatedCluster.startTime = Double(clusterStartTime) ?? 0.0
             updatedCluster.time = showTimePickerScrollView ? Double(clusterTime) : 0
             updatedCluster.hasTags = tagsSelectionModel.selectedTags
@@ -356,8 +357,15 @@ import SwiftUI
             var deleteObjects: [DeleteObject] {
                 deletedSheets.compactMap { $0.sheetModel.sheet }.flatMap { $0.getDeleteObjects(forceDelete: true) }
             }
-            let universalClustersEndpoint = ChurchBeamConfiguration.universalClusterVersion == Config.PublicKeys.universalClusterVersionOLD ? EndPoint.universalclusters : EndPoint.universalclusterszwolledutch
-            try await SubmitUseCase(endpoint: uploadSecret != nil ? universalClustersEndpoint : .clusters, requestMethod: isNew ? .post : .put, uploadObjects: [updatedCluster], deleteObjects: deleteObjects).submit()
+            
+            if uploadSecret != nil {
+                updatedCluster.contentPackage = ContentPackage(contentPackage: user.contentPackage) ?? ContentPackage(contentPackage: user.contentPackageBabyChurchesMotherChurch) ?? .user
+            } else {
+                updatedCluster.contentPackage = ContentPackage.user
+            }
+            let endpoint = await GetCollectionsEndpointUseCase().get()
+            
+            try await SubmitUseCase(endpoint: endpoint, requestMethod: isNew ? .post : .put, uploadObjects: [updatedCluster], deleteObjects: deleteObjects).submit()
             
             showingLoader = false
             return true

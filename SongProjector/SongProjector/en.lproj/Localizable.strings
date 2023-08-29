@@ -226,11 +226,23 @@
 "Settings-sectionSongServiceSettings" = "Song service settings";
 "Settings-sectionGmailAccount" = "Gmail account";
 "Settings-sectionCalendarId" = "Google calendar ID";
+"Settings-sectionContentPackageBabyChurches" = "Content package: baby churches prayer sheets";
+"Settings-sectionContentPackageBabyChurches-explain" = "All baby churches slides. By subscribing, these slides will automatically be in sync: slides will be automatically removed or added based on the change.";
+"Settings-sectionMotherChurch" = "Content package: mother church";
+"Settings-MotherChurch-explain" = "Select a mother church to subscribe to it. The app will automatically stay in sync with the available content from this church.";
 "Settings-calendarIdPlaceHolder" = "Google calendar id";
 "Settings-appversion" = "Version: ";
 "Settings-sectionAppSettings" = "App settings";
 "Settings-resetMutes" = "Reset saved mutes for instruments";
 "Settings-contactId" = "Contact reference ID";
+"Settings-sectionContentPackageBabyChurches-AreYouSure" = "Are you sure you want to subscribe to %@? At this moment you can not change this once selected.";
+"Settings-MotherChurch-areUSure" = "Are you sure you want to set the mother church to %@? At this moment you can not change this once selected.";
+"Settings-ContentPackage-pastorsZwolle" = "The Door Zwolle";
+"Settings-ContentPackage-zwolleDutch" = "The Door Zwolle (Dutch)";
+"Settings-ContentPackage-zwolleEnglish" = "The Door Zwolle (English)";
+"Settings-ContentPackage-zwolleMandarin" = "The Door Zwolle (Mandarijn)";
+"Settings-ContentPackage-zwolleChurches" = "The Door Zwolle Churches";
+"Settings-ContentPackage-SubscribeTo" = "Subscribe to ";
 
 "EditTheme-title" = "Edit theme";
 

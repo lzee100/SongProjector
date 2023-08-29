@@ -229,13 +229,23 @@
 "Settings-sectionSongServiceSettings" = "Zangdienst instellingen";
 "Settings-sectionGmailAccount" = "Gmail account";
 "Settings-sectionCalendarId" = "Google agenda ID";
+"Settings-sectionContentPackageBabyChurches" = "Content pakket: baby kerken gebeds dia's";
+"Settings-sectionMotherChurch" = "Content pakket: moeder kerk";
+"Settings-sectionContentPackageBabyChurches-explain" = "Alle baby kerken dia's. Door je te abboneren zullen deze dia's automatisch in sync zijn: dia's worden automatisch verwijderd of toegevoegd gebasseerd op de verandering.";
 "Settings-calendarIdPlaceHolder" = "Google agenda id";
 "Settings-appversion" = "Versie: ";
 "Settings-sectionAppSettings" = "App instellingen";
 "Settings-resetMutes" = "Reset opgeslagen mutes voor instrument";
 "Settings-contactId" = "Contact referentie ID";
-
-
+"Settings-MotherChurch-explain" = "Selecteer een moederkerk om je hierop te abboneren. De app zal automatisch in sync blijven met de beschikbare content vanuit deze kerk.";
+"Settings-MotherChurch-areUSure" = "Weet je zeker dat je de moederkerk wil zetten naar %@? Op dit moment kan je dit niet wijzigen wanneer je dit hebt geselecteerd.";
+"Settings-sectionContentPackageBabyChurches-AreYouSure" = "Weet je zeker dat je je wilt abonneren op %@? Op dit moment kan je dit niet wijzigen wanneer je dit hebt geselecteerd.";
+"Settings-ContentPackage-pastorsZwolle" = "De Deur Zwolle";
+"Settings-ContentPackage-zwolleDutch" = "De Deur Zwolle (Nederlands)";
+"Settings-ContentPackage-zwolleEnglish" = "De Deur Zwolle (Engels)";
+"Settings-ContentPackage-zwolleMandarin" = "De Deur Zwolle (Mandarijn)";
+"Settings-ContentPackage-zwolleChurches" = "De Deur Zwolle kerken";
+"Settings-ContentPackage-SubscribeTo" = "Abonneer op ";
 
 "EditTheme-title" = "Wijzig thema";
 

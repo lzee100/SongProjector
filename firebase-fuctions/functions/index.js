@@ -32,7 +32,7 @@ var db = admin.firestore();
 exports.fetchUniversalClustersWithUID = functions.region('europe-west1').https.onRequest(async (request, response) => {
 
     const token = request.header('authorization');
-    const universalClusterVersion = request.query.universalClusterVersion;
+
     const tokenId = await admin
         .auth()
         .verifyIdToken(token)
@@ -50,9 +50,37 @@ exports.fetchUniversalClustersWithUID = functions.region('europe-west1').https.o
             getErrorValue : function() {return errorValue;},
             setErrorValue : function(value) {errorValue = value;}
          };
-    try {
-        let clusters = await GetUniversalClustersUseCase.getUniversalClusters(tokenId, translator, universalClusterVersion);
-        response.send({ success: clusters });
+    try {            
+
+        const snapshot = await db.collection('users').where('userUID', '==', tokenId).get();
+        const user = snapshot.docs[0].data();
+        var contentPackage = user.contentPackage;
+        const contentPackageBabyChurchesMotherChurch = user.contentPackageBabyChurchesMotherChurch;
+
+        var universalClusters;
+        var prayerClusters;
+
+        if (contentPackage != null) {
+            universalClusters = await GetUniversalClustersUseCase.getUniversalClusters(tokenId, translator, contentPackage, false);
+        }
+        // response.status(200).send({ success: user });
+        // return;
+        if (contentPackageBabyChurchesMotherChurch != null) {
+            prayerClusters = await GetUniversalClustersUseCase.getUniversalClusters(tokenId, translator, contentPackageBabyChurchesMotherChurch, true);
+        }
+
+        if (universalClusters != null) {
+            if (prayerClusters != null) {
+                response.status(200).send({ success: universalClusters.concat(prayerClusters) });
+            } else {
+                response.status(200).send({ success: universalClusters });
+            }
+        } else if (prayerClusters != null) {
+            response.status(200).send({ success: prayerClusters });
+        } else {
+            response.status(200).send({ success: user });
+        }
+
     } catch (error) {
         response.status(500).send({ error: errorValue });
     };
@@ -84,29 +112,31 @@ exports.fetchUser = functions.region('europe-west1').https.onRequest(async (requ
 
 });
 
-exports.hasNewUniversalClusters = functions.region('europe-west1').https.onRequest(async (request, response) => {
+// exports.hasNewUniversalClusters = functions.region('europe-west1').https.onRequest(async (request, response) => {
 
-    const token = request.header('authorization');
-    const universalClusterVersion = request.query.universalClusterVersion;
-    const userUID = await admin
-    .auth()
-    .verifyIdToken(token)
-    .then(function (decodedToken) {
-        var uid = decodedToken.uid;
-        return uid;
-    })
-    .catch(function (error) {
-        console.log("error ->", error);
-        response.status(500).send({ error: 'Something failed!' })
-    });
+//     const token = request.header('authorization');
+//     const universalClusterVersion = request.query.universalClusterVersion;
+//     const contentPackage = request.query.contentPackage;
+//     const contentPackageBabyChurchesMotherChurch = request.query.contentPackageBabyChurchesMotherChurch;
+//     const userUID = await admin
+//     .auth()
+//     .verifyIdToken(token)
+//     .then(function (decodedToken) {
+//         var uid = decodedToken.uid;
+//         return uid;
+//     })
+//     .catch(function (error) {
+//         console.log("error ->", error);
+//         response.status(500).send({ error: 'Something failed!' })
+//     });
 
-    try {
-        const hasNewUniversalClusters = await GetUniversalClustersUseCase.hasUniversalClusters(userUID, universalClusterVersion);
-        response.send({hasNewUniversalClusters: hasNewUniversalClusters});
-    } catch (error) {
-        response.status(500).send({ error: error });
-    };
-});
+//     try {
+//         const hasNewUniversalClusters = await GetUniversalClustersUseCase.hasUniversalClusters(userUID, universalClusterVersion, contentPackage, contentPackageBabyChurchesMotherChurch);
+//         response.send({hasNewUniversalClusters: hasNewUniversalClusters});
+//     } catch (error) {
+//         response.status(500).send({ error: error });
+//     };
+// });
 
 class CreateUserIfNeeded {
 
@@ -129,7 +159,7 @@ class CreateUserIfNeeded {
                 createdAt: new Date().getTime(),
                 adminInstallTokenId: installTokenId,
                 appInstallTokens: installTokenId,
-                sheetTimeOffset: 0,
+                sheetTimeOffset: "0",
                 id: id
             };
             await db.collection('users').doc(id).set(user);
@@ -141,31 +171,67 @@ class CreateUserIfNeeded {
 
 class GetUniversalClustersUseCase {
 
-    static async hasUniversalClusters(userUID, universalClusterVersion) {
+    // static async hasUniversalClusters(userUID, universalClusterVersion, contentPackage, contentPackageBabyChurchesMotherChurch) {
 
-        const universalUpdatedAt = await this.getUniversalUpdatedAt(userUID);
-        var endPoint = "universalclusters";
-        if (universalClusterVersion == "universalClusterVersionNEW") {
-            endPoint = "universalclusterszwolledutch"
-        }
-        let snapshot = await db.collection(endPoint).where('updatedAt', '>', universalUpdatedAt).get();
-        return snapshot.docs.length > 0;
-    }
+    //     const isChurchesContentPackage = contentPackage == "pastorsZwolle";
+    //     const universalUpdatedAt = await this.getUniversalUpdatedAt(userUID, isChurchesContentPackage);
+    //     var endPoint = "universalclusters";
+    //     if (universalClusterVersion == "universalClusterVersionNEW") {
+    //         if (contentPackage == "zwolleDutch") {
+    //             endPoint = "universalclusterszwolledutch"
+    //         } else if (contentPackage == "zwolleEnglish") {
+    //             endPoint = "universalclusterszwolleenglish"
+    //         } else if (contentPackage == "zwolleMandarin") {
+    //             endPoint = "universalclusterszwollemandarin"
+    //         } else if (contentPackage == "pastorsZwolle") {
+    //             endPoint = "universalclusterszwollebabychurches"
+    //         }
+    //     }
+    //     let snapshot = await db.collection(endPoint).where('updatedAt', '>', universalUpdatedAt).get();
 
-    static async getUniversalClusters(userUID, errorValue, universalClusterVersion) {
-        const universalUpdatedAt = await this.getUniversalUpdatedAt(userUID);
+    //     if (contentPackageBabyChurchesMotherChurch == "pastorsZwolle") {
+    //         endPoint = "universalclusterszwollebabychurches"
+    //         let snapshot2 = await db.collection(endPoint).where('updatedAt', '>', universalUpdatedAt).get();
+    //         return snapshot.docs.length > 0 || snapshot2.docs.length > 0;
+    //     } else {
+    //         return snapshot.docs.length > 0;
+    //     }
+    // }
+
+    static async getUniversalClusters(userUID, errorValue, contentPackage, isChurchesContentPackage) {
+        const universalUpdatedAt = await this.getUniversalUpdatedAt(userUID, isChurchesContentPackage);
         var defaultTheme = await this.createDefaultThemeIfNeeded(userUID);
         var endPoint = "universalclusters";
-        if (universalClusterVersion == "universalClusterVersionNEW") {
+
+        if (contentPackage == "zwolleDutch") {
             endPoint = "universalclusterszwolledutch"
+        } else if (contentPackage == "zwolleEnglish") {
+            endPoint = "universalclusterszwolleenglish"
+        } else if (contentPackage == "zwolleMandarin") {
+            endPoint = "universalclusterszwollemandarin"
+        } else if (contentPackage == "pastorsZwolle") {
+            endPoint = "universalclusterszwollebabychurches"
         }
-        let snapshot = await db.collection(endPoint).where('updatedAt', '>', universalUpdatedAt).get();
+
+        var snapshot;
+        if (universalUpdatedAt != null) {
+            snapshot = await db.collection(endPoint).where('updatedAt', '>', universalUpdatedAt).get();
+        } else {
+            snapshot = await db.collection(endPoint).get();
+        }
+
+        let updatedAtDates = snapshot.docs.map((doc) => doc.data().updatedAt).sort();
+        errorValue.setErrorValue(`line 230 ${ updatedAtDates }`);
+        var lastUpdatedAt;
+        if (updatedAtDates.length > 0) {
+            lastUpdatedAt = updatedAtDates[updatedAtDates.length - 1];
+        }
+        // return `${lastUpdatedAt}`;
         errorValue.setErrorValue("line 152");
         await this.updateUniversalClusters(userUID, snapshot.docs, errorValue);
         errorValue.setErrorValue("line 156")
         let defaultTag = await this.createDefaultTagIfNeeded(userUID, errorValue);
         errorValue.setErrorValue(`line 205`);
-
         const updatedUniversalClusters = snapshot.docs.map(doc => {
             const universalCluster = doc.data();
             const rootID = universalCluster.id;
@@ -211,11 +277,20 @@ class GetUniversalClustersUseCase {
         errorValue.setErrorValue(`line 202`);
 
         await Promise.all(updatedUniversalClusters.map(async (cluster) => {
-            errorValue.setErrorValue(`line 205 ${cluster}`);
+            errorValue.setErrorValue(`line 205 ${cluster.id}`);
             await db.collection('clusters').doc(cluster.id).set(cluster);
         }));
+        errorValue.setErrorValue(`line 258`);
 
-        await this.setUniversalUpdatedAt(userUID);
+        if (lastUpdatedAt != null) {
+            if (isChurchesContentPackage) {
+                errorValue.setErrorValue(`line 261`);
+                await this.setUniversalUpdatedAt(userUID, null, lastUpdatedAt, errorValue);
+            } else {
+                errorValue.setErrorValue(`line 264`);
+                await this.setUniversalUpdatedAt(userUID, lastUpdatedAt, null, errorValue);
+            }
+        }
         errorValue.setErrorValue("line 204");
 
         return updatedUniversalClusters;
@@ -329,20 +404,36 @@ class GetUniversalClustersUseCase {
     }
 
 
-    static async getUniversalUpdatedAt(userUID) {
+    static async getUniversalUpdatedAt(userUID, isChurchesContentPackage) {
         const data = await db.collection('universalupdatedat').where('userUID', '==', userUID).get();
         if (data.docs.length > 0) {
-            return data.docs[0].data().universalUpdatedAt;
+            if (isChurchesContentPackage) {
+                return data.docs[0].data().churchesUpdatedAt;
+            } else {
+                return data.docs[0].data().universalUpdatedAt;
+            }
         } else {
             return 1
         }
     }
 
-    static async setUniversalUpdatedAt(userUID) {
+    static async setUniversalUpdatedAt(userUID, universalupdatedat, churchesUpdatedAt, errorValue) {
+        errorValue.setErrorValue(`line 407`);
+        if (universalupdatedat != null) {
+            errorValue.setErrorValue(`line 409 ${universalupdatedat}`);
+        }
+        if (churchesUpdatedAt != null) {
+            errorValue.setErrorValue(`line 412 ${churchesUpdatedAt}`);
+        }
         const data = await db.collection('universalupdatedat').where('userUID', '==', userUID).get();
         if (data.docs.length > 0) {
             var uua = data.docs[0].data();
-            uua.universalUpdatedAt = new Date().getTime();
+            if (churchesUpdatedAt != null) {
+                uua.churchesUpdatedAt = churchesUpdatedAt;
+            } 
+            if (universalupdatedat != null) {
+                uua.universalUpdatedAt = universalupdatedat;
+            }
             var id = data.docs[0].id;
             if (uua.id == null) {
                 uua.id = data.docs[0].id
@@ -354,7 +445,8 @@ class GetUniversalClustersUseCase {
             var uua = {
                 userUID: userUID,
                 updatedAt: new Date().getTime(),
-                universalUpdatedAt: new Date().getTime(),
+                universalUpdatedAt: universalupdatedat,
+                churchesUpdatedAt: churchesUpdatedAt,
                 createdAt: new Date().getTime(),
                 id: id
             }

@@ -20,6 +20,10 @@ public struct UserCodable: FileTransferable, Codable {
         updatedAt = entity.updatedAt?.date
         deleteDate = entity.deleteDate?.date
         rootDeleteDate = entity.rootDeleteDate?.date
+        contentPackage = entity.contentPackage
+        contentPackageBabyChurchesMotherChurch = entity.contentPackageBabyChurchesMotherChurch
+        appInstallTokens = (entity.appInstallTokens ?? "").split(separator: ",").map(String.init)
+        adminInstallTokenId = entity.adminInstallTokenId
     }
 
     private let productExpireDateKey = "churchbeamProductExpireDateKey"
@@ -40,6 +44,8 @@ public struct UserCodable: FileTransferable, Codable {
     var adminCode: String? = nil
     var adminInstallTokenId: String? = nil
     var googleCalendarId: String? = nil
+    var contentPackage: String? = nil
+    var contentPackageBabyChurchesMotherChurch: String? = nil
     private var productExpireDate: Date?
     private var pilotStartDate: Date?
     private var productId: String?
@@ -63,6 +69,8 @@ public struct UserCodable: FileTransferable, Codable {
         case googleCalendarId
         case productExpireDate
         case productId
+        case contentPackage
+        case contentPackageBabyChurchesMotherChurch
     }
     
     // MARK: - Decodable
@@ -91,16 +99,18 @@ public struct UserCodable: FileTransferable, Codable {
         
         let installTokens = try container.decodeIfPresent(String.self, forKey: .appInstallTokens) ?? ""
         appInstallTokens = installTokens.split(separator: ",").compactMap({ String($0) })
-        if let sheetTimeOffsetString = try container.decodeIfPresent(Int.self, forKey: .sheetTimeOffset) {
-            sheetTimeOffset = Double(sheetTimeOffsetString)
-        }
+//        if let sheetTimeOffsetString = try container.decodeIfPresent(String.self, forKey: .sheetTimeOffset) {
+//            sheetTimeOffset = Double(sheetTimeOffsetString) ?? 0
+//        }
         if let pilotStartDateInt = try container.decodeIfPresent(Int64.self, forKey: .pilotStartDate) {
             pilotStartDate = Date(timeIntervalSince1970: TimeInterval(pilotStartDateInt) / 1000)
         }
         if let productExpireDateInt = try container.decodeIfPresent(Int64.self, forKey: .productExpireDate) {
             productExpireDate = Date(timeIntervalSince1970: TimeInterval(productExpireDateInt) / 1000)
         }
-
+        self.contentPackage = try container.decodeIfPresent(String.self, forKey: .contentPackage)
+        self.contentPackageBabyChurchesMotherChurch = try container.decodeIfPresent(String.self, forKey: .contentPackageBabyChurchesMotherChurch)
+        
         adminCode = try container.decodeIfPresent(String.self, forKey: .adminCode)
         adminInstallTokenId = try container.decodeIfPresent(String.self, forKey: .adminInstallTokenId)
         googleCalendarId = try container.decodeIfPresent(String.self, forKey: .googleCalendarId)
@@ -130,10 +140,13 @@ public struct UserCodable: FileTransferable, Codable {
         }
         
         try container.encode(appInstallTokens.joined(separator: ","), forKey: .appInstallTokens)
-        try container.encode("\(sheetTimeOffset)", forKey: .sheetTimeOffset)
+//        try container.encode(sheetTimeOffset.stringValue, forKey: .sheetTimeOffset)
         if let pilotStartDate = pilotStartDate {
             try container.encode(pilotStartDate.intValue, forKey: .pilotStartDate)
         }
+        try container.encode(contentPackage, forKey: .contentPackage)
+        try container.encode(contentPackageBabyChurchesMotherChurch, forKey: .contentPackageBabyChurchesMotherChurch)
+
         try container.encode(adminCode, forKey: .adminCode)
         try container.encode(adminInstallTokenId, forKey: .adminInstallTokenId)
         try container.encode(googleCalendarId, forKey: .googleCalendarId)
