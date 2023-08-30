@@ -227,7 +227,7 @@
 "Settings-sectionGmailAccount" = "Gmail account";
 "Settings-sectionCalendarId" = "Google calendar ID";
 "Settings-sectionContentPackageBabyChurches" = "Content package: baby churches prayer sheets";
-"Settings-sectionContentPackageBabyChurches-explain" = "All baby churches slides. By subscribing, these slides will automatically be in sync: slides will be automatically removed or added based on the change.";
+"Settings-sectionContentPackageBabyChurches-explain" = "All baby churches sheets. By subscribing, these sheets will automatically be in sync: sheets will be automatically removed or added based on the change.";
 "Settings-sectionMotherChurch" = "Content package: mother church";
 "Settings-MotherChurch-explain" = "Select a mother church to subscribe to it. The app will automatically stay in sync with the available content from this church.";
 "Settings-calendarIdPlaceHolder" = "Google calendar id";

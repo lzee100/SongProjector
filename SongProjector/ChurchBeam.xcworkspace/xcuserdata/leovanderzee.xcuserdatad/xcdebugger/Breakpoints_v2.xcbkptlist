@@ -30,10 +30,151 @@
             filePath = "SongProjector/View/CollectionsViewUI.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "234"
-            endingLineNumber = "234"
-            landmarkName = "init(editingSection:songServiceEditorModel:customSelectedSongsForSongService:customSelectionDelegate:mandatoryTags:)"
+            startingLineNumber = "229"
+            endingLineNumber = "229"
+            landmarkName = "CollectionsViewUI"
+            landmarkType = "14">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "5C026E2A-D824-4A26-BE1F-B1E7546FCF92"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SongProjector/Model/Viewmodel/CollectionEditorViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "359"
+            endingLineNumber = "359"
+            landmarkName = "saveCluster()"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "5C026E2A-D824-4A26-BE1F-B1E7546FCF92 - 8871a20e976e5f46"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "deleteObjects.getter : Swift.Array&lt;ChurchBeam.DeleteObject&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Viewmodel/CollectionEditorViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "355"
+                  endingLineNumber = "355"
+                  offsetFromSymbolStart = "340">
+               </Location>
+               <Location
+                  uuid = "5C026E2A-D824-4A26-BE1F-B1E7546FCF92 - 3aed9e4d64998f10"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for ChurchBeam.CollectionEditorViewModel.saveCluster() async -&gt; Swift.Bool"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Viewmodel/CollectionEditorViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "355"
+                  endingLineNumber = "355"
+                  offsetFromSymbolStart = "1960">
+               </Location>
+               <Location
+                  uuid = "5C026E2A-D824-4A26-BE1F-B1E7546FCF92 - 6708e6462ea57138"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(4) await resume partial function for ChurchBeam.CollectionEditorViewModel.saveCluster() async -&gt; Swift.Bool"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Viewmodel/CollectionEditorViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "355"
+                  endingLineNumber = "355"
+                  offsetFromSymbolStart = "56">
+               </Location>
+               <Location
+                  uuid = "5C026E2A-D824-4A26-BE1F-B1E7546FCF92 - 95bbecf253b14b2e"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(5) suspend resume partial function for ChurchBeam.CollectionEditorViewModel.saveCluster() async -&gt; Swift.Bool"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Viewmodel/CollectionEditorViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "355"
+                  endingLineNumber = "355"
+                  offsetFromSymbolStart = "76">
+               </Location>
+               <Location
+                  uuid = "5C026E2A-D824-4A26-BE1F-B1E7546FCF92 - a1d0c249d75eb52d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(6) suspend resume partial function for ChurchBeam.CollectionEditorViewModel.saveCluster() async -&gt; Swift.Bool"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Viewmodel/CollectionEditorViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "355"
+                  endingLineNumber = "355"
+                  offsetFromSymbolStart = "84">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "8C3B45E0-B829-4BC1-908C-C38D5A231EA3"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SongProjector/Model/Viewmodel/CollectionEditorViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "356"
+            endingLineNumber = "356"
+            landmarkName = "saveCluster()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "8C3B45E0-B829-4BC1-908C-C38D5A231EA3 - 3aed9e4d64998eb3"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for ChurchBeam.CollectionEditorViewModel.saveCluster() async -&gt; Swift.Bool"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Viewmodel/CollectionEditorViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "352"
+                  endingLineNumber = "352"
+                  offsetFromSymbolStart = "1944">
+               </Location>
+               <Location
+                  uuid = "8C3B45E0-B829-4BC1-908C-C38D5A231EA3 - 8871a20e976e5e84"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "deleteObjects.getter : Swift.Array&lt;ChurchBeam.DeleteObject&gt;"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/Model/Viewmodel/CollectionEditorViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "353"
+                  endingLineNumber = "353"
+                  offsetFromSymbolStart = "44">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -103,8 +244,131 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "5738C0AD-6376-4E19-B598-59B667ED660C"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SongProjector/View/TagsViewUI.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "91"
+            endingLineNumber = "91"
+            landmarkName = "body"
+            landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "5738C0AD-6376-4E19-B598-59B667ED660C - 3e466f7deeeac99f"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #3 () -&gt; Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.tint&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.ShapeStyle&gt;(Swift.Optional&lt;&#x3c4;_1_0&gt;) -&gt; some&gt;&gt;.0&gt; in closure #1 (ChurchBeam.TagCodable) -&gt; &lt;&lt;opaque return type of SwiftUI.View.swipeActions&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.View&gt;(edge: SwiftUI.HorizontalEdge, allowsFullSwipe: Swift.Bool, content: () -&gt; &#x3c4;_1_0) -&gt; some&gt;&gt;.0 in closure #1 () -&gt; &lt;&lt;opaque return type of SwiftUI.DynamicViewContent.onMove(perform: Swift.Optional&lt;(Foundation.IndexSet, Swift.Int) -&gt; ()&gt;) -&gt; some&gt;&gt;.0 in closure #1 () -&gt; SwiftUI.List&lt;ChurchBeam.TagCodable, &lt;&lt;opaque return type of SwiftUI.DynamicViewContent.onMove(perform: Swift.Optional&lt;(Foundation.IndexSet, Swift.Int) -&gt; ()&gt;) -&gt; some&gt;&gt;.0&gt; in closure #1 () -&gt; SwiftUI.TupleView&lt;(Swift.Optional&lt;SwiftUI.ProgressView&lt;SwiftUI.EmptyView, SwiftUI.EmptyView&gt;&gt;, &lt;&lt;opaque return type of SwiftUI.View.task(priority: Swift.TaskPriority, _: @Sendable () async -&gt; ()) -&gt; some&gt;&gt;.0)&gt; in ChurchBeam.TagsViewUI.body.getter : some"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/View/TagsViewUI.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "91"
+                  endingLineNumber = "91"
+                  offsetFromSymbolStart = "596">
+               </Location>
+               <Location
+                  uuid = "5738C0AD-6376-4E19-B598-59B667ED660C - 85418bb1336f8451"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; () in closure #3 () -&gt; Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.tint&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.ShapeStyle&gt;(Swift.Optional&lt;&#x3c4;_1_0&gt;) -&gt; some&gt;&gt;.0&gt; in closure #1 (ChurchBeam.TagCodable) -&gt; &lt;&lt;opaque return type of SwiftUI.View.swipeActions&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.View&gt;(edge: SwiftUI.HorizontalEdge, allowsFullSwipe: Swift.Bool, content: () -&gt; &#x3c4;_1_0) -&gt; some&gt;&gt;.0 in closure #1 () -&gt; &lt;&lt;opaque return type of SwiftUI.DynamicViewContent.onMove(perform: Swift.Optional&lt;(Foundation.IndexSet, Swift.Int) -&gt; ()&gt;) -&gt; some&gt;&gt;.0 in closure #1 () -&gt; SwiftUI.List&lt;ChurchBeam.TagCodable, &lt;&lt;opaque return type of SwiftUI.DynamicViewContent.onMove(perform: Swift.Optional&lt;(Foundation.IndexSet, Swift.Int) -&gt; ()&gt;) -&gt; some&gt;&gt;.0&gt; in closure #1 () -&gt; SwiftUI.TupleView&lt;(Swift.Optional&lt;SwiftUI.ProgressView&lt;SwiftUI.EmptyView, SwiftUI.EmptyView&gt;&gt;, &lt;&lt;opaque return type of SwiftUI.View.task(priority: Swift.TaskPriority, _: @Sendable () async -&gt; ()) -&gt; some&gt;&gt;.0)&gt; in ChurchBeam.TagsViewUI.body.getter : some"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/View/TagsViewUI.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "92"
+                  endingLineNumber = "92"
+                  offsetFromSymbolStart = "212">
+               </Location>
+               <Location
+                  uuid = "5738C0AD-6376-4E19-B598-59B667ED660C - 1b3d37e4372f42f1"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; () in closure #3 () -&gt; &lt;&lt;opaque return type of SwiftUI.View.tint&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.ShapeStyle&gt;(Swift.Optional&lt;&#x3c4;_1_0&gt;) -&gt; some&gt;&gt;.0 in closure #1 (ChurchBeam.TagCodable) -&gt; &lt;&lt;opaque return type of SwiftUI.View.swipeActions&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.View&gt;(edge: SwiftUI.HorizontalEdge, allowsFullSwipe: Swift.Bool, content: () -&gt; &#x3c4;_1_0) -&gt; some&gt;&gt;.0 in closure #1 () -&gt; &lt;&lt;opaque return type of SwiftUI.DynamicViewContent.onMove(perform: Swift.Optional&lt;(Foundation.IndexSet, Swift.Int) -&gt; ()&gt;) -&gt; some&gt;&gt;.0 in closure #1 () -&gt; SwiftUI.List&lt;ChurchBeam.TagCodable, &lt;&lt;opaque return type of SwiftUI.DynamicViewContent.onMove(perform: Swift.Optional&lt;(Foundation.IndexSet, Swift.Int) -&gt; ()&gt;) -&gt; some&gt;&gt;.0&gt; in closure #1 () -&gt; SwiftUI.TupleView&lt;(Swift.Optional&lt;SwiftUI.ProgressView&lt;SwiftUI.EmptyView, SwiftUI.EmptyView&gt;&gt;, &lt;&lt;opaque return type of SwiftUI.View.task(priority: Swift.TaskPriority, _: @Sendable () async -&gt; ()) -&gt; some&gt;&gt;.0)&gt; in ChurchBeam.TagsViewUI.body.getter : some"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/View/TagsViewUI.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "91"
+                  endingLineNumber = "91"
+                  offsetFromSymbolStart = "272">
+               </Location>
+               <Location
+                  uuid = "5738C0AD-6376-4E19-B598-59B667ED660C - ffdfb726ffa4827f"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Sendable () async -&gt; () in closure #1 () -&gt; () in closure #3 () -&gt; &lt;&lt;opaque return type of SwiftUI.View.tint&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.ShapeStyle&gt;(Swift.Optional&lt;&#x3c4;_1_0&gt;) -&gt; some&gt;&gt;.0 in closure #1 (ChurchBeam.TagCodable) -&gt; &lt;&lt;opaque return type of SwiftUI.View.swipeActions&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.View&gt;(edge: SwiftUI.HorizontalEdge, allowsFullSwipe: Swift.Bool, content: () -&gt; &#x3c4;_1_0) -&gt; some&gt;&gt;.0 in closure #1 () -&gt; &lt;&lt;opaque return type of SwiftUI.DynamicViewContent.onMove(perform: Swift.Optional&lt;(Foundation.IndexSet, Swift.Int) -&gt; ()&gt;) -&gt; some&gt;&gt;.0 in closure #1 () -&gt; SwiftUI.List&lt;ChurchBeam.TagCodable, &lt;&lt;opaque return type of SwiftUI.DynamicViewContent.onMove(perform: Swift.Optional&lt;(Foundation.IndexSet, Swift.Int) -&gt; ()&gt;) -&gt; some&gt;&gt;.0&gt; in closure #1 () -&gt; SwiftUI.TupleView&lt;(Swift.Optional&lt;SwiftUI.ProgressView&lt;SwiftUI.EmptyView, SwiftUI.EmptyView&gt;&gt;, &lt;&lt;opaque return type of SwiftUI.View.task(priority: Swift.TaskPriority, _: @Sendable () async -&gt; ()) -&gt; some&gt;&gt;.0)&gt; in ChurchBeam.TagsViewUI.body.getter : some"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/View/TagsViewUI.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "91"
+                  endingLineNumber = "91"
+                  offsetFromSymbolStart = "156">
+               </Location>
+               <Location
+                  uuid = "5738C0AD-6376-4E19-B598-59B667ED660C - 4825389629a7deca"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for closure #1 @Sendable () async -&gt; () in closure #1 () -&gt; () in closure #3 () -&gt; &lt;&lt;opaque return type of SwiftUI.View.tint&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.ShapeStyle&gt;(Swift.Optional&lt;&#x3c4;_1_0&gt;) -&gt; some&gt;&gt;.0 in closure #1 (ChurchBeam.TagCodable) -&gt; &lt;&lt;opaque return type of SwiftUI.View.swipeActions&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.View&gt;(edge: SwiftUI.HorizontalEdge, allowsFullSwipe: Swift.Bool, content: () -&gt; &#x3c4;_1_0) -&gt; some&gt;&gt;.0 in closure #1 () -&gt; &lt;&lt;opaque return type of SwiftUI.DynamicViewContent.onMove(perform: Swift.Optional&lt;(Foundation.IndexSet, Swift.Int) -&gt; ()&gt;) -&gt; some&gt;&gt;.0 in closure #1 () -&gt; SwiftUI.List&lt;ChurchBeam.TagCodable, &lt;&lt;opaque return type of SwiftUI.DynamicViewContent.onMove(perform: Swift.Optional&lt;(Foundation.IndexSet, Swift.Int) -&gt; ()&gt;) -&gt; some&gt;&gt;.0&gt; in closure #1 () -&gt; SwiftUI.TupleView&lt;(Swift.Optional&lt;SwiftUI.ProgressView&lt;SwiftUI.EmptyView, SwiftUI.EmptyView&gt;&gt;, &lt;&lt;opaque return type of SwiftUI.View.task(priority: Swift.TaskPriority, _: @Sendable () async -&gt; ()) -&gt; some&gt;&gt;.0)&gt; in ChurchBeam.TagsViewUI.body.getter : some"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/View/TagsViewUI.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "91"
+                  endingLineNumber = "91"
+                  offsetFromSymbolStart = "40">
+               </Location>
+               <Location
+                  uuid = "5738C0AD-6376-4E19-B598-59B667ED660C - 3e466f7deeeac99f"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #3 () -&gt; Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.tint&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.ShapeStyle&gt;(Swift.Optional&lt;&#x3c4;_1_0&gt;) -&gt; some&gt;&gt;.0&gt; in closure #1 (ChurchBeam.TagCodable) -&gt; &lt;&lt;opaque return type of SwiftUI.View.swipeActions&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.View&gt;(edge: SwiftUI.HorizontalEdge, allowsFullSwipe: Swift.Bool, content: () -&gt; &#x3c4;_1_0) -&gt; some&gt;&gt;.0 in closure #1 () -&gt; &lt;&lt;opaque return type of SwiftUI.DynamicViewContent.onMove(perform: Swift.Optional&lt;(Foundation.IndexSet, Swift.Int) -&gt; ()&gt;) -&gt; some&gt;&gt;.0 in closure #1 () -&gt; SwiftUI.List&lt;ChurchBeam.TagCodable, &lt;&lt;opaque return type of SwiftUI.DynamicViewContent.onMove(perform: Swift.Optional&lt;(Foundation.IndexSet, Swift.Int) -&gt; ()&gt;) -&gt; some&gt;&gt;.0&gt; in closure #1 () -&gt; SwiftUI.TupleView&lt;(Swift.Optional&lt;SwiftUI.ProgressView&lt;SwiftUI.EmptyView, SwiftUI.EmptyView&gt;&gt;, &lt;&lt;opaque return type of SwiftUI.View.task(priority: Swift.TaskPriority, _: @Sendable () async -&gt; ()) -&gt; some&gt;&gt;.0)&gt; in ChurchBeam.TagsViewUI.body.getter : some"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/View/TagsViewUI.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "91"
+                  endingLineNumber = "91"
+                  offsetFromSymbolStart = "896">
+               </Location>
+               <Location
+                  uuid = "5738C0AD-6376-4E19-B598-59B667ED660C - 85418bb1336f8451"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; () in closure #3 () -&gt; Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.tint&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.ShapeStyle&gt;(Swift.Optional&lt;&#x3c4;_1_0&gt;) -&gt; some&gt;&gt;.0&gt; in closure #1 (ChurchBeam.TagCodable) -&gt; &lt;&lt;opaque return type of SwiftUI.View.swipeActions&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.View&gt;(edge: SwiftUI.HorizontalEdge, allowsFullSwipe: Swift.Bool, content: () -&gt; &#x3c4;_1_0) -&gt; some&gt;&gt;.0 in closure #1 () -&gt; &lt;&lt;opaque return type of SwiftUI.DynamicViewContent.onMove(perform: Swift.Optional&lt;(Foundation.IndexSet, Swift.Int) -&gt; ()&gt;) -&gt; some&gt;&gt;.0 in closure #1 () -&gt; SwiftUI.List&lt;ChurchBeam.TagCodable, &lt;&lt;opaque return type of SwiftUI.DynamicViewContent.onMove(perform: Swift.Optional&lt;(Foundation.IndexSet, Swift.Int) -&gt; ()&gt;) -&gt; some&gt;&gt;.0&gt; in closure #1 () -&gt; SwiftUI.TupleView&lt;(Swift.Optional&lt;SwiftUI.ProgressView&lt;SwiftUI.EmptyView, SwiftUI.EmptyView&gt;&gt;, &lt;&lt;opaque return type of SwiftUI.View.task(priority: Swift.TaskPriority, _: @Sendable () async -&gt; ()) -&gt; some&gt;&gt;.0)&gt; in ChurchBeam.TagsViewUI.body.getter : some"
+                  moduleName = "SongProjector"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/leovanderzee/development/songprojector/SongProjector/SongProjector/View/TagsViewUI.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "92"
+                  endingLineNumber = "92"
+                  offsetFromSymbolStart = "272">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
             uuid = "19C3C17C-1C61-4775-A198-EC3E52FE15CB"
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SongProjector/Model/Codable/Fetchers/VerifyPurachaseTransactionUseCase.swift"
@@ -120,7 +384,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "4CFD9A90-7B78-44F7-AD17-45620FEDB395"
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SongProjector/Model/Codable/Fetchers/VerifyPurachaseTransactionUseCase.swift"
@@ -136,7 +400,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "53E37D7B-5DAC-486D-A25F-A1D4EE1AD136"
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SongProjector/Model/Codable/Fetchers/VerifyPurachaseTransactionUseCase.swift"
@@ -152,7 +416,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "1B80A398-C0F9-4302-89F3-4214DE4293F6"
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SongProjector/Model/Codable/Fetchers/VerifyPurachaseTransactionUseCase.swift"
@@ -240,54 +504,6 @@
                   offsetFromSymbolStart = "512">
                </Location>
             </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "D5E250CE-C6F1-45FF-9B61-7E85AFE56863"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SongProjector/Model/Codable/Fetchers/SyncUniversalCollectionsUseCase.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "79"
-            endingLineNumber = "79"
-            landmarkName = "request()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "03DD6D7B-3DB4-4423-8937-2D45C332640E"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SongProjector/Global/App.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "205"
-            endingLineNumber = "205"
-            landmarkName = "initializeFireStore()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "B2D042D7-14DF-42F5-A0CE-99BCF933B29B"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SongProjector/Global/App.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "207"
-            endingLineNumber = "207"
-            landmarkName = "initializeFireStore()"
-            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

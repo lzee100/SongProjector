@@ -17,7 +17,7 @@ enum ContentPackage: String, CaseIterable, Identifiable {
     static let key = "contentPackage"
     static let keyContentPackageBabyChurchesMotherChurch = "contentPackageBabyChurchesMotherChurch"
     
-    static let zwolleContent = [zwolleDutch, zwolleEnglish, zwolleMandarin]
+    static let zwolleContent = [zwolleDutch, zwolleEnglish]
     
     case zwolleDutch
     case zwolleEnglish
