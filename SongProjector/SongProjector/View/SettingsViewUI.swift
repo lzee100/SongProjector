@@ -255,7 +255,7 @@ struct SettingsViewUI: View {
             }
         }
         .buttonStyle(.borderedProminent)
-        .tint(Color(uiColor: uploadSecret != nil && viewModel.user?.contentPackageBabyChurchesMotherChurch != nil ? .red1 : themeHighlighted))
+        .tint(Color(uiColor: uploadSecret != nil && viewModel.user?.contentPackage == contentPackage.rawValue ? .red1 : themeHighlighted))
         .disabled((viewModel.showingLoader || viewModel.user?.contentPackage != nil) && (uploadSecret == nil))
     }
     
