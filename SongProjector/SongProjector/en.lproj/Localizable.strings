@@ -205,8 +205,8 @@
 "SongServiceManagement-name" = "Name";
 "SongServiceManagement-numberOfSongs" = "Number of songs: ";
 "SongServiceManagement-newSongService" = "New songservice structure";
-"SongServiceManagement-titleNewSongServiceSchema" = "New songservice scheme";
-"SongServiceManagement-titleEditSongServiceSchema" = "Change songservice schema";
+"SongServiceManagement-titleNewSongServiceSchema" = "Songservice scheme";
+"SongServiceManagement-titleEditSongServiceSchema" = "Songservice schema";
 "SongServiceManagement-addSection" = "Add section";
 "SongServiceManagement-errorAddASection" = "Add a section to the song service";
 "SongServiceManagement-errorInSections" = "Please add a title and at least one tag in the following sections: %$";

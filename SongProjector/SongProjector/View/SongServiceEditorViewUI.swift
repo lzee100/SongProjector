@@ -176,6 +176,7 @@ struct SongServiceEditorViewUI: View {
                 }
             }
             .navigationTitle(AppText.NewSongService.title)
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 if !viewModel.showingLoader {
                     ToolbarItemGroup(placement: .navigationBarLeading) {

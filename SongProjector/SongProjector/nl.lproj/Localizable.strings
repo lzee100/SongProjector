@@ -208,8 +208,8 @@
 "SongServiceManagement-addTags" = "Voeg tags toe";
 "SongServiceManagement-name" = "Naam";
 "SongServiceManagement-numberOfSongs" = "Aantal liedjes: ";
-"SongServiceManagement-titleNewSongServiceSchema" = "Nieuwe zangdienst schema";
-"SongServiceManagement-titleEditSongServiceSchema" = "Wijzig zangdienst schema";
+"SongServiceManagement-titleNewSongServiceSchema" = "Zangdienst schema";
+"SongServiceManagement-titleEditSongServiceSchema" = "Zangdienst schema";
 "SongServiceManagement-addSection" = "Voeg sectie toe";
 "SongServiceManagement-errorAddASection" = "Voeg een sectie toe aan het schema";
 "SongServiceManagement-errorInSections" = "Voeg een titel en ten minste 1 tag toe aan de volgende secties: %$";

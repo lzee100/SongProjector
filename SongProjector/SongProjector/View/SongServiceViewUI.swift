@@ -112,8 +112,8 @@ struct SongServiceViewUI: View {
                 }
                 .padding([.bottom], 1)
                 .background(.black)
-                .navigationBarTitleDisplayMode(.inline)
                 .navigationBarTitle(AppText.SongService.title)
+                .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     
                     if previewSong != nil {
