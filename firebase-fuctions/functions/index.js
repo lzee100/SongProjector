@@ -10,6 +10,11 @@
 // const {onRequest} = require("firebase-functions/v2/https");
 // const logger = require("firebase-functions/logger");
 
+
+// https://console.firebase.google.com/u/0/project/churchbeamtest/settings/serviceaccounts/adminsdk -> set this private key to test project
+// export GOOGLE_APPLICATION_CREDENTIALS="/home/user/Downloads/service-account-file.json"
+
+
 // RUN IN TERMINAL TO START: firebase emulators:start
 // RUN IN TERMINAL TO START: firebase serve --only functions
 // RUN IN TERMINAL: firebase deploy --only functions
@@ -113,45 +118,21 @@ exports.fetchUser = functions.region('europe-west1').https.onRequest(async (requ
          try {
         // response.status(200).send({userId: userUID, installToken: installToken})
         let user = await CreateUserIfNeeded.createUserIfNeeded(userUID, installToken, translator);
-        response.send(errorValue);
+        response.status(200).send(user);
     } catch (error) {
         response.status(500).send({ error: errorValue });
     };
 
 });
 
-// exports.hasNewUniversalClusters = functions.region('europe-west1').https.onRequest(async (request, response) => {
-
-//     const token = request.header('authorization');
-//     const universalClusterVersion = request.query.universalClusterVersion;
-//     const contentPackage = request.query.contentPackage;
-//     const contentPackageBabyChurchesMotherChurch = request.query.contentPackageBabyChurchesMotherChurch;
-//     const userUID = await admin
-//     .auth()
-//     .verifyIdToken(token)
-//     .then(function (decodedToken) {
-//         var uid = decodedToken.uid;
-//         return uid;
-//     })
-//     .catch(function (error) {
-//         console.log("error ->", error);
-//         response.status(500).send({ error: 'Something failed!' })
-//     });
-
-//     try {
-//         const hasNewUniversalClusters = await GetUniversalClustersUseCase.hasUniversalClusters(userUID, universalClusterVersion, contentPackage, contentPackageBabyChurchesMotherChurch);
-//         response.send({hasNewUniversalClusters: hasNewUniversalClusters});
-//     } catch (error) {
-//         response.status(500).send({ error: error });
-//     };
-// });
-
 class CreateUserIfNeeded {
 
     static async createUserIfNeeded(userUID, installTokenId, errorValue) {
-        errorValue.setErrorValue("line 152-");
-        const data = await db.collection('users').where('userUID', '==', userUID).get();
-        errorValue.setErrorValue("line 154");
+        errorValue.setErrorValue(`line 152 ${ userUID }`);
+        const data = await db.collection('users').where('userUID', '==', userUID).get()
+        .catch(error => { 
+            errorValue.setErrorValue(error.message);
+        });
         if (data.docs.length > 0) {
             errorValue.setErrorValue("line 156");
             const user = data.docs[0].data();

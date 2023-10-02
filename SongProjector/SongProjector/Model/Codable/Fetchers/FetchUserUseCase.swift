@@ -29,7 +29,7 @@ actor FetchUserUseCase {
             request.addValue(token, forHTTPHeaderField: "Authorization")
             request.addValue(installTokenId, forHTTPHeaderField: "installTokenId")
             let (userData, _) = try await URLSession.shared.data(for: request)
-                        
+            
             let bla = String(data: userData, encoding: .utf8)
 print(bla)
             if let user = try? JSONDecoder().decode(UserCodable.self, from: userData) {

@@ -120,7 +120,7 @@ actor SongServiceGeneratorUseCase {
             let unPinnedTagIds = section.tags .filter({ !$0.isPinned }).map { $0.id }
 
             repeat {
-                if let pinnedTag = pinnedTags.first(where: { $0.position == positionInSection }) {
+                if let pinnedTag = pinnedTags.first(where: { $0.positionInScheme == positionInSection }) {
                     if var cluster = clustersToPick.first(where: { $0.tagIds.contains(where: { pinnedTag.id == $0 }) }) {
                         cluster.position = position
                         clusterComments.append(.cluster(cluster))
