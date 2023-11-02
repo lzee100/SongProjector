@@ -44,19 +44,23 @@
 "Intro-introHalloContent" = "Welkom bij Churchbeam. Deze app ondersteund de gehele voordienst in jouw kerk.";
 "Intro-featureIntro" = "Voor %@ per maand krijg je onbeperkt toegang tot:";
 
-"Intro-featuresSong1" = "Onbeperkt aantal liedjes";
+"Subscriptions-info-title" = "Abonnementen";
+
+"Feature-song-intro" = "De Song optie geeft je toegang tot liedjes met muziek. Het biedt daarnaast nog veel meer:";
+"Intro-featuresSong1" = "Onbeperkt aantal liedjes maken (tekst / dia's)";
 "Intro-featuresSong2" = "thema's en tags opslaan";
 "Intro-featuresSong3" = "Automatische generatie van dia's voor bijbelteksten";
 "Intro-featuresSong4" = "Automatisch genererende diensten";
 "Intro-featuresSong5" = "Automatisch downloaden van liedjes met tekst en muziek";
 "Intro-featuresSong6" = "Instrumenten individueel mengbaar";
-"Intro-featuresSong7" = "Google agenda integratie";
+"Intro-featuresSong7" = "Google agenda integratie (toont jouw Google-activiteiten automatisch op een dia)";
 
-"Intro-featuresBeam1" = "Onbeperkt aantal liedjes";
+"Feature-beam-intro" = "De Beam geeft je toegang tot nummers met songteksten. Het biedt daarnaast nog veel meer:";
+"Intro-featuresBeam1" = "Onbeperkt aantal liedjes maken (tekst / dia's)";
 "Intro-featuresBeam2" = "thema's en tags opslaan";
 "Intro-featuresBeam3" = "Automatische generatie van dia's voor bijbelteksten";
 "Intro-featuresBeam4" = "Automatisch genererende diensten";
-"Intro-featuresBeam5" = "Google agenda integratie";
+"Intro-featuresBeam5" = "Google agenda integratie (toont jouw Google-activiteiten automatisch op een dia)";
 
 "Intro-cancelMonthly" = "(Maandelijks opzegbaar)";
 "Intro-subscribe" = "Abonneer";

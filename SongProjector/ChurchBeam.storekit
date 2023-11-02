@@ -9,7 +9,57 @@
   "settings" : {
     "_applicationInternalID" : "1533095472",
     "_developerTeamID" : "4RH34LGMLA",
-    "_lastSynchronizedDate" : 712661519.90784299
+    "_failTransactionsEnabled" : false,
+    "_lastSynchronizedDate" : 720484899.20457101,
+    "_locale" : "nl",
+    "_storefront" : "NLD",
+    "_storeKitErrors" : [
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Load Products"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Purchase"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Verification"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Store Sync"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Subscription Status"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Transaction"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Manage Subscriptions Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Refund Request Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Offer Code Redeem Sheet"
+      }
+    ]
   },
   "subscriptionGroups" : [
     {
@@ -26,16 +76,41 @@
           "codeOffers" : [
 
           ],
-          "displayPrice" : "9.99",
+          "displayPrice" : "10.99",
           "familyShareable" : false,
           "groupNumber" : 2,
           "internalID" : "1537267394",
-          "introductoryOffer" : null,
+          "introductoryOffer" : {
+            "internalID" : "4F952F7C",
+            "numberOfPeriods" : 1,
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P1M"
+          },
           "localizations" : [
             {
-              "description" : "Onbeperkt aantal nummers (zonder muziek)",
+              "description" : "Onbeperkt eigen liedjes maken (zonder muziek)",
               "displayName" : "Dia's",
               "locale" : "nl"
+            },
+            {
+              "description" : "Unlimited number of songs (without music).",
+              "displayName" : "Sheets",
+              "locale" : "en_AU"
+            },
+            {
+              "description" : "Unlimited number of songs (without music).",
+              "displayName" : "Sheets",
+              "locale" : "en_GB"
+            },
+            {
+              "description" : "Unlimited number of songs (without music).",
+              "displayName" : "Sheets",
+              "locale" : "en_CA"
+            },
+            {
+              "description" : "Unlimited number of songs (without music).",
+              "displayName" : "Sheets",
+              "locale" : "en_US"
             }
           ],
           "productID" : "beam",
@@ -51,16 +126,41 @@
           "codeOffers" : [
 
           ],
-          "displayPrice" : "23.49",
+          "displayPrice" : "25.99",
           "familyShareable" : false,
           "groupNumber" : 1,
           "internalID" : "1537267286",
-          "introductoryOffer" : null,
+          "introductoryOffer" : {
+            "internalID" : "46355286",
+            "numberOfPeriods" : 1,
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P1M"
+          },
           "localizations" : [
             {
-              "description" : "Onbeperkt aantal nummers en muziek+mengpaneel",
+              "description" : "Onbeperkt aantal liedjes met muziek.",
               "displayName" : "Muziek",
               "locale" : "nl"
+            },
+            {
+              "description" : "Unlimited number of songs with music.",
+              "displayName" : "Music",
+              "locale" : "en_AU"
+            },
+            {
+              "description" : "Unlimited number of songs with music.",
+              "displayName" : "Music",
+              "locale" : "en_CA"
+            },
+            {
+              "description" : "Unlimited number of songs with music.",
+              "displayName" : "Music",
+              "locale" : "en_GB"
+            },
+            {
+              "description" : "Unlimited number of songs with music.",
+              "displayName" : "Music",
+              "locale" : "en_US"
             }
           ],
           "productID" : "song",
@@ -73,7 +173,7 @@
     }
   ],
   "version" : {
-    "major" : 2,
+    "major" : 3,
     "minor" : 0
   }
 }

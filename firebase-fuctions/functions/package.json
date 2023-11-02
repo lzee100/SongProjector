@@ -12,13 +12,9 @@
     "node": "18"
   },
   "main": "index.js",
-  "type":"module",
   "dependencies": {
-    "app-store-server-api": "^0.10.0",
     "firebase-admin": "^11.8.0",
-    "firebase-functions": "^4.3.1",
-    "node-apple-receipt-verify": "^1.12.1",
-    "uuidv4": "^6.2.13"
+    "firebase-functions": "^4.3.1"
   },
   "devDependencies": {
     "firebase-functions-test": "^3.1.0"

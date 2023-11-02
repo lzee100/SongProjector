@@ -165,3 +165,7 @@ import StoreKit
         .frame(width: size.width - 30)
     }
 }
+
+#Preview {
+    SubscriptionTabView(subscriptionsManager: SubscriptionsManager(), showingSubscriptions: .constant(false))
+}

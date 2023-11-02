@@ -164,9 +164,9 @@ struct SongServiceViewUI: View {
                         .background(.clear)
                 }
             })
-//            .sheet(isPresented: $showingSubscriptions, content: {
-//                SubscriptionTabView(subscriptionsManager: SubscriptionsManager(), showingSubscriptions: $showingSubscriptions)
-//            })
+            .sheet(isPresented: $showingSubscriptions, content: {
+                SubscriptionTabView(subscriptionsManager: SubscriptionsManager(), showingSubscriptions: $showingSubscriptions)
+            })
         }
         .environmentObject(musicDownloadManager)
         .onAppear {

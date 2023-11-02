@@ -5,15 +5,15 @@
 //  Created by Leo van der Zee on 11/05/2023.
 //
 
-import SwiftUI
-import UserNotifications
 import CoreData
-import Photos
-import UIKit
 import Firebase
-import GoogleSignIn
 import FirebaseAuth
+import GoogleSignIn
 import Network
+import Photos
+import SwiftUI
+import UIKit
+import UserNotifications
 
 class Authentication: ObservableObject {
     @Published var isRegistered = false
@@ -22,17 +22,19 @@ class Authentication: ObservableObject {
 var store = ExternalDisplayConnector()
 
 struct ChurchBeamApp: View {
-    
     enum AppState: Identifiable {
         var id: String {
             UUID().uuidString
         }
+
         case onboarding
         case app
     }
-    
+
     let store: ExternalDisplayConnector
-    var userAuth: UserAuthModel = UserAuthModel()
+    @ObservedObject var subscriptionsStore: SubscriptionsStore
+
+    var userAuth: UserAuthModel = .init()
     var soundPlayer = SoundPlayer2()
     @StateObject var musicDownloadManager = MusicDownloadManager()
     var universalClusterRequester = SyncUniversalCollectionsUseCase()
@@ -45,7 +47,8 @@ struct ChurchBeamApp: View {
     @State private var showingFetchingAdminUserChurch = false
     @StateObject private var authentication = Authentication()
     
-    init(store: ExternalDisplayConnector) {
+    init(store: ExternalDisplayConnector, subscriptionsStore: SubscriptionsStore) {
+        self.subscriptionsStore = subscriptionsStore
         self.store = store
         initializeFireStore()
         initializeLocalStorage()
@@ -81,7 +84,7 @@ struct ChurchBeamApp: View {
             }
         }
         .onAppear {
-            handleFireStore = Auth.auth().addStateDidChangeListener { auth, user in
+            handleFireStore = Auth.auth().addStateDidChangeListener { auth, _ in
                 authentication.isRegistered = auth.currentUser != nil
                 
                 if !authentication.isRegistered {
@@ -124,6 +127,7 @@ struct ChurchBeamApp: View {
                 .environmentObject(musicDownloadManager)
                 .environmentObject(store)
                 .environmentObject(universalClusterRequester)
+                .environmentObject(subscriptionsStore)
         })
         .fullScreenCover(isPresented: $showOnboarding, onDismiss: {
             Task {
@@ -156,15 +160,12 @@ struct ChurchBeamApp: View {
         let admin = await GetAdminUseCase().get()
         guard admin == nil else { return }
         
-        let hasNewUniversalClusters = try await FetchNeedsUpdateUniversalClustersUseCase().fetch()
-        if hasNewUniversalClusters {
+        do {
             showingPreparingAccount = true
-            do {
-                try await universalClusterRequester.request()
-            } catch {
-                showingUniversalClusterError = true
-            }
+            try await universalClusterRequester.request()
             showingPreparingAccount = false
+        } catch {
+            showingUniversalClusterError = true
         }
     }
     
@@ -186,7 +187,7 @@ struct ChurchBeamApp: View {
     
     private func getAdminUserAndChurch() async {
         await withThrowingTaskGroup(of: Void.self) { group in
-            for item in 0..<3 {
+            for item in 0 ..< 3 {
                 group.addTask {
                     switch item {
                     case 0: try await getChurch()
@@ -201,17 +202,17 @@ struct ChurchBeamApp: View {
     private func initializeFireStore() {
 //        ChurchBeamConfiguration.environment = .production
 //        ChurchBeamConfiguration.environment.loadGoogleFile()
-                if UserDefaults.standard.integer(forKey: "config.environment") != 0 {
-                    ChurchBeamConfiguration.environment.loadGoogleFile()
-                } else {
-                    switch AppConfiguration.mode {
-                    case .TestFlight, .AppStore:
-                        ChurchBeamConfiguration.environment = .production
-                    case .Debug:
-                        ChurchBeamConfiguration.environment = .dev
-                    }
-                    ChurchBeamConfiguration.environment.loadGoogleFile()
-                }
+        if UserDefaults.standard.integer(forKey: "config.environment") != 0 {
+            ChurchBeamConfiguration.environment.loadGoogleFile()
+        } else {
+            switch AppConfiguration.mode {
+            case .TestFlight, .AppStore:
+                ChurchBeamConfiguration.environment = .production
+            case .Debug:
+                ChurchBeamConfiguration.environment = .dev
+            }
+            ChurchBeamConfiguration.environment.loadGoogleFile()
+        }
         FirebaseConfiguration.shared.setLoggerLevel(.min)
     }
     
@@ -240,36 +241,34 @@ struct ChurchBeamApp: View {
     }
 }
 
-
 class UserAuthModel: ObservableObject {
-    
     @Published var givenName: String = ""
     @Published var profilePicUrl: String = ""
     @Published var isLoggedIn: Bool = false
     @Published var errorMessage: String = ""
     
-    init(){
+    init() {
         check()
     }
     
-    func checkStatus(){
-        if(GIDSignIn.sharedInstance.currentUser != nil){
+    func checkStatus() {
+        if GIDSignIn.sharedInstance.currentUser != nil {
             let user = GIDSignIn.sharedInstance.currentUser
             guard let user = user else { return }
             let givenName = user.profile?.givenName
             let profilePicUrl = user.profile!.imageURL(withDimension: 100)!.absoluteString
             self.givenName = givenName ?? ""
             self.profilePicUrl = profilePicUrl
-            self.isLoggedIn = true
-        }else{
-            self.isLoggedIn = false
-            self.givenName = "Not Logged In"
-            self.profilePicUrl =  ""
+            isLoggedIn = true
+        } else {
+            isLoggedIn = false
+            givenName = "Not Logged In"
+            profilePicUrl = ""
         }
     }
     
-    func check(){
-        GIDSignIn.sharedInstance.restorePreviousSignIn { user, error in
+    func check() {
+        GIDSignIn.sharedInstance.restorePreviousSignIn { _, error in
             if let error = error {
                 self.errorMessage = "error: \(error.localizedDescription)"
             }
@@ -278,11 +277,10 @@ class UserAuthModel: ObservableObject {
         }
     }
     
-    func signIn(){
+    func signIn() {
+        guard let presentingViewController = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.windows.first?.rootViewController else { return }
         
-        guard let presentingViewController = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.windows.first?.rootViewController else {return}
-        
-        GIDSignIn.sharedInstance.signIn(withPresenting: presentingViewController, hint: nil, additionalScopes: []) { result, error in
+        GIDSignIn.sharedInstance.signIn(withPresenting: presentingViewController, hint: nil, additionalScopes: []) { _, error in
             if let error {
                 self.errorMessage = "error: \(error.localizedDescription)"
             }
@@ -290,8 +288,8 @@ class UserAuthModel: ObservableObject {
         }
     }
     
-    func signOut(){
+    func signOut() {
         GIDSignIn.sharedInstance.signOut()
-        self.checkStatus()
+        checkStatus()
     }
 }

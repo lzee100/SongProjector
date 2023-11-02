@@ -44,19 +44,25 @@
 "Intro-introHalloContent" = "Welcome to Churchbeam. This app supports the entire song service in your church.";
 "Intro-featureIntro" = "For %@ per month you get unlimited access to:";
 
-"Intro-featuresSong1" = "unlimited songs";
+"Subscriptions-info-title" = "Subscriptions";
+
+"Feature-song-intro" = "The Song option gives you access to songs with music. It also offers much more:";
+"Intro-featuresSong1" = "unlimited songs creation (lyrics / sheets)";
 "Intro-featuresSong2" = "save themes and tags";
 "Intro-featuresSong3" = "Automatic generation of slides for bible verses";
-"Intro-featuresSong4" = "Auto-generating song services";
-"Intro-featuresSong5" = "Automatically download songs with lyrics and music";
-"Intro-featuresSong6" = "Instruments individually mixable";
-"Intro-featuresSong7" = "Google agenda integration";
+"Intro-featuresSong4" = "Make your own song service schema";
+"Intro-featuresSong5" = "Auto-generating song services";
+"Intro-featuresSong6" = "Automatically download songs with lyrics and music";
+"Intro-featuresSong7" = "Instruments individually mixable";
+"Intro-featuresSong8" = "Google agenda integration (show your google activities automatically on a slide)";
 
-"Intro-featuresBeam1" = "unlimited songs";
+"Feature-beam-intro" = "The beam option gives you access to songs with lyrics. It also offers much more:";
+"Intro-featuresBeam1" = "unlimited songs creation (lyrics / sheets)";
 "Intro-featuresBeam2" = "save themes and tags";
 "Intro-featuresBeam3" = "Automatic generation of slides for bible verses";
-"Intro-featuresBeam4" = "Auto-generating song services";
-"Intro-featuresBeam5" = "Google agenda integration";
+"Intro-featuresBeam4" = "Make your own song service schema";
+"Intro-featuresBeam5" = "Auto-generating song services";
+"Intro-featuresBeam6" = "Google agenda integration (show your google activities automatically on a slide)";
 
 "Intro-cancelMonthly" = "(Monthly terminable)";
 "Intro-subscribe" = "Subscribe";

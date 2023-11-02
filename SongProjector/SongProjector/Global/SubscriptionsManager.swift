@@ -15,6 +15,7 @@ typealias RenewalState = StoreKit.Product.SubscriptionInfo.RenewalInfo
 
 
 
+@MainActor
 class SubscriptionsManager: ObservableObject {
     
     enum StoreManagerError: LocalizedError {
@@ -55,9 +56,9 @@ class SubscriptionsManager: ObservableObject {
     func requestProducts() async throws {
         subscriptions = try await Product.products(for: productIds).sorted(by: { $0.id < $1.id })
         try await updateCustomerProductStatus()
-        print(subscriptions)
+        print(purchasedSubscriptions)
     }
-    
+
     @discardableResult func purchase(_ product: Product) async throws -> StoreKit.Transaction? {
         guard let user = await GetUserUseCase().get() else {
             throw StoreManagerError.noUserFound
@@ -80,7 +81,7 @@ class SubscriptionsManager: ObservableObject {
     private func listenForTransactions() throws -> Task<Void, Error> {
         return Task.detached {
             for await result in StoreKit.Transaction.updates {
-                let transaction = try self.check(result)
+                let transaction = try await self.check(result)
                 try await self.updateCustomerProductStatus()
                 await transaction.finish()
             }
@@ -119,3 +120,78 @@ class SubscriptionsManager: ObservableObject {
         
     }
 }
+
+import StoreKit
+
+@MainActor final class SubscriptionsStore: ObservableObject {
+    @Published private(set) var products: [Product] = []
+    @Published private(set) var activeTransactions: Set<StoreKit.Transaction> = []
+
+    private var updates: Task<Void, Never>?
+
+    init() {
+        updates = Task {
+            for await update in StoreKit.Transaction.updates {
+                if let transaction = try? update.payloadValue {
+                    activeTransactions.insert(transaction)
+                    await transaction.finish()
+                }
+            }
+        }
+    }
+
+    deinit {
+        updates?.cancel()
+    }
+
+    func fetchProducts() async {
+        let productIds = loadProductId()
+        let ids = productIds.map { $0.key }
+        do {
+            products = try await Product.products(for: ["song", "beam"])
+        } catch {
+            products = []
+        }
+    }
+
+    private func loadProductId() -> [String: String] {
+        guard let path = Bundle.main.path(forResource: "Products", ofType: "plist"),
+              let plist = FileManager.default.contents(atPath: path),
+              let data = try? PropertyListSerialization.propertyList(from: plist, format: nil) as? [String: String] else {
+            return [:]
+        }
+        return data
+    }
+
+
+    func fetchActiveTransactions() async {
+        var activeTransactions: Set<StoreKit.Transaction> = []
+
+        for await entitlement in StoreKit.Transaction.currentEntitlements {
+            if let transaction = try? entitlement.payloadValue {
+                activeTransactions.insert(transaction)
+            }
+        }
+
+        self.activeTransactions = activeTransactions
+    }
+
+    func purchase(_ product: Product) async throws {
+        let result = try await product.purchase()
+        switch result {
+        case .success(let verificationResult):
+            if let transaction = try? verificationResult.payloadValue {
+                activeTransactions.insert(transaction)
+                await transaction.finish()
+            }
+        case .userCancelled:
+            break
+        case .pending:
+            break
+        @unknown default:
+            break
+        }
+    }
+
+}
+

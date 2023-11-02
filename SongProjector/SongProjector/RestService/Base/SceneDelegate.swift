@@ -12,7 +12,9 @@ import SwiftUI
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
-    
+    @StateObject var subscriptionsStore = SubscriptionsStore()
+    var fetchSubscriptionsTask: Task<(), Never>?
+
     func scene(_ scene: UIScene,
        willConnectTo session: UISceneSession,
        options connectionOptions: UIScene.ConnectionOptions) {
@@ -31,12 +33,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             externalDisplayWindow = window
         } else {
             window = UIWindow(windowScene: scene)
-            let content = ChurchBeamApp(store: appDelegate.store)
+            let content = ChurchBeamApp(store: appDelegate.store, subscriptionsStore: subscriptionsStore)
             window?.rootViewController = UIHostingController(rootView: content)
             window?.makeKeyAndVisible()
         }
     }
     
-    
+    func sceneWillEnterForeground(_ scene: UIScene) {
+        fetchSubscriptionsTask = Task {
+            await subscriptionsStore.fetchActiveTransactions()
+        }
+    }
+
+    func sceneWillResignActive(_ scene: UIScene) {
+        fetchSubscriptionsTask?.cancel()
+    }
 
 }

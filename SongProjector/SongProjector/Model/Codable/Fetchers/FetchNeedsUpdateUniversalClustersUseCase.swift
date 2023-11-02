@@ -29,7 +29,8 @@ actor FetchNeedsUpdateUniversalClustersUseCase {
             request.addValue(token, forHTTPHeaderField: "Authorization")
             let (needsToken, _) = try await URLSession.shared.data(for: request)
             
-//            let json = try JSONSerialization.jsonObject(with: needsToken, options: []) as? [String : Any]
+            let bla = String(data: needsToken, encoding: .utf8)
+            let json = try JSONSerialization.jsonObject(with: needsToken, options: []) as? [String : Any]
 
             guard let json = try JSONSerialization.jsonObject(with: needsToken, options: []) as? [String : Bool] else {
                 isFetching = false
