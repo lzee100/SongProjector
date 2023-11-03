@@ -62,18 +62,19 @@
 //	}
 //    
 //	func fetchEvents() {
-////        let users: [User] = DataFetcher().getEntities(moc: moc)
-////        guard let calendarId = users.first?.googleCalendarId else { return }
-////        let query = GTLRCalendarQuery_EventsList.query(withCalendarId: calendarId)
-////		query.maxResults = 200
-////		query.timeMin = GTLRDateTime(date: Date())
-////		query.timeMax = GTLRDateTime(date: Date().addingTimeInterval(.days(21)))
-////		query.singleEvents = true
-////		query.orderBy = kGTLRCalendarOrderByStartTime
-////		calendarService?.executeQuery(
-////			query,
-////			delegate: self,
-////			didFinish: #selector(mapResultForTicket(ticket:finishedWithObject:error:)))
+//
+//        let users: [User] = DataFetcher().getEntities(moc: moc)
+//        guard let calendarId = users.first?.googleCalendarId else { return }
+//        let query = GTLRCalendarQuery_EventsList.query(withCalendarId: calendarId)
+//		query.maxResults = 200
+//		query.timeMin = GTLRDateTime(date: Date())
+//		query.timeMax = GTLRDateTime(date: Date().addingTimeInterval(.days(21)))
+//		query.singleEvents = true
+//		query.orderBy = kGTLRCalendarOrderByStartTime
+//		calendarService?.executeQuery(
+//			query,
+//			delegate: self,
+//			didFinish: #selector(mapResultForTicket(ticket:finishedWithObject:error:)))
 //	}
 //
 //

@@ -48,7 +48,7 @@ struct SongServiceViewUI: View {
         self.previewSong = previewSong
         self._viewModel = StateObject(wrappedValue: SongServiceViewModel(showingSongServiceView: showingSongServiceView))
     }
-    
+    @State var getGoogleEventsUseCase = GetGoogleEventsUseCase()
     var body: some View {
         NavigationStack {
             GeometryReader { ruler in
@@ -166,6 +166,7 @@ struct SongServiceViewUI: View {
         }
         .environmentObject(musicDownloadManager)
         .onAppear {
+            getGoogleEventsUseCase.fetch()
             if let previewSong {
                 songService.set(sectionedSongs: [SongServiceSectionWithSongs(title: "", cocList: [.cluster(previewSong)])])
             }
