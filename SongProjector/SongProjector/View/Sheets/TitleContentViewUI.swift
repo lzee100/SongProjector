@@ -53,20 +53,20 @@ struct TitleContentViewEditUI: View {
                 }
                 Spacer()
             }
-        }
-        .setBackgroundImage(isForExternalDisplay: false, sheetViewModel: sheetViewModel)
-        .modifier(SheetBackgroundColorAndOpacityEditModifier2(sheetViewModel: sheetViewModel))
-        .cornerRadius(isForExternalDisplay ? 0 : 10)
-        .aspectRatio(16 / 9, contentMode: .fit)
-        .ignoresSafeArea()
-        .onReceive(timer) { _ in
-            if sheetViewModel.themeModel.theme.displayTime {
-                time = Date().time
-                if Date().minute == 0 {
-                    timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
+            .setBackgroundImage(isForExternalDisplay: false, sheetViewModel: sheetViewModel)
+            .modifier(SheetBackgroundColorAndOpacityEditModifier2(sheetViewModel: sheetViewModel))
+            .cornerRadius(isForExternalDisplay ? 0 : 10)
+            .aspectRatio(16 / 9, contentMode: .fit)
+            .ignoresSafeArea()
+            .onReceive(timer) { _ in
+                if sheetViewModel.themeModel.theme.displayTime {
+                    time = Date().time
+                    if Date().minute == 0 {
+                        timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
+                    }
+                } else {
+                    self.timer.upstream.connect().cancel()
                 }
-            } else {
-                self.timer.upstream.connect().cancel()
             }
         }
     }

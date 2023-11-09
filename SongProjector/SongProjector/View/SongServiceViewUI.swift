@@ -166,7 +166,6 @@ struct SongServiceViewUI: View {
         }
         .environmentObject(musicDownloadManager)
         .onAppear {
-            getGoogleEventsUseCase.fetch()
             if let previewSong {
                 songService.set(sectionedSongs: [SongServiceSectionWithSongs(title: "", cocList: [.cluster(previewSong)])])
             }

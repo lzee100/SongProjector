@@ -21,6 +21,7 @@ public struct UserCodable: FileTransferable, Codable {
         deleteDate = entity.deleteDate?.date
         rootDeleteDate = entity.rootDeleteDate?.date
         contentPackage = entity.contentPackage
+        googleCalendarId = entity.googleCalendarId
         contentPackageBabyChurchesMotherChurch = entity.contentPackageBabyChurchesMotherChurch
         appInstallTokens = (entity.appInstallTokens ?? "").split(separator: ",").map(String.init)
         adminInstallTokenId = entity.adminInstallTokenId

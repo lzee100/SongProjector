@@ -1,117 +1,95 @@
-////
-////  GoogleActivityFetcher.swift
-////  SongProjector
-////
-////  Created by Leo van der Zee on 27-01-18.
-////  Copyright © 2018 iozee. All rights reserved.
-////
 //
+//  GoogleEventsFetcher.swift
+//  SongProjector
 //
-//import Foundation
-//import UIKit
-//import FirebaseAuth
+//  Created by Leo van der Zee on 28-01-18.
+//  Copyright © 2018 iozee. All rights reserved.
 //
-//let GoogleActivityFetcher = GoogleActivityFetch()
-//
-//protocol GoogleFetcherLoginDelegate {
-//	func loginDidFailWithError(message: String)
-//	func presentLoginViewController(vc: UIViewController)
-//}
-//
-//class GoogleActivityFetch: NSObject {
-//
-////	var loginDelegate: GoogleFetcherLoginDelegate?
-//    private var numberOfTries = 0
-//	
-////	fileprivate lazy var calendarService: GTLRCalendarService? = {
-////		let service = GTLRCalendarService()
-////		// Have the service object set tickets to fetch consecutive pages
-////		// of the feed so we do not need to manually fetch them
-////		service.shouldFetchNextPages = true
-////		// Have the service object set tickets to retry temporary error conditions
-////		// automatically
-////		service.isRetryEnabled = true
-////		service.maxRetryInterval = 15
-////
-////		guard let currentUser = GIDSignIn.sharedInstance().currentUser,
-////			let authentication = currentUser.authentication else {
-////				return nil
-////		}
-////		service.authorizer = authentication.fetcherAuthorizer()
-////		return service
-////	}()
-//
-//	override init() {
-//		super.init()
-////        GIDSignIn.sharedInstance().scopes = ["https://www.googleapis.com/auth/calendar.events.public.readonly"]
-//	}
-//
-//
-//
-//	func fetch(force: Bool) {
-////        GIDSignIn.sharedInstance()?.restorePreviousSignIn()
-////		if GIDSignIn.sharedInstance().currentUser != nil {
-////            GIDSignIn.sharedInstance().scopes = ["https://www.googleapis.com/auth/calendar.events.public.readonly"]
-////		fetchEvents()
-////        } else {
-////            if numberOfTries == 1 {
-////                NotificationCenter.default.post(name: .googleCalendarNotAuthenticated, object: nil)
-////            }
-////            numberOfTries += 1
-////        }
-//	}
-//    
-//	func fetchEvents() {
-//
-//        let users: [User] = DataFetcher().getEntities(moc: moc)
-//        guard let calendarId = users.first?.googleCalendarId else { return }
-//        let query = GTLRCalendarQuery_EventsList.query(withCalendarId: calendarId)
-//		query.maxResults = 200
-//		query.timeMin = GTLRDateTime(date: Date())
-//		query.timeMax = GTLRDateTime(date: Date().addingTimeInterval(.days(21)))
-//		query.singleEvents = true
-//		query.orderBy = kGTLRCalendarOrderByStartTime
-//		calendarService?.executeQuery(
-//			query,
-//			delegate: self,
-//			didFinish: #selector(mapResultForTicket(ticket:finishedWithObject:error:)))
-//	}
-//
-//
-//	@objc func mapResultForTicket(
-//		ticket: GTLRServiceTicket,
-//		finishedWithObject response : GTLRCalendar_Events,
-//		error : NSError?) {
-//
-//		if let error = error {
-//            print(error)
-//			return
-//		}
-//        
-////        let mocBackground = newMOCBackground
-////        mocBackground.performAndWait {
-////            let activities: [GoogleActivity] = DataFetcher().getEntities(moc: mocBackground)
-////            activities.forEach({ mocBackground.delete($0) })
-////
-////            if let events = response.items, !events.isEmpty {
-////                for event in events {
-////                    let activity: GoogleActivity = DataFetcher().createEntity(moc: mocBackground)
-////                    activity.id = UUID().uuidString
-////                    activity.startDate = event.start?.dateTime?.date as NSDate?
-////                    activity.endDate = event.end?.dateTime?.date as NSDate?
-////                    activity.eventDescription = event.summary
-////                    activity.createdAt = NSDate()
-////                    activity.userUID = Auth.auth().currentUser?.uid ?? "-"
-////                }
-////            }
-////            do {
-////                try mocBackground.save()
-////            } catch { }
-////
-////        }
-////        do {
-////            try moc.save()
-////        } catch { }
-//	}
-//
-//}
+import Foundation
+import GoogleAPIClientForREST_Calendar
+import FirebaseAuth
+import GoogleSignIn
+
+
+class GoogleEventsFetcher {
+
+    private let calendarService = GTLRCalendarService()
+    private var calendarList: GTLRCollectionObject?
+    private var calendarListFetchError: Error?
+    private var calendarListTicket: GTLRServiceTicket?
+
+    init() {
+        calendarService.isRetryEnabled = true
+        calendarService.shouldFetchNextPages = true
+        let authorizer = GIDSignIn.sharedInstance.currentUser?.fetcherAuthorizer
+        calendarService.authorizer = authorizer
+    }
+
+    func fetch() async throws {
+        let user = await GetUserUseCase().get()
+        guard let googleCalendarId = user?.googleCalendarId else { return }
+        let result = await withCheckedContinuation { continuation in
+            fetch(googleCalendarId: googleCalendarId) { activities in
+                continuation.resume(returning: activities)
+            }
+        }
+        try await SaveGoogleActivitiesUseCase().save(entities: result)
+    }
+
+    private func fetch(googleCalendarId: String, completion: @escaping (([GoogleCalendarEventDictionary]) -> Void)) {
+        let query = GTLRCalendarQuery_EventsList.query(withCalendarId: googleCalendarId)
+        query.maxResults = 40
+        query.timeMin = GTLRDateTime(date: Date())
+        query.timeMax = GTLRDateTime(date: Date().dateByAddingDays(60))
+
+        _ = calendarService.executeQuery(query) { callbackTicket, calendarList, callbackError in
+            // Callback
+            self.calendarList = calendarList as? GTLRCollectionObject
+            self.calendarListFetchError = callbackError
+            self.calendarListTicket = nil
+
+            let something = self.calendarList?.json as? Dictionary<String,Any>
+            let items = something?.first( where: { $0.key == "items" })?.value as? [Dictionary<String,Any>]
+            completion(items?.map { GoogleCalendarEventDictionary(dic: $0) } ?? [])
+        }
+    }
+}
+
+struct GoogleCalendarEventDictionary {
+
+    let startDate: Date
+    let endDate: Date
+    let summary: String
+
+    init(dic: Dictionary<String,Any>) {
+        let start = dic.filter{ $0.key == "start" }.first?.value as? [String: String]
+        let end = dic.filter{ $0.key == "end" }.first?.value as? [String: String]
+        let startDateString = start?.first(where: { $0.key == "dateTime" })?.value
+        let startTimeZoneString = start?.first(where: { $0.key == "timeZone" })?.value
+        let endDateString = end?.first(where: { $0.key == "dateTime" })?.value
+        let endTimeZoneString = end?.first(where: { $0.key == "timeZone" })?.value
+
+
+        if let startTimeZoneString, let startDateString {
+            let dateFormatter = DateFormatter()
+            dateFormatter.timeZone = TimeZone(identifier: startTimeZoneString)
+            dateFormatter.locale = .current
+            dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+            startDate = dateFormatter.date(from: startDateString) ?? Date()
+        } else {
+            startDate = Date()
+        }
+
+        if let endTimeZoneString, let endDateString {
+            let dateFormatter = DateFormatter()
+            dateFormatter.timeZone = TimeZone(identifier: endTimeZoneString)
+            dateFormatter.locale = .current
+            dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+            endDate = dateFormatter.date(from: endDateString) ?? Date()
+        } else {
+            endDate = Date()
+        }
+        summary = dic.filter { $0.key == "summary" }.first?.value as? String ?? ""
+    }
+
+}

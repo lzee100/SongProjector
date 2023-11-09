@@ -227,6 +227,7 @@ struct CollectionsViewUI: View {
     @State var showingTrailingButtonAlertMessage = false
     @EnvironmentObject var musicDownloadManager: MusicDownloadManager
 
+    @State private var googleEventsFetcher = GoogleEventsFetcher()
     @State private var selectedCollectionForTrailingActions: ClusterCodable? = nil
     @SwiftUI.Environment(\.colorScheme) var colorScheme
 
@@ -354,6 +355,11 @@ struct CollectionsViewUI: View {
             await viewModel.fetchRemoteTags()
             await viewModel.fetchRemoteThemes()
             await viewModel.fetchRemoteCollections()
+            do {
+                try await googleEventsFetcher.fetch()
+            } catch {
+                print(error)
+            }
         }
         .onChange(of: viewModel.searchText, perform: { searchText in
             Task(priority: .high) {

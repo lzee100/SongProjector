@@ -314,6 +314,10 @@ struct SheetEditModel: Identifiable {
             sheet.time = Double(sheetTime) ?? 0
             return sheet
         case .SheetActivities:
+            guard var sheet = self.sheet as? SheetActivitiesCodable else { return nil }
+            sheet.title = title.isBlanc ? nil : title
+            sheet.position = position
+            sheet.hasTheme = theme
             return sheet
         }
     }

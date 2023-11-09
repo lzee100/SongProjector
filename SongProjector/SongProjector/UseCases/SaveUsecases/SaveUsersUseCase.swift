@@ -52,6 +52,7 @@ actor SaveUsersUseCase {
         entity.contentPackage = codable.contentPackage
         entity.appInstallTokens = codable.appInstallTokens.joined(separator: ",")
         entity.adminInstallTokenId = codable.adminInstallTokenId
+        entity.googleCalendarId = codable.googleCalendarId
         entity.contentPackageBabyChurchesMotherChurch = codable.contentPackageBabyChurchesMotherChurch
     }
 }

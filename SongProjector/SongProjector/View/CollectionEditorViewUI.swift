@@ -112,6 +112,10 @@ struct CollectionEditorViewUI: View {
                     }
                 }
             }
+            .onChange(of: viewModel.sheets, { old, new in
+                print(new)
+                print(new)
+            })
             .blur(radius: viewModel.showingLoader ? 5 : 0)
             .overlay {
                 if viewModel.showingLoader {

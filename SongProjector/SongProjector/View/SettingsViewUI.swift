@@ -8,10 +8,13 @@
 
 import SwiftUI
 import FirebaseAuth
+import Combine
 
 @MainActor class SettingsViewModel: ObservableObject {
     
     @Published var googleAgendaId: String = ""
+    @Published var changedGoogleAgendaId: String = ""
+    @Published var showingSaveGoogleAgendaIdButton = false
     @Published var showingSetMotherChurch = false
     @Published var showingSubscribeToBabyChurchesOfMotherChurchZwolle = false
     @Published var error: LocalizedError?
@@ -19,13 +22,21 @@ import FirebaseAuth
     @Published private(set) var user: UserCodable?
     @Published private(set) var showingLoader = false
     @Published private(set) var profilePictureData: Data?
+    @Published private(set) var isLoading = false
+
+    private(set) var userSubmitter: SubmitUseCase<UserCodable>?
+    private(set) var anyCancellable: AnyCancellable?
+    private(set) var submitUserTask: Task<(), Error>?
+
+
     var contentPackage: ContentPackage?
     
     let authentication = Auth.auth().currentUser
-    
+
     func fetchUser() async {
         user = await GetUserUseCase().get()
         googleAgendaId = user?.googleCalendarId ?? ""
+        changedGoogleAgendaId = googleAgendaId
     }
     
     func fetchUserRemotely() async {
@@ -97,13 +108,28 @@ import FirebaseAuth
         }
 
     }
+
+    func submitGoogleAgendaId() async {
+        do {
+            guard var user = user else { return }
+            isLoading = true
+            user.googleCalendarId = changedGoogleAgendaId.trimmingCharacters(in: .whitespacesAndNewlines)
+            self.userSubmitter = SubmitUseCase(endpoint: .users, requestMethod: .put, uploadObjects: [user])
+            try await self.userSubmitter?.submit()
+            await self.fetchUserRemotely()
+            isLoading = false
+        } catch {
+            isLoading = false
+            self.error = error.forcedLocalizedError
+        }
+    }
 }
 
 struct SettingsViewUI: View {
     
     @StateObject private var singInOutViewModel = GoogleLoginSignOutModel()
     @StateObject private var viewModel = SettingsViewModel()
-    
+
     var body: some View {
         NavigationStack {
             Form {
@@ -113,9 +139,34 @@ struct SettingsViewUI: View {
                     }
                 }
                 
-//                Section(AppText.Settings.sectionCalendarId) {
-//                    googleAgendaIdView
-//                }
+                Section(AppText.Settings.sectionCalendarId) {
+                    googleAgendaIdView
+                    if viewModel.showingSaveGoogleAgendaIdButton {
+                        Button {
+                            Task(priority: .userInitiated) {
+                                await viewModel.submitGoogleAgendaId()
+                            }
+                        } label: {
+                            HStack {
+                                Spacer()
+                                Label {
+                                    Text(AppText.Actions.save)
+                                } icon: {
+                                    if viewModel.isLoading {
+                                        ProgressView()
+                                    } else {
+                                        EmptyView()
+                                    }
+                                }
+                                Spacer()
+                            }
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .foregroundStyle(.white)
+                        .tint(Color(uiColor: themeHighlighted))
+                        .disabled(viewModel.isLoading)
+                    }
+                }
                 
                 Section(AppText.Settings.sectionMotherChurch) {
                     Text(AppText.Settings.motherChurchExplain)
@@ -206,13 +257,16 @@ struct SettingsViewUI: View {
             }
         }
     }
-    
+
     @ViewBuilder var googleAgendaIdView: some View {
         VStack {
-            TextField(AppText.Settings.sectionCalendarId, text: $viewModel.googleAgendaId)
+            TextField(AppText.Settings.sectionCalendarId, text: $viewModel.changedGoogleAgendaId)
                 .styleAs(font: .xNormal)
                 .textFieldStyle(.roundedBorder)
                 .padding()
+                .onChange(of: viewModel.changedGoogleAgendaId) { oldValue, newValue in
+                    viewModel.showingSaveGoogleAgendaIdButton = newValue != viewModel.googleAgendaId
+                }
         }
     }
     

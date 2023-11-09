@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		864794E02AAA201A0040CB91 /* ProgressControllerUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 864794DF2AAA201A0040CB91 /* ProgressControllerUI.swift */; };
 		864794E22AAA20510040CB91 /* GetNewTagPositionUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 864794E12AAA20510040CB91 /* GetNewTagPositionUseCase.swift */; };
+		865973A62AF93F9200B33E7D /* SaveGoogleActivitiesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 865973A52AF93F9200B33E7D /* SaveGoogleActivitiesUseCase.swift */; };
 		86EE3B912AF4651C001F733B /* GoogleAPIClientForRESTCore in Frameworks */ = {isa = PBXBuildFile; productRef = 86EE3B902AF4651C001F733B /* GoogleAPIClientForRESTCore */; };
 		86EE3B932AF4651C001F733B /* GoogleAPIClientForREST_ACMEDNS in Frameworks */ = {isa = PBXBuildFile; productRef = 86EE3B922AF4651C001F733B /* GoogleAPIClientForREST_ACMEDNS */; };
 		86EE3B952AF4651C001F733B /* GoogleAPIClientForREST_AIPlatformNotebooks in Frameworks */ = {isa = PBXBuildFile; productRef = 86EE3B942AF4651C001F733B /* GoogleAPIClientForREST_AIPlatformNotebooks */; };
@@ -758,6 +759,7 @@
 		8300EFE78A26AC2834037C54 /* Pods-SongProjector.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SongProjector.release.xcconfig"; path = "Pods/Target Support Files/Pods-SongProjector/Pods-SongProjector.release.xcconfig"; sourceTree = "<group>"; };
 		864794DF2AAA201A0040CB91 /* ProgressControllerUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressControllerUI.swift; sourceTree = "<group>"; };
 		864794E12AAA20510040CB91 /* GetNewTagPositionUseCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetNewTagPositionUseCase.swift; sourceTree = "<group>"; };
+		865973A52AF93F9200B33E7D /* SaveGoogleActivitiesUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveGoogleActivitiesUseCase.swift; sourceTree = "<group>"; };
 		86EE3D4C2AF46662001F733B /* GetGoogleEventsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetGoogleEventsUseCase.swift; sourceTree = "<group>"; };
 		95070415C3C6BD5B7639F73A /* Pods_SongProjector.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SongProjector.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3125F072921A359009E8E56 /* PianoSoloButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PianoSoloButtonView.swift; sourceTree = "<group>"; };
@@ -2050,6 +2052,7 @@
 				E37FFCB02A22D400005DD5BF /* SaveSongServicePlayDateUseCase.swift */,
 				E37FFCB22A22D46E005DD5BF /* SaveUniversalUpdatedAtUseCase.swift */,
 				E37FFC9E2A22CC23005DD5BF /* SaveCodableToCorDataUseCase.swift */,
+				865973A52AF93F9200B33E7D /* SaveGoogleActivitiesUseCase.swift */,
 			);
 			path = SaveUsecases;
 			sourceTree = "<group>";
@@ -3176,6 +3179,7 @@
 				B38A1D122926EA1400565BDA /* SongServiceCollectionViewDataSource.swift in Sources */,
 				E306BF9C29DDC929005DF761 /* BeamerViewUI.swift in Sources */,
 				E31171641FE5A0E7008D9D51 /* MenuController.swift in Sources */,
+				865973A62AF93F9200B33E7D /* SaveGoogleActivitiesUseCase.swift in Sources */,
 				E33BFE9129E81F5400912B4E /* LabelColorPickerViewUI.swift in Sources */,
 				E37137BE205EBB8300DF86F1 /* LabelSliderCell.swift in Sources */,
 				E393B7672008D25F0073D0A9 /* SheetEmpty.swift in Sources */,
@@ -3409,7 +3413,7 @@
 				INFOPLIST_FILE = SongProjector/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Churchbeam;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3436,7 +3440,7 @@
 				INFOPLIST_FILE = SongProjector/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Churchbeam;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

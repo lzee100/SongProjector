@@ -364,9 +364,9 @@ import SwiftUI
                 updatedCluster.contentPackage = ContentPackage.user
             }
             let endpoint = await GetCollectionsEndpointUseCase().get()
-            
+
             try await SubmitUseCase(endpoint: endpoint, requestMethod: isNew ? .post : .put, uploadObjects: [updatedCluster], deleteObjects: deleteObjects).submit()
-            
+
             showingLoader = false
             return true
 

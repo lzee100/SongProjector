@@ -50,33 +50,22 @@ struct GoogleActivitiesViewEditUI: View {
                 }
             }
         }
-        .background(.gray)
         .setBackgroundImage(isForExternalDisplay: isForExternalDisplay, sheetViewModel: sheetViewModel)
         .modifier(SheetBackgroundColorAndOpacityEditModifier(sheetViewModel: sheetViewModel))
         .cornerRadius(isForExternalDisplay ? 0 : 10)
         .aspectRatio(externalDisplayWindowRatioHeightWidth, contentMode: .fit)
         .ignoresSafeArea()
         .shadow(radius: 6)
-        .onChange(of: activityRowHeight) { newValue in
-            print(newValue)
-        }
     }
     
     @ViewBuilder func getActivitiesRow(sheetProxy: GeometryProxy) -> some View {
         GeometryReader { proxy in
                 VStack(spacing: 0) {
-                    if googleActivities.count > 0 {
-                        HStack {
-                            Text(getContentAttributedString(Date().toString("d MMMM hh:mm"), viewSize: proxy.size))
-                            Text(getContentAttributedString("Geweldige activiteiten hier", viewSize: proxy.size))
-                            Spacer()
-                        }.observeViewSize()
-                    }
                     ForEach(googleActivities.prefix(getMaxItemsFor(height: proxy.size.height, viewSize: proxy.size)), id: \.self) { activity in
                         if proxy.size.height + activityRowHeight < sheetProxy.size.height {
                             HStack {
-                                Text(getContentAttributedString(activity.startDate?.toString("d MMMM hh:mm") ?? "-", viewSize: proxy.size))
-                                Text(getContentAttributedString(activity.eventDescription ?? "-", viewSize: proxy.size))
+                                Text(getContentAttributedString(activity.startDate?.toString("E d MMM") ?? "-", viewSize: proxy.size))
+                                Text(getContentAttributedString(activity.title ?? "-", viewSize: proxy.size))
                                 Spacer()
                             }.observeViewSize()
                         }
