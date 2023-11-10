@@ -32,12 +32,14 @@ struct ChurchBeamApp: View {
     }
 
     let store: ExternalDisplayConnector
-    @ObservedObject var subscriptionsStore: SubscriptionsStore
+    @SwiftUI.Environment(\.scenePhase) private var scenePhase
 
     var userAuth: UserAuthModel = .init()
-    var soundPlayer = SoundPlayer2()
+    @StateObject var soundPlayer = SoundPlayer2()
+    @StateObject var subscriptionsStore = SubscriptionsStore()
     @StateObject var musicDownloadManager = MusicDownloadManager()
-    var universalClusterRequester = SyncUniversalCollectionsUseCase()
+    @StateObject private var authentication = Authentication()
+    @StateObject var universalClusterRequester = SyncUniversalCollectionsUseCase()
     @State private var appState: AppState? = nil
     @State private var showApp = false
     @State private var showOnboarding = false
@@ -45,10 +47,9 @@ struct ChurchBeamApp: View {
     @State private var showingUniversalClusterError = false
     @State private var showingPreparingAccount = false
     @State private var showingFetchingAdminUserChurch = false
-    @StateObject private var authentication = Authentication()
-    
-    init(store: ExternalDisplayConnector, subscriptionsStore: SubscriptionsStore) {
-        self.subscriptionsStore = subscriptionsStore
+    @State private var fetchSubscriptionsTask: Task<(), Never>?
+
+    init(store: ExternalDisplayConnector) {
         self.store = store
         initializeFireStore()
         initializeLocalStorage()
@@ -83,6 +84,7 @@ struct ChurchBeamApp: View {
                 }
             }
         }
+        .environmentObject(subscriptionsStore)
         .onAppear {
             handleFireStore = Auth.auth().addStateDidChangeListener { auth, _ in
                 authentication.isRegistered = auth.currentUser != nil
@@ -112,6 +114,13 @@ struct ChurchBeamApp: View {
                 }
             }
         }
+        .onChange(of: scenePhase, { oldValue, newValue in
+            switch newValue {
+            case .active: sceneWillEnterForeground()
+            case .inactive, .background: sceneWillResignActive()
+            @unknown default: return
+            }
+        })
         .alert(isPresented: $showingFetchingAdminUserChurch, content: {
             Alert(title: Text("Er ging iets mis met het ophalen van de data voor het account"), message: nil, dismissButton: .cancel())
         })
@@ -239,6 +248,17 @@ struct ChurchBeamApp: View {
             userDefaults.set(UUID, forKey: ApplicationIdentifier)
         }
     }
+
+    private func sceneWillEnterForeground() {
+        fetchSubscriptionsTask = Task {
+            await subscriptionsStore.fetchActiveTransactions()
+        }
+    }
+
+    private func sceneWillResignActive() {
+        fetchSubscriptionsTask?.cancel()
+    }
+
 }
 
 class UserAuthModel: ObservableObject {

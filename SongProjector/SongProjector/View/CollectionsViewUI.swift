@@ -36,36 +36,40 @@ import SwiftUI
     private var unfilteredCollections: [ClusterCodable] = []
     @Published private(set) var showingLoader = false
     @ObservedObject var tagSelectionModel: TagSelectionModel = TagSelectionModel(mandatoryTags: [])
+    @ObservedObject var subscriptionStore: SubscriptionsStore
     private let customSelectionDelegate: CollectionsViewCustomSelectionDelegate?
     @Published private var customSelectedSongsForSongService: [ClusterCodable] = []
     var hasCustomSelectedSongsForSongService: Bool {
         return customSelectionDelegate != nil
     }
+
     init(
         tagSelectionModel: TagSelectionModel,
         customSelectedSongsForSongService: [ClusterCodable],
-        customSelectionDelegate: CollectionsViewCustomSelectionDelegate?
+        customSelectionDelegate: CollectionsViewCustomSelectionDelegate?,
+        subscriptionStore: SubscriptionsStore
     ) {
         self.tagSelectionModel = tagSelectionModel
         self.customSelectedSongsForSongService = customSelectedSongsForSongService
         self.customSelectionDelegate = customSelectionDelegate
+        self.subscriptionStore = subscriptionStore
     }
     
     func fetchCollections(searchText: String? = nil) async {
         let searchText = searchText?.isBlanc ?? true ? self.searchText.isBlanc ? nil : self.searchText : searchText
         self.searchText = searchText ?? ""
         if unfilteredCollections.count > 0 {
-            collections = await FilteredCollectionsUseCase.getCollectionsIn(collections: unfilteredCollections, searchText: searchText, selectedTags: (tagSelectionModel.selectedTags + tagSelectionModel.mandatoryTags).unique, showDeleted: showDeletedCollections)
+            collections = await FilteredCollectionsUseCase.getCollectionsIn(collections: unfilteredCollections, searchText: searchText, selectedTags: (tagSelectionModel.selectedTags + tagSelectionModel.mandatoryTags).unique, showDeleted: showDeletedCollections, subscriptionsStore: subscriptionStore)
             return
         }
-        collections = await FilteredCollectionsUseCase.getCollections(searchText: searchText, showDeleted: showDeletedCollections, selectedTags: (tagSelectionModel.selectedTags +  tagSelectionModel.mandatoryTags).unique)
+        collections = await FilteredCollectionsUseCase.getCollections(searchText: searchText, showDeleted: showDeletedCollections, selectedTags: (tagSelectionModel.selectedTags +  tagSelectionModel.mandatoryTags).unique, subscriptionStore: subscriptionStore)
     }
     
     func reload() async {
         let searchText = self.searchText.isBlanc ? nil : self.searchText
-        unfilteredCollections = await FilteredCollectionsUseCase.getCollections(searchText: nil, showDeleted: true, selectedTags: [])
+        unfilteredCollections = await FilteredCollectionsUseCase.getCollections(searchText: nil, showDeleted: true, selectedTags: [], subscriptionStore: subscriptionStore)
 
-        collections = await FilteredCollectionsUseCase.getCollectionsIn(collections: unfilteredCollections, searchText: searchText, selectedTags: (tagSelectionModel.selectedTags +  tagSelectionModel.mandatoryTags).unique, showDeleted: showDeletedCollections)
+        collections = await FilteredCollectionsUseCase.getCollectionsIn(collections: unfilteredCollections, searchText: searchText, selectedTags: (tagSelectionModel.selectedTags +  tagSelectionModel.mandatoryTags).unique, showDeleted: showDeletedCollections, subscriptionsStore: subscriptionStore)
     }
     
     func fetchRemoteTags() async {
@@ -230,7 +234,8 @@ struct CollectionsViewUI: View {
         songServiceEditorModel: SongServiceEditorModel,
         customSelectedSongsForSongService: [ClusterCodable] = [],
         customSelectionDelegate: CollectionsViewCustomSelectionDelegate? = nil,
-        mandatoryTags: [TagCodable]
+        mandatoryTags: [TagCodable],
+        subscriptionStore: SubscriptionsStore
     ) {
         self._editingSection = editingSection
         self.songServiceEditorModel = songServiceEditorModel
@@ -239,7 +244,8 @@ struct CollectionsViewUI: View {
         self._viewModel = StateObject(wrappedValue: CollectionsViewModel(
             tagSelectionModel: model,
             customSelectedSongsForSongService: customSelectedSongsForSongService,
-            customSelectionDelegate: customSelectionDelegate
+            customSelectionDelegate: customSelectionDelegate,
+            subscriptionStore: subscriptionStore
         ))
     }
     

@@ -55,7 +55,13 @@ struct SongServiceSectionWithSongs: Identifiable {
 }
 
 actor SongServiceGeneratorUseCase {
-    
+
+    private let subscriptionsStore: SubscriptionsStore
+
+    init(subscriptionsStore: SubscriptionsStore) {
+        self.subscriptionsStore = subscriptionsStore
+    }
+
     private let line = "----------------"
     
     func generate(for songService: SongServiceSettingsCodable) async -> [SongServiceSectionWithSongs] {
@@ -86,7 +92,7 @@ actor SongServiceGeneratorUseCase {
     
     private func filterOn(_ tagIds: [String], to clustersForSection: inout [ClusterCodable]) async {
         let tags = await GetTagsUseCase().fetch(predicates: tagIds.map { .get(id: $0) }, sort: .position(asc: true), predicateCompoundPredicateType: .or)
-        clustersForSection = await FilteredCollectionsUseCase.getCollections(searchText: nil, showDeleted: false, selectedTags: tags)
+        clustersForSection = await FilteredCollectionsUseCase.getCollections(searchText: nil, showDeleted: false, selectedTags: tags, subscriptionStore: subscriptionsStore)
     }
     
     private func filterOnPlayDate(_ clustersForSection: inout [ClusterCodable], numberOfSongs: Int) {

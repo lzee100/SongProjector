@@ -94,7 +94,7 @@ struct CollectionListViewUI_Previews: PreviewProvider {
     static private let collectionsViewModel = CollectionsViewModel(
         tagSelectionModel: TagSelectionModel(mandatoryTags: []),
         customSelectedSongsForSongService: [],
-        customSelectionDelegate: nil)
+        customSelectionDelegate: nil, subscriptionStore: SubscriptionsStore())
     static var previews: some View {
         CollectionListViewUI(collectionsViewModel: collectionsViewModel, collection: .makeDefault()!, isSelectable: false, isSelected: false)
             .previewLayout(.sizeThatFits)

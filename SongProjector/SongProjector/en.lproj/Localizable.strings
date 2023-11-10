@@ -46,23 +46,27 @@
 
 "Subscriptions-info-title" = "Subscriptions";
 
-"Feature-song-intro" = "The Song option gives you access to songs with music. It also offers much more:";
-"Intro-featuresSong1" = "unlimited songs creation (lyrics / sheets)";
-"Intro-featuresSong2" = "save themes and tags";
-"Intro-featuresSong3" = "Automatic generation of slides for bible verses";
-"Intro-featuresSong4" = "Make your own song service schema";
-"Intro-featuresSong5" = "Auto-generating song services";
-"Intro-featuresSong6" = "Automatically download songs with lyrics and music";
-"Intro-featuresSong7" = "Instruments individually mixable";
-"Intro-featuresSong8" = "Google agenda integration (show your google activities automatically on a slide)";
-
-"Feature-beam-intro" = "The beam option gives you access to songs with lyrics. It also offers much more:";
-"Intro-featuresBeam1" = "unlimited songs creation (lyrics / sheets)";
-"Intro-featuresBeam2" = "save themes and tags";
-"Intro-featuresBeam3" = "Automatic generation of slides for bible verses";
-"Intro-featuresBeam4" = "Make your own song service schema";
-"Intro-featuresBeam5" = "Auto-generating song services";
-"Intro-featuresBeam6" = "Google agenda integration (show your google activities automatically on a slide)";
+"Features-explain-standaard-header" = "Free";
+"Features-explain-standaard-headline" = "ChurchBeam already has standard super useful features that help you with providing a worship service. The following features are free:";
+"Features-explain-standaard-content" = "- Wirelessly connect from your iPad or iPhone to your projector via an Apple TV
+- Create songs (up to 15 songs for free)
+- Create themes (up to 5 for free)
+- Create your own worship service schedule
+- Automatically generate a worship service. The app keeps track of which songs you have sung when so that you sing something different in every worship service. And this can be customized as desired
+- Automatically generate slides based on a list of Bible verses.";
+"Features-explain-song-header" = "Song";
+"Features-explain-song-headline" = "In addition to these super useful features, you can do more with the Song subscription:";
+"Features-explain-song-content" = "- You can download 50+ worship songs with music and lyrics (slides)
+- The slides automatically follow the music, and you can see in the app when to start singing
+- You can mix each song per instrument in the app (convenient for when you want to play along with an instrument)
+- You can integrate your church's Google calendar into the app, so your activities can automatically appear on a slide (this is called a Google activities slide and is automatically in sync). Useful for announcements or to display before the service begins
+- Create unlimited songs (slides only)
+- Create unlimited themes";
+"Features-explain-beam-header" = "Beam";
+"Features-explain-beam-headline" = "If you play the music in the church yourself, there is the option for the Beam subscription. This supports your pre-service with all the basic features and:";
+"Features-explain-beam-content" = "- You can integrate your church's Google calendar into the app, so your activities can automatically appear on a slide (this is called a Google activities slide and is automatically in sync). Useful for announcements or to display before the service begins
+- Create unlimited songs (slides only)
+- Create unlimited themes";
 
 "Intro-cancelMonthly" = "(Monthly terminable)";
 "Intro-subscribe" = "Subscribe";

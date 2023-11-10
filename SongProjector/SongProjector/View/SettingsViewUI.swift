@@ -11,7 +11,7 @@ import FirebaseAuth
 
 @MainActor class SettingsViewModel: ObservableObject {
     
-    private let subscriptionsManager = SubscriptionsManager()
+    @EnvironmentObject private var subscriptionsStore: SubscriptionsStore
     @Published var googleAgendaId: String = ""
     
     @Published private(set) var user: UserCodable?
@@ -55,20 +55,6 @@ import FirebaseAuth
     func resetMutes() async {
         await MuteInstrumentsUseCase.resetMutes()
     }
-    
-    func updateUser() async {
-        showingLoader = true
-        do {
-            guard var user = await GetUserUseCase().get() else { return }
-            try await subscriptionsManager.requestProducts()
-            user.productId = subscriptionsManager.purchasedSubscriptions.first?.id
-            try await SubmitUseCase(endpoint: .users, requestMethod: .put, uploadObjects: [user]).submit()
-            showingLoader = false
-        } catch {
-            showingLoader = false
-            self.error = error.forcedLocalizedError
-        }
-    }
 }
 
 struct SettingsViewUI: View {
@@ -104,13 +90,6 @@ struct SettingsViewUI: View {
                 }
             }
             .manageSubscriptionsSheet(isPresented: $viewModel.showingSubscriptions)
-            .onChange(of: viewModel.showingSubscriptions) { newValue in
-                if !newValue {
-                    Task {
-                        await viewModel.updateUser()
-                    }
-                }
-            }
         }
     }
     

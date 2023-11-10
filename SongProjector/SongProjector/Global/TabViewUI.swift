@@ -9,9 +9,11 @@
 import SwiftUI
 
 struct TabViewUI: View {
+
     @StateObject private var model = TabViewViewModel()
     @State private var selectedTab: Feature = .songService
     @State private var showingSongServiceView = true
+    @EnvironmentObject var subscriptionsStore: SubscriptionsStore
     @EnvironmentObject var externalDisplayConnector: ExternalDisplayConnector
     @EnvironmentObject var musicDownloadManager: MusicDownloadManager
 
@@ -24,8 +26,8 @@ struct TabViewUI: View {
                 case .songs:
                     tabView(CollectionsViewUI(
                         editingSection: Binding.constant(nil),
-                        songServiceEditorModel: SongServiceEditorModel(),
-                        mandatoryTags: []).environmentObject(musicDownloadManager), feature: feature)
+                        songServiceEditorModel: SongServiceEditorModel(subscriptionsStore: subscriptionsStore),
+                        mandatoryTags: [], subscriptionStore: subscriptionsStore).environmentObject(musicDownloadManager), feature: .about)
                 case .themes:
                     tabView(ThemesViewUI(), feature: feature)
                 case .tags:

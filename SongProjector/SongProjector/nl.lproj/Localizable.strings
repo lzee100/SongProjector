@@ -46,21 +46,30 @@
 
 "Subscriptions-info-title" = "Abonnementen";
 
-"Feature-song-intro" = "De Song optie geeft je toegang tot liedjes met muziek. Het biedt daarnaast nog veel meer:";
-"Intro-featuresSong1" = "Onbeperkt aantal liedjes maken (tekst / dia's)";
-"Intro-featuresSong2" = "thema's en tags opslaan";
-"Intro-featuresSong3" = "Automatische generatie van dia's voor bijbelteksten";
-"Intro-featuresSong4" = "Automatisch genererende diensten";
-"Intro-featuresSong5" = "Automatisch downloaden van liedjes met tekst en muziek";
-"Intro-featuresSong6" = "Instrumenten individueel mengbaar";
-"Intro-featuresSong7" = "Google agenda integratie (toont jouw Google-activiteiten automatisch op een dia)";
 
-"Feature-beam-intro" = "De Beam geeft je toegang tot nummers met songteksten. Het biedt daarnaast nog veel meer:";
-"Intro-featuresBeam1" = "Onbeperkt aantal liedjes maken (tekst / dia's)";
-"Intro-featuresBeam2" = "thema's en tags opslaan";
-"Intro-featuresBeam3" = "Automatische generatie van dia's voor bijbelteksten";
-"Intro-featuresBeam4" = "Automatisch genererende diensten";
-"Intro-featuresBeam5" = "Google agenda integratie (toont jouw Google-activiteiten automatisch op een dia)";
+"Features-explain-standaard-header" = "Gratis";
+"Features-explain-standaard-headline" = "ChurchBeam heeft standaard al super handige features die jou helpen met het voorzien in een zangdienst. De volgende features zijn gratis:";
+"Features-explain-standaard-content" = "- Draadloos vanaf je iPad of iPhone naar je beamer via een Apple TV
+- Het maken van liedjes (maximaal 15 nummers gratis)
+- Het maken van themas (maximaal 5 gratis)
+- Het maken van een eigen zangdienst schema
+- Het automatisch genereren van een zangdienst. De app houdt bij welke liedjes je wanneer hebt gezonden zodat je elke zangdienst iets anders zingt. En dit is te wijzigen naar wens
+- Het automatisch genereren van dia’s op basis van een lijst van bijbelteksten";
+
+"Features-explain-song-header" = "Song";
+"Features-explain-song-headline" = "Naast deze super handige features kan je meer met het Song abonnement:";
+"Features-explain-song-content" = "- Je kan 50+ opwekkingsliedjes downloaden met muziek en tekst (dia’s)
+- De dia’s gaan automatisch mee met de muziek en tevens zie je in de app wanneer je moet beginnen met zingen
+- Je kan elk liedje mengen per instrument in de app (handig voor als je zelf wil meespelen)
+- Je kan je kerk Google agenda integreren in de app waardoor je activiteiten automatisch op een dia kunnen verschijnen (dit heet een google activiteiten dia en is automatisch in sync). Handig voor de afkondigingen of om te tonen voordat de dienst begint
+- Onbeperkt liedjes maken (alleen dia’s)
+- Onbeperkt thema’s aanmaken";
+
+"Features-explain-beam-header" = "Beam";
+"Features-explain-beam-headline" = "Mocht je nou zelf de muziek in de kerk spelen, dan is er de mogelijkheid voor het abonnement Beam. Deze ondersteunt je voordienst met alle basis features en:";
+"Features-explain-beam-content" = "- Je kan je kerk Google agenda integreren in de app waardoor je activiteiten automatisch op een dia kunnen verschijnen (dit heet een google activiteiten dia en is automatisch in sync). Handig voor de afkondigingen of om te tonen voordat de dienst begint
+- Onbeperkt liedjes maken (alleen dia’s)
+- Onbeperkt thema’s aanmaken";
 
 "Intro-cancelMonthly" = "(Maandelijks opzegbaar)";
 "Intro-subscribe" = "Abonneer";

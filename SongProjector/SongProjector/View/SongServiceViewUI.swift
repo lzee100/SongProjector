@@ -27,6 +27,7 @@ private var idiom : UIUserInterfaceIdiom { UIDevice.current.userInterfaceIdiom }
 struct SongServiceViewUI: View {
     
     private let alignment: Sticky.Alignment
+    @EnvironmentObject var subscriptionsStore: SubscriptionsStore
     @EnvironmentObject private var soundPlayer: SoundPlayer2
     @EnvironmentObject var musicDownloadManager: MusicDownloadManager
     @EnvironmentObject var store: ExternalDisplayConnector
@@ -154,7 +155,7 @@ struct SongServiceViewUI: View {
                 .toolbarBackground(.black, for: .tabBar)
             }
             .sheet(isPresented: $showingSongServiceEditor) {
-                SongServiceEditorViewUI(songService: songService, viewModel: SongServiceEditorModel(songServiceUI: songService), showingSongServiceEditorViewUI: $showingSongServiceEditor)
+                SongServiceEditorViewUI(songService: songService, viewModel: SongServiceEditorModel(songServiceUI: songService, subscriptionsStore: subscriptionsStore), showingSongServiceEditorViewUI: $showingSongServiceEditor)
             }
             .sheet(isPresented: $showingMixerView, content: {
                 ZStack {
@@ -165,12 +166,11 @@ struct SongServiceViewUI: View {
                 }
             })
             .sheet(isPresented: $showingSubscriptions, content: {
-                SubscriptionTabView(subscriptionsManager: SubscriptionsManager(), showingSubscriptions: $showingSubscriptions)
+                SubscriptionsViewUI()
             })
         }
         .environmentObject(musicDownloadManager)
         .onAppear {
-            showingSubscriptions = true
             if let previewSong {
                 songService.set(sectionedSongs: [SongServiceSectionWithSongs(title: "", cocList: [.cluster(previewSong)])])
             }
@@ -192,6 +192,17 @@ struct SongServiceViewUI: View {
 //                }
 //            }
         }
+        .task(priority: .background, {
+            await subscriptionsStore.fetchActiveTransactions()
+            if subscriptionsStore.activeTransactions.count == 0 {
+                showingSubscriptions = true
+            }
+        })
+        .onChange(of: subscriptionsStore.activeTransactions, { _, activeTransactions in
+            if activeTransactions.count > 0 {
+                showingSubscriptions = false
+            }
+        })
         .onChange(of: selectedSheet) { newValue in
             songService.selectedSheetId = newValue
         }

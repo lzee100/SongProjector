@@ -10,47 +10,44 @@ import StoreKit
 import SwiftUI
 
 struct SubscriptionsViewUI: View {
-
     @SwiftUI.Environment(\.dismiss) private var dismiss
-    @EnvironmentObject var subscriptionsStore: SubscriptionsStore
+    @EnvironmentObject private var subscriptionsStore: SubscriptionsStore
     @State private var showingInformation = false
 
     var body: some View {
-        NavigationStack {
-                Group {
-                    if subscriptionsStore.products.isEmpty {
-                        ProgressView()
-                    } else {
-                        SubscriptionStoreView(groupID: "20702484", visibleRelationships: .all)
-                    }
-                }
-                .background(.background.secondary)
-                .task {
-                    await subscriptionsStore.fetchProducts()
-                    await subscriptionsStore.fetchActiveTransactions()
-                }
-            .sheet(isPresented: $showingInformation, content: {
-                SubscriptionsInformationView()
-            })
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Text(AppText.Actions.close)
-                    }
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    if !subscriptionsStore.products.isEmpty {
+        Group {
+            if subscriptionsStore.products.isEmpty {
+                ProgressView()
+            } else {
+                SubscriptionStoreView(groupID: "20702484") {
+
+                    VStack {
+                        Spacer()
+                        Image("ChurchBeam")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 100)
+                            .clipShape(RoundedRectangle(cornerRadius: 15))
+                            .padding(.bottom)
                         Button {
-                            showingInformation.toggle()
-                        } label: {
-                            Image(systemName: "info.circle")
-                        }
+                                showingInformation.toggle()
+                            } label: {
+                                Text("Meer informatie")
+                            }
+                        .buttonStyle(.borderless)
+                        .padding(.bottom)
                     }
                 }
             }
         }
+        .background(.background.secondary)
+        .task {
+            await subscriptionsStore.fetchProducts()
+            await subscriptionsStore.fetchActiveTransactions()
+        }
+        .sheet(isPresented: $showingInformation, content: {
+            SubscriptionsInformationView()
+        })
     }
 }
 

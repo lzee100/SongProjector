@@ -11,26 +11,58 @@ import SwiftUI
 struct SubscriptionsInformationView: View {
 
     @SwiftUI.Environment(\.dismiss) private var dismiss
-    @State private var songFeatures: [(id: Int, key: LocalizedStringKey)] = []
-    @State private var beamFeatures: [(id: Int, key: LocalizedStringKey)] = []
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack {
-                    songView
-                    BeamView
+            Form {
+                Section {
+                        Text("Features-explain-standaard-headline")
+                            .styleAs(font: .xNormalBold)
+                            .padding(.top)
+                            .listRowSeparator(.hidden)
+                        Text("Features-explain-standaard-content")
+                        .styleAs(font: .xNormal)
+                        .padding(.bottom)
+                } header: {
+                    Text("Features-explain-standaard-header")
+                        .textCase(nil)
+                        .foregroundStyle(.black)
+                        .font(.title3)
+                        .bold()
                 }
-            }
-            .onAppear {
-                songFeatures = (1..<9).map { index in
-                    let key = "Intro-featuresSong\(index)"
-                    return (index, LocalizedStringKey(key))
+
+                Section {
+                    Text("Features-explain-song-headline")
+                        .styleAs(font: .xNormalBold)
+                        .padding(.top)
+                        .listRowSeparator(.hidden)
+                    Text("Features-explain-song-content")
+                    .styleAs(font: .xNormal)
+                    .padding(.bottom)
+                } header: {
+                    Text("Features-explain-song-header")
+                        .textCase(nil)
+                        .foregroundStyle(.black)
+                        .font(.title3)
+                        .bold()
                 }
-                beamFeatures = (1..<7).map { index in
-                    let key = "Intro-featuresBeam\(index)"
-                    return (index, LocalizedStringKey(key))
+
+                Section {
+                    Text("Features-explain-beam-headline")
+                        .styleAs(font: .xNormalBold)
+                        .padding(.top)
+                        .listRowSeparator(.hidden)
+                    Text("Features-explain-beam-content")
+                    .styleAs(font: .xNormal)
+                    .padding(.bottom)
+                } header: {
+                    Text("Features-explain-beam-header")
+                        .textCase(nil)
+                        .foregroundStyle(.black)
+                        .font(.title3)
+                        .bold()
                 }
+
             }
             .background(.background.secondary)
             .navigationTitle("Subscriptions-info-title")
@@ -45,52 +77,6 @@ struct SubscriptionsInformationView: View {
                 }
             }
         }
-    }
-
-    @ViewBuilder var songView: some View {
-        VStack(spacing: 7) {
-            Text("Song")
-                .styleAs(font: .xLargeBold)
-            Text("Feature-song-intro")
-                .styleAs(font: .large)
-            ForEach(songFeatures, id:\.id) { info in
-                HStack {
-                    Text("-")
-                        .styleAs(font: .xNormal)
-                    Text(info.key)
-                            .styleAs(font: .xNormal)
-                    Spacer()
-                }
-            }
-        }
-        .frame(maxWidth: .infinity)
-        .padding()
-        .background(.background.secondary, in: .rect(cornerSize: CGSize(width: 10, height: 10)))
-        .padding()
-    }
-
-    @ViewBuilder private var BeamView: some View {
-        VStack(spacing: 7) {
-            Text("Beam")
-                .styleAs(font: .xLargeBold)
-            Text("Feature-beam-intro")
-                .styleAs(font: .large)
-            ForEach(beamFeatures, id:\.id) { info in
-                HStack {
-
-                    Text("-")
-                        .styleAs(font: .xNormal)
-                    Text(info.key)
-                        .styleAs(font: .xNormal)
-                    Spacer()
-                }
-            }
-        }
-        .frame(maxWidth: .infinity)
-        .padding()
-        .background(.background.secondary, in: .rect(cornerSize: CGSize(width: 10, height: 10)))
-        .padding()
-
     }
 }
 

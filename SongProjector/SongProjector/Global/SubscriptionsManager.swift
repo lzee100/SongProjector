@@ -13,8 +13,6 @@ import StoreKitTest
 
 typealias RenewalState = StoreKit.Product.SubscriptionInfo.RenewalInfo
 
-
-
 @MainActor
 class SubscriptionsManager: ObservableObject {
     
@@ -121,9 +119,21 @@ class SubscriptionsManager: ObservableObject {
     }
 }
 
-import StoreKit
-
 @MainActor final class SubscriptionsStore: ObservableObject {
+
+    enum SubscriptionType: String {
+        case song, beam, none
+    }
+
+    var activeSubscription: SubscriptionType {
+        if activeTransactions.contains(where: { $0.productID == SubscriptionType.song.rawValue }) {
+            return .song
+        } else if activeTransactions.contains(where: { $0.productID == SubscriptionType.beam.rawValue }) {
+            return .beam
+        }
+        return .none
+    }
+
     @Published private(set) var products: [Product] = []
     @Published private(set) var activeTransactions: Set<StoreKit.Transaction> = []
 
@@ -168,7 +178,7 @@ import StoreKit
         var activeTransactions: Set<StoreKit.Transaction> = []
 
         for await entitlement in StoreKit.Transaction.currentEntitlements {
-            if let transaction = try? entitlement.payloadValue {
+            if let transaction = try? entitlement.payloadValue, transaction.expirationDate?.isAfter(Date()) ?? true {
                 activeTransactions.insert(transaction)
             }
         }
