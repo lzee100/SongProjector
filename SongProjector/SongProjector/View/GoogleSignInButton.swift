@@ -25,7 +25,7 @@ import FirebaseAuth
     func signInWithGoogle() {
         guard let presentingViewController = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.windows.first?.rootViewController else {return}
 
-         GIDSignIn.sharedInstance.signIn(withPresenting: presentingViewController, hint: nil, additionalScopes: []) { result, error in
+         GIDSignIn.sharedInstance.signIn(withPresenting: presentingViewController, hint: nil, additionalScopes: ["https://www.googleapis.com/auth/calendar.events.public.readonly"]) { result, error in
              if let error {
                  self.error = RequestError.unknown(requester: "", error: error)
              }

@@ -22,6 +22,8 @@ protocol EditThemeOrSheetViewUIDelegate {
     }
     
     @Published var error: LocalizedError?
+    @Published var showingSubscriptionsView = false
+    @Published var isSavingEnabled = true
     @Published private(set) var showingLoader = false
     @ObservedObject var sheetViewModel: SheetViewModel
     var navigationBarTitle: String {
@@ -64,7 +66,12 @@ protocol EditThemeOrSheetViewUIDelegate {
             self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
         }
     }
-        
+
+    func checkSubscriptionsStatus() async {
+        let status = await GetActiveSubscriptionsUseCase().fetch()
+        isSavingEnabled = status != .none
+    }
+
     private func setIsLoading(_ showingLoader: Bool) {
         withAnimation(.linear) {
             self.showingLoader = showingLoader
@@ -174,11 +181,17 @@ struct EditThemeOrSheetViewUI: View {
                 })
             }
         .ignoresSafeArea()
-        .onChange(of: viewModel.showingLoader) { newValue in
+        .task(priority: .userInitiated, {
+            await viewModel.checkSubscriptionsStatus()
+        })
+        .sheet(isPresented: $viewModel.showingSubscriptionsView, content: {
+            SubscriptionsViewUI(subscriptionsStore: SubscriptionsStore())
+        })
+        .onChange(of: viewModel.showingLoader, { _, newValue in
             if !newValue {
                 delegate.dismiss()
             }
-        }
+        })
     }
     
     @ViewBuilder var navigationBarButtonRight: some View {
@@ -186,7 +199,11 @@ struct EditThemeOrSheetViewUI: View {
             switch viewModel.rightNavigationBarButton {
             case .addNewSheet, .changeSheet:
                 Button {
-                    delegate.dismissAndSave(model: viewModel.sheetViewModel)
+                    if viewModel.isSavingEnabled {
+                        delegate.dismissAndSave(model: viewModel.sheetViewModel)
+                    } else {
+                        viewModel.showingSubscriptionsView.toggle()
+                    }
                 } label: {
                     if case .addNewSheet = viewModel.rightNavigationBarButton {
                         Text(AppText.Actions.add)
@@ -197,8 +214,12 @@ struct EditThemeOrSheetViewUI: View {
                 .tint(Color(uiColor: themeHighlighted))
             case .submitTheme:
                 Button {
-                    Task {
-                       await viewModel.submitTheme()
+                    if viewModel.isSavingEnabled {
+                        Task {
+                            await viewModel.submitTheme()
+                        }
+                    } else {
+                        viewModel.showingSubscriptionsView.toggle()
                     }
                 } label: {
                     Text(AppText.Actions.save)

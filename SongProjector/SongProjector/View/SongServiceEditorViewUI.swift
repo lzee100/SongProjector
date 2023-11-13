@@ -31,10 +31,8 @@ protocol SongServiceEditorViewDelegate {
     @Published private(set) var showingLoader = false
     @Published var error: LocalizedError? = nil
     var isInUsage = false
-    private let subscriptionsStore: SubscriptionsStore
 
-    init(songServiceUI: SongServiceUI, subscriptionsStore: SubscriptionsStore) {
-        self.subscriptionsStore = subscriptionsStore
+    init(songServiceUI: SongServiceUI) {
         isInUsage = true
         guard songServiceUI.songs.count > 0 else { return }
         
@@ -54,8 +52,7 @@ protocol SongServiceEditorViewDelegate {
         }
     }
     
-    init(subscriptionsStore: SubscriptionsStore) {
-        self.subscriptionsStore = subscriptionsStore
+    init() {
     }
     
     var editButtons: [EditButtons] {
@@ -144,28 +141,33 @@ protocol SongServiceEditorViewDelegate {
     
     func getShareInfo(withContent: Bool) async -> (title: String, content: String)? {
         if sectionedSongs.count > 0 {
-            return await SongServiceGeneratorUseCase(subscriptionsStore: subscriptionsStore).generateShareForSongServiceSettings(sectionedSongs, withContent: withContent)
+            return await SongServiceGeneratorUseCase().generateShareForSongServiceSettings(sectionedSongs, withContent: withContent)
         } else {
-            return await SongServiceGeneratorUseCase(subscriptionsStore: subscriptionsStore).generateShareForCustomSelection(customSelectedSongs)
+            return await SongServiceGeneratorUseCase().generateShareForCustomSelection(customSelectedSongs)
         }
     }
     
     private func generateSongServiceSettingsRows() async {
         if let songServiceSettings {
-            self.sectionedSongs = await SongServiceGeneratorUseCase(subscriptionsStore: subscriptionsStore).generate(for: songServiceSettings)
+            self.sectionedSongs = await SongServiceGeneratorUseCase().generate(for: songServiceSettings)
         }
     }
 }
 
 struct SongServiceEditorViewUI: View {
     
-    @EnvironmentObject private var subscriptionsStore: SubscriptionsStore
     @ObservedObject var songService: SongServiceUI
-    @ObservedObject var viewModel: SongServiceEditorModel
+    @StateObject var viewModel: SongServiceEditorModel
     @State private var showingCustomSelectionSongsCollectionOverView: Bool = false
     @State private var editingSection: SongServiceSectionWithSongs? = nil
     @Binding var showingSongServiceEditorViewUI: Bool
     @EnvironmentObject var musicDownloadManager: MusicDownloadManager
+
+    init(songService: SongServiceUI, showingSongServiceEditorViewUI: Binding<Bool>) {
+        self.songService = songService
+        self._viewModel = StateObject(wrappedValue: SongServiceEditorModel(songServiceUI: songService))
+        self._showingSongServiceEditorViewUI = showingSongServiceEditorViewUI
+    }
 
     var body: some View {
         NavigationStack {
@@ -180,6 +182,7 @@ struct SongServiceEditorViewUI: View {
                 }
             }
             .navigationTitle(AppText.NewSongService.title)
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 if !viewModel.showingLoader {
                     ToolbarItemGroup(placement: .navigationBarLeading) {
@@ -203,8 +206,7 @@ struct SongServiceEditorViewUI: View {
                     songServiceEditorModel: viewModel,
                     customSelectedSongsForSongService: viewModel.customSelectedSongs,
                     customSelectionDelegate: self,
-                    mandatoryTags: [],
-                    subscriptionStore: subscriptionsStore
+                    mandatoryTags: []
                 )
             })
             .sheet(item: $editingSection) { editingSection in
@@ -213,8 +215,7 @@ struct SongServiceEditorViewUI: View {
                     CollectionsViewUI(
                         editingSection: $editingSection,
                         songServiceEditorModel: viewModel,
-                        mandatoryTags: mandatoryTags,
-                        subscriptionStore: subscriptionsStore
+                        mandatoryTags: mandatoryTags
                     )
                 }
             }
@@ -363,6 +364,6 @@ struct SongServiceEditorViewUI_Previews: PreviewProvider {
     @State static var model = SongServiceUI()
     @State static var showing = false
     static var previews: some View {
-        SongServiceEditorViewUI(songService: model, viewModel: SongServiceEditorModel(subscriptionsStore: SubscriptionsStore()), showingSongServiceEditorViewUI: $showing)
+        SongServiceEditorViewUI(songService: model, showingSongServiceEditorViewUI: $showing)
     }
 }

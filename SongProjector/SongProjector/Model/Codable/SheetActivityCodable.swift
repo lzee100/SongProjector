@@ -66,6 +66,7 @@ public struct SheetActivitiesCodable: EntityCodableType, SheetMetaType {
     var updatedAt: Date? = nil
     var deleteDate: Date? = nil
     var rootDeleteDate: Date? = nil
+    var hasTheme: ThemeCodable? = nil
     var position: Int
     var hasGoogleActivities: [GoogleActivityCodable] = []
 
@@ -79,6 +80,7 @@ public struct SheetActivitiesCodable: EntityCodableType, SheetMetaType {
         case deleteDate = "deletedAt"
         case rootDeleteDate
         case position
+        case hasTheme = "theme"
     }
     
     init?(entity: SheetActivitiesEntity) {
@@ -115,6 +117,7 @@ public struct SheetActivitiesCodable: EntityCodableType, SheetMetaType {
         if let rootdeleteDateInt = try container.decodeIfPresent(Int.self, forKey: .rootDeleteDate) {
             rootDeleteDate = Date(timeIntervalSince1970: TimeInterval(rootdeleteDateInt))
         }
+        hasTheme = try container.decodeIfPresent(ThemeCodable.self, forKey: .hasTheme)
         if let position = try container.decodeIfPresent(Int.self, forKey: .position) {
             self.position = position
         } else {
@@ -132,6 +135,9 @@ public struct SheetActivitiesCodable: EntityCodableType, SheetMetaType {
         try container.encode(userUID, forKey: .userUID)
 
        try container.encode((createdAt as Date).intValue, forKey: .createdAt)
+        if hasTheme != nil {
+            try container.encode(hasTheme, forKey: .hasTheme)
+        }
         if let updatedAt = updatedAt {
             try container.encode((updatedAt as Date).intValue, forKey: .updatedAt)
         } else {
@@ -151,26 +157,29 @@ extension SheetActivitiesCodable: FileTransferable {
     
     mutating func clearDataForDeletedObjects(forceDelete: Bool) {
     }
-    
+
     func getDeleteObjects(forceDelete: Bool) -> [DeleteObject] {
-        []
+        return hasTheme?.getDeleteObjects(forceDelete: forceDelete) ?? []
     }
-    
+
     var uploadObjects: [TransferObject] {
-        []
+        [hasTheme].compactMap { $0?.newSelectedThemeImageTempDirPath }.compactMap { UploadObject(fileName: $0) }
     }
-    
+
     var downloadObjects: [TransferObject] {
-        []
+        [self].compactMap { $0.hasTheme?.imagePathAWS }.compactMap { URL(string: $0) }.compactMap { DownloadObject(remoteURL: $0)}
     }
-    
+
     var transferObjects: [TransferObject] {
         uploadObjects + downloadObjects
     }
-    
+
     mutating func setTransferObjects(_ transferObjects: [TransferObject]) throws {
+        var theme = theme
+        try theme?.setTransferObjects(transferObjects)
+        self.hasTheme = theme
     }
-    
+
     func setDeleteDate() -> FileTransferable {
         var modifiedDocument = self
         if uploadSecret != nil {
@@ -180,12 +189,12 @@ extension SheetActivitiesCodable: FileTransferable {
         }
         return modifiedDocument
     }
-    
+
     func setUpdatedAt() -> FileTransferable {
         var modifiedDocument = self
         modifiedDocument.updatedAt = Date()
         return modifiedDocument
-    }    
+    }
     func setUserUID() throws -> FileTransferable {
         var modifiedDocument = self
         guard let userUID = Auth.auth().currentUser?.uid else {
@@ -194,5 +203,4 @@ extension SheetActivitiesCodable: FileTransferable {
         modifiedDocument.userUID = userUID
         return modifiedDocument
     }
-
 }

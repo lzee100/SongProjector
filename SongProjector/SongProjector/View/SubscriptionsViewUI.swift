@@ -11,8 +11,9 @@ import SwiftUI
 
 struct SubscriptionsViewUI: View {
     @SwiftUI.Environment(\.dismiss) private var dismiss
-    @EnvironmentObject private var subscriptionsStore: SubscriptionsStore
     @State private var showingInformation = false
+    
+    @State var subscriptionsStore: SubscriptionsStore
 
     var body: some View {
         Group {
@@ -52,7 +53,7 @@ struct SubscriptionsViewUI: View {
 }
 
 #Preview {
-    SubscriptionsViewUI()
+    SubscriptionsViewUI(subscriptionsStore: SubscriptionsStore())
         .environmentObject(SubscriptionsStore())
         .environment(\.locale, .init(identifier: "nl"))
 }

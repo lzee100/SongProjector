@@ -10,10 +10,9 @@ import SwiftUI
 
 struct TabViewUI: View {
 
+    @Binding var selectedTab: Feature
     @StateObject private var model = TabViewViewModel()
-    @State private var selectedTab: Feature = .songService
     @State private var showingSongServiceView = true
-    @EnvironmentObject var subscriptionsStore: SubscriptionsStore
     @EnvironmentObject var externalDisplayConnector: ExternalDisplayConnector
     @EnvironmentObject var musicDownloadManager: MusicDownloadManager
 
@@ -26,21 +25,30 @@ struct TabViewUI: View {
                 case .songs:
                     tabView(CollectionsViewUI(
                         editingSection: Binding.constant(nil),
-                        songServiceEditorModel: SongServiceEditorModel(subscriptionsStore: subscriptionsStore),
-                        mandatoryTags: [], subscriptionStore: subscriptionsStore).environmentObject(musicDownloadManager), feature: .about)
+                        songServiceEditorModel: SongServiceEditorModel(),
+                        mandatoryTags: [])
+                        .environmentObject(musicDownloadManager), feature: feature)
                 case .themes:
                     tabView(ThemesViewUI(), feature: feature)
                 case .tags:
                     tabView(TagsViewUI(), feature: feature)
                 case .songServiceManagement:
-                    tabView(SongServiceSettingsViewUI(), feature: feature)
+                    tabView(SongServiceSettingsViewUI(selectedTab: $selectedTab), feature: feature)
                 case .settings:
-                    tabView(SettingsViewUI(), feature: feature)
-                default:
-                    tabView(SettingsViewUI(), feature: feature)
+                    tabView(SettingsViewUI(selectedTab: $selectedTab), feature: feature)
+                case .about:
+                    tabView(SettingsViewUI(selectedTab: $selectedTab), feature: feature)
+                case .bibleStudy:
+                    tabView(SettingsViewUI(selectedTab: $selectedTab), feature: feature)
+                case .more:
+                    tabView(SettingsViewUI(selectedTab: $selectedTab), feature: feature)
                 }
             }
         }
+        .onChange(of: selectedTab, { oldValue, newValue in
+            print(oldValue)
+            print(newValue)
+        })
         .accentColor(Color(uiColor: themeHighlighted))
     }
     
@@ -59,7 +67,7 @@ struct TabViewUI: View {
 
 struct TabViewUI_Previews: PreviewProvider {
     static var previews: some View {
-        TabViewUI()
+        TabViewUI(selectedTab: .constant(Feature.songService))
     }
 }
 

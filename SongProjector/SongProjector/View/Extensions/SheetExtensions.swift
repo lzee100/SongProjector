@@ -48,7 +48,10 @@ public enum SheetType: String, Codable {
         case .SheetEmpty: return SheetEmptyCodable.makeDefault()
         case .SheetSplit: return SheetTitleContentCodable.makeDefault()
         case .SheetPastors: return SheetPastorsCodable.makeDefault()
-        case .SheetActivities: return SheetActivitiesCodable.makeDefault()
+        case .SheetActivities: 
+            var sheet = SheetActivitiesCodable.makeDefault()
+            sheet?.hasGoogleActivities = await GetGoogleEventsUseCase().get()
+            return sheet
         }
     }
 	
@@ -286,6 +289,9 @@ extension Array where Element == Sheet {
                 return mapped
             }
             if let sheet = sheet as? SheetActivitiesEntity, var mapped = SheetActivitiesCodable(entity: sheet) {
+                if let theme = sheet.hasTheme {
+                    mapped.hasTheme = ThemeCodable(entity: theme)
+                }
                 return mapped
             }
             return nil

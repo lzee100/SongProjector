@@ -18,6 +18,8 @@ import FirebaseFirestoreSwift
     
     @Published private(set) var themes: [ThemeCodable] = []
     @Published private(set) var showingLoader = false
+    @Published var showingSubscriptionsView = false
+    @Published var isSavingEnabled = true
 
     
     func reload() async {
@@ -77,7 +79,12 @@ import FirebaseFirestoreSwift
             self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
         }
     }
-    
+
+    func checkSubscriptionsStatus() async {
+        let status = await GetActiveSubscriptionsUseCase().fetch()
+        isSavingEnabled = status != .none
+    }
+
     private func setIsLoading(_ showingLoader: Bool) {
         withAnimation(.linear) {
             self.showingLoader = showingLoader
@@ -134,14 +141,18 @@ struct ThemesViewUI: View {
             }
         }
         .task {
+            await viewModel.checkSubscriptionsStatus()
             await viewModel.fetchRemoteThemes()
         }
         .errorAlert(error: $viewModel.error)
-        .onChange(of: searchText) { newValue in
+        .onChange(of: searchText, { oldValue, newValue in
             Task {
                 await viewModel.filterOn(newValue)
             }
-        }
+        })
+        .sheet(isPresented: $viewModel.showingSubscriptionsView, content: {
+            SubscriptionsViewUI(subscriptionsStore: SubscriptionsStore())
+        })
         .sheet(item: $selectedTheme, onDismiss: {
             Task {
                 await viewModel.reload()
@@ -171,14 +182,18 @@ struct ThemesViewUI: View {
     
     @ViewBuilder var newthemeButton: some View {
         Button {
-            Task {
-                do {
-                    if let theme = await viewModel.createDefaultTheme() {
-                        selectedTheme = try await SheetViewModel(cluster: nil, theme: nil, defaultTheme: theme, sheet: nil, sheetType: .SheetTitleContent, sheetEditType: .theme)
+            if viewModel.isSavingEnabled {
+                Task {
+                    do {
+                        if let theme = await viewModel.createDefaultTheme() {
+                            selectedTheme = try await SheetViewModel(cluster: nil, theme: nil, defaultTheme: theme, sheet: nil, sheetType: .SheetTitleContent, sheetEditType: .theme)
+                        }
+                    } catch {
+
                     }
-                } catch {
-                    
                 }
+            } else {
+                viewModel.showingSubscriptionsView.toggle()
             }
         } label: {
             Image(systemName: "plus")

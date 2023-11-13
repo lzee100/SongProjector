@@ -27,7 +27,6 @@ private var idiom : UIUserInterfaceIdiom { UIDevice.current.userInterfaceIdiom }
 struct SongServiceViewUI: View {
     
     private let alignment: Sticky.Alignment
-    @EnvironmentObject var subscriptionsStore: SubscriptionsStore
     @EnvironmentObject private var soundPlayer: SoundPlayer2
     @EnvironmentObject var musicDownloadManager: MusicDownloadManager
     @EnvironmentObject var store: ExternalDisplayConnector
@@ -50,7 +49,7 @@ struct SongServiceViewUI: View {
         self.previewSong = previewSong
         self._viewModel = StateObject(wrappedValue: SongServiceViewModel(showingSongServiceView: showingSongServiceView))
     }
-    
+    @State var getGoogleEventsUseCase = GetGoogleEventsUseCase()
     var body: some View {
         NavigationStack {
             GeometryReader { ruler in
@@ -114,8 +113,8 @@ struct SongServiceViewUI: View {
                 }
                 .padding([.bottom], 1)
                 .background(.black)
-                .navigationBarTitleDisplayMode(.inline)
                 .navigationBarTitle(AppText.SongService.title)
+                .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     
                     if previewSong != nil {
@@ -155,7 +154,7 @@ struct SongServiceViewUI: View {
                 .toolbarBackground(.black, for: .tabBar)
             }
             .sheet(isPresented: $showingSongServiceEditor) {
-                SongServiceEditorViewUI(songService: songService, viewModel: SongServiceEditorModel(songServiceUI: songService, subscriptionsStore: subscriptionsStore), showingSongServiceEditorViewUI: $showingSongServiceEditor)
+                SongServiceEditorViewUI(songService: songService, showingSongServiceEditorViewUI: $showingSongServiceEditor)
             }
             .sheet(isPresented: $showingMixerView, content: {
                 ZStack {
@@ -166,7 +165,7 @@ struct SongServiceViewUI: View {
                 }
             })
             .sheet(isPresented: $showingSubscriptions, content: {
-                SubscriptionsViewUI()
+                SubscriptionsViewUI(subscriptionsStore: SubscriptionsStore())
             })
         }
         .environmentObject(musicDownloadManager)
@@ -193,20 +192,15 @@ struct SongServiceViewUI: View {
 //            }
         }
         .task(priority: .background, {
-            await subscriptionsStore.fetchActiveTransactions()
-            if subscriptionsStore.activeTransactions.count == 0 {
-                showingSubscriptions = true
-            }
+            let subscription = await GetActiveSubscriptionsUseCase().fetch()
+//            if subscription == .none {
+//                showingSubscriptions = true
+//            } 
         })
-        .onChange(of: subscriptionsStore.activeTransactions, { _, activeTransactions in
-            if activeTransactions.count > 0 {
-                showingSubscriptions = false
-            }
-        })
-        .onChange(of: selectedSheet) { newValue in
+        .onChange(of: selectedSheet, { _, newValue in
             songService.selectedSheetId = newValue
-        }
-        .onChange(of: songService.selectedSong) { newValue in
+        })
+        .onChange(of: songService.selectedSong, { _, newValue in
             guard let selectedSong = newValue else {
                 isUserInteractionEnabledForBeamer = true
                 return
@@ -219,8 +213,8 @@ struct SongServiceViewUI: View {
             Task {
                 await viewModel.submitPlayDateFor(selectedSong)
             }
-        }
-        .onChange(of: songService.selectedSong) { song in
+        })
+        .onChange(of: songService.selectedSong, { _, song in
             soundAndSheetPlayer?.stop()
             guard let song, let soundAndSheetPlayer else {
                 return
@@ -229,7 +223,7 @@ struct SongServiceViewUI: View {
                 return
             }
             soundAndSheetPlayer.play(song: song)
-        }
+        })
     }
     
     func isCompactOrVertical(ruler: GeometryProxy) -> Bool {

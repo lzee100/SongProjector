@@ -36,10 +36,10 @@ struct ChurchBeamApp: View {
 
     var userAuth: UserAuthModel = .init()
     @StateObject var soundPlayer = SoundPlayer2()
-    @StateObject var subscriptionsStore = SubscriptionsStore()
     @StateObject var musicDownloadManager = MusicDownloadManager()
     @StateObject private var authentication = Authentication()
     @StateObject var universalClusterRequester = SyncUniversalCollectionsUseCase()
+    @State private var selectedTab: Feature = .songService
     @State private var appState: AppState? = nil
     @State private var showApp = false
     @State private var showOnboarding = false
@@ -63,30 +63,29 @@ struct ChurchBeamApp: View {
             Color(uiColor: .blackColor).ignoresSafeArea()
             ProgressView()
                 .tint(Color(uiColor: .whiteColor))
-            if showingPreparingAccount {
-                VStack {
+            VStack {
+                Spacer()
+                HStack {
                     Spacer()
-                    HStack {
-                        Spacer()
-                        VStack(spacing: 30) {
-                            Text(AppText.Start.syncingAccountData)
-                                .styleAs(font: .title, color: .white)
-                            ProgressView()
-                                .tint(.white)
-                                .scaleEffect(1.4)
-                        }
-                        .padding(EdgeInsets(top: 40, leading: 40, bottom: 40, trailing: 40))
-                        .background(Color(uiColor: themeHighlighted))
-                        .cornerRadius(20)
-                        Spacer()
+                    VStack(spacing: 30) {
+                        Text(AppText.Start.syncingAccountData)
+                            .styleAs(font: .title, color: .white)
+                        ProgressView()
+                            .tint(.white)
+                            .scaleEffect(1.4)
                     }
+                    .padding(EdgeInsets(top: 40, leading: 40, bottom: 40, trailing: 40))
+                    .background(Color(uiColor: themeHighlighted))
+                    .cornerRadius(20)
                     Spacer()
                 }
+                Spacer()
             }
+            .opacity(showingPreparingAccount ? 1 : 0)
         }
-        .environmentObject(subscriptionsStore)
         .onAppear {
-            handleFireStore = Auth.auth().addStateDidChangeListener { auth, _ in
+            showingPreparingAccount = false
+            handleFireStore = Auth.auth().addStateDidChangeListener { auth, user in
                 authentication.isRegistered = auth.currentUser != nil
                 
                 if !authentication.isRegistered {
@@ -105,7 +104,9 @@ struct ChurchBeamApp: View {
                                 showApp = authentication.isRegistered
                                 handleTransition()
                             } catch {
-                                showingFetchingAdminUserChurch = true
+                                await MainActor.run {
+                                    showingFetchingAdminUserChurch = true
+                                }
                             }
                         }
                     } else {
@@ -114,13 +115,6 @@ struct ChurchBeamApp: View {
                 }
             }
         }
-        .onChange(of: scenePhase, { oldValue, newValue in
-            switch newValue {
-            case .active: sceneWillEnterForeground()
-            case .inactive, .background: sceneWillResignActive()
-            @unknown default: return
-            }
-        })
         .alert(isPresented: $showingFetchingAdminUserChurch, content: {
             Alert(title: Text("Er ging iets mis met het ophalen van de data voor het account"), message: nil, dismissButton: .cancel())
         })
@@ -131,12 +125,11 @@ struct ChurchBeamApp: View {
             showOnboarding = !authentication.isRegistered
             handleTransition()
         }, content: {
-            TabViewUI()
+            TabViewUI(selectedTab: $selectedTab)
                 .environmentObject(soundPlayer)
                 .environmentObject(musicDownloadManager)
                 .environmentObject(store)
                 .environmentObject(universalClusterRequester)
-                .environmentObject(subscriptionsStore)
         })
         .fullScreenCover(isPresented: $showOnboarding, onDismiss: {
             Task {
@@ -168,12 +161,16 @@ struct ChurchBeamApp: View {
         await getAdminUserAndChurch()
         let admin = await GetAdminUseCase().get()
         guard admin == nil else { return }
-        
-        do {
+        showingPreparingAccount = false
+
+        withAnimation(Animation.spring().speed(0.5).delay(0.5)) {
             showingPreparingAccount = true
-            try await universalClusterRequester.request()
+        }
+        do {
+            try await SyncUniversalCollectionsUseCase().request()
             showingPreparingAccount = false
         } catch {
+            showingPreparingAccount = false
             showingUniversalClusterError = true
         }
     }
@@ -247,16 +244,6 @@ struct ChurchBeamApp: View {
             let UUID = NSUUID().uuidString
             userDefaults.set(UUID, forKey: ApplicationIdentifier)
         }
-    }
-
-    private func sceneWillEnterForeground() {
-        fetchSubscriptionsTask = Task {
-            await subscriptionsStore.fetchActiveTransactions()
-        }
-    }
-
-    private func sceneWillResignActive() {
-        fetchSubscriptionsTask?.cancel()
     }
 
 }

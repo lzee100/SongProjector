@@ -319,6 +319,8 @@ class AppText: NSObject {
         static let sectionSongServiceSettings = NSLocalizedString("Settings-sectionSongServiceSettings", comment: "")
         static let sectionGmailAccount = NSLocalizedString("Settings-sectionGmailAccount", comment: "")
         static let sectionCalendarId = NSLocalizedString("Settings-sectionCalendarId", comment: "")
+        static let sectionMotherChurch = NSLocalizedString("Settings-sectionMotherChurch", comment: "")
+        static let sectionContentPackageBabyChurches = NSLocalizedString("Settings-sectionContentPackageBabyChurches", comment: "")
         static let calendarIdPlaceHolder = NSLocalizedString("Settings-calendarIdPlaceHolder", comment: "")
         static let sectionAppSettings = NSLocalizedString("Settings-sectionAppSettings", comment: "")
         static let sectionManageSubscriptions = NSLocalizedString("Settings-sectionManageSubscriptions", comment: "")
@@ -326,6 +328,24 @@ class AppText: NSObject {
         static let AppSettings = NSLocalizedString("Settings-sectionAppSettings", comment: "")
         static let ResetMutes = NSLocalizedString("Settings-resetMutes", comment: "")
         static let contactId = NSLocalizedString("Settings-contactId", comment: "")
+        
+        static let sectionContentPackageBabyChurchesExplain = NSLocalizedString("Settings-sectionContentPackageBabyChurches-explain", comment: "")
+        static let motherChurchExplain = NSLocalizedString("Settings-MotherChurch-explain", comment: "")
+        static func motherChurchAreYouSure(_ contentPackage: ContentPackage) -> String {
+            return String(format: NSLocalizedString("Settings-MotherChurch-areUSure", comment: ""),  contentPackage.rawValue)
+        }
+        static func sectionContentPackageBabyChurchesAreYouSure(_ contentPackage: ContentPackage) -> String {
+            return String(format: NSLocalizedString("Settings-sectionContentPackageBabyChurches-AreYouSure", comment: ""),  contentPackage.rawValue)
+        }
+        static let subscribeTo = NSLocalizedString("Settings-ContentPackage-SubscribeTo", comment: "")
+        
+        static let contentPackagePastorsZwolle = NSLocalizedString("Settings-ContentPackage-pastorsZwolle", comment: "")
+        static let contentPackageZwolleDutch = NSLocalizedString("Settings-ContentPackage-zwolleDutch", comment: "")
+        static let contentPackageZwolleEnglish = NSLocalizedString("Settings-ContentPackage-zwolleEnglish", comment: "")
+        static let contentPackageZwolleMandarin = NSLocalizedString("Settings-ContentPackage-zwolleMandarin", comment: "")
+        
+        static let contentPackageZwolleChurches = NSLocalizedString("Settings-ContentPackage-zwolleChurches", comment: "")
+        
 	}
 	
 	struct NewTheme {

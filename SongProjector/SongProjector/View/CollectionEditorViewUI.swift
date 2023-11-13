@@ -75,7 +75,6 @@ struct CollectionEditorViewUI: View {
     }
     
     var body: some View {
-        
         NavigationStack {
             List {
                 Section {
@@ -154,6 +153,9 @@ struct CollectionEditorViewUI: View {
                     ))
                 }
             })
+            .sheet(isPresented: $viewModel.showingSubscriptionsView, content: {
+                SubscriptionsViewUI(subscriptionsStore: SubscriptionsStore())
+            })
             .sheet(item: $selectedSheetModel, content: { model in
                 EditThemeOrSheetViewUI(
                     navigationTitle: AppText.SheetPickerMenu.pickCustom,
@@ -225,16 +227,17 @@ struct CollectionEditorViewUI: View {
                 }
             }
         }
-        .onChange(of: viewModel.cluster.showEmptySheetBibleText, perform: { _ in
+        .onChange(of: viewModel.cluster.showEmptySheetBibleText, { _, _ in
             Task {
                 await viewModel.bibleStudyTextDidChange(lyricsOrBibleStudytext: viewModel.lyricsOrBibleStudyText, updateExistingSheets: false, parentViewSize: sheetSizeClass.sheetSize)
             }
         })
         .task {
+            await viewModel.checkSubscriptionsStatus()
             await viewModel.tagsSelectionModel.fetchRemoteTags()
         }
     }
-    
+
     @ViewBuilder var titleTextField: some View {
         let boundTitle = Binding(
             get: { self.viewModel.title },
@@ -424,8 +427,12 @@ struct CollectionEditorViewUI: View {
                 case .save:
                     Button {
                         Task {
-                            if await viewModel.saveCluster() {
-                                showingCollectionEditor = nil
+                            if viewModel.isSavingEnabled {
+                                if await viewModel.saveCluster() {
+                                    showingCollectionEditor = nil
+                                }
+                            } else {
+                                viewModel.showingSubscriptionsView.toggle()
                             }
                         }
                     } label: {
@@ -433,16 +440,24 @@ struct CollectionEditorViewUI: View {
                     }
                 case .add:
                     Button {
-                        viewModel.themeSelectionModel.selectFirstthemeIfNeeded()
-                        sheetPresentMode = .bibleStudySheets(content: "")
+                        if viewModel.isSavingEnabled {
+                            viewModel.themeSelectionModel.selectFirstthemeIfNeeded()
+                            sheetPresentMode = .bibleStudySheets(content: "")
+                        } else {
+                            viewModel.showingSubscriptionsView.toggle()
+                        }
                     } label: {
                         Image(systemName: "plus")
                     }
                 case .change:
                     Button {
-                        Task {
-                            let text = viewModel.getLyricsString()
-                            sheetPresentMode = .bibleStudySheets(content: text)
+                        if viewModel.isSavingEnabled {
+                            Task {
+                                let text = viewModel.getLyricsString()
+                                sheetPresentMode = .bibleStudySheets(content: text)
+                            }
+                        } else {
+                            viewModel.showingSubscriptionsView.toggle()
                         }
                     } label: {
                         Text(AppText.Actions.change)
@@ -537,23 +552,31 @@ struct CollectionEditorViewUI: View {
             if viewModel.collectionType == .bibleStudy {
                 Section {
                     Button(AppText.Lyrics.titleBibleText) {
-                        viewModel.themeSelectionModel.selectFirstthemeIfNeeded()
-                        sheetPresentMode = .bibleStudySheets(content: "")
+                        if viewModel.isSavingEnabled {
+                            viewModel.themeSelectionModel.selectFirstthemeIfNeeded()
+                            sheetPresentMode = .bibleStudySheets(content: "")
+                        } else {
+                            viewModel.showingSubscriptionsView.toggle()
+                        }
                     }
                 }
             }
             Section {
                 ForEach(SheetType.all, id: \.rawValue) { type in
                     Button(type.name) {
-                        Task {
-                            do {
-                                let selectedSheetModel = try await type.sheetModel(with: viewModel.cluster)
-                                await MainActor.run {
-                                    self.selectedSheetModel = selectedSheetModel
+                        if viewModel.isSavingEnabled {
+                            Task {
+                                do {
+                                    let selectedSheetModel = try await type.sheetModel(with: viewModel.cluster)
+                                    await MainActor.run {
+                                        self.selectedSheetModel = selectedSheetModel
+                                    }
+                                } catch {
+                                    viewModel.error = error.forcedLocalizedError
                                 }
-                            } catch {
-                                viewModel.error = error.forcedLocalizedError
                             }
+                        } else {
+                            viewModel.showingSubscriptionsView.toggle()
                         }
                     }
                 }

@@ -68,6 +68,8 @@ import SwiftUI
     @Published var clusterTime: Int = 0
     @Published var error: LocalizedError?
     @Published var showingLoader = false
+    @Published var isSavingEnabled = true
+    @Published var showingSubscriptionsView = false
     @Published var instrumentsModel = InstrumentsModel()
 
     private var deletedSheets: [SheetViewModel] = []
@@ -289,7 +291,11 @@ import SwiftUI
             updatedCluster.hasSheets = codableSheets
             updatedCluster.hasInstruments = instrumentsModel.instruments.compactMap({ instrument in
                 if let resourcePath = instrument.resourcePath?.absoluteString {
-                    return InstrumentCodable(resourcePath: resourcePath)
+                    return InstrumentCodable(
+                        isLoop: instrument.instrumentType == .pianoSolo,
+                        resourcePath: resourcePath,
+                        typeString: instrument.instrumentType.rawValue
+                    )
                 }
                 return nil
             })
@@ -305,6 +311,10 @@ import SwiftUI
     func saveCluster() async -> Bool {
         var updatedCluster = cluster
         showingLoader = true
+        guard let user = await GetUserUseCase().get() else {
+            showingLoader = false
+            return false
+        }
         guard let selectedTheme = themeSelectionModel.selectedTheme else {
             error = Error.noThemeSelected
             showingLoader = false
@@ -325,11 +335,8 @@ import SwiftUI
                     codableSheets.append(createdSheet)
                 }
             }
-            
-            let church = await GetChurchUseCase().get()?.title ?? "De Deur Zwolle"
-            
+                        
             updatedCluster.title = title
-            updatedCluster.church = church
             updatedCluster.startTime = Double(clusterStartTime) ?? 0.0
             updatedCluster.time = showTimePickerScrollView ? Double(clusterTime) : 0
             updatedCluster.hasTags = tagsSelectionModel.selectedTags
@@ -352,8 +359,16 @@ import SwiftUI
             var deleteObjects: [DeleteObject] {
                 deletedSheets.compactMap { $0.sheetModel.sheet }.flatMap { $0.getDeleteObjects(forceDelete: true) }
             }
-            try await SubmitUseCase(endpoint: uploadSecret != nil ? .universalclusters : .clusters, requestMethod: isNew ? .post : .put, uploadObjects: [updatedCluster], deleteObjects: deleteObjects).submit()
             
+            if uploadSecret != nil {
+                updatedCluster.contentPackage = ContentPackage(contentPackage: user.contentPackage) ?? ContentPackage(contentPackage: user.contentPackageBabyChurchesMotherChurch) ?? .user
+            } else {
+                updatedCluster.contentPackage = ContentPackage.user
+            }
+            let endpoint = await GetCollectionsEndpointUseCase().get()
+
+            try await SubmitUseCase(endpoint: endpoint, requestMethod: isNew ? .post : .put, uploadObjects: [updatedCluster], deleteObjects: deleteObjects).submit()
+
             showingLoader = false
             return true
 
@@ -376,13 +391,19 @@ import SwiftUI
     func canMove(_ sheetModel: SheetViewModel) -> Bool {
         Double(sheetModel.sheetTime) ?? 0 > 0
     }
+
     func move(from source: IndexSet, to destination: Int) {
         sheets.move(fromOffsets: source, toOffset: destination)
         for (index, sheet) in sheets.enumerated() {
             sheet.sheetModel.position = index
         }
     }
-    
+
+    func checkSubscriptionsStatus() async {
+        let status = await GetActiveSubscriptionsUseCase().fetch()
+        isSavingEnabled = status != .none
+    }
+
     private func updateCustomSheets() async {
         do {
             cluster.theme = themeSelectionModel.selectedTheme

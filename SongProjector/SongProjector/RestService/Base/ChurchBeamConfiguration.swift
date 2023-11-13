@@ -14,10 +14,15 @@ import FirebaseAuth
 let ChurchBeamConfiguration = Config()
 
 class Config: NSObject {
-	
-	
+    
+    struct PublicKeys {
+        static let universalClusterVersionOLD = "universalClusterVersionOLD"
+        static let universalClusterVersionNEW = "universalClusterVersionNEW"
+    }
+    
 	fileprivate struct Keys {
 		
+        static let universalClusterVersion = "universalClusterVersion"
 		static let Environment = "config.environment"
 		static let BundleVersion = "CFBundleShortVersionString"
 		static let BuildTargetType = "BuildTargetType"
@@ -59,7 +64,7 @@ class Config: NSObject {
 		}
 		return nil
 	}()
-	
+    	
 	var environment: Environment {
 		get {
 			let int = UserDefaults.standard.integer(forKey: Keys.Environment)
@@ -124,7 +129,7 @@ enum Environment: Int, Identifiable {
     var cloudFunctionsEndpoint: String {
         switch self {
         case .dev: return "https://europe-west1-churchbeamtest.cloudfunctions.net/"
-        case .devLocalHost: return "http://localhost:5000/churchbeamtest/europe-west1/"
+        case .devLocalHost: return "http://127.0.0.1:5001/churchbeamtest/europe-west1/"
         case .production: return "https://europe-west1-churchbeam-7a169.cloudfunctions.net/"
         }
     }

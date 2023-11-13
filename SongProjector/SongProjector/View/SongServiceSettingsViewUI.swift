@@ -58,6 +58,7 @@ import SwiftUI
 
 struct SongServiceSettingsViewUI: View {
     
+    @Binding var selectedTab: Feature
     @StateObject private var viewModel = SongServiceSettingsViewModel()
     @State private var showingSongServiceSettingsEditorView: SongServiceSettingsCodable?
     @State private var showingNewSongServiceSettingsView = false
@@ -77,6 +78,9 @@ struct SongServiceSettingsViewUI: View {
                         }
                     }
                 }
+            .onAppear {
+                selectedTab = .songServiceManagement
+            }
             .blur(radius: viewModel.isLoading ? 5 : 0)
             .allowsHitTesting(!viewModel.isLoading)
             .overlay {
@@ -143,6 +147,6 @@ struct SongServiceSettingsViewUI: View {
 
 struct SongServiceSettingsViewUI_Previews: PreviewProvider {
     static var previews: some View {
-        SongServiceSettingsViewUI()
+        SongServiceSettingsViewUI(selectedTab: .constant(.songServiceManagement))
     }
 }

@@ -56,12 +56,6 @@ struct SongServiceSectionWithSongs: Identifiable {
 
 actor SongServiceGeneratorUseCase {
 
-    private let subscriptionsStore: SubscriptionsStore
-
-    init(subscriptionsStore: SubscriptionsStore) {
-        self.subscriptionsStore = subscriptionsStore
-    }
-
     private let line = "----------------"
     
     func generate(for songService: SongServiceSettingsCodable) async -> [SongServiceSectionWithSongs] {
@@ -92,7 +86,7 @@ actor SongServiceGeneratorUseCase {
     
     private func filterOn(_ tagIds: [String], to clustersForSection: inout [ClusterCodable]) async {
         let tags = await GetTagsUseCase().fetch(predicates: tagIds.map { .get(id: $0) }, sort: .position(asc: true), predicateCompoundPredicateType: .or)
-        clustersForSection = await FilteredCollectionsUseCase.getCollections(searchText: nil, showDeleted: false, selectedTags: tags, subscriptionStore: subscriptionsStore)
+        clustersForSection = await FilteredCollectionsUseCase.getCollections(searchText: nil, showDeleted: false, selectedTags: tags)
     }
     
     private func filterOnPlayDate(_ clustersForSection: inout [ClusterCodable], numberOfSongs: Int) {
@@ -126,7 +120,7 @@ actor SongServiceGeneratorUseCase {
             let unPinnedTagIds = section.tags .filter({ !$0.isPinned }).map { $0.id }
 
             repeat {
-                if let pinnedTag = pinnedTags.first(where: { $0.position == positionInSection }) {
+                if let pinnedTag = pinnedTags.first(where: { $0.positionInScheme == positionInSection }) {
                     if var cluster = clustersToPick.first(where: { $0.tagIds.contains(where: { pinnedTag.id == $0 }) }) {
                         cluster.position = position
                         clusterComments.append(.cluster(cluster))

@@ -121,19 +121,6 @@ class SubscriptionsManager: ObservableObject {
 
 @MainActor final class SubscriptionsStore: ObservableObject {
 
-    enum SubscriptionType: String {
-        case song, beam, none
-    }
-
-    var activeSubscription: SubscriptionType {
-        if activeTransactions.contains(where: { $0.productID == SubscriptionType.song.rawValue }) {
-            return .song
-        } else if activeTransactions.contains(where: { $0.productID == SubscriptionType.beam.rawValue }) {
-            return .beam
-        }
-        return .none
-    }
-
     @Published private(set) var products: [Product] = []
     @Published private(set) var activeTransactions: Set<StoreKit.Transaction> = []
 
@@ -156,7 +143,6 @@ class SubscriptionsManager: ObservableObject {
 
     func fetchProducts() async {
         let productIds = loadProductId()
-        let ids = productIds.map { $0.key }
         do {
             products = try await Product.products(for: ["song", "beam"])
         } catch {

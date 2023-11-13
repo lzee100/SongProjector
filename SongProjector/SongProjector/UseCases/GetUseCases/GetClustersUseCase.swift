@@ -26,7 +26,8 @@ actor GetClustersUseCase {
     {
 
         let request: NSFetchRequest<Cluster> = GetCoreDataRequestUseCase.get(predicates: predicates, sort: sort, predicateCompoundPredicateType: predicateCompoundPredicateType, fetchDeleted: fetchDeleted)
-        
+        let activities = await GetGoogleEventsUseCase().get()
+
         return await context.perform {
             do {
                 let result = try self.context.fetch(request)
@@ -38,12 +39,17 @@ actor GetClustersUseCase {
                     try self.getInstruments(with: $0.instrumentIds?.split(separator: ",").map(String.init) ?? []),
                     try self.getTags(with: $0.tagIds.split(separator: (",")).map(String.init))
                 )}
-                
-                let clusterCodables: [ClusterCodable] = clusterWithAllInfo.compactMap { info in
+
+                let clusterCodables: [ClusterCodable] = clusterWithAllInfo.compactMap{ info in
                     let (cluster, sheets, theme, instruments, tags) = info
                     var clusterCodable = ClusterCodable(managedObject: cluster)
-                    let sheetCodables = sheets.getSheets()
-                    
+                    var sheetCodables = sheets.getSheets().sorted(by: { $0.position < $1.position })
+                    if var sheet = sheetCodables.compactMap({ $0 as? SheetActivitiesCodable }).first {
+                        sheet.hasGoogleActivities = activities
+                        sheetCodables.remove(at: sheet.position)
+                        sheetCodables.insert(sheet, at: sheet.position)
+                    }
+
                     var themeCodable: ThemeCodable? {
                         if let theme {
                             return ThemeCodable(entity: theme)

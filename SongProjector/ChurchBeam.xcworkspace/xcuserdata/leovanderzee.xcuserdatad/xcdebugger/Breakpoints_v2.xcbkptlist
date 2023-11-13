@@ -32,8 +32,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "229"
             endingLineNumber = "229"
-            landmarkName = "init(editingSection:songServiceEditorModel:customSelectedSongsForSongService:customSelectionDelegate:mandatoryTags:)"
-            landmarkType = "7">
+            landmarkName = "CollectionsViewUI"
+            landmarkType = "14">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy

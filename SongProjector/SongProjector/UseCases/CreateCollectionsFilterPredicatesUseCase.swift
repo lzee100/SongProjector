@@ -10,9 +10,9 @@ import Foundation
 
 struct FilteredCollectionsUseCase {
     
-    static func getCollectionsIn(collections: [ClusterCodable], searchText: String?, selectedTags: [TagCodable], showDeleted: Bool, subscriptionsStore: SubscriptionsStore) async -> [ClusterCodable] {
+    static func getCollectionsIn(collections: [ClusterCodable], searchText: String?, selectedTags: [TagCodable], showDeleted: Bool) async -> [ClusterCodable] {
 
-        let subScriptionType = await subscriptionsStore.activeSubscription
+        let subScriptionType = await GetActiveSubscriptionsUseCase().fetch()
         var showDeleted = showDeleted
         var selectedTags = selectedTags
         if let index = selectedTags.firstIndex(where: { !$0.isDeletable && $0.title == AppText.Tags.deletedClusters }) {
@@ -52,21 +52,21 @@ struct FilteredCollectionsUseCase {
         case .song:
             return collecties
         case .beam:
-            return collecties.filter({ !$0.hasRemoteMusic })
+            return collecties.filter({ $0.isFree })
         case .none:
-            return Array(collections.prefix(3))
+            return Array(collecties.filter({ $0.isFree }).prefix(3))
         }
     }
     
-    static func getCollections(searchText: String?, showDeleted: Bool, selectedTags: [TagCodable], subscriptionStore: SubscriptionsStore) async -> [ClusterCodable] {
+    static func getCollections(searchText: String?, showDeleted: Bool, selectedTags: [TagCodable]) async -> [ClusterCodable] {
 
-        let subscriptionType = await subscriptionStore.activeSubscription
+        let subscriptionType = await GetActiveSubscriptionsUseCase().fetch()
         let predicates = predicatesFor(searchText: searchText, showDeleted: showDeleted, selectedTags: selectedTags, subscription: subscriptionType)
 
         return await GetClustersUseCase().fetch(predicates: predicates, fetchDeleted: showDeleted)
     }
     
-    private static func predicatesFor(searchText: String?, showDeleted: Bool, selectedTags: [TagCodable], subscription: SubscriptionsStore.SubscriptionType) -> [Predicate] {
+    private static func predicatesFor(searchText: String?, showDeleted: Bool, selectedTags: [TagCodable], subscription: GetActiveSubscriptionsUseCase.SubscriptionType) -> [Predicate] {
         let searchText = (searchText ?? "").lowercased()
         var predicates: [Predicate] = []
         filterOutClustersWithInstrumentsBasedOnContract(&predicates, subscription: subscription)
@@ -75,18 +75,12 @@ struct FilteredCollectionsUseCase {
         return predicates
     }
     
-    private static func filterOutClustersWithInstrumentsBasedOnContract(_ predicates: inout [Predicate], subscription: SubscriptionsStore.SubscriptionType) {
+    private static func filterOutClustersWithInstrumentsBasedOnContract(_ predicates: inout [Predicate], subscription: GetActiveSubscriptionsUseCase.SubscriptionType) {
         switch subscription {
         case .song:
             return // mag alles
         case .beam, .none:
-            var songPreds: [Predicate] = [] // mag geen gedownloade liedjes
-//            if !user.hasActiveSongContract {
-//                songPreds.append(.custom(format: "instrumentIds == nil"))
-//                songPreds.append(.customWithValue(format: "instrumentIds == %@", value: ""))
-//                let comp = Predicate.compound(predicates: songPreds, isOr: true)
-//                predicates.append(comp)
-//            }
+            predicates += [ContentPackage.freeContentPackagePredicates]
         }
     }
     
@@ -103,4 +97,13 @@ struct FilteredCollectionsUseCase {
         }
     }
     
+}
+
+fileprivate extension ContentPackage {
+    static var freeContentPackagePredicates: Predicate {
+        let predicates = ContentPackage.allCases.filter({ $0.isFree }).map({
+            Predicate.customWithValue(format: "contentPackage == %@", value: $0.rawValue)
+        })
+        return Predicate.compound(predicates: predicates, isOr: true)
+    }
 }

@@ -44,7 +44,7 @@ public struct ClusterCodable: EntityCodableType, Identifiable, Equatable {
         lastShownAt: Date? = nil,
         instrumentIds: String = "",
         sheetIds: [String] = [],
-        church: String? = nil,
+        contentPackage: ContentPackage = .user,
         startTime: Double = 0.0,
         hasSheetPastors: Bool = false,
         tagIds: [String] = [],
@@ -69,7 +69,7 @@ public struct ClusterCodable: EntityCodableType, Identifiable, Equatable {
         self.lastShownAt = lastShownAt
         self.instrumentIds = instrumentIds
         self.sheetIds = sheetIds
-        self.church = church
+        self.contentPackage = contentPackage
         self.startTime = startTime
         self.hasSheetPastors = hasSheetPastors
         self.tagIds = tagIds
@@ -97,12 +97,15 @@ public struct ClusterCodable: EntityCodableType, Identifiable, Equatable {
     var lastShownAt: Date? = nil
     var instrumentIds: String = ""
     var sheetIds: [String] = []
-    var church: String?
+    var contentPackage: ContentPackage?
     var startTime: Double = 0.0
     var hasSheetPastors = false
     var tagIds: [String] = []
     var showEmptySheetBibleText = true
-    
+    var isFree: Bool {
+        return [.pastorsZwolle, .user].contains(contentPackage)
+    }
+
     public var isTypeSong: Bool {
         if hasSheets.contains(where: { $0.theme?.isHidden ?? false }) {
             return false
@@ -147,7 +150,7 @@ public struct ClusterCodable: EntityCodableType, Identifiable, Equatable {
         case hasInstruments = "instruments"
         case tagids = "tagids"
         case lastShownAt
-        case church
+        case contentPackage
         case startTime
         case hasSheetPastors
         case showEmptySheetBibleText
@@ -165,7 +168,7 @@ public struct ClusterCodable: EntityCodableType, Identifiable, Equatable {
         if let lastShownAt = lastShownAt {
             try container.encode(lastShownAt.intValue, forKey: .lastShownAt)
         }
-        try container.encode(church, forKey: .church)
+        try container.encode(contentPackage?.rawValue, forKey: .contentPackage)
         try container.encode(tagIds.joined(separator: ","), forKey: .tagids)
         try container.encode(String(startTime), forKey: .startTime)
         try container.encode(Int(truncating: NSNumber(value: hasSheetPastors)), forKey: .hasSheetPastors)
@@ -209,14 +212,13 @@ public struct ClusterCodable: EntityCodableType, Identifiable, Equatable {
         themeId = entity.themeId
         lastShownAt = entity.lastShownAt as Date?
         instrumentIds = entity.instrumentIds ?? ""
-        church = entity.church
+        contentPackage = ContentPackage(contentPackage: entity.contentPackage) ?? .user
         startTime = entity.startTime
         hasSheetPastors = entity.hasSheetPastors
         
         sheetIds = entity.sheetIds.split(separator: ",").compactMap({ String($0) })
         tagIds = entity.tagIds.split(separator: ",").compactMap({ String($0) })
         instrumentIds = entity.instrumentIds ?? ""
-        church = entity.church
         startTime = entity.startTime
         showEmptySheetBibleText = entity.showEmptySheetBibleText
     }
@@ -235,7 +237,8 @@ public struct ClusterCodable: EntityCodableType, Identifiable, Equatable {
         if let lastShownAtInt = try container.decodeIfPresent(Int.self, forKey: .lastShownAt) {
             lastShownAt = Date(timeIntervalSince1970: TimeInterval(lastShownAtInt / 1000))
         }
-        church = try container.decodeIfPresent(String.self, forKey: .church)
+        let contentPackage = try container.decodeIfPresent(String.self, forKey: .contentPackage)
+        self.contentPackage = ContentPackage(contentPackage: contentPackage) ?? .user
         let startTimeString = try container.decodeIfPresent(String.self, forKey: .startTime)
         startTime = Double(startTimeString ?? "0") ?? 0
         let tempTagIds = try (container.decodeIfPresent(String.self, forKey: .tagids) ?? "")

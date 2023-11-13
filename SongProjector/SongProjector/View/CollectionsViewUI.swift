@@ -7,9 +7,9 @@
 //
 
 import SwiftUI
+import UIKit
 
 @MainActor class MusicDownloadManager: ObservableObject {
-    
     @Published private(set) var musicDownloaders: [FetchMusicUseCase] = []
     
     func downloadMusicFor(collection: ClusterCodable) async throws {
@@ -23,11 +23,9 @@ import SwiftUI
     func isDownloading(for collection: ClusterCodable) async -> Bool {
         musicDownloaders.contains(where: { $0.id == collection.id })
     }
-
 }
 
 @MainActor class CollectionsViewModel: ObservableObject {
-    
     @Published var searchText: String = ""
     
     @Published var error: LocalizedError?
@@ -35,10 +33,12 @@ import SwiftUI
     @Published private(set) var collections: [ClusterCodable] = []
     private var unfilteredCollections: [ClusterCodable] = []
     @Published private(set) var showingLoader = false
-    @ObservedObject var tagSelectionModel: TagSelectionModel = TagSelectionModel(mandatoryTags: [])
-    @ObservedObject var subscriptionStore: SubscriptionsStore
+    @ObservedObject var tagSelectionModel: TagSelectionModel = .init(mandatoryTags: [])
     private let customSelectionDelegate: CollectionsViewCustomSelectionDelegate?
     @Published private var customSelectedSongsForSongService: [ClusterCodable] = []
+    @Published var showSubscriptionsBar = false
+    @Published var showSubscriptionsView = false
+
     var hasCustomSelectedSongsForSongService: Bool {
         return customSelectionDelegate != nil
     }
@@ -46,30 +46,28 @@ import SwiftUI
     init(
         tagSelectionModel: TagSelectionModel,
         customSelectedSongsForSongService: [ClusterCodable],
-        customSelectionDelegate: CollectionsViewCustomSelectionDelegate?,
-        subscriptionStore: SubscriptionsStore
+        customSelectionDelegate: CollectionsViewCustomSelectionDelegate?
     ) {
         self.tagSelectionModel = tagSelectionModel
         self.customSelectedSongsForSongService = customSelectedSongsForSongService
         self.customSelectionDelegate = customSelectionDelegate
-        self.subscriptionStore = subscriptionStore
     }
     
     func fetchCollections(searchText: String? = nil) async {
         let searchText = searchText?.isBlanc ?? true ? self.searchText.isBlanc ? nil : self.searchText : searchText
         self.searchText = searchText ?? ""
         if unfilteredCollections.count > 0 {
-            collections = await FilteredCollectionsUseCase.getCollectionsIn(collections: unfilteredCollections, searchText: searchText, selectedTags: (tagSelectionModel.selectedTags + tagSelectionModel.mandatoryTags).unique, showDeleted: showDeletedCollections, subscriptionsStore: subscriptionStore)
+            collections = await FilteredCollectionsUseCase.getCollectionsIn(collections: unfilteredCollections, searchText: searchText, selectedTags: (tagSelectionModel.selectedTags + tagSelectionModel.mandatoryTags).unique, showDeleted: showDeletedCollections)
             return
         }
-        collections = await FilteredCollectionsUseCase.getCollections(searchText: searchText, showDeleted: showDeletedCollections, selectedTags: (tagSelectionModel.selectedTags +  tagSelectionModel.mandatoryTags).unique, subscriptionStore: subscriptionStore)
+        collections = await FilteredCollectionsUseCase.getCollections(searchText: searchText, showDeleted: showDeletedCollections, selectedTags: (tagSelectionModel.selectedTags + tagSelectionModel.mandatoryTags).unique)
     }
     
     func reload() async {
         let searchText = self.searchText.isBlanc ? nil : self.searchText
-        unfilteredCollections = await FilteredCollectionsUseCase.getCollections(searchText: nil, showDeleted: true, selectedTags: [], subscriptionStore: subscriptionStore)
+        unfilteredCollections = await FilteredCollectionsUseCase.getCollections(searchText: nil, showDeleted: true, selectedTags: [])
 
-        collections = await FilteredCollectionsUseCase.getCollectionsIn(collections: unfilteredCollections, searchText: searchText, selectedTags: (tagSelectionModel.selectedTags +  tagSelectionModel.mandatoryTags).unique, showDeleted: showDeletedCollections, subscriptionsStore: subscriptionStore)
+        collections = await FilteredCollectionsUseCase.getCollectionsIn(collections: unfilteredCollections, searchText: searchText, selectedTags: (tagSelectionModel.selectedTags + tagSelectionModel.mandatoryTags).unique, showDeleted: showDeletedCollections)
     }
     
     func fetchRemoteTags() async {
@@ -95,7 +93,7 @@ import SwiftUI
                 await fetchRemoteThemes()
             }
         } catch {
-            self.showingLoader = false
+            showingLoader = false
             self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
         }
     }
@@ -129,7 +127,7 @@ import SwiftUI
             showingLoader = false
         }
     }
-        
+    
     func restore(_ collection: ClusterCodable) async {
         showingLoader = true
         var collection = collection
@@ -137,15 +135,16 @@ import SwiftUI
         if uploadSecret == nil {
             collection.rootDeleteDate = nil
         }
+        let endpoint = await GetCollectionsEndpointUseCase().get()
+
         do {
-            try await SubmitUseCase(endpoint: .clusters, requestMethod: .put, uploadObjects: [collection]).submit()
+            try await SubmitUseCase(endpoint: endpoint, requestMethod: .put, uploadObjects: [collection]).submit()
             await reload()
             showingLoader = false
         } catch {
             showingLoader = false
             self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
         }
-        
     }
     
     func delete(_ collection: ClusterCodable) async {
@@ -155,8 +154,11 @@ import SwiftUI
         if uploadSecret != nil {
             collection.rootDeleteDate = Date()
         }
+        
+        let endpoint = await GetCollectionsEndpointUseCase().get()
+        
         do {
-            try await SubmitUseCase(endpoint: uploadSecret == nil ? .clusters : .universalclusters, requestMethod: .delete, uploadObjects: [collection]).submit()
+            try await SubmitUseCase(endpoint: endpoint, requestMethod: .delete, uploadObjects: [collection]).submit()
             await reload()
             showingLoader = false
         } catch {
@@ -180,13 +182,18 @@ import SwiftUI
     func didSelectFinishCustomSelectionSongsForSongService() {
         customSelectionDelegate?.didFinishCustomSelection(collections: customSelectedSongsForSongService)
     }
+
+    func fetchSubscriptionsStatus() async {
+        let subscriptions = await GetActiveSubscriptionsUseCase().fetch()
+        showSubscriptionsBar = [.beam, .none].contains(subscriptions)
+    }
 }
 
-protocol CollectionsViewCustomSelectionDelegate{
+protocol CollectionsViewCustomSelectionDelegate {
     func didFinishCustomSelection(collections: [ClusterCodable])
 }
+
 struct CollectionsViewUI: View {
-    
     enum CollectionEditor: Identifiable {
         case new(type: CollectionEditorViewModel.CollectionType)
         case existing(ClusterCodable)
@@ -206,6 +213,7 @@ struct CollectionsViewUI: View {
             case .deleteMusic: return UUID().uuidString
             }
         }
+
         case delete(ClusterCodable)
         case deleteMusic(ClusterCodable)
         
@@ -226,6 +234,7 @@ struct CollectionsViewUI: View {
     @State var showingTrailingButtonAlertMessage = false
     @EnvironmentObject var musicDownloadManager: MusicDownloadManager
 
+    @State private var googleEventsFetcher = GoogleEventsFetcher()
     @State private var selectedCollectionForTrailingActions: ClusterCodable? = nil
     @SwiftUI.Environment(\.colorScheme) var colorScheme
 
@@ -234,8 +243,7 @@ struct CollectionsViewUI: View {
         songServiceEditorModel: SongServiceEditorModel,
         customSelectedSongsForSongService: [ClusterCodable] = [],
         customSelectionDelegate: CollectionsViewCustomSelectionDelegate? = nil,
-        mandatoryTags: [TagCodable],
-        subscriptionStore: SubscriptionsStore
+        mandatoryTags: [TagCodable]
     ) {
         self._editingSection = editingSection
         self.songServiceEditorModel = songServiceEditorModel
@@ -244,8 +252,7 @@ struct CollectionsViewUI: View {
         self._viewModel = StateObject(wrappedValue: CollectionsViewModel(
             tagSelectionModel: model,
             customSelectedSongsForSongService: customSelectedSongsForSongService,
-            customSelectionDelegate: customSelectionDelegate,
-            subscriptionStore: subscriptionStore
+            customSelectionDelegate: customSelectionDelegate
         ))
     }
     
@@ -264,7 +271,27 @@ struct CollectionsViewUI: View {
                     }
                 }
                 .padding()
-                
+
+                if viewModel.showSubscriptionsBar {
+                    VStack {
+                        Text("Songs-subscriptionsBarMessage")
+                            .textCase(.uppercase)
+                            .styleAs(font: .small, color: .gray)
+                        Button {
+                            viewModel.showSubscriptionsView.toggle()
+                        } label: {
+                            HStack {
+                                Spacer()
+                                Text("Songs-button-subscriptionsBarMessage")
+                                    .styleAs(font: .xNormal, color: Color(uiColor: themeHighlighted))
+                                Spacer()
+                            }
+                        }
+                        .buttonStyle(.borderless)
+                    }
+                    .padding([.top, .leading, .trailing])
+                }
+
                 List {
                     ForEach(viewModel.collections, id: \.listViewID) { collection in
                         Button {
@@ -281,7 +308,7 @@ struct CollectionsViewUI: View {
                                 collectionsViewModel: viewModel,
                                 collection: collection,
                                 isSelectable: songServiceEditorModel.isInUsage,
-                                isSelected: (editingSection?.selectedCollectionIds.contains(where: { $0 == collection.id }) ?? false) ||  viewModel.isCustomSelectionSelected(collection)
+                                isSelected: (editingSection?.selectedCollectionIds.contains(where: { $0 == collection.id }) ?? false) || viewModel.isCustomSelectionSelected(collection)
                             )
                             .frame(minHeight: 50)
                         }
@@ -313,7 +340,7 @@ struct CollectionsViewUI: View {
                             viewModel.didSelectFinishCustomSelectionSongsForSongService()
                         } label: {
                             Text(AppText.Actions.done)
-                            .tint(Color(uiColor: themeHighlighted))
+                                .tint(Color(uiColor: themeHighlighted))
                         }
                     }
                     if editingSection != nil {
@@ -321,18 +348,24 @@ struct CollectionsViewUI: View {
                             editingSection = nil
                         } label: {
                             Text(AppText.Actions.cancel)
-                            .tint(Color(uiColor: themeHighlighted))
+                                .tint(Color(uiColor: themeHighlighted))
                         }
                     }
                 }
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    
                     ProgressView()
                         .tint(Color(uiColor: .blackColor).opacity(0.8))
                         .opacity(viewModel.showingLoader ? 1 : 0)
-                    
-                   menu
-
+                    if viewModel.showSubscriptionsBar {
+                        Button {
+                            viewModel.showSubscriptionsView.toggle()
+                        } label: {
+                            Image(systemName: "plus")
+                                .tint(Color(uiColor: themeHighlighted))
+                        }
+                    } else {
+                        menu
+                    }
                 }
             }
             .background(Color(uiColor: colorScheme == .dark ? .black : .systemGray6))
@@ -350,23 +383,32 @@ struct CollectionsViewUI: View {
                     CollectionEditorViewUI(cluster: cluster, collectionType: cluster.collectionType, showingCollectionEditor: $showingCollectionEditor)
                 }
             })
+            .sheet(isPresented: $viewModel.showSubscriptionsView) {
+                SubscriptionsViewUI(subscriptionsStore: SubscriptionsStore())
+            }
         }
         .task {
+            await viewModel.fetchSubscriptionsStatus()
             await viewModel.fetchRemoteTags()
             await viewModel.fetchRemoteThemes()
             await viewModel.fetchRemoteCollections()
+            do {
+                try await googleEventsFetcher.fetch()
+            } catch {
+                print(error)
+            }
         }
         .onChange(of: viewModel.searchText, perform: { searchText in
             Task(priority: .high) {
                 await viewModel.fetchCollections(searchText: searchText)
             }
         })
-        .onChange(of: viewModel.tagSelectionModel.selectedTags, perform: { selectedTags in
+        .onChange(of: viewModel.tagSelectionModel.selectedTags, perform: { _ in
             Task(priority: .high) {
                 await viewModel.fetchCollections()
             }
         })
-        .onChange(of: viewModel.showDeletedCollections, perform: { showDeletedCollections in
+        .onChange(of: viewModel.showDeletedCollections, perform: { _ in
             Task(priority: .high) {
                 await viewModel.fetchCollections()
             }
@@ -379,9 +421,9 @@ struct CollectionsViewUI: View {
                     case .deleteMusic(let collection): await viewModel.deleteMusicFor(collection)
                     }
                 }
-            }), secondaryButton: Alert.Button.cancel({
+            }), secondaryButton: Alert.Button.cancel {
                 alertMessage = nil
-            }))
+            })
         })
         .onReceive(musicDownloadManager.$musicDownloaders) { _ in
             Task {
@@ -442,14 +484,13 @@ struct CollectionsViewUI: View {
                 .tint(Color(uiColor: themeHighlighted))
         }
     }
-    
 }
 
-fileprivate extension ClusterCodable {
+private extension ClusterCodable {
     var collectionType: CollectionEditorViewModel.CollectionType {
-        if self.isTypeSong {
+        if isTypeSong {
             return .lyrics
-        } else if self.hasBibleVerses {
+        } else if hasBibleVerses {
             return .bibleStudy
         }
         return .custom
