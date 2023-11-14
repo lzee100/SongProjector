@@ -12,8 +12,6 @@ import CoreData
 
 public class Tag: Entity {
 	
-    @NSManaged public var positionInScheme: Int16
-    @NSManaged public var isPinned: Bool
 	@NSManaged public var position: Int16
     @NSManaged public var isDeletable: Bool
 	@NSManaged public var hasSongServiceSections: NSSet?

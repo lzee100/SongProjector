@@ -64,7 +64,7 @@ struct CollectionEditorViewUI: View {
         showingCollectionEditor: Binding<CollectionsViewUI.CollectionEditor?>
     ) {
         let themesSelectionModel = ThemesSelectionModel(selectedTheme: cluster?.theme)
-        let tagsSelectionModel = TagSelectionModel(mandatoryTags: [], selectedTags: cluster?.hasTags ?? [])
+        let tagsSelectionModel = TagSelectionModel(mandatoryTagIds: [], selectedTags: cluster?.hasTags ?? [])
         guard let viewModel = CollectionEditorViewModel(cluster: cluster, themeSelectionModel: themesSelectionModel, tagsSelectionModel: tagsSelectionModel, collectionType: collectionType) else {
             return nil
         }
@@ -211,10 +211,10 @@ struct CollectionEditorViewUI: View {
         }, content: {
             DocumentPickerViewUI(fileURL: $viewModel.instrumentsModel.instruments[selectedInstrumentIndex].resourcePath, showingDocumentPicker: $showingDocumentPicker)
         })
-        .onChange(of: viewModel.themeSelectionModel.selectedTheme, perform: { _ in
+        .onChange(of: viewModel.themeSelectionModel.selectedTheme, { _, _ in
             viewModel.updateSheets(sheetSize: sheetSizeClass.sheetSize)
         })
-        .onChange(of: viewModel.lyricsOrBibleStudyText) { text in
+        .onChange(of: viewModel.lyricsOrBibleStudyText, { _, text in
             if viewModel.collectionType == .bibleStudy {
                 Task {
                     await viewModel.bibleStudyTextDidChange(
@@ -228,8 +228,8 @@ struct CollectionEditorViewUI: View {
                     await viewModel.lyricsTextDidChange(screenWidth: sheetSizeClass.sheetSize.width)
                 }
             }
-        }
-        .onChange(of: viewModel.cluster.showEmptySheetBibleText, perform: { _ in
+        })
+        .onChange(of: viewModel.cluster.showEmptySheetBibleText, { _, _ in
             Task {
                 await viewModel.bibleStudyTextDidChange(lyricsOrBibleStudytext: viewModel.lyricsOrBibleStudyText, updateExistingSheets: false, parentViewSize: sheetSizeClass.sheetSize)
             }

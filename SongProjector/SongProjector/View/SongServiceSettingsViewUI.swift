@@ -35,9 +35,7 @@ import SwiftUI
 
     func fetchSettings() async {
         let settings = await GetSongServiceSettingsUseCase().fetch()
-        print(settings)
         songServiceSettings = settings
-//        songServiceSettings = await GetSongServiceSettingsUseCase().fetch()
     }
     
     func fetchRemoteSettings() async {
@@ -109,10 +107,7 @@ struct SongServiceSettingsViewUI: View {
                     await viewModel.fetchSettings()
                 }
             }, content: { settings in
-                SongServiceSettingsEditorViewUI(
-                    showingSongServiceSettings: $showingSongServiceSettingsEditorView,
-                    viewModel: SongServiceSettingsEditorViewModel(songServiceSettings: settings)
-                )
+                SongServiceSettingsEditorViewUI2(songServiceSettings: WrappedStruct(withItem: settings))
             })
         }
     }

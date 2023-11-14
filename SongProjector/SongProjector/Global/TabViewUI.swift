@@ -25,7 +25,7 @@ struct TabViewUI: View {
                     tabView(CollectionsViewUI(
                         editingSection: Binding.constant(nil),
                         songServiceEditorModel: SongServiceEditorModel(),
-                        mandatoryTags: []).environmentObject(musicDownloadManager), feature: feature)
+                        mandatoryTagIds: []).environmentObject(musicDownloadManager), feature: feature)
                 case .themes:
                     tabView(ThemesViewUI(), feature: feature)
                 case .tags:

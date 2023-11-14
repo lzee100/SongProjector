@@ -11,9 +11,9 @@ import FirebaseAuth
 import CoreData
 import CoreData
 
-public struct SongServiceSectionCodable: EntityCodableType, Codable, Identifiable {
+public struct SongServiceSectionCodable: EntityCodableType, Codable, Identifiable, Equatable {
     
-    static func makeDefault(title: String, position: Int, numberOfSongs: Int, tags: [TagCodable]) -> SongServiceSectionCodable? {
+    static func makeDefault(title: String, position: Int, numberOfSongs: Int, tags: [TagInSchemeCodable]) -> SongServiceSectionCodable? {
 #if DEBUG
         let userId = "userid"
 #else
@@ -37,7 +37,7 @@ public struct SongServiceSectionCodable: EntityCodableType, Codable, Identifiabl
     var position: Int16 = 0
     var numberOfSongs: Int16 = 0
     var tagIds: [String] = []
-    var tags: [TagCodable] = []
+    var tags: [TagInSchemeCodable] = []
 
     enum CodingKeys: String, CodingKey
     {
@@ -65,7 +65,7 @@ public struct SongServiceSectionCodable: EntityCodableType, Codable, Identifiabl
         rootDeleteDate: Date? = nil,
         position: Int,
         numberOfSongs: Int,
-        tags: [TagCodable]
+        tags: [TagInSchemeCodable]
     ) {
         self.id = id
         self.userUID = userUID
@@ -78,6 +78,7 @@ public struct SongServiceSectionCodable: EntityCodableType, Codable, Identifiabl
         self.position = Int16(position)
         self.numberOfSongs = Int16(numberOfSongs)
         self.tags = tags
+        self.tagIds = tags.compactMap { $0.id }
     }
     
     init(entity: SongServiceSection) {
@@ -121,7 +122,7 @@ public struct SongServiceSectionCodable: EntityCodableType, Codable, Identifiabl
         
         position = try container.decode(Int16.self, forKey: .position)
         numberOfSongs = try container.decode(Int16.self, forKey: .numberOfSongs)
-        tags = try container.decodeIfPresent([TagCodable].self, forKey: .tags) ?? []
+        tags = try container.decodeIfPresent([TagInSchemeCodable].self, forKey: .tags) ?? []
         tagIds = tags.compactMap({ $0.id })
     }
     

@@ -299,8 +299,14 @@ class AppText: NSObject {
         static func errorInSections(_ sections: [Int]) -> String {
             return String(format: NSLocalizedString("SongServiceManagement-errorInSections", comment: ""),  sections.compactMap { String($0)}.joined(separator: ", "))
         }
-        static func errorInSection(_ section: Int) -> String {
-            return String(format: NSLocalizedString("SongServiceManagement-errorInSections", comment: ""),  String(section))
+        static func tagError(sectionIndex: Int, sectionName: String ) -> String {
+            return String(format: NSLocalizedString("SongServiceManagement-error-tag", comment: ""), sectionIndex.stringValue, sectionName )
+        }
+        static func titleError(sectionIndex: Int) -> String {
+            return String(format: NSLocalizedString("SongServiceManagement-error-title", comment: ""), sectionIndex.stringValue )
+        }
+        static func numberOfSongsError(sectionIndex: Int, sectionName: String ) -> String {
+            return String(format: NSLocalizedString("SongServiceManagement-errornumberOfSongstag", comment: ""), sectionIndex.stringValue, sectionName )
         }
 	}
 	

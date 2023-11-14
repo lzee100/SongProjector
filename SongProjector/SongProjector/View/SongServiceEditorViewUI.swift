@@ -200,7 +200,7 @@ struct SongServiceEditorViewUI: View {
                     songServiceEditorModel: viewModel,
                     customSelectedSongsForSongService: viewModel.customSelectedSongs,
                     customSelectionDelegate: self,
-                    mandatoryTags: []
+                    mandatoryTagIds: []
                 )
             })
             .sheet(item: $editingSection) { editingSection in
@@ -209,7 +209,7 @@ struct SongServiceEditorViewUI: View {
                     CollectionsViewUI(
                         editingSection: $editingSection,
                         songServiceEditorModel: viewModel,
-                        mandatoryTags: mandatoryTags
+                        mandatoryTagIds: mandatoryTags.map({ $0.rootTagId })
                     )
                 }
             }

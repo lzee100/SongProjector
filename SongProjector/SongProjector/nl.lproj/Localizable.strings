@@ -173,6 +173,7 @@
 "Tags-deletedClusters" = "Verwijderde items";
 "Tags-errorEmptyTitle" = "De titel mag niet leeg zijn";
 "Tags-editTag" = "Wijzig tag";
+"Tags-SelectTags" = "Selecteer tags";
 
 "CustomSheets-CollectionType-Lyrics" = "Liedtekst dia's";
 "CustomSheets-CollectionType-BibleSheets" = "Bijbeltekst dia's";
@@ -214,6 +215,10 @@
 "SongServiceManagement-errorAddASection" = "Voeg een sectie toe aan het schema";
 "SongServiceManagement-errorInSections" = "Voeg een titel en ten minste 1 tag toe aan de volgende secties: %$";
 "SongServiceManagement-errorInSection" = "Voeg een titel en ten minste 1 tag toe aan deze sectie: %$";
+"SongServiceManagement-error-tag" = "Je hebt nog geen tags geselecteerd in sectie %@: %@";
+"SongServiceManagement-error-title" = "Je hebt nog geen titel voor sectie %@";
+"SongServiceManagement-error-numberOfSongs" = "Je hebt een verkeerd aantal liedjes in sectie %@: %@";
+
 
 "Settings-title" = "Instellingen";
 "Settings-descriptionGoogleSub" = "Login om activiteiten op te halen";

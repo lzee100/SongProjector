@@ -7,9 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8639B4342B02B12400F3EC05 /* TagInSchemeCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8639B4332B02B12300F3EC05 /* TagInSchemeCodable.swift */; };
 		864794E02AAA201A0040CB91 /* ProgressControllerUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 864794DF2AAA201A0040CB91 /* ProgressControllerUI.swift */; };
 		864794E22AAA20510040CB91 /* GetNewTagPositionUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 864794E12AAA20510040CB91 /* GetNewTagPositionUseCase.swift */; };
 		865973A62AF93F9200B33E7D /* SaveGoogleActivitiesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 865973A52AF93F9200B33E7D /* SaveGoogleActivitiesUseCase.swift */; };
+		86D6D8352B02B2E600BBA498 /* GetTagInSchemeUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86D6D8342B02B2E600BBA498 /* GetTagInSchemeUseCase.swift */; };
+		86D6D8372B02B35000BBA498 /* SaveTagInSchemeUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86D6D8362B02B35000BBA498 /* SaveTagInSchemeUseCase.swift */; };
+		86D6D8392B02B95D00BBA498 /* GetAllTagInSchemeUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86D6D8382B02B95D00BBA498 /* GetAllTagInSchemeUseCase.swift */; };
+		86D6D83B2B02BB1100BBA498 /* SongServiceSettingsEditorViewUI2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86D6D83A2B02BB1100BBA498 /* SongServiceSettingsEditorViewUI2.swift */; };
 		86EE3B912AF4651C001F733B /* GoogleAPIClientForRESTCore in Frameworks */ = {isa = PBXBuildFile; productRef = 86EE3B902AF4651C001F733B /* GoogleAPIClientForRESTCore */; };
 		86EE3B932AF4651C001F733B /* GoogleAPIClientForREST_ACMEDNS in Frameworks */ = {isa = PBXBuildFile; productRef = 86EE3B922AF4651C001F733B /* GoogleAPIClientForREST_ACMEDNS */; };
 		86EE3B952AF4651C001F733B /* GoogleAPIClientForREST_AIPlatformNotebooks in Frameworks */ = {isa = PBXBuildFile; productRef = 86EE3B942AF4651C001F733B /* GoogleAPIClientForREST_AIPlatformNotebooks */; };
@@ -757,9 +762,15 @@
 /* Begin PBXFileReference section */
 		346D1C5C5532C9E10C448104 /* Pods-SongProjector.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SongProjector.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SongProjector/Pods-SongProjector.debug.xcconfig"; sourceTree = "<group>"; };
 		8300EFE78A26AC2834037C54 /* Pods-SongProjector.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SongProjector.release.xcconfig"; path = "Pods/Target Support Files/Pods-SongProjector/Pods-SongProjector.release.xcconfig"; sourceTree = "<group>"; };
+		8639B4322B02AEE900F3EC05 /* SongProjector 4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "SongProjector 4.xcdatamodel"; sourceTree = "<group>"; };
+		8639B4332B02B12300F3EC05 /* TagInSchemeCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagInSchemeCodable.swift; sourceTree = "<group>"; };
 		864794DF2AAA201A0040CB91 /* ProgressControllerUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressControllerUI.swift; sourceTree = "<group>"; };
 		864794E12AAA20510040CB91 /* GetNewTagPositionUseCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetNewTagPositionUseCase.swift; sourceTree = "<group>"; };
 		865973A52AF93F9200B33E7D /* SaveGoogleActivitiesUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveGoogleActivitiesUseCase.swift; sourceTree = "<group>"; };
+		86D6D8342B02B2E600BBA498 /* GetTagInSchemeUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetTagInSchemeUseCase.swift; sourceTree = "<group>"; };
+		86D6D8362B02B35000BBA498 /* SaveTagInSchemeUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveTagInSchemeUseCase.swift; sourceTree = "<group>"; };
+		86D6D8382B02B95D00BBA498 /* GetAllTagInSchemeUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetAllTagInSchemeUseCase.swift; sourceTree = "<group>"; };
+		86D6D83A2B02BB1100BBA498 /* SongServiceSettingsEditorViewUI2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongServiceSettingsEditorViewUI2.swift; sourceTree = "<group>"; };
 		86EE3D4C2AF46662001F733B /* GetGoogleEventsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetGoogleEventsUseCase.swift; sourceTree = "<group>"; };
 		95070415C3C6BD5B7639F73A /* Pods_SongProjector.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SongProjector.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3125F072921A359009E8E56 /* PianoSoloButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PianoSoloButtonView.swift; sourceTree = "<group>"; };
@@ -1574,6 +1585,7 @@
 				B37EFE8A2936C003005F7D4F /* OrganisatieCodable.swift */,
 				B37EFE8C2936C0BB005F7D4F /* ContractLedgerCodable.swift */,
 				B37EFE8E2937489D005F7D4F /* TagCodable.swift */,
+				8639B4332B02B12300F3EC05 /* TagInSchemeCodable.swift */,
 				B37EFE9029374937005F7D4F /* SongServiceSettingsCodable.swift */,
 				B37EFE9229374948005F7D4F /* SongServiceSectionCodable.swift */,
 				B37EFE9429374958005F7D4F /* UserCodable.swift */,
@@ -2044,6 +2056,7 @@
 				E37FFCA02A22CCE2005DD5BF /* SaveThemeUseCase.swift */,
 				E37FFC962A22BE20005DD5BF /* SaveInstrumentsUseCase.swift */,
 				E37FFCA22A22CD86005DD5BF /* SaveTagsUseCase.swift */,
+				86D6D8362B02B35000BBA498 /* SaveTagInSchemeUseCase.swift */,
 				E37FFCA42A22CED1005DD5BF /* SaveUsersUseCase.swift */,
 				E37FFCA62A22CF61005DD5BF /* SaveSongServiceSettingsUseCase.swift */,
 				E37FFCAA2A22D152005DD5BF /* SaveChurchUseCase.swift */,
@@ -2118,8 +2131,10 @@
 				E37FFCB82A22D9B9005DD5BF /* GetSheetsUseCase.swift */,
 				E37FFC9C2A22CB30005DD5BF /* GetThemeUseCase.swift */,
 				E37FFCA82A22D067005DD5BF /* GetTagEntitiesUseCase.swift */,
+				86D6D8342B02B2E600BBA498 /* GetTagInSchemeUseCase.swift */,
 				E37FFCBD2A23E9AA005DD5BF /* GetSongServiceSettingsUseCase.swift */,
 				E37FFCBF2A23F49C005DD5BF /* GetTagsUseCase.swift */,
+				86D6D8382B02B95D00BBA498 /* GetAllTagInSchemeUseCase.swift */,
 				E37FFCC12A23F5D8005DD5BF /* GetThemesUseCase.swift */,
 				E37FFCC32A23FD1A005DD5BF /* GetLastUpdatedAtUseCase.swift */,
 				E34C72852A24A5F400A8D557 /* GetUserUseCase.swift */,
@@ -2279,6 +2294,7 @@
 			children = (
 				E3B6839D2A5A10E8007E6859 /* Components */,
 				E34B57012A152AA1004DF83D /* SongServiceSettingsEditorViewUI.swift */,
+				86D6D83A2B02BB1100BBA498 /* SongServiceSettingsEditorViewUI2.swift */,
 				E3B683452A536225007E6859 /* TagSelectionListForSectionViewUI.swift */,
 			);
 			path = SongServiceSettingsEditor;
@@ -2915,6 +2931,7 @@
 				E35E7CFC23BA33E00071DCC8 /* VOrganization.swift in Sources */,
 				E39944612A0D25E40018EE38 /* SongServiceGeneratorUseCase.swift in Sources */,
 				B37EFEC2294BC76D005F7D4F /* CreateEditThemeSheetViewController.swift in Sources */,
+				86D6D8392B02B95D00BBA498 /* GetAllTagInSchemeUseCase.swift in Sources */,
 				B37F43E428C66EF4007970DD /* InstrumentView.swift in Sources */,
 				E34B57072A161CC2004DF83D /* FetchSongServiceSettingsUseCase.swift in Sources */,
 				E3F99646201209F100634C5E /* LabelNumberPickerCell.swift in Sources */,
@@ -3003,9 +3020,11 @@
 				E3CB6854200635D600F007B2 /* LoadingViewController.swift in Sources */,
 				E330A06429F719DC00E227AD /* CollectionEditorViewUI.swift in Sources */,
 				E351AB822A30A90800163A46 /* SheetTimesEditViewUI.swift in Sources */,
+				86D6D83B2B02BB1100BBA498 /* SongServiceSettingsEditorViewUI2.swift in Sources */,
 				B37EFE8D2936C0BB005F7D4F /* ContractLedgerCodable.swift in Sources */,
 				B37EFE7D2936B80C005F7D4F /* SheetPastorsCodable.swift in Sources */,
 				E31114862206460C007C7A61 /* ChurchBeamTableViewController.swift in Sources */,
+				8639B4342B02B12400F3EC05 /* TagInSchemeCodable.swift in Sources */,
 				E3C63DE52540C734006AB94B /* DoubleExtensions.swift in Sources */,
 				E3CF0BDC248C11D40032007E /* ClusterSubmitter.swift in Sources */,
 				E3F4A15C24BCC81C004E6B08 /* SongServicePlayDateSubmitter.swift in Sources */,
@@ -3056,6 +3075,7 @@
 				E334B10121ED02870088CD48 /* SheetTitleContentEntity.swift in Sources */,
 				B37EFEBC29492945005F7D4F /* ThemeDraft.swift in Sources */,
 				E30B30EA24CF82A900C8E9A4 /* PopUpManager.swift in Sources */,
+				86D6D8352B02B2E600BBA498 /* GetTagInSchemeUseCase.swift in Sources */,
 				E35E7CFE23BA34E20071DCC8 /* VContractLedger.swift in Sources */,
 				E34B570F2A16D38E004DF83D /* OnboardingViewUI.swift in Sources */,
 				E37FFCB72A22D86E005DD5BF /* GetCoreDataRequestUseCase.swift in Sources */,
@@ -3175,6 +3195,7 @@
 				E3B127112A0BEED90085E230 /* VolumeUseCase.swift in Sources */,
 				E3F201D6201E04FC002FF06E /* FetcherTimeInterval.swift in Sources */,
 				E34C72DC2A28B32C00A8D557 /* SaveImageUseCase.swift in Sources */,
+				86D6D8372B02B35000BBA498 /* SaveTagInSchemeUseCase.swift in Sources */,
 				E33CFD072A14EAE200F5D217 /* NewSongServiceSettingsViewUI.swift in Sources */,
 				B38A1D122926EA1400565BDA /* SongServiceCollectionViewDataSource.swift in Sources */,
 				E306BF9C29DDC929005DF761 /* BeamerViewUI.swift in Sources */,
@@ -4663,11 +4684,12 @@
 		E31171371FE59DA3008D9D51 /* SongProjector.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				8639B4322B02AEE900F3EC05 /* SongProjector 4.xcdatamodel */,
 				E30163EC2A965BFA0014CBDA /* SongProjector 3.xcdatamodel */,
 				E3B683362A52DFC3007E6859 /* SongProjector 2.xcdatamodel */,
 				E31171381FE59DA3008D9D51 /* SongProjector.xcdatamodel */,
 			);
-			currentVersion = E30163EC2A965BFA0014CBDA /* SongProjector 3.xcdatamodel */;
+			currentVersion = 8639B4322B02AEE900F3EC05 /* SongProjector 4.xcdatamodel */;
 			path = SongProjector.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

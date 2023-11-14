@@ -15,7 +15,7 @@ class SongServiceSettingsSection: ObservableObject {
     let songServiceSection: SongServiceSectionCodable?
     @Published var title = ""
     @Published var numberOfSongs: Int = 1
-    @Published var tags: [WrappedStruct<TagCodable>] = []
+    @Published var tags: [WrappedStruct<TagInSchemeCodable>] = []
 
     var isValid: Bool {
         return !title.isBlanc && tags.count > 0 && numberOfSongs > 0

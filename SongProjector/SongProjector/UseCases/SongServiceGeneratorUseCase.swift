@@ -63,7 +63,7 @@ actor SongServiceGeneratorUseCase {
         var position: Int16 = 0
         return await songService.sections.asyncMap { section in
             var clustersForSection: [ClusterCodable] = []
-            await filterOn(section.tagIds, to: &clustersForSection)
+            await filterOn(section.tags.map({ $0.rootTagId }), to: &clustersForSection)
             filterOnPlayDate(&clustersForSection, numberOfSongs: section.numberOfSongs.intValue)
             return SongServiceSectionWithSongs(title: section.title ?? "", cocList: mapToClusterOrComment(section: section, clusters: clustersForSection, position: &position))
         }
@@ -85,8 +85,7 @@ actor SongServiceGeneratorUseCase {
     }
     
     private func filterOn(_ tagIds: [String], to clustersForSection: inout [ClusterCodable]) async {
-        let tags = await GetTagsUseCase().fetch(predicates: tagIds.map { .get(id: $0) }, sort: .position(asc: true), predicateCompoundPredicateType: .or)
-        clustersForSection = await FilteredCollectionsUseCase.getCollections(searchText: nil, showDeleted: false, selectedTags: tags)
+        clustersForSection = await FilteredCollectionsUseCase.getCollections(searchText: nil, showDeleted: false, selectedTagIds: tagIds)
     }
     
     private func filterOnPlayDate(_ clustersForSection: inout [ClusterCodable], numberOfSongs: Int) {
@@ -116,12 +115,12 @@ actor SongServiceGeneratorUseCase {
         
         if section.tags.count > 0 {
                         
-            let pinnedTags = section.tags.filter({ $0.isPinned })
-            let unPinnedTagIds = section.tags .filter({ !$0.isPinned }).map { $0.id }
+            let pinnedTags = section.tags.filter({ $0.isPinned }).sorted(by: { $0.positionInScheme ?? 0 < $1.positionInScheme ?? 0 })
+            let unPinnedTagIds = section.tags.filter({ !$0.isPinned }).map { $0.rootTagId }
 
             repeat {
-                if let pinnedTag = pinnedTags.first(where: { $0.positionInScheme == positionInSection }) {
-                    if var cluster = clustersToPick.first(where: { $0.tagIds.contains(where: { pinnedTag.id == $0 }) }) {
+                if let pinnedTag = pinnedTags.first(where: { $0.positionInScheme(section, currentValue: positionInSection) == positionInSection }) {
+                    if var cluster = clustersToPick.first(where: { $0.tagIds.contains(where: { pinnedTag.rootTagId == $0 }) }) {
                         cluster.position = position
                         clusterComments.append(.cluster(cluster))
                         position += 1
@@ -229,4 +228,21 @@ actor SongServiceGeneratorUseCase {
         return [formattedTitle, sheetText].compactMap { $0 }.joined(separator: "\n\n")
     }
     
+}
+
+extension TagInSchemeCodable {
+
+    // 5 songs
+
+    // 0 pinned
+    // 1 pinned
+    // 2
+    // 3 pinned
+
+    func positionInScheme(_ section: SongServiceSectionCodable, currentValue: Int) -> Int {
+        if positionInScheme == section.tags.count - 1 {
+            return section.numberOfSongs.intValue - 1
+        }
+        return positionInScheme ?? 0
+    }
 }

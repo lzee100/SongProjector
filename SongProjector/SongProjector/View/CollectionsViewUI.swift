@@ -35,12 +35,16 @@ import SwiftUI
     @Published private(set) var collections: [ClusterCodable] = []
     private var unfilteredCollections: [ClusterCodable] = []
     @Published private(set) var showingLoader = false
-    @ObservedObject var tagSelectionModel: TagSelectionModel = TagSelectionModel(mandatoryTags: [])
+    @ObservedObject var tagSelectionModel: TagSelectionModel = TagSelectionModel(mandatoryTagIds: [])
     private let customSelectionDelegate: CollectionsViewCustomSelectionDelegate?
     @Published private var customSelectedSongsForSongService: [ClusterCodable] = []
     var hasCustomSelectedSongsForSongService: Bool {
         return customSelectionDelegate != nil
     }
+    var showDeletedCollectionsBasedOnTag: Bool {
+        return tagSelectionModel.selectedTags.contains(where: { !$0.isDeletable && $0.title == AppText.Tags.deletedClusters })
+    }
+
     init(
         tagSelectionModel: TagSelectionModel,
         customSelectedSongsForSongService: [ClusterCodable],
@@ -54,18 +58,32 @@ import SwiftUI
     func fetchCollections(searchText: String? = nil) async {
         let searchText = searchText?.isBlanc ?? true ? self.searchText.isBlanc ? nil : self.searchText : searchText
         self.searchText = searchText ?? ""
+        var showDeletedCollections: Bool {
+            self.showDeletedCollections || showDeletedCollectionsBasedOnTag
+        }
+        var selectedTagIds: [String] {
+            (tagSelectionModel.selectedTags.filter({ !(!$0.isDeletable && $0.title == AppText.Tags.deletedClusters) }) + tagSelectionModel.tags.filter({ tagSelectionModel.mandatoryTagIds.contains($0.id)})).unique.map { $0.id }
+        }
         if unfilteredCollections.count > 0 {
-            collections = await FilteredCollectionsUseCase.getCollectionsIn(collections: unfilteredCollections, searchText: searchText, selectedTags: (tagSelectionModel.selectedTags + tagSelectionModel.mandatoryTags).unique, showDeleted: showDeletedCollections)
+            collections = await FilteredCollectionsUseCase.getCollectionsIn(collections: unfilteredCollections, searchText: searchText, selectedTagIds: selectedTagIds, showDeleted: showDeletedCollections)
             return
         }
-        collections = await FilteredCollectionsUseCase.getCollections(searchText: searchText, showDeleted: showDeletedCollections, selectedTags: (tagSelectionModel.selectedTags +  tagSelectionModel.mandatoryTags).unique)
+        collections = await FilteredCollectionsUseCase.getCollections(searchText: searchText, showDeleted: showDeletedCollections, selectedTagIds: selectedTagIds)
     }
     
     func reload() async {
+        var showDeletedCollections: Bool {
+            self.showDeletedCollections || showDeletedCollectionsBasedOnTag
+        }
+        
         let searchText = self.searchText.isBlanc ? nil : self.searchText
-        unfilteredCollections = await FilteredCollectionsUseCase.getCollections(searchText: nil, showDeleted: true, selectedTags: [])
+        unfilteredCollections = await FilteredCollectionsUseCase.getCollections(searchText: nil, showDeleted: true, selectedTagIds: [])
 
-        collections = await FilteredCollectionsUseCase.getCollectionsIn(collections: unfilteredCollections, searchText: searchText, selectedTags: (tagSelectionModel.selectedTags +  tagSelectionModel.mandatoryTags).unique, showDeleted: showDeletedCollections)
+        var selectedTagIds: [String] {
+            (tagSelectionModel.selectedTags + tagSelectionModel.tags.filter({ tagSelectionModel.mandatoryTagIds.contains($0.id)})).unique.map { $0.id }
+        }
+
+        collections = await FilteredCollectionsUseCase.getCollectionsIn(collections: unfilteredCollections, searchText: searchText, selectedTagIds: selectedTagIds, showDeleted: showDeletedCollections)
     }
     
     func fetchRemoteTags() async {
@@ -221,7 +239,7 @@ struct CollectionsViewUI: View {
     @Binding var editingSection: SongServiceSectionWithSongs?
     @ObservedObject var songServiceEditorModel: SongServiceEditorModel
     @StateObject var viewModel: CollectionsViewModel
-    @StateObject var tagSelectionModel = TagSelectionModel(mandatoryTags: [])
+    @StateObject var tagSelectionModel = TagSelectionModel(mandatoryTagIds: [])
     @State var showingCollectionEditor: CollectionEditor?
     @State var alertMessage: AlertMessage? = nil
     @State var showingTrailingButtonAlertMessage = false
@@ -236,11 +254,11 @@ struct CollectionsViewUI: View {
         songServiceEditorModel: SongServiceEditorModel,
         customSelectedSongsForSongService: [ClusterCodable] = [],
         customSelectionDelegate: CollectionsViewCustomSelectionDelegate? = nil,
-        mandatoryTags: [TagCodable]
+        mandatoryTagIds: [String]
     ) {
         self._editingSection = editingSection
         self.songServiceEditorModel = songServiceEditorModel
-        let model = TagSelectionModel(mandatoryTags: mandatoryTags, addDeleteTag: UIDevice.current.userInterfaceIdiom == .phone)
+        let model = TagSelectionModel(mandatoryTagIds: mandatoryTagIds, addDeleteTag: UIDevice.current.userInterfaceIdiom == .phone)
         _tagSelectionModel = StateObject(wrappedValue: model)
         self._viewModel = StateObject(wrappedValue: CollectionsViewModel(
             tagSelectionModel: model,
@@ -288,7 +306,7 @@ struct CollectionsViewUI: View {
                         .buttonStyle(.borderless)
                         .tint(.black.opacity(0.8))
                         .swipeActions {
-                            if viewModel.showDeletedCollections {
+                            if viewModel.showDeletedCollections || viewModel.showDeletedCollectionsBasedOnTag {
                                 restore(collection: collection)
                             } else {
                                 deleteSongButton(collection: collection)
@@ -416,10 +434,9 @@ struct CollectionsViewUI: View {
                 Text(AppText.Actions.delete)
             } icon: {
                 Image(systemName: "trash")
-                    .tint(.white)
+                    .tint(Color(uiColor: .red1))
             }
         }
-        .tint(Color(uiColor: .red1))
     }
     
     @ViewBuilder private func restore(collection: ClusterCodable) -> some View {

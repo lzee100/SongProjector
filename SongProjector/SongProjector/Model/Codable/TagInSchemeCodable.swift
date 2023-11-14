@@ -1,5 +1,15 @@
 //
-//  SongServiceSettingsCodable.swift
+//  TagInSchemeCodable.swift
+//  SongProjector
+//
+//  Created by Leo van der Zee on 13/11/2023.
+//  Copyright © 2023 iozee. All rights reserved.
+//
+
+import Foundation
+
+//
+//  TagCodable.swift
 //  SongProjector
 //
 //  Created by Leo van der Zee on 30/11/2022.
@@ -10,9 +20,9 @@ import Foundation
 import FirebaseAuth
 import CoreData
 
-public struct SongServiceSettingsCodable: EntityCodableType, Identifiable, Equatable {
+public struct TagInSchemeCodable: EntityCodableType, Identifiable, Equatable, Hashable {
 
-    static func makeDefault(userUID: String? = nil) -> SongServiceSettingsCodable? {
+    static func makeDefault(id: String? = nil) -> TagInSchemeCodable? {
 #if DEBUG
         let userId = "userid"
 #else
@@ -20,10 +30,10 @@ public struct SongServiceSettingsCodable: EntityCodableType, Identifiable, Equat
             return nil
         }
 #endif
-        
-        return SongServiceSettingsCodable(userUID: userUID ?? userId)
+
+        return TagInSchemeCodable(id: id ?? "CHURCHBEAM" + UUID().uuidString)
     }
-    
+
     public var id: String = "CHURCHBEAM" + UUID().uuidString
     var userUID: String = ""
     var title: String? = nil
@@ -32,9 +42,11 @@ public struct SongServiceSettingsCodable: EntityCodableType, Identifiable, Equat
     var deleteDate: Date? = nil
     var isTemp: Bool = false
     var rootDeleteDate: Date? = nil
-    
-    var sections: [SongServiceSectionCodable] = []
-    
+
+    var positionInScheme: Int? = 0
+    var isPinned = false
+    var rootTagId: String = ""
+
     enum CodingKeys: String, CodingKey
     {
         case id
@@ -44,10 +56,12 @@ public struct SongServiceSettingsCodable: EntityCodableType, Identifiable, Equat
         case updatedAt
         case deleteDate = "deletedAt"
         case rootDeleteDate
-        
-        case sections
+
+        case positionInScheme
+        case rootTagId
+        case isPinned
     }
-    
+
     init(
         id: String = "CHURCHBEAM" + UUID().uuidString,
         userUID: String = "",
@@ -57,7 +71,9 @@ public struct SongServiceSettingsCodable: EntityCodableType, Identifiable, Equat
         deleteDate: Date? = nil,
         isTemp: Bool = false,
         rootDeleteDate: Date? = nil,
-        sections: [SongServiceSectionCodable] = []
+        rootTagId: String = "",
+        isPinned: Bool = false,
+        positionInScheme: Int? = nil
     ) {
         self.id = id
         self.userUID = userUID
@@ -67,10 +83,12 @@ public struct SongServiceSettingsCodable: EntityCodableType, Identifiable, Equat
         self.deleteDate = deleteDate
         self.isTemp = isTemp
         self.rootDeleteDate = rootDeleteDate
-        self.sections = sections
+        self.rootTagId = rootTagId
+        self.isPinned = isPinned
+        self.positionInScheme = positionInScheme
     }
-    
-    init(entity: SongServiceSettings) {
+
+    init?(entity: TagInScheme) {
         id = entity.id
         userUID = entity.userUID
         title = entity.title
@@ -78,23 +96,25 @@ public struct SongServiceSettingsCodable: EntityCodableType, Identifiable, Equat
         updatedAt = entity.updatedAt?.date
         deleteDate = entity.deleteDate?.date
         rootDeleteDate = entity.rootDeleteDate?.date
+        rootTagId = entity.rootTagId ?? ""
+        positionInScheme = entity.positionInScheme.intValue
+        isPinned = entity.isPinned
     }
-    
-    
+
     // MARK: - Decodable
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
+
         id  = try container.decode(String.self, forKey: .id)
         title = try container.decodeIfPresent(String.self, forKey: .title)
         userUID = try container.decode(String.self, forKey: .userUID)
-        
+
         let createdAtInt = try container.decode(Int64.self, forKey: .createdAt)
         let updatedAtInt = try container.decodeIfPresent(Int64.self, forKey: .updatedAt)
         let deletedAtInt = try container.decodeIfPresent(Int64.self, forKey: .deleteDate)
         createdAt = Date(timeIntervalSince1970: TimeInterval(createdAtInt) / 1000)
-        
+
         if let updatedAtInt = updatedAtInt {
             updatedAt = Date(timeIntervalSince1970: TimeInterval(updatedAtInt) / 1000)
         }
@@ -104,10 +124,13 @@ public struct SongServiceSettingsCodable: EntityCodableType, Identifiable, Equat
         if let rootdeleteDateInt = try container.decodeIfPresent(Int.self, forKey: .rootDeleteDate) {
             rootDeleteDate = Date(timeIntervalSince1970: TimeInterval(rootdeleteDateInt))
         }
-        
-        sections = try (container.decodeIfPresent([SongServiceSectionCodable].self, forKey: .sections) ?? []).sorted(by: { $0.position < $1.position })
+
+        rootTagId = try container.decode(String.self, forKey: .rootTagId)
+        positionInScheme = try container.decodeIfPresent(Int.self, forKey: .positionInScheme)
+        isPinned = try Bool(truncating: (container.decodeIfPresent(Int.self, forKey: .isPinned) ?? 0) as NSNumber)
+
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
@@ -129,50 +152,46 @@ public struct SongServiceSettingsCodable: EntityCodableType, Identifiable, Equat
         if let rootDeleteDate = rootDeleteDate {
             try container.encode(rootDeleteDate.intValue, forKey: .rootDeleteDate)
         }
-        
-        try container.encode(sections, forKey: .sections)
+
+        try container.encode(rootTagId, forKey: .rootTagId)
+        try container.encode(Int(truncating: NSNumber(value: isPinned)), forKey: .isPinned)
+        try container.encode(positionInScheme, forKey: .positionInScheme)
     }
 }
 
-extension SongServiceSettingsCodable: FileTransferable {
-    
+extension TagInSchemeCodable: FileTransferable {
+
     mutating func clearDataForDeletedObjects(forceDelete: Bool) {
     }
-    
+
     func getDeleteObjects(forceDelete: Bool) -> [DeleteObject] {
         []
     }
-    
+
     var uploadObjects: [TransferObject] {
         []
     }
-    
+
     var downloadObjects: [TransferObject] {
         []
     }
-    
+
     var transferObjects: [TransferObject] {
         uploadObjects + downloadObjects
     }
-    
+
     mutating func setTransferObjects(_ transferObjects: [TransferObject]) throws {
     }
-    
+
     func setDeleteDate() -> FileTransferable {
-        var modifiedDocument = self
-        if uploadSecret != nil {
-            modifiedDocument.rootDeleteDate = Date()
-        } else {
-            modifiedDocument.deleteDate = Date()
-        }
-        return modifiedDocument
+        self
     }
-    
+
     func setUpdatedAt() -> FileTransferable {
         var modifiedDocument = self
         modifiedDocument.updatedAt = Date()
         return modifiedDocument
-    }    
+    }
     func setUserUID() throws -> FileTransferable {
         var modifiedDocument = self
         guard let userUID = Auth.auth().currentUser?.uid else {

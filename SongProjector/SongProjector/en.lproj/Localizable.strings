@@ -169,6 +169,7 @@
 "Tags-deletedClusters" = "Deleted items";
 "Tags-errorEmptyTitle" = "Title can not be empty";
 "Tags-editTag" = "Change tag";
+"Tags-SelectTags" = "Select tags";
 
 "CustomSheets-CollectionType-Lyrics" = "Lyrics sheets";
 "CustomSheets-CollectionType-BibleSheets" = "Bible text sheets";
@@ -211,6 +212,10 @@
 "SongServiceManagement-errorAddASection" = "Add a section to the song service";
 "SongServiceManagement-errorInSections" = "Please add a title and at least one tag in the following sections: %$";
 "SongServiceManagement-errorInSection" = "Please add a title and at least one tag in this section: %$";
+"SongServiceManagement-error-tag" = "You have no tags selected in section %@: %@";
+"SongServiceManagement-error-title" = "You have no title for section %@";
+"SongServiceManagement-error-numberOfSongs" = "You have a wrong number of songs in %@: %@";
+
 
 "Settings-title" = "Settings";
 "Settings-descriptionGoogleSub" = "Login to retrieve activities";

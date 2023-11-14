@@ -109,6 +109,8 @@ struct SubmitUseCase<T: FileTransferable> {
         await withTaskGroup(of: Void.self) { group in
             files.forEach { reference in
                 group.addTask {
+                    let url = try? await reference.downloadURL()
+                    print(url)
                     try? await reference.delete()
                 }
             }
