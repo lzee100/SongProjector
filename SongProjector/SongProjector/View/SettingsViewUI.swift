@@ -126,7 +126,8 @@ import Combine
 }
 
 struct SettingsViewUI: View {
-    
+
+    @Binding var selectedTab: Feature
     @StateObject private var singInOutViewModel = GoogleLoginSignOutModel()
     @StateObject private var viewModel = SettingsViewModel()
 
@@ -138,7 +139,7 @@ struct SettingsViewUI: View {
                         credentialsView(user: user)
                     }
                 }
-                
+
                 Section(AppText.Settings.sectionCalendarId) {
                     googleAgendaIdView
                     if viewModel.showingSaveGoogleAgendaIdButton {
@@ -167,7 +168,7 @@ struct SettingsViewUI: View {
                         .disabled(viewModel.isLoading)
                     }
                 }
-                
+
                 Section(AppText.Settings.sectionMotherChurch) {
                     Text(AppText.Settings.motherChurchExplain)
                         .styleAs(font: .xNormal)
@@ -182,7 +183,7 @@ struct SettingsViewUI: View {
                         sectionMotherChurch
                     }
                 }
-                
+
                 Section(AppText.Settings.sectionContentPackageBabyChurches) {
                     Text(AppText.Settings.sectionContentPackageBabyChurchesExplain)
                         .styleAs(font: .xNormal)
@@ -196,13 +197,27 @@ struct SettingsViewUI: View {
                         contentPackagePastorsZwolleButton
                     }
                 }
-//                Section(AppText.Settings.contactId) {
-//                    contactReferenceIDView
-//                }
-//
+                //                Section(AppText.Settings.contactId) {
+                //                    contactReferenceIDView
+                //                }
+                //
                 Section(AppText.Settings.sectionAppSettings) {
                     resetInstrumentMutes
                 }
+
+#if DEBUG
+                Section("Verwijder alle clusters") {
+                    DeleteAllClustersSectionView()
+                }
+
+                Section("Omgeving") {
+                    Text(ChurchBeamConfiguration.environment.name)
+                        .styleAs(font: .xNormal)
+                }
+#endif
+            }
+            .onAppear {
+                selectedTab = .settings
             }
             .task {
                 await viewModel.fetchUserRemotely()
@@ -328,11 +343,32 @@ struct SettingsViewUI: View {
         .tint(Color(uiColor: uploadSecret != nil && viewModel.user?.contentPackageBabyChurchesMotherChurch != nil ? .red1 : themeHighlighted))
         .disabled((viewModel.showingLoader || viewModel.user?.contentPackageBabyChurchesMotherChurch != nil) && (uploadSecret == nil))
     }
-    
+
+    private struct DeleteAllClustersSectionView: View {
+        @State private var userUID = ""
+        var body: some View {
+            VStack {
+                TextField("User uid", text: $userUID)
+                Button {
+                    guard userUID != "" else { return }
+                    Task {
+                        do {
+                            try await DeleteAllClustersSubmitter().request(userUID: userUID)
+                        } catch {
+                            print(error)
+                        }
+                    }
+                } label: {
+                    Text("Delete all clusters")
+                }
+            }
+        }
+    }
+
 }
 
 struct SettingsViewUI_Previews: PreviewProvider {
     static var previews: some View {
-        SettingsViewUI()
+        SettingsViewUI(selectedTab: .constant(.songService))
     }
 }

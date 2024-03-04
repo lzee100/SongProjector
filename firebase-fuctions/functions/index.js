@@ -92,6 +92,51 @@ exports.fetchUniversalClustersWithUID = functions.region('europe-west1').https.o
 
 });
 
+exports.deleteAllClusters = functions.region('europe-west1').https.onRequest(async (request, response) => {
+
+    const token = request.header('authorization');
+    const userUID = request.header('userUID');
+
+    const tokenId = await admin
+        .auth()
+        .verifyIdToken(token)
+        .then(function (decodedToken) {
+            var uid = decodedToken.uid;
+            return uid;
+        })
+        .catch(function (error) {
+            console.log("error ->", error);
+            response.status(500).send({ error: 'Something failed!' })
+        });
+
+        var errorValue = "error";
+        var translator = {
+            getErrorValue : function() {return errorValue;},
+            setErrorValue : function(value) {errorValue = value;}
+         };
+    try {            
+
+        const snapshotAdmin = await db.collection('admin').where('userUID', '==', tokenId).get();
+
+        if (snapshotAdmin.docs.length > 0) {
+
+            const snapshot = await db.collection('clusters').where('userUID', '==', userUID).get();
+    
+            if (snapshot.docs.length > 0) {
+                for (const doc of snapshot.docs) {
+                    await db.collection('clusters').doc(doc.id).delete();
+                }
+            }
+            response.sendStatus(200);
+        } else {
+            response.sendStatus(401);
+        }
+    } catch (error) {
+        response.status(500).send({ error: "error" });
+    };
+
+});
+
 exports.fetchUser = functions.region('europe-west1').https.onRequest(async (request, response) => {
 
     const token = request.header('authorization');
@@ -234,7 +279,6 @@ class GetUniversalClustersUseCase {
             universalCluster.root = rootID;
             universalCluster.theme_id = defaultTheme.id;
             universalCluster.id = "CHURCHBEAM" + uuidv4();
-            universalCluster.updatedAt = new Date().getTime();
             universalCluster.tagids = defaultTag.id;
 
             const sheets = universalCluster.sheets;

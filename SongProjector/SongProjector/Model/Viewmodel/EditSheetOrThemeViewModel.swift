@@ -238,6 +238,7 @@ struct SheetEditModel: Identifiable {
     }
 
     mutating func setNewSheetImage(_ image: UIImage) {
+        isImageDeleted = false
         newSelectedImage = image
         newSelectedImageThumb = image.resized(withPercentage: 0.4)
     }

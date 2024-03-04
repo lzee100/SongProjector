@@ -162,6 +162,8 @@ struct SongServiceEditorViewUI: View {
     @State private var editingSection: SongServiceSectionWithSongs? = nil
     @Binding var showingSongServiceEditorViewUI: Bool
     @EnvironmentObject var musicDownloadManager: MusicDownloadManager
+    @State private var showingNoEmailError = false
+    private let noEmailMessage: LocalizedStringKey = "AboutController-errorNoMail"
 
     var body: some View {
         NavigationStack {
@@ -215,6 +217,9 @@ struct SongServiceEditorViewUI: View {
             }
         }
         .environmentObject(musicDownloadManager)
+        .alert(noEmailMessage, isPresented: $showingNoEmailError) {
+            Button(AppText.Actions.ok) { }
+        }
     }
     
     @ViewBuilder var songServiceView: some View {
@@ -303,7 +308,11 @@ struct SongServiceEditorViewUI: View {
             Button {
                 Task {
                     guard let shareInfo = await viewModel.getShareInfo(withContent: false) else { return }
-                    EmailController.shared.sendEmail(subject: shareInfo.title, body: shareInfo.content)
+                    do {
+                        try EmailController.shared.sendEmail(subject: shareInfo.title, body: shareInfo.content)
+                    } catch {
+                        showingNoEmailError.toggle()
+                    }
                 }
             } label: {
                 Text(AppText.NewSongService.shareOptionTitles)
@@ -311,7 +320,11 @@ struct SongServiceEditorViewUI: View {
             Button {
                 Task {
                     guard let shareInfo = await viewModel.getShareInfo(withContent: true) else { return }
-                    EmailController.shared.sendEmail(subject: shareInfo.title, body: shareInfo.content)
+                    do {
+                        try EmailController.shared.sendEmail(subject: shareInfo.title, body: shareInfo.content)
+                    } catch {
+                        showingNoEmailError.toggle()
+                    }
                 }
             } label: {
                 Text(AppText.NewSongService.shareOptionTitlesWithSections)

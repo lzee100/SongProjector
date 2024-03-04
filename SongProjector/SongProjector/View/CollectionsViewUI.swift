@@ -420,9 +420,8 @@ struct CollectionsViewUI: View {
         } label: {
             Image("TrashMusic")
                 .resizable()
-                .tint(.white)
+                .tint(Color(uiColor: .red2))
         }
-        .tint(Color(uiColor: .red2))
     }
     
     @ViewBuilder private func deleteSongButton(collection: ClusterCodable) -> some View {

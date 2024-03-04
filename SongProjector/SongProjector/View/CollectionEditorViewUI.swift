@@ -435,6 +435,7 @@ struct CollectionEditorViewUI: View {
                     } label: {
                         Text(AppText.Actions.save)
                     }
+//                    .disabled(viewModel.sheets.contains(where: { $0.sheetModel.sheet.sheetType == .SheetPastors }))
                 case .add:
                     Button {
                         viewModel.themeSelectionModel.selectFirstthemeIfNeeded()
@@ -604,7 +605,12 @@ extension CollectionEditorViewUI: EditThemeOrSheetViewUIDelegate {
 struct CollectionEditorViewUI_Previews: PreviewProvider {
     @State static var showingCollectionEditor: CollectionsViewUI.CollectionEditor? = nil
     static var previews: some View {
-        CollectionEditorViewUI(cluster: nil, collectionType: .custom, showingCollectionEditor: $showingCollectionEditor)
+        CollectionEditorViewUI(
+            cluster: nil,
+            collectionType: .custom,
+            showingCollectionEditor: $showingCollectionEditor
+        )
+        .environmentObject(MusicDownloadManager())
     }
 }
 

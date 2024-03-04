@@ -42,6 +42,7 @@ struct ChurchBeamApp: View {
     @State private var showingUniversalClusterError = false
     @State private var showingPreparingAccount = false
     @State private var showingFetchingAdminUserChurch = false
+    @State private var selectedTab: Feature = .songService
     @StateObject private var authentication = Authentication()
     
     init(store: ExternalDisplayConnector) {
@@ -87,6 +88,7 @@ struct ChurchBeamApp: View {
                     UserDefaults.standard.removeObject(forKey: secretKey)
                     Task {
                         try? await ResetCoreDataUseCase().reset()
+                        initializeLocalStorage()
                     }
                 }
                 Task {
@@ -118,7 +120,7 @@ struct ChurchBeamApp: View {
             showOnboarding = !authentication.isRegistered
             handleTransition()
         }, content: {
-            TabViewUI()
+            TabViewUI(selectedTab: $selectedTab)
                 .environmentObject(soundPlayer)
                 .environmentObject(musicDownloadManager)
                 .environmentObject(store)

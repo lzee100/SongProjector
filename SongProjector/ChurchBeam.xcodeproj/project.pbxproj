@@ -7,10 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		86150CC12B057922009ECD57 /* AboutViewUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86150CC02B057922009ECD57 /* AboutViewUI.swift */; };
 		8639B4342B02B12400F3EC05 /* TagInSchemeCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8639B4332B02B12300F3EC05 /* TagInSchemeCodable.swift */; };
 		864794E02AAA201A0040CB91 /* ProgressControllerUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 864794DF2AAA201A0040CB91 /* ProgressControllerUI.swift */; };
 		864794E22AAA20510040CB91 /* GetNewTagPositionUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 864794E12AAA20510040CB91 /* GetNewTagPositionUseCase.swift */; };
 		865973A62AF93F9200B33E7D /* SaveGoogleActivitiesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 865973A52AF93F9200B33E7D /* SaveGoogleActivitiesUseCase.swift */; };
+		86BFA51A2B93D66600A6BF64 /* DeleteAllClustersSubmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86BFA5192B93D66600A6BF64 /* DeleteAllClustersSubmitter.swift */; };
 		86D6D8352B02B2E600BBA498 /* GetTagInSchemeUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86D6D8342B02B2E600BBA498 /* GetTagInSchemeUseCase.swift */; };
 		86D6D8372B02B35000BBA498 /* SaveTagInSchemeUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86D6D8362B02B35000BBA498 /* SaveTagInSchemeUseCase.swift */; };
 		86D6D8392B02B95D00BBA498 /* GetAllTagInSchemeUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86D6D8382B02B95D00BBA498 /* GetAllTagInSchemeUseCase.swift */; };
@@ -762,11 +764,13 @@
 /* Begin PBXFileReference section */
 		346D1C5C5532C9E10C448104 /* Pods-SongProjector.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SongProjector.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SongProjector/Pods-SongProjector.debug.xcconfig"; sourceTree = "<group>"; };
 		8300EFE78A26AC2834037C54 /* Pods-SongProjector.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SongProjector.release.xcconfig"; path = "Pods/Target Support Files/Pods-SongProjector/Pods-SongProjector.release.xcconfig"; sourceTree = "<group>"; };
+		86150CC02B057922009ECD57 /* AboutViewUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutViewUI.swift; sourceTree = "<group>"; };
 		8639B4322B02AEE900F3EC05 /* SongProjector 4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "SongProjector 4.xcdatamodel"; sourceTree = "<group>"; };
 		8639B4332B02B12300F3EC05 /* TagInSchemeCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagInSchemeCodable.swift; sourceTree = "<group>"; };
 		864794DF2AAA201A0040CB91 /* ProgressControllerUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressControllerUI.swift; sourceTree = "<group>"; };
 		864794E12AAA20510040CB91 /* GetNewTagPositionUseCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetNewTagPositionUseCase.swift; sourceTree = "<group>"; };
 		865973A52AF93F9200B33E7D /* SaveGoogleActivitiesUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveGoogleActivitiesUseCase.swift; sourceTree = "<group>"; };
+		86BFA5192B93D66600A6BF64 /* DeleteAllClustersSubmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAllClustersSubmitter.swift; sourceTree = "<group>"; };
 		86D6D8342B02B2E600BBA498 /* GetTagInSchemeUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetTagInSchemeUseCase.swift; sourceTree = "<group>"; };
 		86D6D8362B02B35000BBA498 /* SaveTagInSchemeUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveTagInSchemeUseCase.swift; sourceTree = "<group>"; };
 		86D6D8382B02B95D00BBA498 /* GetAllTagInSchemeUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetAllTagInSchemeUseCase.swift; sourceTree = "<group>"; };
@@ -1619,6 +1623,7 @@
 				E33CFCFA2A142F1100F5D217 /* SubmitUseCase.swift */,
 				E332ED2F2A1BF0A0003DCE68 /* FileUploadUseCase.swift */,
 				E32C31432A3A67E5002D362E /* LastShownAtSubmitterUseCase.swift */,
+				86BFA5192B93D66600A6BF64 /* DeleteAllClustersSubmitter.swift */,
 			);
 			path = Submitters;
 			sourceTree = "<group>";
@@ -1772,6 +1777,7 @@
 				E33CFD062A14EAE200F5D217 /* NewSongServiceSettingsViewUI.swift */,
 				E3B6839C2A5A10C8007E6859 /* SongServiceSettingsEditor */,
 				E34B57142A16E1FE004DF83D /* SettingsViewUI.swift */,
+				86150CC02B057922009ECD57 /* AboutViewUI.swift */,
 				E3B126ED29FC7E060085E230 /* TextView.swift */,
 				E311714A1FE5A04A008D9D51 /* Extensions */,
 				E34B570E2A16D38E004DF83D /* OnboardingViewUI.swift */,
@@ -3016,6 +3022,7 @@
 				E334B10721ED031C0088CD48 /* SheetEmptyEntity.swift in Sources */,
 				B37EFE7F2936B8FF005F7D4F /* SheetEmptyCodable.swift in Sources */,
 				E35A1A6925616EAE008CF6A3 /* FileDeleter.swift in Sources */,
+				86BFA51A2B93D66600A6BF64 /* DeleteAllClustersSubmitter.swift in Sources */,
 				E37FFCA12A22CCE2005DD5BF /* SaveThemeUseCase.swift in Sources */,
 				E3CB6854200635D600F007B2 /* LoadingViewController.swift in Sources */,
 				E330A06429F719DC00E227AD /* CollectionEditorViewUI.swift in Sources */,
@@ -3042,6 +3049,7 @@
 				E3D9C28E20D6F11E006EDFE3 /* TestView.swift in Sources */,
 				E37FFC912A229F11005DD5BF /* GetClustersUseCase.swift in Sources */,
 				E34B57152A16E1FE004DF83D /* SettingsViewUI.swift in Sources */,
+				86150CC12B057922009ECD57 /* AboutViewUI.swift in Sources */,
 				E3C001BD29EE8B8C00D9AB17 /* UIimageExtensions.swift in Sources */,
 				E3FB64492484D65800E03617 /* UserFetcher.swift in Sources */,
 				E33BFEA229E8AEB600912B4E /* SectionTitleModifier.swift in Sources */,
@@ -3427,7 +3435,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = SongProjector/SongProjector.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 17;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 4RH34LGMLA;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -3455,7 +3463,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = SongProjector/SongProjector.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 17;
 				DEVELOPMENT_TEAM = 4RH34LGMLA;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = SongProjector/Info.plist;
@@ -3512,9 +3520,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
 			requirement = {
-				kind = versionRange;
-				maximumVersion = 11.0.0;
-				minimumVersion = 10.0.0;
+				kind = exactVersion;
+				version = 10.18.0;
 			};
 		};
 		E32B880729C1389600DFF9D8 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {

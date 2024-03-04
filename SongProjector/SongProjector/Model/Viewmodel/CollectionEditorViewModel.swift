@@ -360,7 +360,7 @@ import SwiftUI
             
             if uploadSecret != nil {
                 updatedCluster.contentPackage = ContentPackage(contentPackage: user.contentPackage) ?? ContentPackage(contentPackage: user.contentPackageBabyChurchesMotherChurch) ?? .user
-            } else {
+            } else if updatedCluster.contentPackage == nil {
                 updatedCluster.contentPackage = ContentPackage.user
             }
             let endpoint = await GetCollectionsEndpointUseCase().get()

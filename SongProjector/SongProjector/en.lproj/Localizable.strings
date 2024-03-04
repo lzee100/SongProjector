@@ -363,7 +363,7 @@
 "AboutController-sectionStartContact" = "Contact me";
 "AboutController-contactInfo" = "If you have any questions or problems, please feel free to contact us.";
 "AboutController-contact" = "Contact me";
-"AboutController-errorNoMail" = "You have not set up an email account on your phone. Set up an email account under iPhone settings.";
+"AboutController-errorNoMail" = "No email account was found. For iOS, set up an email account under settings.";
 
 
 "SingInGoogleController-title" = "Sign-in calendar";

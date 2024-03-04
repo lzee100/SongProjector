@@ -362,11 +362,11 @@
 
 "AboutController-title" = "Contactinformatie";
 "AboutController-sectionAbout" = "Over de ontwikkelaar";
-"AboutController-infoText" = "Hey, mijn naam is Leo van der Zee. Voor een aantal jaren heb ik naast mijn baan deze app ontwikkeld. Mijn visie is om de diensten van kleine kerken te verbeteren zodat zij:\n- grotere mate van aanbidding kunnen ervaren zodat er een vergroting van het werk van God in het hart zal plaatsvinden.\n- een betere aansluiting bij de verwachtingen die bezoekers hebben van vandaag de dag\n- een vergroting van de betrokkenheid van de kerk krijgen\n- meer ruimte voor de voorganger krijgt zodat hij met mensen bezig kan zijn\n\nHopelijk helpt de app jou en de kerk verder.";
+"AboutController-infoText" = "Hey, mijn naam is Leo van der Zee. Voor een aantal jaren heb ik naast mijn baan deze app ontwikkeld. Mijn visie is om de diensten van kleine kerken te verbeteren zodat zij:\n- grotere mate van aanbidding kunnen ervaren zodat er een vergroting van het werk van God in het hart zal plaatsvinden.\n- een betere aansluiting bij de verwachtingen die bezoekers hebben van vandaag de dag\n- meer mensen betrokken worden in de kerk\n- de voorganger meer ruimte geven zodat hij met mensen bezig kan zijn\n\nHopelijk helpt de app jou en de kerk verder.";
 "AboutController-sectionStartContact" = "Neem contact op";
 "AboutController-contactInfo" = "Mocht je vragen of problemen hebben, neem dan gerust contact op.";
 "AboutController-contact" = "Contact";
-"AboutController-errorNoMail" = "Je hebt geen mail account op je telefoon ingesteld. Stel een mail account in onder settings.";
+"AboutController-errorNoMail" = "Er kon geen email account gevonden worden. Voor iOS, stel deze in onder instellingen.";
 
 
 "SingInGoogleController-title" = "Inloggen Agenda";

@@ -56,6 +56,7 @@ import SwiftUI
 
 struct SongServiceSettingsViewUI: View {
     
+    @Binding var selectedTab: Feature
     @StateObject private var viewModel = SongServiceSettingsViewModel()
     @State private var showingSongServiceSettingsEditorView: SongServiceSettingsCodable?
     @State private var showingNewSongServiceSettingsView = false
@@ -81,6 +82,10 @@ struct SongServiceSettingsViewUI: View {
                 if viewModel.isLoading {
                     ProgressView()
                 }
+            }
+            .onAppear {
+                selectedTab = .songServiceManagement
+                CreateChurchBeamDirectoryUseCase().setup()
             }
             .task {
                 await viewModel.fetchRemoteSettings()
@@ -138,6 +143,6 @@ struct SongServiceSettingsViewUI: View {
 
 struct SongServiceSettingsViewUI_Previews: PreviewProvider {
     static var previews: some View {
-        SongServiceSettingsViewUI()
+        SongServiceSettingsViewUI(selectedTab: .constant(.songService))
     }
 }
