@@ -10,6 +10,7 @@ import SwiftUI
 
 struct OnboardingWelcomeViewUI: View {
     @State private var isShowingEnvironmentPicker = false
+
     var body: some View {
         ZStack {
             Color(uiColor: themeHighlighted).edgesIgnoringSafeArea(.all)
@@ -26,6 +27,7 @@ struct OnboardingWelcomeViewUI: View {
                         .styleAs(font: .xxNormalLight, color: .white)
                     Spacer()
                 }
+
 #if DEBUG
                 Button(action: {
                     isShowingEnvironmentPicker.toggle()

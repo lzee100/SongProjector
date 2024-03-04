@@ -82,7 +82,7 @@ struct MusicDownloadButtonViewUI: View {
 }
 
 struct MusicDownloadButtonUI_Previews: PreviewProvider {
-    @State static var viewModel = CollectionsViewModel(tagSelectionModel: TagSelectionModel(mandatoryTags: []), customSelectedSongsForSongService: [], customSelectionDelegate: nil)
+    @State static var viewModel = CollectionsViewModel(tagSelectionModel: TagSelectionModel(mandatoryTagIds: []), customSelectedSongsForSongService: [], customSelectionDelegate: nil)
     static var previews: some View {
         MusicDownloadButtonViewUI(collection: .makeDefault()!)
     }

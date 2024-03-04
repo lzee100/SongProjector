@@ -14,10 +14,15 @@ import FirebaseAuth
 let ChurchBeamConfiguration = Config()
 
 class Config: NSObject {
-	
-	
+    
+    struct PublicKeys {
+        static let universalClusterVersionOLD = "universalClusterVersionOLD"
+        static let universalClusterVersionNEW = "universalClusterVersionNEW"
+    }
+    
 	fileprivate struct Keys {
 		
+        static let universalClusterVersion = "universalClusterVersion"
 		static let Environment = "config.environment"
 		static let BundleVersion = "CFBundleShortVersionString"
 		static let BuildTargetType = "BuildTargetType"
@@ -59,7 +64,7 @@ class Config: NSObject {
 		}
 		return nil
 	}()
-	
+    	
 	var environment: Environment {
 		get {
 			let int = UserDefaults.standard.integer(forKey: Keys.Environment)

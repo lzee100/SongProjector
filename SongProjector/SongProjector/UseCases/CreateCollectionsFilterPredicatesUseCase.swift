@@ -10,15 +10,8 @@ import Foundation
 
 struct FilteredCollectionsUseCase {
     
-    static func getCollectionsIn(collections: [ClusterCodable], searchText: String?, selectedTags: [TagCodable], showDeleted: Bool) async -> [ClusterCodable] {
-        
-        var showDeleted = showDeleted
-        var selectedTags = selectedTags
-        if let index = selectedTags.firstIndex(where: { !$0.isDeletable && $0.title == AppText.Tags.deletedClusters }) {
-            selectedTags.remove(at: index)
-            showDeleted = true
-        }
-        
+    static func getCollectionsIn(collections: [ClusterCodable], searchText: String?, selectedTagIds: [String], showDeleted: Bool) async -> [ClusterCodable] {
+
         return collections.filter { collection in
             
             func isDeleted(collection: ClusterCodable) -> Bool {
@@ -29,10 +22,10 @@ struct FilteredCollectionsUseCase {
             }
             
             func containsTagId(collection: ClusterCodable) -> Bool {
-                guard selectedTags.count > 0 else {
+                guard selectedTagIds.count > 0 else {
                     return true
                 }
-                return collection.tagIds.map { id in selectedTags.map { $0.id}.contains(id) }.filter { $0 }.count > 0
+                return collection.tagIds.map { id in selectedTagIds.contains(id) }.filter { $0 }.count > 0
             }
             if let searchText {
                 if collection.title?.localizedCaseInsensitiveContains(searchText) ?? false {
@@ -48,18 +41,18 @@ struct FilteredCollectionsUseCase {
         }.sorted(by: { $0.title ?? "" < $1.title ?? "" })
     }
     
-    static func getCollections(searchText: String?, showDeleted: Bool, selectedTags: [TagCodable]) async -> [ClusterCodable] {
-                
-        let predicates = predicatesFor(searchText: searchText, showDeleted: showDeleted, selectedTags: selectedTags)
-        
+    static func getCollections(searchText: String?, showDeleted: Bool, selectedTagIds: [String]) async -> [ClusterCodable] {
+
+        let predicates = predicatesFor(searchText: searchText, showDeleted: showDeleted, selectedTagIds: selectedTagIds)
+
         return await GetClustersUseCase().fetch(predicates: predicates, fetchDeleted: showDeleted)
     }
     
-    private static func predicatesFor(searchText: String?, showDeleted: Bool, selectedTags: [TagCodable]) -> [Predicate] {
+    private static func predicatesFor(searchText: String?, showDeleted: Bool, selectedTagIds: [String]) -> [Predicate] {
         let searchText = (searchText ?? "").lowercased()
         var predicates: [Predicate] = []
 //        filterOutClustersWithInstrumentsBasedOnContract(&predicates)
-        filter(selectedTags: selectedTags, predicates: &predicates)
+        filter(selectedTagIds: selectedTagIds, predicates: &predicates)
         filter(searchText: searchText, predicates: &predicates)
         return predicates
     }
@@ -76,9 +69,9 @@ struct FilteredCollectionsUseCase {
         }
     }
     
-    private static func filter(selectedTags: [TagCodable], predicates: inout [Predicate]) {
-        if selectedTags.count > 0 {
-            let tagIdsPredicates: [Predicate] = selectedTags.map { .customWithValue(format:"tagIds CONTAINS %@", value: $0.id) }
+    private static func filter(selectedTagIds: [String], predicates: inout [Predicate]) {
+        if selectedTagIds.count > 0 {
+            let tagIdsPredicates: [Predicate] = selectedTagIds.map { .customWithValue(format:"tagIds CONTAINS %@", value: $0) }
             predicates.append(.compound(predicates: tagIdsPredicates, isOr: true))
         }
     }

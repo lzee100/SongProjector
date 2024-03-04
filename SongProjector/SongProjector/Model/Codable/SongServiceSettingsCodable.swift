@@ -10,8 +10,8 @@ import Foundation
 import FirebaseAuth
 import CoreData
 
-public struct SongServiceSettingsCodable: EntityCodableType, Identifiable {
-    
+public struct SongServiceSettingsCodable: EntityCodableType, Identifiable, Equatable {
+
     static func makeDefault(userUID: String? = nil) -> SongServiceSettingsCodable? {
 #if DEBUG
         let userId = "userid"

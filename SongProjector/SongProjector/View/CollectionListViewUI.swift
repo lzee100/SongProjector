@@ -92,7 +92,7 @@ struct CollectionListViewUI: View {
 
 struct CollectionListViewUI_Previews: PreviewProvider {
     static private let collectionsViewModel = CollectionsViewModel(
-        tagSelectionModel: TagSelectionModel(mandatoryTags: []),
+        tagSelectionModel: TagSelectionModel(mandatoryTagIds: []),
         customSelectedSongsForSongService: [],
         customSelectionDelegate: nil)
     static var previews: some View {

@@ -29,7 +29,7 @@ actor GetSongServiceSettingsUseCase {
                     let tagIds = section.tagIds.split(separator: ",").map(String.init)
                     if tagIds.count > 0 {
                         let tags = try self.getTags(with: tagIds)
-                        sectionCodable.tags = tags.compactMap { TagCodable(entity: $0) }
+                        sectionCodable.tags = tags.compactMap { TagInSchemeCodable(entity: $0) }
                     }
                     return sectionCodable
                 }
@@ -66,15 +66,15 @@ actor GetSongServiceSettingsUseCase {
         
     }
     
-    private func getTags(with ids: [String]) throws -> [Tag] {
-        
+    private func getTags(with ids: [String]) throws -> [TagInScheme] {
+
         guard ids.count > 0 else { return [] }
         
         let predicates: [Predicate] = ids.map { .get(id: $0) }
         
-        let request: NSFetchRequest<Tag> = GetCoreDataRequestUseCase.get(
+        let request: NSFetchRequest<TagInScheme> = GetCoreDataRequestUseCase.get(
             predicates: predicates,
-            sort: .position(asc: true),
+            sort: .custom(key: "positionInScheme", ascending: true),
             predicateCompoundPredicateType: .or,
             fetchDeleted: false
         )

@@ -63,6 +63,8 @@ extension SheetMetaType {
             return sheetPastors.hasTheme
         } else if let sheetEmpty = self as? SheetEmptyCodable {
             return sheetEmpty.hasTheme
+        } else if let sheetActivities = self as? SheetActivitiesCodable {
+            return sheetActivities.hasTheme
         }
         return nil
     }

@@ -11,14 +11,17 @@ import MessageUI
 import SwiftUI
 
 class EmailController: NSObject, MFMailComposeViewControllerDelegate {
+
+    enum EmailError: Error {
+        case noAccount
+    }
     public static let shared = EmailController()
     private override init() { }
     
-    func sendEmail(subject:String, body:String, to:String? = nil) {
+    func sendEmail(subject:String, body:String, to:String? = nil) throws {
         // Check if the device is able to send emails
         if !MFMailComposeViewController.canSendMail() {
-           print("This device cannot send emails.")
-           return
+            throw EmailError.noAccount
         }
         // Create the email composer
         let mailComposer = MFMailComposeViewController()

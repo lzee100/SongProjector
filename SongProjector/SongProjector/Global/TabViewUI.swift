@@ -9,8 +9,10 @@
 import SwiftUI
 
 struct TabViewUI: View {
+
+    @Binding var selectedTab: Feature
+
     @StateObject private var model = TabViewViewModel()
-    @State private var selectedTab: Feature = .songService
     @State private var showingSongServiceView = true
     @EnvironmentObject var externalDisplayConnector: ExternalDisplayConnector
     @EnvironmentObject var musicDownloadManager: MusicDownloadManager
@@ -25,17 +27,17 @@ struct TabViewUI: View {
                     tabView(CollectionsViewUI(
                         editingSection: Binding.constant(nil),
                         songServiceEditorModel: SongServiceEditorModel(),
-                        mandatoryTags: []).environmentObject(musicDownloadManager), feature: feature)
+                        mandatoryTagIds: []).environmentObject(musicDownloadManager), feature: feature)
                 case .themes:
                     tabView(ThemesViewUI(), feature: feature)
                 case .tags:
                     tabView(TagsViewUI(), feature: feature)
                 case .songServiceManagement:
-                    tabView(SongServiceSettingsViewUI(), feature: feature)
+                    tabView(SongServiceSettingsViewUI(selectedTab: $selectedTab), feature: feature)
                 case .settings:
-                    tabView(SettingsViewUI(), feature: feature)
+                    tabView(SettingsViewUI(selectedTab: $selectedTab), feature: feature)
                 default:
-                    tabView(SettingsViewUI(), feature: feature)
+                    tabView(AboutViewUI(), feature: feature)
                 }
             }
         }
@@ -57,7 +59,7 @@ struct TabViewUI: View {
 
 struct TabViewUI_Previews: PreviewProvider {
     static var previews: some View {
-        TabViewUI()
+        TabViewUI(selectedTab: .constant(.songService))
     }
 }
 

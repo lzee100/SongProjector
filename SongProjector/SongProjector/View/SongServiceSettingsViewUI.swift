@@ -35,9 +35,7 @@ import SwiftUI
 
     func fetchSettings() async {
         let settings = await GetSongServiceSettingsUseCase().fetch()
-        print(settings)
         songServiceSettings = settings
-//        songServiceSettings = await GetSongServiceSettingsUseCase().fetch()
     }
     
     func fetchRemoteSettings() async {
@@ -58,6 +56,7 @@ import SwiftUI
 
 struct SongServiceSettingsViewUI: View {
     
+    @Binding var selectedTab: Feature
     @StateObject private var viewModel = SongServiceSettingsViewModel()
     @State private var showingSongServiceSettingsEditorView: SongServiceSettingsCodable?
     @State private var showingNewSongServiceSettingsView = false
@@ -84,6 +83,10 @@ struct SongServiceSettingsViewUI: View {
                     ProgressView()
                 }
             }
+            .onAppear {
+                selectedTab = .songServiceManagement
+                CreateChurchBeamDirectoryUseCase().setup()
+            }
             .task {
                 await viewModel.fetchRemoteSettings()
             }
@@ -109,10 +112,7 @@ struct SongServiceSettingsViewUI: View {
                     await viewModel.fetchSettings()
                 }
             }, content: { settings in
-                SongServiceSettingsEditorViewUI(
-                    showingSongServiceSettings: $showingSongServiceSettingsEditorView,
-                    viewModel: SongServiceSettingsEditorViewModel(songServiceSettings: settings)
-                )
+                SongServiceSettingsEditorViewUI2(songServiceSettings: WrappedStruct(withItem: settings))
             })
         }
     }
@@ -143,6 +143,6 @@ struct SongServiceSettingsViewUI: View {
 
 struct SongServiceSettingsViewUI_Previews: PreviewProvider {
     static var previews: some View {
-        SongServiceSettingsViewUI()
+        SongServiceSettingsViewUI(selectedTab: .constant(.songService))
     }
 }

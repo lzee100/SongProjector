@@ -55,7 +55,7 @@ actor FetchUseCaseAsyncTask<T: FileTransferable> {
     
     private let endpoint: EndPoint
     private let db = Firestore.firestore()
-    private let fetchCount = 15
+    private let fetchCount = 50
     private let saveUseCase = SaveCodableToCorDataUseCase<T>()
     let lastUpdatedAtKey = "updatedAt"
     let createdAtKey = "createdAt"

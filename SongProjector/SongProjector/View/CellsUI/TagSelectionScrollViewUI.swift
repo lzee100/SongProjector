@@ -11,7 +11,7 @@ import SwiftUI
 @MainActor class TagSelectionModel: ObservableObject {
     
     let label = AppText.Tags.title
-    let mandatoryTags: [TagCodable]
+    let mandatoryTagIds: [String]
     @Published private(set) var tags: [TagCodable] = []
     @Published private(set) var selectedTags: [TagCodable]
     @Published var error: LocalizedError? = nil
@@ -19,9 +19,9 @@ import SwiftUI
     private var fetchRemoteTags: Bool
     private let addDeleteTag: Bool
     
-    init(mandatoryTags: [TagCodable], selectedTags: [TagCodable] = [], fetchRemoteTags: Bool = true, addDeleteTag: Bool = false) {
-        self.mandatoryTags = mandatoryTags
-        self.selectedTags = (mandatoryTags + selectedTags).unique.sorted(by: { $0.position < $1.position})
+    init(mandatoryTagIds: [String], selectedTags: [TagCodable] = [], fetchRemoteTags: Bool = true, addDeleteTag: Bool = false) {
+        self.mandatoryTagIds = mandatoryTagIds
+        self.selectedTags = selectedTags.sorted(by: { $0.position < $1.position})
         self.fetchRemoteTags = fetchRemoteTags
         self.addDeleteTag = addDeleteTag
         defer {
@@ -40,6 +40,7 @@ import SwiftUI
     func fetchTags() {
         Task {
             tags = await GetTagsUseCase().fetch()
+            addMandatoryTagsToSelectedTags()
             addDeleteTagIfNeeded()
         }
     }
@@ -58,7 +59,12 @@ import SwiftUI
             self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
         }
     }
-    
+
+    private func addMandatoryTagsToSelectedTags() {
+        let selTags = selectedTags
+        selectedTags = (tags.filter({ mandatoryTagIds.contains($0.id) }) + selTags ).unique.sorted(by: { $0.position < $1.position })
+    }
+
     private func addDeleteTagIfNeeded() {
         if addDeleteTag {
             let deleteTag = TagCodable(title: AppText.Tags.deletedClusters, isDeletable: false)
@@ -82,13 +88,13 @@ struct TagSelectionScrollViewUI: View {
                             Text(tag.title ?? "-")
                         }
                         .styleAsSelectionCapsuleButton(isSelected: viewModel.selectedTags.contains(where: { $0.id == tag.id }))
-                        .allowsHitTesting(viewModel.mandatoryTags.count == 0)
+                        .allowsHitTesting(viewModel.mandatoryTagIds.count == 0)
                         .id(tag.id)
                     }
                 }
             }
-            .onChange(of: viewModel.tags, perform: { _ in
-                if let mandatoryTagId = viewModel.mandatoryTags.first?.id {
+            .onChange(of: viewModel.tags, { _, _ in
+                if let mandatoryTagId = viewModel.mandatoryTagIds.first {
                     reader.scrollTo(mandatoryTagId)
                 }
                 else if let selectedTagId = viewModel.selectedTags.first?.id {
@@ -101,7 +107,7 @@ struct TagSelectionScrollViewUI: View {
 }
 
 struct TagSelectionScrollViewUI_Previews: PreviewProvider {
-    @State static var model = TagSelectionModel(mandatoryTags: [])
+    @State static var model = TagSelectionModel(mandatoryTagIds: [])
     static var previews: some View {
         TagSelectionScrollViewUI(viewModel: model)
     }

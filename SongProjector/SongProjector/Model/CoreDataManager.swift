@@ -131,6 +131,7 @@ enum SortDescriptor {
     case position(asc: Bool)
     case title(asc: Bool)
     case updatedAt(asc: Bool)
+    case custom(key: String, ascending: Bool)
 
     var sortDescriptor: NSSortDescriptor {
         switch self {
@@ -140,6 +141,8 @@ enum SortDescriptor {
             return NSSortDescriptor(key: "title", ascending: asc)
         case .updatedAt(asc: let asc):
             return NSSortDescriptor(key: "updatedAt", ascending: asc)
+        case .custom(let key, let ascending):
+            return NSSortDescriptor(key: key, ascending: ascending)
         }
     }
     

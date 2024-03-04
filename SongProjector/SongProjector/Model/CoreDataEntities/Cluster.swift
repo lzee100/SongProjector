@@ -23,6 +23,7 @@ public class Cluster: Entity {
 	@NSManaged public var lastShownAt: NSDate?
     @NSManaged public var instrumentIds: String?
     @NSManaged public var church: String?
+    @NSManaged public var contentPackage: String
     @NSManaged public var startTime: Double
     @NSManaged public var sheetIds: String
     @NSManaged public var hasSheetPastors: Bool

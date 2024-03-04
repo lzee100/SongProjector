@@ -169,6 +169,7 @@
 "Tags-deletedClusters" = "Deleted items";
 "Tags-errorEmptyTitle" = "Title can not be empty";
 "Tags-editTag" = "Change tag";
+"Tags-SelectTags" = "Select tags";
 
 "CustomSheets-CollectionType-Lyrics" = "Lyrics sheets";
 "CustomSheets-CollectionType-BibleSheets" = "Bible text sheets";
@@ -211,6 +212,10 @@
 "SongServiceManagement-errorAddASection" = "Add a section to the song service";
 "SongServiceManagement-errorInSections" = "Please add a title and at least one tag in the following sections: %$";
 "SongServiceManagement-errorInSection" = "Please add a title and at least one tag in this section: %$";
+"SongServiceManagement-error-tag" = "You have no tags selected in section %@: %@";
+"SongServiceManagement-error-title" = "You have no title for section %@";
+"SongServiceManagement-error-numberOfSongs" = "You have a wrong number of songs in %@: %@";
+
 
 "Settings-title" = "Settings";
 "Settings-descriptionGoogleSub" = "Login to retrieve activities";
@@ -226,11 +231,23 @@
 "Settings-sectionSongServiceSettings" = "Song service settings";
 "Settings-sectionGmailAccount" = "Gmail account";
 "Settings-sectionCalendarId" = "Google calendar ID";
+"Settings-sectionContentPackageBabyChurches" = "Content package: baby churches prayer sheets";
+"Settings-sectionContentPackageBabyChurches-explain" = "All baby churches sheets. By subscribing, these sheets will automatically be in sync: sheets will be automatically removed or added based on the change.";
+"Settings-sectionMotherChurch" = "Content package: mother church";
+"Settings-MotherChurch-explain" = "Select a mother church to subscribe to it. The app will automatically stay in sync with the available content from this church.";
 "Settings-calendarIdPlaceHolder" = "Google calendar id";
 "Settings-appversion" = "Version: ";
 "Settings-sectionAppSettings" = "App settings";
 "Settings-resetMutes" = "Reset saved mutes for instruments";
 "Settings-contactId" = "Contact reference ID";
+"Settings-sectionContentPackageBabyChurches-AreYouSure" = "Are you sure you want to subscribe to %@? At this moment you can not change this once selected.";
+"Settings-MotherChurch-areUSure" = "Are you sure you want to set the mother church to %@? At this moment you can not change this once selected.";
+"Settings-ContentPackage-pastorsZwolle" = "The Door Zwolle";
+"Settings-ContentPackage-zwolleDutch" = "The Door Zwolle (Dutch)";
+"Settings-ContentPackage-zwolleEnglish" = "The Door Zwolle (English)";
+"Settings-ContentPackage-zwolleMandarin" = "The Door Zwolle (Mandarijn)";
+"Settings-ContentPackage-zwolleChurches" = "The Door Zwolle Churches";
+"Settings-ContentPackage-SubscribeTo" = "Subscribe to ";
 
 "EditTheme-title" = "Edit theme";
 
@@ -346,7 +363,7 @@
 "AboutController-sectionStartContact" = "Contact me";
 "AboutController-contactInfo" = "If you have any questions or problems, please feel free to contact us.";
 "AboutController-contact" = "Contact me";
-"AboutController-errorNoMail" = "You have not set up an email account on your phone. Set up an email account under iPhone settings.";
+"AboutController-errorNoMail" = "No email account was found. For iOS, set up an email account under settings.";
 
 
 "SingInGoogleController-title" = "Sign-in calendar";

@@ -297,15 +297,19 @@ extension SheetTitleImageCodable: FileTransferable {
     
     func getDeleteObjects(forceDelete: Bool) -> [DeleteObject] {
         let deleteObjects = hasTheme?.getDeleteObjects(forceDelete: forceDelete) ?? []
-        
-        let deleteObject2 = DeleteObject(
-            imagePathAWS: imagePathAWS,
-            imagePath: imagePath,
-            imagePathThumbnail: thumbnailPath
-        )
-        return deleteObjects + [deleteObject2]
+
+        let hasNewImageAndOldImage = newSelectedSheetImageTempDirPath != nil && imagePathAWS != nil
+        if isSheetImageDeleted || forceDelete || hasNewImageAndOldImage {
+            let deleteObject2 = DeleteObject(
+                imagePathAWS: imagePathAWS,
+                imagePath: imagePath,
+                imagePathThumbnail: thumbnailPath
+            )
+            return deleteObjects + [deleteObject2]
+        }
+        return deleteObjects
     }
-    
+
     var uploadObjects: [TransferObject] {
         [newSelectedSheetImageTempDirPath].compactMap { $0 }.compactMap { UploadObject(fileName: $0) } + [hasTheme].compactMap { $0?.newSelectedThemeImageTempDirPath }.compactMap { UploadObject(fileName: $0) }
     }

@@ -162,6 +162,8 @@ struct SongServiceEditorViewUI: View {
     @State private var editingSection: SongServiceSectionWithSongs? = nil
     @Binding var showingSongServiceEditorViewUI: Bool
     @EnvironmentObject var musicDownloadManager: MusicDownloadManager
+    @State private var showingNoEmailError = false
+    private let noEmailMessage: LocalizedStringKey = "AboutController-errorNoMail"
 
     var body: some View {
         NavigationStack {
@@ -200,7 +202,7 @@ struct SongServiceEditorViewUI: View {
                     songServiceEditorModel: viewModel,
                     customSelectedSongsForSongService: viewModel.customSelectedSongs,
                     customSelectionDelegate: self,
-                    mandatoryTags: []
+                    mandatoryTagIds: []
                 )
             })
             .sheet(item: $editingSection) { editingSection in
@@ -209,12 +211,15 @@ struct SongServiceEditorViewUI: View {
                     CollectionsViewUI(
                         editingSection: $editingSection,
                         songServiceEditorModel: viewModel,
-                        mandatoryTags: mandatoryTags
+                        mandatoryTagIds: mandatoryTags.map({ $0.rootTagId })
                     )
                 }
             }
         }
         .environmentObject(musicDownloadManager)
+        .alert(noEmailMessage, isPresented: $showingNoEmailError) {
+            Button(AppText.Actions.ok) { }
+        }
     }
     
     @ViewBuilder var songServiceView: some View {
@@ -303,7 +308,11 @@ struct SongServiceEditorViewUI: View {
             Button {
                 Task {
                     guard let shareInfo = await viewModel.getShareInfo(withContent: false) else { return }
-                    EmailController.shared.sendEmail(subject: shareInfo.title, body: shareInfo.content)
+                    do {
+                        try EmailController.shared.sendEmail(subject: shareInfo.title, body: shareInfo.content)
+                    } catch {
+                        showingNoEmailError.toggle()
+                    }
                 }
             } label: {
                 Text(AppText.NewSongService.shareOptionTitles)
@@ -311,7 +320,11 @@ struct SongServiceEditorViewUI: View {
             Button {
                 Task {
                     guard let shareInfo = await viewModel.getShareInfo(withContent: true) else { return }
-                    EmailController.shared.sendEmail(subject: shareInfo.title, body: shareInfo.content)
+                    do {
+                        try EmailController.shared.sendEmail(subject: shareInfo.title, body: shareInfo.content)
+                    } catch {
+                        showingNoEmailError.toggle()
+                    }
                 }
             } label: {
                 Text(AppText.NewSongService.shareOptionTitlesWithSections)

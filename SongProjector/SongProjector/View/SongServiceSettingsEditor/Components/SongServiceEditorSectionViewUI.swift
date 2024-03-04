@@ -23,7 +23,7 @@ class SongServiceEditorSectionViewModel: ObservableObject, Identifiable {
     let songServiceSection: SongServiceSectionCodable
     @Published var title = ""
     @Published var numberOfSongs: Int = 1
-    @Published var tags: [TagCodable] = []
+    @Published var tags: [TagInSchemeCodable] = []
     private let output = PassthroughSubject<Output, Never>()
     private var cancables: [AnyCancellable] = []
     private var section: Int {
@@ -60,7 +60,13 @@ class SongServiceEditorSectionViewModel: ObservableObject, Identifiable {
     }
     
     func didSelect(_ tags: [TagCodable]) {
-        self.tags = tags
+        let oldTags = self.tags
+        func isPinned(_ tag: TagCodable) -> Bool {
+            return oldTags.first(where: { $0.rootTagId == tag.id })?.isPinned ?? false
+        }
+        self.tags = tags.map({ tag in
+            return TagInSchemeCodable(title: tag.title, createdAt: Date(), updatedAt: Date(), rootTagId: tag.id, isPinned: isPinned(tag))
+        })
         output.send(.isValid(section: section, isValid: isValid))
     }
 }

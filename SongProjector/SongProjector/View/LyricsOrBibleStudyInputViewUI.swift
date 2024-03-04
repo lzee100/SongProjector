@@ -60,7 +60,7 @@ protocol LyricsOrBibleStudyInputViewModelDelegate {
             if collectionType == .lyrics {
                 let numberOfSheetsOriginal = try await lyricsUseCase.buildSheetsModels(from: originalContent, cluster: cluster).count
                 let numberOfSheetsNew = try await lyricsUseCase.buildSheetsModels(from: changedContent, cluster: cluster).count
-                if !isNewSong, numberOfSheetsOriginal != 0 && (numberOfSheetsNew != numberOfSheetsOriginal) {
+                if !isNewSong, numberOfSheetsOriginal != 0 && (numberOfSheetsNew != numberOfSheetsOriginal), cluster.hasRemoteMusic {
                     showingNumberOfSheetsError.toggle()
                 } else {
                     delegate?.didSave(content: changedContent)

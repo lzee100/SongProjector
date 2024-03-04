@@ -82,6 +82,6 @@ actor SaveSongServiceSettingsUseCase {
         entity.position = codable.position
         entity.numberOfSongs = codable.numberOfSongs
         entity.tagIds = codable.tags.compactMap({ $0.id }).joined(separator: ",")
-        try codable.tags.forEach { try GetTagEntitiesUseCase.get($0, context: context) }
+        try codable.tags.forEach { try GetTagInSchemeUseCase.get($0, context: context) }
     }
 }

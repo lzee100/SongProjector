@@ -35,7 +35,6 @@ struct ChurchBeamApp: View {
     var userAuth: UserAuthModel = UserAuthModel()
     var soundPlayer = SoundPlayer2()
     @StateObject var musicDownloadManager = MusicDownloadManager()
-    var universalClusterRequester = SyncUniversalCollectionsUseCase()
     @State private var appState: AppState? = nil
     @State private var showApp = false
     @State private var showOnboarding = false
@@ -43,6 +42,7 @@ struct ChurchBeamApp: View {
     @State private var showingUniversalClusterError = false
     @State private var showingPreparingAccount = false
     @State private var showingFetchingAdminUserChurch = false
+    @State private var selectedTab: Feature = .songService
     @StateObject private var authentication = Authentication()
     
     init(store: ExternalDisplayConnector) {
@@ -59,28 +59,28 @@ struct ChurchBeamApp: View {
             Color(uiColor: .blackColor).ignoresSafeArea()
             ProgressView()
                 .tint(Color(uiColor: .whiteColor))
-            if showingPreparingAccount {
-                VStack {
+            VStack {
+                Spacer()
+                HStack {
                     Spacer()
-                    HStack {
-                        Spacer()
-                        VStack(spacing: 30) {
-                            Text(AppText.Start.syncingAccountData)
-                                .styleAs(font: .title, color: .white)
-                            ProgressView()
-                                .tint(.white)
-                                .scaleEffect(1.4)
-                        }
-                        .padding(EdgeInsets(top: 40, leading: 40, bottom: 40, trailing: 40))
-                        .background(Color(uiColor: themeHighlighted))
-                        .cornerRadius(20)
-                        Spacer()
+                    VStack(spacing: 30) {
+                        Text(AppText.Start.syncingAccountData)
+                            .styleAs(font: .title, color: .white)
+                        ProgressView()
+                            .tint(.white)
+                            .scaleEffect(1.4)
                     }
+                    .padding(EdgeInsets(top: 40, leading: 40, bottom: 40, trailing: 40))
+                    .background(Color(uiColor: themeHighlighted))
+                    .cornerRadius(20)
                     Spacer()
                 }
+                Spacer()
             }
+            .opacity(showingPreparingAccount ? 1 : 0)
         }
         .onAppear {
+            showingPreparingAccount = false
             handleFireStore = Auth.auth().addStateDidChangeListener { auth, user in
                 authentication.isRegistered = auth.currentUser != nil
                 
@@ -88,6 +88,7 @@ struct ChurchBeamApp: View {
                     UserDefaults.standard.removeObject(forKey: secretKey)
                     Task {
                         try? await ResetCoreDataUseCase().reset()
+                        initializeLocalStorage()
                     }
                 }
                 Task {
@@ -119,11 +120,10 @@ struct ChurchBeamApp: View {
             showOnboarding = !authentication.isRegistered
             handleTransition()
         }, content: {
-            TabViewUI()
+            TabViewUI(selectedTab: $selectedTab)
                 .environmentObject(soundPlayer)
                 .environmentObject(musicDownloadManager)
                 .environmentObject(store)
-                .environmentObject(universalClusterRequester)
         })
         .fullScreenCover(isPresented: $showOnboarding, onDismiss: {
             Task {
@@ -155,16 +155,18 @@ struct ChurchBeamApp: View {
         await getAdminUserAndChurch()
         let admin = await GetAdminUseCase().get()
         guard admin == nil else { return }
-        
-        let hasNewUniversalClusters = try await FetchNeedsUpdateUniversalClustersUseCase().fetch()
-        if hasNewUniversalClusters {
+        guard let user = await GetUserUseCase().get() else { return }
+        showingPreparingAccount = false
+
+        withAnimation(Animation.spring().speed(0.5).delay(0.5)) {
             showingPreparingAccount = true
-            do {
-                try await universalClusterRequester.request()
-            } catch {
-                showingUniversalClusterError = true
-            }
+        }
+        do {
+            try await SyncUniversalCollectionsUseCase().request()
             showingPreparingAccount = false
+        } catch {
+            showingPreparingAccount = false
+            showingUniversalClusterError = true
         }
     }
     

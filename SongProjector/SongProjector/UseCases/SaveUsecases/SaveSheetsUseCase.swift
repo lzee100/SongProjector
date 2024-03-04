@@ -261,7 +261,10 @@ actor SaveSheetsUseCase {
         entity.deleteDate = sheet.deleteDate?.nsDate
         entity.rootDeleteDate = sheet.rootDeleteDate?.nsDate
         entity.position = Int16(sheet.position)
-        
+        if let theme = sheet.hasTheme {
+            entity.hasTheme = try GetThemeEntityUseCase.get(theme, context: context)
+        }
+
         entity.hasGoogleActivity = NSSet(array: try sheet.hasGoogleActivities.compactMap { try getGoogleActivity($0) })
     }
     

@@ -238,6 +238,7 @@ struct SheetEditModel: Identifiable {
     }
 
     mutating func setNewSheetImage(_ image: UIImage) {
+        isImageDeleted = false
         newSelectedImage = image
         newSelectedImageThumb = image.resized(withPercentage: 0.4)
     }
@@ -314,6 +315,10 @@ struct SheetEditModel: Identifiable {
             sheet.time = Double(sheetTime) ?? 0
             return sheet
         case .SheetActivities:
+            guard var sheet = self.sheet as? SheetActivitiesCodable else { return nil }
+            sheet.title = title.isBlanc ? nil : title
+            sheet.position = position
+            sheet.hasTheme = theme
             return sheet
         }
     }

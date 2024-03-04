@@ -173,6 +173,7 @@
 "Tags-deletedClusters" = "Verwijderde items";
 "Tags-errorEmptyTitle" = "De titel mag niet leeg zijn";
 "Tags-editTag" = "Wijzig tag";
+"Tags-SelectTags" = "Selecteer tags";
 
 "CustomSheets-CollectionType-Lyrics" = "Liedtekst dia's";
 "CustomSheets-CollectionType-BibleSheets" = "Bijbeltekst dia's";
@@ -214,6 +215,10 @@
 "SongServiceManagement-errorAddASection" = "Voeg een sectie toe aan het schema";
 "SongServiceManagement-errorInSections" = "Voeg een titel en ten minste 1 tag toe aan de volgende secties: %$";
 "SongServiceManagement-errorInSection" = "Voeg een titel en ten minste 1 tag toe aan deze sectie: %$";
+"SongServiceManagement-error-tag" = "Je hebt nog geen tags geselecteerd in sectie %@: %@";
+"SongServiceManagement-error-title" = "Je hebt nog geen titel voor sectie %@";
+"SongServiceManagement-error-numberOfSongs" = "Je hebt een verkeerd aantal liedjes in sectie %@: %@";
+
 
 "Settings-title" = "Instellingen";
 "Settings-descriptionGoogleSub" = "Login om activiteiten op te halen";
@@ -229,13 +234,23 @@
 "Settings-sectionSongServiceSettings" = "Zangdienst instellingen";
 "Settings-sectionGmailAccount" = "Gmail account";
 "Settings-sectionCalendarId" = "Google agenda ID";
+"Settings-sectionContentPackageBabyChurches" = "Content pakket: baby kerken gebeds dia's";
+"Settings-sectionMotherChurch" = "Content pakket: moeder kerk";
+"Settings-sectionContentPackageBabyChurches-explain" = "Alle baby kerken dia's. Door je te abboneren zullen deze dia's automatisch in sync zijn: dia's worden automatisch verwijderd of toegevoegd gebasseerd op de verandering.";
 "Settings-calendarIdPlaceHolder" = "Google agenda id";
 "Settings-appversion" = "Versie: ";
 "Settings-sectionAppSettings" = "App instellingen";
 "Settings-resetMutes" = "Reset opgeslagen mutes voor instrument";
 "Settings-contactId" = "Contact referentie ID";
-
-
+"Settings-MotherChurch-explain" = "Selecteer een moederkerk om je hierop te abboneren. De app zal automatisch in sync blijven met de beschikbare content vanuit deze kerk.";
+"Settings-MotherChurch-areUSure" = "Weet je zeker dat je de moederkerk wil zetten naar %@? Op dit moment kan je dit niet wijzigen wanneer je dit hebt geselecteerd.";
+"Settings-sectionContentPackageBabyChurches-AreYouSure" = "Weet je zeker dat je je wilt abonneren op %@? Op dit moment kan je dit niet wijzigen wanneer je dit hebt geselecteerd.";
+"Settings-ContentPackage-pastorsZwolle" = "De Deur Zwolle";
+"Settings-ContentPackage-zwolleDutch" = "De Deur Zwolle (Nederlands)";
+"Settings-ContentPackage-zwolleEnglish" = "De Deur Zwolle (Engels)";
+"Settings-ContentPackage-zwolleMandarin" = "De Deur Zwolle (Mandarijn)";
+"Settings-ContentPackage-zwolleChurches" = "De Deur Zwolle kerken";
+"Settings-ContentPackage-SubscribeTo" = "Abonneer op ";
 
 "EditTheme-title" = "Wijzig thema";
 
@@ -347,11 +362,11 @@
 
 "AboutController-title" = "Contactinformatie";
 "AboutController-sectionAbout" = "Over de ontwikkelaar";
-"AboutController-infoText" = "Hey, mijn naam is Leo van der Zee. Voor een aantal jaren heb ik naast mijn baan deze app ontwikkeld. Mijn visie is om de diensten van kleine kerken te verbeteren zodat zij:\n- grotere mate van aanbidding kunnen ervaren zodat er een vergroting van het werk van God in het hart zal plaatsvinden.\n- een betere aansluiting bij de verwachtingen die bezoekers hebben van vandaag de dag\n- een vergroting van de betrokkenheid van de kerk krijgen\n- meer ruimte voor de voorganger krijgt zodat hij met mensen bezig kan zijn\n\nHopelijk helpt de app jou en de kerk verder.";
+"AboutController-infoText" = "Hey, mijn naam is Leo van der Zee. Voor een aantal jaren heb ik naast mijn baan deze app ontwikkeld. Mijn visie is om de diensten van kleine kerken te verbeteren zodat zij:\n- grotere mate van aanbidding kunnen ervaren zodat er een vergroting van het werk van God in het hart zal plaatsvinden.\n- een betere aansluiting bij de verwachtingen die bezoekers hebben van vandaag de dag\n- meer mensen betrokken worden in de kerk\n- de voorganger meer ruimte geven zodat hij met mensen bezig kan zijn\n\nHopelijk helpt de app jou en de kerk verder.";
 "AboutController-sectionStartContact" = "Neem contact op";
 "AboutController-contactInfo" = "Mocht je vragen of problemen hebben, neem dan gerust contact op.";
 "AboutController-contact" = "Contact";
-"AboutController-errorNoMail" = "Je hebt geen mail account op je telefoon ingesteld. Stel een mail account in onder settings.";
+"AboutController-errorNoMail" = "Er kon geen email account gevonden worden. Voor iOS, stel deze in onder instellingen.";
 
 
 "SingInGoogleController-title" = "Inloggen Agenda";

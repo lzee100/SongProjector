@@ -13,8 +13,13 @@ actor FileDownloadUseCase<T: FileTransferable> {
     func startDownloadingFor(_ entity: T, downloadObjects: [DownloadObject] = []) async throws -> T {
         let fetchers = (entity.downloadObjects + downloadObjects).compactMap { $0 as? DownloadObject }.map { FileFetcher(downloadObject: $0) }
         
-        let results = try await downloadFilesFor(fetchers)
-        return try updateCollectionFor(entity, with: results.compactMap { $0 as? DownloadObject })
+        do {
+            let results = try await downloadFilesFor(fetchers)
+            return try updateCollectionFor(entity, with: results.compactMap { $0 as? DownloadObject })
+        } catch {
+            print("No file for: \(entity.title ?? "-")")
+            throw error
+        }
     }
     
     private func downloadFilesFor(_ fetchers: [FileFetcher]) async throws -> [TransferObject] {
