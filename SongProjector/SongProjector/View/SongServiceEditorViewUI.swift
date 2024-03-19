@@ -161,7 +161,7 @@ struct SongServiceEditorViewUI: View {
     @State private var showingCustomSelectionSongsCollectionOverView: Bool = false
     @State private var editingSection: SongServiceSectionWithSongs? = nil
     @Binding var showingSongServiceEditorViewUI: Bool
-    @EnvironmentObject var musicDownloadManager: MusicDownloadManager
+    @Environment(MusicDownloadManager.self) private var musicDownloadManager
     @State private var showingNoEmailError = false
     private let noEmailMessage: LocalizedStringKey = "AboutController-errorNoMail"
 
@@ -216,7 +216,6 @@ struct SongServiceEditorViewUI: View {
                 }
             }
         }
-        .environmentObject(musicDownloadManager)
         .alert(noEmailMessage, isPresented: $showingNoEmailError) {
             Button(AppText.Actions.ok) { }
         }

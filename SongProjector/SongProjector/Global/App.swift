@@ -34,7 +34,7 @@ struct ChurchBeamApp: View {
     let store: ExternalDisplayConnector
     var userAuth: UserAuthModel = UserAuthModel()
     var soundPlayer = SoundPlayer2()
-    @StateObject var musicDownloadManager = MusicDownloadManager()
+    let musicDownloadManager = MusicDownloadManager()
     @State private var appState: AppState? = nil
     @State private var showApp = false
     @State private var showOnboarding = false
@@ -122,7 +122,7 @@ struct ChurchBeamApp: View {
         }, content: {
             TabViewUI(selectedTab: $selectedTab)
                 .environmentObject(soundPlayer)
-                .environmentObject(musicDownloadManager)
+                .environment(musicDownloadManager)
                 .environmentObject(store)
         })
         .fullScreenCover(isPresented: $showOnboarding, onDismiss: {

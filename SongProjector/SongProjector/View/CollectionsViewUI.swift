@@ -8,24 +8,6 @@
 
 import SwiftUI
 
-@MainActor class MusicDownloadManager: ObservableObject {
-    
-    @Published private(set) var musicDownloaders: [FetchMusicUseCase] = []
-    
-    func downloadMusicFor(collection: ClusterCodable) async throws {
-        guard !musicDownloaders.contains(where: { $0.id == collection.id }) else { return }
-        let fetchMusicUseCase = FetchMusicUseCase(collection: collection)
-        musicDownloaders.append(fetchMusicUseCase)
-        try await fetchMusicUseCase.fetch()
-        musicDownloaders.removeAll(where: { $0.id == collection.id })
-    }
-    
-    func isDownloading(for collection: ClusterCodable) async -> Bool {
-        musicDownloaders.contains(where: { $0.id == collection.id })
-    }
-
-}
-
 @MainActor class CollectionsViewModel: ObservableObject {
     
     @Published var searchText: String = ""
@@ -243,7 +225,6 @@ struct CollectionsViewUI: View {
     @State var showingCollectionEditor: CollectionEditor?
     @State var alertMessage: AlertMessage? = nil
     @State var showingTrailingButtonAlertMessage = false
-    @EnvironmentObject var musicDownloadManager: MusicDownloadManager
 
     @State private var googleEventsFetcher = GoogleEventsFetcher()
     @State private var selectedCollectionForTrailingActions: ClusterCodable? = nil
@@ -406,11 +387,6 @@ struct CollectionsViewUI: View {
                 alertMessage = nil
             }))
         })
-        .onReceive(musicDownloadManager.$musicDownloaders) { _ in
-            Task {
-                await viewModel.reload()
-            }
-        }
     }
     
     @ViewBuilder private func deleteLocalMusicButton(collection: ClusterCodable) -> some View {

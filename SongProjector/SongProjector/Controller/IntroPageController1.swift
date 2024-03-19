@@ -28,7 +28,7 @@ class IntroPageController1: PageController {
     override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
         if(event?.subtype == UIEvent.EventSubtype.motionShake) {
             let alert = UIAlertController(title: nil, message: "Selecteer omgeving:", preferredStyle: .actionSheet)
-            let actions = Environment.allValues.map({ environment in
+            let actions = ChurchBeamEnvironment.allValues.map({ environment in
                 UIAlertAction(title: environment.name, style: .default) { (_) in
                     Queues.main.async {
                         ChurchBeamConfiguration.environment = environment

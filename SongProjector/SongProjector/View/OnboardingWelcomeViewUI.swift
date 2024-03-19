@@ -43,7 +43,7 @@ struct OnboardingWelcomeViewUI: View {
             .padding([.leading, .trailing], 50)
         }
         .alert(Text("Choose environment"), isPresented: $isShowingEnvironmentPicker) {
-            ForEach(Environment.allValues) { environment in
+            ForEach(ChurchBeamEnvironment.allValues) { environment in
                 Button(environment.name, role: environment == ChurchBeamConfiguration.environment ? .destructive : nil) {
                     ChurchBeamConfiguration.environment = environment
                 }

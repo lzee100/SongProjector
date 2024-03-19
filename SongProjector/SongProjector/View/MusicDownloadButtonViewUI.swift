@@ -8,76 +8,68 @@
 
 import SwiftUI
 
-@MainActor class MusicDownloadButtonViewModel: ObservableObject {
-    
-    @Published var error: LocalizedError? = nil
-    @Published var showingLoader = false
-    
-    private(set) var collection: ClusterCodable
-    
-    init(collection: ClusterCodable) {
-        self.collection = collection
-    }
-    
-    func downloadMusic(manager: MusicDownloadManager) async {
-        showingLoader = true
-        do {
-            guard await !manager.isDownloading(for: collection) else { return }
-            try await manager.downloadMusicFor(collection: collection)
-            showingLoader = false
-        } catch {
-            self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
-        }
-    }
-    
-    func isDownloading(manager: MusicDownloadManager) async -> Bool {
-        await manager.isDownloading(for: collection)
-    }
-}
+//@MainActor class MusicDownloadButtonViewModel: ObservableObject {
+//    
+//    @Published var error: LocalizedError? = nil
+//    @Published var showingLoader = false
+//    
+//    private(set) var collection: ClusterCodable
+//    
+//    init(collection: ClusterCodable) {
+//        self.collection = collection
+//    }
+//    
+//    func downloadMusic(manager: MusicDownloadManager) async {
+//        showingLoader = true
+//        do {
+//            guard await !manager.isDownloading(for: collection) else { return }
+//            try await manager.downloadMusicFor(collection: collection)
+//            showingLoader = false
+//        } catch {
+//            self.error = error as? LocalizedError ?? RequestError.unknown(requester: "", error: error)
+//        }
+//    }
+//    
+//    func isDownloading(manager: MusicDownloadManager) async -> Bool {
+//        await manager.isDownloading(for: collection)
+//    }
+//}
 
 struct MusicDownloadButtonViewUI: View {
     
-    @ObservedObject private var viewModel: MusicDownloadButtonViewModel
-    @EnvironmentObject private var musicDownloadManager: MusicDownloadManager
-    
-    init(collection: ClusterCodable) {
-        self._viewModel = ObservedObject(initialValue: MusicDownloadButtonViewModel(collection: collection))
-    }
-    
+    let collection: ClusterCodable
+    @Environment(MusicDownloadManager.self) private var musicDownloadManager
+    @State var error: LocalizedError?
+
     var body: some View {
         Button {
             Task {
-                await viewModel.downloadMusic(manager: musicDownloadManager)
+                do {
+                    try await musicDownloadManager.downloadMusicFor(collection: collection)
+                    error = nil
+                } catch {
+                    self.error = error.forcedLocalizedError
+                }
             }
         } label: {
-            HStack {
-                Image("DownloadIcon")
-                    .resizable()
-                    .renderingMode(.template)
-                    .foregroundColor(viewModel.showingLoader ? .clear : .white)
-                    .frame(width: 30, height: 30)
-                    .overlay {
-                        if viewModel.showingLoader {
-                            ProgressView()
-                                .scaleEffect(1.4)
-                                .tint(Color(uiColor: .blackColor).opacity(0.8))
-                        }
-                    }
+            ZStack {
+                    GIFView(location: Bundle.main.url(forResource: "Loader", withExtension: "gif")!)
+                        .colorInvert()
+                        .frame(width: 30, height: 30)
+                        .opacity(musicDownloadManager.isDownloading(for: collection) ? 1 : 0)
+                    Image("DownloadIcon")
+                        .resizable()
+                        .renderingMode(.template)
+                        .foregroundColor(musicDownloadManager.isDownloading(for: collection) ? .clear : .white)
+                        .frame(width: 30, height: 30)
+                        .opacity(musicDownloadManager.isDownloading(for: collection) ? 0 : 1)
             }
             .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
-            .background(Color(uiColor: viewModel.showingLoader ? .clear : .softBlueGrey))
+            .background(Color(uiColor: musicDownloadManager.isDownloading(for: collection) ? .clear : .softBlueGrey))
             .cornerRadius(8)
         }
         .buttonStyle(.plain)
         .tint(.white)
-        .onAppear {
-            Task {
-                let isDownloading = await viewModel.isDownloading(manager: musicDownloadManager)
-                await MainActor.run(body: {
-                    viewModel.showingLoader = isDownloading
-                })
-            }
-        }
     }
 }
 

@@ -15,19 +15,18 @@ struct TabViewUI: View {
     @StateObject private var model = TabViewViewModel()
     @State private var showingSongServiceView = true
     @EnvironmentObject var externalDisplayConnector: ExternalDisplayConnector
-    @EnvironmentObject var musicDownloadManager: MusicDownloadManager
 
     var body: some View {
         TabView(selection: $selectedTab) {
             ForEach(model.tabFeatures) { feature in
                 switch feature {
                 case .songService:
-                    tabView(SongServiceViewUI(showingSongServiceView: $showingSongServiceView).environmentObject(musicDownloadManager), feature: feature)
+                    tabView(SongServiceViewUI(showingSongServiceView: $showingSongServiceView), feature: feature)
                 case .songs:
                     tabView(CollectionsViewUI(
                         editingSection: Binding.constant(nil),
                         songServiceEditorModel: SongServiceEditorModel(),
-                        mandatoryTagIds: []).environmentObject(musicDownloadManager), feature: feature)
+                        mandatoryTagIds: []), feature: feature)
                 case .themes:
                     tabView(ThemesViewUI(), feature: feature)
                 case .tags:

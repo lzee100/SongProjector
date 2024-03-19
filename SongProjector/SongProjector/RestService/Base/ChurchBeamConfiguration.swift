@@ -65,15 +65,15 @@ class Config: NSObject {
 		return nil
 	}()
     	
-	var environment: Environment {
+	var environment: ChurchBeamEnvironment {
 		get {
 			let int = UserDefaults.standard.integer(forKey: Keys.Environment)
 			if int != 0 {
-				if let env = Environment(rawValue: int) {
+				if let env = ChurchBeamEnvironment(rawValue: int) {
 					return env
 				}
 			}
-            return Environment.production
+            return ChurchBeamEnvironment.production
 		}
 		set {
 			if environment != newValue {
@@ -90,7 +90,7 @@ class Config: NSObject {
 	}()
 }
 
-enum Environment: Int, Identifiable {
+enum ChurchBeamEnvironment: Int, Identifiable {
     
     var id: String {
         UUID().uuidString
@@ -113,7 +113,7 @@ enum Environment: Int, Identifiable {
 		}
 	}
     
-    var next: Environment {
+    var next: ChurchBeamEnvironment {
         return self == .dev ? .production : .dev
     }
     
@@ -126,7 +126,7 @@ enum Environment: Int, Identifiable {
     }
 }
 
-extension Environment {
+extension ChurchBeamEnvironment {
     
     func loadGoogleFile() {
         switch self {

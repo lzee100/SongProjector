@@ -38,7 +38,7 @@ struct CollectionEditorViewUI: View {
         
         case bibleStudySheets(content: String)
     }
-    @EnvironmentObject var musicDownloadManager: MusicDownloadManager
+    @Environment(MusicDownloadManager.self) private var musicDownloadManager
 
     @StateObject private var viewModel: CollectionEditorViewModel
     @StateObject private var themeSelectionModel: ThemesSelectionModel
@@ -178,7 +178,6 @@ struct CollectionEditorViewUI: View {
                 )
             })
         }
-        .environmentObject(musicDownloadManager)
         .interactiveDismissDisabled()
         .alert(AppText.UploadUniversalSong.saveClusterConformationQuestion, isPresented: $showingConfirmUploadUniversalClusterAlert, actions: {
             Button(role: .destructive) {
@@ -610,7 +609,7 @@ struct CollectionEditorViewUI_Previews: PreviewProvider {
             collectionType: .custom,
             showingCollectionEditor: $showingCollectionEditor
         )
-        .environmentObject(MusicDownloadManager())
+        .environment(MusicDownloadManager())
     }
 }
 

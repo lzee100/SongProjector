@@ -8,6 +8,8 @@
 
 import SwiftUI
 import UIKit
+import Observation
+
 private var idiom : UIUserInterfaceIdiom { UIDevice.current.userInterfaceIdiom }
 
 @MainActor class SongServiceViewModel: ObservableObject {
@@ -28,10 +30,11 @@ struct SongServiceViewUI: View {
     
     private let alignment: Sticky.Alignment
     @EnvironmentObject private var soundPlayer: SoundPlayer2
-    @EnvironmentObject var musicDownloadManager: MusicDownloadManager
+    @Environment(MusicDownloadManager.self) private var musicDownloadManager
+
     @EnvironmentObject var store: ExternalDisplayConnector
     @State private var collectionCountDown: CollectionCountDown?
-    @SwiftUI.Environment(\.horizontalSizeClass) var horizontalSizeClass
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
     @State var selectedSheet: String?
     @State var isUserInteractionEnabledForBeamer = true
     @State var showingMixerView = false
@@ -164,7 +167,6 @@ struct SongServiceViewUI: View {
                 }
             })
         }
-        .environmentObject(musicDownloadManager)
         .onAppear {
             if let previewSong {
                 songService.set(sectionedSongs: [SongServiceSectionWithSongs(title: "", cocList: [.cluster(previewSong)])])
